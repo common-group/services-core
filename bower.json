@@ -1,0 +1,26 @@
+{
+  "name": "catarse_admin",
+  "version": "1.0.0",
+  "homepage": "https://github.com/catarse/catarse_admin",
+  "authors": [
+    "Diogo Biazus <diogo@biazus.me>",
+    "Vinícius Andrade <vchavesster@gmail.com>"
+  ],
+  "description": "A set of components to use in Catarse Admin interface",
+  "main": "dist/catarse_admin.js",
+  "keywords": [
+    "mithril",
+    "catarse"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "mithril": "~0.2.0"
+  }
+}
