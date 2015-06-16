@@ -4,7 +4,6 @@ describe('adminContributions component', function() {
   beforeAll(function() {
     n_contributions = 10;
     adminContributions = m.component(adminApp.adminContributions);
-    adminApp.models.ContributionDetail.get = 
     spyOn(adminApp.models.ContributionDetail, 'get').and.callFake(function(filter){
       return ContributionDetailMockery(n_contributions);
     });
@@ -28,7 +27,12 @@ describe('adminContributions component', function() {
 
   describe('view', function() {
     beforeAll(function() {
-      view = adminContributions.view();
+      view = adminContributions.view(ctrl);
     });
+
+    it('should return valid HTML markup', function() {
+      pending("Decide what to test on view");
+    });
+
   });
 });
