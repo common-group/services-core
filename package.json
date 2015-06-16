@@ -10,7 +10,6 @@
   ],
   "description": "A Mithril.js plugin to authenticate requests against PostgREST",
   "devDependencies": {
-    "factory-girl": "^1.6.0",
     "grunt": "^0.4.5",
     "grunt-contrib-jasmine": "0.8.x",
     "grunt-contrib-uglify": "0.9.x"
