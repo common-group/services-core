@@ -1,6 +1,4 @@
 describe('AdminContributions component', function() {
-  var AdminContributions, n_contributions, ctrl, view;
-
   beforeAll(function() {
     n_contributions = 10;
     AdminContributions = m.component(adminApp.AdminContributions);
