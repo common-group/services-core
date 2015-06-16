@@ -1,9 +1,9 @@
 describe('adminContributions component', function() {
   beforeAll(function() {
-    var n_contributions = 10;
+    this.n_contributions = 10;
     this.adminContributions = m.component(adminApp.adminContributions);
     adminApp.models.ContributionDetail.get = function(filter){
-      return ContributionDetailMockery(n_contributions);
+      return ContributionDetailMockery(this.n_contributions);
     };
     spyOn(adminApp.models.ContributionDetail, 'get').and.callThrough();
   });
@@ -20,7 +20,7 @@ describe('adminContributions component', function() {
       expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
     });
     it('should initialize with a list of contributions', function() {
-      expect(this.ctrl.contributions.length).toEqual(n_contributions);
+      expect(this.ctrl.contributions.length).toEqual(this.n_contributions);
     });
   });
 
