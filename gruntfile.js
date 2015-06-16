@@ -18,7 +18,7 @@ module.exports = function( grunt ) {
         },
 
         files: {
-          'dist/catarse_admin.js': ['src/catarse_admin.js']
+          'dist/catarse_admin.js': ['src/**/*.js']
         }
       },
 
