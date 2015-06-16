@@ -1,7 +1,9 @@
 describe('adminContributions component', function() {
+  var adminContributions, n_contributions, ctrl, view;
+
   beforeAll(function() {
-    var n_contributions = this.n_contributions = 10;
-    this.adminContributions = m.component(adminApp.adminContributions);
+    n_contributions = 10;
+    adminContributions = m.component(adminApp.adminContributions);
     adminApp.models.ContributionDetail.get = function(filter){
       return ContributionDetailMockery(n_contributions);
     };
@@ -10,18 +12,25 @@ describe('adminContributions component', function() {
 
   describe('controller', function() {
     beforeAll(function() {
-      this.ctrl = this.adminContributions.controller();
+      ctrl = adminContributions.controller();
     });
 
     it('should instantiate filterContributions', function() {
-      expect(typeof this.ctrl.filterContributions).toBe('function');
+      expect(typeof ctrl.filterContributions).toBe('function');
     });
     it('should populate contributions on initialization', function() {
       expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
     });
     it('should initialize with a list of contributions', function() {
-      expect(this.ctrl.contributions.length).toEqual(this.n_contributions);
+      expect(ctrl.contributions.length).toEqual(n_contributions);
     });
   });
 
+  describe('view', function() {
+    beforeAll(function() {
+      view = adminContributions.view();
+    });
+
+
+  });
 });
