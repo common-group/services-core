@@ -1,0 +1,47 @@
+beforeAll(function(){
+  ContributionDetailMockery = function(j,attrs){
+    var attrs = {}, 
+        contributions = [], 
+        i;
+    //Here we should set custom attributes for specific aimed mocks
+    attrs = {};
+
+    for(i = 0; i < j; i++){
+      var data = {
+        id : i,
+        contribution_id : i,
+        user_id : i,
+        project_id : i,
+        reward_id : i,
+        payment_id : i,
+        permalink : 'project_'+i,
+        project_name : 'Project '+i,
+        user_name : 'User '+i,
+        email : 'user@user'+i+'.com',
+        uploaded_image : 'avatar_'+i+'.jpg',
+        contribution_key : i,
+        contribution_value : 50,
+        installments : 1,
+        installment_value : 50,
+        state : 'paid',
+        anonymous : false,
+        payer_email : 'payer'+i+'@email.com',
+        gateway : 'MoIP',
+        gateway_id : null,
+        gateway_fee : null,
+        gateway_data : {},
+        payment_method : 'desconhecido',
+        project_state : 'successful',
+        has_rewards : true,
+        pending_at : '2015-01-16T17:25:56.611561',
+        paid_at : '2015-01-16T17:25:56.611561',
+        refused_at : null,
+        pending_refund_at : null,
+        refunded_at : null,
+        created_at : '2015-01-15T17:25:56.611561'
+      };
+      contributions.push(data);
+    }
+    return contributions;
+  };
+});

@@ -1,8 +1,8 @@
 adminApp.adminContributions = {
     controller: function() {
-      var contributions = this.contributions;
+      var that = this;
       this.filterContributions = function(filter){
-        contributions = adminApp.models.ContributionDetail.get(filter);
+        that.contributions = adminApp.models.ContributionDetail.get(filter);
         return;
       };
       this.filterContributions();

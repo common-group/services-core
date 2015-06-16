@@ -1,7 +1,10 @@
 describe('adminContributions component', function() {
   beforeAll(function() {
     this.adminContributions = m.component(adminApp.adminContributions);
-    spyOn(adminApp.models.ContributionDetail, 'get');
+    adminApp.models.ContributionDetail.get = function(filter){
+      return ContributionDetailMockery(10);
+    };
+    spyOn(adminApp.models.ContributionDetail, 'get').and.callThrough();
   });
 
   describe('controller', function() {
@@ -16,7 +19,7 @@ describe('adminContributions component', function() {
       expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
     });
     it('should initialize with a list of contributions', function() {
-      pending('Waiting for automatically created contributions.');
+      expect(this.ctrl.contributions.length).toEqual(10);
     });
   });
 
