@@ -30,7 +30,5 @@ describe('adminContributions component', function() {
     beforeAll(function() {
       view = adminContributions.view();
     });
-
-
   });
 });
