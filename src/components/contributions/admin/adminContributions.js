@@ -1,11 +1,11 @@
-//AdminContribution.js
-adminApp.AdminContribution = {
+adminApp.AdminContributions = {
     controller: function() {
-      var contributions = this.contributions = adminApp.models.Contribution.get();
+      var that = this;
       this.filterContributions = function(filter){
-        contributions = adminApp.models.Contribution.get(filter);
+        that.contributions = adminApp.models.ContributionDetail.get(filter);
         return;
       };
+      this.filterContributions();
     },
     view: function(ctrl) {
       return  [ 
@@ -26,4 +26,4 @@ adminApp.AdminContribution = {
                 ])
               ];   
     }
-}
+};

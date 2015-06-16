@@ -33,30 +33,8 @@ var ContributionDetail = function(data){
   this.created_at = m.prop(data.created_at);
 };
 
-ContributionDetail.get = function(filter) {
-
-  var data = [];
-  //quick manual factory
-  for(var i = 0; i < 5; i++){
-    data[i] = {
-      id : i,
-      user_id : i,
-      project_id : i,
-      reward_id : i,
-      contribution_value : i*100,
-      anonymous : i%2,
-      notified_finish : false,
-      payer_name : 'payer_'+i,
-      payer_email : 'payer_'+i+'@payer.com',
-      payer_document : 'cpfdopayer',
-      payment_choice : 'slip',
-      payment_service_fee : 0,
-      referral_link: 'hello',
-      created_at : Date.now(),
-      updated_at : Date.now(),
-    };
-  }
-  return data;
+ContributionDetail.get = function(filter){
+  return [];
   //return m.postgrest.request({method: "GET", url: "/contribution_details", data: filter});
 };
 
