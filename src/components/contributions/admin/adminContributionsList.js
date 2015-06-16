@@ -1,4 +1,4 @@
-adminApp.AdminContributionsList = {
+adminApp.adminContributionsList = {
   controller: function(args) {
     this.contributions = m.prop(args.contributions || new adminApp.models.Contribution());
   },
@@ -13,7 +13,7 @@ adminApp.AdminContributionsList = {
               ])
             ]),
             ctrl.contributions().map(function(contribution){
-              return m.component(adminApp.AdminContributionsListDetail, {contribution: contribution, key: contribution});
+              return m.component(adminApp.adminContributionsListDetail, {contribution: contribution, key: contribution});
             })
           ]);    
   }

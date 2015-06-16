@@ -1,17 +1,16 @@
-//AdminContribution.js
-adminApp.AdminContribution = {
+adminApp.adminContributions = {
     controller: function() {
-      var contributions = this.contributions = adminApp.models.Contribution.get();
+      var contributions = this.contributions = adminApp.models.ContributionDetail.get();
       this.filterContributions = function(filter){
-        contributions = adminApp.models.Contribution.get(filter);
+        contributions = adminApp.models.ContributionDetail.get(filter);
         return;
       };
     },
     view: function(ctrl) {
       return  [ 
-                m.component(adminApp.AdminContributionsFilter,{onFilter: ctrl.filterContributions}),
+                m.component(adminApp.adminContributionsFilter,{onFilter: ctrl.filterContributions}),
                 m(".w-section.section",[
-                  m.component(adminApp.AdminContributionsList, {contributions: ctrl.contributions}),
+                  m.component(adminApp.adminContributionsList, {contributions: ctrl.contributions}),
                 ]),
                 m(".w-section.section",[
                   m(".w-container",[
@@ -26,4 +25,4 @@ adminApp.AdminContribution = {
                 ])
               ];   
     }
-}
+};

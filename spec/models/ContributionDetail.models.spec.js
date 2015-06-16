@@ -48,6 +48,9 @@ describe('ContributionDetail model', function() {
     it('should instantiate a get function', function() {
       expect(typeof adminApp.models.ContributionDetail.get).toBe('function');
     });
+    it('should return 10 contributions and pagination info when filtering', function() {
+      pending("Implement this with postgrest already set");
+    });
   });
 
 });

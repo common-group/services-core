@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListDetail = {
+adminApp.adminContributionsListDetail = {
   controller: function(args){
     //this.contribution = args.contribution;
   },
