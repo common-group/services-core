@@ -1,12 +1,7 @@
-(function (factory) {
-  // Browser globals
-  factory(m, window);
-}(function (m, window) { 
-  var adminApp = window.adminApp = {};
+var adminApp = window.adminApp = {};
 
-  adminApp.models = {};
+adminApp.models = {};
 
-  adminApp.submodule = function(module, args) {
-    return module.view.bind(this, new module.controller(args))
-  } 
-}));
+adminApp.submodule = function(module, args) {
+  return module.view.bind(this, new module.controller(args))
+} 
