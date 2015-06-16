@@ -1,12 +1,22 @@
 describe('adminContributions component', function() {
   beforeAll(function() {
     this.adminContributions = m.component(adminApp.adminContributions);
-
+    spyOn(adminApp.models.ContributionDetail, 'get');
   });
+
   describe('controller', function() {
-    it('should instantiate filterContributions function', function() {
-      var ctrl = this.adminContributions.controller();
-      expect(typeof ctrl.filterContributions).toBe('function');
+    beforeAll(function() {
+      this.ctrl = this.adminContributions.controller();
+    });
+
+    it('should instantiate filterContributions', function() {
+      expect(typeof this.ctrl.filterContributions).toBe('function');
+    });
+    it('should populate contributions on initialization', function() {
+      expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
+    });
+    it('should initialize with a list of contributions', function() {
+      pending('Waiting for automatically created contributions.');
     });
   });
 

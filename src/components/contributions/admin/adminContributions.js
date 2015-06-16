@@ -1,10 +1,11 @@
 adminApp.adminContributions = {
     controller: function() {
-      var contributions = this.contributions = adminApp.models.ContributionDetail.get();
+      var contributions = this.contributions;
       this.filterContributions = function(filter){
         contributions = adminApp.models.ContributionDetail.get(filter);
         return;
       };
+      this.filterContributions();
     },
     view: function(ctrl) {
       return  [ 
