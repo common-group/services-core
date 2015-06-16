@@ -2,10 +2,12 @@
   "name": "catarse_admin",
   "version": "1.0.0",
   "author": "Diogo Biazus",
-  "contributors": [{
-    "name": "Vinícius Andrade",
-    "email": "vchavesster@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Vinícius Andrade",
+      "email": "vchavesster@gmail.com"
+    }
+  ],
   "description": "A Mithril.js plugin to authenticate requests against PostgREST",
   "devDependencies": {
     "grunt": "^0.4.5",
@@ -15,6 +17,5 @@
   "scripts": {
     "test": "grunt test"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
