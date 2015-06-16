@@ -1,4 +1,4 @@
-adminApp.adminContributionsFilter.VM = (function(){
+adminApp.AdminContributionsFilter.VM = (function(){
   var permalink = m.prop("");
 
   function filter(){

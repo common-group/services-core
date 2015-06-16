@@ -1,4 +1,4 @@
-adminApp.adminContributions = {
+adminApp.AdminContributions = {
     controller: function() {
       var that = this;
       this.filterContributions = function(filter){
@@ -9,9 +9,9 @@ adminApp.adminContributions = {
     },
     view: function(ctrl) {
       return  [ 
-                m.component(adminApp.adminContributionsFilter,{onFilter: ctrl.filterContributions}),
+                m.component(adminApp.AdminContributionsFilter,{onFilter: ctrl.filterContributions}),
                 m(".w-section.section",[
-                  m.component(adminApp.adminContributionsList, {contributions: ctrl.contributions}),
+                  m.component(adminApp.AdminContributionsList, {contributions: ctrl.contributions}),
                 ]),
                 m(".w-section.section",[
                   m(".w-container",[

@@ -1,9 +1,9 @@
-describe('adminContributions component', function() {
-  var adminContributions, n_contributions, ctrl, view;
+describe('AdminContributions component', function() {
+  var AdminContributions, n_contributions, ctrl, view;
 
   beforeAll(function() {
     n_contributions = 10;
-    adminContributions = m.component(adminApp.adminContributions);
+    AdminContributions = m.component(adminApp.AdminContributions);
     spyOn(adminApp.models.ContributionDetail, 'get').and.callFake(function(filter){
       return ContributionDetailMockery(n_contributions);
     });
@@ -11,7 +11,7 @@ describe('adminContributions component', function() {
 
   describe('controller', function() {
     beforeAll(function() {
-      ctrl = adminContributions.controller();
+      ctrl = AdminContributions.controller();
     });
 
     it('should instantiate filterContributions', function() {
@@ -27,7 +27,7 @@ describe('adminContributions component', function() {
 
   describe('view', function() {
     beforeAll(function() {
-      view = adminContributions.view(ctrl);
+      view = AdminContributions.view(ctrl);
     });
 
     it('should return valid HTML markup', function() {
