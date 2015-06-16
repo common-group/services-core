@@ -1,9 +1,9 @@
 describe('adminContributions component', function() {
   beforeAll(function() {
-    this.n_contributions = 10;
+    var n_contributions = this.n_contributions = 10;
     this.adminContributions = m.component(adminApp.adminContributions);
     adminApp.models.ContributionDetail.get = function(filter){
-      return ContributionDetailMockery(this.n_contributions);
+      return ContributionDetailMockery(n_contributions);
     };
     spyOn(adminApp.models.ContributionDetail, 'get').and.callThrough();
   });
