@@ -4,10 +4,10 @@ describe('adminContributions component', function() {
   beforeAll(function() {
     n_contributions = 10;
     adminContributions = m.component(adminApp.adminContributions);
-    adminApp.models.ContributionDetail.get = function(filter){
+    adminApp.models.ContributionDetail.get = 
+    spyOn(adminApp.models.ContributionDetail, 'get').and.callFake(function(filter){
       return ContributionDetailMockery(n_contributions);
-    };
-    spyOn(adminApp.models.ContributionDetail, 'get').and.callThrough();
+    });
   });
 
   describe('controller', function() {
