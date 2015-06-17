@@ -5550,5 +5550,8 @@ module.exports = function(name){
 },{}],28:[function(require,module,exports){
 //mithril-query.js
 //This file exposes mithril-query node module to global $ var
-window.$ = require('mithril-query');
+beforeAll(function(){
+  mq = require('mithril-query');
+});
+
 },{"mithril-query":23}]},{},[28]);
