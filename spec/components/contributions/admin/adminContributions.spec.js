@@ -1,7 +1,8 @@
 describe('AdminContributions component', function() {
+  var n_contributions = 10,
+      AdminContributions = m.component(adminApp.AdminContributions);
+       
   beforeAll(function() {
-    n_contributions = 10;
-    AdminContributions = m.component(adminApp.AdminContributions);
     spyOn(adminApp.models.ContributionDetail, 'get').and.callFake(function(filter){
       return ContributionDetailMockery(n_contributions);
     });

@@ -1,7 +1,5 @@
 describe('AdminContributionsFilterVM view-model', function() {
-  beforeAll(function() {
-    AdminContributionsFilterVM = adminApp.AdminContributionsFilter.VM;
-  });
+  var AdminContributionsFilterVM = adminApp.AdminContributionsFilter.VM;
 
   describe('initialization', function() {
     it('should return a propified permalink object', function() {

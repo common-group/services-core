@@ -1,12 +1,8 @@
 describe('AdminContributionsFilter component', function() {
+  var AdminContributionsFilter = m.component(adminApp.AdminContributionsFilter),
+      ctrl = AdminContributionsFilter.controller();
+  
   beforeAll(function() {
-    AdminContributionsFilter = m.component(adminApp.AdminContributionsFilter);
-    args = {
-      onFilter: function(filter) {
-        return filter;
-      }
-    }
-    ctrl = AdminContributionsFilter.controller();
     spyOn(ctrl, 'filter')
   });
 

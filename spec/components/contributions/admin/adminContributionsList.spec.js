@@ -1,6 +1,7 @@
 describe('AdminContributionsList component', function() {
+  var n_contributions = 5;
+
   beforeAll(function() {
-    n_contributions = 5;
     contributions = ContributionDetailMockery(n_contributions);
     AdminContributionsList = m.component(adminApp.AdminContributionsList, {contributions:contributions});
   });
