@@ -30,7 +30,7 @@ adminApp.models = {}, adminApp.submodule = function(module, args) {
         };
     },
     view: function(ctrl, args) {
-        return m(".w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-2", [ m("label.fontsize-small[for='permalink']", "Permalink"), m("input.w-input.text-field.positive[id='permalink'][name='permalink'][placeholder='permalink do projeto'][required='required'][type='text']", {
+        return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-2", [ m("label.fontsize-small[for='permalink']", "Permalink"), m("input.w-input.text-field.positive[id='permalink'][name='permalink'][placeholder='permalink do projeto'][required='required'][type='text']", {
             onchange: m.withAttr("value", ctrl.vm.permalink),
             value: ctrl.vm.permalink()
         }) ]), m(".w-col.w-col-4", [ m("label.fontsize-small[for='expiration']", "Expiram entre"), m("input.w-input.text-field.positive[data-name='Field 2'][id='expiration'][name='expiration'][placeholder='Expiram entre'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-small[for='progress']", "Por progresso %"), m("input.w-input.text-field.positive[data-name='Field 2'][id='progress'][name='progress'][placeholder='Progresso em %'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-small[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [ m("option[value='']", "Select one..."), "\n", m("option[value='First']", "First Choice"), "\n", m("option[value='Second']", "Second Choice"), "\n", m("option[value='Third']", "Third Choice") ]) ]), m(".w-col.w-col-2", [ m("label.fontsize-small[for='field-3']", "Meio de pag."), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [ m("option[value='']", "Select one..."), "\n", m("option[value='First']", "First Choice"), "\n", m("option[value='Second']", "Second Choice"), "\n", m("option[value='Third']", "Third Choice") ]) ]) ]) ]), m(".w-form-done", [ m("p", "Thank you! Your submission has been received!") ]), m(".w-form-fail", [ m("p", "Oops! Something went wrong while submitting the form :(") ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("button.btn.btn-small", {
@@ -54,7 +54,7 @@ adminApp.models = {}, adminApp.submodule = function(module, args) {
         this.contributions = m.prop(args.contributions || new adminApp.models.Contribution());
     },
     view: function(ctrl, args) {
-        return m(".w-container", [ m(".u-marginbottom-30.fontsize-base", [ m("span.fontweight-semibold", "125"), " apoios encontrados, totalizando ", m("span.fontweight-semibold", [ "R$27.090.655,00     ", m("a.fa.fa-download.fontcolor-dashboard[href='#']", ".") ]) ]), ctrl.contributions().map(function(contribution) {
+        return m("#admin-contributions-list.w-container", [ m(".u-marginbottom-30.fontsize-base", [ m("span.fontweight-semibold", "125"), " apoios encontrados, totalizando ", m("span.fontweight-semibold", [ "R$27.090.655,00     ", m("a.fa.fa-download.fontcolor-dashboard[href='#']", ".") ]) ]), ctrl.contributions().map(function(contribution) {
             return m.component(adminApp.AdminContributionsListDetail, {
                 contribution: contribution,
                 key: contribution
@@ -119,9 +119,9 @@ var ContributionDetail = function(data) {
     this.reward_id = m.prop(data.reward_id), this.payment_id = m.prop(data.payment_id), 
     this.permalink = m.prop(data.permalink), this.project_name = m.prop(data.project_name), 
     this.user_name = m.prop(data.user_name), this.email = m.prop(data.email), this.uploaded_image = m.prop(data.uploaded_image), 
-    this.contribution_key = m.prop(data.contribution_key), this.contribution_value = m.prop(data.contribution_value), 
-    this.installments = m.prop(data.installments), this.installment_value = m.prop(data.installment_value), 
-    this.state = m.prop(data.state), this.anonymous = m.prop(data.anonymous), this.payer_email = m.prop(data.payer_email), 
+    this.key = m.prop(data.key), this.value = m.prop(data.value), this.installments = m.prop(data.installments), 
+    this.installment_value = m.prop(data.installment_value), this.state = m.prop(data.state), 
+    this.anonymous = m.prop(data.anonymous), this.payer_email = m.prop(data.payer_email), 
     this.gateway = m.prop(data.gateway), this.gateway_id = m.prop(data.gateway_id), 
     this.gateway_fee = m.prop(data.gateway_fee), this.gateway_data = m.prop(data.gateway_data), 
     this.payment_method = m.prop(data.payment_method), this.project_state = m.prop(data.project_state), 
