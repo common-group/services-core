@@ -3,7 +3,7 @@ adminApp.AdminContributionsList = {
     this.contributions = m.prop(args.contributions || new adminApp.models.Contribution());
   },
   view: function(ctrl, args) {
-    return m(".w-container",[
+    return m("#admin-contributions-list.w-container",[
             m(".u-marginbottom-30.fontsize-base",[
               m("span.fontweight-semibold", "125")," apoios encontrados, totalizando ",
               m("span.fontweight-semibold", [

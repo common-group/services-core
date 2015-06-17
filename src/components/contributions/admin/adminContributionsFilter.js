@@ -6,7 +6,7 @@ adminApp.AdminContributionsFilter = {
     };
   },
   view: function(ctrl, args) {
-    return m(".w-section.page-header",[
+    return m("#admin-contributions-filter.w-section.page-header",[
             m(".w-container",[
               m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"),
               m(".w-form",[

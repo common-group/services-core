@@ -5,6 +5,13 @@ module.exports = function( grunt ) {
   grunt.initConfig({
     // TODO: change to read component.json
     pkg: require('./package.json'),
+    
+    browserify: {
+      dist: {
+        src: ['spec/lib/mithril-query/src/mithril-query.js'],
+        dest: 'spec/lib/mithril-query/mithril-query.js'
+      }
+    },
 
     uglify: {
       options: {
@@ -35,6 +42,7 @@ module.exports = function( grunt ) {
         options: {
           specs: "spec/**/*[S|s]pec.js",
           vendor: [
+            "spec/lib/mithril-query/mithril-query.js",
             "spec/lib/jasmine-species/jasmine-grammar.js",
             "spec/lib/matchers.js",
             "spec/lib/mocks/*mock.js",
@@ -44,10 +52,11 @@ module.exports = function( grunt ) {
       }
     }
   });
-
+  
+  grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-contrib-jasmine");
   grunt.loadNpmTasks("grunt-contrib-uglify");
 
-  grunt.registerTask('test', ['jasmine']);
+  grunt.registerTask('test', ['browserify','jasmine']);
   grunt.registerTask('default', ['test', 'uglify']);
 };
