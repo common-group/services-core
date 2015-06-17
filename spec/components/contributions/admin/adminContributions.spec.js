@@ -35,8 +35,9 @@ describe('AdminContributions component', function() {
     it('should render adminContributionsList nested component', function() {
       expect($output.has('#admin-contributions-list')).toBe(true);
     });
-    it('should render fetched contributions cards', function() {
-      expect($output.find('.results-admin-contributions').length).toEqual(n_contributions);
+    it('should call Contribution Details when filtering', function() {
+      $output.click('#filter-btn');
+      expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
     });
   });
 });
