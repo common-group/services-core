@@ -6,14 +6,11 @@ describe('AdminContributionsFilter component', function() {
         return filter;
       }
     }
-    spyOn(adminApp.AdminContributionsFilter, 'VM')
+    ctrl = AdminContributionsFilter.controller();
+    spyOn(ctrl, 'filter')
   });
 
   describe('controller', function() {
-    beforeAll(function() {
-      ctrl = AdminContributionsFilter.controller();
-    });
-
     it('should instantiate a function called filter', function() {
       expect(typeof ctrl.filter).toBe('function');
     });
@@ -23,6 +20,14 @@ describe('AdminContributionsFilter component', function() {
   });
 
   describe('view', function() {
-    pending('View specs pending');
+    beforeAll(function() {
+      view = AdminContributionsFilter.view(ctrl);
+      $output = mq(view);
+    });
+
+    it('should call its filter when clicking on a filter', function() {
+      $output.click('#filter-btn');
+      expect(ctrl.filter).toHaveBeenCalled();
+    });
   });
 });
