@@ -8,7 +8,7 @@ describe('AdminContributionsFilter component', function() {
 
   describe('controller', function() {
     it('should instantiate a function called filter', function() {
-      expect(typeof ctrl.filter).toBe('function');
+      expect(ctrl.filter).toBeFunction();
     });
     it('should instantiate its View-Model on initialization', function() {
       expect(ctrl.vm).toBeDefined();

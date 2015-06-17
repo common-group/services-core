@@ -7,7 +7,7 @@ describe('AdminContributionsFilterVM view-model', function() {
       expect(AdminContributionsFilterVM.permalink()).toEqual('teste');
     });
     it('should return a filter function', function() {
-      expect(typeof AdminContributionsFilterVM.filter).toEqual('function')
+      expect(AdminContributionsFilterVM.filter).toBeFunction();
     });
   });
 });
