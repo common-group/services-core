@@ -26,11 +26,17 @@ describe('AdminContributions component', function() {
   describe('view', function() {
     beforeAll(function() {
       view = AdminContributions.view(ctrl);
+      $output = mq(view);
     });
 
-    it('should return valid HTML markup', function() {
-      pending("Decide what to test on view");
+    it('should render adminContributionsFilter nested component', function() {
+      expect($output.has('#admin-contributions-filter')).toBe(true);
     });
-
+    it('should render adminContributionsList nested component', function() {
+      expect($output.has('#admin-contributions-list')).toBe(true);
+    });
+    it('should render fetched contributions cards', function() {
+      expect($output.find('.results-admin-contributions').length).toEqual(n_contributions);
+    });
   });
 });
