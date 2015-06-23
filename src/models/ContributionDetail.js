@@ -34,8 +34,8 @@ var ContributionDetail = function(data){
 };
 
 ContributionDetail.get = function(filter){
-  return [];
-  //return m.postgrest.request({method: "GET", url: "/contribution_details", data: filter});
+  filter = filter || {};
+  return m.postgrest.requestWithToken({method: "GET", url: "/contribution_details", data: filter});
 };
 
 adminApp.models.ContributionDetail = ContributionDetail;
