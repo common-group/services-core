@@ -2,6 +2,7 @@
 "use strict";
 
 module.exports = function( grunt ) {
+  var sources = ['src/catarse_admin.js', 'src/models/**/*.js', 'src/**/*.js'];
   grunt.initConfig({
     // TODO: change to read component.json
     pkg: require('./package.json'),
@@ -25,30 +26,32 @@ module.exports = function( grunt ) {
         },
 
         files: {
-          'dist/catarse_admin.js': ['src/**/*.js']
+          'dist/catarse_admin.js': sources
         }
       },
 
       min: {
         files: {
-          'dist/catarse_admin.min.js': ['src/catarse_admin.js']
+          'dist/catarse_admin.min.js': sources
         }
       }
     },
 
     jasmine: {
       full: {
-        src: "src/**/*.js",
+        src: sources,
         options: {
           specs: "spec/**/*[S|s]pec.js",
           vendor: [
             "spec/lib/mithril-query/mithril-query.js",
             "spec/lib/jasmine-species/jasmine-grammar.js",
             "spec/lib/jasmine-matchers.js",
+            "spec/lib/jasmine-ajax/mock-ajax.js",
             "spec/lib/matchers.js",
             "spec/lib/mocks/*mock.js",
-            "bower_components/mithril/mithril.min.js",
-            "bower_components/mihtril.postgrest/dist/mithril.postgrest.js"
+            "bower_components/mithril/mithril.js",
+            "bower_components/underscore/underscore.js",
+            "bower_components/mithril.postgrest/dist/mithril.postgrest.js"
           ]
         }
       }
