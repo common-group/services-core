@@ -15,7 +15,6 @@ describe('AdminContributions component', function() {
     it('should instantiate its view-model', function() {
       expect(ctrl.vm).toBeDefined();
     });
-    
   });
 
   describe('view', function() {

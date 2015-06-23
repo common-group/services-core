@@ -1,6 +1,7 @@
 adminApp.AdminContributions.VM = (function(){
   var contributions = m.prop(""),
       filters = m.prop(""),
+      isLoading = m.prop(false),
       page = m.prop(1);
 
   var getContributions = function(){
@@ -8,21 +9,27 @@ adminApp.AdminContributions.VM = (function(){
   };
 
   var filter = function(input){
+    isLoading(true);
     var input = input || {},
         d = m.deferred();
     filters(input); 
     getContributions().then(function(data){
       contributions(data);
       d.resolve(contributions());
+      isLoading(false);
     });  
     return d.promise;
   };
 
   var nextPage = function(){
+    var d = m.deferred();
+    isLoading(true);
     page(page()+1);
     getContributions().then(function(data){
-      contributions(_.union(contributions(), data));
+      d.resolve(contributions(_.union(contributions(), data)));
+      isLoading(false);
     });
+    return d.promise;
   };
 
   filter();
@@ -33,5 +40,5 @@ adminApp.AdminContributions.VM = (function(){
     filters: filters,
     nextPage: nextPage,
     page: page
-  }
+  };
 })();
