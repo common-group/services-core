@@ -33,9 +33,9 @@ var ContributionDetail = function(data){
   this.created_at = m.prop(data.created_at);
 };
 
-ContributionDetail.get = function(filter){
-  filter = filter || {};
-  return m.postgrest.requestWithToken({method: "GET", url: "/contribution_details", data: filter});
+ContributionDetail.get = function(filters){
+  filters = filters || {};
+  return m.postgrest.requestWithToken({method: "GET", url: "/contribution_details", data: filters});
 };
 
 adminApp.models.ContributionDetail = ContributionDetail;
