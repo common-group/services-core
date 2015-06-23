@@ -33,7 +33,7 @@ ContributionDetail.get = function(filters, page) {
         var pageSize = 10;
         return page * pageSize + "-" + (page * pageSize + pageSize);
     }, xhrConfig = function(xhr) {
-        xhr.setHeader("Range-unit", "items"), xhr.setHeader("Range", toRange());
+        xhr.setRequestHeader("Range-unit", "items"), xhr.setRequestHeader("Range", toRange());
     };
     return filters = filters || {}, m.postgrest.requestWithToken({
         method: "GET",
