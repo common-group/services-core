@@ -39,8 +39,8 @@ ContributionDetail.get = function(filters, page){
     return (page*pageSize)+"-"+((page*pageSize)+pageSize);
   };
   var xhrConfig = function(xhr){
-    xhr.setHeader("Range-unit", "items");
-    xhr.setHeader("Range", toRange());
+    xhr.setRequestHeader("Range-unit", "items");
+    xhr.setRequestHeader("Range", toRange());
   }
   filters = filters || {};
   return m.postgrest.requestWithToken({method: "GET", url: "/contribution_details", config: xhrConfig});
