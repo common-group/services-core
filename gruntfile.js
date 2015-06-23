@@ -48,10 +48,10 @@ module.exports = function( grunt ) {
             "spec/lib/jasmine-matchers.js",
             "spec/lib/jasmine-ajax/mock-ajax.js",
             "spec/lib/matchers.js",
-            "spec/lib/mocks/*mock.js",
             "bower_components/mithril/mithril.js",
             "bower_components/underscore/underscore.js",
-            "bower_components/mithril.postgrest/dist/mithril.postgrest.js"
+            "bower_components/mithril.postgrest/dist/mithril.postgrest.js",
+            "spec/lib/mocks/*mock.js"
           ]
         }
       }

@@ -1,7 +1,5 @@
 var adminApp = window.adminApp = {};
 
-m.postgrest.init("http://api.catarse.me/", {method: "GET", url: "/api_token"});
-
 adminApp.models = {};
 
 adminApp.submodule = function(module, args) {
