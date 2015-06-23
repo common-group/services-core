@@ -33,9 +33,17 @@ var ContributionDetail = function(data){
   this.created_at = m.prop(data.created_at);
 };
 
-ContributionDetail.get = function(filter){
-  return [];
-  //return m.postgrest.request({method: "GET", url: "/contribution_details", data: filter});
+ContributionDetail.get = function(filters, page){
+  var toRange = function(){
+    var pageSize = 10;
+    return (page*pageSize)+"-"+((page*pageSize)+pageSize);
+  };
+  var xhrConfig = function(xhr){
+    xhr.setRequestHeader("Range-unit", "items");
+    xhr.setRequestHeader("Range", toRange());
+  }
+  filters = filters || {};
+  return m.postgrest.requestWithToken({method: "GET", url: "/contribution_details", config: xhrConfig});
 };
 
 adminApp.models.ContributionDetail = ContributionDetail;

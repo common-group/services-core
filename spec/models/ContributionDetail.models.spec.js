@@ -1,6 +1,7 @@
 describe('ContributionDetail model', function() {
   beforeAll(function(){
     this.contribution_mock = ContributionDetailMockery(1)[0];
+    spyOn(m.postgrest, "requestWithToken");
   });
 
   describe('when instantiated', function() {
@@ -13,12 +14,16 @@ describe('ContributionDetail model', function() {
     });
   });
 
-  describe('helper functions', function() {
+  describe('fetching data', function() {
     it('should instantiate a get function', function() {
       expect(typeof adminApp.models.ContributionDetail.get).toBe('function');
     });
-    it('should return 10 contributions and pagination info when filtering', function() {
-      pending("Implement this with postgrest already set");
+    it('should call requestWithToken when getting contributions', function() {
+      adminApp.models.ContributionDetail.get();
+      expect(m.postgrest.requestWithToken).toHaveBeenCalled();
+    });
+    it('should set a Range & Range-unit request header', function() {
+      pending("Figure out a way to test xhr request by steps");
     });
   });
 

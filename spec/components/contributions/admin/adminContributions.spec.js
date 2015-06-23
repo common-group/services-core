@@ -1,12 +1,5 @@
 describe('AdminContributions component', function() {
-  var n_contributions = 10,
-      AdminContributions = m.component(adminApp.AdminContributions);
-
-  beforeAll(function() {
-    spyOn(adminApp.models.ContributionDetail, 'get').and.callFake(function(filter){
-      return ContributionDetailMockery(n_contributions);
-    });
-  });
+  var AdminContributions = m.component(adminApp.AdminContributions);
 
   describe('controller', function() {
     beforeAll(function() {
@@ -16,11 +9,11 @@ describe('AdminContributions component', function() {
     it('should instantiate filterContributions', function() {
       expect(ctrl.filterContributions).toBeFunction();
     });
-    it('should populate contributions on initialization', function() {
-      expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
+    it('should instantiate nextPage', function() {
+      expect(ctrl.nextPage).toBeFunction();
     });
-    it('should initialize with a list of contributions', function() {
-      expect(ctrl.contributions.length).toEqual(n_contributions);
+    it('should instantiate its view-model', function() {
+      expect(ctrl.vm).toBeDefined();
     });
   });
 
@@ -28,6 +21,7 @@ describe('AdminContributions component', function() {
     beforeAll(function() {
       view = AdminContributions.view(ctrl);
       $output = mq(view);
+      spyOn(ctrl.vm, "filter");
     });
 
     it('should render adminContributionsFilter nested component', function() {
@@ -38,7 +32,7 @@ describe('AdminContributions component', function() {
     });
     it('should call Contribution Details when filtering', function() {
       $output.click('#filter-btn');
-      expect(adminApp.models.ContributionDetail.get).toHaveBeenCalled();
+      expect(ctrl.vm.filter).toHaveBeenCalled();
     });
   });
 });
