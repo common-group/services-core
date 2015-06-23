@@ -44,6 +44,7 @@ module.exports = function( grunt ) {
           vendor: [
             "spec/lib/mithril-query/mithril-query.js",
             "spec/lib/jasmine-species/jasmine-grammar.js",
+            "spec/lib/jasmine-matchers.js",
             "spec/lib/matchers.js",
             "spec/lib/mocks/*mock.js",
             "bower_components/**/*.js"

@@ -60,7 +60,7 @@ adminApp.AdminContributionsFilter = {
               m(".w-row", [
                 m(".w-col.w-col-4"),
                 m(".w-col.w-col-4", [
-                  m("button.btn.btn-small", {onclick: ctrl.filter},"Filtrar")
+                  m("button#filter-btn.btn.btn-small", {onclick: ctrl.filter},"Filtrar")
                 ]),
                 m(".w-col.w-col-4")
               ])
