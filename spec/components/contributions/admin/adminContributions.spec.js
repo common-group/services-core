@@ -15,12 +15,7 @@ describe('AdminContributions component', function() {
     it('should instantiate its view-model', function() {
       expect(ctrl.vm).toBeDefined();
     });
-    it('should initialize with a list of contributions', function(done) {
-      ctrl.vm.filter().then(function(){
-        expect(ctrl.vm.contributions().length).toEqual(n_contributions);
-        done();
-      })
-    });
+    
   });
 
   describe('view', function() {

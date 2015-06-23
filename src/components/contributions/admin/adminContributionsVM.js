@@ -3,11 +3,15 @@ adminApp.AdminContributions.VM = (function(){
       filters = m.prop(""),
       page = m.prop(1);
 
+  var getContributions = function(){
+    return adminApp.models.ContributionDetail.get(filters(), page());
+  };
+
   var filter = function(input){
     var input = input || {},
         d = m.deferred();
     filters(input); 
-    adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
+    getContributions().then(function(data){
       contributions(data);
       d.resolve(contributions());
     });  
@@ -16,10 +20,10 @@ adminApp.AdminContributions.VM = (function(){
 
   var nextPage = function(){
     page(page()+1);
-    adminApp.models.ContributionDetail.get(filters(),page()).then(function(data){
+    getContributions().then(function(data){
       contributions(_.union(contributions(), data));
     });
-  }
+  };
 
   filter();
 
@@ -27,6 +31,7 @@ adminApp.AdminContributions.VM = (function(){
     contributions: contributions,
     filter: filter,
     filters: filters,
+    nextPage: nextPage,
     page: page
   }
 })();
