@@ -152,25 +152,19 @@ ContributionDetail.get = function(filters, page) {
         }, [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]), m(".w-form-done", [ m("p", "Thank you! Your submission has been received!") ]), m(".w-form-fail", [ m("p", "Oops! Something went wrong while submitting the form") ]) ]) ]) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$80\n", m("br"), "Taxa: R$3,35\n", m("br"), "Recompensa: R$80\n", m("br"), "Anônimo: Não\n", m("br"), "Id pagamento: 638912", m("br"), "Apoio: 54545454", m("br"), "Chave: \n", m("br"), "7809d09d-6325-442e-876e-b9a0846c526f\n", m("br"), "Meio: Pagarme\n", m("br"), "Operadora: STONE", m("br"), m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via") ]) ]), m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Histórico da transação"), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", [ m("span.badge.badge-attention.fontsize-smallest", "Estorno realizado") ]) ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado"), m(".fontsize-smallest.lineheight-tighter", [ m("span.badge", "Luis Otavio Ribeiro") ]) ]) ]) ]), m(".w-col.w-col-4") ]) ]);
     }
 }, adminApp.AdminContributions.VM = function() {
-    var contributions = m.prop(""), filters = m.prop(""), isLoading = m.prop(!1), page = m.prop(1), getContributions = function() {
-        return adminApp.models.ContributionDetail.get(filters(), page());
-    }, filter = function(input) {
-        isLoading(!0);
-        var input = input || {}, d = m.deferred();
-        return filters(input), getContributions().then(function(data) {
-            contributions(data), d.resolve(contributions()), isLoading(!1);
-        }), d.promise;
-    }, nextPage = function() {
+    var contributions = m.prop({}), filters = m.prop({}), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
-        return isLoading(!0), page(page() + 1), getContributions().then(function(data) {
-            d.resolve(contributions(_.union(contributions(), data))), isLoading(!1);
+        return isLoading(!0), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
+            contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions());
         }), d.promise;
+    }, filter = function(input) {
+        return filters(input), fetch();
+    }, nextPage = function() {
+        return page(page() + 1), fetch();
     };
-    return filter(), {
+    return {
         contributions: contributions,
         filter: filter,
-        filters: filters,
-        nextPage: nextPage,
-        page: page
+        nextPage: nextPage
     };
 }();

@@ -1,18 +1,17 @@
 adminApp.AdminContributions.VM = (function(){
-  var contributions = m.prop(""),
-      filters = m.prop(""),
+  var contributions = m.prop({}),
+      filters = m.prop({}),
       isLoading = m.prop(false),
       page = m.prop(1);
 
   var fetch = function(){
     var d = m.deferred();
     isLoading(true);
-    adminApp.models.ContributionDetail.get(filters(), page())
-      .then(function(data){
-        contributions(_.union(contributions(), data);
-        d.resolve(contributions());
-        isLoading(false);
-      });
+    adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
+      contributions(_.union(contributions(), data));
+      isLoading(false);
+      d.resolve(contributions());
+    });
     return d.promise;
   };
 
@@ -26,13 +25,9 @@ adminApp.AdminContributions.VM = (function(){
     return fetch();
   };
 
-  fetch();
-
   return {
     contributions: contributions,
     filter: filter,
-    filters: filters,
-    nextPage: nextPage,
-    page: page
+    nextPage: nextPage
   };
 })();
