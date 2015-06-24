@@ -9,9 +9,6 @@ describe('AdminContributions component', function() {
     it('should instantiate filterContributions', function() {
       expect(ctrl.filterContributions).toBeFunction();
     });
-    it('should instantiate nextPage', function() {
-      expect(ctrl.nextPage).toBeFunction();
-    });
     it('should instantiate its view-model', function() {
       expect(ctrl.vm).toBeDefined();
     });
@@ -33,6 +30,12 @@ describe('AdminContributions component', function() {
     it('should call Contribution Details when filtering', function() {
       $output.click('#filter-btn');
       expect(ctrl.vm.filter).toHaveBeenCalled();
+    });
+    it('should render '+n_contributions*2+' contribution cards when clicking on load_more.', function() {
+      $output.click('#filter-btn');
+      $output.click('#load-more');
+      pending("Check on browser");
+      //expect($output.find('.results-admin-contributions').length).toEqual(n_contributions*2);
     });
   });
 });
