@@ -16,16 +16,21 @@ adminApp.AdminContributions.VM = (function(){
     return d.promise;
   };
 
+  var loading = function(){
+    isLoading(true);
+    m.redraw();
+  };
+
   var filter = function(input){
+    loading();
     filters(input);
     page(1);
     return fetch();
   };
 
   var nextPage = function(){
+    loading();
     page(page()+1);
-    isLoading(true);
-    m.redraw();
     return fetch();
   };
 

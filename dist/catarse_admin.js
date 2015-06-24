@@ -152,10 +152,12 @@ ContributionDetail.get = function(filters, page) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
             m.endComputation();
         }), d.promise;
+    }, loading = function() {
+        isLoading(!0), m.redraw();
     }, filter = function(input) {
-        return filters(input), page(1), fetch();
+        return loading(), filters(input), page(1), fetch();
     }, nextPage = function() {
-        return page(page() + 1), isLoading(!0), m.redraw(), fetch();
+        return loading(), page(page() + 1), fetch();
     };
     return {
         contributions: contributions,
