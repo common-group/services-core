@@ -155,7 +155,7 @@ ContributionDetail.get = function(filters, page) {
     }, filter = function(input) {
         return filters(input), page(1), fetch();
     }, nextPage = function() {
-        return page(page() + 1), isLoading(!0), fetch();
+        return page(page() + 1), isLoading(!0), m.redraw(), fetch();
     };
     return {
         contributions: contributions,

@@ -25,6 +25,7 @@ adminApp.AdminContributions.VM = (function(){
   var nextPage = function(){
     page(page()+1);
     isLoading(true);
+    m.redraw();
     return fetch();
   };
 
