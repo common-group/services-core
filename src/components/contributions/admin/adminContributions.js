@@ -3,6 +3,7 @@ adminApp.AdminContributions = {
       var vm = this.vm = adminApp.AdminContributions.VM;
       this.filterContributions = function(filters){ vm.filter(filters); };
       this.nextPage = function(){ vm.nextPage(); };
+      vm.fetch();
     },
     view: function(ctrl) {
       return  [ 

@@ -47,7 +47,7 @@ ContributionDetail.get = function(filters, page) {
             vm.filter(filters);
         }, this.nextPage = function() {
             vm.nextPage();
-        };
+        }, vm.fetch();
     },
     view: function(ctrl) {
         return [ m.component(adminApp.AdminContributionsFilter, {
@@ -165,6 +165,7 @@ ContributionDetail.get = function(filters, page) {
     return {
         contributions: contributions,
         filter: filter,
-        nextPage: nextPage
+        nextPage: nextPage,
+        fetch: fetch
     };
 }();
