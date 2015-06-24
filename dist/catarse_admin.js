@@ -45,8 +45,6 @@ ContributionDetail.get = function(filters, page) {
         var vm = this.vm = adminApp.AdminContributions.VM;
         this.filterContributions = function(filters) {
             vm.filter(filters);
-        }, this.nextPage = function() {
-            vm.nextPage();
         }, vm.fetch();
     },
     view: function(ctrl) {
@@ -54,8 +52,8 @@ ContributionDetail.get = function(filters, page) {
             onFilter: ctrl.filterContributions
         }), m(".w-section.section", [ m.component(adminApp.AdminContributionsList, {
             contributions: ctrl.vm.contributions()
-        }) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button.btn.btn-medium.btn-terciary[href='#']", {
-            onclick: ctrl.nextPage
+        }) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
+            onclick: ctrl.vm.nextPage
         }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
     }
 }, adminApp.AdminContributionsFilter = {
@@ -98,9 +96,12 @@ ContributionDetail.get = function(filters, page) {
         }) ]);
     }
 }, adminApp.AdminContributionsListDetail = {
-    controller: function(args) {},
+    controller: function(args) {
+        this.contribution = args.contribution;
+    },
     view: function(ctrl, args) {
-        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5409e86a50c3bd3f1b90aec7_user-avatar.jpeg']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", "Ricardo Matos dos Santos"), m(".fontsize-smallest", "Usuário: 423199"), m(".fontsize-smallest.fontcolor-secondary", "rtmatosribeiro@gmail.com"), m(".fontsize-smallest.fontcolor-secondary", "rmatos@yahoo.com") ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5485dfa838fa8324238733f7_project_thumb_10304019_328175090684874_7563008857993874086_n.png'][width='50']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", "PING-POINT no Largo do Batata!"), m(".fontsize-smallest.fontweight-semibold", "Online"), m(".fontsize-smallest.fontcolor-secondary", "13/01/2015 a 13/05/2015") ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$80"), m(".fontsize-smallest.fontcolor-secondary", "19/05/2015, 01:20 h"), m(".fontsize-smallest", "Id: 638912"), m(".fontsize-smallest", "Apoio: 638912") ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle.text-success", "."), " Paid" ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa.fa-barcode", "."), " ", m("a.link-hidden[href='#']", "Boleto bancário") ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ "      ", m("span.badge", "2a via") ]) ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"), m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-2", [ m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {
+        var contrib = ctrl.contribution;
+        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5409e86a50c3bd3f1b90aec7_user-avatar.jpeg']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.user_name), m(".fontsize-smallest", "Usuário: " + contrib.user_id), m(".fontsize-smallest.fontcolor-secondary", contrib.email), m(".fontsize-smallest.fontcolor-secondary", contrib.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5485dfa838fa8324238733f7_project_thumb_10304019_328175090684874_7563008857993874086_n.png'][width='50']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.project_name), m(".fontsize-smallest.fontweight-semibold", contrib.project_state), m(".fontsize-smallest.fontcolor-secondary", "13/01/2015 a 13/05/2015") ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contrib.value), m(".fontsize-smallest.fontcolor-secondary", contrib.paid_at), m(".fontsize-smallest", "Id: " + contrib.payment_id), m(".fontsize-smallest", "Apoio: " + contrib.key) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle.text-success", "."), " " + contrib.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa.fa-barcode", "."), " ", m("a.link-hidden[href='#']", contrib.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ "      ", m("span.badge", "2a via") ]) ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"), m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-2", [ m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {
             style: {
                 transition: " all 0.5s ease 0s",
                 " -webkit-transition": " all 0.5s ease 0s"
