@@ -51,7 +51,7 @@ ContributionDetail.get = function(filters, page) {
         return [ m.component(adminApp.AdminContributionsFilter, {
             onFilter: ctrl.filterContributions
         }), m(".w-section.section", [ m.component(adminApp.AdminContributionsList, {
-            contributions: ctrl.vm.contributions()
+            contributions: ctrl.vm.contributions
         }) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: ctrl.vm.nextPage
         }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
@@ -84,11 +84,8 @@ ContributionDetail.get = function(filters, page) {
         filter: filter
     };
 }(), adminApp.AdminContributionsList = {
-    controller: function(args) {
-        this.contributions = m.prop(args.contributions || new adminApp.models.ContributionDetail());
-    },
     view: function(ctrl, args) {
-        return m("#admin-contributions-list.w-container", [ m(".u-marginbottom-30.fontsize-base", [ m("span.fontweight-semibold", "125"), " apoios encontrados, totalizando ", m("span.fontweight-semibold", [ "R$27.090.655,00     ", m("a.fa.fa-download.fontcolor-dashboard[href='#']", ".") ]) ]), ctrl.contributions().map(function(contribution) {
+        return m("#admin-contributions-list.w-container", [ m(".u-marginbottom-30.fontsize-base", [ m("span.fontweight-semibold", "125"), " apoios encontrados, totalizando ", m("span.fontweight-semibold", [ "R$27.090.655,00     ", m("a.fa.fa-download.fontcolor-dashboard[href='#']", ".") ]) ]), args.contributions().map(function(contribution) {
             return m.component(adminApp.AdminContributionsListDetail, {
                 contribution: contribution,
                 key: contribution
@@ -151,8 +148,9 @@ ContributionDetail.get = function(filters, page) {
 }, adminApp.AdminContributions.VM = function() {
     var contributions = m.prop({}), filters = m.prop({}), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
-        return isLoading(!0), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
-            contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions());
+        return m.startComputation(), isLoading(!0), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
+            contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
+            m.endComputation();
         }), d.promise;
     }, filter = function(input) {
         return filters(input), fetch();
