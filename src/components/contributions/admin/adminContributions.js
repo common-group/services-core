@@ -8,7 +8,7 @@ adminApp.AdminContributions = {
       return  [ 
                 m.component(adminApp.AdminContributionsFilter,{onFilter: ctrl.filterContributions}),
                 m(".w-section.section",[
-                  m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.contributions()}),
+                  m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.contributions}),
                 ]),
                 m(".w-section.section",[
                   m(".w-container",[
