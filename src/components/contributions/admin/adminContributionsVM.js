@@ -27,8 +27,9 @@ adminApp.AdminContributions.VM = (function(){
 
   return {
     contributions: contributions,
+    fetch: fetch,
     filter: filter,
-    nextPage: nextPage,
-    fetch: fetch
+    isLoading: isLoading,
+    nextPage: nextPage
   };
 })();

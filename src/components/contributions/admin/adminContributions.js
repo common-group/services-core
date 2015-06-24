@@ -16,9 +16,9 @@ adminApp.AdminContributions = {
                     m(".w-row",[
                       m(".w-col.w-col-5"),
                       m(".w-col.w-col-2",[
-                        ctrl.vm.isLoading ?
+                        ctrl.vm.isLoading() ?
                         m("button.btn.btn-medium.btn-terciary[href='#']", {onclick: ctrl.filter}, "Carregar mais") :
-                        m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']", {style: {"display": " none"}}),
+                        m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']"),
                       ]),
                       m(".w-col.w-col-5")
                     ])
