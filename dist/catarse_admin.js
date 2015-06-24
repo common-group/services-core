@@ -148,14 +148,14 @@ ContributionDetail.get = function(filters, page) {
 }, adminApp.AdminContributions.VM = function() {
     var contributions = m.prop({}), filters = m.prop({}), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
-        return isLoading(!0), m.redraw(), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
+        return m.startComputation(), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
-            m.redraw();
+            m.endComputation();
         }), d.promise;
     }, filter = function(input) {
         return filters(input), page(1), fetch();
     }, nextPage = function() {
-        return page(page() + 1), fetch();
+        return page(page() + 1), isLoading(!0), fetch();
     };
     return {
         contributions: contributions,
