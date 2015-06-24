@@ -148,7 +148,7 @@ ContributionDetail.get = function(filters, page) {
 }, adminApp.AdminContributions.VM = function() {
     var contributions = m.prop({}), filters = m.prop({}), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
-        return m.startComputation(), isLoading(!0), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
+        return isLoading(!0), m.startComputation(), adminApp.models.ContributionDetail.get(filters(), page()).then(function(data) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
             m.endComputation();
         }), d.promise;

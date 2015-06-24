@@ -6,8 +6,8 @@ adminApp.AdminContributions.VM = (function(){
 
   var fetch = function(){
     var d = m.deferred();
-    m.startComputation();
     isLoading(true);
+    m.startComputation();
     adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
       contributions(_.union(contributions(), data));
       isLoading(false);
