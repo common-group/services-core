@@ -1,11 +1,8 @@
 describe('AdminContributions component', function() {
-  var AdminContributions = m.component(adminApp.AdminContributions);
+  var AdminContributions = m.component(adminApp.AdminContributions),
+      ctrl = AdminContributions.controller();
 
   describe('controller', function() {
-    beforeAll(function() {
-      ctrl = AdminContributions.controller();
-    });
-
     it('should instantiate filterContributions', function() {
       expect(ctrl.filterContributions).toBeFunction();
     });
@@ -31,11 +28,10 @@ describe('AdminContributions component', function() {
       $output.click('#filter-btn');
       expect(ctrl.vm.filter).toHaveBeenCalled();
     });
-    it('should render '+n_contributions*2+' contribution cards when clicking on load_more.', function() {
-      $output.click('#filter-btn');
+    it('should render '+n_contributions+' more contribution cards when clicking on load_more.', function() {
+      var actual = ctrl.vm.contributions().length;
       $output.click('#load-more');
-      pending("Check on browser");
-      //expect($output.find('.results-admin-contributions').length).toEqual(n_contributions*2);
+      expect($output.find('.results-admin-contributions').length).toEqual(actual+n_contributions);
     });
   });
 });
