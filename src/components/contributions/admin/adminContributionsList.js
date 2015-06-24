@@ -1,7 +1,4 @@
 adminApp.AdminContributionsList = {
-  controller: function(args) {
-    this.contributions = m.prop(args.contributions || new adminApp.models.ContributionDetail());
-  },
   view: function(ctrl, args) {
     return m("#admin-contributions-list.w-container",[
             m(".u-marginbottom-30.fontsize-base",[
@@ -12,7 +9,7 @@ adminApp.AdminContributionsList = {
                  ".")
               ])
             ]),
-            ctrl.contributions().map(function(contribution){
+            args.contributions().map(function(contribution){
               return m.component(adminApp.AdminContributionsListDetail, {contribution: contribution, key: contribution});
             })
           ]);    

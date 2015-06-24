@@ -8,12 +8,10 @@ beforeAll(function() {
   });
   //mocking postgrest requests
   m.postgrest.requestWithToken = function(data){
-    var dfr = m.deferred();
-    setTimeout(function(){
-      if(data.method === "GET" && data.url === "/contribution_details"){
-        dfr.resolve(ContributionDetailMockery(n_contributions));
-      }
-    },20);
+    var dfr = m.deferred();    
+    if(data.method === "GET" && data.url === "/contribution_details"){
+      dfr.resolve(ContributionDetailMockery(n_contributions));
+    }
     return dfr.promise;
   };
 });

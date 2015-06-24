@@ -1,44 +1,44 @@
 adminApp.AdminContributions.VM = (function(){
-  var contributions = m.prop(""),
-      filters = m.prop(""),
+  var contributions = m.prop({}),
+      filters = m.prop({}),
       isLoading = m.prop(false),
       page = m.prop(1);
 
-  var getContributions = function(){
-    return adminApp.models.ContributionDetail.get(filters(), page());
-  };
-
-  var filter = function(input){
-    isLoading(true);
-    var input = input || {},
-        d = m.deferred();
-    filters(input); 
-    getContributions().then(function(data){
-      contributions(data);
-      d.resolve(contributions());
-      isLoading(false);
-    });  
-    return d.promise;
-  };
-
-  var nextPage = function(){
+  var fetch = function(){
     var d = m.deferred();
-    isLoading(true);
-    page(page()+1);
-    getContributions().then(function(data){
-      d.resolve(contributions(_.union(contributions(), data)));
+    m.startComputation();
+    adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
+      contributions(_.union(contributions(), data));
       isLoading(false);
+      d.resolve(contributions());
+      m.endComputation();
     });
     return d.promise;
   };
 
-  filter();
+  var loading = function(){
+    isLoading(true);
+    m.redraw();
+  };
+
+  var filter = function(input){
+    loading();
+    filters(input);
+    page(1);
+    return fetch();
+  };
+
+  var nextPage = function(){
+    loading();
+    page(page()+1);
+    return fetch();
+  };
 
   return {
     contributions: contributions,
+    fetch: fetch,
     filter: filter,
-    filters: filters,
-    nextPage: nextPage,
-    page: page
+    isLoading: isLoading,
+    nextPage: nextPage
   };
 })();
