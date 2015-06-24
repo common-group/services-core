@@ -8,12 +8,11 @@ adminApp.AdminContributions.VM = (function(){
     var d = m.deferred();
     isLoading(true);
     m.redraw();
-    m.startComputation();
     adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
       contributions(_.union(contributions(), data));
       isLoading(false);
       d.resolve(contributions());
-      m.endComputation();
+      m.redraw();
     });
     return d.promise;
   };
