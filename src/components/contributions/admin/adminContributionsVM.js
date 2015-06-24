@@ -6,11 +6,13 @@ adminApp.AdminContributions.VM = (function(){
 
   var fetch = function(){
     var d = m.deferred();
+    m.startComputation();
     isLoading(true);
     adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
       contributions(_.union(contributions(), data));
       isLoading(false);
       d.resolve(contributions());
+      m.endComputation();
     });
     return d.promise;
   };
