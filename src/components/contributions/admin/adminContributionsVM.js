@@ -7,6 +7,7 @@ adminApp.AdminContributions.VM = (function(){
   var fetch = function(){
     var d = m.deferred();
     isLoading(true);
+    m.redraw();
     m.startComputation();
     adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
       contributions(_.union(contributions(), data));
@@ -19,6 +20,7 @@ adminApp.AdminContributions.VM = (function(){
 
   var filter = function(input){
     filters(input);
+    page(1);
     return fetch();
   };
 
