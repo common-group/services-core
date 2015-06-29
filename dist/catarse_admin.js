@@ -120,7 +120,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
 }, adminApp.AdminContributions.VM = function() {
     var contributions = m.prop({}), filters = m.prop({}), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
-        return m.startComputation(), adminApp.models.ContributionDetail.getPage(filters(), page()).then(function(data) {
+        return m.startComputation(), adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
             m.endComputation();
         }), d.promise;

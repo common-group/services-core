@@ -1,21 +1,22 @@
-var test_token = "test_token";
-var n_contributions = 20;
+var testToken = "test_token";
+var nContributions = 20;
+var apiPrefix = "https://api.catarse.me";
+m.postgrest.init(apiPrefix, {method: "GET", url: "/api_token"});
+
 beforeAll(function() {
   jasmine.Ajax.install();
+
   //API token stub
   jasmine.Ajax.stubRequest('/api_token').andReturn({
-    'responseText' : '{"token": "'+test_token+'"}'
+    'responseText' : '{"token": "' + testToken + '"}'
   });
-  //mocking postgrest requests
-  m.postgrest.requestWithToken = function(data){
-    var dfr = m.deferred();    
-    if(data.method === "GET" && data.url === "/contribution_details"){
-      dfr.resolve(ContributionDetailMockery(n_contributions));
-    }
-    return dfr.promise;
-  };
+
+  jasmine.Ajax.stubRequest(apiPrefix + '/contribution_details').andReturn({
+    'responseText' : JSON.stringify(ContributionDetailMockery(nContributions))
+  });
+
 });
-m.postgrest.init("http://api.catarse.me/", {method: "GET", url: "/api_token"});
+
 afterAll(function() {
   jasmine.Ajax.uninstall();
 });

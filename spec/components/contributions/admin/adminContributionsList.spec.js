@@ -1,8 +1,8 @@
 describe('AdminContributionsList component', function() {
-  var n_contributions = 5;
+  var nContributions = 5;
 
   beforeAll(function() {
-    contributions = m.prop(ContributionDetailMockery(n_contributions));
+    contributions = m.prop(ContributionDetailMockery(nContributions));
     AdminContributionsList = m.component(adminApp.AdminContributionsList, {contributions:contributions});
   });
 
@@ -13,7 +13,7 @@ describe('AdminContributionsList component', function() {
     });
 
     it('should render fetched contributions cards', function() {
-      expect($output.find('.results-admin-contributions').length).toEqual(n_contributions);
+      expect($output.find('.results-admin-contributions').length).toEqual(nContributions);
     });
   });
 });
