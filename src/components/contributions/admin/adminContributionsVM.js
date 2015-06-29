@@ -7,7 +7,7 @@ adminApp.AdminContributions.VM = (function(){
   var fetch = function(){
     var d = m.deferred();
     m.startComputation();
-    adminApp.models.ContributionDetail.get(filters(), page()).then(function(data){
+    adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data){
       contributions(_.union(contributions(), data));
       isLoading(false);
       d.resolve(contributions());
