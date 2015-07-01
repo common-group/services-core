@@ -1,53 +1,76 @@
 adminApp.AdminContributionsListDetail = {
   controller: function(args){
     this.contribution = args.contribution;
+    this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
+    (this.contribution.paid_at) ? this.contribution.paid_at = moment(new Date(this.contribution.paid_at)).format("DD/MM/YYYY, hh:mm[h]") : "";
+    this.stateClass = function(){
+      switch(this.contribution.state){
+        case 'paid':
+          return ".text-success";
+        case 'pending':
+          return ".text-warning";
+        default:
+          return ".text-error";
+      }
+    };
+    this.paymentMethodClass = function(){
+      switch(this.contribution.payment_method){
+        case 'BoletoBancario':
+          return ".fa-barcode";
+        case 'CartaoDeCredito':
+          return ".fa-credit-card";
+        default: 
+          return ".fa-question";
+      }
+    };
   },
   view: function(ctrl, args) {
-    var contrib = ctrl.contribution;
+    var ctrb = ctrl.contribution;
     return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions",[
             m(".w-row",[
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5409e86a50c3bd3f1b90aec7_user-avatar.jpeg']")
+                    m("img.user-avatar[src='"+ctrb.user_profile_img+"']")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
-                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.user_name),
-                    m(".fontsize-smallest", "Usuário: "+contrib.user_id),
-                    m(".fontsize-smallest.fontcolor-secondary", contrib.email),
-                    m(".fontsize-smallest.fontcolor-secondary", contrib.payer_email)
+                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.user_name),
+                    m(".fontsize-smallest", "Usuário: "+ctrb.user_id),
+                    m(".fontsize-smallest.fontcolor-secondary", ctrb.email),
+                    m(".fontsize-smallest.fontcolor-secondary", ctrb.payer_email)
                   ])
                 ])
               ]),
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.thumb-project.u-radius[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5485dfa838fa8324238733f7_project_thumb_10304019_328175090684874_7563008857993874086_n.png'][width='50']")
+                    m("img.thumb-project.u-radius[src='"+ctrb.uploaded_image+"'")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
-                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.project_name),
-                    m(".fontsize-smallest.fontweight-semibold", contrib.project_state),
-                    m(".fontsize-smallest.fontcolor-secondary", "13/01/2015 a 13/05/2015")
+                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.project_name),
+                    m(".fontsize-smallest.fontweight-semibold", ctrb.project_state),
+                    m(".fontsize-smallest.fontcolor-secondary", ".")//Here we should get the project start and end date.
                   ])
                 ])
               ]),
               m(".w-col.w-col-2",[
-                m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contrib.value),
-                m(".fontsize-smallest.fontcolor-secondary", contrib.paid_at),
-                m(".fontsize-smallest", "Id: "+contrib.payment_id),
-                m(".fontsize-smallest", "Apoio: "+contrib.key)
+                m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+ctrb.value),
+                m(".fontsize-smallest.fontcolor-secondary", ctrb.paid_at),
+                m(".fontsize-smallest", "Id: "+ctrb.payment_id)
               ]),
               m(".w-col.w-col-2",[
                 m(".fontsize-smallest.lineheight-looser.fontweight-semibold",[
-                  m("span.fa.fa-circle.text-success", ".")," "+contrib.state
+                  m("span.fa.fa-circle"+ctrl.stateClass())," "+ctrb.state
                 ]),
                 m(".fontsize-smallest.fontweight-semibold",[
-                  m("span.fa.fa-barcode", ".")," ",m("a.link-hidden[href='#']", contrib.payment_method)
-                ]),
-                m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [
-                  "      ",
-                  m("span.badge", "2a via")
-                ])
+                  m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", ctrb.payment_method)
+                ]),(
+                  (function(){
+                    if(ctrb.payment_method === "BoletoBancario"){
+                      return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [m("span.badge", "2a via")])  
+                    }
+                  })()
+                )
               ])
             ]),
             m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
