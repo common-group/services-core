@@ -2,10 +2,11 @@ adminApp.AdminContributionsListDetail = {
   controller: function(args){
     this.contribution = args.contribution;
     this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
-    (this.contribution.paid_at) ? this.contribution.paid_at = moment(new Date(this.contribution.paid_at)).format("DD/MM/YYYY, hh:mm[h]") : "";
     this.stateClass = function(){
       switch(this.contribution.state){
         case 'paid':
+          return ".text-success";
+        case 'refunded':
           return ".text-success";
         case 'pending':
           return ".text-warning";
@@ -19,7 +20,7 @@ adminApp.AdminContributionsListDetail = {
           return ".fa-barcode";
         case 'CartaoDeCredito':
           return ".fa-credit-card";
-        default: 
+        default:
           return ".fa-question";
       }
     };
@@ -44,18 +45,18 @@ adminApp.AdminContributionsListDetail = {
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.thumb-project.u-radius[src='"+ctrb.uploaded_image+"'")
+                    m("img.thumb-project.u-radius[src='"+ctrb.project_img+"'")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
                     m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.project_name),
                     m(".fontsize-smallest.fontweight-semibold", ctrb.project_state),
-                    m(".fontsize-smallest.fontcolor-secondary", ".")//Here we should get the project start and end date.
+                    m(".fontsize-smallest.fontcolor-secondary", momentify(ctrb.project_starts_at) + " a " +momentify(ctrb.project_ends_at))
                   ])
                 ])
               ]),
               m(".w-col.w-col-2",[
                 m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+ctrb.value),
-                m(".fontsize-smallest.fontcolor-secondary", ctrb.paid_at),
+                m(".fontsize-smallest.fontcolor-secondary", momentify(ctrb.paid_at, "DD/MM/YYYY hh:mm[h]")),
                 m(".fontsize-smallest", "Id: "+ctrb.payment_id)
               ]),
               m(".w-col.w-col-2",[
@@ -67,7 +68,14 @@ adminApp.AdminContributionsListDetail = {
                 ]),(
                   (function(){
                     if(ctrb.payment_method === "BoletoBancario"){
-                      return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [m("span.badge", "2a via")])  
+                      return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [m("span.badge", "2a via")])
+                    }else if(ctrb.payment_method === "CartaoDeCredito"){
+                      if(ctrb.gateway_data){
+                        return [
+                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.gateway_data.cartao_bin+"******"+ctrb.gateway_data.cartao_final),
+                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.gateway_data.cartao_bandeira+" "+ctrb.gateway_data.parcelas+"x")
+                        ]
+                      }
                     }
                   })()
                 )
@@ -255,6 +263,6 @@ adminApp.AdminContributionsListDetail = {
               ]),
               m(".w-col.w-col-4")
             ])
-          ]);    
+          ]);
   }
 }
