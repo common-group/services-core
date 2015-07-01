@@ -26,7 +26,7 @@ adminApp.AdminContributionsFilter = {
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-2']", "Projeto"),
-                      m("input.w-input.text-field.positive[data-name='Field 2'][id='field-2'][name='field-2'][required='required'][type='text']")
+                      m("input.w-input.text-field.positive[name='permalink'][required='required'][type='text']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-3']", "Com o estado"),
