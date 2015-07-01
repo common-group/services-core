@@ -51,6 +51,7 @@ module.exports = function( grunt ) {
             "bower_components/mithril/mithril.js",
             "bower_components/underscore/underscore.js",
             "bower_components/mithril.postgrest/src/mithril.postgrest.js",
+            "bower_components/moment/moment.js",
             "spec/lib/mocks/*mock.js"
           ]
         }
