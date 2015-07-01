@@ -2,6 +2,24 @@ adminApp.AdminContributionsListDetail = {
   controller: function(args){
     this.contribution = args.contribution;
     this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
+    this.payment_details = function(){
+      switch(this.contribution.gateway){
+        case 'MoIP':
+          this.contribution.cartao_inicio = this.contribution.gateway_data.cartao_bin;
+          this.contribution.cartao_final = this.contribution.gateway_data.cartao_final;
+          this.contribution.cartao_bandeira = this.contribution.gateway_data.cartao_bandeira;
+          this.contribution.cartao_parcelas = this.contribution.gateway_data.parcelas;
+          return true;
+        case 'Pagarme':
+          this.contribution.cartao_inicio = this.contribution.gateway_data.card_first_digits;
+          this.contribution.cartao_final = this.contribution.gateway_data.card_last_digits;
+          this.contribution.cartao_bandeira = this.contribution.gateway_data.card_brand;
+          this.contribution.cartao_parcelas = this.contribution.gateway_data.installments;
+          return true;
+        default:
+          return false;
+      }
+    };
     this.stateClass = function(){
       switch(this.contribution.state){
         case 'paid':
@@ -67,13 +85,13 @@ adminApp.AdminContributionsListDetail = {
                   m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", ctrb.payment_method)
                 ]),(
                   (function(){
-                    if(ctrb.payment_method === "BoletoBancario"){
-                      return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [m("span.badge", "2a via")])
-                    }else if(ctrb.payment_method === "CartaoDeCredito"){
-                      if(ctrb.gateway_data){
+                    if(ctrl.payment_details()){
+                      if(ctrb.payment_method === "BoletoBancario"){
+                        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [m("span.badge", "2a via")])
+                      }else if(ctrb.payment_method === "CartaoDeCredito"){
                         return [
-                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.gateway_data.cartao_bin+"******"+ctrb.gateway_data.cartao_final),
-                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.gateway_data.cartao_bandeira+" "+ctrb.gateway_data.parcelas+"x")
+                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.cartao_inicio+"******"+ctrb.cartao_final),
+                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.cartao_bandeira+" "+ctrb.cartao_parcelas+"x")
                         ]
                       }
                     }

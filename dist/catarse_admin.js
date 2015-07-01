@@ -10,7 +10,9 @@ adminApp.models = {}, adminApp.submodule = function(module, args) {
     return module.view.bind(this, new module.controller(args));
 };
 
-var ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "user_name", "email", "uploaded_image", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "pending_refund_at", "refunded_at", "created_at" ]);
+var momentify = function(date, format) {
+    return format = format || "DD/MM/YYYY", date ? moment(new Date(date)).format(format) : "no date";
+}, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "user_name", "email", "uploaded_image", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "pending_refund_at", "refunded_at", "created_at" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
     controller: function() {
@@ -36,18 +38,24 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
         };
     },
     view: function(ctrl, args) {
-        return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-2", [ m("label.fontsize-small[for='permalink']", "Permalink"), m("input.w-input.text-field.positive[id='permalink'][name='permalink'][placeholder='permalink do projeto'][required='required'][type='text']", {
+        return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", [ m(".w-row.u-marginbottom-10", [ m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field']", "Nome do usuário"), m("input.w-input.text-field.positive[id='field'][name='field'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-2']", "Email do usuário"), m("input.w-input.text-field.positive[data-name='Field 2'][id='field-2'][name='field-2'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-2']", "Id do usuário"), m("input.w-input.text-field.positive[data-name='Field 2'][id='field-2'][name='field-2'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-2']", "Projeto"), m("input.w-input.text-field.positive[name='permalink'][required='required'][type='text']", {
             onchange: m.withAttr("value", ctrl.vm.permalink),
             value: ctrl.vm.permalink()
-        }) ]), m(".w-col.w-col-4", [ m("label.fontsize-small[for='expiration']", "Expiram entre"), m("input.w-input.text-field.positive[data-name='Field 2'][id='expiration'][name='expiration'][placeholder='Expiram entre'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-small[for='progress']", "Por progresso %"), m("input.w-input.text-field.positive[data-name='Field 2'][id='progress'][name='progress'][placeholder='Progresso em %'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-small[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [ m("option[value='']", "Select one..."), "\n", m("option[value='First']", "First Choice"), "\n", m("option[value='Second']", "Second Choice"), "\n", m("option[value='Third']", "Third Choice") ]) ]), m(".w-col.w-col-2", [ m("label.fontsize-small[for='field-3']", "Meio de pag."), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [ m("option[value='']", "Select one..."), "\n", m("option[value='First']", "First Choice"), "\n", m("option[value='Second']", "Second Choice"), "\n", m("option[value='Third']", "Third Choice") ]) ]) ]) ]), m(".w-form-done", [ m("p", "Thank you! Your submission has been received!") ]), m(".w-form-fail", [ m("p", "Oops! Something went wrong while submitting the form :(") ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("button#filter-btn.btn.btn-small", {
+        }) ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [ m("option[value='']", "Select one..."), m("option[value='First']", "First Choice"), m("option[value='Second']", "Second Choice"), m("option[value='Third']", "Third Choice") ]) ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-4']", "Id do apoio"), m("input.w-input.text-field.positive[data-name='Field 4'][id='field-4'][name='field-4'][required='required'][type='text']") ]) ]), m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-5']", "Operadora"), m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-8']", "Gateway"), m("select.w-select.text-field.positive[data-name='Field 8'][id='field-8'][name='field-8']", [ m("option[value='']", "Select one..."), m("option[value='First']", "First Choice"), m("option[value='Second']", "Second Choice"), m("option[value='Third']", "Third Choice") ]) ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-6']", "Valores entre"), m(".w-row", [ m(".w-col.w-col-6", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']") ]), m(".w-col.w-col-6", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']") ]) ]) ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-7']", "Período do apoio"), m(".w-row", [ m(".w-col.w-col-6", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']") ]), m(".w-col.w-col-6", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']") ]) ]) ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-4']", "Email Pagar-me"), m("input.w-input.text-field.positive[data-name='Field 4'][id='field-4'][name='field-4'][required='required'][type='text']") ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-4']", "Id Pagar-me"), m("input.w-input.text-field.positive[data-name='Field 4'][id='field-4'][name='field-4'][required='required'][type='text']") ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("button#filter-btn.btn.btn-small", {
             onclick: ctrl.filter
         }, "Filtrar") ]), m(".w-col.w-col-4") ]) ]) ]);
     }
-}, adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
+};
+
+var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
     permalink: "eq"
+});
+
+vm.order({
+    id: "desc"
 }), adminApp.AdminContributionsList = {
     view: function(ctrl, args) {
-        return m("#admin-contributions-list.w-container", [ m(".u-marginbottom-30.fontsize-base", [ m("span.fontweight-semibold", "125"), " apoios encontrados, totalizando ", m("span.fontweight-semibold", [ "R$27.090.655,00     ", m("a.fa.fa-download.fontcolor-dashboard[href='#']", ".") ]) ]), args.contributions().map(function(contribution) {
+        return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
             return m.component(adminApp.AdminContributionsListDetail, {
                 contribution: contribution,
                 key: contribution
@@ -56,11 +64,58 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
     }
 }, adminApp.AdminContributionsListDetail = {
     controller: function(args) {
-        this.contribution = args.contribution;
+        this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
+        this.payment_details = function() {
+            switch (this.contribution.gateway) {
+              case "MoIP":
+                return this.contribution.cartao_inicio = this.contribution.gateway_data.cartao_bin, 
+                this.contribution.cartao_final = this.contribution.gateway_data.cartao_final, this.contribution.cartao_bandeira = this.contribution.gateway_data.cartao_bandeira, 
+                this.contribution.cartao_parcelas = this.contribution.gateway_data.parcelas, !0;
+
+              case "Pagarme":
+                return this.contribution.cartao_inicio = this.contribution.gateway_data.card_first_digits, 
+                this.contribution.cartao_final = this.contribution.gateway_data.card_last_digits, 
+                this.contribution.cartao_bandeira = this.contribution.gateway_data.card_brand, this.contribution.cartao_parcelas = this.contribution.gateway_data.installments, 
+                !0;
+
+              default:
+                return !1;
+            }
+        }, this.stateClass = function() {
+            switch (this.contribution.state) {
+              case "paid":
+                return ".text-success";
+
+              case "refunded":
+                return ".text-success";
+
+              case "pending":
+                return ".text-warning";
+
+              default:
+                return ".text-error";
+            }
+        }, this.paymentMethodClass = function() {
+            switch (this.contribution.payment_method) {
+              case "BoletoBancario":
+                return ".fa-barcode";
+
+              case "CartaoDeCredito":
+                return ".fa-credit-card";
+
+              default:
+                return ".fa-question";
+            }
+        };
     },
     view: function(ctrl, args) {
-        var contrib = ctrl.contribution;
-        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5409e86a50c3bd3f1b90aec7_user-avatar.jpeg']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.user_name), m(".fontsize-smallest", "Usuário: " + contrib.user_id), m(".fontsize-smallest.fontcolor-secondary", contrib.email), m(".fontsize-smallest.fontcolor-secondary", contrib.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5485dfa838fa8324238733f7_project_thumb_10304019_328175090684874_7563008857993874086_n.png'][width='50']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.project_name), m(".fontsize-smallest.fontweight-semibold", contrib.project_state), m(".fontsize-smallest.fontcolor-secondary", "13/01/2015 a 13/05/2015") ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contrib.value), m(".fontsize-smallest.fontcolor-secondary", contrib.paid_at), m(".fontsize-smallest", "Id: " + contrib.payment_id), m(".fontsize-smallest", "Apoio: " + contrib.key) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle.text-success", "."), " " + contrib.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa.fa-barcode", "."), " ", m("a.link-hidden[href='#']", contrib.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ "      ", m("span.badge", "2a via") ]) ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"), m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-2", [ m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {
+        var ctrb = ctrl.contribution;
+        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + ctrb.user_profile_img + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.user_name), m(".fontsize-smallest", "Usuário: " + ctrb.user_id), m(".fontsize-smallest.fontcolor-secondary", ctrb.email), m(".fontsize-smallest.fontcolor-secondary", ctrb.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src='" + ctrb.project_img + "'") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.project_name), m(".fontsize-smallest.fontweight-semibold", ctrb.project_state), m(".fontsize-smallest.fontcolor-secondary", momentify(ctrb.project_starts_at) + " a " + momentify(ctrb.project_ends_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + ctrb.value), m(".fontsize-smallest.fontcolor-secondary", momentify(ctrb.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", "Id: " + ctrb.payment_id) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + ctrb.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", ctrb.payment_method) ]), function() {
+            if (ctrl.payment_details()) {
+                if ("BoletoBancario" === ctrb.payment_method) return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ m("span.badge", "2a via") ]);
+                if ("CartaoDeCredito" === ctrb.payment_method) return [ m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.cartao_inicio + "******" + ctrb.cartao_final), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.cartao_bandeira + " " + ctrb.cartao_parcelas + "x") ];
+            }
+        }() ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"), m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-2", [ m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {
             style: {
                 transition: " all 0.5s ease 0s",
                 " -webkit-transition": " all 0.5s ease 0s"
