@@ -12,21 +12,9 @@ adminApp.AdminContributionsFilter = {
               m(".w-form",[
                 m("form[data-name='Email Form'][id='email-form'][name='email-form']", [
                   m(".w-row.u-marginbottom-10", [
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field']", "Nome do usuário"),
-                      m("input.w-input.text-field.positive[id='field'][name='field'][required='required'][type='text']")
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-2']", "Email do usuário"),
-                      m("input.w-input.text-field.positive[data-name='Field 2'][id='field-2'][name='field-2'][required='required'][type='text']")
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-2']", "Id do usuário"),
-                      m("input.w-input.text-field.positive[data-name='Field 2'][id='field-2'][name='field-2'][required='required'][type='text']")
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-2']", "Projeto"),
-                      m("input.w-input.text-field.positive[name='permalink'][required='required'][type='text']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
+                    m(".w-col.w-col-4", [
+                      m("label.fontsize-smaller[for='field']", "Procurar por"),
+                      m("input.w-input.text-field.positive[id='field'][name='field'][required='required'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-3']", "Com o estado"),
@@ -36,16 +24,6 @@ adminApp.AdminContributionsFilter = {
                         m("option[value='Second']", "Second Choice"),
                         m("option[value='Third']", "Third Choice")
                       ])
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-4']", "Id do apoio"),
-                      m("input.w-input.text-field.positive[data-name='Field 4'][id='field-4'][name='field-4'][required='required'][type='text']")
-                    ])
-                  ]),
-                  m(".w-row.u-marginbottom-20", [
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-5']", "Operadora"),
-                      m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-8']", "Gateway"),
@@ -77,14 +55,6 @@ adminApp.AdminContributionsFilter = {
                           m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
                         ])
                       ])
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-4']", "Email Pagar-me"),
-                      m("input.w-input.text-field.positive[data-name='Field 4'][id='field-4'][name='field-4'][required='required'][type='text']")
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-smaller[for='field-4']", "Id Pagar-me"),
-                      m("input.w-input.text-field.positive[data-name='Field 4'][id='field-4'][name='field-4'][required='required'][type='text']")
                     ])
                   ])
                 ])
