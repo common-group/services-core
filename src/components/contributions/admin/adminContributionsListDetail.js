@@ -83,20 +83,7 @@ adminApp.AdminContributionsListDetail = {
                 ]),
                 m(".fontsize-smallest.fontweight-semibold",[
                   m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", ctrb.payment_method)
-                ]),(
-                  (function(){
-                    if(ctrl.payment_details()){
-                      if(ctrb.payment_method === "BoletoBancario"){
-                        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [m("span.badge", "2a via")])
-                      }else if(ctrb.payment_method === "CartaoDeCredito"){
-                        return [
-                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.cartao_inicio+"******"+ctrb.cartao_final),
-                          m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", ctrb.cartao_bandeira+" "+ctrb.cartao_parcelas+"x")
-                        ]
-                      }
-                    }
-                  })()
-                )
+                ]),( ctrl.payment_details() ? m.component(adminApp.AdminContributionsListPaymentDetail, {ctrb: ctrb}) : "")
               ])
             ]),
             m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
