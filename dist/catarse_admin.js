@@ -32,7 +32,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
     controller: function(args) {
         var vm = this.vm = adminApp.AdminContributionsFilter.VM;
         this.filter = function() {
-            args.onFilter(vm.filter());
+            args.onFilter(vm.parameters());
         };
     },
     view: function(ctrl, args) {
@@ -43,19 +43,9 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
             onclick: ctrl.filter
         }, "Filtrar") ]), m(".w-col.w-col-4") ]) ]) ]);
     }
-}, adminApp.AdminContributionsFilter.VM = function() {
-    function filter() {
-        var filter = {
-            permalink: permalink()
-        };
-        return filter;
-    }
-    var permalink = m.prop("");
-    return {
-        permalink: permalink,
-        filter: filter
-    };
-}(), adminApp.AdminContributionsList = {
+}, adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
+    permalink: "eq"
+}), adminApp.AdminContributionsList = {
     view: function(ctrl, args) {
         return m("#admin-contributions-list.w-container", [ m(".u-marginbottom-30.fontsize-base", [ m("span.fontweight-semibold", "125"), " apoios encontrados, totalizando ", m("span.fontweight-semibold", [ "R$27.090.655,00     ", m("a.fa.fa-download.fontcolor-dashboard[href='#']", ".") ]) ]), args.contributions().map(function(contribution) {
             return m.component(adminApp.AdminContributionsListDetail, {

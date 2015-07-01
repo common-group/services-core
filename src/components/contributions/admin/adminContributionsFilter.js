@@ -2,7 +2,7 @@ adminApp.AdminContributionsFilter = {
   controller: function(args){
     var vm = this.vm = adminApp.AdminContributionsFilter.VM;
     this.filter = function(){
-      args.onFilter(vm.filter());
+      args.onFilter(vm.parameters());
     };
   },
   view: function(ctrl, args) {
