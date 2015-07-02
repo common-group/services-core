@@ -19,29 +19,25 @@ describe('AdminContributionsListDetails component', function() {
       expect(ctrl.paymentMethodClass).toBeFunction();
     });
     describe('stateClass function', function() {
-      var CSSsuccess = '.text-success',
-          CSSwarning = '.text-warning',
-          CSSerror   = '.text-error';
-
       it('should return a success CSS class when contribution state is paid', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'paid'})));
-        expect(ctrl.stateClass()).toEqual(CSSsuccess);
+        expect(ctrl.stateClass()).toEqual(ctrl.CSSsuccess);
       });
       it('should return a success CSS class when contribution state is refunded', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'refunded'})));
-        expect(ctrl.stateClass()).toEqual(CSSsuccess);
+        expect(ctrl.stateClass()).toEqual(ctrl.CSSsuccess);
       });
       it('should return a warning CSS class when contribution state is pending', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'pending'})));
-        expect(ctrl.stateClass()).toEqual(CSSwarning);
+        expect(ctrl.stateClass()).toEqual(ctrl.CSSwaiting);
       });
       it('should return an error CSS class when contribution state is refused', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'refused'})));
-        expect(ctrl.stateClass()).toEqual(CSSerror);
+        expect(ctrl.stateClass()).toEqual(ctrl.CSSerror);
       });
       it('should return an error CSS class when contribution state is not known', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'foo'})));
-        expect(ctrl.stateClass()).toEqual(CSSerror);
+        expect(ctrl.stateClass()).toEqual(ctrl.CSSerror);
       });
     });
     describe('paymentMethodClass function', function() {

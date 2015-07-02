@@ -2,6 +2,9 @@ adminApp.AdminContributionsListDetail = {
   controller: function(args){
     this.contribution = args.contribution;
     this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
+    this.CSSsuccess = '.text-success';
+    this.CSSwaiting = '.text-waiting';
+    this.CSSerror   = '.text-error';
     this.paymentDetails = function(){
       this.contribution.gateway = this.contribution.gateway.toLowerCase();
       switch(this.contribution.gateway){
@@ -24,13 +27,13 @@ adminApp.AdminContributionsListDetail = {
     this.stateClass = function(){
       switch(this.contribution.state){
         case 'paid':
-          return ".text-success";
+          return this.CSSsuccess;
         case 'refunded':
-          return ".text-success";
+          return this.CSSsuccess;
         case 'pending':
-          return ".text-warning";
+          return this.CSSwaiting;
         default:
-          return ".text-error";
+          return this.CSSerror;
       }
     };
     this.paymentMethodClass = function(){
