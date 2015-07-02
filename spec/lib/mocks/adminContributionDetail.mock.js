@@ -1,10 +1,8 @@
 beforeAll(function(){
   ContributionDetailMockery = function(j,attrs){
-    var attrs = {}, 
-        contributions = [], 
+    var attrs = attrs || {},
+        contributions = [],
         i;
-    //Here we should set custom attributes for specific aimed mocks
-    attrs = {};
 
     for(i = 0; i < j; i++){
       var data = {
@@ -40,6 +38,7 @@ beforeAll(function(){
         refunded_at : null,
         created_at : '2015-01-15T17:25:56.611561'
       };
+      data = _.extend(data, attrs);
       contributions.push(data);
     }
     return contributions;

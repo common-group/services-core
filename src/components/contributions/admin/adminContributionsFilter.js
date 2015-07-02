@@ -11,50 +11,52 @@ adminApp.AdminContributionsFilter = {
               m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"),
               m(".w-form",[
                 m("form[data-name='Email Form'][id='email-form'][name='email-form']", [
-                  m(".w-row.u-marginbottom-20", [
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-small[for='permalink']", "Permalink"),
-                      m("input.w-input.text-field.positive[id='permalink'][name='permalink'][placeholder='permalink do projeto'][required='required'][type='text']",{onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
-                    ]),
+                  m(".w-row.u-marginbottom-10", [
                     m(".w-col.w-col-4", [
-                      m("label.fontsize-small[for='expiration']", "Expiram entre"),
-                      m("input.w-input.text-field.positive[data-name='Field 2'][id='expiration'][name='expiration'][placeholder='Expiram entre'][required='required'][type='text']")
+                      m("label.fontsize-smaller[for='field']", "Procurar por"),
+                      m("input.w-input.text-field.positive[id='field'][name='field'][required='required'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
                     ]),
                     m(".w-col.w-col-2", [
-                      m("label.fontsize-small[for='progress']", "Por progresso %"),
-                      m("input.w-input.text-field.positive[data-name='Field 2'][id='progress'][name='progress'][placeholder='Progresso em %'][required='required'][type='text']")
-                    ]),
-                    m(".w-col.w-col-2", [
-                      m("label.fontsize-small[for='field-3']", "Com o estado"),
+                      m("label.fontsize-smaller[for='field-3']", "Com o estado"),
                       m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [
                         m("option[value='']", "Select one..."),
-                        "\n",
                         m("option[value='First']", "First Choice"),
-                        "\n",
                         m("option[value='Second']", "Second Choice"),
-                        "\n",
                         m("option[value='Third']", "Third Choice")
                       ])
                     ]),
                     m(".w-col.w-col-2", [
-                      m("label.fontsize-small[for='field-3']", "Meio de pag."),
-                      m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [
+                      m("label.fontsize-smaller[for='field-8']", "Gateway"),
+                      m("select.w-select.text-field.positive[data-name='Field 8'][id='field-8'][name='field-8']", [
                         m("option[value='']", "Select one..."),
-                        "\n",
                         m("option[value='First']", "First Choice"),
-                        "\n",
                         m("option[value='Second']", "Second Choice"),
-                        "\n",
                         m("option[value='Third']", "Third Choice")
+                      ])
+                    ]),
+                    m(".w-col.w-col-2", [
+                      m("label.fontsize-smaller[for='field-6']", "Valores entre"),
+                      m(".w-row", [
+                        m(".w-col.w-col-6", [
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                        ]),
+                        m(".w-col.w-col-6", [
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                        ])
+                      ])
+                    ]),
+                    m(".w-col.w-col-2", [
+                      m("label.fontsize-smaller[for='field-7']", "Período do apoio"),
+                      m(".w-row", [
+                        m(".w-col.w-col-6", [
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                        ]),
+                        m(".w-col.w-col-6", [
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                        ])
                       ])
                     ])
                   ])
-                ]),
-                m(".w-form-done", [
-                  m("p", "Thank you! Your submission has been received!")
-                ]),
-                m(".w-form-fail", [
-                  m("p", "Oops! Something went wrong while submitting the form :(")
                 ])
               ]),
               m(".w-row", [

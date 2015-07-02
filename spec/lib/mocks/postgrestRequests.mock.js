@@ -11,7 +11,7 @@ beforeAll(function() {
     'responseText' : '{"token": "' + testToken + '"}'
   });
 
-  jasmine.Ajax.stubRequest(apiPrefix + '/contribution_details').andReturn({
+  jasmine.Ajax.stubRequest(new RegExp("("+apiPrefix + '\/contribution_details)'+'(.*)')).andReturn({
     'responseText' : JSON.stringify(ContributionDetailMockery(nContributions))
   });
 

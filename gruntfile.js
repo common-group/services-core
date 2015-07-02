@@ -6,7 +6,7 @@ module.exports = function( grunt ) {
   grunt.initConfig({
     // TODO: change to read component.json
     pkg: require('./package.json'),
-    
+
     browserify: {
       dist: {
         src: ['spec/lib/mithril-query/src/mithril-query.js'],
@@ -51,16 +51,25 @@ module.exports = function( grunt ) {
             "bower_components/mithril/mithril.js",
             "bower_components/underscore/underscore.js",
             "bower_components/mithril.postgrest/src/mithril.postgrest.js",
+            "bower_components/moment/moment.js",
             "spec/lib/mocks/*mock.js"
           ]
         }
       }
+    },
+
+    watch: {
+      scripts: {
+        files: ['src/**/*.js', 'spec/**/*.spec.js'],
+        tasks: ['test', 'uglify']
+      },
     }
   });
-  
+
   grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-contrib-jasmine");
   grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('test', ['browserify','jasmine']);
   grunt.registerTask('default', ['test', 'uglify']);

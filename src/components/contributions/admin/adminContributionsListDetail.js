@@ -1,53 +1,93 @@
 adminApp.AdminContributionsListDetail = {
   controller: function(args){
     this.contribution = args.contribution;
+    this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
+    this.CSSsuccess = '.text-success';
+    this.CSSwaiting = '.text-waiting';
+    this.CSSerror   = '.text-error';
+    this.paymentDetails = function(){
+      this.contribution.gateway = this.contribution.gateway.toLowerCase();
+      switch(this.contribution.gateway){
+        case 'moip':
+          this.contribution.card_first_digits = this.contribution.gateway_data.cartao_bin;
+          this.contribution.card_last_digits = this.contribution.gateway_data.cartao_final;
+          this.contribution.card_brand = this.contribution.gateway_data.cartao_bandeira;
+          this.contribution.installments = this.contribution.gateway_data.parcelas;
+          return true;
+        case 'pagarme':
+          this.contribution.card_first_digits = this.contribution.gateway_data.card_first_digits;
+          this.contribution.card_last_digits = this.contribution.gateway_data.card_last_digits;
+          this.contribution.card_brand = this.contribution.gateway_data.card_brand;
+          this.contribution.installments = this.contribution.gateway_data.installments;
+          return true;
+        default:
+          return false;
+      }
+    };
+    this.stateClass = function(){
+      switch(this.contribution.state){
+        case 'paid':
+          return this.CSSsuccess;
+        case 'refunded':
+          return this.CSSsuccess;
+        case 'pending':
+          return this.CSSwaiting;
+        default:
+          return this.CSSerror;
+      }
+    };
+    this.paymentMethodClass = function(){
+      switch(this.contribution.payment_method){
+        case 'BoletoBancario':
+          return ".fa-barcode";
+        case 'CartaoDeCredito':
+          return ".fa-credit-card";
+        default:
+          return ".fa-question";
+      }
+    };
   },
   view: function(ctrl, args) {
-    var contrib = ctrl.contribution;
+    var contribution = ctrl.contribution;
     return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions",[
             m(".w-row",[
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5409e86a50c3bd3f1b90aec7_user-avatar.jpeg']")
+                    m("img.user-avatar[src='"+contribution.user_profile_img+"']")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
-                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.user_name),
-                    m(".fontsize-smallest", "Usuário: "+contrib.user_id),
-                    m(".fontsize-smallest.fontcolor-secondary", contrib.email),
-                    m(".fontsize-smallest.fontcolor-secondary", contrib.payer_email)
+                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.user_name),
+                    m(".fontsize-smallest", "Usuário: "+contribution.user_id),
+                    m(".fontsize-smallest.fontcolor-secondary", contribution.email),
+                    m(".fontsize-smallest.fontcolor-secondary", contribution.payer_email)
                   ])
                 ])
               ]),
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.thumb-project.u-radius[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5485dfa838fa8324238733f7_project_thumb_10304019_328175090684874_7563008857993874086_n.png'][width='50']")
+                    m("img.thumb-project.u-radius[src='"+contribution.project_img+"'")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
-                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contrib.project_name),
-                    m(".fontsize-smallest.fontweight-semibold", contrib.project_state),
-                    m(".fontsize-smallest.fontcolor-secondary", "13/01/2015 a 13/05/2015")
+                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.project_name),
+                    m(".fontsize-smallest.fontweight-semibold", contribution.project_state),
+                    m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_starts_at) + " a " +momentify(contribution.project_ends_at))
                   ])
                 ])
               ]),
               m(".w-col.w-col-2",[
-                m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contrib.value),
-                m(".fontsize-smallest.fontcolor-secondary", contrib.paid_at),
-                m(".fontsize-smallest", "Id: "+contrib.payment_id),
-                m(".fontsize-smallest", "Apoio: "+contrib.key)
+                m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
+                m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
+                m(".fontsize-smallest", "Id: "+contribution.payment_id)
               ]),
               m(".w-col.w-col-2",[
                 m(".fontsize-smallest.lineheight-looser.fontweight-semibold",[
-                  m("span.fa.fa-circle.text-success", ".")," "+contrib.state
+                  m("span.fa.fa-circle"+ctrl.stateClass())," "+contribution.state
                 ]),
                 m(".fontsize-smallest.fontweight-semibold",[
-                  m("span.fa.fa-barcode", ".")," ",m("a.link-hidden[href='#']", contrib.payment_method)
-                ]),
-                m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [
-                  "      ",
-                  m("span.badge", "2a via")
-                ])
+                  m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", contribution.payment_method)
+                ]),( ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {contribution: contribution}) : "")
               ])
             ]),
             m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
@@ -232,6 +272,6 @@ adminApp.AdminContributionsListDetail = {
               ]),
               m(".w-col.w-col-4")
             ])
-          ]);    
+          ]);
   }
 }
