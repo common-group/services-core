@@ -51,9 +51,7 @@ var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
     permalink: "eq"
 });
 
-vm.order({
-    id: "desc"
-}), adminApp.AdminContributionsList = {
+adminApp.AdminContributionsList = {
     view: function(ctrl, args) {
         return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
             return m.component(adminApp.AdminContributionsListDetail, {
@@ -164,7 +162,7 @@ vm.order({
     view: function(ctrl, args) {
         var contribution = args.contribution;
         return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
-            switch (console.log("Testing: " + contribution.payment_method.toLowerCase()), contribution.payment_method.toLowerCase()) {
+            switch (contribution.payment_method.toLowerCase()) {
               case "boletobancario":
                 return m("span#boleto-detail.badge", "2a via");
 
@@ -174,7 +172,11 @@ vm.order({
         }() ]);
     }
 }, adminApp.AdminContributions.VM = function() {
-    var contributions = m.prop({}), filters = m.prop({}), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
+    var contributions = m.prop({}), defaultOrder = "id.desc";
+    filters = m.prop({
+        order: defaultOrder
+    }), isLoading = m.prop(!1), page = m.prop(1);
+    var fetch = function() {
         var d = m.deferred();
         return m.startComputation(), adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
@@ -183,7 +185,8 @@ vm.order({
     }, loading = function() {
         isLoading(!0), m.redraw();
     }, filter = function(input) {
-        return loading(), filters(input), page(1), fetch();
+        return loading(), input && (input.order = input.order || defaultOrder, filters(input)), 
+        page(1), fetch();
     }, nextPage = function() {
         return loading(), page(page() + 1), fetch();
     };
