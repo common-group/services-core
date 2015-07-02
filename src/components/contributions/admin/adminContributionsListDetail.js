@@ -2,19 +2,20 @@ adminApp.AdminContributionsListDetail = {
   controller: function(args){
     this.contribution = args.contribution;
     this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
-    this.payment_details = function(){
+    this.paymentDetails = function(){
+      this.contribution.gateway = this.contribution.gateway.toLowerCase();
       switch(this.contribution.gateway){
-        case 'MoIP':
-          this.contribution.cartao_inicio = this.contribution.gateway_data.cartao_bin;
-          this.contribution.cartao_final = this.contribution.gateway_data.cartao_final;
-          this.contribution.cartao_bandeira = this.contribution.gateway_data.cartao_bandeira;
-          this.contribution.cartao_parcelas = this.contribution.gateway_data.parcelas;
+        case 'moip':
+          this.contribution.card_first_digits = this.contribution.gateway_data.cartao_bin;
+          this.contribution.card_last_digits = this.contribution.gateway_data.cartao_final;
+          this.contribution.card_brand = this.contribution.gateway_data.cartao_bandeira;
+          this.contribution.installments = this.contribution.gateway_data.parcelas;
           return true;
-        case 'Pagarme':
-          this.contribution.cartao_inicio = this.contribution.gateway_data.card_first_digits;
-          this.contribution.cartao_final = this.contribution.gateway_data.card_last_digits;
-          this.contribution.cartao_bandeira = this.contribution.gateway_data.card_brand;
-          this.contribution.cartao_parcelas = this.contribution.gateway_data.installments;
+        case 'pagarme':
+          this.contribution.card_first_digits = this.contribution.gateway_data.card_first_digits;
+          this.contribution.card_last_digits = this.contribution.gateway_data.card_last_digits;
+          this.contribution.card_brand = this.contribution.gateway_data.card_brand;
+          this.contribution.installments = this.contribution.gateway_data.installments;
           return true;
         default:
           return false;
@@ -44,46 +45,46 @@ adminApp.AdminContributionsListDetail = {
     };
   },
   view: function(ctrl, args) {
-    var ctrb = ctrl.contribution;
+    var contribution = ctrl.contribution;
     return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions",[
             m(".w-row",[
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.user-avatar[src='"+ctrb.user_profile_img+"']")
+                    m("img.user-avatar[src='"+contribution.user_profile_img+"']")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
-                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.user_name),
-                    m(".fontsize-smallest", "Usuário: "+ctrb.user_id),
-                    m(".fontsize-smallest.fontcolor-secondary", ctrb.email),
-                    m(".fontsize-smallest.fontcolor-secondary", ctrb.payer_email)
+                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.user_name),
+                    m(".fontsize-smallest", "Usuário: "+contribution.user_id),
+                    m(".fontsize-smallest.fontcolor-secondary", contribution.email),
+                    m(".fontsize-smallest.fontcolor-secondary", contribution.payer_email)
                   ])
                 ])
               ]),
               m(".w-col.w-col-4",[
                 m(".w-row",[
                   m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-                    m("img.thumb-project.u-radius[src='"+ctrb.project_img+"'")
+                    m("img.thumb-project.u-radius[src='"+contribution.project_img+"'")
                   ]),
                   m(".w-col.w-col-9.w-col-small-9",[
-                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", ctrb.project_name),
-                    m(".fontsize-smallest.fontweight-semibold", ctrb.project_state),
-                    m(".fontsize-smallest.fontcolor-secondary", momentify(ctrb.project_starts_at) + " a " +momentify(ctrb.project_ends_at))
+                    m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.project_name),
+                    m(".fontsize-smallest.fontweight-semibold", contribution.project_state),
+                    m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_starts_at) + " a " +momentify(contribution.project_ends_at))
                   ])
                 ])
               ]),
               m(".w-col.w-col-2",[
-                m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+ctrb.value),
-                m(".fontsize-smallest.fontcolor-secondary", momentify(ctrb.paid_at, "DD/MM/YYYY hh:mm[h]")),
-                m(".fontsize-smallest", "Id: "+ctrb.payment_id)
+                m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
+                m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
+                m(".fontsize-smallest", "Id: "+contribution.payment_id)
               ]),
               m(".w-col.w-col-2",[
                 m(".fontsize-smallest.lineheight-looser.fontweight-semibold",[
-                  m("span.fa.fa-circle"+ctrl.stateClass())," "+ctrb.state
+                  m("span.fa.fa-circle"+ctrl.stateClass())," "+contribution.state
                 ]),
                 m(".fontsize-smallest.fontweight-semibold",[
-                  m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", ctrb.payment_method)
-                ]),( ctrl.payment_details() ? m.component(adminApp.AdminContributionsListPaymentDetail, {ctrb: ctrb}) : "")
+                  m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", contribution.payment_method)
+                ]),( ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {contribution: contribution}) : "")
               ])
             ]),
             m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
