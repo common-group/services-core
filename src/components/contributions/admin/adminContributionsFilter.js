@@ -3,6 +3,7 @@ adminApp.AdminContributionsFilter = {
     var vm = this.vm = adminApp.AdminContributionsFilter.VM;
     this.filter = function(){
       args.onFilter(vm.parameters());
+      return false;
     };
   },
   view: function(ctrl, args) {
@@ -10,11 +11,11 @@ adminApp.AdminContributionsFilter = {
             m(".w-container",[
               m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"),
               m(".w-form",[
-                m("form[data-name='Email Form'][id='email-form'][name='email-form']", [
+                m("form[data-name='Email Form'][id='email-form'][name='email-form']", {onsubmit: ctrl.filter}, [
                   m(".w-row.u-marginbottom-10", [
                     m(".w-col.w-col-4", [
                       m("label.fontsize-smaller[for='field']", "Procurar por"),
-                      m("input.w-input.text-field.positive[id='field'][name='field'][required='required'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
+                      m("input.w-input.text-field.positive[id='field'][name='field'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-3']", "Com o estado"),
@@ -38,10 +39,10 @@ adminApp.AdminContributionsFilter = {
                       m("label.fontsize-smaller[for='field-6']", "Valores entre"),
                       m(".w-row", [
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
                         ]),
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
                         ])
                       ])
                     ]),
@@ -49,22 +50,22 @@ adminApp.AdminContributionsFilter = {
                       m("label.fontsize-smaller[for='field-7']", "Período do apoio"),
                       m(".w-row", [
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
                         ]),
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][required='required'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
                         ])
                       ])
                     ])
+                  ]),
+                  m(".w-row", [
+                    m(".w-col.w-col-4"),
+                    m(".w-col.w-col-4", [
+                      m("input#filter-btn.btn.btn-small[type='submit']", "Filtrar")
+                    ]),
+                    m(".w-col.w-col-4")
                   ])
                 ])
-              ]),
-              m(".w-row", [
-                m(".w-col.w-col-4"),
-                m(".w-col.w-col-4", [
-                  m("button#filter-btn.btn.btn-small", {onclick: ctrl.filter},"Filtrar")
-                ]),
-                m(".w-col.w-col-4")
               ])
             ])
           ]);

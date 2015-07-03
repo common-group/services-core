@@ -22,12 +22,13 @@ adminApp.AdminContributions.VM = (function(){
     m.redraw();
   };
 
-  var filter = function(input){
+  var filter = function(parameters){
     loading();
-    if(input){
-      input.order = input.order || defaultOrder;
-      filters(input);
+    if(parameters){
+      parameters.order = parameters.order || defaultOrder;
+      filters(parameters);
     }
+    contributions({});
     page(1);
     return fetch();
   };

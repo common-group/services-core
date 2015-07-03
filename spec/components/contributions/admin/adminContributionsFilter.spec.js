@@ -22,7 +22,7 @@ describe('AdminContributionsFilter component', function() {
     });
 
     it('should call its filter when clicking on a filter', function() {
-      $output.click('#filter-btn');
+      $output.trigger('form', 'submit');
       expect(ctrl.filter).toHaveBeenCalled();
     });
   });

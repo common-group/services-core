@@ -29,7 +29,7 @@ describe('AdminContributions component', function() {
       expect($output.has('#admin-contributions-list')).toBeTrue();
     });
     it('should call Contribution Details when filtering', function() {
-      $output.click('#filter-btn');
+      $output.trigger('form', 'submit');
       expect(ctrl.vm.filter).toHaveBeenCalled();
     });
     it('should render '+nContributions+' more contribution cards when clicking on load_more.', function() {
