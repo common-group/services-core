@@ -2,7 +2,6 @@ adminApp.AdminContributions = {
     controller: function() {
       var vm = this.vm = adminApp.AdminContributions.VM;
       this.filterContributions = function(filters){ vm.filter(filters); };
-      vm.fetch();
     },
     view: function(ctrl) {
       return  [ 

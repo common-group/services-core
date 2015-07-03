@@ -5,6 +5,7 @@ adminApp.AdminContributionsFilter = {
       args.onFilter(vm.parameters());
       return false;
     };
+    if(args) this.filter();
   },
   view: function(ctrl, args) {
     return m("#admin-contributions-filter.w-section.page-header",[
@@ -19,30 +20,33 @@ adminApp.AdminContributionsFilter = {
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-3']", "Com o estado"),
-                      m("select.w-select.text-field.positive[id='field-3'][name='field-3']", [
-                        m("option[value='']", "Select one..."),
-                        m("option[value='First']", "First Choice"),
-                        m("option[value='Second']", "Second Choice"),
-                        m("option[value='Third']", "Third Choice")
+                      m("select.w-select.text-field.positive[id='field-3'][name='field-3']", { onchange: m.withAttr("value", ctrl.vm.state), value: ctrl.vm.state()},  [
+                        m("option[value='pending']", "pending"),
+                        m("option[value='refused']", "refused"),
+                        m("option[value='paid']", "paid"),
+                        m("option[value='pending_refund']", "pending_refund"),
+                        m("option[value='refunded']", "refunded"),
+                        m("option[value='chargeback']", "chargeback"),
+                        m("option[value='deleted']", "deleted")
                       ])
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-8']", "Gateway"),
-                      m("select.w-select.text-field.positive[data-name='Field 8'][id='field-8'][name='field-8']", [
-                        m("option[value='']", "Select one..."),
-                        m("option[value='First']", "First Choice"),
-                        m("option[value='Second']", "Second Choice"),
-                        m("option[value='Third']", "Third Choice")
+                      m("select.w-select.text-field.positive[data-name='Field 8'][id='field-8'][name='field-8']", { onchange: m.withAttr("value", ctrl.vm.gateway), value: ctrl.vm.gateway()}, [
+                        m("option[value='Pagarme']", "Pagarme"),
+                        m("option[value='MoIP']", "MoIP"),
+                        m("option[value='PayPal']", "PayPal"),
+                        m("option[value='Credits']", "Créditos")
                       ])
                     ]),
                     m(".w-col.w-col-2", [
                       m("label.fontsize-smaller[for='field-6']", "Valores entre"),
                       m(".w-row", [
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", { onchange: m.withAttr("value", ctrl.vm.value['gte']), value: ctrl.vm.value['gte']()})
                         ]),
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", { onchange: m.withAttr("value", ctrl.vm.value['lte']), value: ctrl.vm.value['lte']()})
                         ])
                       ])
                     ]),
@@ -50,10 +54,10 @@ adminApp.AdminContributionsFilter = {
                       m("label.fontsize-smaller[for='field-7']", "Período do apoio"),
                       m(".w-row", [
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", { onchange: m.withAttr("value", ctrl.vm.created_at['gte']), value: ctrl.vm.created_at['gte']()})
                         ]),
                         m(".w-col.w-col-6", [
-                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']")
+                          m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", { onchange: m.withAttr("value", ctrl.vm.created_at['lte']), value: ctrl.vm.created_at['lte']()})
                         ])
                       ])
                     ])

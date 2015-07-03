@@ -1,5 +1,5 @@
 adminApp.AdminContributions.VM = (function(){
-  var contributions = m.prop({}),
+  var contributions = m.prop([]),
       defaultOrder = "id.desc";
       filters = m.prop({order: defaultOrder}),
       isLoading = m.prop(false),
@@ -28,7 +28,7 @@ adminApp.AdminContributions.VM = (function(){
       parameters.order = parameters.order || defaultOrder;
       filters(parameters);
     }
-    contributions({});
+    contributions([]);
     page(1);
     return fetch();
   };
