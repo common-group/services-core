@@ -199,17 +199,15 @@ vm.state("pending"), vm.gateway("Pagarme"), adminApp.AdminContributionsList = {
         order: defaultOrder
     }), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
-        return m.startComputation(), adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data) {
+        return isLoading(!0), m.redraw(), m.startComputation(), adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
             m.endComputation();
         }), d.promise;
-    }, loading = function() {
-        isLoading(!0), m.redraw();
     }, filter = function(parameters) {
-        return loading(), parameters && (parameters.order = parameters.order || defaultOrder, 
-        filters(parameters)), contributions([]), page(1), fetch();
+        return parameters && (parameters.order = parameters.order || defaultOrder, filters(parameters)), 
+        contributions([]), page(1), fetch();
     }, nextPage = function() {
-        return loading(), page(page() + 1), fetch();
+        return page(page() + 1), fetch();
     };
     return {
         contributions: contributions,

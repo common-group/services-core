@@ -7,6 +7,8 @@ adminApp.AdminContributions.VM = (function(){
 
   var fetch = function(){
     var d = m.deferred();
+    isLoading(true);
+    m.redraw();
     m.startComputation();
     adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data){
       contributions(_.union(contributions(), data));
@@ -17,13 +19,7 @@ adminApp.AdminContributions.VM = (function(){
     return d.promise;
   };
 
-  var loading = function(){
-    isLoading(true);
-    m.redraw();
-  };
-
   var filter = function(parameters){
-    loading();
     if(parameters){
       parameters.order = parameters.order || defaultOrder;
       filters(parameters);
@@ -34,7 +30,6 @@ adminApp.AdminContributions.VM = (function(){
   };
 
   var nextPage = function(){
-    loading();
     page(page()+1);
     return fetch();
   };
