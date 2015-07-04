@@ -1,6 +1,6 @@
 adminApp.AdminContributions.VM = (function(){
   var contributions = m.prop([]),
-      defaultOrder = "id.desc";
+      defaultOrder = "id.desc",
       filters = m.prop({order: defaultOrder}),
       isLoading = m.prop(false),
       page = m.prop(1);

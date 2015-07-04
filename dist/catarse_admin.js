@@ -61,7 +61,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
         }) ]), m(".w-col.w-col-6", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", {
             onchange: m.withAttr("value", ctrl.vm.created_at.lte),
             value: ctrl.vm.created_at.lte()
-        }) ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("input#filter-btn.btn.btn-small[type='submit']", "Filtrar") ]), m(".w-col.w-col-4") ]) ]) ]) ]) ]);
+        }) ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("input#filter-btn.btn.btn-small[type='submit'][value='Filtrar']") ]), m(".w-col.w-col-4") ]) ]) ]) ]) ]);
     }
 };
 
@@ -195,11 +195,9 @@ vm.state("pending"), vm.gateway("Pagarme"), adminApp.AdminContributionsList = {
         }() ]);
     }
 }, adminApp.AdminContributions.VM = function() {
-    var contributions = m.prop([]), defaultOrder = "id.desc";
-    filters = m.prop({
+    var contributions = m.prop([]), defaultOrder = "id.desc", filters = m.prop({
         order: defaultOrder
-    }), isLoading = m.prop(!1), page = m.prop(1);
-    var fetch = function() {
+    }), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
         var d = m.deferred();
         return m.startComputation(), adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data) {
             contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
