@@ -25,7 +25,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
         return [ m.component(adminApp.AdminContributionsFilter, {
             onFilter: ctrl.filterContributions
         }), m(".w-section.section", [ m.component(adminApp.AdminContributionsList, {
-            contributions: ctrl.vm.contributions
+            contributions: ctrl.vm.collection
         }) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: ctrl.vm.nextPage
         }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
@@ -194,26 +194,4 @@ vm.state("pending"), vm.gateway("Pagarme"), adminApp.AdminContributionsList = {
             }
         }() ]);
     }
-}, adminApp.AdminContributions.VM = function() {
-    var contributions = m.prop([]), defaultOrder = "id.desc", filters = m.prop({
-        order: defaultOrder
-    }), isLoading = m.prop(!1), page = m.prop(1), fetch = function() {
-        var d = m.deferred();
-        return isLoading(!0), m.redraw(), m.startComputation(), adminApp.models.ContributionDetail.getPageWithToken(page(), filters()).then(function(data) {
-            contributions(_.union(contributions(), data)), isLoading(!1), d.resolve(contributions()), 
-            m.endComputation();
-        }), d.promise;
-    }, filter = function(parameters) {
-        return parameters && (parameters.order = parameters.order || defaultOrder, filters(parameters)), 
-        contributions([]), page(1), fetch();
-    }, nextPage = function() {
-        return page(page() + 1), fetch();
-    };
-    return {
-        contributions: contributions,
-        fetch: fetch,
-        filter: filter,
-        isLoading: isLoading,
-        nextPage: nextPage
-    };
-}();
+}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken);

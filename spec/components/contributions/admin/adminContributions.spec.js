@@ -33,7 +33,7 @@ describe('AdminContributions component', function() {
       expect(ctrl.vm.filter).toHaveBeenCalled();
     });
     it('should render '+nContributions+' more contribution cards when clicking on load_more.', function() {
-      var actual = ctrl.vm.contributions().length;
+      var actual = ctrl.vm.collection().length;
       $output.click('#load-more');
       expect($output.find('.results-admin-contributions').length).toEqual(actual+nContributions);
     });
