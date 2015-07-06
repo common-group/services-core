@@ -12,7 +12,7 @@ adminApp.models = {}, adminApp.submodule = function(module, args) {
 
 var momentify = function(date, format) {
     return format = format || "DD/MM/YYYY", date ? moment(new Date(date)).format(format) : "no date";
-}, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "user_name", "email", "uploaded_image", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "pending_refund_at", "refunded_at", "created_at" ]);
+}, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "pending_refund_at", "refunded_at", "created_at" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
     controller: function() {
@@ -41,8 +41,8 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
         return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", {
             onsubmit: ctrl.filter
         }, [ m(".w-row.u-marginbottom-10", [ m(".w-col.w-col-4", [ m("label.fontsize-smaller[for='field']", "Procurar por"), m("input.w-input.text-field.positive[id='field'][name='field'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", {
-            onchange: m.withAttr("value", ctrl.vm.permalink),
-            value: ctrl.vm.permalink()
+            onchange: m.withAttr("value", ctrl.vm.search_text),
+            value: ctrl.vm.search_text()
         }) ]), m(".w-col.w-col-2", [ m("label.fontsize-smaller[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", {
             onchange: m.withAttr("value", ctrl.vm.state),
             value: ctrl.vm.state()
@@ -66,7 +66,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
 };
 
 var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
-    permalink: "ilike",
+    search_text: "ilike",
     state: "eq",
     gateway: "eq",
     value: "between",

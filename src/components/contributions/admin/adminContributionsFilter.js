@@ -17,7 +17,7 @@ adminApp.AdminContributionsFilter = {
             m(".w-row.u-marginbottom-10", [
               m(".w-col.w-col-4", [
                 m("label.fontsize-smaller[for='field']", "Procurar por"),
-                m("input.w-input.text-field.positive[id='field'][name='field'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", { onchange: m.withAttr("value", ctrl.vm.permalink), value: ctrl.vm.permalink()})
+                m("input.w-input.text-field.positive[id='field'][name='field'][type='text'][placeholder='Procure por e-mail, permalink, nome do projeto...']", { onchange: m.withAttr("value", ctrl.vm.search_text), value: ctrl.vm.search_text()})
               ]),
               m(".w-col.w-col-2", [
                 m("label.fontsize-smaller[for='field-3']", "Com o estado"),
