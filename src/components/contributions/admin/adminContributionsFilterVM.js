@@ -1,5 +1,5 @@
 var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
-  permalink: 'ilike',
+  search_text: 'ilike',
   state: 'eq',
   gateway: 'eq',
   value: 'between',
