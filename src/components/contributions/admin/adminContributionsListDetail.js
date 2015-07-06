@@ -68,7 +68,7 @@ adminApp.AdminContributionsListDetail = {
         m(".w-col.w-col-4",[
           m(".w-row",[
             m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10",[
-              m("img.thumb-project.u-radius[src='"+contribution.project_img+"'")
+              m("img.thumb-project.u-radius[src="+contribution.project_img+"][width=50]")
             ]),
             m(".w-col.w-col-9.w-col-small-9",[
               m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.project_name),
