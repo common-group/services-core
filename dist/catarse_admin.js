@@ -24,9 +24,9 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
     view: function(ctrl) {
         return [ m.component(adminApp.AdminContributionsFilter, {
             onFilter: ctrl.filterContributions
-        }), m(".w-section.section", [ m.component(adminApp.AdminContributionsList, {
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), m.component(adminApp.AdminContributionsList, {
             contributions: ctrl.vm.collection
-        }) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
+        }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: ctrl.vm.nextPage
         }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
     }

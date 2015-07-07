@@ -8,7 +8,16 @@ adminApp.AdminContributions = {
     return  [ 
       m.component(adminApp.AdminContributionsFilter,{onFilter: ctrl.filterContributions}),
       m(".w-section.section",[
-        m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.collection}),
+        m(".w-container",[
+          m(".w-row.u-marginbottom-20", [
+            m(".w-col.w-col-9", [
+              m(".fontsize-base", [
+                m("span.fontweight-semibold", ctrl.vm.total())," apoios encontrados"]
+               )
+            ])
+          ]),
+          m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.collection}),
+        ])
       ]),
       m(".w-section.section",[
         m(".w-container",[
