@@ -7,5 +7,5 @@ var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
 });
 
 // Set default values
-vm.state('pending');
+vm.state('');
 vm.gateway('Pagarme');
