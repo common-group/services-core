@@ -91,7 +91,7 @@ adminApp.AdminContributionsListDetail = {
           ]),( ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {contribution: contribution}) : "")
         ])
       ]),
-      m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
+      // m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
       m(".divider.u-margintop-20.u-marginbottom-20"),
       m(".w-row.u-marginbottom-30",[
         m(".w-col.w-col-2",[
@@ -119,12 +119,6 @@ adminApp.AdminContributionsListDetail = {
                 m("label[for='name-2']", "Id do novo apoiador:"),
                 m("input.w-input.text-field[data-name='Name 2'][id='name-2'][name='name'][placeholder='ex: 129908'][type='text']"),
                 m("input.w-button.btn.btn-small[data-wait='Please wait...'][type='submit'][value='Transferir']")
-              ]),
-              m(".w-form-done",[
-                m("p", "Thank you! Your submission has been received!")
-              ]),
-              m(".w-form-fail",[
-                m("p", "Oops! Something went wrong while submitting the form")
               ])
             ])
           ])
@@ -153,12 +147,6 @@ adminApp.AdminContributionsListDetail = {
                     m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"),
                     m("label.w-form-label[for='radio']", "R$ 10")
                   ])
-              ]),
-              m(".w-form-done",[
-                m("p", "Thank you! Your submission has been received!")
-              ]),
-              m(".w-form-fail",[
-                m("p", "Oops! Something went wrong while submitting the form")
               ])
             ])
           ])
@@ -176,12 +164,6 @@ adminApp.AdminContributionsListDetail = {
                   m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"),
                   m("label.w-form-label[for='radio']", "Público")
                 ])
-              ]),
-              m(".w-form-done",[
-                m("p", "Thank you! Your submission has been received!")
-              ]),
-              m(".w-form-fail",[
-                m("p", "Oops! Something went wrong while submitting the form")
               ])
             ])
           ])
