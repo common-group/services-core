@@ -26,7 +26,7 @@ adminApp.AdminContributionsFilter = {
           m("form[data-name='Email Form'][id='email-form'][name='email-form']", {onsubmit: ctrl.filter}, [
             m(".w-row.u-marginbottom-20", [
               m(".w-col.w-col-10", [
-                m("input.w-input.text-field.positive.medium[id='field'][name='field'][placeholder='Busque por projeto, email, Ids do usuário e do apoio...'][type='text']", {onchange: m.withAttr("value", ctrl.vm.search_text), value: ctrl.vm.search_text()}),
+                m("input.w-input.text-field.positive.medium[id='field'][name='field'][placeholder='Busque por projeto, email, Ids do usuário e do apoio...'][type='text']", {onchange: m.withAttr("value", ctrl.vm.full_text_index), value: ctrl.vm.full_text_index()}),
                 m("a.fontsize-smallest.link-hidden-light[data-ix='admin-filter'][href='#']", {onclick: ctrl.toggleSearch}, "Filtros avançados  >")]),
                 m(".w-col.w-col-2", [
                   m("input#filter-btn.btn.btn-large.u-marginbottom-10[type='submit'][href='#'][value='Buscar']")
