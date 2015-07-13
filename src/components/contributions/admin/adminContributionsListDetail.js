@@ -60,8 +60,8 @@ adminApp.AdminContributionsListDetail = {
             m(".w-col.w-col-9.w-col-small-9",[
               m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.user_name),
               m(".fontsize-smallest", "Usuário: "+contribution.user_id),
-              m(".fontsize-smallest.fontcolor-secondary", contribution.email),
-              m(".fontsize-smallest.fontcolor-secondary", contribution.payer_email)
+              m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email),
+              m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email)
             ])
           ])
         ]),
@@ -73,14 +73,14 @@ adminApp.AdminContributionsListDetail = {
             m(".w-col.w-col-9.w-col-small-9",[
               m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.project_name),
               m(".fontsize-smallest.fontweight-semibold", contribution.project_state),
-              m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_starts_at) + " a " +momentify(contribution.project_ends_at))
+              m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_online_date) + " a " +momentify(contribution.project_expires_at))
             ])
           ])
         ]),
         m(".w-col.w-col-2",[
           m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
           m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
-          m(".fontsize-smallest", "Id: "+contribution.payment_id)
+          m(".fontsize-smallest", "ID do Gateway: " + contribution.gateway_id)
         ]),
         m(".w-col.w-col-2",[
           m(".fontsize-smallest.lineheight-looser.fontweight-semibold",[
