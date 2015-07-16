@@ -94,7 +94,6 @@ adminApp.AdminContributionsListDetail = {
         ])
       ]),
       m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", { onclick: ctrl.displayDetailBox.toggle }),
-      m(".divider.u-margintop-20.u-marginbottom-20"),
       m.component(adminApp.ToggleDiv, { display: ctrl.displayDetailBox, content:
         m.component(adminApp.AdminContributionsListPaymentDetailBox, { contribution: contribution })
       })
