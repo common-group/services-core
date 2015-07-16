@@ -1,7 +1,13 @@
 adminApp.AdminContributions = {
   controller: function() {
-    var vm = this.vm = adminApp.AdminContributions.VM;
-    this.filterContributions = function(filters){ vm.filter(filters); };
+    var vm = this.vm = adminApp.AdminContributions.VM
+        error = this.error = m.prop();
+
+    this.filterContributions = function(filters){ 
+      vm.filter(filters).then(null, function(serverError){
+        error(serverError.message);
+      }); 
+    };
   },
 
   view: function(ctrl) {
@@ -16,7 +22,7 @@ adminApp.AdminContributions = {
                )
             ])
           ]),
-          m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.collection}),
+          (ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.collection})),
         ])
       ]),
       m(".w-section.section",[
