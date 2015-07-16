@@ -1,21 +1,18 @@
-// AdminContributionsListPaymentDetailBox this component is used to
-// create a box with more contribution details and actions like refund, 2via,
-// change reward and a lot more... :)
 adminApp.AdminContributionsListPaymentDetailBox = {
   view: function(ctrl, args) {
     var contribution = args.contribution;
     return m("#admin-contribution-detail-box", [
       m(".w-row.u-marginbottom-30",[
         m(".w-col.w-col-2",[
-          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", "Pedir reembolso"),
-          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10",[
+          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {style: {"transition": " all 0.5s ease 0s", " -webkit-transition": " all 0.5s ease 0s"}}, "Pedir reembolso"),
+          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {style: {"display": " none"}},[
             m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"),
             m("a.btn.btn-small[href='#']", "Solicitar reembolso")
           ])
         ]),
         m(".w-col.w-col-2",[
-          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", "Estornar"),
-          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10",[
+          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {style: {"transition": " all 0.5s ease 0s", " -webkit-transition": " all 0.5s ease 0s"}}, "Estornar"),
+          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {style: {"display": " none"}},[
             m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"),
             m("a.btn.btn-small[href='#']", "Solicitar estorno")
           ])
@@ -24,8 +21,8 @@ adminApp.AdminContributionsListPaymentDetailBox = {
           m("a.btn.btn-small.btn-terciary.btn-desactivated[href='#']", "2a via")
         ]),
         m(".w-col.w-col-2",[
-          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", "Transferir apoio"),
-          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10",[
+          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {style: {"transition": " all 0.5s ease 0s", " -webkit-transition": " all 0.5s ease 0s"}}, "Transferir apoio"),
+          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {style: {"display": " none"}},[
             m(".w-form",[
               m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']",[
                 m("label[for='name-2']", "Id do novo apoiador:"),
@@ -36,8 +33,8 @@ adminApp.AdminContributionsListPaymentDetailBox = {
           ])
         ]),
         m(".w-col.w-col-2",[
-          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", "Trocar recompensa"),
-          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10",[
+          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {style: {"transition": " all 0.5s ease 0s", " -webkit-transition": " all 0.5s ease 0s"}}, "Trocar recompensa"),
+          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {style: {"display": " none"}},[
             m(".w-form",[
               m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']",[
                 m(".w-radio",[
@@ -64,8 +61,8 @@ adminApp.AdminContributionsListPaymentDetailBox = {
           ])
         ]),
         m(".w-col.w-col-2",[
-          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", "Anonimato"),
-          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10",[
+          m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", {style: {"transition": " all 0.5s ease 0s", " -webkit-transition": " all 0.5s ease 0s"}}, "Anonimato"),
+          m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {style: {"display": " none"}},[
             m(".w-form",[
               m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']",[
                 m(".w-radio",[
