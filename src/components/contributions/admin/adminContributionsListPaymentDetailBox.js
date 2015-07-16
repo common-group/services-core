@@ -4,7 +4,7 @@
 adminApp.AdminContributionsListPaymentDetailBox = {
   view: function(ctrl, args) {
     var contribution = args.contribution;
-    return m("#admin-contribution-detail-box", {style: {"transition": " all 0.5s ease 0s", " -webkit-transition": " all 0.5s ease 0s"}}, [
+    return m("#admin-contribution-detail-box", [
       m(".w-row.u-marginbottom-30",[
         m(".w-col.w-col-2",[
           m("a.btn.btn-small.btn-terciary[data-ix='show-dropdown'][href='#']", "Pedir reembolso"),

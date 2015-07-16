@@ -46,6 +46,8 @@ adminApp.AdminContributionsListDetail = {
           return ".fa-question";
       }
     };
+
+    this.displayDetailBox = adminApp.ToggleDiv.toggleProp('none', 'block')
   },
 
   view: function(ctrl, args) {
@@ -91,9 +93,11 @@ adminApp.AdminContributionsListDetail = {
           ]),( ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {contribution: contribution}) : "")
         ])
       ]),
-      // m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='#']"),
+      m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", { onclick: ctrl.displayDetailBox.toggle }),
       m(".divider.u-margintop-20.u-marginbottom-20"),
-      m.component(adminApp.AdminContributionsListPaymentDetailBox, { contribution: contribution }),
+      m.component(adminApp.ToggleDiv, { display: ctrl.displayDetailBox, content:
+        m.component(adminApp.AdminContributionsListPaymentDetailBox, { contribution: contribution })
+      })
     ]);
   }
 }
