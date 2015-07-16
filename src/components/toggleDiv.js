@@ -4,7 +4,7 @@ adminApp.ToggleDiv = {
   toggleProp: function(defaultState, alternateState) {
     var p = m.prop(defaultState);
     p.toggle = function(){
-      this(((this() === alternateState) ? defaultState : alternateState));
+      p(((p() === alternateState) ? defaultState : alternateState));
     };
 
     return p;
