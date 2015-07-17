@@ -60,7 +60,9 @@ adminApp.AdminContributionsListDetail = {
               m("img.user-avatar[src='"+contribution.user_profile_img+"']")
             ]),
             m(".w-col.w-col-9.w-col-small-9",[
-              m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.user_name),
+              m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [
+                m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name)
+              ]),
               m(".fontsize-smallest", "Usuário: "+contribution.user_id),
               m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email),
               m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email)
@@ -73,7 +75,9 @@ adminApp.AdminContributionsListDetail = {
               m("img.thumb-project.u-radius[src="+contribution.project_img+"][width=50]")
             ]),
             m(".w-col.w-col-9.w-col-small-9",[
-              m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", contribution.project_name),
+              m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [
+                m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name)
+              ]),
               m(".fontsize-smallest.fontweight-semibold", contribution.project_state),
               m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_online_date) + " a " +momentify(contribution.project_expires_at))
             ])
@@ -82,7 +86,9 @@ adminApp.AdminContributionsListDetail = {
         m(".w-col.w-col-2",[
           m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
           m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
-          m(".fontsize-smallest", "ID do Gateway: " + contribution.gateway_id)
+          m(".fontsize-smallest", ["ID do Gateway: ", 
+            m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id)
+          ])
         ]),
         m(".w-col.w-col-2",[
           m(".fontsize-smallest.lineheight-looser.fontweight-semibold",[
