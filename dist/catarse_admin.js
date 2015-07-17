@@ -207,11 +207,18 @@ vm.state(""), vm.gateway("Pagarme"), adminApp.AdminContributionsList = {
         }, "Anonimato"), m.component(adminApp.ToggleDiv, {
             display: ctrl.displatAnonDropDown,
             content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
-        }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Recompensa: " + formatNumber(contribution.reward_minimum_value, 2, 3), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + contribution.gateway_data.acquirer_name, m("br"), function() {
-            return contribution.is_second_slip ? [ m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via") ] : void 0;
-        }() ]) ]), m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, {
+        }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed, {
+            contribution: contribution
+        }), m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, {
             contribution: contribution
         }), m(".w-col.w-col-4") ]) ]);
+    }
+}, adminApp.AdminContributionsListPaymentDetailBoxDetailed = {
+    view: function(ctrl, args) {
+        var contribution = args.contribution;
+        return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Recompensa: " + formatNumber(contribution.reward_minimum_value, 2, 3), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + contribution.gateway_data.acquirer_name, m("br"), function() {
+            return contribution.is_second_slip ? [ m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via") ] : void 0;
+        }() ]) ]);
     }
 }, adminApp.AdminContributionsListPaymentDetailBoxHistory = {
     controller: function(args) {
