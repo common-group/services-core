@@ -15,7 +15,7 @@ adminApp.AdminContributionsListPaymentDetailBox = {
     var contribution = args.contribution;
     return m("#admin-contribution-detail-box", [
       m(".divider.u-margintop-20.u-marginbottom-20"),
-      m(".w-row.u-marginbottom-30",[
+      m(".w-row.u-marginbottom-30.w-hidden",[
         m(".w-col.w-col-2",[
           m("button.btn.btn-small.btn-terciary", {onclick: ctrl.displayRequestRefundDropDown.toggle }, "Pedir reembolso"),
           m.component(adminApp.ToggleDiv, { display: ctrl.displayRequestRefundDropDown,  content:
