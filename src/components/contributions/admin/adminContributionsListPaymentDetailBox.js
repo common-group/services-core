@@ -1,10 +1,14 @@
 adminApp.AdminContributionsListPaymentDetailBox = {
   controller: function(args) {
-    this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggleProp('none', 'block')
-    this.displayRefundDropDown = adminApp.ToggleDiv.toggleProp('none', 'block')
-    this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggleProp('none', 'block')
-    this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggleProp('none', 'block')
-    this.displatAnonDropDown = adminApp.ToggleDiv.toggleProp('none', 'block')
+    var toggleDropDown = function() {
+     return adminApp.ToggleDiv.toggleProp('none', 'block');
+    }
+
+    this.displayRequestRefundDropDown = toggleDropDown();
+    this.displayRefundDropDown = toggleDropDown();
+    this.displayTransferContributionDropDown = toggleDropDown();
+    this.displayChangeRewardDropDown = toggleDropDown();
+    this.displatAnonDropDown = toggleDropDown();
   },
 
   view: function(ctrl, args) {
