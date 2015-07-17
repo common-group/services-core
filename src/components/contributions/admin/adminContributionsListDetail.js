@@ -47,7 +47,7 @@ adminApp.AdminContributionsListDetail = {
       }
     };
 
-    this.displayDetailBox = adminApp.ToggleDiv.toggleProp('none', 'block')
+    this.displayDetailBox = adminApp.ToggleDiv.toggler();
   },
 
   view: function(ctrl, args) {

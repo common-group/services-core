@@ -7,7 +7,7 @@ adminApp.AdminContributionsFilter = {
       return false;
     };
 
-    this.displayFilters = adminApp.ToggleDiv.toggleProp('none', 'block')
+    this.displayFilters = adminApp.ToggleDiv.toggler()
 
     if(args) this.filter();
   },

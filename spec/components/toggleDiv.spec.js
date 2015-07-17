@@ -2,11 +2,11 @@ describe('toggleDiv component', function() {
   var toggleProp = null, toggleComponent = null, $output = null;
 
   beforeAll(function(){
-    toggleProp = adminApp.ToggleDiv.toggleProp('none', 'block');
+    toggleProp = adminApp.ToggleDiv.toggler();
     $output = mq(adminApp.ToggleDiv, {display: toggleProp});
   });
 
-  describe('toggleProp', function() {
+  describe('toggler', function() {
     it("should return a property with default state", function(){
       expect(toggleProp()).toEqual('none')
     })
