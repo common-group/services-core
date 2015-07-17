@@ -4,13 +4,9 @@
     Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
     Version: 1.0.0
 */
-var adminApp = window.adminApp = {};
-
-adminApp.models = {}, adminApp.submodule = function(module, args) {
-    return module.view.bind(this, new module.controller(args));
-};
-
-var momentify = function(date, format) {
+var adminApp = window.adminApp = {
+    models: {}
+}, momentify = function(date, format) {
     return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
 }, momentFromString = function(date, format) {
     var european = moment(date, format || "DD/MM/YYYY");

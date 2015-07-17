@@ -1,9 +1,5 @@
-var adminApp = window.adminApp = {};
-
-adminApp.models = {};
-
-adminApp.submodule = function(module, args) {
-  return module.view.bind(this, new module.controller(args))
+var adminApp = window.adminApp = {
+  models:{}
 };
 
 var momentify = function(date, format) {
