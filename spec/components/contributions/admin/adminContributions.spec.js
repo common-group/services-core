@@ -19,7 +19,7 @@ describe('AdminContributions component', function() {
     beforeAll(function() {
       view = AdminContributions.view(ctrl);
       $output = mq(view);
-      spyOn(ctrl.vm, "filter");
+      spyOn(ctrl.vm, "filter").and.callThrough();
     });
 
     it('should render adminContributionsFilter nested component', function() {
