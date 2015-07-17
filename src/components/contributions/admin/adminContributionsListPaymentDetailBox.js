@@ -105,28 +105,25 @@ adminApp.AdminContributionsListPaymentDetailBox = {
         m(".w-col.w-col-4",[
           m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"),
           m(".fontsize-smallest.lineheight-looser",[
-            "Valor: R$80\n",
+            "Valor: R$" + formatNumber(contribution.value, 2, 3),
             m("br"),
-            "Taxa: R$3,35\n",
-            m("br"),"Recompensa: R$80\n",
+            "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3),
+            m("br"),"Recompensa: " + formatNumber(contribution.reward_minimum_value, 2, 3),
             m("br"),
-            "Anônimo: Não\n",
+            "Anônimo: " + (contribution.anonymous ? 'Sim' : 'Não'),
             m("br"),
-            "Id pagamento: 638912",
+            "Id pagamento: " + contribution.gateway_id,
             m("br"),
-            "Apoio: 54545454",
+            "Apoio: " + contribution.contribution_id,
             m("br"),
             "Chave: \n",
             m("br"),
-            "7809d09d-6325-442e-876e-b9a0846c526f\n",
+            contribution.key,
             m("br"),
-            "Meio: Pagarme\n",
+            "Meio: " + contribution.gateway,
             m("br"),
-            "Operadora: STONE",
+            "Operadora: " + contribution.gateway_data.acquirer_name,
             m("br"),
-            m("a.link-hidden[href='#']", "Boleto bancário"),
-            " ",
-            m("span.badge", "2a via")
           ])
         ]),
         m(".w-col.w-col-4",[
@@ -183,6 +180,11 @@ adminApp.AdminContributionsListPaymentDetailBox = {
                 m("span.badge", "Luis Otavio Ribeiro")
               ])
             ])
+            (function(){
+              if(contribution.is_second_slip) {
+                return [m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via")];
+              }
+            })(),
           ])
         ]),
         m(".w-col.w-col-4")
