@@ -11,7 +11,7 @@ adminApp.models = {}, adminApp.submodule = function(module, args) {
 };
 
 var momentify = function(date, format) {
-    return format = format || "DD/MM/YYYY", date ? moment(new Date(date)).format(format) : "no date";
+    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
 }, generateFormatNumber = function(s, c) {
     return function(number, n, x) {
         if (null == number || void 0 == number) return null;
