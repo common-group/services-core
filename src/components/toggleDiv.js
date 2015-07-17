@@ -1,13 +1,9 @@
 // ToggleDiv
+
 adminApp.ToggleDiv = {
 
-  toggleProp: function(defaultState, alternateState) {
-    var p = m.prop(defaultState);
-    p.toggle = function(){
-      p(((p() === alternateState) ? defaultState : alternateState));
-    };
-
-    return p;
+  toggler: function() {
+    return toggleProp('none', 'block');
   },
 
   controller: function(args) {
@@ -18,4 +14,4 @@ adminApp.ToggleDiv = {
     return m(".toggleDiv", { style: {"transition": "all .1s ease-out", "overflow": "hidden", "display": ctrl.vm.display() }}, [
       args.content ]);
   }
-}
+};

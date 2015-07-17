@@ -17,7 +17,12 @@ var adminApp = window.adminApp = {
         var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
         return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
     };
-}, formatNumber = generateFormatNumber(".", ","), ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
+}, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
+    var p = m.prop(defaultState);
+    return p.toggle = function() {
+        p(p() === alternateState ? defaultState : alternateState);
+    }, p;
+}, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
     controller: function() {
@@ -42,7 +47,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
         var vm = this.vm = adminApp.AdminContributionsFilter.VM;
         this.filter = function() {
             return args.onFilter(vm.parameters()), !1;
-        }, this.displayFilters = adminApp.ToggleDiv.toggleProp("none", "block"), args && this.filter();
+        }, this.displayFilters = adminApp.ToggleDiv.toggler(), args && this.filter();
     },
     view: function(ctrl, args) {
         return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", {
@@ -144,7 +149,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
               default:
                 return ".fa-question";
             }
-        }, this.displayDetailBox = adminApp.ToggleDiv.toggleProp("none", "block");
+        }, this.displayDetailBox = adminApp.ToggleDiv.toggler();
     },
     view: function(ctrl, args) {
         var contribution = ctrl.contribution;
@@ -174,12 +179,9 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     }
 }, adminApp.AdminContributionsListPaymentDetailBox = {
     controller: function(args) {
-        var toggleDropDown = function() {
-            return adminApp.ToggleDiv.toggleProp("none", "block");
-        };
-        this.displayRequestRefundDropDown = toggleDropDown(), this.displayRefundDropDown = toggleDropDown(), 
-        this.displayTransferContributionDropDown = toggleDropDown(), this.displayChangeRewardDropDown = toggleDropDown(), 
-        this.displatAnonDropDown = toggleDropDown();
+        this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
+        this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
+        this.displatAnonDropDown = adminApp.ToggleDiv.toggler();
     },
     view: function(ctrl, args) {
         var contribution = args.contribution;
@@ -256,11 +258,8 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     }
 }, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
 adminApp.ToggleDiv = {
-    toggleProp: function(defaultState, alternateState) {
-        var p = m.prop(defaultState);
-        return p.toggle = function() {
-            p(p() === alternateState ? defaultState : alternateState);
-        }, p;
+    toggler: function() {
+        return toggleProp("none", "block");
     },
     controller: function(args) {
         this.vm = {

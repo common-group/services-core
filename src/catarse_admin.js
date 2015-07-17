@@ -25,3 +25,12 @@ var generateFormatNumber = function(s, c) {
 };
 
 var formatNumber = generateFormatNumber('.', ',');
+
+var toggleProp = function(defaultState, alternateState) {
+  var p = m.prop(defaultState);
+  p.toggle = function(){
+    p(((p() === alternateState) ? defaultState : alternateState));
+  };
+
+  return p;
+};
