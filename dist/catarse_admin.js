@@ -214,9 +214,33 @@ vm.state(""), vm.gateway("Pagarme"), adminApp.AdminContributionsList = {
         }), m(".w-col.w-col-4") ]) ]);
     }
 }, adminApp.AdminContributionsListPaymentDetailBoxHistory = {
+    controller: function(args) {
+        var contribution = args.contribution, mapEvents = _.reduce([ {
+            date: contribution.paid_at,
+            name: "Apoio confirmado"
+        }, {
+            date: contribution.pending_refund_at,
+            name: "Reembolso solicitado"
+        }, {
+            date: contribution.refunded_at,
+            name: "Estorno realizado"
+        }, {
+            date: contribution.created_at,
+            name: "Apoio criado"
+        }, {
+            date: contribution.refused_at,
+            name: "Apoio cancelado"
+        } ], function(memo, item) {
+            return null != item.date && void 0 != item.date ? (item.originalDate = item.date, 
+            item.date = momentify(item.date, "DD/MM/YYYY, HH:mm"), memo.concat(item)) : memo;
+        }, []);
+        this.orderedEvents = _.sortBy(mapEvents, "originalDate");
+    },
     view: function(ctrl, args) {
         args.contribution;
-        return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Histórico da transação"), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", [ m("span.badge.badge-attention.fontsize-smallest", "Estorno realizado") ]) ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado") ]) ]), m(".w-row.fontsize-smallest.lineheight-looser", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", "19/05/2015, 01:20 h") ]), m(".w-col.w-col-6", [ m("div", "Apoio criado"), m(".fontsize-smallest.lineheight-tighter", [ m("span.badge", "Luis Otavio Ribeiro") ]) ]) ]) ]);
+        return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Histórico da transação"), ctrl.orderedEvents.map(function(cEvent) {
+            return m(".w-row.fontsize-smallest.lineheight-looser.date-event", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", cEvent.date) ]), m(".w-col.w-col-6", [ m("div", cEvent.name) ]) ]);
+        }) ]);
     }
 }, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
 adminApp.ToggleDiv = {
