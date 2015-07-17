@@ -44,10 +44,12 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
     }
 }, adminApp.AdminContributionsFilter = {
     controller: function(args) {
-        var vm = this.vm = adminApp.AdminContributionsFilter.VM;
-        this.filter = function() {
+        var vm = this.vm = adminApp.AdminContributionsFilter.VM, filter = this.filter = function() {
             return args.onFilter(vm.parameters()), !1;
-        }, this.displayFilters = adminApp.ToggleDiv.toggler(), args && this.filter();
+        };
+        this.displayFilters = adminApp.ToggleDiv.toggler(), setTimeout(function() {
+            filter();
+        });
     },
     view: function(ctrl, args) {
         return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", {

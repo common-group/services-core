@@ -2,14 +2,16 @@ adminApp.AdminContributionsFilter = {
   controller: function(args){
     var vm = this.vm = adminApp.AdminContributionsFilter.VM;
 
-    this.filter = function(){
+    var filter = this.filter = function(){
       args.onFilter(vm.parameters());
       return false;
     };
 
     this.displayFilters = adminApp.ToggleDiv.toggler()
 
-    if(args) this.filter();
+    setTimeout(function(){ 
+      filter();
+    });
   },
 
   view: function(ctrl, args) {
