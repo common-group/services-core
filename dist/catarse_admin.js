@@ -11,7 +11,10 @@ adminApp.models = {}, adminApp.submodule = function(module, args) {
 };
 
 var momentify = function(date, format) {
-    return format = format || "DD/MM/YYYY", date ? moment(new Date(date)).format(format) : "no date";
+    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
+}, momentFromString = function(date, format) {
+    var european = moment(date, format || "DD/MM/YYYY");
+    return european.isValid() ? european : moment(date);
 }, generateFormatNumber = function(s, c) {
     return function(number, n, x) {
         if (null == number || void 0 == number) return null;
@@ -86,7 +89,11 @@ var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
     created_at: "between"
 });
 
-vm.state(""), vm.gateway("Pagarme"), adminApp.AdminContributionsList = {
+vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
+    return momentFromString(this()).endOf("day").format();
+}, vm.created_at.gte.toFilter = function() {
+    return momentFromString(this()).format();
+}, adminApp.AdminContributionsList = {
     view: function(ctrl, args) {
         return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
             return m.component(adminApp.AdminContributionsListDetail, {

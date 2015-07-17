@@ -8,7 +8,12 @@ adminApp.submodule = function(module, args) {
 
 var momentify = function(date, format) {
   format = format || "DD/MM/YYYY";
-  return (date) ? moment(new Date(date)).format(format) : "no date";
+  return (date) ? moment(date).format(format) : "no date";
+};
+
+var momentFromString = function(date, format){
+  var european = moment(date, format || 'DD/MM/YYYY');
+  return european.isValid() ? european : moment(date);
 };
 
 var generateFormatNumber = function(s, c) {
