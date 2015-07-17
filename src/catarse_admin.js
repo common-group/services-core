@@ -11,6 +11,11 @@ var momentify = function(date, format) {
   return (date) ? moment(date).format(format) : "no date";
 };
 
+var momentFromString = function(date, format){
+  var european = moment(date, format || 'DD/MM/YYYY');
+  return european.isValid() ? european : moment(date);
+};
+
 var generateFormatNumber = function(s, c) {
   return function(number, n, x) {
     if(number == null || number == undefined) {
