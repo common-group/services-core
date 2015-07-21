@@ -1,6 +1,6 @@
 describe('AdminContributionsListPaymentDetailBoxDetailed component', function() {
   beforeAll(function(){
-    contribution = m.prop(ContributionDetailMockery(1));
+    contribution = m.prop(ContributionDetailMockery(1, {gateway_data: null}));
     detailedBox = m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed,  {contribution: contribution()[0]})
     view = detailedBox.view(ctrl, {contribution: contribution});
     $output = mq(view);

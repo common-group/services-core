@@ -21,7 +21,7 @@ adminApp.AdminContributionsListPaymentDetailBoxDetailed = {
         m("br"),
         "Meio: " + contribution.gateway,
         m("br"),
-        "Operadora: " + contribution.gateway_data.acquirer_name,
+        "Operadora: " + (contribution.gateway_data && contribution.gateway_data.acquirer_name),
         m("br"),
         (function(){
           if(contribution.is_second_slip) {
