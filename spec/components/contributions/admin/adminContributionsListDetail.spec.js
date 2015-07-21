@@ -98,6 +98,10 @@ describe('AdminContributionsListDetails component', function() {
         setController(m.prop(ContributionDetailMockery(1, {gateway: 'foo'})));
         expect(ctrl.paymentDetails()).toBeFalse();
       });
+      it('should return false when contribution gateway_data is null', function() {
+        setController(m.prop(ContributionDetailMockery(1, {gateway_data: null})));
+        expect(ctrl.paymentDetails()).toBeFalse();
+      });
     });
   });
 });

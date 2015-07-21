@@ -7,21 +7,26 @@ adminApp.AdminContributionsListDetail = {
     this.CSSerror   = '.text-error';
     this.paymentDetails = function(){
       this.contribution.gateway = this.contribution.gateway.toLowerCase();
-      switch(this.contribution.gateway){
-        case 'moip':
-          this.contribution.card_first_digits = this.contribution.gateway_data.cartao_bin;
-          this.contribution.card_last_digits = this.contribution.gateway_data.cartao_final;
-          this.contribution.card_brand = this.contribution.gateway_data.cartao_bandeira;
-          this.contribution.installments = this.contribution.gateway_data.parcelas;
-        return true;
-        case 'pagarme':
-          this.contribution.card_first_digits = this.contribution.gateway_data.card_first_digits;
-          this.contribution.card_last_digits = this.contribution.gateway_data.card_last_digits;
-          this.contribution.card_brand = this.contribution.gateway_data.card_brand;
-          this.contribution.installments = this.contribution.gateway_data.installments;
-        return true;
-        default:
-          return false;
+      if(this.contribution.gateway_data){
+        switch(this.contribution.gateway){
+          case 'moip':
+            this.contribution.card_first_digits = this.contribution.gateway_data.cartao_bin;
+            this.contribution.card_last_digits = this.contribution.gateway_data.cartao_final;
+            this.contribution.card_brand = this.contribution.gateway_data.cartao_bandeira;
+            this.contribution.installments = this.contribution.gateway_data.parcelas;
+            return true;
+          case 'pagarme':
+            this.contribution.card_first_digits = this.contribution.gateway_data.card_first_digits;
+            this.contribution.card_last_digits = this.contribution.gateway_data.card_last_digits;
+            this.contribution.card_brand = this.contribution.gateway_data.card_brand;
+            this.contribution.installments = this.contribution.gateway_data.installments;
+            return true;
+          default:
+            return false;
+        }
+      }
+      else{
+        return false;
       }
     };
     this.stateClass = function(){

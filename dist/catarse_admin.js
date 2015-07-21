@@ -110,7 +110,8 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
         this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
         this.CSSsuccess = ".text-success", this.CSSwaiting = ".text-waiting", this.CSSerror = ".text-error", 
         this.paymentDetails = function() {
-            switch (this.contribution.gateway = this.contribution.gateway.toLowerCase(), this.contribution.gateway) {
+            if (this.contribution.gateway = this.contribution.gateway.toLowerCase(), !this.contribution.gateway_data) return !1;
+            switch (this.contribution.gateway) {
               case "moip":
                 return this.contribution.card_first_digits = this.contribution.gateway_data.cartao_bin, 
                 this.contribution.card_last_digits = this.contribution.gateway_data.cartao_final, 
