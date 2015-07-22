@@ -4,8 +4,6 @@
     Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
     Version: 1.0.0
 */
-alert("App lock and loaded!");
-
 var adminApp = window.adminApp = {
     models: {}
 }, momentify = function(date, format) {
