@@ -1,14 +1,14 @@
-describe('AdminContributionsList component', function() {
+describe('AdminList component', function() {
   var nContributions = 5;
 
   beforeAll(function() {
     contributions = m.prop(ContributionDetailMockery(nContributions));
-    AdminContributionsList = m.component(adminApp.AdminContributionsList, {contributions:contributions});
+    AdminList = m.component(adminApp.AdminList, {contributions:contributions});
   });
 
   describe('view', function() {
     beforeAll(function() {
-      view = AdminContributionsList.view(AdminContributionsList.ctrl, {contributions: contributions});
+      view = AdminList.view(AdminList.ctrl, {contributions: contributions});
       $output = mq(view);
     });
 

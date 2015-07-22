@@ -22,7 +22,7 @@ adminApp.AdminContributions = {
                )
             ])
           ]),
-          (ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {contributions: ctrl.vm.collection})),
+          (ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminList, {contributions: ctrl.vm.collection})),
         ])
       ]),
       m(".w-section.section",[

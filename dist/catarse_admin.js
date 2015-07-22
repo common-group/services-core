@@ -183,7 +183,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
             })
         }) ]);
     }
-}, adminApp.AdminContributionsList = {
+}, adminApp.AdminList = {
     view: function(ctrl, args) {
         return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
             return m.component(adminApp.AdminItem, {
@@ -204,7 +204,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     view: function(ctrl) {
         return [ m.component(adminApp.AdminFilter, {
             onFilter: ctrl.filterContributions
-        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminList, {
             contributions: ctrl.vm.collection
         }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: ctrl.vm.nextPage

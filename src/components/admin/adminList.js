@@ -1,4 +1,4 @@
-adminApp.AdminContributionsList = {
+adminApp.AdminList = {
   view: function(ctrl, args) {
     return m("#admin-contributions-list.w-container",[
       args.contributions().map(function(contribution){
