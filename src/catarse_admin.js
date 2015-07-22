@@ -1,3 +1,5 @@
+alert("App lock and loaded!");
+
 var adminApp = window.adminApp = {
   models:{}
 };

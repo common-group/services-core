@@ -4,6 +4,8 @@
     Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
     Version: 1.0.0
 */
+alert("App lock and loaded!");
+
 var adminApp = window.adminApp = {
     models: {}
 }, momentify = function(date, format) {
@@ -24,23 +26,48 @@ var adminApp = window.adminApp = {
     }, p;
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
-adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
-    controller: function() {
-        var vm = this.vm = adminApp.AdminContributions.VM;
-        error = this.error = m.prop(), this.filterContributions = function(filters) {
-            vm.filter(filters).then(null, function(serverError) {
-                error(serverError.message);
-            });
-        };
+adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributionsListPaymentDetailBox = {
+    controller: function(args) {
+        this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
+        this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
+        this.displatAnonDropDown = adminApp.ToggleDiv.toggler();
     },
-    view: function(ctrl) {
-        return [ m.component(adminApp.AdminContributionsFilter, {
-            onFilter: ctrl.filterContributions
-        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {
-            contributions: ctrl.vm.collection
-        }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
-            onclick: ctrl.vm.nextPage
-        }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
+    view: function(ctrl, args) {
+        var contribution = args.contribution;
+        return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30.w-hidden", [ m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayRequestRefundDropDown.toggle
+        }, "Pedir reembolso"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayRequestRefundDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("a.btn.btn-small[href='#']", "Solicitar reembolso") ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayRefundDropDown.toggle
+        }, "Estornar"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayRefundDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("a.btn.btn-small[href='#']", "Solicitar estorno") ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated[href='#']", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayTransferContributionDropDown.toggle
+        }, "Transferir apoio"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayTransferContributionDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m("label[for='name-2']", "Id do novo apoiador:"), m("input.w-input.text-field[data-name='Name 2'][id='name-2'][name='name'][placeholder='ex: 129908'][type='text']"), m("input.w-button.btn.btn-small[data-wait='Please wait...'][type='submit'][value='Transferir']") ]) ]) ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayChangeRewardDropDown.toggle
+        }, "Trocar recompensa"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayChangeRewardDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {
+                style: {
+                    display: " none"
+                }
+            }, [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]) ]) ]) ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displatAnonDropDown.toggle
+        }, "Anonimato"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displatAnonDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
+        }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed, {
+            contribution: contribution
+        }), m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, {
+            contribution: contribution
+        }), m(".w-col.w-col-4") ]) ]);
     }
 }, adminApp.AdminContributionsFilter = {
     controller: function(args) {
@@ -96,15 +123,6 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     return momentFromString(this()).endOf("day").format();
 }, vm.created_at.gte.toFilter = function() {
     return momentFromString(this()).format();
-}, adminApp.AdminContributionsList = {
-    view: function(ctrl, args) {
-        return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
-            return m.component(adminApp.AdminContributionsListDetail, {
-                contribution: contribution,
-                key: contribution
-            });
-        }) ]);
-    }
 }, adminApp.AdminContributionsListDetail = {
     controller: function(args) {
         this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
@@ -167,7 +185,35 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
             })
         }) ]);
     }
-}, adminApp.AdminContributionsListPaymentDetail = {
+}, adminApp.AdminContributionsList = {
+    view: function(ctrl, args) {
+        return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
+            return m.component(adminApp.AdminContributionsListDetail, {
+                contribution: contribution,
+                key: contribution
+            });
+        }) ]);
+    }
+}, adminApp.AdminContributions = {
+    controller: function() {
+        var vm = this.vm = adminApp.AdminContributions.VM;
+        error = this.error = m.prop(), this.filterContributions = function(filters) {
+            vm.filter(filters).then(null, function(serverError) {
+                error(serverError.message);
+            });
+        };
+    },
+    view: function(ctrl) {
+        return [ m.component(adminApp.AdminContributionsFilter, {
+            onFilter: ctrl.filterContributions
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {
+            contributions: ctrl.vm.collection
+        }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
+            onclick: ctrl.vm.nextPage
+        }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
+    }
+}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
+adminApp.AdminContributionsListPaymentDetail = {
     view: function(ctrl, args) {
         var contribution = args.contribution;
         return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
@@ -180,48 +226,23 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
             }
         }() ]);
     }
-}, adminApp.AdminContributionsListPaymentDetailBox = {
+}, adminApp.ToggleDiv = {
+    toggler: function() {
+        return toggleProp("none", "block");
+    },
     controller: function(args) {
-        this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
-        this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
-        this.displatAnonDropDown = adminApp.ToggleDiv.toggler();
+        this.vm = {
+            display: args.display
+        };
     },
     view: function(ctrl, args) {
-        var contribution = args.contribution;
-        return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30.w-hidden", [ m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayRequestRefundDropDown.toggle
-        }, "Pedir reembolso"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayRequestRefundDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("a.btn.btn-small[href='#']", "Solicitar reembolso") ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayRefundDropDown.toggle
-        }, "Estornar"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayRefundDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("a.btn.btn-small[href='#']", "Solicitar estorno") ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated[href='#']", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayTransferContributionDropDown.toggle
-        }, "Transferir apoio"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayTransferContributionDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m("label[for='name-2']", "Id do novo apoiador:"), m("input.w-input.text-field[data-name='Name 2'][id='name-2'][name='name'][placeholder='ex: 129908'][type='text']"), m("input.w-button.btn.btn-small[data-wait='Please wait...'][type='submit'][value='Transferir']") ]) ]) ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayChangeRewardDropDown.toggle
-        }, "Trocar recompensa"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayChangeRewardDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {
-                style: {
-                    display: " none"
-                }
-            }, [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]) ]) ]) ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displatAnonDropDown.toggle
-        }, "Anonimato"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displatAnonDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
-        }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed, {
-            contribution: contribution
-        }), m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, {
-            contribution: contribution
-        }), m(".w-col.w-col-4") ]) ]);
+        return m(".toggleDiv", {
+            style: {
+                transition: "all .1s ease-out",
+                overflow: "hidden",
+                display: ctrl.vm.display()
+            }
+        }, [ args.content ]);
     }
 }, adminApp.AdminContributionsListPaymentDetailBoxDetailed = {
     view: function(ctrl, args) {
@@ -258,24 +279,5 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
         return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Histórico da transação"), ctrl.orderedEvents.map(function(cEvent) {
             return m(".w-row.fontsize-smallest.lineheight-looser.date-event", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", cEvent.date) ]), m(".w-col.w-col-6", [ m("div", cEvent.name) ]) ]);
         }) ]);
-    }
-}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
-adminApp.ToggleDiv = {
-    toggler: function() {
-        return toggleProp("none", "block");
-    },
-    controller: function(args) {
-        this.vm = {
-            display: args.display
-        };
-    },
-    view: function(ctrl, args) {
-        return m(".toggleDiv", {
-            style: {
-                transition: "all .1s ease-out",
-                overflow: "hidden",
-                display: ctrl.vm.display()
-            }
-        }, [ args.content ]);
     }
 };
