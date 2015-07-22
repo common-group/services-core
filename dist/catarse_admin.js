@@ -121,7 +121,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     return momentFromString(this()).endOf("day").format();
 }, vm.created_at.gte.toFilter = function() {
     return momentFromString(this()).format();
-}, adminApp.AdminContributionsListDetail = {
+}, adminApp.AdminItem = {
     controller: function(args) {
         this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
         this.CSSsuccess = ".text-success", this.CSSwaiting = ".text-waiting", this.CSSerror = ".text-error", 
@@ -186,7 +186,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
 }, adminApp.AdminContributionsList = {
     view: function(ctrl, args) {
         return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
-            return m.component(adminApp.AdminContributionsListDetail, {
+            return m.component(adminApp.AdminItem, {
                 contribution: contribution,
                 key: contribution
             });

@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListDetail = {
+adminApp.AdminItem = {
   controller: function(args){
     this.contribution = args.contribution;
     this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';

@@ -1,6 +1,6 @@
-describe('AdminContributionsListDetails component', function() {
+describe('AdminItems component', function() {
   var setController = function(contribution){
-    ctrl = m.component(adminApp.AdminContributionsListDetail, {contribution: contribution()[0]}).controller();
+    ctrl = m.component(adminApp.AdminItem, {contribution: contribution()[0]}).controller();
   };
 
   describe('controller', function(){
