@@ -67,9 +67,9 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = 
             contribution: contribution
         }), m(".w-col.w-col-4") ]) ]);
     }
-}, adminApp.AdminContributionsFilter = {
+}, adminApp.AdminFilter = {
     controller: function(args) {
-        var vm = this.vm = adminApp.AdminContributionsFilter.VM, filter = this.filter = function() {
+        var vm = this.vm = adminApp.AdminFilter.VM, filter = this.filter = function() {
             return args.onFilter(vm.parameters()), !1;
         };
         this.displayFilters = adminApp.ToggleDiv.toggler(), setTimeout(function() {
@@ -109,7 +109,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = 
     }
 };
 
-var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
+var vm = adminApp.AdminFilter.VM = m.postgrest.filtersVM({
     full_text_index: "@@",
     state: "eq",
     gateway: "eq",
@@ -202,7 +202,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
         };
     },
     view: function(ctrl) {
-        return [ m.component(adminApp.AdminContributionsFilter, {
+        return [ m.component(adminApp.AdminFilter, {
             onFilter: ctrl.filterContributions
         }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {
             contributions: ctrl.vm.collection

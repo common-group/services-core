@@ -1,5 +1,5 @@
 describe('adminContributionsFilterVM view-model', function() {
-  var adminContributionsFilterVM = adminApp.AdminContributionsFilter.VM;
+  var adminContributionsFilterVM = adminApp.AdminFilter.VM;
 
   describe('initialization', function() {
     it('should return a propified permalink object', function() {
@@ -17,7 +17,7 @@ describe('adminContributionsFilterVM view-model', function() {
       adminContributionsFilterVM.created_at.gte(m.format('DD/MM/YYYY'));
       expect(adminContributionsFilterVM.created_at.gte.toFilter()).toEqual(m.format());
     });
-  });  
+  });
 
   describe("created_at.lte.toFilter", function() {
     it("should convert to ISO format at end of day", function() {
@@ -25,5 +25,5 @@ describe('adminContributionsFilterVM view-model', function() {
       adminContributionsFilterVM.created_at.lte(m.format('DD/MM/YYYY'));
       expect(adminContributionsFilterVM.created_at.lte.toFilter()).toEqual(m.endOf('day').format());
     });
-  });  
+  });
 });

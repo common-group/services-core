@@ -22,7 +22,7 @@ describe('AdminContributions component', function() {
       spyOn(ctrl.vm, "filter").and.callThrough();
     });
 
-    it('should render adminContributionsFilter nested component', function() {
+    it('should render AdminFilternested component', function() {
       expect($output.has('#admin-contributions-filter')).toBeTrue();
     });
     it('should render adminContributionsList nested component', function() {

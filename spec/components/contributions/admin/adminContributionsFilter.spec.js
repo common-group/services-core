@@ -1,7 +1,7 @@
-describe('AdminContributionsFilter component', function() {
-  var AdminContributionsFilter = m.component(adminApp.AdminContributionsFilter),
-      ctrl = AdminContributionsFilter.controller();
-  
+describe('AdminFilter component', function() {
+  var AdminFilter= m.component(adminApp.AdminFilter),
+      ctrl = AdminFilter.controller();
+
   beforeAll(function() {
     spyOn(ctrl, 'filter')
   });
@@ -17,7 +17,7 @@ describe('AdminContributionsFilter component', function() {
 
   describe('view', function() {
     beforeAll(function() {
-      view = AdminContributionsFilter.view(ctrl);
+      view = AdminFilter.view(ctrl);
       $output = mq(view);
     });
 

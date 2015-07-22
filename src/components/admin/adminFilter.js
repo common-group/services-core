@@ -1,6 +1,6 @@
-adminApp.AdminContributionsFilter = {
+adminApp.AdminFilter= {
   controller: function(args){
-    var vm = this.vm = adminApp.AdminContributionsFilter.VM;
+    var vm = this.vm = adminApp.AdminFilter.VM;
 
     var filter = this.filter = function(){
       args.onFilter(vm.parameters());
@@ -9,7 +9,7 @@ adminApp.AdminContributionsFilter = {
 
     this.displayFilters = adminApp.ToggleDiv.toggler()
 
-    setTimeout(function(){ 
+    setTimeout(function(){
       filter();
     });
   },

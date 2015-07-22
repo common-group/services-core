@@ -3,16 +3,16 @@ adminApp.AdminContributions = {
     var vm = this.vm = adminApp.AdminContributions.VM
         error = this.error = m.prop();
 
-    this.filterContributions = function(filters){ 
+    this.filterContributions = function(filters){
       vm.filter(filters).then(null, function(serverError){
         error(serverError.message);
-      }); 
+      });
     };
   },
 
   view: function(ctrl) {
-    return  [ 
-      m.component(adminApp.AdminContributionsFilter,{onFilter: ctrl.filterContributions}),
+    return  [
+      m.component(adminApp.AdminFilter,{onFilter: ctrl.filterContributions}),
       m(".w-section.section",[
         m(".w-container",[
           m(".w-row.u-marginbottom-20", [
@@ -38,6 +38,6 @@ adminApp.AdminContributions = {
           ])
         ])
       ])
-    ];   
+    ];
   }
 };
