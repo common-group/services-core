@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListPaymentDetailBox = {
+adminApp.AdminDetail = {
   controller: function(args) {
     this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler();
     this.displayRefundDropDown = adminApp.ToggleDiv.toggler();
@@ -105,4 +105,3 @@ adminApp.AdminContributionsListPaymentDetailBox = {
     ]);
   }
 }
-

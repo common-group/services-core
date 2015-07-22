@@ -91,7 +91,7 @@ adminApp.AdminContributionsListDetail = {
         m(".w-col.w-col-2",[
           m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
           m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
-          m(".fontsize-smallest", ["ID do Gateway: ", 
+          m(".fontsize-smallest", ["ID do Gateway: ",
             m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id)
           ])
         ]),
@@ -106,7 +106,7 @@ adminApp.AdminContributionsListDetail = {
       ]),
       m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", { onclick: ctrl.displayDetailBox.toggle }),
       m.component(adminApp.ToggleDiv, { display: ctrl.displayDetailBox, content:
-        m.component(adminApp.AdminContributionsListPaymentDetailBox, { contribution: contribution })
+        m.component(adminApp.AdminDetail, { contribution: contribution })
       })
     ]);
   }

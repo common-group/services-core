@@ -26,7 +26,7 @@ var adminApp = window.adminApp = {
     }, p;
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
-adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributionsListPaymentDetailBox = {
+adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = {
     controller: function(args) {
         this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
         this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
@@ -180,7 +180,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
             onclick: ctrl.displayDetailBox.toggle
         }), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayDetailBox,
-            content: m.component(adminApp.AdminContributionsListPaymentDetailBox, {
+            content: m.component(adminApp.AdminDetail, {
                 contribution: contribution
             })
         }) ]);
