@@ -1,5 +1,5 @@
 describe('AdminFilter component', function() {
-  var AdminFilter= m.component(adminApp.AdminFilter),
+  var AdminFilter = m.component(adminApp.AdminFilter,{onFilter: function(){}}),
       ctrl = AdminFilter.controller();
 
   beforeAll(function() {
