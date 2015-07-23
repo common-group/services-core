@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListPaymentDetailBoxDetailed = {
+adminApp.AdminTransaction = {
   view: function(ctrl, args) {
     var contribution = args.contribution;
     return m(".w-col.w-col-4",[
@@ -32,6 +32,3 @@ adminApp.AdminContributionsListPaymentDetailBoxDetailed = {
     ])
   }
 }
-
-
-

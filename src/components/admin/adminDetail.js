@@ -98,7 +98,7 @@ adminApp.AdminDetail = {
         ])
       ]),
       m(".w-row.card.card-terciary.u-radius",[
-        m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed, { contribution: contribution }),
+        m.component(adminApp.AdminTransaction, { contribution: contribution }),
         m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, { contribution: contribution }),
         m(".w-col.w-col-4")
       ])
