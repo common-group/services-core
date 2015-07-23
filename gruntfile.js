@@ -2,7 +2,14 @@
 "use strict";
 
 module.exports = function( grunt ) {
-  var sources = ['src/catarse_admin.js', 'src/models/**/*.js', 'src/**/*.js'];
+  var sources = [
+    'src/*.js', 
+    'src/models/**/*.js',
+    'src/components/contributions/**/*.js',
+    'src/components/admin/**/*.js',
+    'src/components/transactions/**/*.js',
+    'src/**/*.js'
+  ];
   grunt.initConfig({
     // TODO: change to read component.json
     pkg: require('./package.json'),

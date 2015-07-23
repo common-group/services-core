@@ -6,9 +6,57 @@
 */
 var adminApp = window.adminApp = {
     models: {}
+}, momentify = function(date, format) {
+    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
+}, momentFromString = function(date, format) {
+    var european = moment(date, format || "DD/MM/YYYY");
+    return european.isValid() ? european : moment(date);
+}, generateFormatNumber = function(s, c) {
+    return function(number, n, x) {
+        if (null == number || void 0 == number) return null;
+        var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
+        return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
+    };
+}, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
+    var p = m.prop(defaultState);
+    return p.toggle = function() {
+        p(p() === alternateState ? defaultState : alternateState);
+    }, p;
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
-adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = {
+adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
+    controller: function() {
+        var vm = this.vm = adminApp.AdminContributions.VM;
+        error = this.error = m.prop(), this.filterContributions = function(filters) {
+            vm.filter(filters).then(null, function(serverError) {
+                error(serverError.message);
+            });
+        };
+    },
+    view: function(ctrl) {
+        return [ m.component(adminApp.AdminFilter, {
+            onFilter: ctrl.filterContributions
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminList, {
+            contributions: ctrl.vm.collection
+        }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
+            onclick: ctrl.vm.nextPage
+        }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
+    }
+}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
+adminApp.PaymentBadge = {
+    view: function(ctrl, args) {
+        var contribution = args.contribution;
+        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
+            switch (contribution.payment_method.toLowerCase()) {
+              case "boletobancario":
+                return m("span#boleto-detail", "");
+
+              case "cartaodecredito":
+                return m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ contribution.card_first_digits + "******" + contribution.card_last_digits, m("br"), contribution.card_brand + " " + contribution.installments + "x" ]);
+            }
+        }() ]);
+    }
+}, adminApp.AdminDetail = {
     controller: function(args) {
         this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
         this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
@@ -53,12 +101,12 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = 
     }
 }, adminApp.AdminFilter = {
     controller: function(args) {
-        var vm = this.vm = adminApp.AdminFilter.VM, filter = this.filter = function() {
+        var vm = this.vm = adminApp.AdminFilter.VM;
+        console.log(args);
+        var filter = this.filter = function() {
             return args.onFilter(vm.parameters()), !1;
         };
-        this.displayFilters = adminApp.ToggleDiv.toggler(), setTimeout(function() {
-            filter();
-        });
+        this.displayFilters = adminApp.ToggleDiv.toggler(), filter();
     },
     view: function(ctrl, args) {
         return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form", {
@@ -176,56 +224,6 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
             });
         }) ]);
     }
-}, adminApp.AdminContributions = {
-    controller: function() {
-        var vm = this.vm = adminApp.AdminContributions.VM;
-        error = this.error = m.prop(), this.filterContributions = function(filters) {
-            vm.filter(filters).then(null, function(serverError) {
-                error(serverError.message);
-            });
-        };
-    },
-    view: function(ctrl) {
-        return [ m.component(adminApp.AdminFilter, {
-            onFilter: ctrl.filterContributions
-        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminList, {
-            contributions: ctrl.vm.collection
-        }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
-            onclick: ctrl.vm.nextPage
-        }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
-    }
-}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
-adminApp.PaymentBadge = {
-    view: function(ctrl, args) {
-        var contribution = args.contribution;
-        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
-            switch (contribution.payment_method.toLowerCase()) {
-              case "boletobancario":
-                return m("span#boleto-detail", "");
-
-              case "cartaodecredito":
-                return m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ contribution.card_first_digits + "******" + contribution.card_last_digits, m("br"), contribution.card_brand + " " + contribution.installments + "x" ]);
-            }
-        }() ]);
-    }
-}, adminApp.ToggleDiv = {
-    toggler: function() {
-        return toggleProp("none", "block");
-    },
-    controller: function(args) {
-        this.vm = {
-            display: args.display
-        };
-    },
-    view: function(ctrl, args) {
-        return m(".toggleDiv", {
-            style: {
-                transition: "all .1s ease-out",
-                overflow: "hidden",
-                display: ctrl.vm.display()
-            }
-        }, [ args.content ]);
-    }
 }, adminApp.AdminTransaction = {
     view: function(ctrl, args) {
         var contribution = args.contribution;
@@ -262,22 +260,22 @@ adminApp.PaymentBadge = {
             return m(".w-row.fontsize-smallest.lineheight-looser.date-event", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", cEvent.date) ]), m(".w-col.w-col-6", [ m("div", cEvent.name) ]) ]);
         }) ]);
     }
-};
-
-var momentify = function(date, format) {
-    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
-}, momentFromString = function(date, format) {
-    var european = moment(date, format || "DD/MM/YYYY");
-    return european.isValid() ? european : moment(date);
-}, generateFormatNumber = function(s, c) {
-    return function(number, n, x) {
-        if (null == number || void 0 == number) return null;
-        var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
-        return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
-    };
-}, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
-    var p = m.prop(defaultState);
-    return p.toggle = function() {
-        p(p() === alternateState ? defaultState : alternateState);
-    }, p;
+}, adminApp.ToggleDiv = {
+    toggler: function() {
+        return toggleProp("none", "block");
+    },
+    controller: function(args) {
+        this.vm = {
+            display: args.display
+        };
+    },
+    view: function(ctrl, args) {
+        return m(".toggleDiv", {
+            style: {
+                transition: "all .1s ease-out",
+                overflow: "hidden",
+                display: ctrl.vm.display()
+            }
+        }, [ args.content ]);
+    }
 };

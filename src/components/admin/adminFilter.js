@@ -1,14 +1,14 @@
 adminApp.AdminFilter= {
   controller: function(args){
     var vm = this.vm = adminApp.AdminFilter.VM;
-
+    console.log(args);
     var filter = this.filter = function(){
       args.onFilter(vm.parameters());
       return false;
     };
 
     this.displayFilters = adminApp.ToggleDiv.toggler();
-    
+
     filter();
   },
 
