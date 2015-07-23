@@ -101,7 +101,7 @@ adminApp.AdminItem = {
           ]),
           m(".fontsize-smallest.fontweight-semibold",[
             m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", contribution.payment_method)
-          ]),( ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {contribution: contribution}) : "")
+          ]),( ctrl.paymentDetails() ? m.component(adminApp.PaymentBadge, {contribution: contribution}) : "")
         ])
       ]),
       m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", { onclick: ctrl.displayDetailBox.toggle }),

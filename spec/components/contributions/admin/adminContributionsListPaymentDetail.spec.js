@@ -1,8 +1,8 @@
-describe('AdminContributionsListPaymentDetail component', function() {
+describe('PaymentBadge component', function() {
   describe('view', function() {
     var getOutput = function(payment_method){
       var contribution = ContributionDetailMockery(1, {payment_method: payment_method}),
-          view = adminApp.AdminContributionsListPaymentDetail.view({},{contribution: contribution[0]});
+          view = adminApp.PaymentBadge.view({},{contribution: contribution[0]});
       return mq(view);
     };
 
