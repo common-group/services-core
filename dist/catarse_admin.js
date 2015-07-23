@@ -6,22 +6,6 @@
 */
 var adminApp = window.adminApp = {
     models: {}
-}, momentify = function(date, format) {
-    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
-}, momentFromString = function(date, format) {
-    var european = moment(date, format || "DD/MM/YYYY");
-    return european.isValid() ? european : moment(date);
-}, generateFormatNumber = function(s, c) {
-    return function(number, n, x) {
-        if (null == number || void 0 == number) return null;
-        var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
-        return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
-    };
-}, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
-    var p = m.prop(defaultState);
-    return p.toggle = function() {
-        p(p() === alternateState ? defaultState : alternateState);
-    }, p;
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = {
@@ -278,4 +262,22 @@ adminApp.PaymentBadge = {
             return m(".w-row.fontsize-smallest.lineheight-looser.date-event", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", cEvent.date) ]), m(".w-col.w-col-6", [ m("div", cEvent.name) ]) ]);
         }) ]);
     }
+};
+
+var momentify = function(date, format) {
+    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
+}, momentFromString = function(date, format) {
+    var european = moment(date, format || "DD/MM/YYYY");
+    return european.isValid() ? european : moment(date);
+}, generateFormatNumber = function(s, c) {
+    return function(number, n, x) {
+        if (null == number || void 0 == number) return null;
+        var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
+        return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
+    };
+}, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
+    var p = m.prop(defaultState);
+    return p.toggle = function() {
+        p(p() === alternateState ? defaultState : alternateState);
+    }, p;
 };
