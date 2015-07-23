@@ -63,7 +63,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminDetail = 
             content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
         }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminTransaction, {
             contribution: contribution
-        }), m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, {
+        }), m.component(adminApp.AdminTransactionHistory, {
             contribution: contribution
         }), m(".w-col.w-col-4") ]) ]);
     }
@@ -249,7 +249,7 @@ adminApp.PaymentBadge = {
             return contribution.is_second_slip ? [ m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via") ] : void 0;
         }() ]) ]);
     }
-}, adminApp.AdminContributionsListPaymentDetailBoxHistory = {
+}, adminApp.AdminTransactionHistory = {
     controller: function(args) {
         var contribution = args.contribution, mapEvents = _.reduce([ {
             date: contribution.paid_at,
