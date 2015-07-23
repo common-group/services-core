@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListDetail = {
+adminApp.AdminItem = {
   controller: function(args){
     this.contribution = args.contribution;
     this.contribution.user_profile_img = this.contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
@@ -91,7 +91,7 @@ adminApp.AdminContributionsListDetail = {
         m(".w-col.w-col-2",[
           m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
           m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
-          m(".fontsize-smallest", ["ID do Gateway: ", 
+          m(".fontsize-smallest", ["ID do Gateway: ",
             m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id)
           ])
         ]),
@@ -101,12 +101,12 @@ adminApp.AdminContributionsListDetail = {
           ]),
           m(".fontsize-smallest.fontweight-semibold",[
             m("span.fa"+ctrl.paymentMethodClass())," ",m("a.link-hidden[href='#']", contribution.payment_method)
-          ]),( ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {contribution: contribution}) : "")
+          ]),( ctrl.paymentDetails() ? m.component(adminApp.PaymentBadge, {contribution: contribution}) : "")
         ])
       ]),
       m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", { onclick: ctrl.displayDetailBox.toggle }),
       m.component(adminApp.ToggleDiv, { display: ctrl.displayDetailBox, content:
-        m.component(adminApp.AdminContributionsListPaymentDetailBox, { contribution: contribution })
+        m.component(adminApp.AdminDetail, { contribution: contribution })
       })
     ]);
   }

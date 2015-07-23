@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListPaymentDetailBox = {
+adminApp.AdminDetail = {
   controller: function(args) {
     this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler();
     this.displayRefundDropDown = adminApp.ToggleDiv.toggler();
@@ -98,11 +98,10 @@ adminApp.AdminContributionsListPaymentDetailBox = {
         ])
       ]),
       m(".w-row.card.card-terciary.u-radius",[
-        m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed, { contribution: contribution }),
-        m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, { contribution: contribution }),
+        m.component(adminApp.AdminTransaction, { contribution: contribution }),
+        m.component(adminApp.AdminTransactionHistory, { contribution: contribution }),
         m(".w-col.w-col-4")
       ])
     ]);
   }
 }
-

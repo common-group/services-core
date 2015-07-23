@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListPaymentDetailBoxHistory = {
+adminApp.AdminTransactionHistory = {
   controller: function(args) {
     var contribution = args.contribution;
     var mapEvents = _.reduce([
@@ -37,5 +37,3 @@ adminApp.AdminContributionsListPaymentDetailBoxHistory = {
     ])
   }
 }
-
-

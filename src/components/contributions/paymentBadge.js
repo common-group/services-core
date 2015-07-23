@@ -1,4 +1,4 @@
-adminApp.AdminContributionsListPaymentDetail = {
+adminApp.PaymentBadge = {
   view: function(ctrl, args){
     var contribution = args.contribution;
     return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [

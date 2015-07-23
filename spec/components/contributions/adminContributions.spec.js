@@ -1,6 +1,6 @@
 describe('AdminContributions component', function() {
   var AdminContributions = null, ctrl = null;
-  
+
   beforeAll(function(){
     AdminContributions = m.component(adminApp.AdminContributions);
     ctrl = AdminContributions.controller();
@@ -22,10 +22,11 @@ describe('AdminContributions component', function() {
       spyOn(ctrl.vm, "filter").and.callThrough();
     });
 
-    it('should render adminContributionsFilter nested component', function() {
+    it('should render AdminFilter nested component', function() {
+      //TO DO: figure out a way to test for the real component implementation, not relying on HTML attr.
       expect($output.has('#admin-contributions-filter')).toBeTrue();
     });
-    it('should render adminContributionsList nested component', function() {
+    it('should render AdminList nested component', function() {
       expect($output.has('#admin-contributions-list')).toBeTrue();
     });
     it('should call Contribution Details when filtering', function() {

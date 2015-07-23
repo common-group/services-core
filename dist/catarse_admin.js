@@ -34,49 +34,104 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
         };
     },
     view: function(ctrl) {
-        return [ m.component(adminApp.AdminContributionsFilter, {
+        return [ m.component(adminApp.AdminFilter, {
             onFilter: ctrl.filterContributions
-        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminContributionsList, {
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminList, {
             contributions: ctrl.vm.collection
         }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: ctrl.vm.nextPage
         }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
     }
-}, adminApp.AdminContributionsFilter = {
+}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
+adminApp.PaymentBadge = {
+    view: function(ctrl, args) {
+        var contribution = args.contribution;
+        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
+            switch (contribution.payment_method.toLowerCase()) {
+              case "boletobancario":
+                return m("span#boleto-detail", "");
+
+              case "cartaodecredito":
+                return m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ contribution.card_first_digits + "******" + contribution.card_last_digits, m("br"), contribution.card_brand + " " + contribution.installments + "x" ]);
+            }
+        }() ]);
+    }
+}, adminApp.AdminDetail = {
     controller: function(args) {
-        var vm = this.vm = adminApp.AdminContributionsFilter.VM, filter = this.filter = function() {
-            return args.onFilter(vm.parameters()), !1;
-        };
-        this.displayFilters = adminApp.ToggleDiv.toggler(), setTimeout(function() {
-            filter();
-        });
+        this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
+        this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
+        this.displatAnonDropDown = adminApp.ToggleDiv.toggler();
     },
     view: function(ctrl, args) {
-        return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form[data-name='Email Form'][id='email-form'][name='email-form']", {
+        var contribution = args.contribution;
+        return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30.w-hidden", [ m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayRequestRefundDropDown.toggle
+        }, "Pedir reembolso"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayRequestRefundDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("a.btn.btn-small[href='#']", "Solicitar reembolso") ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayRefundDropDown.toggle
+        }, "Estornar"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayRefundDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("a.btn.btn-small[href='#']", "Solicitar estorno") ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated[href='#']", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayTransferContributionDropDown.toggle
+        }, "Transferir apoio"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayTransferContributionDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m("label[for='name-2']", "Id do novo apoiador:"), m("input.w-input.text-field[data-name='Name 2'][id='name-2'][name='name'][placeholder='ex: 129908'][type='text']"), m("input.w-button.btn.btn-small[data-wait='Please wait...'][type='submit'][value='Transferir']") ]) ]) ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displayChangeRewardDropDown.toggle
+        }, "Trocar recompensa"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displayChangeRewardDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {
+                style: {
+                    display: " none"
+                }
+            }, [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]) ]) ]) ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            onclick: ctrl.displatAnonDropDown.toggle
+        }, "Anonimato"), m.component(adminApp.ToggleDiv, {
+            display: ctrl.displatAnonDropDown,
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
+        }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminTransaction, {
+            contribution: contribution
+        }), m.component(adminApp.AdminTransactionHistory, {
+            contribution: contribution
+        }), m(".w-col.w-col-4") ]) ]);
+    }
+}, adminApp.AdminFilter = {
+    controller: function(args) {
+        var vm = this.vm = adminApp.AdminFilter.VM, filter = this.filter = function() {
+            return args.onFilter(vm.parameters()), !1;
+        };
+        this.displayFilters = adminApp.ToggleDiv.toggler(), filter();
+    },
+    view: function(ctrl, args) {
+        return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form", {
             onsubmit: ctrl.filter
-        }, [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-10", [ m("input.w-input.text-field.positive.medium[id='field'][name='field'][placeholder='Busque por projeto, email, Ids do usuário e do apoio...'][type='text']", {
+        }, [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-10", [ m("input.w-input.text-field.positive.medium[placeholder='Busque por projeto, email, Ids do usuário e do apoio...'][type='text']", {
             onchange: m.withAttr("value", ctrl.vm.full_text_index),
             value: ctrl.vm.full_text_index()
-        }), m("a.fontsize-smallest.link-hidden-light[data-ix='admin-filter'][href='#']", {
+        }), m("button.fontsize-smallest.link-hidden-light", {
             onclick: ctrl.displayFilters.toggle
-        }, "Filtros avançados  >") ]), m(".w-col.w-col-2", [ m("input#filter-btn.btn.btn-large.u-marginbottom-10[type='submit'][href='#'][value='Buscar']") ]) ]), m.component(adminApp.ToggleDiv, {
+        }, "Filtros avançados  >") ]), m(".w-col.w-col-2", [ m("input#filter-btn.btn.btn-large.u-marginbottom-10[type='submit'][value='Buscar']") ]) ]), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayFilters,
-            content: m("#advanced-search.w-row.admin-filters", [ m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[id='field-3'][name='field-3']", {
+            content: m("#advanced-search.w-row.admin-filters", [ m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[name='field-3']", {
                 onchange: m.withAttr("value", ctrl.vm.state),
                 value: ctrl.vm.state()
-            }, [ m("option[value='']", "Qualquer um"), m("option[value='pending']", "pending"), m("option[value='refused']", "refused"), m("option[value='paid']", "paid"), m("option[value='pending_refund']", "pending_refund"), m("option[value='refunded']", "refunded"), m("option[value='chargeback']", "chargeback"), m("option[value='deleted']", "deleted") ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-8']", "Gateway"), m("select.w-select.text-field.positive[data-name='Field 8'][id='field-8'][name='field-8']", {
+            }, [ m("option[value='']", "Qualquer um"), m("option[value='pending']", "pending"), m("option[value='refused']", "refused"), m("option[value='paid']", "paid"), m("option[value='pending_refund']", "pending_refund"), m("option[value='refunded']", "refunded"), m("option[value='chargeback']", "chargeback"), m("option[value='deleted']", "deleted") ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-8']", "Gateway"), m("select.w-select.text-field.positive[name='field-8']", {
                 onchange: m.withAttr("value", ctrl.vm.gateway),
                 value: ctrl.vm.gateway()
-            }, [ m("option[value='']", "Qualquer um"), m("option[value='Pagarme']", "Pagarme"), m("option[value='MoIP']", "MoIP"), m("option[value='PayPal']", "PayPal"), m("option[value='Credits']", "Créditos") ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-6']", "Valores entre"), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", {
+            }, [ m("option[value='']", "Qualquer um"), m("option[value='Pagarme']", "Pagarme"), m("option[value='MoIP']", "MoIP"), m("option[value='PayPal']", "PayPal"), m("option[value='Credits']", "Créditos") ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-6']", "Valores entre"), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
                 onchange: m.withAttr("value", ctrl.vm.value.gte),
                 value: ctrl.vm.value.gte()
-            }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", {
+            }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
                 onchange: m.withAttr("value", ctrl.vm.value.lte),
                 value: ctrl.vm.value.lte()
-            }) ]) ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-7']", "Período do apoio"), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", {
+            }) ]) ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-7']", "Período do apoio"), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
                 onchange: m.withAttr("value", ctrl.vm.created_at.gte),
                 value: ctrl.vm.created_at.gte()
-            }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[data-name='Field 5'][id='field-5'][name='field-5'][type='text']", {
+            }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
                 onchange: m.withAttr("value", ctrl.vm.created_at.lte),
                 value: ctrl.vm.created_at.lte()
             }) ]) ]) ]) ])
@@ -84,7 +139,7 @@ adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContribut
     }
 };
 
-var vm = adminApp.AdminContributionsFilter.VM = m.postgrest.filtersVM({
+var vm = adminApp.AdminFilter.VM = m.postgrest.filtersVM({
     full_text_index: "@@",
     state: "eq",
     gateway: "eq",
@@ -96,16 +151,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     return momentFromString(this()).endOf("day").format();
 }, vm.created_at.gte.toFilter = function() {
     return momentFromString(this()).format();
-}, adminApp.AdminContributionsList = {
-    view: function(ctrl, args) {
-        return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
-            return m.component(adminApp.AdminContributionsListDetail, {
-                contribution: contribution,
-                key: contribution
-            });
-        }) ]);
-    }
-}, adminApp.AdminContributionsListDetail = {
+}, adminApp.AdminItem = {
     controller: function(args) {
         this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
         this.CSSsuccess = ".text-success", this.CSSwaiting = ".text-waiting", this.CSSerror = ".text-error", 
@@ -156,81 +202,34 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
     },
     view: function(ctrl, args) {
         var contribution = ctrl.contribution;
-        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + contribution.user_profile_img + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_online_date) + " a " + momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method) ]), ctrl.paymentDetails() ? m.component(adminApp.AdminContributionsListPaymentDetail, {
+        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + contribution.user_profile_img + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_online_date) + " a " + momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method) ]), ctrl.paymentDetails() ? m.component(adminApp.PaymentBadge, {
             contribution: contribution
         }) : "" ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", {
             onclick: ctrl.displayDetailBox.toggle
         }), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayDetailBox,
-            content: m.component(adminApp.AdminContributionsListPaymentDetailBox, {
+            content: m.component(adminApp.AdminDetail, {
                 contribution: contribution
             })
         }) ]);
     }
-}, adminApp.AdminContributionsListPaymentDetail = {
+}, adminApp.AdminList = {
     view: function(ctrl, args) {
-        var contribution = args.contribution;
-        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
-            switch (contribution.payment_method.toLowerCase()) {
-              case "boletobancario":
-                return m("span#boleto-detail", "");
-
-              case "cartaodecredito":
-                return m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ contribution.card_first_digits + "******" + contribution.card_last_digits, m("br"), contribution.card_brand + " " + contribution.installments + "x" ]);
-            }
-        }() ]);
+        return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
+            return m.component(adminApp.AdminItem, {
+                contribution: contribution,
+                key: contribution
+            });
+        }) ]);
     }
-}, adminApp.AdminContributionsListPaymentDetailBox = {
-    controller: function(args) {
-        this.displayRequestRefundDropDown = adminApp.ToggleDiv.toggler(), this.displayRefundDropDown = adminApp.ToggleDiv.toggler(), 
-        this.displayTransferContributionDropDown = adminApp.ToggleDiv.toggler(), this.displayChangeRewardDropDown = adminApp.ToggleDiv.toggler(), 
-        this.displatAnonDropDown = adminApp.ToggleDiv.toggler();
-    },
-    view: function(ctrl, args) {
-        var contribution = args.contribution;
-        return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30.w-hidden", [ m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayRequestRefundDropDown.toggle
-        }, "Pedir reembolso"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayRequestRefundDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("a.btn.btn-small[href='#']", "Solicitar reembolso") ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayRefundDropDown.toggle
-        }, "Estornar"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayRefundDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("a.btn.btn-small[href='#']", "Solicitar estorno") ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated[href='#']", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayTransferContributionDropDown.toggle
-        }, "Transferir apoio"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayTransferContributionDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m("label[for='name-2']", "Id do novo apoiador:"), m("input.w-input.text-field[data-name='Name 2'][id='name-2'][name='name'][placeholder='ex: 129908'][type='text']"), m("input.w-button.btn.btn-small[data-wait='Please wait...'][type='submit'][value='Transferir']") ]) ]) ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displayChangeRewardDropDown.toggle
-        }, "Trocar recompensa"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayChangeRewardDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {
-                style: {
-                    display: " none"
-                }
-            }, [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]) ]) ]) ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-            onclick: ctrl.displatAnonDropDown.toggle
-        }, "Anonimato"), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displatAnonDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
-        }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminContributionsListPaymentDetailBoxDetailed, {
-            contribution: contribution
-        }), m.component(adminApp.AdminContributionsListPaymentDetailBoxHistory, {
-            contribution: contribution
-        }), m(".w-col.w-col-4") ]) ]);
-    }
-}, adminApp.AdminContributionsListPaymentDetailBoxDetailed = {
+}, adminApp.AdminTransaction = {
     view: function(ctrl, args) {
         var contribution = args.contribution;
         return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Recompensa: " + formatNumber(contribution.reward_minimum_value, 2, 3), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + (contribution.gateway_data && contribution.gateway_data.acquirer_name), m("br"), function() {
             return contribution.is_second_slip ? [ m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via") ] : void 0;
         }() ]) ]);
     }
-}, adminApp.AdminContributionsListPaymentDetailBoxHistory = {
+}, adminApp.AdminTransactionHistory = {
     controller: function(args) {
         var contribution = args.contribution, mapEvents = _.reduce([ {
             date: contribution.paid_at,
@@ -259,8 +258,7 @@ vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
             return m(".w-row.fontsize-smallest.lineheight-looser.date-event", [ m(".w-col.w-col-6", [ m(".fontcolor-secondary", cEvent.date) ]), m(".w-col.w-col-6", [ m("div", cEvent.name) ]) ]);
         }) ]);
     }
-}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
-adminApp.ToggleDiv = {
+}, adminApp.ToggleDiv = {
     toggler: function() {
         return toggleProp("none", "block");
     },
