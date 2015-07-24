@@ -11,9 +11,9 @@ vm.state('');
 vm.gateway('');
 
 vm.created_at.lte.toFilter = function(){
-  return momentFromString(this()).endOf('day').format();
+  return momentFromString(vm.created_at.lte()).endOf('day').format();
 };
 
 vm.created_at.gte.toFilter = function(){
-  return momentFromString(this()).format();
+  return momentFromString(vm.created_at.gte()).format();
 };

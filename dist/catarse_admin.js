@@ -148,9 +148,9 @@ var vm = adminApp.AdminFilter.VM = m.postgrest.filtersVM({
 });
 
 vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
-    return momentFromString(this()).endOf("day").format();
+    return momentFromString(vm.created_at.lte()).endOf("day").format();
 }, vm.created_at.gte.toFilter = function() {
-    return momentFromString(this()).format();
+    return momentFromString(vm.created_at.gte()).format();
 }, adminApp.AdminItem = {
     controller: function(args) {
         this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
