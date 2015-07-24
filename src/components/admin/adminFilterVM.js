@@ -8,7 +8,7 @@ var vm = adminApp.AdminFilter.VM = m.postgrest.filtersVM({
 
 // Set default values
 vm.state('');
-vm.gateway('Pagarme');
+vm.gateway('');
 
 vm.created_at.lte.toFilter = function(){
   return momentFromString(this()).endOf('day').format();

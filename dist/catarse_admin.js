@@ -147,7 +147,7 @@ var vm = adminApp.AdminFilter.VM = m.postgrest.filtersVM({
     created_at: "between"
 });
 
-vm.state(""), vm.gateway("Pagarme"), vm.created_at.lte.toFilter = function() {
+vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
     return momentFromString(this()).endOf("day").format();
 }, vm.created_at.gte.toFilter = function() {
     return momentFromString(this()).format();
