@@ -1,9 +1,8 @@
-
 "use strict";
 
 module.exports = function( grunt ) {
   var sources = [
-    'src/*.js', 
+    'src/*.js',
     'src/models/**/*.js',
     'src/components/contributions/**/*.js',
     'src/components/admin/**/*.js',

@@ -1,88 +1,36 @@
-adminApp.AdminFilter= {
-  controller: function(args){
-    var vm = this.vm = adminApp.AdminFilter.VM;
-    var filter = this.filter = function(){
-      args.onFilter(vm.parameters());
-      return false;
-    };
-
-    this.displayFilters = adminApp.ToggleDiv.toggler();
-
-    filter();
+adminApp.AdminFilter = {
+  controller: function() {
+    this.toggler = toggleProp(false, true);
   },
-
   view: function(ctrl, args) {
-    return m("#admin-contributions-filter.w-section.page-header",[
-      m(".w-container",[
-        m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"),
-        m(".w-form",[
-          m("form", {onsubmit: ctrl.filter}, [
-            m(".w-row.u-marginbottom-20", [
-              m(".w-col.w-col-10", [
-                m("input.w-input.text-field.positive.medium[placeholder='Busque por projeto, email, Ids do usuário e do apoio...'][type='text']", {onchange: m.withAttr("value", ctrl.vm.full_text_index), value: ctrl.vm.full_text_index()}),
-                m("button.fontsize-smallest.link-hidden-light", {onclick: ctrl.displayFilters.toggle}, "Filtros avançados  >")
-              ]),
-              m(".w-col.w-col-2", [
-                m("input#filter-btn.btn.btn-large.u-marginbottom-10[type='submit'][value='Buscar']")
-              ])
-            ]),
+    var formBuilder = function(data) {
+      return {
+        'main': m.component(adminApp.filterMain, data),
+        'dropdown': m.component(adminApp.filterDropdown, data),
+        'numberRange': m.component(adminApp.filterNumberRange, data),
+        'dateRange': m.component(adminApp.filterDateRange, data)
+      };
+    };
+    var main = _.findWhere(args.form, {type: 'main'});
 
-            m.component(adminApp.ToggleDiv, { display: ctrl.displayFilters, content:
-              m("#advanced-search.w-row.admin-filters", [
-                m(".w-col.w-col-3.w-col-small-6", [
-                  m("label.fontsize-smaller[for='field-3']", "Com o estado"),
-                  m("select.w-select.text-field.positive[name='field-3']", {onchange: m.withAttr("value", ctrl.vm.state), value: ctrl.vm.state()}, [
-                    m("option[value='']", "Qualquer um"),
-                    m("option[value='pending']", "pending"),
-                    m("option[value='refused']", "refused"),
-                    m("option[value='paid']", "paid"),
-                    m("option[value='pending_refund']", "pending_refund"),
-                    m("option[value='refunded']", "refunded"),
-                    m("option[value='chargeback']", "chargeback"),
-                    m("option[value='deleted']", "deleted")
-                  ])
-                ]),
-                m(".w-col.w-col-3.w-col-small-6", [
-                  m("label.fontsize-smaller[for='field-8']", "Gateway"),
-                  m("select.w-select.text-field.positive[name='field-8']", {onchange: m.withAttr("value", ctrl.vm.gateway), value: ctrl.vm.gateway()}, [
-                    m("option[value='']", "Qualquer um"),
-                    m("option[value='Pagarme']", "Pagarme"),
-                    m("option[value='MoIP']", "MoIP"),
-                    m("option[value='PayPal']", "PayPal"),
-                    m("option[value='Credits']", "Créditos")
-                  ])
-                ]),
-                m(".w-col.w-col-3.w-col-small-6", [
-                  m("label.fontsize-smaller[for='field-6']", "Valores entre"),
-                  m(".w-row", [
-                    m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [
-                      m("input.w-input.text-field.positive[name='field-5'][type='text']", {onchange: m.withAttr("value", ctrl.vm.value['gte']), value: ctrl.vm.value['gte']()})
-                    ]),
-                    m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [
-                      m(".fontsize-smaller.u-text-center.lineheight-looser", "e")
-                    ]),
-                    m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [
-                      m("input.w-input.text-field.positive[name='field-5'][type='text']", {onchange: m.withAttr("value", ctrl.vm.value['lte']), value: ctrl.vm.value['lte']()})
-                    ])
-                  ])
-                ]),
-                m(".w-col.w-col-3.w-col-small-6", [
-                  m("label.fontsize-smaller[for='field-7']", "Período do apoio"),
-                  m(".w-row", [
-                    m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [
-                      m("input.w-input.text-field.positive[name='field-5'][type='text']", {onchange: m.withAttr("value", ctrl.vm.created_at['gte']), value: ctrl.vm.created_at['gte']()})
-                    ]),
-                    m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [
-                      m(".fontsize-smaller.u-text-center.lineheight-looser", "e")
-                    ]),
-                    m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [
-                      m("input.w-input.text-field.positive[name='field-5'][type='text']", {onchange: m.withAttr("value", ctrl.vm.created_at['lte']), value: ctrl.vm.created_at['lte']()})
-                    ])
-                  ])
-                ])
-              ])
-            })
-
+    return m('#admin-contributions-filter.w-section.page-header', [
+      m('.w-container', [
+        m('.fontsize-larger.u-text-center.u-marginbottom-30', 'Apoios'),
+        m('.w-form', [
+          m('form', {
+            onsubmit: args.submit
+          }, [
+            formBuilder(main.data)['main'],
+            m('.u-marginbottom-20.w-row',
+              m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[type="button"][style="background: none; border: none; outline: none; text-align: left;"]', {
+                onclick: ctrl.toggler.toggle
+              }, 'Filtros avançados  >')), (ctrl.toggler() ?
+              m('#advanced-search.w-row.admin-filters', [
+                _.map(args.form, function(f){
+                  return (f.type !== 'main') ? formBuilder(f.data)[f.type] : '';
+                })
+              ]) : ''
+            )
           ])
         ])
       ])

@@ -1,9 +1,25 @@
 adminApp.AdminList = {
+  controller: function(args){
+    if(!args.vm.collection().length){
+      args.vm.filter();
+    }
+  },
   view: function(ctrl, args) {
     return m("#admin-contributions-list.w-container",[
-      args.contributions().map(function(contribution){
-        return m.component(adminApp.AdminItem, {contribution: contribution, key: contribution});
-      })
-    ]);
+            args.vm.collection().map(function(item){
+              return m.component(adminApp.AdminItem, {contribution: item, key: item});
+            }),
+            m(".w-section.section",[
+              m(".w-container",[
+                m(".w-row",[
+                  m(".w-col.w-col-2.w-col-push-5",[
+                    !args.vm.isLoading() ?
+                    m("button#load-more.btn.btn-medium.btn-terciary", {onclick: args.vm.nextPage}, "Carregar mais") :
+                    m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']"),
+                  ])
+                ])
+              ])
+            ])
+          ])
   }
 }
