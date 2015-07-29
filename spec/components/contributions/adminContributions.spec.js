@@ -7,11 +7,12 @@ describe('AdminContributions component', function() {
   });
 
   describe('controller', function() {
-//    it('should instantiate filterContributions', function() {
-//      expect(ctrl.filterContributions).toBeFunction();
-//    });
-    it('should instantiate its view-model', function() {
-      expect(ctrl.vm).toBeDefined();
+    it('should instantiate a list view-model', function() {
+      expect(ctrl.listVM).toBeDefined();
+    });
+
+    it('should instantiate a filter view-model', function() {
+      expect(ctrl.filterVM).toBeDefined();
     });
   });
 
@@ -19,7 +20,6 @@ describe('AdminContributions component', function() {
     beforeAll(function() {
       view = AdminContributions.view(ctrl);
       $output = mq(view);
-      spyOn(ctrl.vm, "filter").and.callThrough();
     });
 
     it('should render AdminFilter nested component', function() {
@@ -28,15 +28,6 @@ describe('AdminContributions component', function() {
     });
     it('should render AdminList nested component', function() {
       expect($output.has('#admin-contributions-list')).toBeTrue();
-    });
-    it('should call Contribution Details when filtering', function() {
-      $output.trigger('form', 'submit');
-//      expect(ctrl.vm.filter).toHaveBeenCalled();
-    });
-    it('should render '+nContributions+' more contribution cards when clicking on load_more.', function() {
-      var actual = ctrl.vm.collection().length;
-      $output.click('#load-more');
-      expect($output.find('.results-admin-contributions').length).toEqual(actual+nContributions);
     });
   });
 });

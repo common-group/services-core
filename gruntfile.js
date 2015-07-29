@@ -67,7 +67,7 @@ module.exports = function( grunt ) {
     watch: {
       scripts: {
         files: ['src/**/*.js', 'spec/**/*.spec.js'],
-        tasks: ['uglify']
+        tasks: ['test', 'uglify']
       },
     }
   });
