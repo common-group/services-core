@@ -66,7 +66,6 @@ vm.formDescriber = [
   }
 ];
 
-
 // Set default values
 vm.state('');
 vm.gateway('');

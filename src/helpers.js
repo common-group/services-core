@@ -33,3 +33,8 @@ var toggleProp = function(defaultState, alternateState) {
 
   return p;
 };
+
+//Templates
+var loader = function(){
+  return m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']");
+}

@@ -1,7 +1,9 @@
 adminApp.AdminList = {
   controller: function(args){
     if(!args.vm.collection().length){
-      args.vm.firstPage();
+       args.vm.firstPage().then(null, function(serverError){
+         adminApp.error(serverError.message);
+       });
     }
   },
   view: function(ctrl, args) {
@@ -24,7 +26,7 @@ adminApp.AdminList = {
                       m(".w-col.w-col-2.w-col-push-5",[
                         !args.vm.isLoading() ?
                         m("button#load-more.btn.btn-medium.btn-terciary", {onclick: args.vm.nextPage}, "Carregar mais") :
-                        m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']"),
+                        loader(),
                       ])
                     ])
                   ])
