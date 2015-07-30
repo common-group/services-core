@@ -1,5 +1,6 @@
 describe('AdminFilter component', function() {
-  var fakeForm = [
+  var submit,
+      fakeForm = [
     {
       type: 'main',
       data: {
@@ -42,8 +43,9 @@ describe('AdminFilter component', function() {
       }
     }
   ];
+
   beforeAll(function(){
-    var submit = jasmine.createSpy('submit');
+    submit = jasmine.createSpy('submit');
   });
 
 
