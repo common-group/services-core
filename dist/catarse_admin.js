@@ -24,7 +24,7 @@ var adminApp = window.adminApp = {
         p(p() === alternateState ? defaultState : alternateState);
     }, p;
 }, loader = function() {
-    return m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']");
+    return m("img[alt='Loader'][src='https://s3.amazonaws.com/catarse.files/loader.gif']");
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
@@ -66,7 +66,7 @@ vm.formDescriber = [ {
         label: "Com o estado",
         name: "state",
         vm: vm.state,
-        dataset: [ {
+        options: [ {
             value: "",
             option: "Qualquer um"
         }, {
@@ -98,7 +98,7 @@ vm.formDescriber = [ {
         label: "gateway",
         name: "gateway",
         vm: vm.gateway,
-        dataset: [ {
+        options: [ {
             value: "",
             option: "Qualquer um"
         }, {
@@ -277,15 +277,15 @@ adminApp.PaymentBadge = {
     }
 }, adminApp.AdminList = {
     controller: function(args) {
-        args.vm.collection().length || args.vm.firstPage().then(null, function(serverError) {
+        !args.vm.collection().length && args.vm.firstPage && args.vm.firstPage().then(null, function(serverError) {
             adminApp.error(serverError.message);
         });
     },
     view: function(ctrl, args) {
-        return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", args.vm.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ args.vm.collection().map(function(item) {
+        return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", args.vm.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ args.vm.collection().map(function(item, index) {
             return m.component(adminApp.AdminItem, {
                 contribution: item,
-                key: item
+                index: index
             });
         }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ args.vm.isLoading() ? loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: args.vm.nextPage
@@ -293,20 +293,20 @@ adminApp.PaymentBadge = {
     }
 }, adminApp.filterDateRange = {
     view: function(ctrl, args) {
-        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="field-7"]', args.label), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="' + args.index + '"]', args.label), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[id="' + args.index + '"][type="text"]', {
             onchange: m.withAttr("value", args.first),
             value: args.first()
-        }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+        }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[type="text"]', {
             onchange: m.withAttr("value", args.last),
             value: args.last()
         }) ]) ]) ]);
     }
 }, adminApp.filterDropdown = {
     view: function(ctrl, args) {
-        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="' + args.name + '"]', args.label), m('select.w-select.text-field.positive[name="' + args.name + '"]', {
+        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="' + args.index + '"]', args.label), m('select.w-select.text-field.positive[id="' + args.index + '"]', {
             onchange: m.withAttr("value", args.vm),
             value: args.vm()
-        }, [ _.map(args.dataset, function(data) {
+        }, [ _.map(args.options, function(data) {
             return m('option[value="' + data.value + '"]', data.option);
         }) ]) ]);
     }
@@ -319,10 +319,10 @@ adminApp.PaymentBadge = {
     }
 }, adminApp.filterNumberRange = {
     view: function(ctrl, args) {
-        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="field-6"]', args.label), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="' + args.index + '"]', args.label), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[id="' + args.index + '"][type="text"]', {
             onchange: m.withAttr("value", args.first),
             value: args.first()
-        }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+        }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[type="text"]', {
             onchange: m.withAttr("value", args.last),
             value: args.last()
         }) ]) ]) ]);

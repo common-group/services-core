@@ -1,6 +1,6 @@
 adminApp.AdminList = {
   controller: function(args){
-    if(!args.vm.collection().length){
+    if(!args.vm.collection().length && args.vm.firstPage){
        args.vm.firstPage().then(null, function(serverError){
          adminApp.error(serverError.message);
        });
