@@ -35,4 +35,4 @@ adminApp.AdminList = {
             ])
           ]);
   }
-}
+};
