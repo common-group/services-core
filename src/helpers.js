@@ -33,3 +33,8 @@ var toggleProp = function(defaultState, alternateState) {
 
   return p;
 };
+
+//Templates
+var loader = function(){
+  return m("img[alt='Loader'][src='https://s3.amazonaws.com/catarse.files/loader.gif']");
+}

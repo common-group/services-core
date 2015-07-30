@@ -5,7 +5,8 @@
     Version: 1.0.0
 */
 var adminApp = window.adminApp = {
-    models: {}
+    models: {},
+    error: m.prop()
 }, momentify = function(date, format) {
     return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
 }, momentFromString = function(date, format) {
@@ -22,27 +23,117 @@ var adminApp = window.adminApp = {
     return p.toggle = function() {
         p(p() === alternateState ? defaultState : alternateState);
     }, p;
+}, loader = function() {
+    return m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']");
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
-    controller: function() {
-        var vm = this.vm = adminApp.AdminContributions.VM;
-        error = this.error = m.prop(), this.filterContributions = function(filters) {
-            vm.filter(filters).then(null, function(serverError) {
-                error(serverError.message);
-            });
+    controller: function(args) {
+        var listVM = this.listVM = adminApp.ContributionListVM, filterVM = this.filterVM = adminApp.ContributionFilterVM;
+        this.submit = function() {
+            return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
+                adminApp.error(serverError.message);
+            }), !1;
         };
     },
     view: function(ctrl) {
         return [ m.component(adminApp.AdminFilter, {
-            onFilter: ctrl.filterContributions
-        }), m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", ctrl.vm.total()), " apoios encontrados" ]) ]) ]), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(adminApp.AdminList, {
-            contributions: ctrl.vm.collection
-        }) ]) ]), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-5"), m(".w-col.w-col-2", [ ctrl.vm.isLoading() ? m("img[alt='Loader'][src='/assets/catarse_bootstrap/loader-eff2ad1eeb09a19c9afb5b143e1dd62b.gif']") : m("button#load-more.btn.btn-medium.btn-terciary", {
-            onclick: ctrl.vm.nextPage
-        }, "Carregar mais") ]), m(".w-col.w-col-5") ]) ]) ]) ];
+            form: ctrl.filterVM.formDescriber,
+            submit: ctrl.submit
+        }), adminApp.error() ? m(".card.card-error.u-radius.fontweight-bold", adminApp.error()) : m.component(adminApp.AdminList, {
+            vm: ctrl.listVM
+        }) ];
     }
-}, adminApp.AdminContributions.VM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
+};
+
+var vm = adminApp.ContributionFilterVM = m.postgrest.filtersVM({
+    full_text_index: "@@",
+    state: "eq",
+    gateway: "eq",
+    value: "between",
+    created_at: "between"
+});
+
+vm.formDescriber = [ {
+    type: "main",
+    data: {
+        vm: vm.full_text_index,
+        placeholder: "Busque por projeto, email, Ids do usuário e do apoio..."
+    }
+}, {
+    type: "dropdown",
+    data: {
+        label: "Com o estado",
+        name: "state",
+        vm: vm.state,
+        dataset: [ {
+            value: "",
+            option: "Qualquer um"
+        }, {
+            value: "paid",
+            option: "paid"
+        }, {
+            value: "refused",
+            option: "refused"
+        }, {
+            value: "pending",
+            option: "pending"
+        }, {
+            value: "pending_refund",
+            option: "pending_refund"
+        }, {
+            value: "refunded",
+            option: "refunded"
+        }, {
+            value: "chargeback",
+            option: "chargeback"
+        }, {
+            value: "deleted",
+            option: "deleted"
+        } ]
+    }
+}, {
+    type: "dropdown",
+    data: {
+        label: "gateway",
+        name: "gateway",
+        vm: vm.gateway,
+        dataset: [ {
+            value: "",
+            option: "Qualquer um"
+        }, {
+            value: "Pagarme",
+            option: "Pagarme"
+        }, {
+            value: "MoIP",
+            option: "MoIP"
+        }, {
+            value: "PayPal",
+            option: "PayPal"
+        }, {
+            value: "Credits",
+            option: "Créditos"
+        } ]
+    }
+}, {
+    type: "numberRange",
+    data: {
+        label: "Valores entre",
+        first: vm.value.gte,
+        last: vm.value.lte
+    }
+}, {
+    type: "dateRange",
+    data: {
+        label: "Período do apoio",
+        first: vm.created_at.gte,
+        last: vm.created_at.lte
+    }
+} ], vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
+    return momentFromString(vm.created_at.lte()).endOf("day").format();
+}, vm.created_at.gte.toFilter = function() {
+    return momentFromString(vm.created_at.gte()).format();
+}, adminApp.ContributionListVM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
 adminApp.PaymentBadge = {
     view: function(ctrl, args) {
         var contribution = args.contribution;
@@ -100,57 +191,28 @@ adminApp.PaymentBadge = {
         }), m(".w-col.w-col-4") ]) ]);
     }
 }, adminApp.AdminFilter = {
-    controller: function(args) {
-        var vm = this.vm = adminApp.AdminFilter.VM, filter = this.filter = function() {
-            return args.onFilter(vm.parameters()), !1;
-        };
-        this.displayFilters = adminApp.ToggleDiv.toggler(), filter();
+    controller: function() {
+        this.toggler = toggleProp(!1, !0);
     },
     view: function(ctrl, args) {
+        var formBuilder = function(data) {
+            return {
+                main: m.component(adminApp.filterMain, data),
+                dropdown: m.component(adminApp.filterDropdown, data),
+                numberRange: m.component(adminApp.filterNumberRange, data),
+                dateRange: m.component(adminApp.filterDateRange, data)
+            };
+        }, main = _.findWhere(args.form, {
+            type: "main"
+        });
         return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form", {
-            onsubmit: ctrl.filter
-        }, [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-10", [ m("input.w-input.text-field.positive.medium[placeholder='Busque por projeto, email, Ids do usuário e do apoio...'][type='text']", {
-            onchange: m.withAttr("value", ctrl.vm.full_text_index),
-            value: ctrl.vm.full_text_index()
-        }), m("button.fontsize-smallest.link-hidden-light", {
-            onclick: ctrl.displayFilters.toggle
-        }, "Filtros avançados  >") ]), m(".w-col.w-col-2", [ m("input#filter-btn.btn.btn-large.u-marginbottom-10[type='submit'][value='Buscar']") ]) ]), m.component(adminApp.ToggleDiv, {
-            display: ctrl.displayFilters,
-            content: m("#advanced-search.w-row.admin-filters", [ m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-3']", "Com o estado"), m("select.w-select.text-field.positive[name='field-3']", {
-                onchange: m.withAttr("value", ctrl.vm.state),
-                value: ctrl.vm.state()
-            }, [ m("option[value='']", "Qualquer um"), m("option[value='pending']", "pending"), m("option[value='refused']", "refused"), m("option[value='paid']", "paid"), m("option[value='pending_refund']", "pending_refund"), m("option[value='refunded']", "refunded"), m("option[value='chargeback']", "chargeback"), m("option[value='deleted']", "deleted") ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-8']", "Gateway"), m("select.w-select.text-field.positive[name='field-8']", {
-                onchange: m.withAttr("value", ctrl.vm.gateway),
-                value: ctrl.vm.gateway()
-            }, [ m("option[value='']", "Qualquer um"), m("option[value='Pagarme']", "Pagarme"), m("option[value='MoIP']", "MoIP"), m("option[value='PayPal']", "PayPal"), m("option[value='Credits']", "Créditos") ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-6']", "Valores entre"), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
-                onchange: m.withAttr("value", ctrl.vm.value.gte),
-                value: ctrl.vm.value.gte()
-            }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
-                onchange: m.withAttr("value", ctrl.vm.value.lte),
-                value: ctrl.vm.value.lte()
-            }) ]) ]) ]), m(".w-col.w-col-3.w-col-small-6", [ m("label.fontsize-smaller[for='field-7']", "Período do apoio"), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
-                onchange: m.withAttr("value", ctrl.vm.created_at.gte),
-                value: ctrl.vm.created_at.gte()
-            }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m("input.w-input.text-field.positive[name='field-5'][type='text']", {
-                onchange: m.withAttr("value", ctrl.vm.created_at.lte),
-                value: ctrl.vm.created_at.lte()
-            }) ]) ]) ]) ])
-        }) ]) ]) ]) ]);
+            onsubmit: args.submit
+        }, [ formBuilder(main.data).main, m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[type="button"][style="background: none; border: none; outline: none; text-align: left;"]', {
+            onclick: ctrl.toggler.toggle
+        }, "Filtros avançados  >")), ctrl.toggler() ? m("#advanced-search.w-row.admin-filters", [ _.map(args.form, function(f) {
+            return "main" !== f.type ? formBuilder(f.data)[f.type] : "";
+        }) ]) : "" ]) ]) ]) ]);
     }
-};
-
-var vm = adminApp.AdminFilter.VM = m.postgrest.filtersVM({
-    full_text_index: "@@",
-    state: "eq",
-    gateway: "eq",
-    value: "between",
-    created_at: "between"
-});
-
-vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
-    return momentFromString(vm.created_at.lte()).endOf("day").format();
-}, vm.created_at.gte.toFilter = function() {
-    return momentFromString(vm.created_at.gte()).format();
 }, adminApp.AdminItem = {
     controller: function(args) {
         this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
@@ -214,13 +276,56 @@ vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
         }) ]);
     }
 }, adminApp.AdminList = {
+    controller: function(args) {
+        args.vm.collection().length || args.vm.firstPage().then(null, function(serverError) {
+            adminApp.error(serverError.message);
+        });
+    },
     view: function(ctrl, args) {
-        return m("#admin-contributions-list.w-container", [ args.contributions().map(function(contribution) {
+        return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", args.vm.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ args.vm.collection().map(function(item) {
             return m.component(adminApp.AdminItem, {
-                contribution: contribution,
-                key: contribution
+                contribution: item,
+                key: item
             });
-        }) ]);
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ args.vm.isLoading() ? loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
+            onclick: args.vm.nextPage
+        }, "Carregar mais") ]) ]) ]) ]) ]) ]) ]);
+    }
+}, adminApp.filterDateRange = {
+    view: function(ctrl, args) {
+        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="field-7"]', args.label), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+            onchange: m.withAttr("value", args.first),
+            value: args.first()
+        }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+            onchange: m.withAttr("value", args.last),
+            value: args.last()
+        }) ]) ]) ]);
+    }
+}, adminApp.filterDropdown = {
+    view: function(ctrl, args) {
+        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="' + args.name + '"]', args.label), m('select.w-select.text-field.positive[name="' + args.name + '"]', {
+            onchange: m.withAttr("value", args.vm),
+            value: args.vm()
+        }, [ _.map(args.dataset, function(data) {
+            return m('option[value="' + data.value + '"]', data.option);
+        }) ]) ]);
+    }
+}, adminApp.filterMain = {
+    view: function(ctrl, args) {
+        return m(".w-row", [ m(".w-col.w-col-10", [ m('input.w-input.text-field.positive.medium[placeholder="' + args.placeholder + '"][type="text"]', {
+            onchange: m.withAttr("value", args.vm),
+            value: args.vm()
+        }) ]), m(".w-col.w-col-2", [ m('input#filter-btn.btn.btn-large.u-marginbottom-10[type="submit"][value="Buscar"]') ]) ]);
+    }
+}, adminApp.filterNumberRange = {
+    view: function(ctrl, args) {
+        return m(".w-col.w-col-3.w-col-small-6", [ m('label.fontsize-smaller[for="field-6"]', args.label), m(".w-row", [ m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+            onchange: m.withAttr("value", args.first),
+            value: args.first()
+        }) ]), m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2", [ m(".fontsize-smaller.u-text-center.lineheight-looser", "e") ]), m(".w-col.w-col-5.w-col-small-5.w-col-tiny-5", [ m('input.w-input.text-field.positive[name="field-5"][type="text"]', {
+            onchange: m.withAttr("value", args.last),
+            value: args.last()
+        }) ]) ]) ]);
     }
 }, adminApp.AdminTransaction = {
     view: function(ctrl, args) {
