@@ -1,0 +1,18 @@
+describe('ContributionFilterVM', function() {
+  var vm = adminApp.ContributionFilterVM;
+
+  describe("created_at.lte.toFilter", function() {
+    it("should use end of the day timestamp to send filter", function() {
+      vm.created_at.lte('21/12/1999');
+      expect(vm.created_at.lte.toFilter()).toEqual('1999-12-21T23:59:59-05:00');
+    });
+  });
+
+  describe("full_text_index.toFilter", function() {
+    it("should remove all diacritics to send filter", function() {
+      vm.full_text_index('rémoção dos acêntüs');
+      expect(vm.full_text_index.toFilter()).toEqual('remocao dos acentus');
+    });
+  });
+});
+
