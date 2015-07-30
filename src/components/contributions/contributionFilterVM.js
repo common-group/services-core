@@ -39,7 +39,7 @@ vm.formDescriber = [
       label: 'gateway',
       name: 'gateway',
       vm: vm.gateway,
-      dataset: [
+      options: [
         {value: '', option: 'Qualquer um'},
         {value: 'Pagarme', option: 'Pagarme'},
         {value: 'MoIP', option: 'MoIP'},

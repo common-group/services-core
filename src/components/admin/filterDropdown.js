@@ -6,7 +6,7 @@ adminApp.filterDropdown = {
         onchange: m.withAttr('value', args.vm),
         value: args.vm()
       },[
-          _.map(args.dataset, function(data){
+          _.map(args.options, function(data){
             return m('option[value="'+data.value+'"]', data.option);
           })
       ])
