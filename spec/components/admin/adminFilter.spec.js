@@ -13,7 +13,7 @@ describe('AdminFilter component', function() {
         label: 'Com o estado',
         name: 'state',
         vm: vm.state,
-        dataset: [
+        options: [
           {value: '', option: 'Qualquer um'},
           {value: 'paid', option: 'paid'},
           {value: 'refused', option: 'refused'},
