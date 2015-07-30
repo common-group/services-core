@@ -32,13 +32,13 @@ module.exports = function( grunt ) {
         },
 
         files: {
-          'dist/catarse_admin.js': sources
+          'dist/catarse-admin.js': sources
         }
       },
 
       min: {
         files: {
-          'dist/catarse_admin.min.js': sources
+          'dist/catarse-admin.min.js': sources
         }
       }
     },
