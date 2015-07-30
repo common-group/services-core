@@ -130,9 +130,11 @@ vm.formDescriber = [ {
         last: vm.created_at.lte
     }
 } ], vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
-    return momentFromString(vm.created_at.lte()).endOf("day").format();
+    return momentFromString(vm.created_at.lte()).endOf("day").format("");
 }, vm.created_at.gte.toFilter = function() {
     return momentFromString(vm.created_at.gte()).format();
+}, vm.full_text_index.toFilter = function() {
+    return replaceDiacritics(vm.full_text_index());
 }, adminApp.ContributionListVM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
 adminApp.PaymentBadge = {
     view: function(ctrl, args) {
