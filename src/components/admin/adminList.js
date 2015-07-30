@@ -17,8 +17,8 @@ adminApp.AdminList = {
                 ])
               ]),
               m("#admin-contributions-list.w-container",[
-                args.vm.collection().map(function(item){
-                  return m.component(adminApp.AdminItem, {contribution: item, key: item});
+                args.vm.collection().map(function(item, index){
+                  return m.component(adminApp.AdminItem, {contribution: item, index: index});
                 }),
                 m(".w-section.section",[
                   m(".w-container",[
