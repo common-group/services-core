@@ -59,7 +59,7 @@ module.exports = function( grunt ) {
             "bower_components/mithril.postgrest/src/mithril.postgrest.js",
             "bower_components/moment/moment.js",
             "bower_components/moment-timezone/moment-timezone.js",
-            "bower_components/replace-diacritics/replace-diacritics.js",
+            "bower_components/replace-diacritics/index.js",
             "spec/lib/mocks/*mock.js"
           ]
         }
