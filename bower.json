@@ -7,7 +7,7 @@
     "Vinícius Andrade <vchavesster@gmail.com>"
   ],
   "description": "A set of components to use in Catarse Admin interface",
-  "main": "dist/catarse_admin.js",
+  "main": "dist/catarse-admin.js",
   "keywords": [
     "mithril",
     "catarse"
