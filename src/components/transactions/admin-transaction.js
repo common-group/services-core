@@ -7,7 +7,6 @@ adminApp.AdminTransaction = {
         "Valor: R$" + formatNumber(contribution.value, 2, 3),
         m("br"),
         "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3),
-        m("br"),"Recompensa: " + formatNumber(contribution.reward_minimum_value, 2, 3),
         m("br"),
         "Anônimo: " + (contribution.anonymous ? 'Sim' : 'Não'),
         m("br"),

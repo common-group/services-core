@@ -195,7 +195,9 @@ adminApp.PaymentBadge = {
             contribution: contribution
         }), m.component(adminApp.AdminTransactionHistory, {
             contribution: contribution
-        }), m(".w-col.w-col-4") ]) ]);
+        }), m.component(adminApp.AdminReward, {
+            contribution: contribution
+        }) ]) ]);
     }
 }, adminApp.AdminFilter = {
     controller: function() {
@@ -366,9 +368,14 @@ adminApp.PaymentBadge = {
 }, adminApp.AdminTransaction = {
     view: function(ctrl, args) {
         var contribution = args.contribution;
-        return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Recompensa: " + formatNumber(contribution.reward_minimum_value, 2, 3), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + (contribution.gateway_data && contribution.gateway_data.acquirer_name), m("br"), function() {
+        return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + (contribution.gateway_data && contribution.gateway_data.acquirer_name), m("br"), function() {
             return contribution.is_second_slip ? [ m("a.link-hidden[href='#']", "Boleto bancário"), " ", m("span.badge", "2a via") ] : void 0;
         }() ]) ]);
+    }
+}, adminApp.AdminReward = {
+    view: function(ctrl, args) {
+        var reward = args.contribution.reward || {};
+        return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Recompensa"), m(".fontsize-smallest.lineheight-looser", _.isEmpty(reward) ? "Apoio sem recompensa." : [ "ID: " + reward.id, m("br"), "Valor mínimo: R$" + formatNumber(reward.minimum_value, 2, 3), m("br"), m.trust("Disponíveis: " + reward.paid_count + reward.waiting_payment_count + " / " + (reward.maximum_contributions ? reward.maximum_contributions : "&infin;")), m("br"), "Aguardando confirmação: " + reward.waiting_payment_count, m("br"), "Descrição: " + reward.description ]) ]);
     }
 }, adminApp.ToggleDiv = {
     toggler: function() {
