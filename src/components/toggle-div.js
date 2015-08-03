@@ -3,7 +3,7 @@
 adminApp.ToggleDiv = {
 
   toggler: function() {
-    return toggleProp('none', 'block');
+    return h.toggleProp('none', 'block');
   },
 
   controller: function(args) {

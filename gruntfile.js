@@ -57,6 +57,7 @@ module.exports = function( grunt ) {
             "bower_components/mithril/mithril.js",
             "bower_components/underscore/underscore.js",
             "bower_components/mithril.postgrest/src/mithril.postgrest.js",
+            "bower_components/catarse-helpers/src/catarse-helpers.js",
             "bower_components/moment/moment.js",
             "bower_components/moment-timezone/moment-timezone.js",
             "bower_components/replace-diacritics/index.js",

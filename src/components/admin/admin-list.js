@@ -26,7 +26,7 @@ adminApp.AdminList = {
                 m(".w-col.w-col-2.w-col-push-5",[
                   !args.vm.isLoading() ?
                     m("button#load-more.btn.btn-medium.btn-terciary", {onclick: args.vm.nextPage}, "Carregar mais") :
-                    loader(),
+                    h.loader(),
                 ])
               ])
             ])

@@ -10,7 +10,7 @@ adminApp.AdminTransactionHistory = {
     ], function(memo, item){
       if(item.date != null && item.date != undefined) {
         item.originalDate = item.date
-        item.date = momentify(item.date, "DD/MM/YYYY, HH:mm");
+        item.date = h.momentify(item.date, "DD/MM/YYYY, HH:mm");
         return memo.concat(item);
       }
 

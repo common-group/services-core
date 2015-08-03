@@ -23,6 +23,7 @@
   "dependencies": {
     "mithril": "~0.2.0",
     "mithril.postgrest": "https://github.com/catarse/mithril.postgrest.git#master",
+    "catarse-helpers": "https://github.com/catarse/catarse-helpers.git#master",
     "moment": "~2.10.3",
     "replace-diacritics": "https://raw.githubusercontent.com/yvg/js-replace-diacritics/master/replace-diacritics.js",
     "moment-timezone": "~0.4.0"

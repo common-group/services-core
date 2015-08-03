@@ -84,13 +84,13 @@ adminApp.AdminItem = {
                 m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name)
               ]),
               m(".fontsize-smallest.fontweight-semibold", contribution.project_state),
-              m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_online_date) + " a " +momentify(contribution.project_expires_at))
+              m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.project_online_date) + " a " +h.momentify(contribution.project_expires_at))
             ])
           ])
         ]),
         m(".w-col.w-col-2",[
           m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$"+contribution.value),
-          m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
+          m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")),
           m(".fontsize-smallest", ["ID do Gateway: ",
             m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id)
           ])

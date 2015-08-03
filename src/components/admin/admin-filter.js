@@ -1,6 +1,6 @@
 adminApp.AdminFilter = {
   controller: function() {
-    this.toggler = toggleProp(false, true);
+    this.toggler = h.toggleProp(false, true);
   },
   view: function(ctrl, args) {
     var formBuilder = function(data) {

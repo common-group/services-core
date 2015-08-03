@@ -7,24 +7,6 @@
 var adminApp = window.adminApp = {
     models: {},
     error: m.prop()
-}, momentify = function(date, format) {
-    return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
-}, momentFromString = function(date, format) {
-    var european = moment(date, format || "DD/MM/YYYY");
-    return european.isValid() ? european : moment(date);
-}, generateFormatNumber = function(s, c) {
-    return function(number, n, x) {
-        if (null == number || void 0 == number) return null;
-        var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
-        return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
-    };
-}, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
-    var p = m.prop(defaultState);
-    return p.toggle = function() {
-        p(p() === alternateState ? defaultState : alternateState);
-    }, p;
-}, loader = function() {
-    return m("img[alt='Loader'][src='https://s3.amazonaws.com/catarse.files/loader.gif']");
 }, ContributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]);
 
 adminApp.models.ContributionDetail = ContributionDetail, adminApp.AdminContributions = {
@@ -130,9 +112,9 @@ vm.formDescriber = [ {
         last: vm.created_at.lte
     }
 } ], vm.state(""), vm.gateway(""), vm.created_at.lte.toFilter = function() {
-    return momentFromString(vm.created_at.lte()).endOf("day").format("");
+    return h.momentFromString(vm.created_at.lte()).endOf("day").format("");
 }, vm.created_at.gte.toFilter = function() {
-    return momentFromString(vm.created_at.gte()).format();
+    return h.momentFromString(vm.created_at.gte()).format();
 }, vm.full_text_index.toFilter = function() {
     return replaceDiacritics(vm.full_text_index());
 }, adminApp.ContributionListVM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
@@ -194,7 +176,7 @@ adminApp.PaymentBadge = {
     }
 }, adminApp.AdminFilter = {
     controller: function() {
-        this.toggler = toggleProp(!1, !0);
+        this.toggler = h.toggleProp(!1, !0);
     },
     view: function(ctrl, args) {
         var formBuilder = function(data) {
@@ -266,7 +248,7 @@ adminApp.PaymentBadge = {
     },
     view: function(ctrl, args) {
         var contribution = ctrl.contribution;
-        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + contribution.user_profile_img + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.project_online_date) + " a " + momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method) ]), ctrl.paymentDetails() ? m.component(adminApp.PaymentBadge, {
+        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + contribution.user_profile_img + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.project_online_date) + " a " + h.momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method) ]), ctrl.paymentDetails() ? m.component(adminApp.PaymentBadge, {
             contribution: contribution
         }) : "" ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", {
             onclick: ctrl.displayDetailBox.toggle
@@ -289,7 +271,7 @@ adminApp.PaymentBadge = {
                 contribution: item,
                 index: index
             });
-        }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ args.vm.isLoading() ? loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
+        }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ args.vm.isLoading() ? h.loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
             onclick: args.vm.nextPage
         }, "Carregar mais") ]) ]) ]) ]) ]) ]) ]);
     }
@@ -348,7 +330,7 @@ adminApp.PaymentBadge = {
             name: "Apoio cancelado"
         } ], function(memo, item) {
             return null != item.date && void 0 != item.date ? (item.originalDate = item.date, 
-            item.date = momentify(item.date, "DD/MM/YYYY, HH:mm"), memo.concat(item)) : memo;
+            item.date = h.momentify(item.date, "DD/MM/YYYY, HH:mm"), memo.concat(item)) : memo;
         }, []);
         this.orderedEvents = _.sortBy(mapEvents, "originalDate");
     },
@@ -367,7 +349,7 @@ adminApp.PaymentBadge = {
     }
 }, adminApp.ToggleDiv = {
     toggler: function() {
-        return toggleProp("none", "block");
+        return h.toggleProp("none", "block");
     },
     controller: function(args) {
         this.vm = {
