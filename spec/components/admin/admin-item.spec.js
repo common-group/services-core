@@ -9,9 +9,6 @@ describe('AdminItem component', function() {
       setController(contribution);
     });
 
-    it('should have a payment_details function', function() {
-      expect(ctrl.paymentDetails).toBeFunction();
-    });
     it('should have a stateClass function', function() {
       expect(ctrl.stateClass).toBeFunction();
     });
@@ -21,23 +18,23 @@ describe('AdminItem component', function() {
     describe('stateClass function', function() {
       it('should return a success CSS class when contribution state is paid', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'paid'})));
-        expect(ctrl.stateClass()).toEqual(ctrl.CSSsuccess);
+        expect(ctrl.stateClass()).toEqual('.text-success');
       });
       it('should return a success CSS class when contribution state is refunded', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'refunded'})));
-        expect(ctrl.stateClass()).toEqual(ctrl.CSSsuccess);
+        expect(ctrl.stateClass()).toEqual('.text-refunded');
       });
       it('should return a warning CSS class when contribution state is pending', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'pending'})));
-        expect(ctrl.stateClass()).toEqual(ctrl.CSSwaiting);
+        expect(ctrl.stateClass()).toEqual('.text-waiting');
       });
       it('should return an error CSS class when contribution state is refused', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'refused'})));
-        expect(ctrl.stateClass()).toEqual(ctrl.CSSerror);
+        expect(ctrl.stateClass()).toEqual('.text-error');
       });
       it('should return an error CSS class when contribution state is not known', function() {
         setController(m.prop(ContributionDetailMockery(1, {state: 'foo'})));
-        expect(ctrl.stateClass()).toEqual(ctrl.CSSerror);
+        expect(ctrl.stateClass()).toEqual('.text-error');
       });
     });
     describe('paymentMethodClass function', function() {
@@ -56,51 +53,6 @@ describe('AdminItem component', function() {
       it('should return an error CSS class when contribution payment method is not known', function() {
         setController(m.prop(ContributionDetailMockery(1, {payment_method: 'foo'})));
         expect(ctrl.paymentMethodClass()).toEqual(CSSerror);
-      });
-    });
-    describe('paymentDetails function', function() {
-      var expected = {
-            card_first_digits: '12345',
-            card_last_digits: '890',
-            card_brand: 'Visa',
-            installments: '1'
-          },
-          moip = {
-            gateway: 'MoIP',
-            gateway_data: {
-              cartao_bin: expected.card_first_digits,
-              cartao_final: expected.card_last_digits,
-              cartao_bandeira: expected.card_brand,
-              parcelas: expected.installments
-            }
-          },
-          pagarme = {
-            gateway: 'Pagarme',
-            gateway_data: {
-              card_first_digits: expected.card_first_digits,
-              card_last_digits: expected.card_last_digits,
-              card_brand: expected.card_brand,
-              installments: expected.installments
-            }
-          };
-
-      it('should set payment details when contribution gateway is Pagarme', function() {
-        setController(m.prop(ContributionDetailMockery(1, pagarme)));
-        ctrl.paymentDetails();
-        expect(ctrl.contribution).toEqual(jasmine.objectContaining(expected));
-      });
-      it('should set payment details when contribution gateway is MoIP', function() {
-        setController(m.prop(ContributionDetailMockery(1, moip)));
-        ctrl.paymentDetails();
-        expect(ctrl.contribution).toEqual(jasmine.objectContaining(expected));
-      });
-      it('should return false when contribution gateway is not known', function() {
-        setController(m.prop(ContributionDetailMockery(1, {gateway: 'foo'})));
-        expect(ctrl.paymentDetails()).toBeFalse();
-      });
-      it('should return false when contribution gateway_data is null', function() {
-        setController(m.prop(ContributionDetailMockery(1, {gateway_data: null})));
-        expect(ctrl.paymentDetails()).toBeFalse();
       });
     });
   });
