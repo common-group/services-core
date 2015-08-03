@@ -1,7 +1,7 @@
 {
-  "name": "catarse_admin",
+  "name": "catarse-admin",
   "version": "0.0.3",
-  "homepage": "https://github.com/catarse/catarse_admin",
+  "homepage": "https://github.com/catarse/catarse-admin",
   "authors": [
     "Diogo Biazus <diogo@biazus.me>",
     "Vinícius Andrade <vchavesster@gmail.com>"
