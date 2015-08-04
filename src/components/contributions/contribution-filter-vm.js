@@ -69,7 +69,7 @@ vm.formDescriber = [
 // Set default values
 vm.state('');
 vm.gateway('');
-vm.order({created_at: 'desc'});
+vm.order({id: 'desc'});
 
 vm.created_at.lte.toFilter = function(){
   return h.momentFromString(vm.created_at.lte()).endOf('day').format('');
