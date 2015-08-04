@@ -94,7 +94,7 @@
 
     require('load-grunt-tasks')(grunt);
 
-    grunt.registerTask('test', ['browserify','jasmine']);
-    grunt.registerTask('default', ['test', 'uglify']);
+    grunt.registerTask('test', ['browserify', 'jshint', 'jscs', 'jasmine']);
+    grunt.registerTask('default', ['test', 'jshint', 'jscs', 'uglify']);
   };
 }());
