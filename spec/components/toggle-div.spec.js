@@ -8,13 +8,13 @@ describe('toggleDiv component', function() {
 
   describe('toggler', function() {
     it("should return a property with default state", function(){
-      expect(toggleProp()).toEqual('none')
-    })
+      expect(toggleProp()).toEqual('none');
+    });
 
     it("should change a property to alternative state", function(){
-      toggleProp.toggle()
-      expect(toggleProp()).toEqual('block')
-    })
+      toggleProp.toggle();
+      expect(toggleProp()).toEqual('block');
+    });
   });
 
   describe('view', function() {
@@ -28,8 +28,7 @@ describe('toggleDiv component', function() {
       toggleProp('block');
       $output.redraw();
       expect($output.find('.toggleDiv')[0].attrs.style.display).toEqual('block');
-    })
+    });
   });
 
 });
-

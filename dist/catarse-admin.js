@@ -165,31 +165,31 @@ adminApp.PaymentBadge = {
             onclick: ctrl.displayRequestRefundDropDown.toggle
         }, "Pedir reembolso"), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayRequestRefundDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("a.btn.btn-small[href='#']", "Solicitar reembolso") ])
+            content: m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[id="transfer"]', [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("button.btn.btn-small", "Solicitar reembolso") ])
         }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
             onclick: ctrl.displayRefundDropDown.toggle
         }, "Estornar"), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayRefundDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("a.btn.btn-small[href='#']", "Solicitar estorno") ])
-        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated[href='#']", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("button.btn.btn-small", "Solicitar estorno") ])
+        }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
             onclick: ctrl.displayTransferContributionDropDown.toggle
         }, "Transferir apoio"), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayTransferContributionDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m("label[for='name-2']", "Id do novo apoiador:"), m("input.w-input.text-field[data-name='Name 2'][id='name-2'][name='name'][placeholder='ex: 129908'][type='text']"), m("input.w-button.btn.btn-small[data-wait='Please wait...'][type='submit'][value='Transferir']") ]) ]) ])
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form", [ m("label", "Id do novo apoiador:"), m('input.w-input.text-field[placeholder="ex: 129908"][type="text"]'), m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]') ]) ]) ])
         }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
             onclick: ctrl.displayChangeRewardDropDown.toggle
         }, "Trocar recompensa"), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayChangeRewardDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[data-ix='display-none-on-load'][id='transfer']", {
+            content: m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[id="transfer"]', {
                 style: {
-                    display: " none"
+                    display: "none"
                 }
-            }, [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "R$ 10") ]) ]) ]) ])
+            }, [ m(".w-form", [ m("form", [ m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m('label.w-form-label[for="radio"]', "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]) ]) ]) ])
         }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
             onclick: ctrl.displatAnonDropDown.toggle
         }, "Anonimato"), m.component(adminApp.ToggleDiv, {
             display: ctrl.displatAnonDropDown,
-            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form[data-name='Email Form 4'][id='email-form-4'][name='email-form-4']", [ m(".w-radio", [ m("input.w-radio-input[data-name='Radio'][id='radio'][name='radio'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Anônimo") ]), m(".w-radio", [ m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"), m("label.w-form-label[for='radio']", "Público") ]) ]) ]) ])
+            content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form", [ m(".w-radio", [ m('input.w-radio-input[type="radio"]'), m("label.w-form-label", "Anônimo") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "Público") ]) ]) ]) ])
         }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(adminApp.AdminTransaction, {
             contribution: contribution
         }), m.component(adminApp.AdminTransactionHistory, {
@@ -341,7 +341,7 @@ adminApp.PaymentBadge = {
             date: contribution.refused_at,
             name: "Apoio cancelado"
         } ], function(memo, item) {
-            return null != item.date && void 0 != item.date ? (item.originalDate = item.date, 
+            return null !== item.date && void 0 !== item.date ? (item.originalDate = item.date, 
             item.date = h.momentify(item.date, "DD/MM/YYYY, HH:mm"), memo.concat(item)) : memo;
         }, []);
         this.orderedEvents = _.sortBy(mapEvents, "originalDate");

@@ -21,4 +21,4 @@ adminApp.filterNumberRange = {
             ])
           ]);
   }
-}
+};

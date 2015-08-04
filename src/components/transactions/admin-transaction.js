@@ -29,6 +29,6 @@ adminApp.AdminTransaction = {
           }
         })(),
       ])
-    ])
+    ]);
   }
-}
+};

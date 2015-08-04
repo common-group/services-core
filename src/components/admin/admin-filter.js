@@ -20,7 +20,7 @@ adminApp.AdminFilter = {
           m('form', {
             onsubmit: args.submit
           }, [
-            formBuilder(main.data)['main'],
+            formBuilder(main.data).main,
             m('.u-marginbottom-20.w-row',
               m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[type="button"][style="background: none; border: none; outline: none; text-align: left;"]', {
                 onclick: ctrl.toggler.toggle
