@@ -24,7 +24,7 @@ adminApp.AdminTransaction = {
         m('br'),
         (function(){
           if (contribution.is_second_slip) {
-            return [m('a.link-hidden[href=\'#\']', 'Boleto bancário'), ' ', m('span.badge', '2a via')];
+            return [m('a.link-hidden[href="#"]', 'Boleto bancário'), ' ', m('span.badge', '2a via')];
           }
         })(),
       ])
