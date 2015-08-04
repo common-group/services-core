@@ -5,7 +5,7 @@ adminApp.AdminItem = {
 
     userProfile = function(){
       return contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
-    }
+    };
 
     stateClass = function(){
       switch(contribution.state){
@@ -87,7 +87,7 @@ adminApp.AdminItem = {
           ]),
           m(".fontsize-smallest.fontweight-semibold",[
             m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method)
-          ]), 
+          ]),
           m.component(adminApp.PaymentBadge, {contribution: contribution, key: contribution.key})
         ])
       ]),
@@ -97,4 +97,4 @@ adminApp.AdminItem = {
       })
     ]);
   }
-}
+};

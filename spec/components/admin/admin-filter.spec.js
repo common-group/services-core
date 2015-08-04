@@ -30,16 +30,16 @@ describe('AdminFilter component', function() {
       type: 'numberRange',
       data: {
         label: 'Valores entre',
-        first: vm.value['gte'],
-        last: vm.value['lte']
+        first: vm.value.gte,
+        last: vm.value.lte
       }
     },
     {
       type: 'dateRange',
       data: {
         label: 'Período do apoio',
-        first: vm.created_at['gte'],
-        last: vm.created_at['lte']
+        first: vm.created_at.gte,
+        last: vm.created_at.lte
       }
     }
   ];

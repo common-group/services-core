@@ -8,8 +8,8 @@ adminApp.AdminTransactionHistory = {
       { date: contribution.created_at, name: 'Apoio criado' },
       { date: contribution.refused_at, name: 'Apoio cancelado' },
     ], function(memo, item){
-      if(item.date != null && item.date != undefined) {
-        item.originalDate = item.date
+      if(item.date !== null && item.date !== undefined) {
+        item.originalDate = item.date;
         item.date = h.momentify(item.date, "DD/MM/YYYY, HH:mm");
         return memo.concat(item);
       }
@@ -34,6 +34,6 @@ adminApp.AdminTransactionHistory = {
           ])
         ]);
       })
-    ])
+    ]);
   }
-}
+};
