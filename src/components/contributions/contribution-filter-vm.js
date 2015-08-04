@@ -17,7 +17,7 @@ vm.formDescriber = [
   },
   { //state
     type: 'dropdown',
-    data:{
+    data: {
       label: 'Com o estado',
       name: 'state',
       vm: vm.state,

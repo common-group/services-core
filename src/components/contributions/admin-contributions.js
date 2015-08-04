@@ -11,11 +11,11 @@ adminApp.AdminContributions = {
     };
   },
   view: function(ctrl) {
-    return  [
-      m.component(adminApp.AdminFilter,{form: ctrl.filterVM.formDescriber, submit: ctrl.submit }),
+    return [
+      m.component(adminApp.AdminFilter,{form: ctrl.filterVM.formDescriber, submit: ctrl.submit}),
       adminApp.error() ?
-        m(".card.card-error.u-radius.fontweight-bold", adminApp.error()) :
-        m.component(adminApp.AdminList, {vm: ctrl.listVM })
+        m('.card.card-error.u-radius.fontweight-bold', adminApp.error()) :
+        m.component(adminApp.AdminList, {vm: ctrl.listVM})
     ];
   }
 };

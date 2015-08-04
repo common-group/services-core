@@ -2,8 +2,8 @@ adminApp.PaymentBadge = {
   controller: function(args){
     var contribution = args.contribution, card = null;
     card = function(){
-      if(contribution.gateway_data){
-        switch(contribution.gateway.toLowerCase()){
+      if (contribution.gateway_data){
+        switch (contribution.gateway.toLowerCase()){
           case 'moip':
             return {
               first_digits:  contribution.gateway_data.cartao_bin,
@@ -23,17 +23,16 @@ adminApp.PaymentBadge = {
       displayPaymentMethod: function(){
         switch (contribution.payment_method.toLowerCase()){
           case 'boletobancario':
-            return m('span#boleto-detail', "");
+            return m('span#boleto-detail', '');
           case 'cartaodecredito':
             var cardData = card();
-            if(cardData){
+            if (cardData){
               return m('#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight', [
-                cardData.first_digits + "******" + cardData.last_digits,
+                cardData.first_digits + '******' + cardData.last_digits,
                 m('br'),
-                cardData.brand + " " + contribution.installments + "x"
+                cardData.brand + ' ' + contribution.installments + 'x'
               ]);
-            }
-            else{
+            } else {
               return '';
             }
         }
@@ -42,7 +41,7 @@ adminApp.PaymentBadge = {
   },
 
   view: function(ctrl, args){
-    return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [
+    return m('.fontsize-smallest.fontcolor-secondary.lineheight-tight', [
       ctrl.displayPaymentMethod()
     ]);
   }
