@@ -1,19 +1,49 @@
 adminApp.PaymentBadge = {
-  view: function(ctrl, args){
-    var contribution = args.contribution;
-    return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [
-      (function() {
-        switch (contribution.payment_method.toLowerCase()){
-          case "boletobancario":
-            return m("span#boleto-detail", "");
-          case "cartaodecredito":
-            return m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [
-              contribution.card_first_digits+"******"+contribution.card_last_digits,
-              m('br'),
-              contribution.card_brand+" "+contribution.installments+"x"
-            ]);
+  controller: function(args){
+    var contribution = args.contribution, card = null;
+    card = function(){
+      if(contribution.gateway_data){
+        switch(contribution.gateway.toLowerCase()){
+          case 'moip':
+            return {
+              first_digits:  contribution.gateway_data.cartao_bin,
+              last_digits: contribution.gateway_data.cartao_final,
+              brand: contribution.gateway_data.cartao_bandeira
+            };
+          case 'pagarme':
+            return {
+              first_digits: contribution.gateway_data.card_first_digits,
+              last_digits: contribution.gateway_data.card_last_digits,
+              brand: contribution.gateway_data.card_brand
+            };
         }
-      })()
+      }
+    };
+    return {
+      displayPaymentMethod: function(){
+        switch (contribution.payment_method.toLowerCase()){
+          case 'boletobancario':
+            return m('span#boleto-detail', "");
+          case 'cartaodecredito':
+            var cardData = card();
+            if(cardData){
+              return m('#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight', [
+                cardData.first_digits + "******" + cardData.last_digits,
+                m('br'),
+                cardData.brand + " " + contribution.installments + "x"
+              ]);
+            }
+            else{
+              return '';
+            }
+        }
+      }
+    };
+  },
+
+  view: function(ctrl, args){
+    return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [
+      ctrl.displayPaymentMethod()
     ]);
   }
 };

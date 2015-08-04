@@ -119,17 +119,39 @@ vm.formDescriber = [ {
     return replaceDiacritics(vm.full_text_index());
 }, adminApp.ContributionListVM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken), 
 adminApp.PaymentBadge = {
-    view: function(ctrl, args) {
-        var contribution = args.contribution;
-        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ function() {
-            switch (contribution.payment_method.toLowerCase()) {
-              case "boletobancario":
-                return m("span#boleto-detail", "");
+    controller: function(args) {
+        var contribution = args.contribution, card = null;
+        return card = function() {
+            if (contribution.gateway_data) switch (contribution.gateway.toLowerCase()) {
+              case "moip":
+                return {
+                    first_digits: contribution.gateway_data.cartao_bin,
+                    last_digits: contribution.gateway_data.cartao_final,
+                    brand: contribution.gateway_data.cartao_bandeira
+                };
 
-              case "cartaodecredito":
-                return m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ contribution.card_first_digits + "******" + contribution.card_last_digits, m("br"), contribution.card_brand + " " + contribution.installments + "x" ]);
+              case "pagarme":
+                return {
+                    first_digits: contribution.gateway_data.card_first_digits,
+                    last_digits: contribution.gateway_data.card_last_digits,
+                    brand: contribution.gateway_data.card_brand
+                };
             }
-        }() ]);
+        }, {
+            displayPaymentMethod: function() {
+                switch (contribution.payment_method.toLowerCase()) {
+                  case "boletobancario":
+                    return m("span#boleto-detail", "");
+
+                  case "cartaodecredito":
+                    var cardData = card();
+                    return cardData ? m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ cardData.first_digits + "******" + cardData.last_digits, m("br"), cardData.brand + " " + contribution.installments + "x" ]) : "";
+                }
+            }
+        };
+    },
+    view: function(ctrl, args) {
+        return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]);
     }
 }, adminApp.AdminDetail = {
     controller: function(args) {
@@ -199,42 +221,25 @@ adminApp.PaymentBadge = {
     }
 }, adminApp.AdminItem = {
     controller: function(args) {
-        this.contribution = args.contribution, this.contribution.user_profile_img = this.contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg", 
-        this.CSSsuccess = ".text-success", this.CSSwaiting = ".text-waiting", this.CSSerror = ".text-error", 
-        this.paymentDetails = function() {
-            if (this.contribution.gateway = this.contribution.gateway.toLowerCase(), !this.contribution.gateway_data) return !1;
-            switch (this.contribution.gateway) {
-              case "moip":
-                return this.contribution.card_first_digits = this.contribution.gateway_data.cartao_bin, 
-                this.contribution.card_last_digits = this.contribution.gateway_data.cartao_final, 
-                this.contribution.card_brand = this.contribution.gateway_data.cartao_bandeira, this.contribution.installments = this.contribution.gateway_data.parcelas, 
-                !0;
-
-              case "pagarme":
-                return this.contribution.card_first_digits = this.contribution.gateway_data.card_first_digits, 
-                this.contribution.card_last_digits = this.contribution.gateway_data.card_last_digits, 
-                this.contribution.card_brand = this.contribution.gateway_data.card_brand, this.contribution.installments = this.contribution.gateway_data.installments, 
-                !0;
-
-              default:
-                return !1;
-            }
-        }, this.stateClass = function() {
-            switch (this.contribution.state) {
+        var userProfile, stateClass, paymentMethodClass, displayDetailBox, contribution = args.contribution;
+        return userProfile = function() {
+            return contribution.user_profile_img || "/assets/catarse_bootstrap/user.jpg";
+        }, stateClass = function() {
+            switch (contribution.state) {
               case "paid":
-                return this.CSSsuccess;
+                return ".text-success";
 
               case "refunded":
-                return this.CSSsuccess;
+                return ".text-refunded";
 
               case "pending":
-                return this.CSSwaiting;
+                return ".text-waiting";
 
               default:
-                return this.CSSerror;
+                return ".text-error";
             }
-        }, this.paymentMethodClass = function() {
-            switch (this.contribution.payment_method) {
+        }, paymentMethodClass = function() {
+            switch (contribution.payment_method) {
               case "BoletoBancario":
                 return ".fa-barcode";
 
@@ -244,18 +249,25 @@ adminApp.PaymentBadge = {
               default:
                 return ".fa-question";
             }
-        }, this.displayDetailBox = adminApp.ToggleDiv.toggler();
+        }, displayDetailBox = adminApp.ToggleDiv.toggler(), {
+            userProfile: userProfile,
+            stateClass: stateClass,
+            paymentMethodClass: paymentMethodClass,
+            displayDetailBox: displayDetailBox
+        };
     },
     view: function(ctrl, args) {
-        var contribution = ctrl.contribution;
-        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + contribution.user_profile_img + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.project_online_date) + " a " + h.momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method) ]), ctrl.paymentDetails() ? m.component(adminApp.PaymentBadge, {
-            contribution: contribution
-        }) : "" ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", {
+        var contribution = args.contribution;
+        return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.user-avatar[src='" + ctrl.userProfile() + "']") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/users/" + contribution.user_id + "']", contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m("a.alt-link[target='_blank'][href='/" + contribution.permalink + "']", contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.project_online_date) + " a " + h.momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.paid_at, "DD/MM/YYYY hh:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m("a.alt-link[target='_blank'][href='https://dashboard.pagar.me/#/transactions/" + contribution.gateway_id + "']", contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m("a.link-hidden[href='#']", contribution.payment_method) ]), m.component(adminApp.PaymentBadge, {
+            contribution: contribution,
+            key: contribution.key
+        }) ]) ]), m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-admin-cont-result'][href='javascript:void(0);']", {
             onclick: ctrl.displayDetailBox.toggle
         }), m.component(adminApp.ToggleDiv, {
             display: ctrl.displayDetailBox,
             content: m.component(adminApp.AdminDetail, {
-                contribution: contribution
+                contribution: contribution,
+                key: contribution.key
             })
         }) ]);
     }
