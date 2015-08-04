@@ -1,4 +1,4 @@
 var adminApp = window.adminApp = {
-  models:{},
+  models: {},
   error: m.prop()
 };
