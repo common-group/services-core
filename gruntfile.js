@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-module.exports = function( grunt ) {
+module.exports = function(grunt){
   var sources = [
     'src/*.js',
     'src/models/**/*.js',
@@ -8,7 +8,22 @@ module.exports = function( grunt ) {
     'src/components/admin/**/*.js',
     'src/components/transactions/**/*.js',
     'src/**/*.js'
+  ],
+  testVendor = [
+    'spec/lib/mithril-query/mithril-query.js',
+    'spec/lib/jasmine-species/jasmine-grammar.js',
+    'spec/lib/jasmine-matchers.js',
+    'spec/lib/jasmine-ajax/mock-ajax.js',
+    'spec/lib/matchers.js',
+    'bower_components/mithril/mithril.js',
+    'bower_components/underscore/underscore.js',
+    'bower_components/mithril.postgrest/src/mithril.postgrest.js',
+    'bower_components/moment/moment.js',
+    'bower_components/moment-timezone/moment-timezone.js',
+    'bower_components/replace-diacritics/index.js',
+    'spec/lib/mocks/*mock.js'
   ];
+
   grunt.initConfig({
     // TODO: change to read component.json
     pkg: require('./package.json'),
@@ -47,23 +62,16 @@ module.exports = function( grunt ) {
       full: {
         src: sources,
         options: {
-          specs: "spec/**/*[S|s]pec.js",
-          vendor: [
-            "spec/lib/mithril-query/mithril-query.js",
-            "spec/lib/jasmine-species/jasmine-grammar.js",
-            "spec/lib/jasmine-matchers.js",
-            "spec/lib/jasmine-ajax/mock-ajax.js",
-            "spec/lib/matchers.js",
-            "bower_components/mithril/mithril.js",
-            "bower_components/underscore/underscore.js",
-            "bower_components/mithril.postgrest/src/mithril.postgrest.js",
-            "bower_components/catarse-helpers/src/catarse-helpers.js",
-            "bower_components/moment/moment.js",
-            "bower_components/moment-timezone/moment-timezone.js",
-            "bower_components/replace-diacritics/index.js",
-            "spec/lib/mocks/*mock.js"
-          ]
+          specs: 'spec/**/*[S|s]pec.js',
+          vendor: testVendor
         }
+      }
+    },
+
+    jshint: {
+      all: ['Gruntfile.js', 'spec/**/*.js', 'src/**/*.js'],
+      options: {
+        reporter: require('jshint-stylish')
       }
     },
 
@@ -75,10 +83,7 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.loadNpmTasks("grunt-browserify");
-  grunt.loadNpmTasks("grunt-contrib-jasmine");
-  grunt.loadNpmTasks("grunt-contrib-uglify");
-  grunt.loadNpmTasks('grunt-contrib-watch');
+  require('load-grunt-tasks')(grunt);
 
   grunt.registerTask('test', ['browserify','jasmine']);
   grunt.registerTask('default', ['test', 'uglify']);
