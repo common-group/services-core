@@ -120,10 +120,10 @@ adminApp.AdminDetail = {
           })
         ])
       ]),
-      m(".w-row.card.card-terciary.u-radius",[
-        m.component(adminApp.AdminTransaction, { contribution: contribution }),
-        m.component(adminApp.AdminTransactionHistory, { contribution: contribution }),
-        m.component(adminApp.AdminReward, { contribution: contribution })
+      m('.w-row.card.card-terciary.u-radius',[
+        m.component(adminApp.AdminTransaction, {contribution: contribution}),
+        m.component(adminApp.AdminTransactionHistory, {contribution: contribution}),
+        m.component(adminApp.AdminReward, {contribution: contribution})
       ])
     ]);
   }
