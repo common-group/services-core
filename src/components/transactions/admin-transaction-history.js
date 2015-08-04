@@ -7,6 +7,8 @@ adminApp.AdminTransactionHistory = {
       {date: contribution.refunded_at, name: 'Estorno realizado'},
       {date: contribution.created_at, name: 'Apoio criado'},
       {date: contribution.refused_at, name: 'Apoio cancelado'},
+      {date: contribution.deleted_at, name: 'Apoio excluído'},
+      {date: contribution.chargeback_at, name: 'Chargeback'},
     ], function(memo, item){
       if (item.date !== null && item.date !== undefined) {
         item.originalDate = item.date;
