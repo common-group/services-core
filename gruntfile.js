@@ -22,6 +22,7 @@
       'bower_components/moment/moment.js',
       'bower_components/moment-timezone/moment-timezone.js',
       'bower_components/replace-diacritics/index.js',
+      'bower_components/catarse-helpers/dist/catarse-helpers.js',
       'spec/lib/mocks/*mock.js'
     ];
 
