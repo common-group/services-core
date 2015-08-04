@@ -9,17 +9,13 @@
         "catch"
     ],
     "requireOperatorBeforeLineBreak": true,
-    "requireCamelCaseOrUpperCaseIdentifiers": true,
     "validateIndentation": 2,
     "validateQuoteMarks": "'",
-
     "disallowMultipleLineStrings": true,
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
-    "disallowMultipleVarDecl": true,
     "disallowKeywordsOnNewLine": ["else"],
-
     "requireSpaceAfterKeywords": [
       "if",
       "else",
