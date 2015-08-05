@@ -1,13 +1,18 @@
-staticApp.TeamTotal = {
-  controller: function(args) {
-    var vm = this.vm = {collection: m.prop([])};
+window.catarse.staticApp.TeamMembers = (function(m, h, models){
+return {
+  controller: function() {
+    var vm = {collection: m.prop([])};
 
-    staticApp.models.TeamTotal.getRow().then(function(data){
+    models.TeamTotal.getRow().then(function(data){
       vm.collection(data);
     });
+
+    return {
+      vm: vm
+    };
   },
 
-  view: function(ctrl, args) {
+  view: function(ctrl) {
     return m("#team-total-static.w-section.section-one-column.u-margintop-40.u-text-center.u-marginbottom-20", [
       ctrl.vm.collection().map(function(teamTotal){
         return m(".w-container", [
@@ -21,8 +26,9 @@ staticApp.TeamTotal = {
                 "Nossa equipe, junta, já apoiou R$" + h.formatNumber(teamTotal.total_amount) + " para " + teamTotal.total_contributed_projects + " projetos!") ]),
             m(".w-col.w-col-2")
           ])
-        ])
+        ]);
       })
-    ])
+    ]);
   }
 };
+}(window.m, window.catarse.h, window.catarse.models));
