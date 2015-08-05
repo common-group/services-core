@@ -14,6 +14,7 @@ adminApp.AdminItem = {
         case 'refunded':
           return '.text-refunded';
         case 'pending':
+        case 'pending_refund':
           return '.text-waiting';
         default:
           return '.text-error';
@@ -76,7 +77,7 @@ adminApp.AdminItem = {
         ]),
         m('.w-col.w-col-2',[
           m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', 'R$' + contribution.value),
-          m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.paid_at, 'DD/MM/YYYY HH:mm[h]')),
+          m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.created_at, 'DD/MM/YYYY HH:mm[h]')),
           m('.fontsize-smallest', ['ID do Gateway: ',
             m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id)
           ])
