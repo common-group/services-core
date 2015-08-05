@@ -1,4 +1,4 @@
-window.catarse = {
+window.c = {
   models: {},
   staticApp: {},
   adminApp: { error: m.prop() },

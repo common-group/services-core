@@ -1,4 +1,4 @@
-window.catarse.staticApp.TeamTotal = (function(m, h, models){
+window.c.staticApp.TeamTotal = (function(m, h, models){
   return {
     controller: function() {
       var vm = {collection: m.prop([])};
@@ -31,4 +31,4 @@ window.catarse.staticApp.TeamTotal = (function(m, h, models){
       ]);
     }
   };
-}(window.m, window.catarse.h, window.catarse.models));
+}(window.m, window.c.h, window.c.models));

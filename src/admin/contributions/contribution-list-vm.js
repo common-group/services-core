@@ -1,1 +1,3 @@
-adminApp.ContributionListVM = m.postgrest.paginationVM(adminApp.models.ContributionDetail.getPageWithToken);
+window.c.adminApp.ContributionListVM = (function(m, models) {
+  m.postgrest.paginationVM(models.ContributionDetail.getPageWithToken);
+}(window.m, window.c.models));

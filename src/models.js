@@ -1,4 +1,4 @@
-window.catarse.models = (function(m){
+window.c.models = (function(m){
   var contributionDetail = m.postgrest.model('contribution_details', [
     'id','contribution_id','user_id','project_id',
     'reward_id','payment_id','permalink','project_name','project_img',

@@ -1,4 +1,4 @@
-window.catarse.form = (function(m){ 
+window.c.FilterNumberRange = (function(m){
   return {
     view: function(ctrl, args){
       return m('.w-col.w-col-3.w-col-small-6', [

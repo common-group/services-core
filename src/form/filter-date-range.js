@@ -1,4 +1,4 @@
-window.catarse.form.filterDateRange = (function(m){
+window.c.filterDateRange = (function(m){
   return {
     view: function(ctrl, args){
       return m('.w-col.w-col-3.w-col-small-6', [

@@ -1,10 +1,10 @@
-window.catarse.staticApp.TeamMembers = (function(_, m, models){
+window.c.staticApp.TeamMembers = (function(_, m, models){
   return {
     controller: function() {
       var vm = {collection: m.prop([])},
 
         groupCollection = function(collection, groupTotal) {
-        return _.map(_.range(Math.ceil(collection.length / groupTotal)), function(i){ 
+        return _.map(_.range(Math.ceil(collection.length / groupTotal)), function(i){
           return collection.slice(i * groupTotal, (i+1) * groupTotal);
         });
       };
@@ -38,4 +38,4 @@ window.catarse.staticApp.TeamMembers = (function(_, m, models){
       ]);
     }
   };
-}(window._, window.m, window.catarse.models));
+}(window._, window.m, window.c.models));

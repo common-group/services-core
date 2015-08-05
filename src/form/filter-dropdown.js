@@ -1,4 +1,4 @@
-window.catarse.form.filterDropdown = (function(m, _){
+window.c.filterDropdown = (function(m, _){
   return {
     view: function(ctrl, args){
       return m('.w-col.w-col-3.w-col-small-6', [

@@ -1,8 +1,8 @@
-window.catarse.h = (function(m){
+window.c.h = (function(m, moment){
   //Date Helpers
   var momentify = function(date, format){
-    format = format || "DD/MM/YYYY";
-    return date ? moment(date).format(format) : "no date";
+    format = format || 'DD/MM/YYYY';
+    return date ? moment(date).format(format) : 'no date';
   },
 
   momentFromString = function(date, format){
@@ -47,4 +47,4 @@ window.catarse.h = (function(m){
     toggleProp: toggleProp,
     loader: loader
   };
-}(window.m));
+}(window.m, window.moment));

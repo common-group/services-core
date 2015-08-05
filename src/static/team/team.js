@@ -1,4 +1,4 @@
-window.catarse.staticApp.Team = (function(m, staticApp){
+window.c.staticApp.Team = (function(m, staticApp){
   return {
     view: function() {
       return m("#static-team-app",[
@@ -7,4 +7,4 @@ window.catarse.staticApp.Team = (function(m, staticApp){
       ]);
     }
   };
-}(window.m, window.catarse.staticApp));
+}(window.m, window.c.staticApp));
