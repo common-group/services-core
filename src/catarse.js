@@ -1,5 +1,7 @@
 window.catarse = {
   models: {},
   staticApp: {},
-  adminApp: { error: m.prop() }
+  adminApp: { error: m.prop() },
+  h: {},
+  form: {}
 };

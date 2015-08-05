@@ -1,4 +1,4 @@
-window.h = (function(){
+window.catarse.h = (function(m){
   //Date Helpers
   var momentify = function(date, format){
     format = format || "DD/MM/YYYY";
@@ -47,4 +47,4 @@ window.h = (function(){
     toggleProp: toggleProp,
     loader: loader
   };
-}());
+}(window.m));
