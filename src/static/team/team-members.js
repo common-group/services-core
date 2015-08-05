@@ -1,6 +1,6 @@
 window.catarse.staticApp.TeamMembers = (function(_, m, models){
   return {
-    controller: function(args) {
+    controller: function() {
       var vm = {collection: m.prop([])},
 
         groupCollection = function(collection, groupTotal) {
@@ -18,7 +18,7 @@ window.catarse.staticApp.TeamMembers = (function(_, m, models){
       };
     },
 
-    view: function(ctrl, args) {
+    view: function(ctrl) {
       return m("#team-members-static.w-section.section", [
         m(".w-container",[
           _.map(ctrl.vm.collection(), function(group) {
