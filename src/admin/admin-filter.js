@@ -1,15 +1,17 @@
-window.c.adminApp.AdminFilter = (function(m, _, h, adminApp){
+window.c.adminApp.AdminFilter = (function(c, m, _, h, adminApp){
   return {
     controller: function() {
-      this.toggler = h.toggleProp(false, true);
+      return {
+        toggler: h.toggleProp(false, true)
+      };
     },
     view: function(ctrl, args) {
       var formBuilder = function(data) {
         return {
           'main': m.component(adminApp.filterMain, data),
-          'dropdown': m.component(adminApp.filterDropdown, data),
-          'numberRange': m.component(adminApp.filterNumberRange, data),
-          'dateRange': m.component(adminApp.filterDateRange, data)
+          'dropdown': m.component(c.filterDropdown, data),
+          'numberRange': m.component(c.filterNumberRange, data),
+          'dateRange': m.component(c.filterDateRange, data)
         };
       }, main = _.findWhere(args.form, {type: 'main'});
 
@@ -37,4 +39,4 @@ window.c.adminApp.AdminFilter = (function(m, _, h, adminApp){
       ]);
     }
   };
-}(window.m, window._, window.c.h, window.c.adminApp));
+}(window.c, window.m, window._, window.c.h, window.c.adminApp));
