@@ -1,10 +1,11 @@
-describe('Contributions component', function() {
+describe('admin.Contributions', function() {
   var AdminContributions = null,
-      adminApp = window.c.admin,
-      ctrl = null;
+      Contributions = window.c.admin.Contributions,
+      ctrl = null,
+      $output;
 
   beforeAll(function(){
-    AdminContributions = m.component(adminApp.Contributions);
+    AdminContributions = m.component(Contributions);
     ctrl = AdminContributions.controller();
   });
 
@@ -20,8 +21,7 @@ describe('Contributions component', function() {
 
   describe('view', function() {
     beforeAll(function() {
-      view = AdminContributions.view(ctrl);
-      $output = mq(view);
+      $output = mq(Contributions);
     });
 
     it('should render AdminFilter nested component', function() {

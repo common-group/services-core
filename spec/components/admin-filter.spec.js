@@ -2,7 +2,7 @@ describe('AdminFilter component', function() {
   var submit,
       c = window.c,
       adminApp = window.c.admin,
-      vm = adminApp.ContributionFilterVM,
+      vm = adminApp.contributionFilterVM,
       fakeForm = [
     {
       type: 'main',

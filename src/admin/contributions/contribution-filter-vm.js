@@ -1,4 +1,4 @@
-window.c.admin.ContributionFilterVM = (function(m, h, replaceDiacritics){
+window.c.admin.contributionFilterVM = (function(m, h, replaceDiacritics){
   var vm = m.postgrest.filtersVM({
     full_text_index: '@@',
     state: 'eq',

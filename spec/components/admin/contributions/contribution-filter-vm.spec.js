@@ -1,6 +1,7 @@
-describe('ContributionFilterVM', function() {
+describe('contributionFilterVM', function() {
   var adminApp = window.c.admin,
-      vm = adminApp.ContributionFilterVM;
+      vm = adminApp.contributionFilterVM,
+      momentFromString = window.c.h.momentFromString;
 
   describe("created_at.lte.toFilter", function() {
     it("should use end of the day timestamp to send filter", function() {
