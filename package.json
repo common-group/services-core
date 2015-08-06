@@ -8,7 +8,7 @@
       "email": "vchavesster@gmail.com"
     }
   ],
-  "description": "A Mithril.js plugin to authenticate requests against PostgREST",
+  "description": "Catarse JS components",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.8.0",

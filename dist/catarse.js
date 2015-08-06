@@ -1,7 +1,7 @@
 /*
-    A Mithril.js plugin to authenticate requests against PostgREST
+    Catarse JS components
     Copyright (c) 2007 - 2015 Diogo Biazus
-    Licensed under the MIT license (http://digitalbush.com/projects/masked-input-plugin/#license)
+    Licensed under the MIT license
     Version: 1.0.0
 */
 window.c = function(m) {
