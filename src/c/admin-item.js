@@ -1,4 +1,4 @@
-window.c.adminApp.AdminItem = (function(m, h, adminApp){
+window.c.AdminItem = (function(m, h, c){
   return {
     controller: function(args){
       var contribution = args.contribution,
@@ -32,7 +32,7 @@ window.c.adminApp.AdminItem = (function(m, h, adminApp){
         }
       };
 
-      displayDetailBox = adminApp.ToggleDiv.toggler();
+      displayDetailBox = c.ToggleDiv.toggler();
 
       return {
         userProfile: userProfile,
@@ -89,14 +89,14 @@ window.c.adminApp.AdminItem = (function(m, h, adminApp){
             m('.fontsize-smallest.fontweight-semibold',[
               m('span.fa' + ctrl.paymentMethodClass()), ' ', m('a.link-hidden[href="#"]', contribution.payment_method)
             ]),
-            m.component(adminApp.PaymentBadge, {contribution: contribution, key: contribution.key})
+            m.component(c.PaymentBadge, {contribution: contribution, key: contribution.key})
           ])
         ]),
         m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix="show-admin-cont-result"][href="javascript:void(0);"]', {onclick: ctrl.displayDetailBox.toggle}),
-        m.component(adminApp.ToggleDiv, {display: ctrl.displayDetailBox, content:
-          m.component(adminApp.AdminDetail, {contribution: contribution, key: contribution.key})
+        m.component(c.ToggleDiv, {display: ctrl.displayDetailBox, content:
+          m.component(c.AdminDetail, {contribution: contribution, key: contribution.key})
         })
       ]);
     }
   };
-}(window.m, window.c.h, window.c.adminApp));
+}(window.m, window.c.h, window.c));

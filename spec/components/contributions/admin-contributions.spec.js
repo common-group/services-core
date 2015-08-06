@@ -1,8 +1,10 @@
-describe('AdminContributions component', function() {
-  var AdminContributions = null, ctrl = null;
+describe('Contributions component', function() {
+  var AdminContributions = null,
+      adminApp = window.c.admin,
+      ctrl = null;
 
   beforeAll(function(){
-    AdminContributions = m.component(adminApp.AdminContributions);
+    AdminContributions = m.component(adminApp.Contributions);
     ctrl = AdminContributions.controller();
   });
 

@@ -1,7 +1,9 @@
-window.c = {
-  models: {},
-  staticApp: {},
-  adminApp: { error: m.prop() },
-  h: {},
-  form: {}
-};
+window.c = (function(m){
+  return {
+    models: {},
+    pages: {},
+    admin: { error: m.prop() },
+    h: {}
+  };
+}(window.m));
+

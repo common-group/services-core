@@ -1,4 +1,4 @@
-window.c.adminApp.AdminContributions = (function(m, adminApp){
+window.c.admin.Contributions = (function(m, adminApp){
   return {
     controller: function(){
       var listVM = adminApp.ContributionListVM,
@@ -24,4 +24,4 @@ window.c.adminApp.AdminContributions = (function(m, adminApp){
       ];
     }
   };
-}(window.m, window.c.adminApp));
+}(window.m, window.c.admin));

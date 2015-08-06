@@ -1,8 +1,10 @@
 describe('PaymentBadge component', function() {
+  var c = window.c;
+
   describe('view', function() {
     var getOutput = function(payment_method){
       var contribution = ContributionDetailMockery(1, {payment_method: payment_method});
-      return mq(adminApp.PaymentBadge, {contribution: contribution[0]});
+      return mq(c.PaymentBadge, {contribution: contribution[0]});
     };
 
     it('should return an HTML element describing a boleto when payment_method is boleto', function() {

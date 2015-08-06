@@ -1,4 +1,4 @@
-window.c.adminApp.filterMain = (function(m){
+window.c.FilterMain = (function(m){
   return {
     view: function(ctrl, args){
       return m('.w-row', [

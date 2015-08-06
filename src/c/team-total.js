@@ -1,9 +1,9 @@
-window.c.staticApp.TeamTotal = (function(m, h, models){
+window.c.TeamTotal = (function(m, h, models){
   return {
     controller: function() {
       var vm = {collection: m.prop([])};
 
-      models.TeamTotal.getRow().then(function(data){
+      models.teamTotal.getRow().then(function(data){
         vm.collection(data);
       });
 

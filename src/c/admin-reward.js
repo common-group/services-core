@@ -1,4 +1,4 @@
-window.c.adminApp.AdminReward = (function(m, h, _){
+window.c.AdminReward = (function(m, h, _){
   return {
     view: function(ctrl, args) {
       var reward = args.contribution.reward || {};

@@ -1,12 +1,12 @@
-window.c.adminApp.AdminDetail = (function(m, adminApp){
+window.c.AdminDetail = (function(m, c){
   return {
     controller: function(){
       return {
-        displayRequestRefundDropDown: adminApp.ToggleDiv.toggler(),
-        displayRefundDropDown: adminApp.ToggleDiv.toggler(),
-        displayTransferContributionDropDown: adminApp.ToggleDiv.toggler(),
-        displayChangeRewardDropDown: adminApp.ToggleDiv.toggler(),
-        displatAnonDropDown: adminApp.ToggleDiv.toggler()
+        displayRequestRefundDropDown: c.ToggleDiv.toggler(),
+        displayRefundDropDown: c.ToggleDiv.toggler(),
+        displayTransferContributionDropDown: c.ToggleDiv.toggler(),
+        displayChangeRewardDropDown: c.ToggleDiv.toggler(),
+        displatAnonDropDown: c.ToggleDiv.toggler()
       };
     },
 
@@ -19,7 +19,7 @@ window.c.adminApp.AdminDetail = (function(m, adminApp){
             m('button.btn.btn-small.btn-terciary', {
               onclick: ctrl.displayRequestRefundDropDown.toggle
             }, 'Pedir reembolso'),
-            m.component(adminApp.ToggleDiv, {
+            m.component(c.ToggleDiv, {
               display: ctrl.displayRequestRefundDropDown,
               content:
                 m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[id="transfer"]',   [
@@ -32,7 +32,7 @@ window.c.adminApp.AdminDetail = (function(m, adminApp){
             m('button.btn.btn-small.btn-terciary', {
               onclick: ctrl.displayRefundDropDown.toggle
             }, 'Estornar'),
-            m.component(adminApp.ToggleDiv, {
+            m.component(c.ToggleDiv, {
               display: ctrl.displayRefundDropDown, content:
               m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
                 m('.fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20', 'Quer efetuar o estorno?'),
@@ -47,7 +47,7 @@ window.c.adminApp.AdminDetail = (function(m, adminApp){
             m('button.btn.btn-small.btn-terciary', {
               onclick: ctrl.displayTransferContributionDropDown.toggle
             }, 'Transferir apoio'),
-            m.component(adminApp.ToggleDiv, {
+            m.component(c.ToggleDiv, {
               display: ctrl.displayTransferContributionDropDown,
               content:
                 m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10',[
@@ -65,7 +65,7 @@ window.c.adminApp.AdminDetail = (function(m, adminApp){
             m('button.btn.btn-small.btn-terciary', {
               onclick: ctrl.displayChangeRewardDropDown.toggle
             }, 'Trocar recompensa'),
-            m.component(adminApp.ToggleDiv, {
+            m.component(c.ToggleDiv, {
               display: ctrl.displayChangeRewardDropDown,
               content:
                 m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[id="transfer"]', {
@@ -103,7 +103,7 @@ window.c.adminApp.AdminDetail = (function(m, adminApp){
             m('button.btn.btn-small.btn-terciary', {
               onclick: ctrl.displatAnonDropDown.toggle
             }, 'Anonimato'),
-            m.component(adminApp.ToggleDiv, {
+            m.component(c.ToggleDiv, {
               display: ctrl.displatAnonDropDown,
               content:
               m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
@@ -124,11 +124,11 @@ window.c.adminApp.AdminDetail = (function(m, adminApp){
           ])
         ]),
         m('.w-row.card.card-terciary.u-radius',[
-          m.component(adminApp.AdminTransaction, {contribution: contribution}),
-          m.component(adminApp.AdminTransactionHistory, {contribution: contribution}),
-          m.component(adminApp.AdminReward, {contribution: contribution, key: contribution.key})
+          m.component(c.AdminTransaction, {contribution: contribution}),
+          m.component(c.AdminTransactionHistory, {contribution: contribution}),
+          m.component(c.AdminReward, {contribution: contribution, key: contribution.key})
         ])
       ]);
     }
   };
-}(window.m, window.c.adminApp));
+}(window.m, window.c));

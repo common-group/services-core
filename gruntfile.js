@@ -3,8 +3,8 @@
 
   module.exports = function(grunt){
     var sources = [
-      'src/*.js',
       'src/models/**/*.js',
+      'src/*.js',
       'src/**/**/*.js',
       'src/**/*.js'
     ],

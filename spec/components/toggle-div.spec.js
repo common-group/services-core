@@ -1,5 +1,5 @@
 describe('toggleDiv component', function() {
-  var toggleProp = null, toggleComponent = null, $output = null;
+  var adminApp = window.c, toggleProp = null, toggleComponent = null, $output = null;
 
   beforeAll(function(){
     toggleProp = adminApp.ToggleDiv.toggler();

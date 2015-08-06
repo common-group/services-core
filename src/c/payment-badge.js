@@ -1,4 +1,4 @@
-window.c.adminApp.PaymentBadge = (function(m){
+window.c.PaymentBadge = (function(m){
   return {
     controller: function(args){
       var contribution = args.contribution, card = null;

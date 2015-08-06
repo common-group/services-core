@@ -1,4 +1,4 @@
-window.c.adminApp.AdminFilter = (function(c, m, _, h, adminApp){
+window.c.AdminFilter = (function(c, m, _, h){
   return {
     controller: function() {
       return {
@@ -8,10 +8,10 @@ window.c.adminApp.AdminFilter = (function(c, m, _, h, adminApp){
     view: function(ctrl, args) {
       var formBuilder = function(data) {
         return {
-          'main': m.component(adminApp.filterMain, data),
-          'dropdown': m.component(c.filterDropdown, data),
-          'numberRange': m.component(c.filterNumberRange, data),
-          'dateRange': m.component(c.filterDateRange, data)
+          'main': m.component(c.FilterMain, data),
+          'dropdown': m.component(c.FilterDropdown, data),
+          'numberRange': m.component(c.FilterNumberRange, data),
+          'dateRange': m.component(c.FilterDateRange, data)
         };
       }, main = _.findWhere(args.form, {type: 'main'});
 
@@ -39,4 +39,4 @@ window.c.adminApp.AdminFilter = (function(c, m, _, h, adminApp){
       ]);
     }
   };
-}(window.c, window.m, window._, window.c.h, window.c.adminApp));
+}(window.c, window.m, window._, window.c.h));

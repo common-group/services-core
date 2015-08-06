@@ -1,5 +1,5 @@
 // ToggleDiv
-window.c.adminApp.ToggleDiv = (function(m, h){
+window.c.ToggleDiv = (function(m, h){
   return {
     toggler: function() {
       return h.toggleProp('none', 'block');

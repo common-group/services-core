@@ -1,7 +1,8 @@
 describe('AdminItem component', function() {
-  var setController = function(contribution){
-    ctrl = m.component(adminApp.AdminItem, {contribution: contribution()[0]}).controller();
-  };
+  var c = window.c,
+      setController = function(contribution){
+        ctrl = m.component(c.AdminItem, {contribution: contribution()[0]}).controller();
+      };
 
   describe('controller', function(){
     beforeAll(function() {

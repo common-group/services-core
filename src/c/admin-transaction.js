@@ -1,4 +1,4 @@
-window.c.adminApp.AdminTransaction = (function(m, h){
+window.c.AdminTransaction = (function(m, h){
   return {
     view: function(ctrl, args) {
       var contribution = args.contribution;

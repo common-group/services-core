@@ -1,4 +1,4 @@
-window.c.adminApp.AdminTransactionHistory = (function(m, h, _){
+window.c.AdminTransactionHistory = (function(m, h, _){
   return {
     controller: function(args) {
       var contribution = args.contribution,

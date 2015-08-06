@@ -1,4 +1,6 @@
 describe('ContributionDetail model', function() {
+  var models = window.c.models;
+
   beforeAll(function(){
     this.contribution_mock = ContributionDetailMockery(1)[0];
     spyOn(m.postgrest, "requestWithToken");
@@ -6,7 +8,7 @@ describe('ContributionDetail model', function() {
 
   describe('when instantiated', function() {
     beforeAll(function() {
-      this.contribution = new adminApp.models.ContributionDetail(this.contribution_mock);
+      this.contribution = new models.contributionDetail(this.contribution_mock);
     });
 
     it('should exhibit attributes', function() {

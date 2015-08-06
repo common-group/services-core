@@ -1,12 +1,13 @@
 describe('AdminList component', function() {
-  var fakeVM = {
-    total: m.prop(),
-    collection: m.prop([]),
-    isLoading: m.prop()
-  };
+  var c = window.c,
+      fakeVM = {
+        total: m.prop(),
+        collection: m.prop([]),
+        isLoading: m.prop()
+      };
 
   beforeAll(function() {
-    AdminList = m.component(adminApp.AdminList, {vm: fakeVM});
+    AdminList = m.component(c.AdminList, {vm: fakeVM});
   });
 
   describe('view', function() {

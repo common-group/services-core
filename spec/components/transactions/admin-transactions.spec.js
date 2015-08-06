@@ -1,7 +1,9 @@
 describe('AdminTransaction component', function() {
+  var c = window.c;
+
   beforeAll(function(){
     contribution = m.prop(ContributionDetailMockery(1, {gateway_data: null}));
-    detailedBox = m.component(adminApp.AdminTransaction,  {contribution: contribution()[0]});
+    detailedBox = m.component(c.AdminTransaction,  {contribution: contribution()[0]});
     view = detailedBox.view(ctrl, {contribution: contribution});
     $output = mq(view);
   });

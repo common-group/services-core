@@ -1,5 +1,8 @@
 describe('AdminFilter component', function() {
   var submit,
+      c = window.c,
+      adminApp = window.c.admin,
+      vm = adminApp.ContributionFilterVM,
       fakeForm = [
     {
       type: 'main',
@@ -51,7 +54,7 @@ describe('AdminFilter component', function() {
 
   describe('view', function(){
     beforeAll(function(){
-      var AdminFilter = m.component(adminApp.AdminFilter,{ form: fakeForm, submit: submit });
+      var AdminFilter = m.component(c.AdminFilter,{ form: fakeForm, submit: submit });
     });
 
     it('should fetch a new list with parameters when clicking on filter', function(){

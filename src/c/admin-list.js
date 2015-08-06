@@ -1,9 +1,9 @@
-window.c.adminApp.AdminList = (function(m, h, adminApp){
+window.c.AdminList = (function(m, h, c){
   return {
     controller: function(args) {
       if (!args.vm.collection().length && args.vm.firstPage) {
         args.vm.firstPage().then(null, function(serverError) {
-          adminApp.error(serverError.message);
+          c.error(serverError.message);
         });
       }
     },
@@ -19,7 +19,7 @@ window.c.adminApp.AdminList = (function(m, h, adminApp){
           ]),
           m('#admin-contributions-list.w-container',[
             args.vm.collection().map(function(item) {
-              return m.component(adminApp.AdminItem, {contribution: item, key: item.key});
+              return m.component(c.AdminItem, {contribution: item, key: item.key});
             }),
             m('.w-section.section',[
               m('.w-container',[
@@ -37,4 +37,4 @@ window.c.adminApp.AdminList = (function(m, h, adminApp){
       ]);
     }
   };
-}(window.m, window.c.h, window.c.adminApp));
+}(window.m, window.c.h, window.c));
