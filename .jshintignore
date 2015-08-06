@@ -1,1 +1,6 @@
-spec/lib/**
+spec/**/*
+.git
+bower_components
+node_modules
+dist
+gruntfile.js
