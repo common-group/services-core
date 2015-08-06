@@ -3,11 +3,9 @@
 
   module.exports = function(grunt){
     var sources = [
-      'src/*.js',
       'src/models/**/*.js',
-      'src/components/contributions/**/*.js',
-      'src/components/admin/**/*.js',
-      'src/components/transactions/**/*.js',
+      'src/*.js',
+      'src/**/**/*.js',
       'src/**/*.js'
     ],
     testVendor = [
@@ -22,12 +20,10 @@
       'bower_components/moment/moment.js',
       'bower_components/moment-timezone/moment-timezone.js',
       'bower_components/replace-diacritics/index.js',
-      'bower_components/catarse-helpers/dist/catarse-helpers.js',
       'spec/lib/mocks/*mock.js'
     ];
 
     grunt.initConfig({
-      // TODO: change to read component.json
       pkg: require('./package.json'),
 
       browserify: {
@@ -49,13 +45,13 @@
           },
 
           files: {
-            'dist/catarse-admin.js': sources
+            'dist/catarse.js': sources
           }
         },
 
         min: {
           files: {
-            'dist/catarse-admin.min.js': sources
+            'dist/catarse.min.js': sources
           }
         }
       },
