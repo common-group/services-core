@@ -47,30 +47,31 @@ window.c = function(m) {
         teamTotal: teamTotal,
         teamMember: teamMember
     };
-}(window.m), window.c.admin.Contributions = function(m, adminApp) {
+}(window.m), window.c.admin.Contributions = function(m, c) {
+    var admin = c.admin;
     return {
         controller: function() {
-            var listVM = adminApp.contributionListVM, filterVM = adminApp.contributionFilterVM;
+            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM;
             return {
                 listVM: listVM,
                 filterVM: filterVM,
                 submit: function() {
                     return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
-                        adminApp.error(serverError.message);
+                        admin.error(serverError.message);
                     }), !1;
                 }
             };
         },
         view: function(ctrl) {
-            return [ m.component(adminApp.AdminFilter, {
+            return [ m.component(c.AdminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 submit: ctrl.submit
-            }), adminApp.error() ? m(".card.card-error.u-radius.fontweight-bold", adminApp.error()) : m.component(adminApp.AdminList, {
+            }), admin.error() ? m(".card.card-error.u-radius.fontweight-bold", admin.error()) : m.component(c.AdminList, {
                 vm: ctrl.listVM
             }) ];
         }
     };
-}(window.m, window.c.admin), window.c.admin.contributionFilterVM = function(m, h, replaceDiacritics) {
+}(window.m, window.c), window.c.admin.contributionFilterVM = function(m, h, replaceDiacritics) {
     var vm = m.postgrest.filtersVM({
         full_text_index: "@@",
         state: "eq",
@@ -163,7 +164,7 @@ window.c = function(m) {
         return replaceDiacritics(vm.full_text_index());
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
-    m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
+    return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
 }(window.m, window.c.models), window.c.AdminDetail = function(m, c) {
     return {
         controller: function() {
@@ -258,6 +259,7 @@ window.c = function(m) {
                     return ".text-refunded";
 
                   case "pending":
+                  case "pending_refund":
                     return ".text-waiting";
 
                   default:
@@ -283,7 +285,7 @@ window.c = function(m) {
         },
         view: function(ctrl, args) {
             var contribution = args.contribution;
-            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + ctrl.userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + contribution.user_id + '"]', contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + contribution.permalink + '"]', contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.project_online_date) + " a " + h.momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.paid_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', contribution.payment_method) ]), m.component(c.PaymentBadge, {
+            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + ctrl.userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + contribution.user_id + '"]', contribution.user_name) ]), m(".fontsize-smallest", "Usuário: " + contribution.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + contribution.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + contribution.payer_email) ]) ]) ]), m(".w-col.w-col-4", [ m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + contribution.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + contribution.permalink + '"]', contribution.project_name) ]), m(".fontsize-smallest.fontweight-semibold", contribution.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.project_online_date) + " a " + h.momentify(contribution.project_expires_at)) ]) ]) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', contribution.payment_method) ]), m.component(c.PaymentBadge, {
                 contribution: contribution,
                 key: contribution.key
             }) ]) ]), m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix="show-admin-cont-result"][href="javascript:void(0);"]', {
@@ -318,8 +320,8 @@ window.c = function(m) {
 }(window.m, window.c.h, window.c), window.c.AdminReward = function(m, h, _) {
     return {
         view: function(ctrl, args) {
-            var reward = args.contribution.reward || {};
-            return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Recompensa"), m(".fontsize-smallest.lineheight-looser", _.isEmpty(reward) ? "Apoio sem recompensa." : [ "ID: " + reward.id, m("br"), "Valor mínimo: R$" + h.formatNumber(reward.minimum_value, 2, 3), m("br"), m.trust("Disponíveis: " + reward.paid_count + reward.waiting_payment_count + " / " + (reward.maximum_contributions || "&infin;")), m("br"), "Aguardando confirmação: " + reward.waiting_payment_count, m("br"), "Descrição: " + reward.description ]) ]);
+            var reward = args.contribution.reward || {}, available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
+            return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Recompensa"), m(".fontsize-smallest.lineheight-looser", _.isEmpty(reward) ? "Apoio sem recompensa." : [ "ID: " + reward.id, m("br"), "Valor mínimo: R$" + h.formatNumber(reward.minimum_value, 2, 3), m("br"), m.trust("Disponíveis: " + available + " / " + (reward.maximum_contributions || "&infin;")), m("br"), "Aguardando confirmação: " + reward.waiting_payment_count, m("br"), "Descrição: " + reward.description ]) ]);
         }
     };
 }(window.m, window.c.h, window._), window.c.AdminTransactionHistory = function(m, h, _) {

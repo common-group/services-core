@@ -1,7 +1,8 @@
 window.c.AdminReward = (function(m, h, _){
   return {
     view: function(ctrl, args) {
-      var reward = args.contribution.reward || {};
+      var reward = args.contribution.reward || {},
+          available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
 
       return m('.w-col.w-col-4',[
         m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Recompensa'),
@@ -10,7 +11,7 @@ window.c.AdminReward = (function(m, h, _){
             m('br'),
             'Valor mínimo: R$' + h.formatNumber(reward.minimum_value, 2, 3),
             m('br'),
-            m.trust('Disponíveis: ' + reward.paid_count + reward.waiting_payment_count + ' / ' + (reward.maximum_contributions || '&infin;')),
+            m.trust('Disponíveis: ' + available + ' / ' + (reward.maximum_contributions || '&infin;')),
             m('br'),
             'Aguardando confirmação: ' + reward.waiting_payment_count,
             m('br'),
