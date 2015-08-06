@@ -1,4 +1,4 @@
-describe('AdminTransactionHistory component', function() {
+describe('AdminTransactionHistory', function() {
   var c = window.c;
 
   beforeAll(function(){

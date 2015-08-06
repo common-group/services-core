@@ -1,4 +1,4 @@
-describe('AdminList component', function() {
+describe('AdminList', function() {
   var c = window.c,
       fakeVM = {
         total: m.prop(),

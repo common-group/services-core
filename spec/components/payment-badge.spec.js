@@ -1,4 +1,4 @@
-describe('PaymentBadge component', function() {
+describe('PaymentBadge', function() {
   var c = window.c;
 
   describe('view', function() {

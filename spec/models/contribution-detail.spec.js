@@ -1,4 +1,4 @@
-describe('ContributionDetail model', function() {
+describe('models.contributionDetail', function() {
   var models = window.c.models;
 
   beforeAll(function(){

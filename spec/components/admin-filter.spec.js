@@ -1,4 +1,4 @@
-describe('AdminFilter component', function() {
+describe('AdminFilter', function() {
   var submit,
       c = window.c,
       adminApp = window.c.admin,

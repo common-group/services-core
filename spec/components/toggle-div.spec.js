@@ -1,4 +1,4 @@
-describe('toggleDiv component', function() {
+describe('ToggleDiv', function() {
   var adminApp = window.c, toggleProp = null, toggleComponent = null, $output = null;
 
   beforeAll(function(){

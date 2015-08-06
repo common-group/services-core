@@ -1,4 +1,4 @@
-describe('contributionFilterVM', function() {
+describe('admin.contributionFilterVM', function() {
   var adminApp = window.c.admin,
       vm = adminApp.contributionFilterVM,
       momentFromString = window.c.h.momentFromString;
