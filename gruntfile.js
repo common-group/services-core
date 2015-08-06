@@ -45,13 +45,13 @@
           },
 
           files: {
-            'dist/catarse-admin.js': sources
+            'dist/catarse.js': sources
           }
         },
 
         min: {
           files: {
-            'dist/catarse-admin.min.js': sources
+            'dist/catarse.min.js': sources
           }
         }
       },
