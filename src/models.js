@@ -11,13 +11,13 @@ window.c.models = (function(m){
   ]),
 
   teamTotal = m.postgrest.model('team_totals', [
-    "member_count", "countries", "total_contributed_projects",
-    "total_cities", "total_amount"
+    'member_count', 'countries', 'total_contributed_projects',
+    'total_cities', 'total_amount'
   ]),
 
   teamMember = m.postgrest.model('team_members', [
-    "name", "img", "id",
-    "total_contributed_projects", "total_amount_contributed"
+    'name', 'img', 'id',
+    'total_contributed_projects', 'total_amount_contributed'
   ]);
   teamMember.pageSize(40);
 

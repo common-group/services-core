@@ -13,7 +13,7 @@ window.c.h = (function(m, moment){
   //Number formatting helpers
   generateFormatNumber = function(s, c){
     return function(number, n, x) {
-      if(number === null || number === undefined) {
+      if (number === null || number === undefined) {
         return null;
       }
 
@@ -37,7 +37,7 @@ window.c.h = (function(m, moment){
 
   //Templates
   loader = function(){
-    return m("img[alt='Loader'][src='https://s3.amazonaws.com/catarse.files/loader.gif']");
+    return m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]');
   };
 
   return {

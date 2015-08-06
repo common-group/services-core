@@ -5,7 +5,7 @@ window.c.TeamMembers = (function(_, m, models){
 
         groupCollection = function(collection, groupTotal) {
         return _.map(_.range(Math.ceil(collection.length / groupTotal)), function(i){
-          return collection.slice(i * groupTotal, (i+1) * groupTotal);
+          return collection.slice(i * groupTotal, (i + 1) * groupTotal);
         });
       };
 
@@ -29,7 +29,7 @@ window.c.TeamMembers = (function(_, m, models){
                     m('img.thumb.big.u-round.u-marginbottom-10[src="' + member.img + '"]'),
                     m('.fontweight-semibold.fontsize-base', member.name)
                   ]),
-                  m('.fontsize-smallest.fontcolor-secondary', "Apoiou " + member.total_contributed_projects + " projetos")
+                  m('.fontsize-smallest.fontcolor-secondary', 'Apoiou ' + member.total_contributed_projects + ' projetos')
                 ]);
               })
             ]);
