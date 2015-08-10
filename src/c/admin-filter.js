@@ -29,7 +29,6 @@ window.c.AdminFilter = (function(c, m, _, h){
                 }, 'Filtros avançados  >')), (ctrl.toggler() ?
                 m('#advanced-search.w-row.admin-filters', [
                   _.map(args.form, function(f){
-                    console.log('Building '+f.type);
                     return (f.type !== 'main') ? formBuilder(f.data)[f.type] : '';
                   })
                 ]) : ''
