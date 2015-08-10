@@ -1,65 +1,43 @@
-describe('AdminFilter', function() {
-  var submit,
+describe('AdminFilter', function(){
+  var ctrl,
+      submit,
+      fakeForm,
+      formDesc,
       c = window.c,
-      adminApp = window.c.admin,
-      vm = adminApp.contributionFilterVM,
-      fakeForm = [
-    {
-      type: 'main',
-      data: {
-        vm: vm.full_text_index,
-        placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
-      }
-    },
-    {
-      type: 'dropdown',
-      data:{
-        label: 'Com o estado',
-        name: 'state',
-        vm: vm.state,
-        options: [
-          {value: '', option: 'Qualquer um'},
-          {value: 'paid', option: 'paid'},
-          {value: 'refused', option: 'refused'},
-          {value: 'pending', option: 'pending'},
-          {value: 'pending_refund', option: 'pending_refund'},
-          {value: 'refunded', option: 'refunded'},
-          {value: 'chargeback', option: 'chargeback'},
-          {value: 'deleted', option: 'deleted'}
-        ]
-      }
-    },
-    {
-      type: 'numberRange',
-      data: {
-        label: 'Valores entre',
-        first: vm.value.gte,
-        last: vm.value.lte
-      }
-    },
-    {
-      type: 'dateRange',
-      data: {
-        label: 'Período do apoio',
-        first: vm.created_at.gte,
-        last: vm.created_at.lte
-      }
-    }
-  ];
+      vm = c.admin.contributionFilterVM,
+      AdminFilter = c.AdminFilter;
 
-  beforeAll(function(){
-    submit = jasmine.createSpy('submit');
+  describe('controller', function(){
+    beforeAll(function(){
+      ctrl = AdminFilter.controller();
+    });
+
+    it('should instantiate a toggler', function(){
+      expect(ctrl.toggler).toBeDefined();
+    });
   });
-
 
   describe('view', function(){
     beforeAll(function(){
-      var AdminFilter = m.component(c.AdminFilter,{ form: fakeForm, submit: submit });
+      spyOn(m, 'component').and.callThrough();
+      submit = jasmine.createSpy('submit');
+      formDesc = ['main', 'dropdown', 'numberRange', 'dateRange'];
+      fakeForm = FormDescriberMock(formDesc);
+      $output = mq(AdminFilter.view(AdminFilter.controller(), {form: fakeForm, submit: submit}));
     });
 
-    it('should fetch a new list with parameters when clicking on filter', function(){
-      pending('implementation');
+    it('should render the main filter on render', function(){
+      expect(m.component).toHaveBeenCalledWith(c.FilterMain, fakeForm[0].data);
     });
 
+    it('should build a form from a FormDescriber when clicking the advanced filter', function(){
+      $output.click('button');
+      expect(m.component.calls.count()).toEqual(formDesc.length);
+    });
+
+    it('should trigger a submit function when submitting the form', function(){
+      $output.trigger('form', 'submit');
+      expect(submit).toHaveBeenCalled();
+    });
   });
 });

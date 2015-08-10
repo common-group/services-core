@@ -1,12 +1,12 @@
 window.c.AdminFilter = (function(c, m, _, h){
   return {
-    controller: function() {
+    controller: function(){
       return {
         toggler: h.toggleProp(false, true)
       };
     },
-    view: function(ctrl, args) {
-      var formBuilder = function(data) {
+    view: function(ctrl, args){
+      var formBuilder = function(data){
         return {
           'main': m.component(c.FilterMain, data),
           'dropdown': m.component(c.FilterDropdown, data),
@@ -24,7 +24,7 @@ window.c.AdminFilter = (function(c, m, _, h){
             }, [
               formBuilder(main.data).main,
               m('.u-marginbottom-20.w-row',
-                m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[type="button"][style="background: none; border: none; outline: none; text-align: left;"]', {
+                m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"]', {
                   onclick: ctrl.toggler.toggle
                 }, 'Filtros avançados  >')), (ctrl.toggler() ?
                 m('#advanced-search.w-row.admin-filters', [
