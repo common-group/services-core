@@ -29,17 +29,15 @@ window.c.AdminItem = (function(m, h, c){
         }
       };
 
-      displayDetailBox = c.ToggleDiv.toggler();
-
-      return {
-        stateClass: stateClass,
-        paymentMethodClass: paymentMethodClass,
-        displayDetailBox: displayDetailBox
+      var project = {
+        project_img: contribution.project_img,
+        permalink: contribution.permalink,
+        project_name: contribution.project_name,
+        project_state: contribution.project_state,
+        project_online_date: contribution.project_online_date,
+        project_expires_at: contribution.project_expires_at
       };
-    },
 
-    view: function(ctrl, args) {
-      var contribution = args.contribution;
       var user = {
         user_profile_img: contribution.user_profile_img,
         user_id: contribution.user_id,
@@ -48,26 +46,27 @@ window.c.AdminItem = (function(m, h, c){
         payer_email: contribution.payer_email
       };
 
+      displayDetailBox = c.ToggleDiv.toggler();
+
+      return {
+        displayDetailBox: displayDetailBox,
+        paymentMethodClass: paymentMethodClass,
+        project: project,
+        stateClass: stateClass,
+        user: user
+      };
+    },
+
+    view: function(ctrl, args) {
+      var contribution = args.contribution;
+
       return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions',[
         m('.w-row',[
           m('.w-col.w-col-4',[
-            m('.w-row',[
-              m.component(c.UserAdminProfile, {user: user})
-            ])
+            m.component(c.AdminUser, {user: ctrl.user})
           ]),
           m('.w-col.w-col-4',[
-            m('.w-row',[
-              m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10',[
-                m('img.thumb-project.u-radius[src=' + contribution.project_img + '][width=50]')
-              ]),
-              m('.w-col.w-col-9.w-col-small-9',[
-                m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [
-                  m('a.alt-link[target="_blank"][href="/' + contribution.permalink + '"]', contribution.project_name)
-                ]),
-                m('.fontsize-smallest.fontweight-semibold', contribution.project_state),
-                m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.project_online_date) + ' a ' + h.momentify(contribution.project_expires_at))
-              ])
-            ])
+            m.component(c.AdminProject, {project: ctrl.project})
           ]),
           m('.w-col.w-col-2',[
             m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', 'R$' + contribution.value),
