@@ -25,7 +25,7 @@ window.c.AdminItem = (function(m, h, c){
         payer_email: contribution.payer_email
       };
 
-      var displayDetailBox = c.ToggleDiv.toggler();
+      var displayDetailBox = h.toggleProp(false, true);
 
       return {
         displayDetailBox: displayDetailBox,
@@ -53,10 +53,8 @@ window.c.AdminItem = (function(m, h, c){
             m.component(c.PaymentStatus, {payment: ctrl.payment, contribution: contribution, key: contribution.key})
           ])
         ]),
-        m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix="show-admin-cont-result"][href="javascript:void(0);"]', {onclick: ctrl.displayDetailBox.toggle}),
-        m.component(c.ToggleDiv, {display: ctrl.displayDetailBox, content:
-          m.component(c.AdminDetail, {contribution: contribution, key: contribution.key})
-        })
+        m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {onclick: ctrl.displayDetailBox.toggle}),
+        ctrl.displayDetailBox() ? m.component(c.AdminDetail, {contribution: contribution, key: contribution.key}) : ''
       ]);
     }
   };
