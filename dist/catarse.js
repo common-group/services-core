@@ -41,7 +41,7 @@ window.c = function(m) {
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details", [ "id", "contribution_id", "user_id", "project_id", "reward_id", "payment_id", "permalink", "project_name", "project_img", "user_name", "user_profile_img", "email", "key", "value", "installments", "installment_value", "state", "anonymous", "payer_email", "gateway", "gateway_id", "gateway_fee", "gateway_data", "payment_method", "project_state", "has_rewards", "pending_at", "paid_at", "refused_at", "reward_minimum_value", "pending_refund_at", "refunded_at", "created_at", "is_second_slip" ]), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), teamMember = m.postgrest.model("team_members", [ "name", "img", "id", "total_contributed_projects", "total_amount_contributed" ]);
+    var contributionDetail = m.postgrest.model("contribution_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), teamMember = m.postgrest.model("team_members");
     return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
         teamTotal: teamTotal,
@@ -237,7 +237,7 @@ window.c = function(m) {
             });
             return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form", {
                 onsubmit: args.submit
-            }, [ formBuilder(main.data).main, m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[type="button"][style="background: none; border: none; outline: none; text-align: left;"]', {
+            }, [ formBuilder(main.data).main, m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"]', {
                 onclick: ctrl.toggler.toggle
             }, "Filtros avançados  >")), ctrl.toggler() ? m("#advanced-search.w-row.admin-filters", [ _.map(args.form, function(f) {
                 return "main" !== f.type ? formBuilder(f.data)[f.type] : "";
