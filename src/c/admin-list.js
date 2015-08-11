@@ -22,7 +22,7 @@ window.c.AdminList = (function(m, h, c){
           ]),
           m('#admin-contributions-list.w-container',[
             list.collection().map(function(item) {
-              return m.component(c.AdminItem, {contribution: item, key: item.key});
+              return m.component(c.AdminItem, {describer: args.vm.itemDescriber, item: item, key: item.key});
             }),
             m('.w-section.section',[
               m('.w-container',[

@@ -177,7 +177,20 @@ window.c = function() {
         return replaceDiacritics(vm.full_text_index());
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
-    return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
+    var vm = m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
+    return vm.itemDescriber = [ {
+        type: "user",
+        wrapperClass: ".w-col.w-col-4"
+    }, {
+        type: "project",
+        wrapperClass: ".w-col.w-col-4"
+    }, {
+        type: "contribution",
+        wrapperClass: ".w-col.w-col-2"
+    }, {
+        type: "payment",
+        wrapperClass: ".w-col.w-col-2"
+    } ], vm;
 }(window.m, window.c.models), window.c.AdminContribution = function(m, h) {
     return {
         view: function(ctrl, args) {
@@ -264,28 +277,34 @@ window.c = function() {
             }) ]) : "" ]) ]) ]) ]);
         }
     };
-}(window.c, window.m, window._, window.c.h), window.c.AdminItem = function(m, h, c) {
+}(window.c, window.m, window._, window.c.h), window.c.AdminItem = function(m, _, h, c) {
     return {
         controller: function(args) {
-            var contribution = args.contribution, payment = {
-                gateway: contribution.gateway,
-                gateway_data: contribution.gateway_data,
-                installments: contribution.installments,
-                state: contribution.state,
-                payment_method: contribution.payment_method
-            }, project = {
-                project_img: contribution.project_img,
-                permalink: contribution.permalink,
-                project_name: contribution.project_name,
-                project_state: contribution.project_state,
-                project_online_date: contribution.project_online_date,
-                project_expires_at: contribution.project_expires_at
-            }, user = {
-                user_profile_img: contribution.user_profile_img,
-                user_id: contribution.user_id,
-                user_name: contribution.user_name,
-                email: contribution.email,
-                payer_email: contribution.payer_email
+            var payment = function(item) {
+                return {
+                    gateway: item.gateway,
+                    gateway_data: item.gateway_data,
+                    installments: item.installments,
+                    state: item.state,
+                    payment_method: item.payment_method
+                };
+            }, project = function(item) {
+                return {
+                    project_img: item.project_img,
+                    permalink: item.permalink,
+                    project_name: item.project_name,
+                    project_state: item.project_state,
+                    project_online_date: item.project_online_date,
+                    project_expires_at: item.project_expires_at
+                };
+            }, user = function(item) {
+                return {
+                    user_profile_img: item.user_profile_img,
+                    user_id: item.user_id,
+                    user_name: item.user_name,
+                    email: item.email,
+                    payer_email: item.payer_email
+                };
             }, displayDetailBox = h.toggleProp(!1, !0);
             return {
                 displayDetailBox: displayDetailBox,
@@ -295,25 +314,35 @@ window.c = function() {
             };
         },
         view: function(ctrl, args) {
-            var contribution = args.contribution;
-            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions", [ m(".w-row", [ m(".w-col.w-col-4", [ m.component(c.AdminUser, {
-                user: ctrl.user
-            }) ]), m(".w-col.w-col-4", [ m.component(c.AdminProject, {
-                project: ctrl.project
-            }) ]), m(".w-col.w-col-2", [ m.component(c.AdminContribution, {
-                contribution: contribution
-            }) ]), m(".w-col.w-col-2", [ m.component(c.PaymentStatus, {
-                payment: ctrl.payment,
-                key: contribution.key
-            }) ]) ]), m("button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary", {
+            var item = args.item, itemBuilder = function(data) {
+                var itemDescriber = {
+                    user: m.component(c.AdminUser, {
+                        user: ctrl.user(item)
+                    }),
+                    project: m.component(c.AdminProject, {
+                        project: ctrl.project(item)
+                    }),
+                    contribution: m.component(c.AdminContribution, {
+                        contribution: item
+                    }),
+                    payment: m.component(c.PaymentStatus, {
+                        payment: ctrl.payment(item),
+                        key: item.key
+                    })
+                };
+                return m(data.wrapperClass, [ itemDescriber[data.type] ]);
+            };
+            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.describer, function(component) {
+                return itemBuilder(component);
+            }) ]), m("button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary", {
                 onclick: ctrl.displayDetailBox.toggle
             }), ctrl.displayDetailBox() ? m.component(c.AdminDetail, {
-                contribution: contribution,
-                key: contribution.key
+                item: item,
+                key: item.key
             }) : "" ]);
         }
     };
-}(window.m, window.c.h, window.c), window.c.AdminList = function(m, h, c) {
+}(window.m, window._, window.c.h, window.c), window.c.AdminList = function(m, h, c) {
     var admin = c.admin;
     return {
         controller: function(args) {
@@ -331,7 +360,8 @@ window.c = function() {
             var list = args.vm.list;
             return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
                 return m.component(c.AdminItem, {
-                    contribution: item,
+                    describer: args.vm.itemDescriber,
+                    item: item,
                     key: item.key
                 });
             }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ list.isLoading() ? h.loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
