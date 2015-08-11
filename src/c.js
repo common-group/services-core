@@ -6,4 +6,3 @@ window.c = (function(){
     h: {}
   };
 }());
-

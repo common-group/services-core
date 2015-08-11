@@ -1,4 +1,5 @@
 window.c.AdminList = (function(m, h, c){
+  var admin = c.admin;
   return {
     controller: function(args) {
       var list = args.vm.list;

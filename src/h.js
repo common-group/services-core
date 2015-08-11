@@ -37,7 +37,9 @@ window.c.h = (function(m, moment){
 
   //Templates
   loader = function(){
-    return m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]');
+    return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
+      m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
+    ]);
   };
 
   return {
