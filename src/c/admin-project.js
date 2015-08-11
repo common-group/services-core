@@ -1,7 +1,7 @@
 window.c.AdminProject = (function(m, h){
   return {
     view: function(ctrl, args) {
-      var project = args.project;
+      var project = args.item;
       return m('.w-row',[
         m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10',[
           m('img.thumb-project.u-radius[src=' + project.project_img + '][width=50]')

@@ -1,7 +1,7 @@
 window.c.PaymentStatus = (function(m){
   return {
     controller: function(args){
-      var payment = args.payment, card = null,
+      var payment = args.item, card = null,
           displayPaymentMethod, paymentMethodClass, stateClass;
 
       card = function(){
@@ -73,7 +73,7 @@ window.c.PaymentStatus = (function(m){
     },
 
     view: function(ctrl, args){
-      var payment = args.payment;
+      var payment = args.item;
       return m('.w-row', [
         m('.fontsize-smallest.lineheight-looser.fontweight-semibold',[
           m('span.fa.fa-circle' + ctrl.stateClass()), ' ' + payment.state

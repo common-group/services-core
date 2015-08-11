@@ -56,6 +56,7 @@ window.c = function() {
     var admin = c.admin;
     return {
         controller: function() {
+<<<<<<< HEAD
             var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, error = m.prop("");
             return {
                 listVM: {
@@ -69,6 +70,30 @@ window.c = function() {
                         error(serverError.message);
                     }), !1;
                 }
+=======
+            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, itemBuilder = [ {
+                component: c.AdminUser,
+                wrapperClass: ".w-col.w-col-4"
+            }, {
+                component: c.AdminProject,
+                wrapperClass: ".w-col.w-col-4"
+            }, {
+                component: c.AdminContribution,
+                wrapperClass: ".w-col.w-col-2"
+            }, {
+                component: c.AdminPayment,
+                wrapperClass: ".w-col.w-col-2"
+            } ], submit = function() {
+                return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
+                    admin.error(serverError.message);
+                }), !1;
+            };
+            return {
+                filterVM: filterVM,
+                itemBuilder: itemBuilder,
+                listVM: listVM,
+                submit: submit
+>>>>>>> Moves item describer to controller
             };
         },
         view: function(ctrl) {
@@ -79,8 +104,13 @@ window.c = function() {
             }), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(c.AdminList, {
 =======
             }), admin.error() ? m(".card.card-error.u-radius.fontweight-bold", admin.error()) : admin.isLoading() ? h.loader() : "", m.component(c.AdminList, {
+<<<<<<< HEAD
 >>>>>>> Adds one level higher loader
                 vm: ctrl.listVM
+=======
+                vm: ctrl.listVM,
+                itemBuilder: ctrl.itemBuilder
+>>>>>>> Moves item describer to controller
             }) ];
         }
     };
@@ -177,24 +207,11 @@ window.c = function() {
         return replaceDiacritics(vm.full_text_index());
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
-    var vm = m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
-    return vm.itemDescriber = [ {
-        type: "user",
-        wrapperClass: ".w-col.w-col-4"
-    }, {
-        type: "project",
-        wrapperClass: ".w-col.w-col-4"
-    }, {
-        type: "contribution",
-        wrapperClass: ".w-col.w-col-2"
-    }, {
-        type: "payment",
-        wrapperClass: ".w-col.w-col-2"
-    } ], vm;
+    return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
 }(window.m, window.c.models), window.c.AdminContribution = function(m, h) {
     return {
         view: function(ctrl, args) {
-            var contribution = args.contribution;
+            var contribution = args.item;
             return m(".w-row", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
         }
     };
@@ -280,60 +297,18 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminItem = function(m, _, h, c) {
     return {
         controller: function(args) {
-            var payment = function(item) {
-                return {
-                    gateway: item.gateway,
-                    gateway_data: item.gateway_data,
-                    installments: item.installments,
-                    state: item.state,
-                    payment_method: item.payment_method
-                };
-            }, project = function(item) {
-                return {
-                    project_img: item.project_img,
-                    permalink: item.permalink,
-                    project_name: item.project_name,
-                    project_state: item.project_state,
-                    project_online_date: item.project_online_date,
-                    project_expires_at: item.project_expires_at
-                };
-            }, user = function(item) {
-                return {
-                    user_profile_img: item.user_profile_img,
-                    user_id: item.user_id,
-                    user_name: item.user_name,
-                    email: item.email,
-                    payer_email: item.payer_email
-                };
-            }, displayDetailBox = h.toggleProp(!1, !0);
+            var displayDetailBox = h.toggleProp(!1, !0);
             return {
-                displayDetailBox: displayDetailBox,
-                payment: payment,
-                project: project,
-                user: user
+                displayDetailBox: displayDetailBox
             };
         },
         view: function(ctrl, args) {
-            var item = args.item, itemBuilder = function(data) {
-                var itemDescriber = {
-                    user: m.component(c.AdminUser, {
-                        user: ctrl.user(item)
-                    }),
-                    project: m.component(c.AdminProject, {
-                        project: ctrl.project(item)
-                    }),
-                    contribution: m.component(c.AdminContribution, {
-                        contribution: item
-                    }),
-                    payment: m.component(c.PaymentStatus, {
-                        payment: ctrl.payment(item),
-                        key: item.key
-                    })
-                };
-                return m(data.wrapperClass, [ itemDescriber[data.type] ]);
-            };
-            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.describer, function(component) {
-                return itemBuilder(component);
+            var item = args.item;
+            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(component) {
+                return m(component.wrapperClass, [ m.component(component, {
+                    item: item,
+                    key: item.key
+                }) ]);
             }) ]), m("button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary", {
                 onclick: ctrl.displayDetailBox.toggle
             }), ctrl.displayDetailBox() ? m.component(c.AdminDetail, {
@@ -360,7 +335,7 @@ window.c = function() {
             var list = args.vm.list;
             return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
                 return m.component(c.AdminItem, {
-                    describer: args.vm.itemDescriber,
+                    builder: args.itemBuilder,
                     item: item,
                     key: item.key
                 });
@@ -372,7 +347,7 @@ window.c = function() {
 }(window.m, window.c.h, window.c), window.c.AdminProject = function(m, h) {
     return {
         view: function(ctrl, args) {
-            var project = args.project;
+            var project = args.item;
             return m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + project.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".fontsize-smallest.fontweight-semibold", project.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(project.project_online_date) + " a " + h.momentify(project.project_expires_at)) ]) ]);
         }
     };
@@ -433,7 +408,7 @@ window.c = function() {
 }(window.m, window.c.h), window.c.AdminUser = function(m) {
     return {
         view: function(ctrl, args) {
-            var user = args.user, userProfile = function() {
+            var user = args.item, userProfile = function() {
                 return user.user_profile_img || "/assets/catarse_bootstrap/user.jpg";
             };
             return m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '"]', user.user_name) ]), m(".fontsize-smallest", "Usuário: " + user.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + user.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + user.payer_email) ]) ]);
@@ -486,7 +461,7 @@ window.c = function() {
 }(window.m), window.c.PaymentStatus = function(m) {
     return {
         controller: function(args) {
-            var displayPaymentMethod, paymentMethodClass, stateClass, payment = args.payment, card = null;
+            var displayPaymentMethod, paymentMethodClass, stateClass, payment = args.item, card = null;
             return card = function() {
                 if (payment.gateway_data) switch (payment.gateway.toLowerCase()) {
                   case "moip":
@@ -545,7 +520,7 @@ window.c = function() {
             };
         },
         view: function(ctrl, args) {
-            var payment = args.payment;
+            var payment = args.item;
             return m(".w-row", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };

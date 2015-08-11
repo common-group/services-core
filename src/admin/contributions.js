@@ -3,19 +3,38 @@ window.c.admin.Contributions = (function(m, c, h){
   return {
     controller: function(){
       var listVM = admin.contributionListVM,
-          filterVM = admin.contributionFilterVM,
-          error = m.prop('');
+          filterVM = admin.contributionFilterVM;
+      var itemBuilder = [
+        {
+          component: 'AdminUser',
+          wrapperClass: '.w-col.w-col-4'
+        },
+        {
+          component: 'AdminProject',
+          wrapperClass: '.w-col.w-col-4'
+        },
+        {
+          component: 'AdminContribution',
+          wrapperClass: '.w-col.w-col-2'
+        },
+        {
+          component: 'PaymentStatus',
+          wrapperClass: '.w-col.w-col-2'
+        }
+      ];
+      var error = m.prop('');
+      var submit = function(){
+        listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
+          error(serverError.message);
+        });
+        return false;
+      };
 
       return {
-        listVM: {list: listVM, error: error},
         filterVM: filterVM,
-        error: error,
-        submit: function(){
-          listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
-            error(serverError.message);
-          });
-          return false;
-        }
+        itemBuilder: itemBuilder,
+        listVM: {list: listVM, error: error},
+        submit: submit
       };
     },
 
@@ -25,7 +44,7 @@ window.c.admin.Contributions = (function(m, c, h){
         ctrl.error() ?
           m('.card.card-error.u-radius.fontweight-bold', ctrl.error()) :
           admin.isLoading() ? h.loader() : '',
-          m.component(c.AdminList, {vm: ctrl.listVM})
+          m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder})
       ];
     }
   };

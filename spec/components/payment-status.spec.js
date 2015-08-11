@@ -9,7 +9,7 @@ describe('PaymentStatus', function(){
           state: contribution.state,
           payment_method: contribution.payment_method
         };
-        ctrl = m.component(c.PaymentStatus, {payment: payment}).controller();
+        ctrl = m.component(c.PaymentStatus, {item: payment}).controller();
       };
 
   describe('stateClass function', function(){
@@ -72,7 +72,7 @@ describe('PaymentStatus', function(){
             state: contribution.state,
             payment_method: contribution.payment_method
           };
-      return mq(m.component(c.PaymentStatus, {payment: payment}));
+      return mq(m.component(c.PaymentStatus, {item: payment}));
     };
 
     it('should return an HTML element describing a boleto when payment_method is boleto', function() {

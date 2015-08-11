@@ -1,7 +1,7 @@
 window.c.AdminUser = (function(m){
   return {
     view: function(ctrl, args) {
-      var user = args.user;
+      var user = args.item;
       var userProfile = function(){
         return user.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
       };
