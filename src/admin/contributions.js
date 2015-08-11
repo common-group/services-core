@@ -3,26 +3,26 @@ window.c.admin.Contributions = (function(m, c, h){
   return {
     controller: function(){
       var listVM = admin.contributionListVM,
-          filterVM = admin.contributionFilterVM;
-      var itemBuilder = [
-        {
-          component: 'AdminUser',
-          wrapperClass: '.w-col.w-col-4'
-        },
-        {
-          component: 'AdminProject',
-          wrapperClass: '.w-col.w-col-4'
-        },
-        {
-          component: 'AdminContribution',
-          wrapperClass: '.w-col.w-col-2'
-        },
-        {
-          component: 'PaymentStatus',
-          wrapperClass: '.w-col.w-col-2'
-        }
-      ];
-      var error = m.prop('');
+          filterVM = admin.contributionFilterVM,
+          itemBuilder = [
+            {
+              component: 'AdminUser',
+              wrapperClass: '.w-col.w-col-4'
+            },
+            {
+              component: 'AdminProject',
+              wrapperClass: '.w-col.w-col-4'
+            },
+            {
+              component: 'AdminContribution',
+              wrapperClass: '.w-col.w-col-2'
+            },
+            {
+              component: 'PaymentStatus',
+              wrapperClass: '.w-col.w-col-2'
+            }
+          ],
+          error = m.prop('');
       var submit = function(){
         listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
           error(serverError.message);
