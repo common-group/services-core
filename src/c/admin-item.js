@@ -4,6 +4,9 @@ window.c.AdminItem = (function(m, h, c){
       var contribution = args.contribution;
 
       var payment = {
+        gateway: contribution.gateway,
+        gateway_data: contribution.gateway_data,
+        installments: contribution.installments,
         state: contribution.state,
         payment_method: contribution.payment_method
       };
@@ -50,7 +53,7 @@ window.c.AdminItem = (function(m, h, c){
             m.component(c.AdminContribution, {contribution: contribution})
           ]),
           m('.w-col.w-col-2',[
-            m.component(c.PaymentStatus, {payment: ctrl.payment, contribution: contribution, key: contribution.key})
+            m.component(c.PaymentStatus, {payment: ctrl.payment, key: contribution.key})
           ])
         ]),
         m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {onclick: ctrl.displayDetailBox.toggle}),

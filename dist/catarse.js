@@ -268,6 +268,9 @@ window.c = function() {
     return {
         controller: function(args) {
             var contribution = args.contribution, payment = {
+                gateway: contribution.gateway,
+                gateway_data: contribution.gateway_data,
+                installments: contribution.installments,
                 state: contribution.state,
                 payment_method: contribution.payment_method
             }, project = {
@@ -301,7 +304,6 @@ window.c = function() {
                 contribution: contribution
             }) ]), m(".w-col.w-col-2", [ m.component(c.PaymentStatus, {
                 payment: ctrl.payment,
-                contribution: contribution,
                 key: contribution.key
             }) ]) ]), m("button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary", {
                 onclick: ctrl.displayDetailBox.toggle
@@ -454,45 +456,45 @@ window.c = function() {
 }(window.m), window.c.PaymentStatus = function(m) {
     return {
         controller: function(args) {
-            var displayPaymentMethod, paymentMethodClass, stateClass, contribution = args.contribution, card = null;
+            var displayPaymentMethod, paymentMethodClass, stateClass, payment = args.payment, card = null;
             return card = function() {
-                if (contribution.gateway_data) switch (contribution.gateway.toLowerCase()) {
+                if (payment.gateway_data) switch (payment.gateway.toLowerCase()) {
                   case "moip":
                     return {
-                        first_digits: contribution.gateway_data.cartao_bin,
-                        last_digits: contribution.gateway_data.cartao_final,
-                        brand: contribution.gateway_data.cartao_bandeira
+                        first_digits: payment.gateway_data.cartao_bin,
+                        last_digits: payment.gateway_data.cartao_final,
+                        brand: payment.gateway_data.cartao_bandeira
                     };
 
                   case "pagarme":
                     return {
-                        first_digits: contribution.gateway_data.card_first_digits,
-                        last_digits: contribution.gateway_data.card_last_digits,
-                        brand: contribution.gateway_data.card_brand
+                        first_digits: payment.gateway_data.card_first_digits,
+                        last_digits: payment.gateway_data.card_last_digits,
+                        brand: payment.gateway_data.card_brand
                     };
                 }
             }, displayPaymentMethod = function() {
-                switch (contribution.payment_method.toLowerCase()) {
+                switch (payment.payment_method.toLowerCase()) {
                   case "boletobancario":
                     return m("span#boleto-detail", "");
 
                   case "cartaodecredito":
                     var cardData = card();
-                    return cardData ? m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ cardData.first_digits + "******" + cardData.last_digits, m("br"), cardData.brand + " " + contribution.installments + "x" ]) : "";
+                    return cardData ? m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ cardData.first_digits + "******" + cardData.last_digits, m("br"), cardData.brand + " " + payment.installments + "x" ]) : "";
                 }
             }, paymentMethodClass = function() {
-                switch (contribution.payment_method) {
-                  case "BoletoBancario":
+                switch (payment.payment_method.toLowerCase()) {
+                  case "boletobancario":
                     return ".fa-barcode";
 
-                  case "CartaoDeCredito":
+                  case "cartaodecredito":
                     return ".fa-credit-card";
 
                   default:
                     return ".fa-question";
                 }
             }, stateClass = function() {
-                switch (contribution.state) {
+                switch (payment.state) {
                   case "paid":
                     return ".text-success";
 

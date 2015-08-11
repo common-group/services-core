@@ -1,8 +1,15 @@
 describe('PaymentStatus', function(){
   var c = window.c,
       ctrl,
-      setController = function(contribution, payment){
-        ctrl = m.component(c.PaymentStatus, {contribution: contribution, payment: payment}).controller();
+      setController = function(contribution){
+        var payment = {
+          gateway: contribution.gateway,
+          gateway_data: contribution.gateway_data,
+          installments: contribution.installments,
+          state: contribution.state,
+          payment_method: contribution.payment_method
+        };
+        ctrl = m.component(c.PaymentStatus, {payment: payment}).controller();
       };
 
   describe('stateClass function', function(){
@@ -57,12 +64,15 @@ describe('PaymentStatus', function(){
 
   describe('view', function() {
     var getOutput = function(payment_method){
-      var contribution = ContributionDetailMockery(1, {payment_method: payment_method}),
+      var contribution = ContributionDetailMockery(1, {payment_method: payment_method})[0],
           payment = {
-            state: contribution[0].state,
-            payment_method: contribution[0].payment_method
+            gateway: contribution.gateway,
+            gateway_data: contribution.gateway_data,
+            installments: contribution.installments,
+            state: contribution.state,
+            payment_method: contribution.payment_method
           };
-      return mq(c.PaymentStatus, {contribution: contribution[0], payment: payment});
+      return mq(m.component(c.PaymentStatus, {payment: payment}));
     };
 
     it('should return an HTML element describing a boleto when payment_method is boleto', function() {
