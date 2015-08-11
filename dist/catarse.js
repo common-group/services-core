@@ -283,7 +283,7 @@ window.c = function() {
                 user_name: contribution.user_name,
                 email: contribution.email,
                 payer_email: contribution.payer_email
-            }, displayDetailBox = c.ToggleDiv.toggler();
+            }, displayDetailBox = h.toggleProp(!1, !0);
             return {
                 displayDetailBox: displayDetailBox,
                 payment: payment,
@@ -303,15 +303,12 @@ window.c = function() {
                 payment: ctrl.payment,
                 contribution: contribution,
                 key: contribution.key
-            }) ]) ]), m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix="show-admin-cont-result"][href="javascript:void(0);"]', {
+            }) ]) ]), m("button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary", {
                 onclick: ctrl.displayDetailBox.toggle
-            }), m.component(c.ToggleDiv, {
-                display: ctrl.displayDetailBox,
-                content: m.component(c.AdminDetail, {
-                    contribution: contribution,
-                    key: contribution.key
-                })
-            }) ]);
+            }), ctrl.displayDetailBox() ? m.component(c.AdminDetail, {
+                contribution: contribution,
+                key: contribution.key
+            }) : "" ]);
         }
     };
 }(window.m, window.c.h, window.c), window.c.AdminList = function(m, h, c) {
