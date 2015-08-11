@@ -1,4 +1,4 @@
-window.c.UserAdminProfile = (function(m){
+window.c.AdminUser = (function(m){
   return {
     view: function(ctrl, args) {
       var user = args.user;
