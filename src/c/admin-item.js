@@ -2,11 +2,7 @@ window.c.AdminItem = (function(m, h, c){
   return {
     controller: function(args){
       var contribution = args.contribution,
-          userProfile, stateClass, paymentMethodClass, displayDetailBox;
-
-      userProfile = function(){
-        return contribution.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
-      };
+          stateClass, paymentMethodClass, displayDetailBox;
 
       stateClass = function(){
         switch (contribution.state){
@@ -36,7 +32,6 @@ window.c.AdminItem = (function(m, h, c){
       displayDetailBox = c.ToggleDiv.toggler();
 
       return {
-        userProfile: userProfile,
         stateClass: stateClass,
         paymentMethodClass: paymentMethodClass,
         displayDetailBox: displayDetailBox
@@ -45,21 +40,19 @@ window.c.AdminItem = (function(m, h, c){
 
     view: function(ctrl, args) {
       var contribution = args.contribution;
+      var user = {
+        user_profile_img: contribution.user_profile_img,
+        user_id: contribution.user_id,
+        user_name: contribution.user_name,
+        email: contribution.email,
+        payer_email: contribution.payer_email
+      };
+
       return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-contributions',[
         m('.w-row',[
           m('.w-col.w-col-4',[
             m('.w-row',[
-              m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10',[
-                m('img.user-avatar[src="' + ctrl.userProfile() + '"]')
-              ]),
-              m('.w-col.w-col-9.w-col-small-9',[
-                m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [
-                  m('a.alt-link[target="_blank"][href="/users/' + contribution.user_id + '"]', contribution.user_name)
-                ]),
-                m('.fontsize-smallest', 'Usuário: ' + contribution.user_id),
-                m('.fontsize-smallest.fontcolor-secondary', 'Catarse: ' + contribution.email),
-                m('.fontsize-smallest.fontcolor-secondary', 'Gateway: ' + contribution.payer_email)
-              ])
+              m.component(c.UserAdminProfile, {user: user})
             ])
           ]),
           m('.w-col.w-col-4',[
