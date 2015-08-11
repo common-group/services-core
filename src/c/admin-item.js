@@ -1,32 +1,11 @@
 window.c.AdminItem = (function(m, h, c){
   return {
     controller: function(args){
-      var contribution = args.contribution,
-          stateClass, paymentMethodClass, displayDetailBox;
+      var contribution = args.contribution;
 
-      stateClass = function(){
-        switch (contribution.state){
-          case 'paid':
-            return '.text-success';
-          case 'refunded':
-            return '.text-refunded';
-          case 'pending':
-          case 'pending_refund':
-            return '.text-waiting';
-          default:
-            return '.text-error';
-        }
-      };
-
-      paymentMethodClass = function(){
-        switch (contribution.payment_method){
-          case 'BoletoBancario':
-            return '.fa-barcode';
-          case 'CartaoDeCredito':
-            return '.fa-credit-card';
-          default:
-            return '.fa-question';
-        }
+      var payment = {
+        state: contribution.state,
+        payment_method: contribution.payment_method
       };
 
       var project = {
@@ -46,13 +25,12 @@ window.c.AdminItem = (function(m, h, c){
         payer_email: contribution.payer_email
       };
 
-      displayDetailBox = c.ToggleDiv.toggler();
+      var displayDetailBox = c.ToggleDiv.toggler();
 
       return {
         displayDetailBox: displayDetailBox,
-        paymentMethodClass: paymentMethodClass,
+        payment: payment,
         project: project,
-        stateClass: stateClass,
         user: user
       };
     },
@@ -69,20 +47,10 @@ window.c.AdminItem = (function(m, h, c){
             m.component(c.AdminProject, {project: ctrl.project})
           ]),
           m('.w-col.w-col-2',[
-            m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', 'R$' + contribution.value),
-            m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.created_at, 'DD/MM/YYYY HH:mm[h]')),
-            m('.fontsize-smallest', ['ID do Gateway: ',
-              m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id)
-            ])
+            m.component(c.AdminContribution, {contribution: contribution})
           ]),
           m('.w-col.w-col-2',[
-            m('.fontsize-smallest.lineheight-looser.fontweight-semibold',[
-              m('span.fa.fa-circle' + ctrl.stateClass()), ' ' + contribution.state
-            ]),
-            m('.fontsize-smallest.fontweight-semibold',[
-              m('span.fa' + ctrl.paymentMethodClass()), ' ', m('a.link-hidden[href="#"]', contribution.payment_method)
-            ]),
-            m.component(c.PaymentBadge, {contribution: contribution, key: contribution.key})
+            m.component(c.PaymentStatus, {payment: ctrl.payment, contribution: contribution, key: contribution.key})
           ])
         ]),
         m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix="show-admin-cont-result"][href="javascript:void(0);"]', {onclick: ctrl.displayDetailBox.toggle}),

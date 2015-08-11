@@ -178,7 +178,14 @@ window.c = function() {
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
     return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
-}(window.m, window.c.models), window.c.AdminDetail = function(m, c) {
+}(window.m, window.c.models), window.c.AdminContribution = function(m, h) {
+    return {
+        view: function(ctrl, args) {
+            var contribution = args.contribution;
+            return m(".w-row", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
+        }
+    };
+}(window.m, window.c.h), window.c.AdminDetail = function(m, c) {
     return {
         controller: function() {
             return {
@@ -260,35 +267,10 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminItem = function(m, h, c) {
     return {
         controller: function(args) {
-            var stateClass, paymentMethodClass, displayDetailBox, contribution = args.contribution;
-            stateClass = function() {
-                switch (contribution.state) {
-                  case "paid":
-                    return ".text-success";
-
-                  case "refunded":
-                    return ".text-refunded";
-
-                  case "pending":
-                  case "pending_refund":
-                    return ".text-waiting";
-
-                  default:
-                    return ".text-error";
-                }
-            }, paymentMethodClass = function() {
-                switch (contribution.payment_method) {
-                  case "BoletoBancario":
-                    return ".fa-barcode";
-
-                  case "CartaoDeCredito":
-                    return ".fa-credit-card";
-
-                  default:
-                    return ".fa-question";
-                }
-            };
-            var project = {
+            var contribution = args.contribution, payment = {
+                state: contribution.state,
+                payment_method: contribution.payment_method
+            }, project = {
                 project_img: contribution.project_img,
                 permalink: contribution.permalink,
                 project_name: contribution.project_name,
@@ -301,12 +283,11 @@ window.c = function() {
                 user_name: contribution.user_name,
                 email: contribution.email,
                 payer_email: contribution.payer_email
-            };
-            return displayDetailBox = c.ToggleDiv.toggler(), {
+            }, displayDetailBox = c.ToggleDiv.toggler();
+            return {
                 displayDetailBox: displayDetailBox,
-                paymentMethodClass: paymentMethodClass,
+                payment: payment,
                 project: project,
-                stateClass: stateClass,
                 user: user
             };
         },
@@ -316,7 +297,10 @@ window.c = function() {
                 user: ctrl.user
             }) ]), m(".w-col.w-col-4", [ m.component(c.AdminProject, {
                 project: ctrl.project
-            }) ]), m(".w-col.w-col-2", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]), m(".w-col.w-col-2", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + contribution.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', contribution.payment_method) ]), m.component(c.PaymentBadge, {
+            }) ]), m(".w-col.w-col-2", [ m.component(c.AdminContribution, {
+                contribution: contribution
+            }) ]), m(".w-col.w-col-2", [ m.component(c.PaymentStatus, {
+                payment: ctrl.payment,
                 contribution: contribution,
                 key: contribution.key
             }) ]) ]), m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix="show-admin-cont-result"][href="javascript:void(0);"]', {
@@ -470,10 +454,10 @@ window.c = function() {
             }) ]) ]) ]);
         }
     };
-}(window.m), window.c.PaymentBadge = function(m) {
+}(window.m), window.c.PaymentStatus = function(m) {
     return {
         controller: function(args) {
-            var contribution = args.contribution, card = null;
+            var displayPaymentMethod, paymentMethodClass, stateClass, contribution = args.contribution, card = null;
             return card = function() {
                 if (contribution.gateway_data) switch (contribution.gateway.toLowerCase()) {
                   case "moip":
@@ -490,21 +474,50 @@ window.c = function() {
                         brand: contribution.gateway_data.card_brand
                     };
                 }
-            }, {
-                displayPaymentMethod: function() {
-                    switch (contribution.payment_method.toLowerCase()) {
-                      case "boletobancario":
-                        return m("span#boleto-detail", "");
+            }, displayPaymentMethod = function() {
+                switch (contribution.payment_method.toLowerCase()) {
+                  case "boletobancario":
+                    return m("span#boleto-detail", "");
 
-                      case "cartaodecredito":
-                        var cardData = card();
-                        return cardData ? m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ cardData.first_digits + "******" + cardData.last_digits, m("br"), cardData.brand + " " + contribution.installments + "x" ]) : "";
-                    }
+                  case "cartaodecredito":
+                    var cardData = card();
+                    return cardData ? m("#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight", [ cardData.first_digits + "******" + cardData.last_digits, m("br"), cardData.brand + " " + contribution.installments + "x" ]) : "";
                 }
+            }, paymentMethodClass = function() {
+                switch (contribution.payment_method) {
+                  case "BoletoBancario":
+                    return ".fa-barcode";
+
+                  case "CartaoDeCredito":
+                    return ".fa-credit-card";
+
+                  default:
+                    return ".fa-question";
+                }
+            }, stateClass = function() {
+                switch (contribution.state) {
+                  case "paid":
+                    return ".text-success";
+
+                  case "refunded":
+                    return ".text-refunded";
+
+                  case "pending":
+                  case "pending_refund":
+                    return ".text-waiting";
+
+                  default:
+                    return ".text-error";
+                }
+            }, {
+                displayPaymentMethod: displayPaymentMethod,
+                paymentMethodClass: paymentMethodClass,
+                stateClass: stateClass
             };
         },
-        view: function(ctrl) {
-            return m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]);
+        view: function(ctrl, args) {
+            var payment = args.payment;
+            return m(".w-row", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
 }(window.m), window.c.TeamMembers = function(_, m, models) {
