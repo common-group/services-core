@@ -3,14 +3,16 @@ window.c.admin.Contributions = (function(m, c){
   return {
     controller: function(){
       var listVM = admin.contributionListVM,
-          filterVM = admin.contributionFilterVM;
+          filterVM = admin.contributionFilterVM,
+          error = m.prop('');
 
       return {
-        listVM: listVM,
+        listVM: {list: listVM, error: error},
         filterVM: filterVM,
+        error: error,
         submit: function() {
           listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
-            admin.error(serverError.message);
+            error(serverError.message);
           });
           return false;
         }
@@ -20,8 +22,8 @@ window.c.admin.Contributions = (function(m, c){
     view: function(ctrl) {
       return [
         m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, submit: ctrl.submit}),
-        admin.error() ?
-          m('.card.card-error.u-radius.fontweight-bold', admin.error()) :
+        ctrl.error() ?
+          m('.card.card-error.u-radius.fontweight-bold', ctrl.error()) :
           m.component(c.AdminList, {vm: ctrl.listVM})
       ];
     }

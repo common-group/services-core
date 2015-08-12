@@ -4,16 +4,14 @@
     Licensed under the MIT license
     Version: 1.0.0
 */
-window.c = function(m) {
+window.c = function() {
     return {
         models: {},
         pages: {},
-        admin: {
-            error: m.prop()
-        },
+        admin: {},
         h: {}
     };
-}(window.m), window.c.h = function(m, moment) {
+}(), window.c.h = function(m, moment) {
     var momentify = function(date, format) {
         return format = format || "DD/MM/YYYY", date ? moment(date).format(format) : "no date";
     }, momentFromString = function(date, format) {
@@ -51,13 +49,17 @@ window.c = function(m) {
     var admin = c.admin;
     return {
         controller: function() {
-            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM;
+            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, error = m.prop("");
             return {
-                listVM: listVM,
+                listVM: {
+                    list: listVM,
+                    error: error
+                },
                 filterVM: filterVM,
+                error: error,
                 submit: function() {
                     return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
-                        admin.error(serverError.message);
+                        error(serverError.message);
                     }), !1;
                 }
             };
@@ -66,7 +68,7 @@ window.c = function(m) {
             return [ m.component(c.AdminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 submit: ctrl.submit
-            }), admin.error() ? m(".card.card-error.u-radius.fontweight-bold", admin.error()) : m.component(c.AdminList, {
+            }), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(c.AdminList, {
                 vm: ctrl.listVM
             }) ];
         }
@@ -302,18 +304,20 @@ window.c = function(m) {
 }(window.m, window.c.h, window.c), window.c.AdminList = function(m, h, c) {
     return {
         controller: function(args) {
-            !args.vm.collection().length && args.vm.firstPage && args.vm.firstPage().then(null, function(serverError) {
-                c.error(serverError.message);
+            var list = args.vm.list;
+            !list.collection().length && list.firstPage && list.firstPage().then(null, function(serverError) {
+                args.vm.error(serverError.message);
             });
         },
         view: function(ctrl, args) {
-            return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", args.vm.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ args.vm.collection().map(function(item) {
+            var list = args.vm.list;
+            return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
                 return m.component(c.AdminItem, {
                     contribution: item,
                     key: item.key
                 });
-            }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ args.vm.isLoading() ? h.loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
-                onclick: args.vm.nextPage
+            }), m(".w-section.section", [ m(".w-container", [ m(".w-row", [ m(".w-col.w-col-2.w-col-push-5", [ list.isLoading() ? h.loader() : m("button#load-more.btn.btn-medium.btn-terciary", {
+                onclick: list.nextPage
             }, "Carregar mais") ]) ]) ]) ]) ]) ]) ]);
         }
     };
