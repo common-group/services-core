@@ -11,7 +11,7 @@ window.c.AdminUser = (function(m){
         ]),
         m('.w-col.w-col-9.w-col-small-9',[
           m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [
-            m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '"]', user.user_name)
+            m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '/edit"]', user.user_name)
           ]),
           m('.fontsize-smallest', 'Usuário: ' + user.user_id),
           m('.fontsize-smallest.fontcolor-secondary', 'Catarse: ' + user.email),
