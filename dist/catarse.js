@@ -8,14 +8,7 @@ window.c = function() {
     return {
         models: {},
         pages: {},
-<<<<<<< HEAD
         admin: {},
-=======
-        admin: {
-            error: m.prop(),
-            isLoading: m.prop(!0)
-        },
->>>>>>> Adds one level higher loader
         h: {}
     };
 }(), window.c.h = function(m, moment) {
@@ -56,61 +49,40 @@ window.c = function() {
     var admin = c.admin;
     return {
         controller: function() {
-<<<<<<< HEAD
-            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, error = m.prop("");
-            return {
-                listVM: {
-                    list: listVM,
-                    error: error
-                },
-                filterVM: filterVM,
-                error: error,
-                submit: function() {
-                    return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
-                        error(serverError.message);
-                    }), !1;
-                }
-=======
             var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, itemBuilder = [ {
-                component: c.AdminUser,
+                component: "AdminUser",
                 wrapperClass: ".w-col.w-col-4"
             }, {
-                component: c.AdminProject,
+                component: "AdminProject",
                 wrapperClass: ".w-col.w-col-4"
             }, {
-                component: c.AdminContribution,
+                component: "AdminContribution",
                 wrapperClass: ".w-col.w-col-2"
             }, {
-                component: c.AdminPayment,
+                component: "PaymentStatus",
                 wrapperClass: ".w-col.w-col-2"
-            } ], submit = function() {
+            } ], error = m.prop(""), submit = function() {
                 return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
-                    admin.error(serverError.message);
+                    error(serverError.message);
                 }), !1;
             };
             return {
                 filterVM: filterVM,
                 itemBuilder: itemBuilder,
-                listVM: listVM,
+                listVM: {
+                    list: listVM,
+                    error: error
+                },
                 submit: submit
->>>>>>> Moves item describer to controller
             };
         },
         view: function(ctrl) {
             return [ m.component(c.AdminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 submit: ctrl.submit
-<<<<<<< HEAD
-            }), ctrl.error() ? m(".card.card-error.u-radius.fontweight-bold", ctrl.error()) : m.component(c.AdminList, {
-=======
-            }), admin.error() ? m(".card.card-error.u-radius.fontweight-bold", admin.error()) : admin.isLoading() ? h.loader() : "", m.component(c.AdminList, {
-<<<<<<< HEAD
->>>>>>> Adds one level higher loader
-                vm: ctrl.listVM
-=======
+            }), m.component(c.AdminList, {
                 vm: ctrl.listVM,
                 itemBuilder: ctrl.itemBuilder
->>>>>>> Moves item describer to controller
             }) ];
         }
     };
@@ -227,7 +199,7 @@ window.c = function() {
             };
         },
         view: function(ctrl, args) {
-            var contribution = args.contribution;
+            var contribution = args.item;
             return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30.w-hidden", [ m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
                 onclick: ctrl.displayRequestRefundDropDown.toggle
             }, "Pedir reembolso"), m.component(c.ToggleDiv, {
@@ -287,7 +259,7 @@ window.c = function() {
             });
             return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form", {
                 onsubmit: args.submit
-            }, [ formBuilder(main.data).main, m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"]', {
+            }, [ formBuilder(main.data).main, m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"][type="button"]', {
                 onclick: ctrl.toggler.toggle
             }, "Filtros avançados  >")), ctrl.toggler() ? m("#advanced-search.w-row.admin-filters", [ _.map(args.form, function(f) {
                 return "main" !== f.type ? formBuilder(f.data)[f.type] : "";
@@ -305,7 +277,7 @@ window.c = function() {
         view: function(ctrl, args) {
             var item = args.item;
             return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(component) {
-                return m(component.wrapperClass, [ m.component(component, {
+                return m(component.wrapperClass, [ m.component(c[component.component], {
                     item: item,
                     key: item.key
                 }) ]);
@@ -318,22 +290,17 @@ window.c = function() {
         }
     };
 }(window.m, window._, window.c.h, window.c), window.c.AdminList = function(m, h, c) {
-    var admin = c.admin;
+    c.admin;
     return {
         controller: function(args) {
-<<<<<<< HEAD
             var list = args.vm.list;
             !list.collection().length && list.firstPage && list.firstPage().then(null, function(serverError) {
                 args.vm.error(serverError.message);
-=======
-            admin.isLoading = args.vm.isLoading, !args.vm.collection().length && args.vm.firstPage && args.vm.firstPage().then(null, function(serverError) {
-                c.error(serverError.message);
->>>>>>> Adds one level higher loader
             });
         },
         view: function(ctrl, args) {
-            var list = args.vm.list;
-            return m(".w-section.section", [ m(".w-container", [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
+            var list = args.vm.list, error = args.vm.error;
+            return m(".w-section.section", [ m(".w-container", error() ? m(".card.card-error.u-radius.fontweight-bold", error()) : [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
                 return m.component(c.AdminItem, {
                     builder: args.itemBuilder,
                     item: item,
