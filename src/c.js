@@ -1,9 +1,9 @@
-window.c = (function(m){
+window.c = (function(){
   return {
     models: {},
     pages: {},
-    admin: {error: m.prop()},
+    admin: {},
     h: {}
   };
-}(window.m));
+}());
 
