@@ -22,13 +22,13 @@ window.c.admin.Contributions = (function(m, c, h){
               wrapperClass: '.w-col.w-col-2'
             }
           ],
-          error = m.prop('');
-      var submit = function(){
-        listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
-          error(serverError.message);
-        });
-        return false;
-      };
+          error = m.prop(''),
+          submit = function(){
+            listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
+              error(serverError.message);
+            });
+            return false;
+          };
 
       return {
         filterVM: filterVM,
@@ -41,10 +41,7 @@ window.c.admin.Contributions = (function(m, c, h){
     view: function(ctrl){
       return [
         m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, submit: ctrl.submit}),
-        ctrl.error() ?
-          m('.card.card-error.u-radius.fontweight-bold', ctrl.error()) :
-          admin.isLoading() ? h.loader() : '',
-          m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder})
+        m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder})
       ];
     }
   };
