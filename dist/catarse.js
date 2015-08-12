@@ -300,7 +300,7 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var list = args.vm.list, error = args.vm.error;
-            return m(".w-section.section", [ m(".w-container", error() ? m(".card.card-error.u-radius.fontweight-bold", error()) : [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
+            return m(".w-section.section", [ m(".w-container", error() ? m(".card.card-error.u-radius.fontweight-bold", error()) : [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", list.isLoading() ? "Buscando apoios..." : [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
                 return m.component(c.AdminItem, {
                     builder: args.itemBuilder,
                     item: item,

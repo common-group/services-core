@@ -20,8 +20,10 @@ window.c.AdminList = (function(m, h, c){
             [
               m('.w-row.u-marginbottom-20', [
                 m('.w-col.w-col-9', [
-                  m('.fontsize-base', [
-                    m('span.fontweight-semibold', list.total()),' apoios encontrados']
+                  m('.fontsize-base',
+                    list.isLoading() ?
+                      'Buscando apoios...' :
+                      [m('span.fontweight-semibold', list.total()), ' apoios encontrados']
                    )
                 ])
               ]),
