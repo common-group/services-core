@@ -74,7 +74,7 @@ window.c.PaymentStatus = (function(m){
 
     view: function(ctrl, args){
       var payment = args.item;
-      return m('.w-row', [
+      return m('.w-row.payment-status', [
         m('.fontsize-smallest.lineheight-looser.fontweight-semibold',[
           m('span.fa.fa-circle' + ctrl.stateClass()), ' ' + payment.state
         ]),

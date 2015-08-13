@@ -14,9 +14,9 @@ window.c.AdminItem = (function(m, _, h, c){
 
       return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items',[
         m('.w-row',[
-          _.map(args.builder, function(component){
-            return m(component.wrapperClass, [
-              m.component(c[component.component], {item: item, key: item.key})
+          _.map(args.builder, function(desc){
+            return m(desc.wrapperClass, [
+              m.component(c[desc.component], {item: item, key: item.key})
             ]);
           })
         ]),
