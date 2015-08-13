@@ -2,7 +2,7 @@ window.c.AdminContribution = (function(m, h){
   return {
     view: function(ctrl, args) {
       var contribution = args.item;
-      return m('.w-row', [
+      return m('.w-row.admin-contribution', [
         m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', 'R$' + contribution.value),
           m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.created_at, 'DD/MM/YYYY HH:mm[h]')),
           m('.fontsize-smallest', [

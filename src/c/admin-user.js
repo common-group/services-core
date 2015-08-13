@@ -5,7 +5,7 @@ window.c.AdminUser = (function(m){
       var userProfile = function(){
         return user.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
       };
-      return m('.w-row',[
+      return m('.w-row.admin-user',[
         m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10',[
           m('img.user-avatar[src="' + userProfile() + '"]')
         ]),

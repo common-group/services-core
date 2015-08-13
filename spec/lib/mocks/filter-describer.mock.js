@@ -1,17 +1,15 @@
 beforeAll(function(){
-  FormDescriberMock = function(opts){
-    var form = [];
-    //describes all possible form fields
-    var describer = {
-      main: {
-        type: 'main',
+  FilterDescriberMock = function(){
+    var describer = [
+      { //full_text_index
+        component: 'FilterMain',
         data: {
           vm: m.prop(),
           placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
         }
       },
-      dropdown: {
-        type: 'dropdown',
+      { //state
+        component: 'FilterDropdown',
         data: {
           label: 'Com o estado',
           name: 'state',
@@ -28,29 +26,39 @@ beforeAll(function(){
           ]
         }
       },
-      numberRange: {
-        type: 'numberRange',
+      { //gateway
+        component: 'FilterDropdown',
+        data: {
+          label: 'gateway',
+          name: 'gateway',
+          vm: m.prop(),
+          options: [
+            {value: '', option: 'Qualquer um'},
+            {value: 'Pagarme', option: 'Pagarme'},
+            {value: 'MoIP', option: 'MoIP'},
+            {value: 'PayPal', option: 'PayPal'},
+            {value: 'Credits', option: 'Créditos'}
+          ]
+        }
+      },
+      { //value
+        component: 'FilterNumberRange',
         data: {
           label: 'Valores entre',
           first: m.prop(),
           last: m.prop()
         }
       },
-      dateRange: {
-        type: 'dateRange',
+      { //created_at
+        component: 'FilterDateRange',
         data: {
           label: 'Período do apoio',
           first: m.prop(),
           last: m.prop()
         }
       }
-    };
-    _.map(opts, function(opt){
-      if(opt in describer){
-        form.push(describer[opt]);
-      }
-    });
+    ];
 
-    return form;
+    return describer;
   };
 });

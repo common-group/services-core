@@ -3,19 +3,19 @@ beforeAll(function(){
     //TO-DO: Implement opts to build custom describers
     return [
       {
-        type: 'user',
+        component: 'AdminUser',
         wrapperClass: '.w-col.w-col-4'
       },
       {
-        type: 'project',
+        component: 'AdminProject',
         wrapperClass: '.w-col.w-col-4'
       },
       {
-        type: 'contribution',
+        component: 'AdminContribution',
         wrapperClass: '.w-col.w-col-2'
       },
       {
-        type: 'payment',
+        component: 'PaymentStatus',
         wrapperClass: '.w-col.w-col-2'
       }
     ];

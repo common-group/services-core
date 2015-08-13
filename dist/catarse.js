@@ -49,7 +49,7 @@ window.c = function() {
     var admin = c.admin;
     return {
         controller: function() {
-            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, itemBuilder = [ {
+            var listVM = admin.contributionListVM, filterVM = admin.contributionFilterVM, error = m.prop(""), itemBuilder = [ {
                 component: "AdminUser",
                 wrapperClass: ".w-col.w-col-4"
             }, {
@@ -61,13 +61,89 @@ window.c = function() {
             }, {
                 component: "PaymentStatus",
                 wrapperClass: ".w-col.w-col-2"
-            } ], error = m.prop(""), submit = function() {
+            } ], filterBuilder = [ {
+                component: "FilterMain",
+                data: {
+                    vm: filterVM.full_text_index,
+                    placeholder: "Busque por projeto, email, Ids do usuário e do apoio..."
+                }
+            }, {
+                component: "FilterDropdown",
+                data: {
+                    label: "Com o estado",
+                    name: "state",
+                    vm: filterVM.state,
+                    options: [ {
+                        value: "",
+                        option: "Qualquer um"
+                    }, {
+                        value: "paid",
+                        option: "paid"
+                    }, {
+                        value: "refused",
+                        option: "refused"
+                    }, {
+                        value: "pending",
+                        option: "pending"
+                    }, {
+                        value: "pending_refund",
+                        option: "pending_refund"
+                    }, {
+                        value: "refunded",
+                        option: "refunded"
+                    }, {
+                        value: "chargeback",
+                        option: "chargeback"
+                    }, {
+                        value: "deleted",
+                        option: "deleted"
+                    } ]
+                }
+            }, {
+                component: "FilterDropdown",
+                data: {
+                    label: "gateway",
+                    name: "gateway",
+                    vm: filterVM.gateway,
+                    options: [ {
+                        value: "",
+                        option: "Qualquer um"
+                    }, {
+                        value: "Pagarme",
+                        option: "Pagarme"
+                    }, {
+                        value: "MoIP",
+                        option: "MoIP"
+                    }, {
+                        value: "PayPal",
+                        option: "PayPal"
+                    }, {
+                        value: "Credits",
+                        option: "Créditos"
+                    } ]
+                }
+            }, {
+                component: "FilterNumberRange",
+                data: {
+                    label: "Valores entre",
+                    first: filterVM.value.gte,
+                    last: filterVM.value.lte
+                }
+            }, {
+                component: "FilterDateRange",
+                data: {
+                    label: "Período do apoio",
+                    first: filterVM.created_at.gte,
+                    last: filterVM.created_at.lte
+                }
+            } ], submit = function() {
                 return listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
                     error(serverError.message);
                 }), !1;
             };
             return {
                 filterVM: filterVM,
+                filterBuilder: filterBuilder,
                 itemBuilder: itemBuilder,
                 listVM: {
                     list: listVM,
@@ -79,6 +155,7 @@ window.c = function() {
         view: function(ctrl) {
             return [ m.component(c.AdminFilter, {
                 form: ctrl.filterVM.formDescriber,
+                filterBuilder: ctrl.filterBuilder,
                 submit: ctrl.submit
             }), m.component(c.AdminList, {
                 vm: ctrl.listVM,
@@ -94,82 +171,7 @@ window.c = function() {
         value: "between",
         created_at: "between"
     });
-    return vm.formDescriber = [ {
-        type: "main",
-        data: {
-            vm: vm.full_text_index,
-            placeholder: "Busque por projeto, email, Ids do usuário e do apoio..."
-        }
-    }, {
-        type: "dropdown",
-        data: {
-            label: "Com o estado",
-            name: "state",
-            vm: vm.state,
-            options: [ {
-                value: "",
-                option: "Qualquer um"
-            }, {
-                value: "paid",
-                option: "paid"
-            }, {
-                value: "refused",
-                option: "refused"
-            }, {
-                value: "pending",
-                option: "pending"
-            }, {
-                value: "pending_refund",
-                option: "pending_refund"
-            }, {
-                value: "refunded",
-                option: "refunded"
-            }, {
-                value: "chargeback",
-                option: "chargeback"
-            }, {
-                value: "deleted",
-                option: "deleted"
-            } ]
-        }
-    }, {
-        type: "dropdown",
-        data: {
-            label: "gateway",
-            name: "gateway",
-            vm: vm.gateway,
-            options: [ {
-                value: "",
-                option: "Qualquer um"
-            }, {
-                value: "Pagarme",
-                option: "Pagarme"
-            }, {
-                value: "MoIP",
-                option: "MoIP"
-            }, {
-                value: "PayPal",
-                option: "PayPal"
-            }, {
-                value: "Credits",
-                option: "Créditos"
-            } ]
-        }
-    }, {
-        type: "numberRange",
-        data: {
-            label: "Valores entre",
-            first: vm.value.gte,
-            last: vm.value.lte
-        }
-    }, {
-        type: "dateRange",
-        data: {
-            label: "Período do apoio",
-            first: vm.created_at.gte,
-            last: vm.created_at.lte
-        }
-    } ], vm.state(""), vm.gateway(""), vm.order({
+    return vm.state(""), vm.gateway(""), vm.order({
         id: "desc"
     }), vm.created_at.lte.toFilter = function() {
         return h.momentFromString(vm.created_at.lte()).endOf("day").format("");
@@ -184,7 +186,7 @@ window.c = function() {
     return {
         view: function(ctrl, args) {
             var contribution = args.item;
-            return m(".w-row", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
+            return m(".w-row.admin-contribution", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
         }
     };
 }(window.m, window.c.h), window.c.AdminDetail = function(m, c) {
@@ -247,22 +249,17 @@ window.c = function() {
             };
         },
         view: function(ctrl, args) {
-            var formBuilder = function(data) {
-                return {
-                    main: m.component(c.FilterMain, data),
-                    dropdown: m.component(c.FilterDropdown, data),
-                    numberRange: m.component(c.FilterNumberRange, data),
-                    dateRange: m.component(c.FilterDateRange, data)
-                };
-            }, main = _.findWhere(args.form, {
-                type: "main"
+            var filterBuilder = args.filterBuilder, main = _.findWhere(filterBuilder, {
+                component: "FilterMain"
             });
             return m("#admin-contributions-filter.w-section.page-header", [ m(".w-container", [ m(".fontsize-larger.u-text-center.u-marginbottom-30", "Apoios"), m(".w-form", [ m("form", {
                 onsubmit: args.submit
-            }, [ formBuilder(main.data).main, m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"][type="button"]', {
+            }, [ _.findWhere(filterBuilder, {
+                component: "FilterMain"
+            }) ? m.component(c[main.component], main.data) : "", m(".u-marginbottom-20.w-row", m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"][type="button"]', {
                 onclick: ctrl.toggler.toggle
-            }, "Filtros avançados  >")), ctrl.toggler() ? m("#advanced-search.w-row.admin-filters", [ _.map(args.form, function(f) {
-                return "main" !== f.type ? formBuilder(f.data)[f.type] : "";
+            }, "Filtros avançados  >")), ctrl.toggler() ? m("#advanced-search.w-row.admin-filters", [ _.map(filterBuilder, function(f) {
+                return "FilterMain" !== f.component ? m.component(c[f.component], f.data) : "";
             }) ]) : "" ]) ]) ]) ]);
         }
     };
@@ -276,8 +273,8 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var item = args.item;
-            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(component) {
-                return m(component.wrapperClass, [ m.component(c[component.component], {
+            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(desc) {
+                return m(desc.wrapperClass, [ m.component(c[desc.component], {
                     item: item,
                     key: item.key
                 }) ]);
@@ -315,7 +312,7 @@ window.c = function() {
     return {
         view: function(ctrl, args) {
             var project = args.item;
-            return m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + project.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".fontsize-smallest.fontweight-semibold", project.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(project.project_online_date) + " a " + h.momentify(project.project_expires_at)) ]) ]);
+            return m(".w-row.admin-project", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + project.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".fontsize-smallest.fontweight-semibold", project.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(project.project_online_date) + " a " + h.momentify(project.project_expires_at)) ]) ]);
         }
     };
 }(window.m, window.c.h), window.c.AdminReward = function(m, h, _) {
@@ -378,7 +375,7 @@ window.c = function() {
             var user = args.item, userProfile = function() {
                 return user.user_profile_img || "/assets/catarse_bootstrap/user.jpg";
             };
-            return m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '/edit"]', user.user_name) ]), m(".fontsize-smallest", "Usuário: " + user.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + user.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + user.payer_email) ]) ]);
+            return m(".w-row.admin-user", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '/edit"]', user.user_name) ]), m(".fontsize-smallest", "Usuário: " + user.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + user.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + user.payer_email) ]) ]);
         }
     };
 }(window.m), window.c.FilterDateRange = function(m) {
@@ -488,7 +485,7 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var payment = args.item;
-            return m(".w-row", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
+            return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
 }(window.m), window.c.TeamMembers = function(_, m, models) {
