@@ -16,7 +16,7 @@
       'spec/lib/matchers.js',
       'bower_components/mithril/mithril.js',
       'bower_components/underscore/underscore.js',
-      'bower_components/mithril.postgrest/src/mithril.postgrest.js',
+      'bower_components/mithril.postgrest/src/**/*.js',
       'bower_components/moment/moment.js',
       'bower_components/moment-timezone/moment-timezone.js',
       'bower_components/replace-diacritics/index.js',
