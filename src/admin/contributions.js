@@ -4,6 +4,7 @@ window.c.admin.Contributions = (function(m, c, h){
     controller: function(){
       var listVM = admin.contributionListVM,
           filterVM = admin.contributionFilterVM,
+          error = m.prop(''),
           itemBuilder = [
             {
               component: 'AdminUser',
@@ -22,7 +23,64 @@ window.c.admin.Contributions = (function(m, c, h){
               wrapperClass: '.w-col.w-col-2'
             }
           ],
-          error = m.prop(''),
+          filterBuilder = [
+            { //full_text_index
+              component: 'FilterMain',
+              data: {
+                vm: filterVM.full_text_index,
+                placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
+              }
+            },
+            { //state
+              component: 'FilterDropdown',
+              data: {
+                label: 'Com o estado',
+                name: 'state',
+                vm: filterVM.state,
+                options: [
+                  {value: '', option: 'Qualquer um'},
+                  {value: 'paid', option: 'paid'},
+                  {value: 'refused', option: 'refused'},
+                  {value: 'pending', option: 'pending'},
+                  {value: 'pending_refund', option: 'pending_refund'},
+                  {value: 'refunded', option: 'refunded'},
+                  {value: 'chargeback', option: 'chargeback'},
+                  {value: 'deleted', option: 'deleted'}
+                ]
+              }
+            },
+            { //gateway
+              component: 'FilterDropdown',
+              data: {
+                label: 'gateway',
+                name: 'gateway',
+                vm: filterVM.gateway,
+                options: [
+                  {value: '', option: 'Qualquer um'},
+                  {value: 'Pagarme', option: 'Pagarme'},
+                  {value: 'MoIP', option: 'MoIP'},
+                  {value: 'PayPal', option: 'PayPal'},
+                  {value: 'Credits', option: 'Créditos'}
+                ]
+              }
+            },
+            { //value
+              component: 'FilterNumberRange',
+              data: {
+                label: 'Valores entre',
+                first: filterVM.value.gte,
+                last: filterVM.value.lte
+              }
+            },
+            { //created_at
+              component: 'FilterDateRange',
+              data: {
+                label: 'Período do apoio',
+                first: filterVM.created_at.gte,
+                last: filterVM.created_at.lte
+              }
+            }
+          ],
           submit = function(){
             listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
               error(serverError.message);
@@ -32,6 +90,7 @@ window.c.admin.Contributions = (function(m, c, h){
 
       return {
         filterVM: filterVM,
+        filterBuilder: filterBuilder,
         itemBuilder: itemBuilder,
         listVM: {list: listVM, error: error},
         submit: submit
@@ -40,7 +99,7 @@ window.c.admin.Contributions = (function(m, c, h){
 
     view: function(ctrl){
       return [
-        m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, submit: ctrl.submit}),
+        m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, submit: ctrl.submit}),
         m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder})
       ];
     }
