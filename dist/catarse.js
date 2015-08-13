@@ -186,7 +186,7 @@ window.c = function() {
     return {
         view: function(ctrl, args) {
             var contribution = args.item;
-            return m(".w-row", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
+            return m(".w-row.admin-contribution", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
         }
     };
 }(window.m, window.c.h), window.c.AdminDetail = function(m, c) {
@@ -273,8 +273,8 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var item = args.item;
-            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(component) {
-                return m(component.wrapperClass, [ m.component(c[component.component], {
+            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(desc) {
+                return m(desc.wrapperClass, [ m.component(c[desc.component], {
                     item: item,
                     key: item.key
                 }) ]);
@@ -312,7 +312,7 @@ window.c = function() {
     return {
         view: function(ctrl, args) {
             var project = args.item;
-            return m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + project.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".fontsize-smallest.fontweight-semibold", project.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(project.project_online_date) + " a " + h.momentify(project.project_expires_at)) ]) ]);
+            return m(".w-row.admin-project", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m("img.thumb-project.u-radius[src=" + project.project_img + "][width=50]") ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".fontsize-smallest.fontweight-semibold", project.project_state), m(".fontsize-smallest.fontcolor-secondary", h.momentify(project.project_online_date) + " a " + h.momentify(project.project_expires_at)) ]) ]);
         }
     };
 }(window.m, window.c.h), window.c.AdminReward = function(m, h, _) {
@@ -375,7 +375,7 @@ window.c = function() {
             var user = args.item, userProfile = function() {
                 return user.user_profile_img || "/assets/catarse_bootstrap/user.jpg";
             };
-            return m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '/edit"]', user.user_name) ]), m(".fontsize-smallest", "Usuário: " + user.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + user.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + user.payer_email) ]) ]);
+            return m(".w-row.admin-user", [ m(".w-col.w-col-3.w-col-small-3.u-marginbottom-10", [ m('img.user-avatar[src="' + userProfile() + '"]') ]), m(".w-col.w-col-9.w-col-small-9", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10", [ m('a.alt-link[target="_blank"][href="/users/' + user.user_id + '/edit"]', user.user_name) ]), m(".fontsize-smallest", "Usuário: " + user.user_id), m(".fontsize-smallest.fontcolor-secondary", "Catarse: " + user.email), m(".fontsize-smallest.fontcolor-secondary", "Gateway: " + user.payer_email) ]) ]);
         }
     };
 }(window.m), window.c.FilterDateRange = function(m) {
@@ -485,7 +485,7 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var payment = args.item;
-            return m(".w-row", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
+            return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
 }(window.m), window.c.TeamMembers = function(_, m, models) {
