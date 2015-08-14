@@ -39,9 +39,10 @@ window.c = function() {
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), teamMember = m.postgrest.model("team_members");
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), teamMember = m.postgrest.model("team_members");
     return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
+        projectDetail: projectDetail,
         teamTotal: teamTotal,
         teamMember: teamMember
     };
@@ -182,13 +183,26 @@ window.c = function() {
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
     return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
-}(window.m, window.c.models), window.c.admin.ProjectInsights = function(m, c) {
+}(window.m, window.c.models), window.c.admin.ProjectInsights = function(m, c, models) {
     return {
-        view: function() {
-            return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m(".fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10", "Minha campanha"), m.component(c.AdminProjectDetailsCard) ]), m(".w-col.w-col-2") ]) ]);
+        controller: function(args) {
+            var vm = m.postgrest.filtersVM({
+                project_id: "eq"
+            }), resource = m.prop({}), resourceId = args.root.getAttribute("data-id");
+            return vm.project_id(resourceId), models.projectDetail.getRow(vm.parameters()).then(function(data) {
+                resource(data[0]);
+            }), {
+                vm: vm,
+                resource: resource
+            };
+        },
+        view: function(ctrl) {
+            return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m(".fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10", "Minha campanha"), m.component(c.AdminProjectDetailsCard, {
+                resource: ctrl.resource
+            }) ]), m(".w-col.w-col-2") ]) ]);
         }
     };
-}(window.m, window.c), window.c.AdminContribution = function(m, h) {
+}(window.m, window.c, window.c.models), window.c.AdminContribution = function(m, h) {
     return {
         view: function(ctrl, args) {
             var contribution = args.item;
@@ -316,8 +330,9 @@ window.c = function() {
     };
 }(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m) {
     return {
-        view: function() {
-            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", "NO AR"), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "54%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$514.000", m("span.fontsize-smaller", ",00") ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "1222"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "25"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "dias restantes") ]) ]) ]);
+        view: function(ctrl, args) {
+            var project = args.resource();
+            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", project.state) ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ project.pledged ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "25"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "dias restantes") ]) ]) ]);
         }
     };
 }(window.m), window.c.AdminProject = function(m, h) {
