@@ -182,7 +182,13 @@ window.c = function() {
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
     return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
-}(window.m, window.c.models), window.c.AdminContribution = function(m, h) {
+}(window.m, window.c.models), window.c.admin.ProjectInsights = function(m, c) {
+    return {
+        view: function() {
+            return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m(".fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10", "Minha campanha"), m.component(c.AdminProjectDetailsCard) ]), m(".w-col.w-col-2") ]) ]);
+        }
+    };
+}(window.m, window.c), window.c.AdminContribution = function(m, h) {
     return {
         view: function(ctrl, args) {
             var contribution = args.item;
@@ -308,7 +314,13 @@ window.c = function() {
             }, "Carregar mais") ]) ]) ]) ]) ]) ]) ]);
         }
     };
-}(window.m, window.c.h, window.c), window.c.AdminProject = function(m, h) {
+}(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m) {
+    return {
+        view: function() {
+            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", "NO AR"), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "54%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$514.000", m("span.fontsize-smaller", ",00") ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "1222"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "25"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "dias restantes") ]) ]) ]);
+        }
+    };
+}(window.m), window.c.AdminProject = function(m, h) {
     return {
         view: function(ctrl, args) {
             var project = args.item;
