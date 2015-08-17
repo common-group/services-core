@@ -205,18 +205,19 @@ window.c = function() {
     return {
         controller: function() {},
         view: function(ctrl, args) {
-            var actions = args.actions, contribution = args.item;
+            var actions = args.actions, item = args.item;
             return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30", _.map(actions, function(action) {
                 return m.component(c[action.component], {
-                    data: action.data
+                    data: action.data,
+                    item: args.item
                 });
             })), m(".w-row.card.card-terciary.u-radius", [ m.component(c.AdminTransaction, {
-                contribution: contribution
+                contribution: item
             }), m.component(c.AdminTransactionHistory, {
-                contribution: contribution
+                contribution: item
             }), m.component(c.AdminReward, {
-                contribution: contribution,
-                key: contribution.key
+                contribution: item,
+                key: item.key
             }) ]) ]);
         }
     };
@@ -244,7 +245,7 @@ window.c = function() {
     };
 }(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
     return {
-        controller: function() {
+        controller: function(args) {
             return {
                 toggler: h.toggleProp(!1, !0)
             };
@@ -255,7 +256,10 @@ window.c = function() {
                 onclick: ctrl.toggler.toggle
             }, action.outerLabel), ctrl.toggler() ? m("form.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m("form.w-form", {
                 onsubmit: ctrl.submit
-            }, [ m("label", action.outerLabel), m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]'), m('input.btn.btn-small[type="submit"][value="' + action.callToAction + '"]') ]) ]) : "" ]);
+            }, [ m("label", action.outerLabel), m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]', {
+                onchange: m.withAttr("value", action.vm),
+                value: action.vm()
+            }), m('input.w-button.btn.btn-small[type="submit"][value="' + action.callToAction + '"]') ]) ]) : "" ]);
         }
     };
 }(window.m, window.c.h, window.c), window.c.AdminItem = function(m, _, h, c) {

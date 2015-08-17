@@ -11,6 +11,10 @@ beforeAll(function() {
     'responseText' : '{"token": "' + testToken + '"}'
   });
 
+  jasmine.Ajax.stubRequest('/test_endpoint').andReturn({
+    'responseText' : '{"object": "responseOK"}'
+  });
+
 
 });
 
