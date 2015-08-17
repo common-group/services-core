@@ -10,6 +10,10 @@ window.c.h = (function(m, moment){
     return european.isValid() ? european : moment(date);
   },
 
+  splitRemaningTime = function(date) {
+    return moment(date).endOf('day').fromNow().split(/\s/);
+  },
+
   //Number formatting helpers
   generateFormatNumber = function(s, c){
     return function(number, n, x) {
@@ -44,6 +48,7 @@ window.c.h = (function(m, moment){
 
   return {
     momentify: momentify,
+    splitRemaningTime: splitRemaningTime,
     momentFromString: momentFromString,
     formatNumber: formatNumber,
     toggleProp: toggleProp,
