@@ -17,6 +17,8 @@ window.c = function() {
     }, momentFromString = function(date, format) {
         var european = moment(date, format || "DD/MM/YYYY");
         return european.isValid() ? european : moment(date);
+    }, splitRemaningTime = function(date) {
+        return moment(date).endOf("day").fromNow().split(/\s/);
     }, generateFormatNumber = function(s, c) {
         return function(number, n, x) {
             if (null === number || void 0 === number) return null;
@@ -33,6 +35,7 @@ window.c = function() {
     };
     return {
         momentify: momentify,
+        splitRemaningTime: splitRemaningTime,
         momentFromString: momentFromString,
         formatNumber: formatNumber,
         toggleProp: toggleProp,
@@ -197,7 +200,7 @@ window.c = function() {
             };
         },
         view: function(ctrl) {
-            return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m(".fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10", "Minha campanha"), m.component(c.AdminProjectDetailsCard, {
+            return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
                 resource: ctrl.resource
             }) ]), m(".w-col.w-col-2") ]) ]);
         }
@@ -328,14 +331,22 @@ window.c = function() {
             }, "Carregar mais") ]) ]) ]) ]) ]) ]) ]);
         }
     };
-}(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m) {
+}(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m, h) {
     return {
-        view: function(ctrl, args) {
-            var project = args.resource();
-            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", project.state) ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ project.pledged ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", "25"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "dias restantes") ]) ]) ]);
+        controller: function(args) {
+            var vm = {
+                resource: args.resource
+            };
+            return {
+                vm: vm
+            };
+        },
+        view: function(ctrl) {
+            var project = ctrl.vm.resource(), remainingTime = h.splitRemaningTime(project.expires_at);
+            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.progress.toFixed(2) + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTime[1]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTime[2] + " restantes") ]) ]) ]);
         }
     };
-}(window.m), window.c.AdminProject = function(m, h) {
+}(window.m, window.c.h), window.c.AdminProject = function(m, h) {
     return {
         view: function(ctrl, args) {
             var project = args.item;
