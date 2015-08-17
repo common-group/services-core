@@ -13,7 +13,8 @@ window.c.admin.ProjectInsights = (function(m, c, models){
 
       return {
         vm: vm,
-        resource: resource
+        resource: resource,
+        resourceId: resourceId
       };
     },
     view: function(ctrl) {
@@ -24,6 +25,11 @@ window.c.admin.ProjectInsights = (function(m, c, models){
             m.component(c.AdminProjectDetailsCard, {resource: ctrl.resource})
           ]),
           m('.w-col.w-col-2')
+        ]),
+        m('.w-row', [
+          m('.w-col.w-col-12.dashboard-header.u-text-center', [
+            m.component(c.ProjectChartContributionTotalPerDay, {resourceId: ctrl.resourceId})
+          ]),
         ])
       ]);
     }

@@ -42,12 +42,13 @@ window.c = function() {
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), teamMember = m.postgrest.model("team_members");
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), teamMember = m.postgrest.model("team_members");
     return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
         projectDetail: projectDetail,
         teamTotal: teamTotal,
-        teamMember: teamMember
+        teamMember: teamMember,
+        projectContributionsPerDay: projectContributionsPerDay
     };
 }(window.m), window.c.admin.Contributions = function(m, c, h) {
     var admin = c.admin;
@@ -196,13 +197,16 @@ window.c = function() {
                 resource(data[0]);
             }), {
                 vm: vm,
-                resource: resource
+                resource: resource,
+                resourceId: resourceId
             };
         },
         view: function(ctrl) {
             return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
                 resource: ctrl.resource
-            }) ]), m(".w-col.w-col-2") ]) ]);
+            }) ]), m(".w-col.w-col-2") ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectChartContributionTotalPerDay, {
+                resourceId: ctrl.resourceId
+            }) ]) ]) ]);
         }
     };
 }(window.m, window.c, window.c.models), window.c.AdminContribution = function(m, h) {
@@ -526,7 +530,52 @@ window.c = function() {
             return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
-}(window.m), window.c.TeamMembers = function(_, m, models) {
+}(window.m), window.c.ProjectChartContributionTotalPerDay = function(m, Chart, models, _) {
+    return {
+        controller: function(args) {
+            var vm = m.postgrest.filtersVM({
+                project_id: "eq"
+            }), resource = m.prop({}), mountDataset = function() {
+                return [ {
+                    label: "My First dataset",
+                    fillColor: "rgba(126,194,69,0.2)",
+                    strokeColor: "rgba(126,194,69,1)",
+                    pointColor: "rgba(126,194,69,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: _.map(resource().source, function(item) {
+                        return item.total;
+                    })
+                } ];
+            }, renderChart = function(element, isInitialized, context) {
+                var ctx = element.getContext("2d");
+                new Chart(ctx).Line({
+                    labels: _.map(resource().source, function(item) {
+                        return item.paid_at;
+                    }),
+                    datasets: mountDataset()
+                });
+            };
+            return vm.project_id(args.resourceId), models.projectContributionsPerDay.getRow(vm.parameters()).then(function(data) {
+                resource(data[0]);
+            }), {
+                vm: vm,
+                resource: resource,
+                renderChart: renderChart
+            };
+        },
+        view: function(ctrl) {
+            return m("canvas", {
+                style: {
+                    width: "900px",
+                    height: "400px"
+                },
+                config: ctrl.renderChart
+            });
+        }
+    };
+}(window.m, window.Chart, window.c.models, window._), window.c.TeamMembers = function(_, m, models) {
     return {
         controller: function() {
             var vm = {

@@ -25,6 +25,7 @@
     "mithril.postgrest": "1.0.4",
     "moment": "~2.10.3",
     "replace-diacritics": "https://raw.githubusercontent.com/yvg/js-replace-diacritics/master/replace-diacritics.js",
-    "moment-timezone": "~0.4.0"
+    "moment-timezone": "~0.4.0",
+    "Chartjs": "https://raw.githubusercontent.com/nnnick/Chart.js/master/Chart.min.js"
   }
 }
