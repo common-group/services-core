@@ -21,7 +21,6 @@ window.c.admin.ProjectInsights = (function(m, c, models){
         m('.w-row', [
           m('.w-col.w-col-2'),
           m('.w-col.w-col-8.dashboard-header.u-text-center', [
-            m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', 'Minha campanha'),
             m.component(c.AdminProjectDetailsCard, {resource: ctrl.resource})
           ]),
           m('.w-col.w-col-2')
