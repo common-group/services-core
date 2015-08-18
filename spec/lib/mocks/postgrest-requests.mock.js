@@ -11,7 +11,7 @@ beforeAll(function() {
     'responseText' : '{"token": "' + testToken + '"}'
   });
 
-  jasmine.Ajax.stubRequest('/test_endpoint').andReturn({
+  jasmine.Ajax.stubRequest('/test').andReturn({
     'responseText' : '{"object": "responseOK"}'
   });
 

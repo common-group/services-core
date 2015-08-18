@@ -2,10 +2,11 @@ window.c.AdminInputAction = (function(m, h, c){
   return {
     controller: function(args){
       var submit = function(){
-        args.vm.patchWithToken();
+        console.log('submit');
       };
       return {
-        toggler: h.toggleProp(false, true)
+        toggler: h.toggleProp(false, true),
+        submit: submit
       };
     },
     view: function(ctrl, args){
@@ -19,8 +20,8 @@ window.c.AdminInputAction = (function(m, h, c){
             m('form.w-form', {
               onsubmit: ctrl.submit
             }, [
-                m('label', action.outerLabel),
-                m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]',{onchange: m.withAttr('value', action.vm), value: action.vm()}),
+                m('label', action.innerLabel),
+                m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]',{onchange: m.withAttr('value', action.model[action.property]), value: action.model[action.property]}),
                 m('input.w-button.btn.btn-small[type="submit"][value="' + action.callToAction + '"]')
             ])
           ])
