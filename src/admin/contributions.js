@@ -23,6 +23,19 @@ window.c.admin.Contributions = (function(m, c, h){
               wrapperClass: '.w-col.w-col-2'
             }
           ],
+          itemActions = [
+            {
+              component: 'AdminInputAction',
+              data: {
+                attrName: 'user_id',
+                callToAction: 'Transferir',
+                innerLabel: 'Id do novo apoiador:',
+                outerLabel: 'Transferir Apoio',
+                placeholder: 'ex: 129908',
+                vm: listVM
+              }
+            }
+          ],
           filterBuilder = [
             { //full_text_index
               component: 'FilterMain',
@@ -91,6 +104,7 @@ window.c.admin.Contributions = (function(m, c, h){
       return {
         filterVM: filterVM,
         filterBuilder: filterBuilder,
+        itemActions: itemActions,
         itemBuilder: itemBuilder,
         listVM: {list: listVM, error: error},
         submit: submit
@@ -100,7 +114,7 @@ window.c.admin.Contributions = (function(m, c, h){
     view: function(ctrl){
       return [
         m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, submit: ctrl.submit}),
-        m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder})
+        m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions})
       ];
     }
   };

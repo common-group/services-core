@@ -66,6 +66,16 @@ window.c = function() {
             }, {
                 component: "PaymentStatus",
                 wrapperClass: ".w-col.w-col-2"
+            } ], itemActions = [ {
+                component: "AdminInputAction",
+                data: {
+                    attrName: "user_id",
+                    callToAction: "Transferir",
+                    innerLabel: "Id do novo apoiador:",
+                    outerLabel: "Transferir Apoio",
+                    placeholder: "ex: 129908",
+                    vm: listVM
+                }
             } ], filterBuilder = [ {
                 component: "FilterMain",
                 data: {
@@ -149,6 +159,7 @@ window.c = function() {
             return {
                 filterVM: filterVM,
                 filterBuilder: filterBuilder,
+                itemActions: itemActions,
                 itemBuilder: itemBuilder,
                 listVM: {
                     list: listVM,
@@ -164,7 +175,8 @@ window.c = function() {
                 submit: ctrl.submit
             }), m.component(c.AdminList, {
                 vm: ctrl.listVM,
-                itemBuilder: ctrl.itemBuilder
+                itemBuilder: ctrl.itemBuilder,
+                itemActions: ctrl.itemActions
             }) ];
         }
     };
@@ -216,59 +228,27 @@ window.c = function() {
             return m(".w-row.admin-contribution", [ m(".fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small", "R$" + contribution.value), m(".fontsize-smallest.fontcolor-secondary", h.momentify(contribution.created_at, "DD/MM/YYYY HH:mm[h]")), m(".fontsize-smallest", [ "ID do Gateway: ", m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id) ]) ]);
         }
     };
-}(window.m, window.c.h), window.c.AdminDetail = function(m, c) {
+}(window.m, window.c.h), window.c.AdminDetail = function(m, _, c) {
     return {
-        controller: function() {
-            return {
-                displayRequestRefundDropDown: c.ToggleDiv.toggler(),
-                displayRefundDropDown: c.ToggleDiv.toggler(),
-                displayTransferContributionDropDown: c.ToggleDiv.toggler(),
-                displayChangeRewardDropDown: c.ToggleDiv.toggler(),
-                displatAnonDropDown: c.ToggleDiv.toggler()
-            };
-        },
+        controller: function() {},
         view: function(ctrl, args) {
-            var contribution = args.item;
-            return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30.w-hidden", [ m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-                onclick: ctrl.displayRequestRefundDropDown.toggle
-            }, "Pedir reembolso"), m.component(c.ToggleDiv, {
-                display: ctrl.displayRequestRefundDropDown,
-                content: m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[id="transfer"]', [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o reembolso?"), m("button.btn.btn-small", "Solicitar reembolso") ])
-            }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-                onclick: ctrl.displayRefundDropDown.toggle
-            }, "Estornar"), m.component(c.ToggleDiv, {
-                display: ctrl.displayRefundDropDown,
-                content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".fontsize-smaller.fontweight-semibold.u-text-center.u-marginbottom-20", "Quer efetuar o estorno?"), m("button.btn.btn-small", "Solicitar estorno") ])
-            }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary.btn-desactivated", "2a via") ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-                onclick: ctrl.displayTransferContributionDropDown.toggle
-            }, "Transferir apoio"), m.component(c.ToggleDiv, {
-                display: ctrl.displayTransferContributionDropDown,
-                content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form", [ m("label", "Id do novo apoiador:"), m('input.w-input.text-field[placeholder="ex: 129908"][type="text"]'), m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]') ]) ]) ])
-            }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-                onclick: ctrl.displayChangeRewardDropDown.toggle
-            }, "Trocar recompensa"), m.component(c.ToggleDiv, {
-                display: ctrl.displayChangeRewardDropDown,
-                content: m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10[id="transfer"]', {
-                    style: {
-                        display: "none"
-                    }
-                }, [ m(".w-form", [ m("form", [ m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m('label.w-form-label[for="radio"]', "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "R$ 10") ]) ]) ]) ])
-            }) ]), m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
-                onclick: ctrl.displatAnonDropDown.toggle
-            }, "Anonimato"), m.component(c.ToggleDiv, {
-                display: ctrl.displatAnonDropDown,
-                content: m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m(".w-form", [ m("form", [ m(".w-radio", [ m('input.w-radio-input[type="radio"]'), m("label.w-form-label", "Anônimo") ]), m(".w-radio", [ m('input.w-radio-input[type="radio"][value="Radio"]'), m("label.w-form-label", "Público") ]) ]) ]) ])
-            }) ]) ]), m(".w-row.card.card-terciary.u-radius", [ m.component(c.AdminTransaction, {
-                contribution: contribution
+            var actions = args.actions, item = args.item;
+            return m("#admin-contribution-detail-box", [ m(".divider.u-margintop-20.u-marginbottom-20"), m(".w-row.u-marginbottom-30", _.map(actions, function(action) {
+                return m.component(c[action.component], {
+                    data: action.data,
+                    item: args.item
+                });
+            })), m(".w-row.card.card-terciary.u-radius", [ m.component(c.AdminTransaction, {
+                contribution: item
             }), m.component(c.AdminTransactionHistory, {
-                contribution: contribution
+                contribution: item
             }), m.component(c.AdminReward, {
-                contribution: contribution,
-                key: contribution.key
+                contribution: item,
+                key: item.key
             }) ]) ]);
         }
     };
-}(window.m, window.c), window.c.AdminFilter = function(c, m, _, h) {
+}(window.m, window._, window.c), window.c.AdminFilter = function(c, m, _, h) {
     return {
         controller: function() {
             return {
@@ -290,7 +270,26 @@ window.c = function() {
             }) ]) : "" ]) ]) ]) ]);
         }
     };
-}(window.c, window.m, window._, window.c.h), window.c.AdminItem = function(m, _, h, c) {
+}(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
+    return {
+        controller: function(args) {
+            return {
+                toggler: h.toggleProp(!1, !0)
+            };
+        },
+        view: function(ctrl, args) {
+            var action = args.data;
+            return m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
+                onclick: ctrl.toggler.toggle
+            }, action.outerLabel), ctrl.toggler() ? m("form.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m("form.w-form", {
+                onsubmit: ctrl.submit
+            }, [ m("label", action.outerLabel), m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]', {
+                onchange: m.withAttr("value", action.vm),
+                value: action.vm()
+            }), m('input.w-button.btn.btn-small[type="submit"][value="' + action.callToAction + '"]') ]) ]) : "" ]);
+        }
+    };
+}(window.m, window.c.h, window.c), window.c.AdminItem = function(m, _, h, c) {
     return {
         controller: function(args) {
             var displayDetailBox = h.toggleProp(!1, !0);
@@ -309,6 +308,7 @@ window.c = function() {
                 onclick: ctrl.displayDetailBox.toggle
             }), ctrl.displayDetailBox() ? m.component(c.AdminDetail, {
                 item: item,
+                actions: args.actions,
                 key: item.key
             }) : "" ]);
         }
@@ -327,6 +327,7 @@ window.c = function() {
             return m(".w-section.section", [ m(".w-container", error() ? m(".card.card-error.u-radius.fontweight-bold", error()) : [ m(".w-row.u-marginbottom-20", [ m(".w-col.w-col-9", [ m(".fontsize-base", list.isLoading() ? "Buscando apoios..." : [ m("span.fontweight-semibold", list.total()), " apoios encontrados" ]) ]) ]), m("#admin-contributions-list.w-container", [ list.collection().map(function(item) {
                 return m.component(c.AdminItem, {
                     builder: args.itemBuilder,
+                    actions: args.itemActions,
                     item: item,
                     key: item.key
                 });
@@ -617,29 +618,7 @@ window.c = function() {
             }) ]);
         }
     };
-}(window.m, window.c.h, window.c.models), window.c.ToggleDiv = function(m, h) {
-    return {
-        toggler: function() {
-            return h.toggleProp("none", "block");
-        },
-        controller: function(args) {
-            return {
-                vm: {
-                    display: args.display
-                }
-            };
-        },
-        view: function(ctrl, args) {
-            return m(".toggleDiv", {
-                style: {
-                    transition: "all .1s ease-out",
-                    overflow: "hidden",
-                    display: ctrl.vm.display()
-                }
-            }, [ args.content ]);
-        }
-    };
-}(window.m, window.c.h), window.c.pages.Team = function(m, c) {
+}(window.m, window.c.h, window.c.models), window.c.pages.Team = function(m, c) {
     return {
         view: function() {
             return m("#static-team-app", [ m.component(c.TeamTotal), m.component(c.TeamMembers) ]);
