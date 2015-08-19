@@ -21,7 +21,8 @@ window.c.admin.ProjectInsights = (function(m, c, models){
         m('.w-row.u-marginbottom-40', [
           m('.w-col.w-col-2'),
           m('.w-col.w-col-8.dashboard-header.u-text-center', [
-            m.component(c.AdminProjectDetailsCard, {collection: ctrl.projectDetails})
+            m.component(c.AdminProjectDetailsCard, {collection: ctrl.projectDetails}),
+            m.component(c.AdminProjectDetailsExplanation, {collection: ctrl.projectDetails})
           ]),
           m('.w-col.w-col-2')
         ]),

@@ -216,6 +216,8 @@ window.c = function() {
         view: function(ctrl) {
             return m(".project-insights", [ m(".w-row.u-marginbottom-40", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
                 collection: ctrl.projectDetails
+            }), m.component(c.AdminProjectDetailsExplanation, {
+                collection: ctrl.projectDetails
             }) ]), m(".w-col.w-col-2") ]), m(".divider"), m(".w-section.section-one-column.bg-gray.before-footer", [ m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
                 style: {
                     "min-height": "300px"
@@ -361,7 +363,39 @@ window.c = function() {
             }) ]);
         }
     };
-}(window.m, window.c.h), window.c.AdminProject = function(m, h) {
+}(window.m, window.c.h), window.c.AdminProjectDetailsExplanation = function(m) {
+    return {
+        controller: function(args) {
+            var project = args.collection()[0], explanation = function(resource) {
+                switch (resource.state) {
+                  case "online":
+                    return m("span", "projeto online");
+
+                  case "successful":
+                    return m("span", "projeto successful");
+
+                  case "waiting_funds":
+                    return m("span", "projeto waiting_funds");
+
+                  case "rejected":
+                    return m("span", "projeto rejected");
+
+                  case "draft":
+                    return m("span", "projeto draft");
+
+                  case "in_analysis":
+                    return m("span", "projeto in_analysis");
+                }
+            };
+            return {
+                explanation: explanation(project)
+            };
+        },
+        view: function(ctrl) {
+            return m("p.fontsize-base", ctrl.explanation);
+        }
+    };
+}(window.m), window.c.AdminProject = function(m, h) {
     return {
         view: function(ctrl, args) {
             var project = args.item;
