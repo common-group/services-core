@@ -68,7 +68,7 @@ window.c = function() {
             } ], itemActions = [ {
                 component: "AdminInputAction",
                 data: {
-                    property: "user_id",
+                    getKey: "user_id",
                     updateKey: "contribution_id",
                     callToAction: "Transferir",
                     innerLabel: "Id do novo apoiador:",
@@ -251,9 +251,9 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
     return {
         controller: function(args) {
-            var builder = args.data, data = {}, item = args.item, itemKey = args.property, newValue = m.prop(""), submit = function() {
-                return h.idVM.id(item[builder.updateKey]), data[itemKey] = newValue(), builder.model.patchWithToken(h.idVM.parameters(), data),
-                !1;
+            var builder = args.data, data = {}, item = args.item, newValue = m.prop(""), submit = function() {
+                return h.idVM.id(item[builder.updateKey]), data[builder.getKey] = newValue(), console.log(data),
+                builder.model.patchWithToken(h.idVM.parameters(), data), !1;
             };
             return {
                 newValue: newValue,

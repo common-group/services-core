@@ -8,7 +8,7 @@ window.c.AdminInputAction = (function(m, h, c){
 
       var submit = function(){
         h.idVM.id(item[builder.updateKey]);
-        data[args.getKey] = newValue();
+        data[builder.getKey] = newValue();
         builder.model.patchWithToken(h.idVM.parameters(), data);
         return false;
       };
