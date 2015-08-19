@@ -1,8 +1,7 @@
-window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, models, _){
+window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, _){
   return {
     controller: function(args) {
-      var vm = m.postgrest.filtersVM({project_id: 'eq'}),
-          resource = m.prop({}),
+      var resource = args.collection()[0],
           mountDataset = function() {
             return [{
               label: 'My First dataset',
@@ -12,10 +11,10 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, models, _){
               pointStrokeColor: '#fff',
               pointHighlightFill: '#fff',
               pointHighlightStroke: 'rgba(220,220,220,1)',
-              data: _.map(resource().source, function(item) {return item.total;})
+              data: _.map(resource.source, function(item) {return item.total;})
             }];
           },
-          renderChart = function(element, isInitialized, context){
+          renderChart = function(element, isInitialized){
             if (isInitialized){return;}
 
             Object.defineProperty(element, 'offsetHeight', {
@@ -27,25 +26,17 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, models, _){
             var ctx = element.getContext('2d');
 
             new Chart(ctx).Line({
-              labels: _.map(resource().source, function(item) {return item.paid_at;}),
+              labels: _.map(resource.source, function(item) {return item.paid_at;}),
               datasets: mountDataset()
             });
           };
 
-      vm.project_id(args.resourceId);
-
-      models.projectContributionsPerDay.getRow(vm.parameters()).then(function(data){
-        resource(data[0]);
-      });
-
       return {
-        vm: vm,
-        resource: resource,
         renderChart: renderChart
       };
     },
     view: function(ctrl) {
-      return m('canvas[id="chart"][width="400"][height="400"]', {config: ctrl.renderChart});
+      return m('canvas[id="chart"][width="650"][height="300"]', {config: ctrl.renderChart});
     }
   };
-}(window.m, window.Chart, window.c.models, window._));
+}(window.m, window.Chart, window._));

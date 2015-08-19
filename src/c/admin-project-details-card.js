@@ -1,46 +1,38 @@
 window.c.AdminProjectDetailsCard = (function(m, h){
   return {
-    controller: function(args) {
-      var vm = {
-        resource: args.resource,
-      };
-
-      return {
-        vm: vm
-      };
-    },
-
-    view: function(ctrl) {
-      var project = ctrl.vm.resource(),
-          remainingTime = h.splitRemaningTime(project.expires_at);
-
+    view: function(ctrl, args) {
       return m('.card.u-radius.card-terciary.u-marginbottom-20', [
-          m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [
-            m('span.fontcolor-secondary', 'Status:'),' ',m('span.text-success', project.state.toUpperCase()),' '
-          ]),
-          m('.meter.u-marginbottom-10', [
-            m('.meter-fill')
-          ]),
-          m('.w-row', [
-            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
-              m('.fontweight-semibold.fontsize-large.lineheight-tight', project.progress.toFixed(2) + '%'),
-              m('.fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10', 'financiado')
-            ]),
-            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
-              m('.fontweight-semibold.fontsize-large.lineheight-tight', [
-                'R$ ' + h.formatNumber(project.pledged, 2),
+          args.collection().map(function(project){
+            var remainingTime = h.splitRemaningTime(project.expires_at);
+            return m('div', [
+              m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [
+                m('span.fontcolor-secondary', 'Status:'),' ',m('span.text-success', project.state.toUpperCase()),' '
               ]),
-              m('.fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10', 'levantados')
-            ]),
-            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
-              m('.fontweight-semibold.fontsize-large.lineheight-tight', project.total_contributions),
-              m('.fontcolor-secondary.lineheight-tighter.fontsize-small', 'apoios')
-            ]),
-            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
-              m('.fontweight-semibold.fontsize-large.lineheight-tight', remainingTime[1]),
-              m('.fontcolor-secondary.lineheight-tighter.fontsize-small', remainingTime[2] + ' restantes')
-            ])
-          ])
+              m('.meter.u-marginbottom-10', [
+                m('.meter-fill')
+              ]),
+              m('.w-row', [
+                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
+                  m('.fontweight-semibold.fontsize-large.lineheight-tight', project.progress.toFixed(2) + '%'),
+                  m('.fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10', 'financiado')
+                ]),
+                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
+                  m('.fontweight-semibold.fontsize-large.lineheight-tight', [
+                    'R$ ' + h.formatNumber(project.pledged, 2),
+                  ]),
+                  m('.fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10', 'levantados')
+                ]),
+                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
+                  m('.fontweight-semibold.fontsize-large.lineheight-tight', project.total_contributions),
+                  m('.fontcolor-secondary.lineheight-tighter.fontsize-small', 'apoios')
+                ]),
+                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
+                  m('.fontweight-semibold.fontsize-large.lineheight-tight', remainingTime[1]),
+                  m('.fontcolor-secondary.lineheight-tighter.fontsize-small', remainingTime[2] + ' restantes')
+                ])
+              ])
+            ]);
+          })
         ]);
     }
   };

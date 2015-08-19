@@ -204,21 +204,25 @@ window.c = function() {
         controller: function(args) {
             var vm = m.postgrest.filtersVM({
                 project_id: "eq"
-            }), resource = m.prop({}), resourceId = args.root.getAttribute("data-id");
-            return vm.project_id(resourceId), models.projectDetail.getRow(vm.parameters()).then(function(data) {
-                resource(data[0]);
-            }), {
+            }), projectDetails = m.prop([]), contributionsPerDay = m.prop([]);
+            return vm.project_id(args.root.getAttribute("data-id")), models.projectDetail.getRow(vm.parameters()).then(projectDetails), 
+            models.projectContributionsPerDay.getRow(vm.parameters()).then(contributionsPerDay), 
+            {
                 vm: vm,
-                resource: resource,
-                resourceId: resourceId
+                projectDetails: projectDetails,
+                contributionsPerDay: contributionsPerDay
             };
         },
         view: function(ctrl) {
             return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
-                resource: ctrl.resource
-            }) ]), m(".w-col.w-col-2") ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectChartContributionTotalPerDay, {
-                resourceId: ctrl.resourceId
-            }) ]) ]) ]);
+                collection: ctrl.projectDetails
+            }) ]), m(".w-col.w-col-2") ]), m(".w-row", [ m(".w-col.w-col-1"), m(".w-col.w-col-10.dashboard-header.u-text-center", {
+                style: {
+                    "min-height": "300px"
+                }
+            }, [ m.component(c.ProjectChartContributionTotalPerDay, {
+                collection: ctrl.contributionsPerDay
+            }) ]), m(".w-col.w-col-1") ]) ]);
         }
     };
 }(window.m, window.c, window.c.models), window.c.AdminContribution = function(m, h) {
@@ -338,17 +342,11 @@ window.c = function() {
     };
 }(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m, h) {
     return {
-        controller: function(args) {
-            var vm = {
-                resource: args.resource
-            };
-            return {
-                vm: vm
-            };
-        },
-        view: function(ctrl) {
-            var project = ctrl.vm.resource(), remainingTime = h.splitRemaningTime(project.expires_at);
-            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.progress.toFixed(2) + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTime[1]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTime[2] + " restantes") ]) ]) ]);
+        view: function(ctrl, args) {
+            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ args.collection().map(function(project) {
+                var remainingTime = h.splitRemaningTime(project.expires_at);
+                return m("div", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill") ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.progress.toFixed(2) + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTime[1]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTime[2] + " restantes") ]) ]) ]);
+            }) ]);
         }
     };
 }(window.m, window.c.h), window.c.AdminProject = function(m, h) {
@@ -531,12 +529,10 @@ window.c = function() {
             return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
-}(window.m), window.c.ProjectChartContributionTotalPerDay = function(m, Chart, models, _) {
+}(window.m), window.c.ProjectChartContributionTotalPerDay = function(m, Chart, _) {
     return {
         controller: function(args) {
-            var vm = m.postgrest.filtersVM({
-                project_id: "eq"
-            }), resource = m.prop({}), mountDataset = function() {
+            var resource = args.collection()[0], mountDataset = function() {
                 return [ {
                     label: "My First dataset",
                     fillColor: "rgba(126,194,69,0.2)",
@@ -545,11 +541,11 @@ window.c = function() {
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(220,220,220,1)",
-                    data: _.map(resource().source, function(item) {
+                    data: _.map(resource.source, function(item) {
                         return item.total;
                     })
                 } ];
-            }, renderChart = function(element, isInitialized, context) {
+            }, renderChart = function(element, isInitialized) {
                 if (!isInitialized) {
                     Object.defineProperty(element, "offsetHeight", {
                         get: function() {
@@ -562,28 +558,24 @@ window.c = function() {
                     });
                     var ctx = element.getContext("2d");
                     new Chart(ctx).Line({
-                        labels: _.map(resource().source, function(item) {
+                        labels: _.map(resource.source, function(item) {
                             return item.paid_at;
                         }),
                         datasets: mountDataset()
                     });
                 }
             };
-            return vm.project_id(args.resourceId), models.projectContributionsPerDay.getRow(vm.parameters()).then(function(data) {
-                resource(data[0]);
-            }), {
-                vm: vm,
-                resource: resource,
+            return {
                 renderChart: renderChart
             };
         },
         view: function(ctrl) {
-            return m('canvas[id="chart"][width="400"][height="400"]', {
+            return m('canvas[id="chart"][width="650"][height="300"]', {
                 config: ctrl.renderChart
             });
         }
     };
-}(window.m, window.Chart, window.c.models, window._), window.c.TeamMembers = function(_, m, models) {
+}(window.m, window.Chart, window._), window.c.TeamMembers = function(_, m, models) {
     return {
         controller: function() {
             var vm = {
