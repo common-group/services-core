@@ -17,34 +17,42 @@ window.c.admin.ProjectInsights = (function(m, c, models){
       };
     },
     view: function(ctrl) {
-      return m('.project-insights',[
-        m('.w-row.u-marginbottom-40', [
-          m('.w-col.w-col-2'),
-          m('.w-col.w-col-8.dashboard-header.u-text-center', [
-            m.component(c.AdminProjectDetailsCard, {collection: ctrl.projectDetails}),
-            m.component(c.AdminProjectDetailsExplanation, {collection: ctrl.projectDetails})
-          ]),
-          m('.w-col.w-col-2')
-        ]),
-        m('.divider'),
-        m('.w-section.section-one-column.bg-gray.before-footer',[
-          m('.w-row', [
-            m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-              m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
+      return ctrl.projectDetails().map(function(project){
+        return m('.project-insights',[
+          m('.w-row.u-marginbottom-40', [
+            m('.w-col.w-col-2'),
+            m('.w-col.w-col-8.dashboard-header.u-text-center', [
+              m.component(c.AdminProjectDetailsCard, {resource: project}),
+              m.component(c.AdminProjectDetailsExplanation, {resource: project})
             ]),
+            m('.w-col.w-col-2')
           ]),
-          m('.w-row', [
-            m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-              m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
-            ]),
-          ]),
-          m('.w-row', [
-            m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-              m.component(c.ProjectReminderCount, {collection: ctrl.projectDetails})
-            ]),
-          ])
-        ])
-      ]);
+          (function(project){
+            if (project.is_published) {
+              return [
+                m('.divider'),
+                m('.w-section.section-one-column.bg-gray.before-footer',[
+                  m('.w-row', [
+                    m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+                      m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
+                    ]),
+                  ]),
+                  m('.w-row', [
+                    m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+                      m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
+                    ]),
+                  ]),
+                  m('.w-row', [
+                    m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+                      m.component(c.ProjectReminderCount, {resource: project})
+                    ]),
+                  ])
+                ])
+              ];
+            }
+          }(project))
+        ]);
+      });
     }
   };
 }(window.m, window.c, window.c.models));
