@@ -35,6 +35,8 @@ window.c.h = (function(m, moment){
     return p;
   },
 
+  idVM = m.postgrest.filtersVM({id: 'eq'}),
+
   //Templates
   loader = function(){
     return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
@@ -46,6 +48,7 @@ window.c.h = (function(m, moment){
     momentify: momentify,
     momentFromString: momentFromString,
     formatNumber: formatNumber,
+    idVM: idVM,
     toggleProp: toggleProp,
     loader: loader
   };
