@@ -214,9 +214,9 @@ window.c = function() {
             };
         },
         view: function(ctrl) {
-            return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
+            return m(".project-insights", [ m(".w-row.u-marginbottom-40", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
                 collection: ctrl.projectDetails
-            }) ]), m(".w-col.w-col-2") ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
+            }) ]), m(".w-col.w-col-2") ]), m(".divider"), m(".w-section.section-one-column.bg-gray.before-footer", [ m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
                 style: {
                     "min-height": "300px"
                 }
@@ -228,7 +228,13 @@ window.c = function() {
                 }
             }, [ m.component(c.ProjectChartContributionAmountPerDay, {
                 collection: ctrl.contributionsPerDay
-            }) ]) ]) ]);
+            }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
+                style: {
+                    "min-height": "300px"
+                }
+            }, [ m.component(c.ProjectReminderCount, {
+                collection: ctrl.projectDetails
+            }) ]) ]) ]) ]);
         }
     };
 }(window.m, window.c, window.c.models), window.c.AdminContribution = function(m, h) {
@@ -576,7 +582,7 @@ window.c = function() {
             };
         },
         view: function(ctrl) {
-            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "R$ arrecadados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="650"][height="300"]', {
+            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "R$ arrecadados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="860"][height="300"]', {
                 config: ctrl.renderChart
             }) ]) ]) ]);
         }
@@ -622,12 +628,20 @@ window.c = function() {
             };
         },
         view: function(ctrl) {
-            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Apoios confirmados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="650"][height="300"]', {
+            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Apoios confirmados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="860"][height="300"]', {
                 config: ctrl.renderChart
             }) ]) ]) ]);
         }
     };
-}(window.m, window.Chart, window._), window.c.TeamMembers = function(_, m, models) {
+}(window.m, window.Chart, window._), window.c.ProjectReminderCount = function(m) {
+    return {
+        view: function(ctrl, args) {
+            return m(".card.u-radius.u-text-center.medium.u-marginbottom-80", [ args.collection().map(function(project) {
+                return m("div", [ m(".fontsize-large.fontweight-semibold", "Total de pessoas que clicaram no botão Lembrar-me"), m(".fontsize-smaller.u-marginbottom-30", "Eles receberão um lembrete por email 48 horas antes do término de sua campanha"), m(".fontsize-jumbo", project.reminder_count) ]);
+            }) ]);
+        }
+    };
+}(window.m), window.c.TeamMembers = function(_, m, models) {
     return {
         controller: function() {
             var vm = {

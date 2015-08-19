@@ -18,22 +18,30 @@ window.c.admin.ProjectInsights = (function(m, c, models){
     },
     view: function(ctrl) {
       return m('.project-insights',[
-        m('.w-row', [
+        m('.w-row.u-marginbottom-40', [
           m('.w-col.w-col-2'),
           m('.w-col.w-col-8.dashboard-header.u-text-center', [
             m.component(c.AdminProjectDetailsCard, {collection: ctrl.projectDetails})
           ]),
           m('.w-col.w-col-2')
         ]),
-        m('.w-row', [
-          m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-            m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
+        m('.divider'),
+        m('.w-section.section-one-column.bg-gray.before-footer',[
+          m('.w-row', [
+            m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+              m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
+            ]),
           ]),
-        ]),
-        m('.w-row', [
-          m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-            m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
+          m('.w-row', [
+            m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+              m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
+            ]),
           ]),
+          m('.w-row', [
+            m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+              m.component(c.ProjectReminderCount, {collection: ctrl.projectDetails})
+            ]),
+          ])
         ])
       ]);
     }
