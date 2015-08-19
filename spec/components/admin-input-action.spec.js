@@ -63,7 +63,7 @@ describe('AdminInputAction', function(){
 
     describe('on form submit', function(){
       beforeAll(function(){
-        spyOn(m, 'request').and.callFake(function(){
+        spyOn(testModel, 'patchWithToken').and.callFake(function(){
           return true;
         });
       });
@@ -73,7 +73,7 @@ describe('AdminInputAction', function(){
 
       it('should call a submit function on form submit', function(){
         $output.trigger('form', 'submit');
-        expect(m.request).toHaveBeenCalled();
+        expect(testModel.patchWithToken).toHaveBeenCalled();
       });
     });
   });
