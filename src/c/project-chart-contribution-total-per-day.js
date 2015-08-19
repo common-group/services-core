@@ -40,7 +40,7 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, _){
         m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'Apoios confirmados por dia'),
         m('.w-row',[
           m('.w-col.w-col-12', [
-            m('canvas[id="chart"][width="650"][height="300"]', {config: ctrl.renderChart})
+            m('canvas[id="chart"][width="860"][height="300"]', {config: ctrl.renderChart})
           ]),
         ])
       ]);
