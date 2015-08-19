@@ -216,13 +216,13 @@ window.c = function() {
         view: function(ctrl) {
             return m(".project-insights", [ m(".w-row", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
                 collection: ctrl.projectDetails
-            }) ]), m(".w-col.w-col-2") ]), m(".w-row", [ m(".w-col.w-col-1"), m(".w-col.w-col-10.dashboard-header.u-text-center", {
+            }) ]), m(".w-col.w-col-2") ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
                 style: {
                     "min-height": "300px"
                 }
             }, [ m.component(c.ProjectChartContributionTotalPerDay, {
                 collection: ctrl.contributionsPerDay
-            }) ]), m(".w-col.w-col-1") ]) ]);
+            }) ]) ]) ]);
         }
     };
 }(window.m, window.c, window.c.models), window.c.AdminContribution = function(m, h) {
@@ -534,7 +534,7 @@ window.c = function() {
         controller: function(args) {
             var resource = args.collection()[0], mountDataset = function() {
                 return [ {
-                    label: "My First dataset",
+                    label: "Apoios confirmados por dia",
                     fillColor: "rgba(126,194,69,0.2)",
                     strokeColor: "rgba(126,194,69,1)",
                     pointColor: "rgba(126,194,69,1)",
@@ -570,9 +570,9 @@ window.c = function() {
             };
         },
         view: function(ctrl) {
-            return m('canvas[id="chart"][width="650"][height="300"]', {
+            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Apoios confirmados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="650"][height="300"]', {
                 config: ctrl.renderChart
-            });
+            }) ]) ]) ]);
         }
     };
 }(window.m, window.Chart, window._), window.c.TeamMembers = function(_, m, models) {
