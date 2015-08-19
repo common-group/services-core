@@ -27,12 +27,13 @@ window.c.admin.Contributions = (function(m, c, h){
             {
               component: 'AdminInputAction',
               data: {
-                attrName: 'user_id',
+                getKey: 'user_id',
+                updateKey: 'contribution_id',
                 callToAction: 'Transferir',
                 innerLabel: 'Id do novo apoiador:',
                 outerLabel: 'Transferir Apoio',
                 placeholder: 'ex: 129908',
-                vm: listVM
+                model: c.models.contributions
               }
             }
           ],
