@@ -550,13 +550,24 @@ window.c = function() {
                     })
                 } ];
             }, renderChart = function(element, isInitialized, context) {
-                var ctx = element.getContext("2d");
-                new Chart(ctx).Line({
-                    labels: _.map(resource().source, function(item) {
-                        return item.paid_at;
-                    }),
-                    datasets: mountDataset()
-                });
+                if (!isInitialized) {
+                    Object.defineProperty(element, "offsetHeight", {
+                        get: function() {
+                            return element.height;
+                        }
+                    }), Object.defineProperty(element, "offsetWidth", {
+                        get: function() {
+                            return element.width;
+                        }
+                    });
+                    var ctx = element.getContext("2d");
+                    new Chart(ctx).Line({
+                        labels: _.map(resource().source, function(item) {
+                            return item.paid_at;
+                        }),
+                        datasets: mountDataset()
+                    });
+                }
             };
             return vm.project_id(args.resourceId), models.projectContributionsPerDay.getRow(vm.parameters()).then(function(data) {
                 resource(data[0]);
@@ -567,11 +578,7 @@ window.c = function() {
             };
         },
         view: function(ctrl) {
-            return m("canvas", {
-                style: {
-                    width: "900px",
-                    height: "400px"
-                },
+            return m('canvas[id="chart"][width="400"][height="400"]', {
                 config: ctrl.renderChart
             });
         }

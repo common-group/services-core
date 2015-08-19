@@ -16,10 +16,14 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, models, _){
             }];
           },
           renderChart = function(element, isInitialized, context){
-            //if (isInitialized) {
-            //  return;
-            //}
+            if (isInitialized){return;}
 
+            Object.defineProperty(element, 'offsetHeight', {
+              get: function() { return element.height; },
+            });
+            Object.defineProperty(element, 'offsetWidth', {
+              get: function() { return element.width; },
+            });
             var ctx = element.getContext('2d');
 
             new Chart(ctx).Line({
@@ -41,7 +45,7 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, models, _){
       };
     },
     view: function(ctrl) {
-      return m('canvas', {style: {width: '900px', height: '400px'}, config: ctrl.renderChart});
+      return m('canvas[id="chart"][width="400"][height="400"]', {config: ctrl.renderChart});
     }
   };
 }(window.m, window.Chart, window.c.models, window._));
