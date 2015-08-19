@@ -1,29 +1,41 @@
 describe('AdminInputAction', function(){
-  var c = window.c, m = window.m,
+  var c = window.c, m = window.m, models = window.c.models,
       AdminInputAction = c.AdminInputAction,
-      ctrl, testModel, $output;
+      testModel = m.postgrest.model('test'),
+      item = {
+        testKey: 'foo'
+      },
+      ctrl, $output;
 
   var args = {
-        property: 'test_id',
+        getKey: 'testKey',
+        updateKey: 'updateKey',
         callToAction: 'cta',
         innerLabel: 'inner',
         outerLabel: 'outer',
         placeholder: 'place',
-        model: m.postgrest.model('test')
+        model: testModel
       };
 
   describe('controller', function(){
     beforeAll(function(){
-      ctrl = AdminInputAction.controller();
+      ctrl = AdminInputAction.controller({data: args, item: item});
     });
+
     it('should instantiate a submit function', function(){
       expect(ctrl.submit).toBeFunction();
+    });
+    it('should return a toggler prop', function(){
+      expect(ctrl.toggler).toBeFunction();
+    });
+    it('should return a value property to bind to', function(){
+      expect(ctrl.newValue).toBeFunction();
     });
   });
 
   describe('view', function(){
     beforeEach(function(){
-      $output = mq(AdminInputAction, {data: args});
+      $output = mq(AdminInputAction, {data: args, item: item});
     });
 
     it('shoud render the outerLabel on first render', function(){
@@ -51,18 +63,17 @@ describe('AdminInputAction', function(){
 
     describe('on form submit', function(){
       beforeAll(function(){
-        ctrl = {
-          submit: function(){},
-          toggler: m.prop(true)
-        };
-        spyOn(ctrl, 'submit');
-        $output = mq(AdminInputAction.view(ctrl, {data: args}));
+        spyOn(m, 'request').and.callFake(function(){
+          return true;
+        });
+      });
+      beforeEach(function(){
+        $output.click('button');
       });
 
       it('should call a submit function on form submit', function(){
-        console.log(JSON.stringify($output));
         $output.trigger('form', 'submit');
-        expect(ctrl.submit).toHaveBeenCalled();
+        expect(m.request).toHaveBeenCalled();
       });
     });
   });

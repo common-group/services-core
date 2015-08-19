@@ -1,28 +1,38 @@
 window.c.AdminInputAction = (function(m, h, c){
   return {
     controller: function(args){
+      var builder = args.data,
+          data = {},
+          item = args.item,
+          newValue = m.prop('');
+
       var submit = function(){
-        console.log('submit');
+        h.idVM.id(item[builder.updateKey]);
+        data[args.getKey] = newValue();
+        builder.model.patchWithToken(h.idVM.parameters(), data);
+        return false;
       };
+
       return {
+        newValue: newValue,
         toggler: h.toggleProp(false, true),
         submit: submit
       };
     },
     view: function(ctrl, args){
-      var action = args.data;
+      var data = args.data;
       return m('.w-col.w-col-2',[
         m('button.btn.btn-small.btn-terciary', {
           onclick: ctrl.toggler.toggle
-        }, action.outerLabel),
+        }, data.outerLabel),
         (ctrl.toggler()) ?
-          m('form.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+          m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
             m('form.w-form', {
               onsubmit: ctrl.submit
             }, [
-                m('label', action.innerLabel),
-                m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]',{onchange: m.withAttr('value', action.model[action.property]), value: action.model[action.property]}),
-                m('input.w-button.btn.btn-small[type="submit"][value="' + action.callToAction + '"]')
+                m('label', data.innerLabel),
+                m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {onchange: m.withAttr('value', ctrl.newValue), value: ctrl.newValue()}),
+                m('input.w-button.btn.btn-small[type="submit"][value="' + data.callToAction + '"]')
             ])
           ])
         : ''
