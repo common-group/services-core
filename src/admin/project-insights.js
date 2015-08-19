@@ -29,6 +29,11 @@ window.c.admin.ProjectInsights = (function(m, c, models){
           m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
             m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
           ]),
+        ]),
+        m('.w-row', [
+          m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+            m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
+          ]),
         ])
       ]);
     }
