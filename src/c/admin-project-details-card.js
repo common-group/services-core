@@ -11,7 +11,7 @@ window.c.AdminProjectDetailsCard = (function(m, h){
             m('span.fontcolor-secondary', 'Status:'),' ',m('span.text-success', project.state.toUpperCase()),' '
           ]),
           (function(){
-            if (project.state !== 'rejected') {
+            if (project.is_published) {
               return [
                 m('.meter.u-margintop-20.u-marginbottom-10', [
                   m('.meter-fill', {style: {width: (progress > 100 ? 100 : progress) + '%'}})
