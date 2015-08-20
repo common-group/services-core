@@ -20,6 +20,13 @@ window.c.AdminProjectDetailsExplanation = (function(m, h){
               'Devido à data de vencimento de boletos, projetos que tiveram apoios de última hora ficam por até 4 dias úteis nesse status, contados a partir da data de finalização do projeto. ',
               m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"]', 'Entenda como o repasse de dinheiro é feito para projetos bem sucedidos.')
             ];
+          case 'failed':
+            return [
+              m('span.fontweight-semibold', resource.user.name + ', não desanime!'),
+              ' Seu projeto não bateu a meta e sabemos que isso não é a melhor das sensações. Mas não desanime. ',
+              'Encare o processo como um aprendizado e não deixe de cogitar uma segunda tentativa. Não se preocupe, todos os seus apoiadores receberão o dinheiro de volta. ',
+              m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos"]', 'Entenda como fazemos estornos e reembolsos.')
+            ];
           case 'rejected':
             return m('span', 'projeto rejected');
           case 'draft':
