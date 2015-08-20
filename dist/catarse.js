@@ -43,9 +43,7 @@ window.c = function() {
     };
 }(window.m, window.moment), window.c.models = function(m) {
     var contributionDetail = m.postgrest.model("contribution_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), teamMember = m.postgrest.model("team_members");
-    return teamMember.pageSize(40), contributionDetail.update = function(data) {
-        console.log("testing update function"), console.log(data), console.log(contributionDetail);
-    }, {
+    return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
         contributions: contributions,
         teamTotal: teamTotal,
@@ -253,13 +251,15 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
     return {
         controller: function(args) {
-            var builder = args.data, complete = m.prop(!1), data = {}, item = args.item, newValue = m.prop(""), isLoading = m.prop(!1);
-            builder.updateModel = builder.updateModel || builder.model;
-            var submit = function() {
-                return isLoading(!0), m.redraw(), h.idVM.id(item[builder.updateKey]), data[builder.getKey] = newValue(),
-                builder.updateModel.patchWithToken(h.idVM.parameters(), data).then(function(data) {
-                    console.log("Setting item " + builder.getKey + " from " + item[builder.getKey] + " to " + data[0][builder.getKey]),
-                    item[builder.getKey] = data[0][builder.getKey], isLoading(!1), complete(!0);
+            var builder = args.data, complete = m.prop(!1), data = {}, error = m.prop(!1), item = (m.prop(!1),
+            args.item), key = builder.getKey, l = m.prop(!1), newValue = m.prop(""), submit = function() {
+                return h.idVM.id(item[builder.updateKey]), data[key] = newValue(), l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data)),
+                l.load().then(function(res) {
+                    item[key] = res[0][key];
+                }, function(err) {
+                    error(err), console.log(err.message);
+                }).then(function() {
+                    complete(!0);
                 }), !1;
             }, unload = function(el, isinit, context) {
                 context.onunload = function() {
@@ -268,7 +268,8 @@ window.c = function() {
             };
             return {
                 complete: complete,
-                isLoading: isLoading,
+                error: error,
+                l: l,
                 newValue: newValue,
                 submit: submit,
                 toggler: h.toggleProp(!1, !0),
@@ -276,14 +277,14 @@ window.c = function() {
             };
         },
         view: function(ctrl, args) {
-            var data = args.data, btnValue = ctrl.isLoading() ? "por favor, aguarde..." : data.callToAction;
+            var data = args.data, btnValue = ctrl.l() ? "por favor, aguarde..." : data.callToAction;
             return m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
                 onclick: ctrl.toggler.toggle
             }, data.outerLabel), ctrl.toggler() ? m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", {
                 config: ctrl.unload
             }, [ m("form.w-form", {
                 onsubmit: ctrl.submit
-            }, ctrl.complete() ? [ m(".w-form-done", [ m("p", "Apoio transferido com sucesso!") ]) ] : [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
+            }, ctrl.complete() ? [ ctrl.error() ? m(".w-form-error", [ m("p", "Não foi possível concluir sua solicitação.") ]) : m(".w-form-done", [ m("p", "Apoio transferido com sucesso!") ]) ] : [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
                 onchange: m.withAttr("value", ctrl.newValue),
                 value: ctrl.newValue()
             }), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]') ]) ]) : "" ]);
@@ -299,7 +300,7 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var item = args.item;
-            return m("#" + item.user_id + ".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(desc) {
+            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(desc) {
                 return m(desc.wrapperClass, [ m.component(c[desc.component], {
                     item: item,
                     key: item.key
