@@ -2,7 +2,8 @@ window.c.AdminProjectDetailsCard = (function(m, h){
   return {
     view: function(ctrl, args) {
       var project = args.resource,
-          remainingTime = h.splitRemaningTime(project.expires_at);
+          remainingTime = h.splitRemaningTime(project.expires_at),
+          progress = project.progress.toFixed(2);
 
       return m('.card.u-radius.card-terciary.u-marginbottom-20', [
         m('div', [
@@ -10,11 +11,11 @@ window.c.AdminProjectDetailsCard = (function(m, h){
             m('span.fontcolor-secondary', 'Status:'),' ',m('span.text-success', project.state.toUpperCase()),' '
           ]),
           m('.meter.u-marginbottom-10', [
-            m('.meter-fill')
+            m('.meter-fill', {style: {width: (progress > 100 ? 100 : progress) + '%'}})
           ]),
           m('.w-row', [
             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
-              m('.fontweight-semibold.fontsize-large.lineheight-tight', project.progress.toFixed(2) + '%'),
+              m('.fontweight-semibold.fontsize-large.lineheight-tight', progress + '%'),
               m('.fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10', 'financiado')
             ]),
             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
