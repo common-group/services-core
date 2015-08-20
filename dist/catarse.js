@@ -360,9 +360,74 @@ window.c = function() {
     };
 }(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m, h) {
     return {
-        view: function(ctrl, args) {
-            var project = args.resource, remainingTime = h.splitRemaningTime(project.expires_at), progress = project.progress.toFixed(2);
-            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), function() {
+        controller: function(args) {
+            var project = args.resource, statusTextObj = m.prop({});
+            switch (project.state) {
+              case "online":
+                statusTextObj({
+                    cssClass: "text-success",
+                    text: "NO AR"
+                });
+                break;
+
+              case "successful":
+                statusTextObj({
+                    cssClass: "text-success",
+                    text: "FINANCIADO"
+                });
+                break;
+
+              case "failed":
+                statusTextObj({
+                    cssClass: "text-error",
+                    text: "NÃO FINANCIADO"
+                });
+                break;
+
+              case "waiting_funds":
+                statusTextObj({
+                    cssClass: "text-waiting",
+                    text: "AGUARDANDO"
+                });
+                break;
+
+              case "rejected":
+                statusTextObj({
+                    cssClass: "text-error",
+                    text: "RECUSADO"
+                });
+                break;
+
+              case "draft":
+                statusTextObj({
+                    cssClass: "",
+                    text: "RASCUNHO"
+                });
+                break;
+
+              case "in_analysis":
+                statusTextObj({
+                    cssClass: "",
+                    text: "EM ANÁLISE"
+                });
+                break;
+
+              case "approved":
+                statusTextObj({
+                    cssClass: "text-success",
+                    text: "APROVADO"
+                });
+            }
+            return {
+                project: project,
+                statusTextObj: statusTextObj
+            };
+        },
+        view: function(ctrl) {
+            var project = ctrl.project, remainingTime = h.splitRemaningTime(project.expires_at), progress = project.progress.toFixed(2), statusTextObj = ctrl.statusTextObj();
+            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span", {
+                "class": statusTextObj.cssClass
+            }, statusTextObj.text), " " ]), function() {
                 return project.is_published ? [ m(".meter.u-margintop-20.u-marginbottom-10", [ m(".meter-fill", {
                     style: {
                         width: (progress > 100 ? 100 : progress) + "%"
@@ -380,22 +445,25 @@ window.c = function() {
                     return m("span", "Você pode receber apoios até 23hs59min59s do dia " + h.momentify(resource.expires_at) + ". Lembre-se, é tudo-ou-nada e você só levará os recursos captados se bater a meta dentro desse prazo.");
 
                   case "successful":
-                    return [ m("span.fontweight-semibold", resource.user.name + ", comemore que você merece!"), " Seu projeto foi bem sucedido e agora é a hora de iniciar o trabalho de relacionamento com seus apoiadores! ", "Atenção especial à entrega de recompensas. Prometeu? Entregue! Não deixe de olhar a seção de pós-projeto do ", m('a.alt-link[href="/guides"]', "Guia dos Realizadores"), " e de informar-se sobre ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"]', "como o repasse do dinheiro será feito.") ];
+                    return [ m("span.fontweight-semibold", resource.user.name + ", comemore que você merece!"), " Seu projeto foi bem sucedido e agora é a hora de iniciar o trabalho de relacionamento com seus apoiadores! ", "Atenção especial à entrega de recompensas. Prometeu? Entregue! Não deixe de olhar a seção de pós-projeto do ", m('a.alt-link[href="/guides"]', "Guia dos Realizadores"), " e de informar-se sobre ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', "como o repasse do dinheiro será feito.") ];
 
                   case "waiting_funds":
-                    return [ m("span.fontweight-semibold", resource.user.name + ", estamos processando os últimos pagamentos!"), " Seu projeto foi finalizado em " + h.momentify(resource.expires_at) + " e está aguardando confirmação de boletos e pagamentos. ", "Devido à data de vencimento de boletos, projetos que tiveram apoios de última hora ficam por até 4 dias úteis nesse status, contados a partir da data de finalização do projeto. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"]', "Entenda como o repasse de dinheiro é feito para projetos bem sucedidos.") ];
+                    return [ m("span.fontweight-semibold", resource.user.name + ", estamos processando os últimos pagamentos!"), " Seu projeto foi finalizado em " + h.momentify(resource.expires_at) + " e está aguardando confirmação de boletos e pagamentos. ", "Devido à data de vencimento de boletos, projetos que tiveram apoios de última hora ficam por até 4 dias úteis nesse status, contados a partir da data de finalização do projeto. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', "Entenda como o repasse de dinheiro é feito para projetos bem sucedidos.") ];
 
                   case "failed":
-                    return [ m("span.fontweight-semibold", resource.user.name + ", não desanime!"), " Seu projeto não bateu a meta e sabemos que isso não é a melhor das sensações. Mas não desanime. ", "Encare o processo como um aprendizado e não deixe de cogitar uma segunda tentativa. Não se preocupe, todos os seus apoiadores receberão o dinheiro de volta. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos"]', "Entenda como fazemos estornos e reembolsos.") ];
+                    return [ m("span.fontweight-semibold", resource.user.name + ", não desanime!"), " Seu projeto não bateu a meta e sabemos que isso não é a melhor das sensações. Mas não desanime. ", "Encare o processo como um aprendizado e não deixe de cogitar uma segunda tentativa. Não se preocupe, todos os seus apoiadores receberão o dinheiro de volta. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos"][target="_blank"]', "Entenda como fazemos estornos e reembolsos.") ];
 
                   case "rejected":
-                    return [ m("span.fontweight-semibold", resource.user.name + ", infelizmente não foi desta vez."), " Você enviou seu projeto para análise do Catarse e entendemos que ele não está de acordo com o perfil do site. ", "Ter um projeto recusado não impede que você envie novos projetos para avaliação ou reformule seu projeto atual. ", "Converse com nosso atendimento! Recomendamos que você dê uma boa olhada nos ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos"]', "critérios da plataforma"), " e no ", m('a.alt-link[href="/guides"]', "guia dos realizadores"), "." ];
+                    return [ m("span.fontweight-semibold", resource.user.name + ", infelizmente não foi desta vez."), " Você enviou seu projeto para análise do Catarse e entendemos que ele não está de acordo com o perfil do site. ", "Ter um projeto recusado não impede que você envie novos projetos para avaliação ou reformule seu projeto atual. ", "Converse com nosso atendimento! Recomendamos que você dê uma boa olhada nos ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos"][target="_blank"]', "critérios da plataforma"), " e no ", m('a.alt-link[href="/guides"]', "guia dos realizadores"), "." ];
 
                   case "draft":
                     return [ m("span.fontweight-semibold", resource.user.name + ", construa o seu projeto!"), " Quanto mais cuidadoso e bem formatado for um projeto, maiores as chances de ele ser bem sucedido na sua campanha de captação. ", "Antes de enviar seu projeto para a nossa análise, preencha todas as abas ao lado com carinho. Você pode salvar as alterações e voltar ao rascunho de projeto quantas vezes quiser. ", "Quando tudo estiver pronto, clique no botão ENVIAR e entraremos em contato para avaliar o seu projeto." ];
 
                   case "in_analysis":
-                    return m("span", "projeto in_analysis");
+                    return [ m("span.fontweight-semibold", resource.user.name + ", você enviou seu projeto para análise em " + h.momentify(resource.sent_to_analysis_at) + " e receberá nossa avaliação em até 4 dias úteis após o envio!"), " Enquanto espera a sua resposta, você pode continuar editando o seu projeto. ", "Recomendamos também que você vá coletando feedback com as pessoas próximas e planejando como será a sua campanha." ];
+
+                  case "approved":
+                    return [ m("span.fontweight-semibold", resource.user.name + "Nome do realizador, seu projeto foi aprovado!"), " Para colocar o seu projeto no ar é preciso apenas que você preencha os dados necessários na aba ", m('a.alt-link[href="#user_settings"]', "Conta"), ". É importante saber que cobramos a taxa de 13% do valor total arrecadado apenas por projetos bem sucedidos. Entenda ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', "como fazemos o repasse do dinheiro.") ];
                 }
             };
             return {
