@@ -363,7 +363,7 @@ window.c = function() {
         view: function(ctrl, args) {
             var project = args.resource, remainingTime = h.splitRemaningTime(project.expires_at), progress = project.progress.toFixed(2);
             return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), function() {
-                return "rejected" !== project.state ? [ m(".meter.u-margintop-20.u-marginbottom-10", [ m(".meter-fill", {
+                return project.is_published ? [ m(".meter.u-margintop-20.u-marginbottom-10", [ m(".meter-fill", {
                     style: {
                         width: (progress > 100 ? 100 : progress) + "%"
                     }
@@ -392,7 +392,7 @@ window.c = function() {
                     return [ m("span.fontweight-semibold", resource.user.name + ", infelizmente não foi desta vez."), " Você enviou seu projeto para análise do Catarse e entendemos que ele não está de acordo com o perfil do site. ", "Ter um projeto recusado não impede que você envie novos projetos para avaliação ou reformule seu projeto atual. ", "Converse com nosso atendimento! Recomendamos que você dê uma boa olhada nos ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos"]', "critérios da plataforma"), " e no ", m('a.alt-link[href="/guides"]', "guia dos realizadores"), "." ];
 
                   case "draft":
-                    return m("span", "projeto draft");
+                    return [ m("span.fontweight-semibold", resource.user.name + ", construa o seu projeto!"), " Quanto mais cuidadoso e bem formatado for um projeto, maiores as chances de ele ser bem sucedido na sua campanha de captação. ", "Antes de enviar seu projeto para a nossa análise, preencha todas as abas ao lado com carinho. Você pode salvar as alterações e voltar ao rascunho de projeto quantas vezes quiser. ", "Quando tudo estiver pronto, clique no botão ENVIAR e entraremos em contato para avaliar o seu projeto." ];
 
                   case "in_analysis":
                     return m("span", "projeto in_analysis");

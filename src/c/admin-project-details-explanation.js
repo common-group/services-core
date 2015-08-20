@@ -38,7 +38,12 @@ window.c.AdminProjectDetailsExplanation = (function(m, h){
               m('a.alt-link[href="/guides"]', 'guia dos realizadores'),'.'
           ];
           case 'draft':
-            return m('span', 'projeto draft');
+            return [
+              m('span.fontweight-semibold', resource.user.name + ', construa o seu projeto!'),
+              ' Quanto mais cuidadoso e bem formatado for um projeto, maiores as chances de ele ser bem sucedido na sua campanha de captação. ',
+              'Antes de enviar seu projeto para a nossa análise, preencha todas as abas ao lado com carinho. Você pode salvar as alterações e voltar ao rascunho de projeto quantas vezes quiser. ',
+              'Quando tudo estiver pronto, clique no botão ENVIAR e entraremos em contato para avaliar o seu projeto.'
+            ];
           case 'in_analysis':
             return m('span', 'projeto in_analysis');
         }
