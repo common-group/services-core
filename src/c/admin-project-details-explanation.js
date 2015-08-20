@@ -28,7 +28,15 @@ window.c.AdminProjectDetailsExplanation = (function(m, h){
               m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos"]', 'Entenda como fazemos estornos e reembolsos.')
             ];
           case 'rejected':
-            return m('span', 'projeto rejected');
+            return [
+              m('span.fontweight-semibold', resource.user.name + ', infelizmente não foi desta vez.'),
+              ' Você enviou seu projeto para análise do Catarse e entendemos que ele não está de acordo com o perfil do site. ',
+              'Ter um projeto recusado não impede que você envie novos projetos para avaliação ou reformule seu projeto atual. ',
+              'Converse com nosso atendimento! Recomendamos que você dê uma boa olhada nos ',
+              m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos"]', 'critérios da plataforma'),
+              ' e no ',
+              m('a.alt-link[href="/guides"]', 'guia dos realizadores'),'.'
+          ];
           case 'draft':
             return m('span', 'projeto draft');
           case 'in_analysis':
