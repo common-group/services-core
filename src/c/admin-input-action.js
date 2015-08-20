@@ -2,6 +2,7 @@ window.c.AdminInputAction = (function(m, h, c){
   return {
     controller: function(args){
       var builder = args.data,
+          key = builder.getKey,
           complete = m.prop(false),
           data = {},
           item = args.item,
@@ -14,9 +15,9 @@ window.c.AdminInputAction = (function(m, h, c){
         isLoading(true);
         m.redraw();
         h.idVM.id(item[builder.updateKey]);
-        data[builder.getKey] = newValue();
+        data[key] = newValue();
         builder.updateModel.patchWithToken(h.idVM.parameters(), data).then(function(data){
-          item[builder.getKey] = data[0][builder.getKey];
+          item[key] = data[0][key];
           isLoading(false);
           complete(true);
         });
