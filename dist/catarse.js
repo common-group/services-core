@@ -17,8 +17,6 @@ window.c = function() {
     }, momentFromString = function(date, format) {
         var european = moment(date, format || "DD/MM/YYYY");
         return european.isValid() ? european : moment(date);
-    }, splitRemaningTime = function(date) {
-        return moment(date).endOf("day").fromNow().split(/\s/);
     }, generateFormatNumber = function(s, c) {
         return function(number, n, x) {
             if (null === number || void 0 === number) return null;
@@ -35,7 +33,6 @@ window.c = function() {
     };
     return {
         momentify: momentify,
-        splitRemaningTime: splitRemaningTime,
         momentFromString: momentFromString,
         formatNumber: formatNumber,
         toggleProp: toggleProp,
@@ -361,70 +358,85 @@ window.c = function() {
 }(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m, h) {
     return {
         controller: function(args) {
-            var project = args.resource, statusTextObj = m.prop({});
-            switch (project.state) {
-              case "online":
-                statusTextObj({
-                    cssClass: "text-success",
-                    text: "NO AR"
-                });
-                break;
+            var project = args.resource, generateStatusText = function() {
+                var statusTextObj = m.prop({});
+                switch (project.state) {
+                  case "online":
+                    statusTextObj({
+                        cssClass: "text-success",
+                        text: "NO AR"
+                    });
+                    break;
 
-              case "successful":
-                statusTextObj({
-                    cssClass: "text-success",
-                    text: "FINANCIADO"
-                });
-                break;
+                  case "successful":
+                    statusTextObj({
+                        cssClass: "text-success",
+                        text: "FINANCIADO"
+                    });
+                    break;
 
-              case "failed":
-                statusTextObj({
-                    cssClass: "text-error",
-                    text: "NÃO FINANCIADO"
-                });
-                break;
+                  case "failed":
+                    statusTextObj({
+                        cssClass: "text-error",
+                        text: "NÃO FINANCIADO"
+                    });
+                    break;
 
-              case "waiting_funds":
-                statusTextObj({
-                    cssClass: "text-waiting",
-                    text: "AGUARDANDO"
-                });
-                break;
+                  case "waiting_funds":
+                    statusTextObj({
+                        cssClass: "text-waiting",
+                        text: "AGUARDANDO"
+                    });
+                    break;
 
-              case "rejected":
-                statusTextObj({
-                    cssClass: "text-error",
-                    text: "RECUSADO"
-                });
-                break;
+                  case "rejected":
+                    statusTextObj({
+                        cssClass: "text-error",
+                        text: "RECUSADO"
+                    });
+                    break;
 
-              case "draft":
-                statusTextObj({
-                    cssClass: "",
-                    text: "RASCUNHO"
-                });
-                break;
+                  case "draft":
+                    statusTextObj({
+                        cssClass: "",
+                        text: "RASCUNHO"
+                    });
+                    break;
 
-              case "in_analysis":
-                statusTextObj({
-                    cssClass: "",
-                    text: "EM ANÁLISE"
-                });
-                break;
+                  case "in_analysis":
+                    statusTextObj({
+                        cssClass: "",
+                        text: "EM ANÁLISE"
+                    });
+                    break;
 
-              case "approved":
-                statusTextObj({
-                    cssClass: "text-success",
-                    text: "APROVADO"
-                });
-            }
+                  case "approved":
+                    statusTextObj({
+                        cssClass: "text-success",
+                        text: "APROVADO"
+                    });
+                }
+                return statusTextObj;
+            }, generateRemaingTime = function() {
+                var remainingTextObj = m.prop({}), translatedTime = {
+                    days: "dias",
+                    minutes: "minutos",
+                    hours: "horas",
+                    seconds: "segundos"
+                };
+                return remainingTextObj({
+                    unit: translatedTime[project.remaining_time.unit || "seconds"],
+                    total: project.remaining_time.total
+                }), remainingTextObj;
+            };
             return {
                 project: project,
-                statusTextObj: statusTextObj
+                statusTextObj: generateStatusText(),
+                remainingTextObj: generateRemaingTime()
             };
         },
         view: function(ctrl) {
-            var project = ctrl.project, remainingTime = h.splitRemaningTime(project.expires_at), progress = project.progress.toFixed(2), statusTextObj = ctrl.statusTextObj();
+            var project = ctrl.project, progress = project.progress.toFixed(2), statusTextObj = ctrl.statusTextObj(), remainingTextObj = ctrl.remainingTextObj();
             return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span", {
                 "class": statusTextObj.cssClass
             }, statusTextObj.text), " " ]), function() {
@@ -432,7 +444,7 @@ window.c = function() {
                     style: {
                         width: (progress > 100 ? 100 : progress) + "%"
                     }
-                }) ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTime[1]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTime[2] + " restantes") ]) ]) ] : void 0;
+                }) ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTextObj.total), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTextObj.unit + " restantes") ]) ]) ] : void 0;
             }() ]) ]);
         }
     };

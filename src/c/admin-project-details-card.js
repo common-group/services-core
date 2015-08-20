@@ -2,46 +2,65 @@ window.c.AdminProjectDetailsCard = (function(m, h){
   return {
     controller: function(args) {
       var project = args.resource,
-          statusTextObj = m.prop({});
+          generateStatusText = function() {
+            var statusTextObj = m.prop({});
+            switch (project.state) {
+              case 'online':
+                statusTextObj({cssClass: 'text-success', text: 'NO AR'});
+                break;
+              case 'successful':
+                statusTextObj({cssClass: 'text-success', text: 'FINANCIADO'});
+                break;
+              case 'failed':
+                statusTextObj({cssClass: 'text-error', text: 'NÃO FINANCIADO'});
+                break;
+              case 'waiting_funds':
+                statusTextObj({cssClass: 'text-waiting', text: 'AGUARDANDO'});
+                break;
+              case 'rejected':
+                statusTextObj({cssClass: 'text-error', text: 'RECUSADO'});
+                break;
+              case 'draft':
+                statusTextObj({cssClass: '', text: 'RASCUNHO'});
+                break;
+              case 'in_analysis':
+                statusTextObj({cssClass: '', text: 'EM ANÁLISE'});
+                break;
+              case 'approved':
+                statusTextObj({cssClass: 'text-success', text: 'APROVADO'});
+                break;
+            }
+            return statusTextObj;
+          },
+          generateRemaingTime = function() {
+            var remainingTextObj = m.prop({}),
+                translatedTime = {
+                  days: 'dias',
+                  minutes: 'minutos',
+                  hours: 'horas',
+                  seconds: 'segundos'
+                };
 
-      switch (project.state) {
-        case 'online':
-          statusTextObj({cssClass: 'text-success', text: 'NO AR'});
-          break;
-        case 'successful':
-          statusTextObj({cssClass: 'text-success', text: 'FINANCIADO'});
-          break;
-        case 'failed':
-          statusTextObj({cssClass: 'text-error', text: 'NÃO FINANCIADO'});
-          break;
-        case 'waiting_funds':
-          statusTextObj({cssClass: 'text-waiting', text: 'AGUARDANDO'});
-          break;
-        case 'rejected':
-          statusTextObj({cssClass: 'text-error', text: 'RECUSADO'});
-          break;
-        case 'draft':
-          statusTextObj({cssClass: '', text: 'RASCUNHO'});
-          break;
-        case 'in_analysis':
-          statusTextObj({cssClass: '', text: 'EM ANÁLISE'});
-          break;
-        case 'approved':
-          statusTextObj({cssClass: 'text-success', text: 'APROVADO'});
-          break;
-      }
+            remainingTextObj({
+              unit: translatedTime[project.remaining_time.unit || 'seconds'],
+              total: project.remaining_time.total
+            });
+
+            return remainingTextObj;
+          };
 
       return {
         project: project,
-        statusTextObj: statusTextObj
+        statusTextObj: generateStatusText(),
+        remainingTextObj: generateRemaingTime()
       };
     },
 
     view: function(ctrl) {
       var project = ctrl.project,
-          remainingTime = h.splitRemaningTime(project.expires_at),
           progress = project.progress.toFixed(2),
-          statusTextObj = ctrl.statusTextObj();
+          statusTextObj = ctrl.statusTextObj(),
+          remainingTextObj = ctrl.remainingTextObj();
 
       return m('.card.u-radius.card-terciary.u-marginbottom-20', [
         m('div', [
@@ -70,8 +89,8 @@ window.c.AdminProjectDetailsCard = (function(m, h){
                     m('.fontcolor-secondary.lineheight-tighter.fontsize-small', 'apoios')
                   ]),
                   m('.w-col.w-col-3.w-col-small-3.w-col-tiny-6', [
-                    m('.fontweight-semibold.fontsize-large.lineheight-tight', remainingTime[1]),
-                    m('.fontcolor-secondary.lineheight-tighter.fontsize-small', remainingTime[2] + ' restantes')
+                    m('.fontweight-semibold.fontsize-large.lineheight-tight', remainingTextObj.total),
+                    m('.fontcolor-secondary.lineheight-tighter.fontsize-small', remainingTextObj.unit + ' restantes')
                   ])
                 ])
               ];
