@@ -362,11 +362,13 @@ window.c = function() {
     return {
         view: function(ctrl, args) {
             var project = args.resource, remainingTime = h.splitRemaningTime(project.expires_at), progress = project.progress.toFixed(2);
-            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold.u-marginbottom-20", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), m(".meter.u-marginbottom-10", [ m(".meter-fill", {
-                style: {
-                    width: (progress > 100 ? 100 : progress) + "%"
-                }
-            }) ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTime[1]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTime[2] + " restantes") ]) ]) ]) ]);
+            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span.text-success", project.state.toUpperCase()), " " ]), function() {
+                return "rejected" !== project.state ? [ m(".meter.u-margintop-20.u-marginbottom-10", [ m(".meter-fill", {
+                    style: {
+                        width: (progress > 100 ? 100 : progress) + "%"
+                    }
+                }) ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTime[1]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTime[2] + " restantes") ]) ]) ] : void 0;
+            }() ]) ]);
         }
     };
 }(window.m, window.c.h), window.c.AdminProjectDetailsExplanation = function(m, h) {
@@ -387,7 +389,7 @@ window.c = function() {
                     return [ m("span.fontweight-semibold", resource.user.name + ", não desanime!"), " Seu projeto não bateu a meta e sabemos que isso não é a melhor das sensações. Mas não desanime. ", "Encare o processo como um aprendizado e não deixe de cogitar uma segunda tentativa. Não se preocupe, todos os seus apoiadores receberão o dinheiro de volta. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos"]', "Entenda como fazemos estornos e reembolsos.") ];
 
                   case "rejected":
-                    return m("span", "projeto rejected");
+                    return [ m("span.fontweight-semibold", resource.user.name + ", infelizmente não foi desta vez."), " Você enviou seu projeto para análise do Catarse e entendemos que ele não está de acordo com o perfil do site. ", "Ter um projeto recusado não impede que você envie novos projetos para avaliação ou reformule seu projeto atual. ", "Converse com nosso atendimento! Recomendamos que você dê uma boa olhada nos ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos"]', "critérios da plataforma"), " e no ", m('a.alt-link[href="/guides"]', "guia dos realizadores"), "." ];
 
                   case "draft":
                     return m("span", "projeto draft");
