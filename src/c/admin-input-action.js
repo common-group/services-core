@@ -2,38 +2,66 @@ window.c.AdminInputAction = (function(m, h, c){
   return {
     controller: function(args){
       var builder = args.data,
+          complete = m.prop(false),
           data = {},
           item = args.item,
-          newValue = m.prop('');
+          newValue = m.prop(''),
+          isLoading = m.prop(false);
+
+      builder.updateModel = builder.updateModel || builder.model
 
       var submit = function(){
+        isLoading(true);
+        m.redraw();
         h.idVM.id(item[builder.updateKey]);
         data[builder.getKey] = newValue();
-        builder.model.patchWithToken(h.idVM.parameters(), data);
+        builder.updateModel.patchWithToken(h.idVM.parameters(), data).then(function(data){
+          item[builder.getKey] = data[0][builder.getKey];
+          isLoading(false);
+          complete(true);
+        });
         return false;
       };
 
+      var unload = function(el, isinit, context){
+        context.onunload = function(){
+          complete(false);
+          newValue('');
+        };
+      };
+
       return {
+        complete: complete,
+        isLoading: isLoading,
         newValue: newValue,
+        submit: submit,
         toggler: h.toggleProp(false, true),
-        submit: submit
+        unload: unload
       };
     },
     view: function(ctrl, args){
-      var data = args.data;
+      var data = args.data,
+          btnValue = (ctrl.isLoading()) ? 'por favor, aguarde...' : data.callToAction;
+
       return m('.w-col.w-col-2',[
         m('button.btn.btn-small.btn-terciary', {
           onclick: ctrl.toggler.toggle
         }, data.outerLabel),
         (ctrl.toggler()) ?
-          m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+          m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {config: ctrl.unload},[
             m('form.w-form', {
               onsubmit: ctrl.submit
-            }, [
-                m('label', data.innerLabel),
-                m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {onchange: m.withAttr('value', ctrl.newValue), value: ctrl.newValue()}),
-                m('input.w-button.btn.btn-small[type="submit"][value="' + data.callToAction + '"]')
-            ])
+            }, (!ctrl.complete()) ? [
+                  m('label', data.innerLabel),
+                  m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {onchange: m.withAttr('value', ctrl.newValue), value: ctrl.newValue()}),
+                  m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
+                ] :
+                [
+                  m('.w-form-done', [
+                    m('p', 'Apoio transferido com sucesso!')
+                  ])
+                ]
+            )
           ])
         : ''
       ]);

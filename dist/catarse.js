@@ -43,7 +43,9 @@ window.c = function() {
     };
 }(window.m, window.moment), window.c.models = function(m) {
     var contributionDetail = m.postgrest.model("contribution_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), teamMember = m.postgrest.model("team_members");
-    return teamMember.pageSize(40), {
+    return teamMember.pageSize(40), contributionDetail.update = function(data) {
+        console.log("testing update function"), console.log(data), console.log(contributionDetail);
+    }, {
         contributionDetail: contributionDetail,
         contributions: contributions,
         teamTotal: teamTotal,
@@ -251,26 +253,40 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
     return {
         controller: function(args) {
-            var builder = args.data, data = {}, item = args.item, newValue = m.prop(""), submit = function() {
-                return h.idVM.id(item[builder.updateKey]), data[builder.getKey] = newValue(), console.log(data),
-                builder.model.patchWithToken(h.idVM.parameters(), data), !1;
+            var builder = args.data, complete = m.prop(!1), data = {}, item = args.item, newValue = m.prop(""), isLoading = m.prop(!1);
+            builder.updateModel = builder.updateModel || builder.model;
+            var submit = function() {
+                return isLoading(!0), m.redraw(), h.idVM.id(item[builder.updateKey]), data[builder.getKey] = newValue(),
+                builder.updateModel.patchWithToken(h.idVM.parameters(), data).then(function(data) {
+                    console.log("Setting item " + builder.getKey + " from " + item[builder.getKey] + " to " + data[0][builder.getKey]),
+                    item[builder.getKey] = data[0][builder.getKey], isLoading(!1), complete(!0);
+                }), !1;
+            }, unload = function(el, isinit, context) {
+                context.onunload = function() {
+                    complete(!1), newValue("");
+                };
             };
             return {
+                complete: complete,
+                isLoading: isLoading,
                 newValue: newValue,
+                submit: submit,
                 toggler: h.toggleProp(!1, !0),
-                submit: submit
+                unload: unload
             };
         },
         view: function(ctrl, args) {
-            var data = args.data;
+            var data = args.data, btnValue = ctrl.isLoading() ? "por favor, aguarde..." : data.callToAction;
             return m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
                 onclick: ctrl.toggler.toggle
-            }, data.outerLabel), ctrl.toggler() ? m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m("form.w-form", {
+            }, data.outerLabel), ctrl.toggler() ? m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", {
+                config: ctrl.unload
+            }, [ m("form.w-form", {
                 onsubmit: ctrl.submit
-            }, [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
+            }, ctrl.complete() ? [ m(".w-form-done", [ m("p", "Apoio transferido com sucesso!") ]) ] : [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
                 onchange: m.withAttr("value", ctrl.newValue),
                 value: ctrl.newValue()
-            }), m('input.w-button.btn.btn-small[type="submit"][value="' + data.callToAction + '"]') ]) ]) : "" ]);
+            }), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]') ]) ]) : "" ]);
         }
     };
 }(window.m, window.c.h, window.c), window.c.AdminItem = function(m, _, h, c) {
@@ -283,7 +299,7 @@ window.c = function() {
         },
         view: function(ctrl, args) {
             var item = args.item;
-            return m(".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(desc) {
+            return m("#" + item.user_id + ".w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items", [ m(".w-row", [ _.map(args.builder, function(desc) {
                 return m(desc.wrapperClass, [ m.component(c[desc.component], {
                     item: item,
                     key: item.key
