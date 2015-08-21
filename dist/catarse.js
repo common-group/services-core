@@ -39,13 +39,14 @@ window.c = function() {
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), teamMember = m.postgrest.model("team_members");
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), teamMember = m.postgrest.model("team_members");
     return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
         projectDetail: projectDetail,
         teamTotal: teamTotal,
         teamMember: teamMember,
-        projectContributionsPerDay: projectContributionsPerDay
+        projectContributionsPerDay: projectContributionsPerDay,
+        projectContributionsPerLocation: projectContributionsPerLocation
     };
 }(window.m), window.c.admin.Contributions = function(m, c, h) {
     var admin = c.admin;
@@ -229,11 +230,9 @@ window.c = function() {
                         }
                     }, [ m.component(c.ProjectChartContributionAmountPerDay, {
                         collection: ctrl.contributionsPerDay
-                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
-                        style: {
-                            "min-height": "300px"
-                        }
-                    }, [ m.component(c.ProjectReminderCount, {
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectContributionsPerLocationTable, {
+                        resourceId: ctrl.vm.project_id()
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectReminderCount, {
                         resource: project
                     }) ]) ]) ]) ] : void 0;
                 }(project) ]);
@@ -721,7 +720,26 @@ window.c = function() {
             }) ]) ]) ]);
         }
     };
-}(window.m, window.Chart, window._), window.c.ProjectReminderCount = function(m) {
+}(window.m, window.Chart, window._), window.c.ProjectContributionsPerLocationTable = function(m, models, h) {
+    return {
+        controller: function(args) {
+            var vm = m.postgrest.filtersVM({
+                project_id: "eq"
+            }), contributionsPerLocation = m.prop([]);
+            return vm.project_id(args.resourceId), models.projectContributionsPerLocation.getRow(vm.parameters()).then(contributionsPerLocation), 
+            {
+                contributionsPerLocation: contributionsPerLocation
+            };
+        },
+        view: function(ctrl) {
+            return m(".project-contributions-per-location", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Localização geográfica dos apoios"), ctrl.contributionsPerLocation().map(function(contributionLocation) {
+                return m(".table-outer.u-marginbottom-60", [ m(".w-row.table-row.fontweight-semibold.fontsize-smaller.header", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "Estado") ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="#"]', [ "Apoios  ", m("span.fa.fa-sort", ".") ]) ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="#"]', [ "R$ apoiados ", m("span.w-hidden-small.w-hidden-tiny", "(% do total) "), " ", m("span.fa.fa-sort", ".") ]) ]) ]), m(".table-inner.fontsize-small", [ contributionLocation.source.map(function(source) {
+                    return m(".w-row.table-row", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", source.state_acronym) ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", source.total_contributions) ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "R$ " + h.formatNumber(source.total_contributed, 2, 3) + "  (" + source.total_on_percentage.toFixed(2) + "%)   ") ]) ]);
+                }) ]) ]);
+            }) ]);
+        }
+    };
+}(window.m, window.c.models, window.c.h), window.c.ProjectReminderCount = function(m) {
     return {
         view: function(ctrl, args) {
             var project = args.resource;
