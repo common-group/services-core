@@ -251,16 +251,13 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
     return {
         controller: function(args) {
-            var builder = args.data, complete = m.prop(!1), data = {}, error = m.prop(!1), item = (m.prop(!1),
-            args.item), key = builder.getKey, l = m.prop(!1), newValue = m.prop(""), submit = function() {
-                return h.idVM.id(item[builder.updateKey]), data[key] = newValue(), l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data)),
-                l.load().then(function(res) {
-                    item[key] = res[0][key];
-                }, function(err) {
-                    error(err), console.log(err.message);
-                }).then(function() {
-                    complete(!0);
-                }), !1;
+            var builder = args.data, complete = m.prop(!1), error = m.prop(!1), data = (m.prop(!1),
+            {}), item = args.item, key = builder.getKey, newValue = m.prop("");
+            h.idVM.id(item[builder.updateKey]);
+            var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data)), returnData = function(res) {
+                item[key] = res[0][key], error(!1), complete(!0);
+            }, submit = function() {
+                return data[key] = newValue(), l.load().then(returnData, error), !1;
             }, unload = function(el, isinit, context) {
                 context.onunload = function() {
                     complete(!1), newValue("");
@@ -284,7 +281,7 @@ window.c = function() {
                 config: ctrl.unload
             }, [ m("form.w-form", {
                 onsubmit: ctrl.submit
-            }, ctrl.complete() ? [ ctrl.error() ? m(".w-form-error", [ m("p", "Não foi possível concluir sua solicitação.") ]) : m(".w-form-done", [ m("p", "Apoio transferido com sucesso!") ]) ] : [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
+            }, ctrl.complete() ? ctrl.error() ? [ m('.w-form-error[style="display:block;"]', [ m("p", "Houve um problema na requisição. O apoio não foi transferido!") ]) ] : [ m('.w-form-done[style="display:block;"]', [ m("p", "Apoio transferido com sucesso!") ]) ] : [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
                 onchange: m.withAttr("value", ctrl.newValue),
                 value: ctrl.newValue()
             }), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]') ]) ]) : "" ]);

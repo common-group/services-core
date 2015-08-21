@@ -3,29 +3,26 @@ window.c.AdminInputAction = (function(m, h, c){
     controller: function(args){
       var builder = args.data,
           complete = m.prop(false),
-          data = {},
           error = m.prop(false),
           fail = m.prop(false),
+          data = {},
           item = args.item,
           key = builder.getKey,
-          l = m.prop(false),
           newValue = m.prop('');
+
+      h.idVM.id(item[builder.updateKey]);
+
+      var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
       var returnData = function(res){
         item[key] = res[0][key];
+        error(false);
         complete(true);
       };
 
-      var showError = function(err){
-        error(err);
-        console.log(err.message);
-      };
-
       var submit = function(){
-        h.idVM.id(item[builder.updateKey]);
         data[key] = newValue();
-        l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
-        l.load().then(returnData, showError);
+        l.load().then(returnData, error);
         return false;
       };
 
@@ -62,13 +59,15 @@ window.c.AdminInputAction = (function(m, h, c){
                   m('label', data.innerLabel),
                   m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {onchange: m.withAttr('value', ctrl.newValue), value: ctrl.newValue()}),
                   m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
-                ] :
-                [
-                  m('.w-form-done', [
-                    m('p', 'Apoio transferido com sucesso!')
-                  ])
-                ],
-                (!ctrl.error())
+                ] : (!ctrl.error()) ? [
+                    m('.w-form-done[style="display:block;"]', [
+                      m('p', 'Apoio transferido com sucesso!')
+                    ])
+                  ] : [
+                    m('.w-form-error[style="display:block;"]', [
+                      m('p', 'Houve um problema na requisição. O apoio não foi transferido!')
+                    ])
+                  ]
             )
           ])
         : ''
