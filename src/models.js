@@ -9,6 +9,7 @@ window.c.models = (function(m){
   ]),
 
   projectContributionsPerDay = m.postgrest.model('project_contributions_per_day'),
+  projectContributionsPerLocation = m.postgrest.model('project_contributions_per_location'),
 
   teamMember = m.postgrest.model('team_members');
   teamMember.pageSize(40);
@@ -18,7 +19,8 @@ window.c.models = (function(m){
     projectDetail: projectDetail,
     teamTotal: teamTotal,
     teamMember: teamMember,
-    projectContributionsPerDay: projectContributionsPerDay
+    projectContributionsPerDay: projectContributionsPerDay,
+    projectContributionsPerLocation: projectContributionsPerLocation
   };
 }(window.m));
 
