@@ -43,7 +43,12 @@ window.c.admin.ProjectInsights = (function(m, c, models){
                     ]),
                   ]),
                   m('.w-row', [
-                    m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
+                    m('.w-col.w-col-12.dashboard-header.u-text-center', [
+                      m.component(c.ProjectContributionsPerLocationTable, {resourceId: ctrl.vm.project_id()})
+                    ]),
+                  ]),
+                  m('.w-row', [
+                    m('.w-col.w-col-12.dashboard-header.u-text-center', [
                       m.component(c.ProjectReminderCount, {resource: project})
                     ]),
                   ])
