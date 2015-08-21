@@ -359,64 +359,41 @@ window.c = function() {
     return {
         controller: function(args) {
             var project = args.resource, generateStatusText = function() {
-                var statusTextObj = m.prop({});
-                switch (project.state) {
-                  case "online":
-                    statusTextObj({
+                var statusTextObj = m.prop({}), statusText = {
+                    online: {
                         cssClass: "text-success",
                         text: "NO AR"
-                    });
-                    break;
-
-                  case "successful":
-                    statusTextObj({
+                    },
+                    successful: {
                         cssClass: "text-success",
                         text: "FINANCIADO"
-                    });
-                    break;
-
-                  case "failed":
-                    statusTextObj({
+                    },
+                    failed: {
                         cssClass: "text-error",
                         text: "NÃO FINANCIADO"
-                    });
-                    break;
-
-                  case "waiting_funds":
-                    statusTextObj({
+                    },
+                    waiting_funds: {
                         cssClass: "text-waiting",
                         text: "AGUARDANDO"
-                    });
-                    break;
-
-                  case "rejected":
-                    statusTextObj({
+                    },
+                    rejected: {
                         cssClass: "text-error",
                         text: "RECUSADO"
-                    });
-                    break;
-
-                  case "draft":
-                    statusTextObj({
+                    },
+                    draft: {
                         cssClass: "",
                         text: "RASCUNHO"
-                    });
-                    break;
-
-                  case "in_analysis":
-                    statusTextObj({
+                    },
+                    in_analysis: {
                         cssClass: "",
                         text: "EM ANÁLISE"
-                    });
-                    break;
-
-                  case "approved":
-                    statusTextObj({
+                    },
+                    approved: {
                         cssClass: "text-success",
                         text: "APROVADO"
-                    });
-                }
-                return statusTextObj;
+                    }
+                };
+                return statusTextObj(statusText[project.state]), statusTextObj;
             }, generateRemaingTime = function() {
                 var remainingTextObj = m.prop({}), translatedTime = {
                     days: "dias",
@@ -437,7 +414,7 @@ window.c = function() {
         },
         view: function(ctrl) {
             var project = ctrl.project, progress = project.progress.toFixed(2), statusTextObj = ctrl.statusTextObj(), remainingTextObj = ctrl.remainingTextObj();
-            return m(".card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span", {
+            return m(".project-details-card.card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span", {
                 "class": statusTextObj.cssClass
             }, statusTextObj.text), " " ]), function() {
                 return project.is_published ? [ m(".meter.u-margintop-20.u-marginbottom-10", [ m(".meter-fill", {

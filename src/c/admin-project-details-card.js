@@ -3,33 +3,20 @@ window.c.AdminProjectDetailsCard = (function(m, h){
     controller: function(args) {
       var project = args.resource,
           generateStatusText = function() {
-            var statusTextObj = m.prop({});
-            switch (project.state) {
-              case 'online':
-                statusTextObj({cssClass: 'text-success', text: 'NO AR'});
-                break;
-              case 'successful':
-                statusTextObj({cssClass: 'text-success', text: 'FINANCIADO'});
-                break;
-              case 'failed':
-                statusTextObj({cssClass: 'text-error', text: 'NÃO FINANCIADO'});
-                break;
-              case 'waiting_funds':
-                statusTextObj({cssClass: 'text-waiting', text: 'AGUARDANDO'});
-                break;
-              case 'rejected':
-                statusTextObj({cssClass: 'text-error', text: 'RECUSADO'});
-                break;
-              case 'draft':
-                statusTextObj({cssClass: '', text: 'RASCUNHO'});
-                break;
-              case 'in_analysis':
-                statusTextObj({cssClass: '', text: 'EM ANÁLISE'});
-                break;
-              case 'approved':
-                statusTextObj({cssClass: 'text-success', text: 'APROVADO'});
-                break;
-            }
+            var statusTextObj = m.prop({}),
+                statusText = {
+                  online: {cssClass: 'text-success', text: 'NO AR'},
+                  successful: {cssClass: 'text-success', text: 'FINANCIADO'},
+                  failed: {cssClass: 'text-error', text: 'NÃO FINANCIADO'},
+                  waiting_funds: {cssClass: 'text-waiting', text: 'AGUARDANDO'},
+                  rejected: {cssClass: 'text-error', text: 'RECUSADO'},
+                  draft: {cssClass: '', text: 'RASCUNHO'},
+                  in_analysis: {cssClass: '', text: 'EM ANÁLISE'},
+                  approved: {cssClass: 'text-success', text: 'APROVADO'}
+                };
+
+            statusTextObj(statusText[project.state]);
+
             return statusTextObj;
           },
           generateRemaingTime = function() {
@@ -62,7 +49,7 @@ window.c.AdminProjectDetailsCard = (function(m, h){
           statusTextObj = ctrl.statusTextObj(),
           remainingTextObj = ctrl.remainingTextObj();
 
-      return m('.card.u-radius.card-terciary.u-marginbottom-20', [
+      return m('.project-details-card.card.u-radius.card-terciary.u-marginbottom-20', [
         m('div', [
           m('.fontsize-small.fontweight-semibold', [
             m('span.fontcolor-secondary', 'Status:'),' ',m('span', {class: statusTextObj.cssClass}, statusTextObj.text),' '
