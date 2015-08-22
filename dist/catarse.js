@@ -9,6 +9,7 @@ window.c = function() {
         models: {},
         pages: {},
         admin: {},
+        project: {},
         h: {}
     };
 }(), window.c.h = function(m, moment) {
@@ -197,49 +198,7 @@ window.c = function() {
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
     return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
-}(window.m, window.c.models), window.c.admin.ProjectInsights = function(m, c, models) {
-    return {
-        controller: function(args) {
-            var vm = m.postgrest.filtersVM({
-                project_id: "eq"
-            }), projectDetails = m.prop([]), contributionsPerDay = m.prop([]);
-            return vm.project_id(args.root.getAttribute("data-id")), models.projectDetail.getRow(vm.parameters()).then(projectDetails), 
-            models.projectContributionsPerDay.getRow(vm.parameters()).then(contributionsPerDay), 
-            {
-                vm: vm,
-                projectDetails: projectDetails,
-                contributionsPerDay: contributionsPerDay
-            };
-        },
-        view: function(ctrl) {
-            return ctrl.projectDetails().map(function(project) {
-                return m(".project-insights", [ m(".w-row.u-marginbottom-40", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
-                    resource: project
-                }), m.component(c.AdminProjectDetailsExplanation, {
-                    resource: project
-                }) ]), m(".w-col.w-col-2") ]), function(project) {
-                    return project.is_published ? [ m(".divider"), m(".w-section.section-one-column.bg-gray.before-footer", [ m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
-                        style: {
-                            "min-height": "300px"
-                        }
-                    }, [ m.component(c.ProjectChartContributionTotalPerDay, {
-                        collection: ctrl.contributionsPerDay
-                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
-                        style: {
-                            "min-height": "300px"
-                        }
-                    }, [ m.component(c.ProjectChartContributionAmountPerDay, {
-                        collection: ctrl.contributionsPerDay
-                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectContributionsPerLocationTable, {
-                        resourceId: ctrl.vm.project_id()
-                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectReminderCount, {
-                        resource: project
-                    }) ]) ]) ]) ] : void 0;
-                }(project) ]);
-            });
-        }
-    };
-}(window.m, window.c, window.c.models), window.c.AdminContribution = function(m, h) {
+}(window.m, window.c.models), window.c.AdminContribution = function(m, h) {
     return {
         view: function(ctrl, args) {
             var contribution = args.item;
@@ -720,7 +679,7 @@ window.c = function() {
             }) ]) ]) ]);
         }
     };
-}(window.m, window.Chart, window._), window.c.ProjectContributionsPerLocationTable = function(m, models, h) {
+}(window.m, window.Chart, window._), window.c.ProjectContributionsPerLocationTable = function(m, models, h, _) {
     return {
         controller: function(args) {
             var vm = m.postgrest.filtersVM({
@@ -733,13 +692,13 @@ window.c = function() {
         },
         view: function(ctrl) {
             return m(".project-contributions-per-location", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Localização geográfica dos apoios"), ctrl.contributionsPerLocation().map(function(contributionLocation) {
-                return m(".table-outer.u-marginbottom-60", [ m(".w-row.table-row.fontweight-semibold.fontsize-smaller.header", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "Estado") ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="#"]', [ "Apoios  ", m("span.fa.fa-sort", ".") ]) ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="#"]', [ "R$ apoiados ", m("span.w-hidden-small.w-hidden-tiny", "(% do total) "), " ", m("span.fa.fa-sort", ".") ]) ]) ]), m(".table-inner.fontsize-small", [ contributionLocation.source.map(function(source) {
+                return m(".table-outer.u-marginbottom-60", [ m(".w-row.table-row.fontweight-semibold.fontsize-smaller.header", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "Estado") ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="#"]', [ "Apoios  ", m("span.fa.fa-sort", ".") ]) ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="#"]', [ "R$ apoiados ", m("span.w-hidden-small.w-hidden-tiny", "(% do total) "), " ", m("span.fa.fa-sort", ".") ]) ]) ]), m(".table-inner.fontsize-small", [ _.map(contributionLocation.source, function(source) {
                     return m(".w-row.table-row", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", source.state_acronym) ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", source.total_contributions) ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "R$ " + h.formatNumber(source.total_contributed, 2, 3) + "  (" + source.total_on_percentage.toFixed(2) + "%)   ") ]) ]);
                 }) ]) ]);
             }) ]);
         }
     };
-}(window.m, window.c.models, window.c.h), window.c.ProjectReminderCount = function(m) {
+}(window.m, window.c.models, window.c.h, window._), window.c.ProjectReminderCount = function(m) {
     return {
         view: function(ctrl, args) {
             var project = args.resource;
@@ -794,4 +753,46 @@ window.c = function() {
             return m("#static-team-app", [ m.component(c.TeamTotal), m.component(c.TeamMembers) ]);
         }
     };
-}(window.m, window.c);
+}(window.m, window.c), window.c.project.Insights = function(m, c, models, _) {
+    return {
+        controller: function(args) {
+            var vm = m.postgrest.filtersVM({
+                project_id: "eq"
+            }), projectDetails = m.prop([]), contributionsPerDay = m.prop([]);
+            return vm.project_id(args.root.getAttribute("data-id")), models.projectDetail.getRow(vm.parameters()).then(projectDetails), 
+            models.projectContributionsPerDay.getRow(vm.parameters()).then(contributionsPerDay), 
+            {
+                vm: vm,
+                projectDetails: projectDetails,
+                contributionsPerDay: contributionsPerDay
+            };
+        },
+        view: function(ctrl) {
+            return _.map(ctrl.projectDetails(), function(project) {
+                return m(".project-insights", [ m(".w-row.u-marginbottom-40", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
+                    resource: project
+                }), m.component(c.AdminProjectDetailsExplanation, {
+                    resource: project
+                }) ]), m(".w-col.w-col-2") ]), function(project) {
+                    return project.is_published ? [ m(".divider"), m(".w-section.section-one-column.bg-gray.before-footer", [ m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
+                        style: {
+                            "min-height": "300px"
+                        }
+                    }, [ m.component(c.ProjectChartContributionTotalPerDay, {
+                        collection: ctrl.contributionsPerDay
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
+                        style: {
+                            "min-height": "300px"
+                        }
+                    }, [ m.component(c.ProjectChartContributionAmountPerDay, {
+                        collection: ctrl.contributionsPerDay
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectContributionsPerLocationTable, {
+                        resourceId: ctrl.vm.project_id()
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectReminderCount, {
+                        resource: project
+                    }) ]) ]) ]) ] : void 0;
+                }(project) ]);
+            });
+        }
+    };
+}(window.m, window.c, window.c.models, window._);

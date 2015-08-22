@@ -1,4 +1,4 @@
-window.c.ProjectContributionsPerLocationTable = (function(m, models, h) {
+window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
   return {
     controller: function(args) {
       var vm = m.postgrest.filtersVM({project_id: 'eq'}),
@@ -35,7 +35,7 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h) {
               ])
             ]),
             m('.table-inner.fontsize-small', [
-              contributionLocation.source.map(function(source) {
+              _.map(contributionLocation.source, function(source) {
                 return m('.w-row.table-row', [
                   m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
                     m('div', source.state_acronym)
@@ -54,4 +54,4 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h) {
       ]);
     }
   };
-}(window.m, window.c.models, window.c.h));
+}(window.m, window.c.models, window.c.h, window._));
