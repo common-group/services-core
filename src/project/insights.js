@@ -1,4 +1,4 @@
-window.c.admin.ProjectInsights = (function(m, c, models){
+window.c.project.Insights = (function(m, c, models, _){
   return {
     controller: function(args) {
       var vm = m.postgrest.filtersVM({project_id: 'eq'}),
@@ -17,7 +17,7 @@ window.c.admin.ProjectInsights = (function(m, c, models){
       };
     },
     view: function(ctrl) {
-      return ctrl.projectDetails().map(function(project){
+      return _.map(ctrl.projectDetails(), function(project){
         return m('.project-insights',[
           m('.w-row.u-marginbottom-40', [
             m('.w-col.w-col-2'),
@@ -60,4 +60,4 @@ window.c.admin.ProjectInsights = (function(m, c, models){
       });
     }
   };
-}(window.m, window.c, window.c.models));
+}(window.m, window.c, window.c.models, window._));

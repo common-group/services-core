@@ -3,6 +3,7 @@ window.c = (function(){
     models: {},
     pages: {},
     admin: {},
+    project: {},
     h: {}
   };
 }());
