@@ -1,15 +1,31 @@
 window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
   return {
     controller: function(args) {
-      var vm = m.postgrest.filtersVM({project_id: 'eq'}),
-          contributionsPerLocation = m.prop([]);
+      var	vm = m.postgrest.filtersVM({project_id: 'eq'}),
+          contributionsPerLocation = m.prop([]),
+          generateSort = function(field, order) {
+            return function(){
+              var collection = contributionsPerLocation(),
+                  resource = collection[0],
+                  orderedSource = _.sortBy(resource.source, field);
+
+              if ((resource.orderFilter || order) == 'DESC') {
+                orderedSource = orderedSource.reverse();
+              }
+
+              resource.source = orderedSource;
+              resource.orderFilter = ((resource.orderFilter || order) == 'DESC' ? 'ASC' : 'DESC');
+              contributionsPerLocation(collection);
+            };
+          };
 
       vm.project_id(args.resourceId);
 
       models.projectContributionsPerLocation.getRow(vm.parameters()).then(contributionsPerLocation);
 
       return {
-        contributionsPerLocation: contributionsPerLocation
+        contributionsPerLocation: contributionsPerLocation,
+        generateSort: generateSort
       };
     },
     view: function(ctrl) {
@@ -22,12 +38,12 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
                 m('div', 'Estado')
               ]),
               m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [
-                m('a.link-hidden[href="#"]', [
+                m('a.link-hidden[href="javascript:void(0);"]', {onclick: ctrl.generateSort('total_contributions', 'DESC')}, [
                   'Apoios  ',m('span.fa.fa-sort', '.')
                 ])
               ]),
               m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [
-                m('a.link-hidden[href="#"]', [
+                m('a.link-hidden[href="javascript:void(0);"]', {onclick: ctrl.generateSort('total_contributed', 'DESC')}, [
                   'R$ apoiados ',
                   m('span.w-hidden-small.w-hidden-tiny','(% do total) '),
                   ' ',m('span.fa.fa-sort', '.')
