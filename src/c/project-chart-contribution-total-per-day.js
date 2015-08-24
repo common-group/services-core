@@ -1,4 +1,4 @@
-window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, _){
+window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, _, h){
   return {
     controller: function(args) {
       var resource = args.collection()[0],
@@ -26,7 +26,7 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, _){
             var ctx = element.getContext('2d');
 
             new Chart(ctx).Line({
-              labels: _.map(resource.source, function(item) {return item.paid_at;}),
+              labels: _.map(resource.source, function(item) {return h.momentify(item.paid_at);}),
               datasets: mountDataset()
             });
           };
@@ -46,4 +46,4 @@ window.c.ProjectChartContributionTotalPerDay = (function(m, Chart, _){
       ]);
     }
   };
-}(window.m, window.Chart, window._));
+}(window.m, window.Chart, window._, window.c.h));

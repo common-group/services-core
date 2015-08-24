@@ -587,7 +587,7 @@ window.c = function() {
             return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
-}(window.m), window.c.ProjectChartContributionAmountPerDay = function(m, Chart, _) {
+}(window.m), window.c.ProjectChartContributionAmountPerDay = function(m, Chart, _, h) {
     return {
         controller: function(args) {
             var resource = args.collection()[0], mountDataset = function() {
@@ -617,7 +617,7 @@ window.c = function() {
                     var ctx = element.getContext("2d");
                     new Chart(ctx).Line({
                         labels: _.map(resource.source, function(item) {
-                            return item.paid_at;
+                            return h.momentify(item.paid_at);
                         }),
                         datasets: mountDataset()
                     });
@@ -633,7 +633,7 @@ window.c = function() {
             }) ]) ]) ]);
         }
     };
-}(window.m, window.Chart, window._), window.c.ProjectChartContributionTotalPerDay = function(m, Chart, _) {
+}(window.m, window.Chart, window._, window.c.h), window.c.ProjectChartContributionTotalPerDay = function(m, Chart, _, h) {
     return {
         controller: function(args) {
             var resource = args.collection()[0], mountDataset = function() {
@@ -663,7 +663,7 @@ window.c = function() {
                     var ctx = element.getContext("2d");
                     new Chart(ctx).Line({
                         labels: _.map(resource.source, function(item) {
-                            return item.paid_at;
+                            return h.momentify(item.paid_at);
                         }),
                         datasets: mountDataset()
                     });
@@ -679,7 +679,7 @@ window.c = function() {
             }) ]) ]) ]);
         }
     };
-}(window.m, window.Chart, window._), window.c.ProjectContributionsPerLocationTable = function(m, models, h, _) {
+}(window.m, window.Chart, window._, window.c.h), window.c.ProjectContributionsPerLocationTable = function(m, models, h, _) {
     return {
         controller: function(args) {
             var vm = m.postgrest.filtersVM({
