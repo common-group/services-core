@@ -6,7 +6,7 @@
     "Diogo Biazus <diogo@biazus.me>",
     "Vinícius Andrade <vchavesster@gmail.com>"
   ],
-  "description": "A set of components to use in Catarse Admin interface",
+  "description": "A set of components to use in Catarse interface",
   "main": "dist/catarse.js",
   "keywords": [
     "mithril",
