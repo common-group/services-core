@@ -6,7 +6,7 @@
     "Diogo Biazus <diogo@biazus.me>",
     "Vinícius Andrade <vchavesster@gmail.com>"
   ],
-  "description": "A set of components to use in Catarse Admin interface",
+  "description": "A set of components to use in Catarse interface",
   "main": "dist/catarse.js",
   "keywords": [
     "mithril",
@@ -25,6 +25,7 @@
     "mithril.postgrest": "1.0.4",
     "moment": "~2.10.3",
     "replace-diacritics": "https://raw.githubusercontent.com/yvg/js-replace-diacritics/master/replace-diacritics.js",
-    "moment-timezone": "~0.4.0"
+    "moment-timezone": "~0.4.0",
+    "chartjs": "1.0.2"
   }
 }

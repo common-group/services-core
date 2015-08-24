@@ -9,6 +9,7 @@ window.c = function() {
         models: {},
         pages: {},
         admin: {},
+        project: {},
         h: {}
     };
 }(), window.c.h = function(m, moment) {
@@ -39,11 +40,14 @@ window.c = function() {
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), teamMember = m.postgrest.model("team_members");
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), teamMember = m.postgrest.model("team_members");
     return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
+        projectDetail: projectDetail,
         teamTotal: teamTotal,
-        teamMember: teamMember
+        teamMember: teamMember,
+        projectContributionsPerDay: projectContributionsPerDay,
+        projectContributionsPerLocation: projectContributionsPerLocation
     };
 }(window.m), window.c.admin.Contributions = function(m, c, h) {
     var admin = c.admin;
@@ -309,7 +313,101 @@ window.c = function() {
             }, "Carregar mais") ]) ]) ]) ]) ]) ]) ]);
         }
     };
-}(window.m, window.c.h, window.c), window.c.AdminProject = function(m, h) {
+}(window.m, window.c.h, window.c), window.c.AdminProjectDetailsCard = function(m, h) {
+    return {
+        controller: function(args) {
+            var project = args.resource, generateStatusText = function() {
+                var statusTextObj = m.prop({}), statusText = {
+                    online: {
+                        cssClass: "text-success",
+                        text: "NO AR"
+                    },
+                    successful: {
+                        cssClass: "text-success",
+                        text: "FINANCIADO"
+                    },
+                    failed: {
+                        cssClass: "text-error",
+                        text: "NÃO FINANCIADO"
+                    },
+                    waiting_funds: {
+                        cssClass: "text-waiting",
+                        text: "AGUARDANDO"
+                    },
+                    rejected: {
+                        cssClass: "text-error",
+                        text: "RECUSADO"
+                    },
+                    draft: {
+                        cssClass: "",
+                        text: "RASCUNHO"
+                    },
+                    in_analysis: {
+                        cssClass: "",
+                        text: "EM ANÁLISE"
+                    },
+                    approved: {
+                        cssClass: "text-success",
+                        text: "APROVADO"
+                    }
+                };
+                return statusTextObj(statusText[project.state]), statusTextObj;
+            }, generateRemaingTime = function() {
+                var remainingTextObj = m.prop({}), translatedTime = {
+                    days: "dias",
+                    minutes: "minutos",
+                    hours: "horas",
+                    seconds: "segundos"
+                };
+                return remainingTextObj({
+                    unit: translatedTime[project.remaining_time.unit || "seconds"],
+                    total: project.remaining_time.total
+                }), remainingTextObj;
+            };
+            return {
+                project: project,
+                statusTextObj: generateStatusText(),
+                remainingTextObj: generateRemaingTime()
+            };
+        },
+        view: function(ctrl) {
+            var project = ctrl.project, progress = project.progress.toFixed(2), statusTextObj = ctrl.statusTextObj(), remainingTextObj = ctrl.remainingTextObj();
+            return m(".project-details-card.card.u-radius.card-terciary.u-marginbottom-20", [ m("div", [ m(".fontsize-small.fontweight-semibold", [ m("span.fontcolor-secondary", "Status:"), " ", m("span", {
+                "class": statusTextObj.cssClass
+            }, statusTextObj.text), " " ]), function() {
+                return project.is_published ? [ m(".meter.u-margintop-20.u-marginbottom-10", [ m(".meter-fill", {
+                    style: {
+                        width: (progress > 100 ? 100 : progress) + "%"
+                    }
+                }) ]), m(".w-row", [ m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", progress + "%"), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "financiado") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", [ "R$ " + h.formatNumber(project.pledged, 2) ]), m(".fontcolor-secondary.lineheight-tighter.fontsize-small.u-marginbottom-10", "levantados") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", project.total_contributions), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", "apoios") ]), m(".w-col.w-col-3.w-col-small-3.w-col-tiny-6", [ m(".fontweight-semibold.fontsize-large.lineheight-tight", remainingTextObj.total), m(".fontcolor-secondary.lineheight-tighter.fontsize-small", remainingTextObj.unit + " restantes") ]) ]) ] : void 0;
+            }() ]) ]);
+        }
+    };
+}(window.m, window.c.h), window.c.AdminProjectDetailsExplanation = function(m, h) {
+    return {
+        controller: function(args) {
+            var explanation = function(resource) {
+                var stateText = {
+                    online: [ m("span", "Você pode receber apoios até 23hs59min59s do dia " + h.momentify(resource.expires_at) + ". Lembre-se, é tudo-ou-nada e você só levará os recursos captados se bater a meta dentro desse prazo.") ],
+                    successful: [ m("span.fontweight-semibold", resource.user.name + ", comemore que você merece!"), " Seu projeto foi bem sucedido e agora é a hora de iniciar o trabalho de relacionamento com seus apoiadores! ", "Atenção especial à entrega de recompensas. Prometeu? Entregue! Não deixe de olhar a seção de pós-projeto do ", m('a.alt-link[href="/guides"]', "Guia dos Realizadores"), " e de informar-se sobre ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', "como o repasse do dinheiro será feito.") ],
+                    waiting_funds: [ m("span.fontweight-semibold", resource.user.name + ", estamos processando os últimos pagamentos!"), " Seu projeto foi finalizado em " + h.momentify(resource.expires_at) + " e está aguardando confirmação de boletos e pagamentos. ", "Devido à data de vencimento de boletos, projetos que tiveram apoios de última hora ficam por até 4 dias úteis nesse status, contados a partir da data de finalização do projeto. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', "Entenda como o repasse de dinheiro é feito para projetos bem sucedidos.") ],
+                    failed: [ m("span.fontweight-semibold", resource.user.name + ", não desanime!"), " Seu projeto não bateu a meta e sabemos que isso não é a melhor das sensações. Mas não desanime. ", "Encare o processo como um aprendizado e não deixe de cogitar uma segunda tentativa. Não se preocupe, todos os seus apoiadores receberão o dinheiro de volta. ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos"][target="_blank"]', "Entenda como fazemos estornos e reembolsos.") ],
+                    rejected: [ m("span.fontweight-semibold", resource.user.name + ", infelizmente não foi desta vez."), " Você enviou seu projeto para análise do Catarse e entendemos que ele não está de acordo com o perfil do site. ", "Ter um projeto recusado não impede que você envie novos projetos para avaliação ou reformule seu projeto atual. ", "Converse com nosso atendimento! Recomendamos que você dê uma boa olhada nos ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos"][target="_blank"]', "critérios da plataforma"), " e no ", m('a.alt-link[href="/guides"]', "guia dos realizadores"), "." ],
+                    draft: [ m("span.fontweight-semibold", resource.user.name + ", construa o seu projeto!"), " Quanto mais cuidadoso e bem formatado for um projeto, maiores as chances de ele ser bem sucedido na sua campanha de captação. ", "Antes de enviar seu projeto para a nossa análise, preencha todas as abas ao lado com carinho. Você pode salvar as alterações e voltar ao rascunho de projeto quantas vezes quiser. ", "Quando tudo estiver pronto, clique no botão ENVIAR e entraremos em contato para avaliar o seu projeto." ],
+                    in_analysis: [ m("span.fontweight-semibold", resource.user.name + ", você enviou seu projeto para análise em " + h.momentify(resource.sent_to_analysis_at) + " e receberá nossa avaliação em até 4 dias úteis após o envio!"), " Enquanto espera a sua resposta, você pode continuar editando o seu projeto. ", "Recomendamos também que você vá coletando feedback com as pessoas próximas e planejando como será a sua campanha." ],
+                    approved: [ m("span.fontweight-semibold", resource.user.name + "Nome do realizador, seu projeto foi aprovado!"), " Para colocar o seu projeto no ar é preciso apenas que você preencha os dados necessários na aba ", m('a.alt-link[href="#user_settings"]', "Conta"), ". É importante saber que cobramos a taxa de 13% do valor total arrecadado apenas por projetos bem sucedidos. Entenda ", m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', "como fazemos o repasse do dinheiro.") ]
+                };
+                return stateText[resource.state];
+            };
+            return {
+                explanation: explanation(args.resource)
+            };
+        },
+        view: function(ctrl, args) {
+            return m("p." + args.resource.state + "-project-text.fontsize-small.lineheight-loose", ctrl.explanation);
+        }
+    };
+}(window.m, window.c.h), window.c.AdminProject = function(m, h) {
     return {
         view: function(ctrl, args) {
             var project = args.item;
@@ -489,6 +587,136 @@ window.c = function() {
             return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
+}(window.m), window.c.ProjectChartContributionAmountPerDay = function(m, Chart, _, h) {
+    return {
+        controller: function(args) {
+            var resource = args.collection()[0], mountDataset = function() {
+                return [ {
+                    label: "R$ arrecadados por dia",
+                    fillColor: "rgba(126,194,69,0.2)",
+                    strokeColor: "rgba(126,194,69,1)",
+                    pointColor: "rgba(126,194,69,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: _.map(resource.source, function(item) {
+                        return item.total_amount;
+                    })
+                } ];
+            }, renderChart = function(element, isInitialized) {
+                if (!isInitialized) {
+                    Object.defineProperty(element, "offsetHeight", {
+                        get: function() {
+                            return element.height;
+                        }
+                    }), Object.defineProperty(element, "offsetWidth", {
+                        get: function() {
+                            return element.width;
+                        }
+                    });
+                    var ctx = element.getContext("2d");
+                    new Chart(ctx).Line({
+                        labels: _.map(resource.source, function(item) {
+                            return h.momentify(item.paid_at);
+                        }),
+                        datasets: mountDataset()
+                    });
+                }
+            };
+            return {
+                renderChart: renderChart
+            };
+        },
+        view: function(ctrl) {
+            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "R$ arrecadados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="860"][height="300"]', {
+                config: ctrl.renderChart
+            }) ]) ]) ]);
+        }
+    };
+}(window.m, window.Chart, window._, window.c.h), window.c.ProjectChartContributionTotalPerDay = function(m, Chart, _, h) {
+    return {
+        controller: function(args) {
+            var resource = args.collection()[0], mountDataset = function() {
+                return [ {
+                    label: "Apoios confirmados por dia",
+                    fillColor: "rgba(126,194,69,0.2)",
+                    strokeColor: "rgba(126,194,69,1)",
+                    pointColor: "rgba(126,194,69,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: _.map(resource.source, function(item) {
+                        return item.total;
+                    })
+                } ];
+            }, renderChart = function(element, isInitialized) {
+                if (!isInitialized) {
+                    Object.defineProperty(element, "offsetHeight", {
+                        get: function() {
+                            return element.height;
+                        }
+                    }), Object.defineProperty(element, "offsetWidth", {
+                        get: function() {
+                            return element.width;
+                        }
+                    });
+                    var ctx = element.getContext("2d");
+                    new Chart(ctx).Line({
+                        labels: _.map(resource.source, function(item) {
+                            return h.momentify(item.paid_at);
+                        }),
+                        datasets: mountDataset()
+                    });
+                }
+            };
+            return {
+                renderChart: renderChart
+            };
+        },
+        view: function(ctrl) {
+            return m(".card.u-radius.medium.u-marginbottom-30", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Apoios confirmados por dia"), m(".w-row", [ m(".w-col.w-col-12", [ m('canvas[id="chart"][width="860"][height="300"]', {
+                config: ctrl.renderChart
+            }) ]) ]) ]);
+        }
+    };
+}(window.m, window.Chart, window._, window.c.h), window.c.ProjectContributionsPerLocationTable = function(m, models, h, _) {
+    return {
+        controller: function(args) {
+            var vm = m.postgrest.filtersVM({
+                project_id: "eq"
+            }), contributionsPerLocation = m.prop([]), generateSort = function(field) {
+                return function() {
+                    var collection = contributionsPerLocation(), resource = collection[0], orderedSource = _.sortBy(resource.source, field);
+                    void 0 === resource.orderFilter && (resource.orderFilter = "DESC"), "DESC" == resource.orderFilter && (orderedSource = orderedSource.reverse()), 
+                    resource.source = orderedSource, resource.orderFilter = "DESC" == resource.orderFilter ? "ASC" : "DESC", 
+                    contributionsPerLocation(collection);
+                };
+            };
+            return vm.project_id(args.resourceId), models.projectContributionsPerLocation.getRow(vm.parameters()).then(contributionsPerLocation), 
+            {
+                contributionsPerLocation: contributionsPerLocation,
+                generateSort: generateSort
+            };
+        },
+        view: function(ctrl) {
+            return m(".project-contributions-per-location", [ m(".fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center", "Localização geográfica dos apoios"), ctrl.contributionsPerLocation().map(function(contributionLocation) {
+                return m(".table-outer.u-marginbottom-60", [ m(".w-row.table-row.fontweight-semibold.fontsize-smaller.header", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "Estado") ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="javascript:void(0);"]', {
+                    onclick: ctrl.generateSort("total_contributions")
+                }, [ "Apoios  ", m("span.fa.fa-sort", ".") ]) ]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [ m('a.link-hidden[href="javascript:void(0);"]', {
+                    onclick: ctrl.generateSort("total_contributed")
+                }, [ "R$ apoiados ", m("span.w-hidden-small.w-hidden-tiny", "(% do total) "), " ", m("span.fa.fa-sort", ".") ]) ]) ]), m(".table-inner.fontsize-small", [ _.map(contributionLocation.source, function(source) {
+                    return m(".w-row.table-row", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", source.state_acronym) ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", source.total_contributions) ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col", [ m("div", "R$ " + h.formatNumber(source.total_contributed, 2, 3) + "  (" + source.total_on_percentage.toFixed(2) + "%)   ") ]) ]);
+                }) ]) ]);
+            }) ]);
+        }
+    };
+}(window.m, window.c.models, window.c.h, window._), window.c.ProjectReminderCount = function(m) {
+    return {
+        view: function(ctrl, args) {
+            var project = args.resource;
+            return m("#project-reminder-count.card.u-radius.u-text-center.medium.u-marginbottom-80", [ m(".fontsize-large.fontweight-semibold", "Total de pessoas que clicaram no botão Lembrar-me"), m(".fontsize-smaller.u-marginbottom-30", "Eles receberão um lembrete por email 48 horas antes do término de sua campanha"), m(".fontsize-jumbo", project.reminder_count) ]);
+        }
+    };
 }(window.m), window.c.TeamMembers = function(_, m, models) {
     return {
         controller: function() {
@@ -537,4 +765,46 @@ window.c = function() {
             return m("#static-team-app", [ m.component(c.TeamTotal), m.component(c.TeamMembers) ]);
         }
     };
-}(window.m, window.c);
+}(window.m, window.c), window.c.project.Insights = function(m, c, models, _) {
+    return {
+        controller: function(args) {
+            var vm = m.postgrest.filtersVM({
+                project_id: "eq"
+            }), projectDetails = m.prop([]), contributionsPerDay = m.prop([]);
+            return vm.project_id(args.root.getAttribute("data-id")), models.projectDetail.getRow(vm.parameters()).then(projectDetails), 
+            models.projectContributionsPerDay.getRow(vm.parameters()).then(contributionsPerDay), 
+            {
+                vm: vm,
+                projectDetails: projectDetails,
+                contributionsPerDay: contributionsPerDay
+            };
+        },
+        view: function(ctrl) {
+            return _.map(ctrl.projectDetails(), function(project) {
+                return m(".project-insights", [ m(".w-row.u-marginbottom-40", [ m(".w-col.w-col-2"), m(".w-col.w-col-8.dashboard-header.u-text-center", [ m.component(c.AdminProjectDetailsCard, {
+                    resource: project
+                }), m.component(c.AdminProjectDetailsExplanation, {
+                    resource: project
+                }) ]), m(".w-col.w-col-2") ]), function(project) {
+                    return project.is_published ? [ m(".divider"), m(".w-section.section-one-column.bg-gray.before-footer", [ m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
+                        style: {
+                            "min-height": "300px"
+                        }
+                    }, [ m.component(c.ProjectChartContributionTotalPerDay, {
+                        collection: ctrl.contributionsPerDay
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", {
+                        style: {
+                            "min-height": "300px"
+                        }
+                    }, [ m.component(c.ProjectChartContributionAmountPerDay, {
+                        collection: ctrl.contributionsPerDay
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectContributionsPerLocationTable, {
+                        resourceId: ctrl.vm.project_id()
+                    }) ]) ]), m(".w-row", [ m(".w-col.w-col-12.dashboard-header.u-text-center", [ m.component(c.ProjectReminderCount, {
+                        resource: project
+                    }) ]) ]) ]) ] : void 0;
+                }(project) ]);
+            });
+        }
+    };
+}(window.m, window.c, window.c.models, window._);
