@@ -9,6 +9,8 @@ window.c.AdminTransaction = (function(m, h){
           m('br'),
           'Taxa: R$' + h.formatNumber(contribution.gateway_fee, 2, 3),
           m('br'),
+          'Aguardando Confirmação: ' + (contribution.waiting_payment ? 'Sim' : 'Não'),
+          m('br'),
           'Anônimo: ' + (contribution.anonymous ? 'Sim' : 'Não'),
           m('br'),
           'Id pagamento: ' + contribution.gateway_id,
