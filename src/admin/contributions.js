@@ -33,7 +33,8 @@ window.c.admin.Contributions = (function(m, c, h){
                 innerLabel: 'Id do novo apoiador:',
                 outerLabel: 'Transferir Apoio',
                 placeholder: 'ex: 129908',
-                model: c.models.contributions
+                model: c.models.contributions,
+                updateModel: c.models.contributionDetail
               }
             }
           ],

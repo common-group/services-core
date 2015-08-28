@@ -8,21 +8,26 @@ window.c.AdminInputAction = (function(m, h, c){
           data = {},
           item = args.item,
           key = builder.getKey,
-          newValue = m.prop('');
+          newValue = m.prop(''),
+          updateVM = m.postgrest.filtersVM({contribution_id: 'eq'});
 
       h.idVM.id(item[builder.updateKey]);
+      updateVM.contribution_id(item.contribution_id);
 
       var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
-      var returnData = function(res){
-        item[key] = res[0][key];
-        error(false);
-        complete(true);
+      var updateItem = function(){
+        builder.updateModel.getRowWithToken(updateVM.parameters()).then(function(newItem){
+          _.map(Object.keys(newItem[0]), function(key){
+            item[key] = newItem[0][key];
+          });
+          complete(true);
+        });
       };
 
       var submit = function(){
         data[key] = newValue();
-        l.load().then(returnData, error);
+        l.load().then(updateItem, error);
         return false;
       };
 
