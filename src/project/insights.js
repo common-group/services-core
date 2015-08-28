@@ -19,38 +19,43 @@ window.c.project.Insights = (function(m, c, models, _){
     view: function(ctrl) {
       return _.map(ctrl.projectDetails(), function(project){
         return m('.project-insights',[
-          m('.w-row.u-marginbottom-40', [
-            m('.w-col.w-col-2'),
-            m('.w-col.w-col-8.dashboard-header.u-text-center', [
-              m.component(c.AdminProjectDetailsCard, {resource: project}),
-              m.component(c.AdminProjectDetailsExplanation, {resource: project})
-            ]),
-            m('.w-col.w-col-2')
+          m('.w-container', [
+            m('.w-row.u-marginbottom-40', [
+              m('.w-col.w-col-2'),
+              m('.w-col.w-col-8.dashboard-header.u-text-center', [
+                m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', 'Minha campanha'),
+                m.component(c.AdminProjectDetailsCard, {resource: project}),
+                m.component(c.AdminProjectDetailsExplanation, {resource: project})
+              ]),
+              m('.w-col.w-col-2')
+            ])
           ]),
           (function(project){
             if (project.is_published) {
               return [
                 m('.divider'),
-                m('.w-section.section-one-column.bg-gray.before-footer',[
-                  m('.w-row', [
-                    m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-                      m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
+                m('.w-section.section-one-column.bg-gray.before-footer', [
+                  m('.w-container', [
+                    m('.w-row', [
+                      m('.w-col.w-col-12.u-text-center', {style: {'min-height': '300px'}}, [
+                        m.component(c.ProjectChartContributionTotalPerDay, {collection: ctrl.contributionsPerDay})
+                      ]),
                     ]),
-                  ]),
-                  m('.w-row', [
-                    m('.w-col.w-col-12.dashboard-header.u-text-center', {style: {'min-height': '300px'}}, [
-                      m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
+                    m('.w-row', [
+                      m('.w-col.w-col-12.u-text-center', {style: {'min-height': '300px'}}, [
+                        m.component(c.ProjectChartContributionAmountPerDay, {collection: ctrl.contributionsPerDay})
+                      ]),
                     ]),
-                  ]),
-                  m('.w-row', [
-                    m('.w-col.w-col-12.dashboard-header.u-text-center', [
-                      m.component(c.ProjectContributionsPerLocationTable, {resourceId: ctrl.vm.project_id()})
+                    m('.w-row', [
+                      m('.w-col.w-col-12.u-text-center', [
+                        m.component(c.ProjectContributionsPerLocationTable, {resourceId: ctrl.vm.project_id()})
+                      ]),
                     ]),
-                  ]),
-                  m('.w-row', [
-                    m('.w-col.w-col-12.dashboard-header.u-text-center', [
-                      m.component(c.ProjectReminderCount, {resource: project})
-                    ]),
+                    m('.w-row', [
+                      m('.w-col.w-col-12.u-text-center', [
+                        m.component(c.ProjectReminderCount, {resource: project})
+                      ]),
+                    ])
                   ])
                 ])
               ];
