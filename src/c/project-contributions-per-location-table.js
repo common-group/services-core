@@ -25,7 +25,10 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
 
       vm.project_id(args.resourceId);
 
-      models.projectContributionsPerLocation.getRow(vm.parameters()).then(contributionsPerLocation);
+      models.projectContributionsPerLocation.getRow(vm.parameters()).then(function(data){
+        contributionsPerLocation(data);
+        generateSort('total_contributed')();
+      });
 
       return {
         contributionsPerLocation: contributionsPerLocation,
