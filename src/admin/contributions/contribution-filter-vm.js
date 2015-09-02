@@ -5,7 +5,11 @@ window.c.admin.contributionFilterVM = (function(m, h, replaceDiacritics){
     gateway: 'eq',
     value: 'between',
     created_at: 'between'
-  });
+  }),
+
+  paramToString = function(p){
+    return (p || '').toString().trim();
+  };
 
   // Set default values
   vm.state('');
@@ -13,15 +17,18 @@ window.c.admin.contributionFilterVM = (function(m, h, replaceDiacritics){
   vm.order({id: 'desc'});
 
   vm.created_at.lte.toFilter = function(){
-    return h.momentFromString(vm.created_at.lte()).endOf('day').format('');
+    var filter = paramToString(vm.created_at.lte());
+    return filter && h.momentFromString(filter).endOf('day').format('');
   };
 
   vm.created_at.gte.toFilter = function(){
-    return h.momentFromString(vm.created_at.gte()).format();
+    var filter = paramToString(vm.created_at.gte());
+    return filter && h.momentFromString(filter).format();
   };
 
   vm.full_text_index.toFilter = function(){
-    return replaceDiacritics(vm.full_text_index());
+    var filter = paramToString(vm.full_text_index());
+    return filter && replaceDiacritics(filter) || undefined;
   };
 
   return vm;

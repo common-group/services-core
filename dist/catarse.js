@@ -2,7 +2,7 @@
     Catarse JS components
     Copyright (c) 2007 - 2015 Diogo Biazus
     Licensed under the MIT license
-    Version: 0.0.6
+    Version: 0.0.7.3
 */
 window.c = function() {
     return {
@@ -186,15 +186,20 @@ window.c = function() {
         gateway: "eq",
         value: "between",
         created_at: "between"
-    });
+    }), paramToString = function(p) {
+        return (p || "").toString().trim();
+    };
     return vm.state(""), vm.gateway(""), vm.order({
         id: "desc"
     }), vm.created_at.lte.toFilter = function() {
-        return h.momentFromString(vm.created_at.lte()).endOf("day").format("");
+        var filter = paramToString(vm.created_at.lte());
+        return filter && h.momentFromString(filter).endOf("day").format("");
     }, vm.created_at.gte.toFilter = function() {
-        return h.momentFromString(vm.created_at.gte()).format();
+        var filter = paramToString(vm.created_at.gte());
+        return filter && h.momentFromString(filter).format();
     }, vm.full_text_index.toFilter = function() {
-        return replaceDiacritics(vm.full_text_index());
+        var filter = paramToString(vm.full_text_index());
+        return filter && replaceDiacritics(filter) || void 0;
     }, vm;
 }(window.m, window.c.h, window.replaceDiacritics), window.c.admin.contributionListVM = function(m, models) {
     return m.postgrest.paginationVM(models.contributionDetail.getPageWithToken);
