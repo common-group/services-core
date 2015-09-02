@@ -46,7 +46,7 @@ window.c.AdminProjectDetailsExplanation = (function(m, h){
             'Recomendamos também que você vá coletando feedback com as pessoas próximas e planejando como será a sua campanha.'
           ],
           approved: [
-            m('span.fontweight-semibold', resource.user.name + 'Nome do realizador, seu projeto foi aprovado!'),
+            m('span.fontweight-semibold', resource.user.name + ', seu projeto foi aprovado!'),
             ' Para colocar o seu projeto no ar é preciso apenas que você preencha os dados necessários na aba ',
             m('a.alt-link[href="#user_settings"]', 'Conta'),
             '. É importante saber que cobramos a taxa de 13% do valor total arrecadado apenas por projetos bem sucedidos. Entenda ',
