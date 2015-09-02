@@ -2,7 +2,7 @@
     Catarse JS components
     Copyright (c) 2007 - 2015 Diogo Biazus
     Licensed under the MIT license
-    Version: 0.0.7.3
+    Version: 0.0.8
 */
 window.c = function() {
     return {
