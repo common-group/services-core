@@ -4,7 +4,7 @@ window.c.AdminProjectDetailsExplanation = (function(m, h){
       var explanation = function(resource) {
         var stateText = {
           online: [
-            m('span', 'Você pode receber apoios até 23hs59min59s do dia ' + h.momentify(resource.expires_at) + '. Lembre-se, é tudo-ou-nada e você só levará os recursos captados se bater a meta dentro desse prazo.')
+            m('span', 'Você pode receber apoios até 23hs59min59s do dia ' + h.momentify(resource.zone_expires_at) + '. Lembre-se, é tudo-ou-nada e você só levará os recursos captados se bater a meta dentro desse prazo.')
           ],
           successful: [
             m('span.fontweight-semibold', resource.user.name + ', comemore que você merece!'),
@@ -15,7 +15,7 @@ window.c.AdminProjectDetailsExplanation = (function(m, h){
           ],
           waiting_funds: [
             m('span.fontweight-semibold', resource.user.name + ', estamos processando os últimos pagamentos!'),
-            ' Seu projeto foi finalizado em ' + h.momentify(resource.expires_at) + ' e está aguardando confirmação de boletos e pagamentos. ',
+            ' Seu projeto foi finalizado em ' + h.momentify(resource.zone_expires_at) + ' e está aguardando confirmação de boletos e pagamentos. ',
             'Devido à data de vencimento de boletos, projetos que tiveram apoios de última hora ficam por até 4 dias úteis nesse status, contados a partir da data de finalização do projeto. ',
             m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="_blank"]', 'Entenda como o repasse de dinheiro é feito para projetos bem sucedidos.')
           ],
