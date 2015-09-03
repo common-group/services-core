@@ -29,21 +29,25 @@ window.c = function() {
         return p.toggle = function() {
             p(p() === alternateState ? defaultState : alternateState);
         }, p;
-    }, loader = function() {
+    }, idVM = m.postgrest.filtersVM({
+        id: "eq"
+    }), loader = function() {
         return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [ m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]') ]);
     };
     return {
         momentify: momentify,
         momentFromString: momentFromString,
         formatNumber: formatNumber,
+        idVM: idVM,
         toggleProp: toggleProp,
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), teamTotal = m.postgrest.model("team_totals", [ "member_count", "countries", "total_contributed_projects", "total_cities", "total_amount" ]), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), teamMember = m.postgrest.model("team_members");
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), teamMember = m.postgrest.model("team_members");
     return teamMember.pageSize(40), {
         contributionDetail: contributionDetail,
         projectDetail: projectDetail,
+        contributions: contributions,
         teamTotal: teamTotal,
         teamMember: teamMember,
         projectContributionsPerDay: projectContributionsPerDay,
@@ -68,12 +72,13 @@ window.c = function() {
             } ], itemActions = [ {
                 component: "AdminInputAction",
                 data: {
-                    attrName: "user_id",
+                    getKey: "user_id",
+                    updateKey: "id",
                     callToAction: "Transferir",
                     innerLabel: "Id do novo apoiador:",
                     outerLabel: "Transferir Apoio",
                     placeholder: "ex: 129908",
-                    vm: listVM
+                    model: c.models.contributionDetail
                 }
             } ], filterBuilder = [ {
                 component: "FilterMain",
@@ -255,20 +260,42 @@ window.c = function() {
 }(window.c, window.m, window._, window.c.h), window.c.AdminInputAction = function(m, h, c) {
     return {
         controller: function(args) {
+            var builder = args.data, complete = m.prop(!1), error = m.prop(!1), data = (m.prop(!1), 
+            {}), item = args.item, key = builder.getKey, newValue = m.prop(""), updateVM = m.postgrest.filtersVM({
+                contribution_id: "eq"
+            });
+            h.idVM.id(item[builder.updateKey]), updateVM.contribution_id(item.contribution_id);
+            var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data)), updateItem = function(data) {
+                _.extend(item, data[0]), complete(!0);
+            }, submit = function() {
+                return data[key] = newValue(), l.load().then(updateItem, error), !1;
+            }, unload = function(el, isinit, context) {
+                context.onunload = function() {
+                    complete(!1), newValue("");
+                };
+            };
             return {
-                toggler: h.toggleProp(!1, !0)
+                complete: complete,
+                error: error,
+                l: l,
+                newValue: newValue,
+                submit: submit,
+                toggler: h.toggleProp(!1, !0),
+                unload: unload
             };
         },
         view: function(ctrl, args) {
-            var action = args.data;
+            var data = args.data, btnValue = ctrl.l() ? "por favor, aguarde..." : data.callToAction;
             return m(".w-col.w-col-2", [ m("button.btn.btn-small.btn-terciary", {
                 onclick: ctrl.toggler.toggle
-            }, action.outerLabel), ctrl.toggler() ? m("form.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", [ m("form.w-form", {
+            }, data.outerLabel), ctrl.toggler() ? m(".dropdown-list.card.u-radius.dropdown-list-medium.zindex-10", {
+                config: ctrl.unload
+            }, [ m("form.w-form", {
                 onsubmit: ctrl.submit
-            }, [ m("label", action.outerLabel), m('input.w-input.text-field[type="text"][placeholder="' + action.placeholder + '"]', {
-                onchange: m.withAttr("value", action.vm),
-                value: action.vm()
-            }), m('input.w-button.btn.btn-small[type="submit"][value="' + action.callToAction + '"]') ]) ]) : "" ]);
+            }, ctrl.complete() ? ctrl.error() ? [ m('.w-form-error[style="display:block;"]', [ m("p", "Houve um problema na requisição. O apoio não foi transferido!") ]) ] : [ m('.w-form-done[style="display:block;"]', [ m("p", "Apoio transferido com sucesso!") ]) ] : [ m("label", data.innerLabel), m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
+                onchange: m.withAttr("value", ctrl.newValue),
+                value: ctrl.newValue()
+            }), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]') ]) ]) : "" ]);
         }
     };
 }(window.m, window.c.h, window.c), window.c.AdminItem = function(m, _, h, c) {
@@ -468,7 +495,7 @@ window.c = function() {
     return {
         view: function(ctrl, args) {
             var contribution = args.contribution;
-            return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + h.formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + h.formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + (contribution.gateway_data && contribution.gateway_data.acquirer_name), m("br"), function() {
+            return m(".w-col.w-col-4", [ m(".fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20", "Detalhes do apoio"), m(".fontsize-smallest.lineheight-looser", [ "Valor: R$" + h.formatNumber(contribution.value, 2, 3), m("br"), "Taxa: R$" + h.formatNumber(contribution.gateway_fee, 2, 3), m("br"), "Aguardando Confirmação: " + (contribution.waiting_payment ? "Sim" : "Não"), m("br"), "Anônimo: " + (contribution.anonymous ? "Sim" : "Não"), m("br"), "Id pagamento: " + contribution.gateway_id, m("br"), "Apoio: " + contribution.contribution_id, m("br"), "Chave: \n", m("br"), contribution.key, m("br"), "Meio: " + contribution.gateway, m("br"), "Operadora: " + (contribution.gateway_data && contribution.gateway_data.acquirer_name), m("br"), function() {
                 return contribution.is_second_slip ? [ m('a.link-hidden[href="#"]', "Boleto bancário"), " ", m("span.badge", "2a via") ] : void 0;
             }() ]) ]);
         }
