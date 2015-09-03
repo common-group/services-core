@@ -2,15 +2,11 @@ window.c.models = (function(m){
   var contributionDetail = m.postgrest.model('contribution_details'),
 
   projectDetail = m.postgrest.model('project_details'),
-  teamTotal = m.postgrest.model('team_totals', [
-    'member_count', 'countries', 'total_contributed_projects',
-    'total_cities', 'total_amount'
-  ]),
   contributions = m.postgrest.model('contributions'),
   teamTotal = m.postgrest.model('team_totals'),
   projectContributionsPerDay = m.postgrest.model('project_contributions_per_day'),
   projectContributionsPerLocation = m.postgrest.model('project_contributions_per_location'),
-  teamMember = m.postgrest.model('team_members'),
+  teamMember = m.postgrest.model('team_members');
   teamMember.pageSize(40);
 
   return {

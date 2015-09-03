@@ -16,13 +16,9 @@ window.c.AdminInputAction = (function(m, h, c){
 
       var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
-      var updateItem = function(){
-        builder.updateModel.getRowWithToken(updateVM.parameters()).then(function(newItem){
-          _.map(Object.keys(newItem[0]), function(key){
-            item[key] = newItem[0][key];
-          });
-          complete(true);
-        });
+      var updateItem = function(data){
+        _.extend(item, data[0]);
+        complete(true);
       };
 
       var submit = function(){
