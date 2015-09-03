@@ -63,9 +63,7 @@ describe('AdminInputAction', function(){
 
     describe('on form submit', function(){
       beforeAll(function(){
-        spyOn(m, 'request').and.callFake(function(){
-          return [{test: true}];
-        });
+        spyOn(m, 'request').and.returnValue( {then: function(callback){ callback([{test: true}]); return {then: function(callback){ return callback(); } } }});
       });
       beforeEach(function(){
         $output.click('button');
