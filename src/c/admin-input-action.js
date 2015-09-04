@@ -16,9 +16,10 @@ window.c.AdminInputAction = (function(m, h, c){
 
       var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
-      var updateItem = function(data){
-        _.extend(item, data[0]);
+      var updateItem = function(res){
+        _.extend(item, res[0]);
         complete(true);
+        error(false);
       };
 
       var submit = function(){
@@ -30,6 +31,7 @@ window.c.AdminInputAction = (function(m, h, c){
       var unload = function(el, isinit, context){
         context.onunload = function(){
           complete(false);
+          error(false);
           newValue('');
         };
       };
