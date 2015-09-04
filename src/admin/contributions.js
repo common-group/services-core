@@ -35,6 +35,15 @@ window.c.admin.Contributions = (function(m, c, h){
                 placeholder: 'ex: 129908',
                 model: c.models.contributionDetail
               }
+            },
+            {
+              component: 'AdminRadioAction',
+              data: {
+                getKey: 'project_id',
+                updateKey: 'id',
+                model: c.models.rewardDetail,
+                callToAction: 'Alterar Recompensa'
+              }
             }
           ],
           filterBuilder = [
