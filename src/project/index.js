@@ -2,14 +2,20 @@ window.c.project.Index = (function(m, c){
   return {
 
     controller: function() {
-      var vm = {collection: m.prop([])},
-          online = m.postgrest.filtersVM({state: 'eq'});
+      var vm = {recentCollection: m.prop([]), expiringCollection: m.prop([])},
+          expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'});
+          expiring.expires_at(moment().add(7, 'days').format('YYYY-MM-DD'));
+          expiring.state('online');
           recent = m.postgrest.filtersVM({created_at: 'gte', state: 'eq'});
-          recent.created_at('2015-08-10');
+          recent.created_at(moment().subtract(7, 'days').format('YYYY-MM-DD'));
           recent.state('online');
 
       c.models.project.getPage(1, recent.parameters()).then(function(data){
-        vm.collection(data);
+        vm.recentCollection(data);
+      });
+
+      c.models.project.getPage(1, expiring.parameters()).then(function(data){
+        vm.expiringCollection(data);
       });
 
       return {
@@ -18,7 +24,8 @@ window.c.project.Index = (function(m, c){
     },
 
     view: function(ctrl) {
-      var collection = ctrl.vm.collection;
+      var recentCollection = ctrl.vm.recentCollection,
+          expiringCollection = ctrl.vm.expiringCollection;
       return [
         m(".w-section.hero-full.hero-knowmore", [
           m(".w-container.u-text-center", [
@@ -30,9 +37,6 @@ window.c.project.Index = (function(m, c){
                     m("span.cd-words-wrapper.waiting", [
                       m("b.is-visible", "atitudes"),
                       m("b", "peças de teatro"),
-                      m("b", "pesquisas"),
-                      m("b", "produtos"),
-                      m("b", "carnavais"),
                       m("b", "fotografias")
                     ]),
                     m("span", "do papel")
@@ -43,10 +47,6 @@ window.c.project.Index = (function(m, c){
                     m("", "Tire"),
                     m("span.cd-words-wrapper.waiting", [
                       m("b.is-visible", "atitudes"),
-                      m("b", "peças de teatro"),
-                      m("b", "filmes"),
-                      m("b", "documentários"),
-                      m("b", "carnavais"),
                       m("b", "fotografias")
                     ]),
                     m("", "do papel")
@@ -68,13 +68,13 @@ window.c.project.Index = (function(m, c){
           m(".w-container", [
             m(".w-row.u-marginbottom-30", [
               m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [
-                m(".fontsize-large.lineheight-looser", "Recomendados")
+                m(".fontsize-large.lineheight-looser", "Recentes")
               ]),
               m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [
                 m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos")
               ])
             ]),
-            m(".w-row", _.map(collection(), function(project){
+            m(".w-row", _.map(recentCollection(), function(project){
              return m.component(c.ProjectCard, {project: project} );
             }
 
@@ -82,25 +82,23 @@ window.c.project.Index = (function(m, c){
           )
         ]),
 
+        m(".w-section.section.u-marginbottom-40", [
+          m(".w-container", [
+            m(".w-row.u-marginbottom-30", [
+              m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [
+                m(".fontsize-large.lineheight-looser", "Na reta final")
+              ]),
+              m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [
+                m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos")
+              ])
+            ]),
+            m(".w-row", _.map(expiringCollection(), function(project){
+             return m.component(c.ProjectCard, {project: project} );
+            }
 
-        //m(".w-section.section.u-marginbottom-40", [
-          //m(".w-container", [
-            //m(".w-row.u-marginbottom-30", [
-              //m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [
-                //m(".fontsize-large.lineheight-looser", "Na reta final")
-              //]),
-              //m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [
-                //m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos")
-              //])
-            //]),
-            //m(".w-row", [
-              //m.component(c.ProjectCard),
-              //m.component(c.ProjectCard),
-              //m.component(c.ProjectCard)
-            //])
-          //])
-        //]),
-
+           ))]
+          )
+        ]),
 
         //m(".w-section.section.u-marginbottom-40", [
           //m(".w-container", [

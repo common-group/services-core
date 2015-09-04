@@ -826,23 +826,32 @@ window.c = function() {
     return {
         controller: function() {
             var vm = {
-                collection: m.prop([])
-            };
-            m.postgrest.filtersVM({
+                recentCollection: m.prop([]),
+                expiringCollection: m.prop([])
+            }, expiring = m.postgrest.filtersVM({
+                expires_at: "lte",
                 state: "eq"
             });
-            return recent = m.postgrest.filtersVM({
+            return expiring.expires_at(moment().add(7, "days").format("YYYY-MM-DD")), expiring.state("online"), 
+            recent = m.postgrest.filtersVM({
                 created_at: "gte",
                 state: "eq"
-            }), recent.created_at("2015-08-10"), recent.state("online"), c.models.project.getPage(1, recent.parameters()).then(function(data) {
-                vm.collection(data);
+            }), recent.created_at(moment().subtract(30, "days").format("YYYY-MM-DD")), recent.state("online"), 
+            c.models.project.getPage(1, recent.parameters()).then(function(data) {
+                vm.recentCollection(data);
+            }), c.models.project.getPage(1, expiring.parameters()).then(function(data) {
+                vm.expiringCollection(data);
             }), {
                 vm: vm
             };
         },
         view: function(ctrl) {
-            var collection = ctrl.vm.collection;
-            return [ m(".w-section.hero-full.hero-knowmore", [ m(".w-container.u-text-center", [ m(".hero-home-words-content", [ m(".fontsize-megajumbo.u-marginbottom-60.fontweight-semibold", [ m(".w-embed.w-hidden-tiny", [ m(".cd-headline.letters.type", [ m("span", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "peças de teatro"), m("b", "pesquisas"), m("b", "produtos"), m("b", "carnavais"), m("b", "fotografias") ]), m("span", "do papel") ]) ]), m(".w-embed.w-hidden-main.w-hidden-medium.w-hidden-small", [ m(".cd-headline.letters.type", [ m("", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "peças de teatro"), m("b", "filmes"), m("b", "documentários"), m("b", "carnavais"), m("b", "fotografias") ]), m("", "do papel") ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("a.btn.btn-large.u-marginbottom-10[href='hello.html']", "Saiba mais") ]), m(".w-col.w-col-4") ]) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recomendados") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(collection(), function(project) {
+            var recentCollection = ctrl.vm.recentCollection, expiringCollection = ctrl.vm.expiringCollection;
+            return [ m(".w-section.hero-full.hero-knowmore", [ m(".w-container.u-text-center", [ m(".hero-home-words-content", [ m(".fontsize-megajumbo.u-marginbottom-60.fontweight-semibold", [ m(".w-embed.w-hidden-tiny", [ m(".cd-headline.letters.type", [ m("span", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "peças de teatro"), m("b", "fotografias") ]), m("span", "do papel") ]) ]), m(".w-embed.w-hidden-main.w-hidden-medium.w-hidden-small", [ m(".cd-headline.letters.type", [ m("", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "fotografias") ]), m("", "do papel") ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("a.btn.btn-large.u-marginbottom-10[href='hello.html']", "Saiba mais") ]), m(".w-col.w-col-4") ]) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recentes") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(recentCollection(), function(project) {
+                return m.component(c.ProjectCard, {
+                    project: project
+                });
+            })) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Na reta final") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(expiringCollection(), function(project) {
                 return m.component(c.ProjectCard, {
                     project: project
                 });
