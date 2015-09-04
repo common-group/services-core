@@ -18,28 +18,12 @@ window.c.AdminProjectDetailsCard = (function(m, h){
             statusTextObj(statusText[project.state]);
 
             return statusTextObj;
-          },
-          generateRemaingTime = function() {
-            var remainingTextObj = m.prop({}),
-                translatedTime = {
-                  days: 'dias',
-                  minutes: 'minutos',
-                  hours: 'horas',
-                  seconds: 'segundos'
-                };
-
-            remainingTextObj({
-              unit: translatedTime[project.remaining_time.unit || 'seconds'],
-              total: project.remaining_time.total
-            });
-
-            return remainingTextObj;
           };
 
       return {
         project: project,
         statusTextObj: generateStatusText(),
-        remainingTextObj: generateRemaingTime()
+        remainingTextObj: h.generateRemaingTime(project)
       };
     },
 

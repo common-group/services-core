@@ -24,7 +24,18 @@ window.c = function() {
             var re = "\\d(?=(\\d{" + (x || 3) + "})+" + (n > 0 ? "\\D" : "$") + ")", num = number.toFixed(Math.max(0, ~~n));
             return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
         };
-    }, formatNumber = generateFormatNumber(".", ","), toggleProp = function(defaultState, alternateState) {
+    }, formatNumber = generateFormatNumber(".", ","), generateRemaingTime = function(project) {
+        var remainingTextObj = m.prop({}), translatedTime = {
+            days: "dias",
+            minutes: "minutos",
+            hours: "horas",
+            seconds: "segundos"
+        };
+        return remainingTextObj({
+            unit: translatedTime[project.remaining_time.unit || "seconds"],
+            total: project.remaining_time.total
+        }), remainingTextObj;
+    }, toggleProp = function(defaultState, alternateState) {
         var p = m.prop(defaultState);
         return p.toggle = function() {
             p(p() === alternateState ? defaultState : alternateState);
@@ -40,16 +51,18 @@ window.c = function() {
         formatNumber: formatNumber,
         idVM: idVM,
         toggleProp: toggleProp,
+        generateRemaingTime: generateRemaingTime,
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), teamMember = m.postgrest.model("team_members");
-    return teamMember.pageSize(40), {
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), project = m.postgrest.model("projects"), teamMember = m.postgrest.model("team_members");
+    return teamMember.pageSize(40), project.pageSize(3), {
         contributionDetail: contributionDetail,
         projectDetail: projectDetail,
         contributions: contributions,
         teamTotal: teamTotal,
         teamMember: teamMember,
+        project: project,
         projectContributionsPerDay: projectContributionsPerDay,
         projectContributionsPerLocation: projectContributionsPerLocation
     };
@@ -265,13 +278,13 @@ window.c = function() {
                 contribution_id: "eq"
             });
             h.idVM.id(item[builder.updateKey]), updateVM.contribution_id(item.contribution_id);
-            var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data)), updateItem = function(data) {
-                _.extend(item, data[0]), complete(!0);
+            var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data)), updateItem = function(res) {
+                _.extend(item, res[0]), complete(!0), error(!1);
             }, submit = function() {
                 return data[key] = newValue(), l.load().then(updateItem, error), !1;
             }, unload = function(el, isinit, context) {
                 context.onunload = function() {
-                    complete(!1), newValue("");
+                    complete(!1), error(!1), newValue("");
                 };
             };
             return {
@@ -384,22 +397,11 @@ window.c = function() {
                     }
                 };
                 return statusTextObj(statusText[project.state]), statusTextObj;
-            }, generateRemaingTime = function() {
-                var remainingTextObj = m.prop({}), translatedTime = {
-                    days: "dias",
-                    minutes: "minutos",
-                    hours: "horas",
-                    seconds: "segundos"
-                };
-                return remainingTextObj({
-                    unit: translatedTime[project.remaining_time.unit || "seconds"],
-                    total: project.remaining_time.total
-                }), remainingTextObj;
             };
             return {
                 project: project,
                 statusTextObj: generateStatusText(),
-                remainingTextObj: generateRemaingTime()
+                remainingTextObj: h.generateRemaingTime(project)
             };
         },
         view: function(ctrl) {
@@ -619,7 +621,29 @@ window.c = function() {
             return m(".w-row.payment-status", [ m(".fontsize-smallest.lineheight-looser.fontweight-semibold", [ m("span.fa.fa-circle" + ctrl.stateClass()), " " + payment.state ]), m(".fontsize-smallest.fontweight-semibold", [ m("span.fa" + ctrl.paymentMethodClass()), " ", m('a.link-hidden[href="#"]', payment.payment_method) ]), m(".fontsize-smallest.fontcolor-secondary.lineheight-tight", [ ctrl.displayPaymentMethod() ]) ]);
         }
     };
-}(window.m), window.c.ProjectChartContributionAmountPerDay = function(m, Chart, _, h) {
+}(window.m), window.c.ProjectCard = function(m, h, models) {
+    return {
+        controller: function(args) {
+            var project = args.project;
+            return {
+                remainingTextObj: h.generateRemaingTime(project)
+            };
+        },
+        view: function(ctrl, args) {
+            var project = args.project, remainingTextObj = ctrl.remainingTextObj(), progress = project.progress.toFixed(2);
+            return m(".w-col.w-col-4", [ m(".card-project.card.u-radius", [ m("a.card-project-thumb[href='" + project.permalink + "'][target='_blank']", {
+                style: {
+                    "background-image": "url(" + project.project_img + ")",
+                    display: "block"
+                }
+            }), m(".card-project-description.alt", [ m(".fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base", [ m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20", "por " + project.owner_name), m(".w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller", [ m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.headline) ]) ]), m(".w-hidden-small.w-hidden-tiny.card-project-author.altt", [ m(".fontsize-smallest.fontcolor-secondary", [ m("span.fa.fa-map-marker.fa-1", " "), project.city_name ]) ]), m(".card-project-meter", [ m(".meter", [ m(".meter-fill", {
+                style: {
+                    width: (progress > 100 ? 100 : progress) + "%"
+                }
+            }) ]) ]), m(".card-project-stats", [ m(".w-row", [ m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4", [ m(".fontsize-base.fontweight-semibold", Math.ceil(project.progress) + "%") ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only", [ m(".fontsize-smaller.fontweight-semibold", "R$ " + project.pledged), m(".fontsize-smallest.lineheight-tightest", "Levantados") ]), m(".w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right", [ m(".fontsize-smaller.fontweight-semibold", remainingTextObj.total + " " + remainingTextObj.unit), m(".fontsize-smallest.lineheight-tightest", "Restantes") ]) ]) ]) ]), m(".card-project") ]);
+        }
+    };
+}(window.m, window.c.h, window.c.models), window.c.ProjectChartContributionAmountPerDay = function(m, Chart, _, h) {
     return {
         controller: function(args) {
             var resource = args.collection()[0], mountDataset = function() {
@@ -796,6 +820,33 @@ window.c = function() {
     return {
         view: function() {
             return m("#static-team-app", [ m.component(c.TeamTotal), m.component(c.TeamMembers) ]);
+        }
+    };
+}(window.m, window.c), window.c.project.Index = function(m, c) {
+    return {
+        controller: function() {
+            var vm = {
+                collection: m.prop([])
+            };
+            m.postgrest.filtersVM({
+                state: "eq"
+            });
+            return recent = m.postgrest.filtersVM({
+                created_at: "gte",
+                state: "eq"
+            }), recent.created_at("2015-08-10"), recent.state("online"), c.models.project.getPage(1, recent.parameters()).then(function(data) {
+                vm.collection(data);
+            }), {
+                vm: vm
+            };
+        },
+        view: function(ctrl) {
+            var collection = ctrl.vm.collection;
+            return [ m(".w-section.hero-full.hero-knowmore", [ m(".w-container.u-text-center", [ m(".hero-home-words-content", [ m(".fontsize-megajumbo.u-marginbottom-60.fontweight-semibold", [ m(".w-embed.w-hidden-tiny", [ m(".cd-headline.letters.type", [ m("span", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "peças de teatro"), m("b", "pesquisas"), m("b", "produtos"), m("b", "carnavais"), m("b", "fotografias") ]), m("span", "do papel") ]) ]), m(".w-embed.w-hidden-main.w-hidden-medium.w-hidden-small", [ m(".cd-headline.letters.type", [ m("", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "peças de teatro"), m("b", "filmes"), m("b", "documentários"), m("b", "carnavais"), m("b", "fotografias") ]), m("", "do papel") ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("a.btn.btn-large.u-marginbottom-10[href='hello.html']", "Saiba mais") ]), m(".w-col.w-col-4") ]) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recomendados") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(collection(), function(project) {
+                return m.component(c.ProjectCard, {
+                    project: project
+                });
+            })) ]) ]), m(".w-section.section-large.bg-gray.before-footer", [ m(".w-container", [ m(".u-text-center", [ m("img.u-marginbottom-10[src='images/icon-blog.png'][width='83']"), m(".fontsize-large.u-marginbottom-60.text-success", "Blog do Catarse") ]), m(".w-row", [ m(".w-col.w-col-4.col-blog-post", [ m("", [ m("", [ m(".fontweight-semibold.fontsize-base.u-marginbottom-10", "Como 36 pessoas mudaram o sistema de transporte de uma cidade inteira"), m(".fontsize-smaller.fontcolor-secondary", "O espaço público das cidades está em constante disputa não apenas entre uma infinidade de grupos de interesse, mas também com a própria burocracia e ineficácia do poder público.") ]) ]) ]), m(".w-col.w-col-4.col-blog-post", [ m(".fontweight-semibold.fontsize-base.u-marginbottom-10", "Retrospectiva Dois Mil e Catarse: R$ 1 milhão por mês"), m(".fontsize-smaller.fontcolor-secondary", "O ano que já veio com trocadilho pronto foi de fato fantástico para nós. Nesses quase quatro anos, já passaram pelo Catarse 2.700 projetos, dos quais 1.480 (55%) alcançaram a meta de financiamento. ") ]), m(".w-col.w-col-4.col-blog-post", [ m(".fontweight-semibold.fontsize-base.u-marginbottom-10", "Retrospectiva Dois Mil e Catarse: R$ 1 milhão por mês"), m(".fontsize-smaller.fontcolor-secondary", "O ano que já veio com trocadilho pronto foi de fato fantástico para nós. Nesses quase quatro anos, já passaram pelo Catarse 2.700 projetos, dos quais 1.480 (55%) alcançaram a meta de financiamento. ") ]) ]) ]) ]) ];
         }
     };
 }(window.m, window.c), window.c.project.Insights = function(m, c, models, _) {
