@@ -16,9 +16,7 @@ var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/c/**/*.js','src/**/
 gulp.task('test', function (done) {
   new Server({
     configFile: __dirname + '/karma.conf.js'
-  }, function(){
-    done();
-  }).start();
+  }, done).start();
 });
 
 gulp.task('lint', function(){
