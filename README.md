@@ -2,4 +2,23 @@
 
 ## Mithril components for the Catarse world
 
-## Usage
+A set of mithril components to use accross [catarse](https://github.com/catarse/catarse).
+
+## Development
+
+To start developing components to catarse.js you'll first have to install [gulp](http://gulpjs.com/), [bower](http://bower.io/) and [npm](https://www.npmjs.com/).
+
+Then, install all the project package dependencies by calling ```npm install && bower install```.
+
+Build dependencies should be described on `bower.json`. Dev dependencies should be described on `package.json`.
+
+Catarse.js uses gulp as build tool. To start developing just run `gulp` and gulp will start watching your source files for changes and running build when those happen. 
+
+To watch source files without running through testing tasks, run:
+```gulp --notest```
+
+To watch source files without running testing or linting tasks, run:
+```gulp --q``` 
+
+To trigger a build cycle without watching files, run:
+```gulp build```
