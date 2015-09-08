@@ -25,15 +25,16 @@ window.c = function() {
             return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
         };
     }, formatNumber = generateFormatNumber(".", ","), generateRemaingTime = function(project) {
-        var remainingTextObj = m.prop({}), translatedTime = {
+        var time, remainingTextObj = m.prop({}), translatedTime = {
             days: "dias",
             minutes: "minutos",
             hours: "horas",
             seconds: "segundos"
         };
-        return remainingTextObj({
-            unit: translatedTime[project.remaining_time.unit || "seconds"],
-            total: project.remaining_time.total
+        return time = "string" == typeof project.remaining_time ? JSON.parse(project.remaining_time) : project.remaining_time, 
+        remainingTextObj({
+            unit: translatedTime[time.unit || "seconds"],
+            total: time.total
         }), remainingTextObj;
     }, toggleProp = function(defaultState, alternateState) {
         var p = m.prop(defaultState);
@@ -55,14 +56,15 @@ window.c = function() {
         loader: loader
     };
 }(window.m, window.moment), window.c.models = function(m) {
-    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), project = m.postgrest.model("projects"), teamMember = m.postgrest.model("team_members");
-    return teamMember.pageSize(40), project.pageSize(3), {
+    var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), project = m.postgrest.model("projects"), projectsForHome = m.postgrest.model("projects_for_home"), teamMember = m.postgrest.model("team_members");
+    return teamMember.pageSize(40), projectsForHome.pageSize(9), {
         contributionDetail: contributionDetail,
         projectDetail: projectDetail,
         contributions: contributions,
         teamTotal: teamTotal,
         teamMember: teamMember,
         project: project,
+        projectsForHome: projectsForHome,
         projectContributionsPerDay: projectContributionsPerDay,
         projectContributionsPerLocation: projectContributionsPerLocation
     };
@@ -636,7 +638,7 @@ window.c = function() {
                     "background-image": "url(" + project.project_img + ")",
                     display: "block"
                 }
-            }), m(".card-project-description.alt", [ m(".fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base", [ m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20", "por " + project.owner_name), m(".w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller", [ m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.headline) ]) ]), m(".w-hidden-small.w-hidden-tiny.card-project-author.altt", [ m(".fontsize-smallest.fontcolor-secondary", [ m("span.fa.fa-map-marker.fa-1", " "), project.city_name ]) ]), m(".card-project-meter", [ m(".meter", [ m(".meter-fill", {
+            }), m(".card-project-description.alt", [ m(".fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base", [ m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.project_name) ]), m(".w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20", "por " + project.owner_name), m(".w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller", [ m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.headline) ]) ]), m(".w-hidden-small.w-hidden-tiny.card-project-author.altt", [ m(".fontsize-smallest.fontcolor-secondary", [ m("span.fa.fa-map-marker.fa-1", " "), " " + project.city_name + ", " + project.state_acronym ]) ]), m(".card-project-meter", [ m(".meter", [ m(".meter-fill", {
                 style: {
                     width: (progress > 100 ? 100 : progress) + "%"
                 }
@@ -826,28 +828,33 @@ window.c = function() {
     return {
         controller: function() {
             var vm = {
+                recommendedCollection: m.prop([]),
                 recentCollection: m.prop([]),
                 expiringCollection: m.prop([])
             }, expiring = m.postgrest.filtersVM({
-                expires_at: "lte",
-                state: "eq"
+                origin: "eq"
             });
-            return expiring.expires_at(moment().add(7, "days").format("YYYY-MM-DD")), expiring.state("online"), 
-            recent = m.postgrest.filtersVM({
-                created_at: "gte",
-                state: "eq"
-            }), recent.created_at(moment().subtract(30, "days").format("YYYY-MM-DD")), recent.state("online"), 
-            c.models.project.getPage(1, recent.parameters()).then(function(data) {
+            return expiring.origin("expiring"), recommended = m.postgrest.filtersVM({
+                origin: "eq"
+            }), recommended.origin("recommended"), recents = m.postgrest.filtersVM({
+                origin: "eq"
+            }), recents.origin("recents"), c.models.projectsForHome.getPage(1, recommended.parameters()).then(function(data) {
+                vm.recommendedCollection(data);
+            }), c.models.projectsForHome.getPage(1, recents.parameters()).then(function(data) {
                 vm.recentCollection(data);
-            }), c.models.project.getPage(1, expiring.parameters()).then(function(data) {
+            }), c.models.projectsForHome.getPage(1, expiring.parameters()).then(function(data) {
                 vm.expiringCollection(data);
             }), {
                 vm: vm
             };
         },
         view: function(ctrl) {
-            var recentCollection = ctrl.vm.recentCollection, expiringCollection = ctrl.vm.expiringCollection;
-            return [ m(".w-section.hero-full.hero-knowmore", [ m(".w-container.u-text-center", [ m(".hero-home-words-content", [ m(".fontsize-megajumbo.u-marginbottom-60.fontweight-semibold", [ m(".w-embed.w-hidden-tiny", [ m(".cd-headline.letters.type", [ m("span", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "peças de teatro"), m("b", "fotografias") ]), m("span", "do papel") ]) ]), m(".w-embed.w-hidden-main.w-hidden-medium.w-hidden-small", [ m(".cd-headline.letters.type", [ m("", "Tire"), m("span.cd-words-wrapper.waiting", [ m("b.is-visible", "atitudes"), m("b", "fotografias") ]), m("", "do papel") ]) ]) ]) ]), m(".w-row", [ m(".w-col.w-col-4"), m(".w-col.w-col-4", [ m("a.btn.btn-large.u-marginbottom-10[href='hello.html']", "Saiba mais") ]), m(".w-col.w-col-4") ]) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recentes") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(recentCollection(), function(project) {
+            var recentCollection = ctrl.vm.recentCollection, recommendedCollection = ctrl.vm.recommendedCollection, expiringCollection = ctrl.vm.expiringCollection;
+            return [ m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recomendados") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(recommendedCollection(), function(project) {
+                return m.component(c.ProjectCard, {
+                    project: project
+                });
+            })) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recentes") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(recentCollection(), function(project) {
                 return m.component(c.ProjectCard, {
                     project: project
                 });
@@ -855,7 +862,7 @@ window.c = function() {
                 return m.component(c.ProjectCard, {
                     project: project
                 });
-            })) ]) ]), m(".w-section.section-large.bg-gray.before-footer", [ m(".w-container", [ m(".u-text-center", [ m("img.u-marginbottom-10[src='images/icon-blog.png'][width='83']"), m(".fontsize-large.u-marginbottom-60.text-success", "Blog do Catarse") ]), m(".w-row", [ m(".w-col.w-col-4.col-blog-post", [ m("", [ m("", [ m(".fontweight-semibold.fontsize-base.u-marginbottom-10", "Como 36 pessoas mudaram o sistema de transporte de uma cidade inteira"), m(".fontsize-smaller.fontcolor-secondary", "O espaço público das cidades está em constante disputa não apenas entre uma infinidade de grupos de interesse, mas também com a própria burocracia e ineficácia do poder público.") ]) ]) ]), m(".w-col.w-col-4.col-blog-post", [ m(".fontweight-semibold.fontsize-base.u-marginbottom-10", "Retrospectiva Dois Mil e Catarse: R$ 1 milhão por mês"), m(".fontsize-smaller.fontcolor-secondary", "O ano que já veio com trocadilho pronto foi de fato fantástico para nós. Nesses quase quatro anos, já passaram pelo Catarse 2.700 projetos, dos quais 1.480 (55%) alcançaram a meta de financiamento. ") ]), m(".w-col.w-col-4.col-blog-post", [ m(".fontweight-semibold.fontsize-base.u-marginbottom-10", "Retrospectiva Dois Mil e Catarse: R$ 1 milhão por mês"), m(".fontsize-smaller.fontcolor-secondary", "O ano que já veio com trocadilho pronto foi de fato fantástico para nós. Nesses quase quatro anos, já passaram pelo Catarse 2.700 projetos, dos quais 1.480 (55%) alcançaram a meta de financiamento. ") ]) ]) ]) ]) ];
+            })) ]) ]) ];
         }
     };
 }(window.m, window.c), window.c.project.Insights = function(m, c, models, _) {
