@@ -8,6 +8,7 @@ window.c = function() {
     return {
         models: {},
         pages: {},
+        contribution: {},
         admin: {},
         project: {},
         h: {}
@@ -829,13 +830,7 @@ window.c = function() {
             }) ]);
         }
     };
-}(window.m, window.c.h, window.c.models), window.c.pages.Team = function(m, c) {
-    return {
-        view: function() {
-            return m("#static-team-app", [ m.component(c.TeamTotal), m.component(c.TeamMembers) ]);
-        }
-    };
-}(window.m, window.c), window.c.project.Index = function(m, c) {
+}(window.m, window.c.h, window.c.models), window.c.contribution.projectsHome = function(m, c) {
     return {
         controller: function() {
             var vm = {
@@ -879,6 +874,12 @@ window.c = function() {
                     collection: collection
                 });
             }) ];
+        }
+    };
+}(window.m, window.c), window.c.pages.Team = function(m, c) {
+    return {
+        view: function() {
+            return m("#static-team-app", [ m.component(c.TeamTotal), m.component(c.TeamMembers) ]);
         }
     };
 }(window.m, window.c), window.c.project.Insights = function(m, c, models, _) {

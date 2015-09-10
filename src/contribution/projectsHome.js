@@ -1,4 +1,4 @@
-window.c.project.Index = (function(m, c){
+window.c.contribution.projectsHome = (function(m, c){
   return {
 
     controller: function() {
