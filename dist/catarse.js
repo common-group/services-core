@@ -776,6 +776,17 @@ window.c = function() {
             return m("#project-reminder-count.card.u-radius.u-text-center.medium.u-marginbottom-80", [ m(".fontsize-large.fontweight-semibold", "Total de pessoas que clicaram no botão Lembrar-me"), m(".fontsize-smaller.u-marginbottom-30", "Um lembrete por email é enviado 48 horas antes do término da sua campanha"), m(".fontsize-jumbo", project.reminder_count) ]);
         }
     };
+}(window.m), window.c.ProjectRow = function(m) {
+    return {
+        view: function(ctrl, args) {
+            var collection = args.collection;
+            return m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", collection.title) ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='/pt/explore?ref=home_" + collection.hash + "#" + collection.hash + "']", "Ver todos") ]) ]), m(".w-row", _.map(collection.collection(), function(project) {
+                return m.component(c.ProjectCard, {
+                    project: project
+                });
+            })) ]) ]);
+        }
+    };
 }(window.m), window.c.TeamMembers = function(_, m, models) {
     return {
         controller: function() {
@@ -834,7 +845,7 @@ window.c = function() {
             }, expiring = m.postgrest.filtersVM({
                 origin: "eq"
             });
-            return expiring.origin("expiring"), recommended = m.postgrest.filtersVM({
+            expiring.origin("expiring"), recommended = m.postgrest.filtersVM({
                 origin: "eq"
             }), recommended.origin("recommended"), recents = m.postgrest.filtersVM({
                 origin: "eq"
@@ -844,25 +855,30 @@ window.c = function() {
                 vm.recentCollection(data);
             }), c.models.projectsForHome.getPage(1, expiring.parameters()).then(function(data) {
                 vm.expiringCollection(data);
-            }), {
-                vm: vm
+            });
+            var collections = [ {
+                title: "Recomendados",
+                hash: "recommended",
+                collection: vm.recommendedCollection
+            }, {
+                title: "Recentes",
+                hash: "recents",
+                collection: vm.recentCollection
+            }, {
+                title: "Na reta final",
+                hash: "expiring",
+                collection: vm.expiringCollection
+            } ];
+            return {
+                collections: collections
             };
         },
         view: function(ctrl) {
-            var recentCollection = ctrl.vm.recentCollection, recommendedCollection = ctrl.vm.recommendedCollection, expiringCollection = ctrl.vm.expiringCollection;
-            return [ m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recomendados") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(recommendedCollection(), function(project) {
-                return m.component(c.ProjectCard, {
-                    project: project
+            return [ _.map(ctrl.collections, function(collection) {
+                return m.component(c.ProjectRow, {
+                    collection: collection
                 });
-            })) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Recentes") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(recentCollection(), function(project) {
-                return m.component(c.ProjectCard, {
-                    project: project
-                });
-            })) ]) ]), m(".w-section.section.u-marginbottom-40", [ m(".w-container", [ m(".w-row.u-marginbottom-30", [ m(".w-col.w-col-10.w-col-small-6.w-col-tiny-6", [ m(".fontsize-large.lineheight-looser", "Na reta final") ]), m(".w-col.w-col-2.w-col-small-6.w-col-tiny-6", [ m("a.btn.btn-small.btn-terciary[href='#']", "Ver todos") ]) ]), m(".w-row", _.map(expiringCollection(), function(project) {
-                return m.component(c.ProjectCard, {
-                    project: project
-                });
-            })) ]) ]) ];
+            }) ];
         }
     };
 }(window.m, window.c), window.c.project.Insights = function(m, c, models, _) {
