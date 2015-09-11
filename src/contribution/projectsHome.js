@@ -6,22 +6,28 @@ window.c.contribution.projectsHome = (function(m, c){
                 recentCollection: m.prop([]),
                 expiringCollection: m.prop([])
           },
-          expiring = m.postgrest.filtersVM({origin: 'eq'});
-          expiring.origin('expiring');
-          recommended = m.postgrest.filtersVM({origin: 'eq'});
-          recommended.origin('recommended');
-          recents = m.postgrest.filtersVM({origin: 'eq'});
-          recents.origin('recents');
 
-      c.models.projectsForHome.getPage(1, recommended.parameters()).then(function(data){
+          expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'});
+          expiring.expires_at(moment().add(7, 'days').format('YYYY-MM-DD'));
+          expiring.state('online');
+
+          recents = m.postgrest.filtersVM({created_at: 'gte', state: 'eq'});
+          recents.created_at(moment().subtract(7, 'days').format('YYYY-MM-DD'));
+          recents.state('online');
+
+          recommended = m.postgrest.filtersVM({recommended: 'eq', state: 'eq'});
+          recommended.recommended('true');
+          recommended.state('online');
+
+      c.models.project.getPage(1, recommended.parameters()).then(function(data){
         vm.recommendedCollection(data);
       });
 
-      c.models.projectsForHome.getPage(1, recents.parameters()).then(function(data){
+      c.models.project.getPage(1, recents.parameters()).then(function(data){
         vm.recentCollection(data);
       });
 
-      c.models.projectsForHome.getPage(1, expiring.parameters()).then(function(data){
+      c.models.project.getPage(1, expiring.parameters()).then(function(data){
         vm.expiringCollection(data);
       });
 

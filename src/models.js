@@ -10,7 +10,7 @@ window.c.models = (function(m){
   projectsForHome = m.postgrest.model('projects_for_home'),
   teamMember = m.postgrest.model('team_members');
   teamMember.pageSize(40);
-  //project.pageSize(3);
+  project.pageSize(3);
   projectsForHome.pageSize(9);
 
   return {

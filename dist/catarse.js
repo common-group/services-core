@@ -26,16 +26,15 @@ window.c = function() {
             return (c ? num.replace(".", c) : num).replace(new RegExp(re, "g"), "$&" + (s || ","));
         };
     }, formatNumber = generateFormatNumber(".", ","), generateRemaingTime = function(project) {
-        var time, remainingTextObj = m.prop({}), translatedTime = {
+        var remainingTextObj = m.prop({}), translatedTime = {
             days: "dias",
             minutes: "minutos",
             hours: "horas",
             seconds: "segundos"
         };
-        return time = "string" == typeof project.remaining_time ? JSON.parse(project.remaining_time) : project.remaining_time, 
-        remainingTextObj({
-            unit: translatedTime[time.unit || "seconds"],
-            total: time.total
+        return remainingTextObj({
+            unit: translatedTime[project.remaining_time.unit || "seconds"],
+            total: project.remaining_time.total
         }), remainingTextObj;
     }, toggleProp = function(defaultState, alternateState) {
         var p = m.prop(defaultState);
@@ -58,7 +57,8 @@ window.c = function() {
     };
 }(window.m, window.moment), window.c.models = function(m) {
     var contributionDetail = m.postgrest.model("contribution_details"), projectDetail = m.postgrest.model("project_details"), contributions = m.postgrest.model("contributions"), teamTotal = m.postgrest.model("team_totals"), projectContributionsPerDay = m.postgrest.model("project_contributions_per_day"), projectContributionsPerLocation = m.postgrest.model("project_contributions_per_location"), project = m.postgrest.model("projects"), projectsForHome = m.postgrest.model("projects_for_home"), teamMember = m.postgrest.model("team_members");
-    return teamMember.pageSize(40), projectsForHome.pageSize(9), {
+    return teamMember.pageSize(40), project.pageSize(3), projectsForHome.pageSize(9), 
+    {
         contributionDetail: contributionDetail,
         projectDetail: projectDetail,
         contributions: contributions,
@@ -838,17 +838,22 @@ window.c = function() {
                 recentCollection: m.prop([]),
                 expiringCollection: m.prop([])
             }, expiring = m.postgrest.filtersVM({
-                origin: "eq"
+                expires_at: "lte",
+                state: "eq"
             });
-            expiring.origin("expiring"), recommended = m.postgrest.filtersVM({
-                origin: "eq"
-            }), recommended.origin("recommended"), recents = m.postgrest.filtersVM({
-                origin: "eq"
-            }), recents.origin("recents"), c.models.projectsForHome.getPage(1, recommended.parameters()).then(function(data) {
+            expiring.expires_at(moment().add(7, "days").format("YYYY-MM-DD")), expiring.state("online"), 
+            recents = m.postgrest.filtersVM({
+                created_at: "gte",
+                state: "eq"
+            }), recents.created_at(moment().subtract(7, "days").format("YYYY-MM-DD")), recents.state("online"), 
+            recommended = m.postgrest.filtersVM({
+                recommended: "eq",
+                state: "eq"
+            }), recommended.recommended("true"), recommended.state("online"), c.models.project.getPage(1, recommended.parameters()).then(function(data) {
                 vm.recommendedCollection(data);
-            }), c.models.projectsForHome.getPage(1, recents.parameters()).then(function(data) {
+            }), c.models.project.getPage(1, recents.parameters()).then(function(data) {
                 vm.recentCollection(data);
-            }), c.models.projectsForHome.getPage(1, expiring.parameters()).then(function(data) {
+            }), c.models.project.getPage(1, expiring.parameters()).then(function(data) {
                 vm.expiringCollection(data);
             });
             var collections = [ {

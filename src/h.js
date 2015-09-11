@@ -33,17 +33,11 @@ window.c.h = (function(m, moment){
           minutes: 'minutos',
           hours: 'horas',
           seconds: 'segundos'
-        },
-        time; 
-        if(typeof ( project.remaining_time ) === 'string'){
-           time = JSON.parse(project.remaining_time);
-        } else{
-           time = project.remaining_time;
-        }
+        };
 
     remainingTextObj({
-      unit: translatedTime[time.unit || 'seconds'],
-      total: time.total
+      unit: translatedTime[project.remaining_time.unit || 'seconds'],
+      total: project.remaining_time.total
     });
 
     return remainingTextObj;
