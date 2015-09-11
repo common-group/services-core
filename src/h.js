@@ -22,7 +22,6 @@ window.c.h = (function(m, moment){
       return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
     };
   },
-
   formatNumber = generateFormatNumber('.', ','),
 
   //Object manipulation helpers
