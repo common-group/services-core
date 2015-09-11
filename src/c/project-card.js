@@ -48,8 +48,7 @@ window.c.ProjectCard = (function(m, h, models){
               ])
             ])
           ])
-        ]),
-        m(".card-project")
+        ])
       ]);
     }
   };
