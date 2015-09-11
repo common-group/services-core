@@ -8,11 +8,11 @@ window.c.contribution.projectsHome = (function(m, c){
           },
 
           expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'});
-          expiring.expires_at(moment().add(7, 'days').format('YYYY-MM-DD'));
+          expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
           expiring.state('online');
 
-          recents = m.postgrest.filtersVM({created_at: 'gte', state: 'eq'});
-          recents.created_at(moment().subtract(7, 'days').format('YYYY-MM-DD'));
+          recents = m.postgrest.filtersVM({online_date: 'gte', state: 'eq'});
+          recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
           recents.state('online');
 
           recommended = m.postgrest.filtersVM({recommended: 'eq', state: 'eq'});
