@@ -29,6 +29,7 @@ window.c.admin.Contributions = (function(m, c, h){
               data: {
                 getKey: 'user_id',
                 updateKey: 'id',
+                property: 'contribution_id',
                 callToAction: 'Transferir',
                 innerLabel: 'Id do novo apoiador:',
                 outerLabel: 'Transferir Apoio',
@@ -40,9 +41,12 @@ window.c.admin.Contributions = (function(m, c, h){
               component: 'AdminRadioAction',
               data: {
                 getKey: 'project_id',
-                updateKey: 'id',
-                model: c.models.rewardDetail,
-                callToAction: 'Alterar Recompensa'
+                updateKey: 'contribution_id',
+                property: 'reward_id',
+                callToAction: 'Alterar Recompensa',
+                outerLabel: 'Recompensa',
+                getModel: c.models.projectDetail,
+                updateModel: c.models.contributionDetail
               }
             }
           ],
