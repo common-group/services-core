@@ -38,15 +38,16 @@ window.c.contribution.projectsHome = (function(m, c){
           collection: vm.recommendedCollection
         },
         {
-          title: 'Recentes',
-          hash: 'recents',
-          collection: vm.recentCollection
-        },
-        {
           title: 'Na reta final',
           hash: 'expiring',
           collection: vm.expiringCollection
-        }];
+        },
+        {
+          title: 'Recentes',
+          hash: 'recent',
+          collection: vm.recentCollection
+        }
+      ];
 
 
       return {
