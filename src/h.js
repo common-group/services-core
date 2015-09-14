@@ -59,6 +59,14 @@ window.c.h = (function(m, moment){
     return (count > 1 ? count + p : count + s);
   },
 
+  simpleFormat = function(str) {
+    str = str.replace(/\r\n?/, "\n");
+    if (str.length > 0) {
+      str = str.replace(/\n\n+/g, '</p><p>');
+      str = str.replace(/\n/g, '<br />');
+      str = '<p>' + str + '</p>';
+    }
+    return str;
   };
 
   return {
@@ -70,5 +78,6 @@ window.c.h = (function(m, moment){
     loader: loader,
     fbParse: fbParse,
     pluralize: pluralize,
+    simpleFormat: simpleFormat,
   };
 }(window.m, window.moment));
