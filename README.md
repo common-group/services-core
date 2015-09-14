@@ -22,3 +22,7 @@ To watch source files without running testing or linting tasks, run:
 
 To trigger a build cycle without watching files, run:
 ```gulp build```
+
+## Troubleshooting
+
+If you can't run `gulp` try to install it with `npm install -g gulp`
