@@ -43,6 +43,7 @@ window.c.admin.Contributions = (function(m, c, h){
                 getKey: 'project_id',
                 updateKey: 'contribution_id',
                 property: 'reward_id',
+                radios: 'rewards',
                 callToAction: 'Alterar Recompensa',
                 outerLabel: 'Recompensa',
                 getModel: c.models.projectDetail,
