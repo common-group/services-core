@@ -8,11 +8,9 @@ window.c.AdminInputAction = (function(m, h, c){
           data = {},
           item = args.item,
           key = builder.getKey,
-          newValue = m.prop(''),
-          updateVM = m.postgrest.filtersVM({contribution_id: 'eq'});
+          newValue = m.prop('');
 
       h.idVM.id(item[builder.updateKey]);
-      updateVM.contribution_id(item.contribution_id);
 
       var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
