@@ -41,6 +41,18 @@ window.c.h = (function(m, moment){
     return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
       m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
     ]);
+  },
+
+  fbParse = function() {
+    var tryParse = function() {
+      try {
+        window.FB.XFBML.parse();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
   };
 
   return {
@@ -49,6 +61,7 @@ window.c.h = (function(m, moment){
     formatNumber: formatNumber,
     idVM: idVM,
     toggleProp: toggleProp,
-    loader: loader
+    loader: loader,
+    fbParse: fbParse,
   };
 }(window.m, window.moment));
