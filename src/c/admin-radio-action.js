@@ -3,27 +3,48 @@ window.c.AdminRadioAction = (function(m, h, c){
     controller: function(args){
       var builder = args.data,
           complete = m.prop(false),
+          data = {},
+          description = m.prop(args.item.reward.description || ''),
           error = m.prop(false),
           fail = m.prop(false),
-          data = {},
           item = args.item,
           key = builder.getKey,
           newValue = m.prop(''),
-          updateVM = m.postgrest.filtersVM({contribution_id: 'eq'});
+          getFilter = {},
+          updateFilter = {},
+          radios = m.prop(),
+          getKey = builder.getKey,
+          getAttr = builder.radios,
+          updateKey = builder.updateKey;
 
-      h.idVM.id(item[builder.updateKey]);
-      updateVM.contribution_id(item.contribution_id);
+      updateFilter[updateKey] = 'eq';
+      var updateVM = m.postgrest.filtersVM(updateFilter);
+      updateVM[updateKey](item[updateKey]);
 
-      var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
+      getFilter[getKey] = 'eq';
+      var getVM = m.postgrest.filtersVM(getFilter);
+      getVM[getKey](item[getKey]);
+
+      var setLoader = m.postgrest.loaderWithToken(builder.updateModel.patchOptions(updateVM.parameters(), data));
+
+      var getLoader = m.postgrest.loaderWithToken(builder.getModel.getRowOptions(getVM.parameters()));
 
       var updateItem = function(data){
         _.extend(item, data[0]);
         complete(true);
       };
 
+      var fetch = function(){
+        getLoader.load().then(function(item){
+          radios(item[0][getAttr]);
+        }, error);
+      };
+
       var submit = function(){
-        data[key] = newValue();
-        l.load().then(updateItem, error);
+        if (newValue()) {
+          data[builder.property] = newValue();
+          setLoader.load().then(updateItem, error);
+        }
         return false;
       };
 
@@ -35,19 +56,31 @@ window.c.AdminRadioAction = (function(m, h, c){
         };
       };
 
+      var setDescription = function(text){
+        description(text);
+        m.redraw();
+      };
+
+      fetch();
+
       return {
         complete: complete,
+        description: description,
+        setDescription: setDescription,
         error: error,
-        l: l,
+        setLoader: setLoader,
+        getLoader: getLoader,
         newValue: newValue,
         submit: submit,
         toggler: h.toggleProp(false, true),
-        unload: unload
+        unload: unload,
+        radios: radios
       };
     },
     view: function(ctrl, args){
       var data = args.data,
-          btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
+          setters = [],
+          btnValue = (ctrl.setLoader() || ctrl.getLoader()) ? 'por favor, aguarde...' : data.callToAction;
 
       return m('.w-col.w-col-2',[
         m('button.btn.btn-small.btn-terciary', {
@@ -58,13 +91,24 @@ window.c.AdminRadioAction = (function(m, h, c){
             m('form.w-form', {
               onsubmit: ctrl.submit
             }, (!ctrl.complete()) ? [
-                  _.map(ctrl.radios(), function(radio, index){
-                    return m('.w-radio', [
-                      m('input#r-' + index + '.w-radio-input[type=radio][value="' + radio.id + '"]'),
-                      m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.value)
-                    ]);
-                  }),
-                  m('p', ctrl.activeText()),
+                  (ctrl.radios()) ?
+                    _.map(ctrl.radios(), function(radio, index){
+                      var set = function(){
+                        ctrl.newValue(radio.id);
+                        ctrl.setDescription(radio.description);
+                      };
+                      var selected = (radio.id === args.item.reward.id) ? true : false;
+                      setters[index] = set;
+
+                      return m('.w-radio', [
+                        m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + ((selected) ? '[checked]' : ''),{
+                          onclick: setters[index]
+                        }),
+                        m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.minimum_value)
+                      ]);
+                    }) : h.loader(),
+                  m('strong', 'Descrição'),
+                  m('p', ctrl.description()),
                   m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
                 ] : (!ctrl.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
