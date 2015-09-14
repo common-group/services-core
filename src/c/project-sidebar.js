@@ -61,7 +61,8 @@ window.c.ProjectSidebar = (function(m, h, c){
           ]),
           (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''),
           m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText()),
-          m.component(c.UserCard, {userId: project.user_id})
+          m.component(c.UserCard, {userId: project.user_id}),
+          m.component(c.ProjectRewardList, {project: project})
         ])
       ]);
     }
