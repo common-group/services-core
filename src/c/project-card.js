@@ -1,16 +1,10 @@
 window.c.ProjectCard = (function(m, h, models){
   return {
-    controller: function(args) {
-      var project = args.project;
-      return {
-        remainingTextObj: h.generateRemaingTime(project)
-      };
-    },
 
     view: function(ctrl, args) {
       var project = args.project,
-          remainingTextObj = ctrl.remainingTextObj(),
-          progress = project.progress.toFixed(2);
+          progress = project.progress.toFixed(2),
+          remainingTextObj = h.generateRemaingTime(project)();
 
       return m(".w-col.w-col-4", [
         m(".card-project.card.u-radius", [
