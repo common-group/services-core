@@ -53,6 +53,12 @@ window.c.h = (function(m, moment){
     };
 
     return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
+  },
+
+  pluralize = function(count, s, p) {
+    return (count > 1 ? count + p : count + s);
+  },
+
   };
 
   return {
@@ -63,5 +69,6 @@ window.c.h = (function(m, moment){
     toggleProp: toggleProp,
     loader: loader,
     fbParse: fbParse,
+    pluralize: pluralize,
   };
 }(window.m, window.moment));
