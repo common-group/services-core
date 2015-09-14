@@ -10,6 +10,24 @@ window.c.h = (function(m, moment){
     return european.isValid() ? european : moment(date);
   },
 
+  //Object manipulation helpers
+  generateRemaingTime = function(project) {
+    var remainingTextObj = m.prop({}),
+        translatedTime = {
+          days: 'dias',
+          minutes: 'minutos',
+          hours: 'horas',
+          seconds: 'segundos'
+        };
+
+    remainingTextObj({
+      unit: translatedTime[project.remaining_time.unit || 'seconds'],
+      total: project.remaining_time.total
+    });
+
+    return remainingTextObj;
+  },
+
   //Number formatting helpers
   generateFormatNumber = function(s, c){
     return function(number, n, x) {
@@ -79,5 +97,6 @@ window.c.h = (function(m, moment){
     fbParse: fbParse,
     pluralize: pluralize,
     simpleFormat: simpleFormat,
+    generateRemaingTime: generateRemaingTime
   };
 }(window.m, window.moment));
