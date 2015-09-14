@@ -23,6 +23,11 @@ To watch source files without running testing or linting tasks, run:
 To trigger a build cycle without watching files, run:
 ```gulp build```
 
+To link catarse.js with catarse, run:
+```bower link```
+Then, in you catarse repository, run:
+```bower link catarse.js```
+
 ## Troubleshooting
 
 If you can't run `gulp` try to install it with `npm install -g gulp`
