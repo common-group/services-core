@@ -92,6 +92,8 @@ window.c.h = (function(m, moment){
         (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
   },
 
+  rewardRemaning = function(reward) {
+    return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
   };
 
   return {
@@ -106,5 +108,6 @@ window.c.h = (function(m, moment){
     simpleFormat: simpleFormat,
     generateRemaingTime: generateRemaingTime,
     rewardSouldOut: rewardSouldOut,
+    rewardRemaning: rewardRemaning
   };
 }(window.m, window.moment));
