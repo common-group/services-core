@@ -6,6 +6,7 @@ window.c.ProjectMain = (function(m, c, _, h){
             var hash = window.location.hash,
                 c_opts = {project: project},
                 routes = {
+                  '#rewards': m('.w-col.w-col-12', m.component(c.ProjectRewardList, c_opts)),
                   '#about': m.component(c.ProjectAbout, c_opts),
                   '#comments': m.component(c.ProjectComments, c_opts)
                 };
