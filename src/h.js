@@ -94,6 +94,12 @@ window.c.h = (function(m, moment){
 
   rewardRemaning = function(reward) {
     return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
+  },
+
+  parseUrl = function(href) {
+    var l = document.createElement('a');
+    l.href = href;
+    return l;
   };
 
   return {
@@ -108,6 +114,7 @@ window.c.h = (function(m, moment){
     simpleFormat: simpleFormat,
     generateRemaingTime: generateRemaingTime,
     rewardSouldOut: rewardSouldOut,
-    rewardRemaning: rewardRemaning
+    rewardRemaning: rewardRemaning,
+    parseUrl: parseUrl
   };
 }(window.m, window.moment));
