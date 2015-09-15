@@ -4,6 +4,7 @@ window.c.AdminRadioAction = (function(m, h, c){
       var builder = args.data,
           complete = m.prop(false),
           data = {},
+          //TODO: Implement a descriptor to abstract the initial description
           description = m.prop(args.item.reward.description || ''),
           error = m.prop(false),
           fail = m.prop(false),
@@ -11,23 +12,23 @@ window.c.AdminRadioAction = (function(m, h, c){
           key = builder.getKey,
           newValue = m.prop(''),
           getFilter = {},
-          updateFilter = {},
+          setFilter = {},
           radios = m.prop(),
           getKey = builder.getKey,
           getAttr = builder.radios,
           updateKey = builder.updateKey;
 
-      updateFilter[updateKey] = 'eq';
-      var updateVM = m.postgrest.filtersVM(updateFilter);
-      updateVM[updateKey](item[updateKey]);
+      setFilter[updateKey] = 'eq';
+      var setVM = m.postgrest.filtersVM(setFilter);
+      setVM[updateKey](item[updateKey]);
 
       getFilter[getKey] = 'eq';
       var getVM = m.postgrest.filtersVM(getFilter);
       getVM[getKey](item[getKey]);
 
-      var setLoader = m.postgrest.loaderWithToken(builder.updateModel.patchOptions(updateVM.parameters(), data));
-
       var getLoader = m.postgrest.loaderWithToken(builder.getModel.getRowOptions(getVM.parameters()));
+
+      var setLoader = m.postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
       var updateItem = function(data){
         _.extend(item, data[0]);
@@ -90,7 +91,7 @@ window.c.AdminRadioAction = (function(m, h, c){
           m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {config: ctrl.unload},[
             m('form.w-form', {
               onsubmit: ctrl.submit
-            }, (!ctrl.complete()) ? [
+            }, (!ctrl.complete() || !ctrl.error()) ? [
                   (ctrl.radios()) ?
                     _.map(ctrl.radios(), function(radio, index){
                       var set = function(){
