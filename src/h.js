@@ -78,13 +78,20 @@ window.c.h = (function(m, moment){
   },
 
   simpleFormat = function(str) {
-    str = str.replace(/\r\n?/, "\n");
+    str = str.replace(/\r\n?/, '\n');
     if (str.length > 0) {
       str = str.replace(/\n\n+/g, '</p><p>');
       str = str.replace(/\n/g, '<br />');
       str = '<p>' + str + '</p>';
     }
     return str;
+  },
+
+  rewardSouldOut = function(reward) {
+    return (reward.maximum_contributions > 0 ?
+        (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
+  },
+
   };
 
   return {
@@ -97,6 +104,7 @@ window.c.h = (function(m, moment){
     fbParse: fbParse,
     pluralize: pluralize,
     simpleFormat: simpleFormat,
-    generateRemaingTime: generateRemaingTime
+    generateRemaingTime: generateRemaingTime,
+    rewardSouldOut: rewardSouldOut,
   };
 }(window.m, window.moment));
