@@ -91,7 +91,7 @@ window.c.AdminRadioAction = (function(m, h, c){
           m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {config: ctrl.unload},[
             m('form.w-form', {
               onsubmit: ctrl.submit
-            }, (!ctrl.complete() || !ctrl.error()) ? [
+            }, (!ctrl.complete()) ? [
                   (ctrl.radios()) ?
                     _.map(ctrl.radios(), function(radio, index){
                       var set = function(){
