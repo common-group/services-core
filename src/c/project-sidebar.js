@@ -29,7 +29,6 @@ window.c.ProjectSidebar = (function(m, h, c){
             return states[project.state];
           };
 
-
       return {
         displayCardClass: displayCardClass,
         displayStatusText: displayStatusText
@@ -40,30 +39,35 @@ window.c.ProjectSidebar = (function(m, h, c){
       var project = args.project,
           timeObj = h.generateRemaingTime(project)();
 
-      return m('#project-sidebar.aside.w-col.w-col-4', [
-        m('.project-stats', [
-          m('.project-stats-numbers.u-marginbottom-20.w-hidden-small.w-hidden-tiny', [
-            m('.w-hidden-small.w-hidden-tiny.u-marginbottom-10', [
+      return m('#project-sidebar.aside', [
+        m('.project-stats.mf', [
+          m('.w-clearfix.u-marginbottom-20', [
+            m('.w-col.w-col-tiny-6.w-col-small-4.fontweight-semibold.u-marginbottom-20', [
               m('.fontsize-largest', 'R$ ' + h.formatNumber(project.pledged)),
-              m('.fontsize-small', 'atingidos de R$ ' + h.formatNumber(project.goal))
+              m('.fontsize-smaller.lineheight-tightest', 'atingidos de R$ ' + h.formatNumber(project.goal))
             ]),
-            m('.w-hidden-small.w-hidden-tiny.u-marginbottom-10', [
+            m('.w-col.w-col-tiny-3.w-col-small-4.fontweight-semibold.u-marginbottom-20', [
               m('.fontsize-largest', project.total_contributions),
-              m('.fontsize-small', 'apoios')
+              m('.fontsize-smaller.lineheight-tightest', 'apoios')
             ]),
-            m('.w-hidden-small.w-hidden-tiny.u-marginbottom-10', [
+            m('.w-col.w-col-tiny-3.w-col-small-4.u-marginbottom-10.fontweight-semibold', [
               m('.fontsize-largest', (project.is_published ? timeObj.total : (project.online_days || 0))),
-              m('.fontsize-small', [
+              m('.fontsize-smaller.lineheight-tightest', [
                 m('span[style="text-transform:capitalize;"]', (project.is_published ? timeObj.unit : 'dias')),
                 ' restantes'
               ])
             ])
-          ]),
-          (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''),
-          m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText()),
-          m.component(c.UserCard, {userId: project.user_id}),
-          m.component(c.ProjectRewardList, {project: project})
-        ])
+          ])
+        ]),
+        (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''),
+        (project.open_for_contributions ? m('.u-text-center.u-marginbottom-30', [
+          m('a.link-hidden.fontsize-small.fontcolor-secondary.fontweight-semibold[href="js:void(0);"]', [
+            m('span.fa.fa-clock-o'),
+            '  Lembrar-me'
+          ])
+        ]) : ''),
+        m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText()),
+        m('.user-c', m.component(c.ProjectUserCard, {userId: project.user_id}))
       ]);
     }
   };
