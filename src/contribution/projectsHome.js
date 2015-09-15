@@ -4,12 +4,17 @@ window.c.contribution.projectsHome = (function(m, c){
     controller: function() {
       var vm = {recommendedCollection: m.prop([]),
                 recentCollection: m.prop([]),
+                nearMeCollection: m.prop([]),
                 expiringCollection: m.prop([])
           },
 
           expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'});
           expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
           expiring.state('online');
+
+          nearMe = m.postgrest.filtersVM({near_me: 'eq', state: 'eq'});
+          nearMe.near_me('true');
+          nearMe.state('online');
 
           recents = m.postgrest.filtersVM({online_date: 'gte', state: 'eq'});
           recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
@@ -19,19 +24,28 @@ window.c.contribution.projectsHome = (function(m, c){
           recommended.recommended('true');
           recommended.state('online');
 
-      c.models.project.getPage(1, recommended.parameters()).then(function(data){
+      c.models.project.getPage(nearMe.parameters()).then(function(data){
+        vm.nearMeCollection(data);
+      });
+
+      c.models.project.getPage(recommended.parameters()).then(function(data){
         vm.recommendedCollection(data);
       });
 
-      c.models.project.getPage(1, recents.parameters()).then(function(data){
+      c.models.project.getPage(recents.parameters()).then(function(data){
         vm.recentCollection(data);
       });
 
-      c.models.project.getPage(1, expiring.parameters()).then(function(data){
+      c.models.project.getPage(expiring.parameters()).then(function(data){
         vm.expiringCollection(data);
       });
 
       var collections = [
+        {
+          title: 'Próximos a você',
+          hash: 'near_of',
+          collection: vm.nearMeCollection
+        },
         {
           title: 'Recomendados',
           hash: 'recommended',
