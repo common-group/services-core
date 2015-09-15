@@ -6,7 +6,6 @@ window.c.ProjectUserCard = (function(m, _, models, h){
 
       vm.id(args.userId);
 
-      //FIXME: can call anon requests when token fails (requestMaybeWithToken)
       models.userDetail.getRowWithToken(vm.parameters()).then(userDetails);
 
       return {
@@ -29,7 +28,7 @@ window.c.ProjectUserCard = (function(m, _, models, h){
                 m.trust('&nbsp;&nbsp;|&nbsp;&nbsp;'),
                 h.pluralize(userDetail.total_contributed_projects, ' apoiado', ' apoiados')
               ]),
-              m('ul.w-list-unstyled.fontsize-smaller.fontweight-semibold.u-margintop-20', [
+              m('ul.w-list-unstyled.fontsize-smaller.fontweight-semibold.u-margintop-20.u-marginbottom-20', [
                 (!_.isEmpty(userDetail.facebook_link) ? m('li', [
                   m('a.link-hidden[itemprop="url"][href="' + userDetail.facebook_link + '"][target="_blank"]', 'Perfil no Facebook')
                 ]) : ''),
@@ -37,12 +36,14 @@ window.c.ProjectUserCard = (function(m, _, models, h){
                   m('a.link-hidden[itemprop="url"][href="https://twitter.com/' + userDetail.twitter_username + '"][target="_blank"]', 'Perfil no Twitter')
                 ]) : ''),
                 _.map(userDetail.links, function(link){
-                  return (!_.isEmpty(link) ? m('li', [
-                    m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', link)
+                  var parsedLink = h.parseUrl(link);
+
+                  return (!_.isEmpty(parsedLink.hostname) ? m('li', [
+                    m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', parsedLink.hostname)
                   ]) : '');
                 })
               ]),
-              (!_.isEmpty(userDetail.email) ? m('a.u-margintop-10.w-hidden-small.w-hidden-tiny.fontsize-smallest.alt-link.fontweight-semibold[href="mailto:' + userDetail.email + '"][itemprop="email"][target="_blank"]', 'Enviar mensagem') : '')
+              (!_.isEmpty(userDetail.email) ? m('a.w-hidden-small.w-hidden-tiny.fontsize-smallest.alt-link.fontweight-semibold[href="mailto:' + userDetail.email + '"][itemprop="email"][target="_blank"]', 'Enviar mensagem') : '')
             ]),
           ]),
         ]);
