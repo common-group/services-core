@@ -30,10 +30,7 @@ window.c.ProjectMain = (function(m, c, _, h){
     view: function(ctrl) {
       return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
         m('.w-container', [
-          m('.w-row', [
-            m('article.w-hidden-small.w-hidden-tiny.w-col.w-col-8', ctrl.generateRoutes()),
-            m.component(c.ProjectSidebar, {project: ctrl.project})
-          ])
+          m('.w-row', ctrl.generateRoutes())
         ])
       ]);
     }
