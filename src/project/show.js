@@ -6,7 +6,7 @@ window.c.project.Show = (function(m, c, _, models){
 
       vm.project_id(args.root.getAttribute('data-id'));
 
-      models.projectDetail.getRow(vm.parameters()).then(projectDetails);
+      models.projectDetail.getRowWithToken(vm.parameters()).then(projectDetails);
 
       return {
         vm: vm,
