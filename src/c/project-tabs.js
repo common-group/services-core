@@ -2,27 +2,25 @@ window.c.ProjectTabs = (function(m){
   return {
     view: function(ctrl, args) {
       var project = args.project;
-      return m('nav.project-nav.w-hidden-small.w-hidden-tiny',[
+      return m('.w-section.project-nav.mf',[
         m('.w-container', [
           m('.w-row', [
-            m('.w-col.w-col-9.w-hidden-small.w-hidden-tiny', [
-              m('a#about_link.nav-tab[href="#about"]', 'Sobre'),
-              m('a#post_link.nav-tab[href="#posts"]', [
+            m('.w-col.w-col-9', [
+              //FIXME: need to adjust rewards on mobile
+              m('a.w-hidden-main.w-hidden-medium.dashboard-nav-link.mf.u-important-display-inline[href="#rewards"]', 'Recompensas'),
+              m('a.dashboard-nav-link.mf[href="#about"]', 'Sobre'),
+              m('a.dashboard-nav-link.mf[href="#posts"]', [
                 'Novidades',
                 m('span.badge', project.posts_count)
               ]),
-              m('a#contributions_link.nav-tab[href="#contributions"]', [
+              m('a.dashboard-nav-link.mf[href="#contributions"]', [
                 'Apoios',
-                m('span.badge', project.total_contributions)
+                m('span.badge.w-hidden-small.w-hidden-tiny', project.total_contributions)
               ]),
-              m('a#comments_link.nav-tab[href="#comments"]', [
+              m('a.dashboard-nav-link.mf[href="#comments"]', [
                 'Comentarios',
-                m('fb:comments-count[href="http://www.catarse.me/' + project.permalink + '"][class="badge project-fb-comment"][style="display: inline"]', m.trust('&nbsp;'))
+                m('fb:comments-count[href="http://www.catarse.me/' + project.permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;'))
               ]),
-            ]),
-            m('.w-col.w-col-3.w-hidden-small.w-hidden-tiny.w-clearfix.project-nav-category', [
-              m('a.link-hidden-light.u-right[href="/explore/by_category_id/#"' + project.category_id + ']', project.category_name),
-              m('img.project-nav-category-icon[width=22][src="/assets/catarse_bootstrap/tag-icon.png"]')
             ])
           ])
         ])
