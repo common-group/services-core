@@ -25,6 +25,23 @@ window.c.h = (function(m, moment){
   formatNumber = generateFormatNumber('.', ','),
 
   //Object manipulation helpers
+  generateRemaingTime = function(project) {
+    var remainingTextObj = m.prop({}),
+        translatedTime = {
+          days: 'dias',
+          minutes: 'minutos',
+          hours: 'horas',
+          seconds: 'segundos'
+        };
+
+    remainingTextObj({
+      unit: translatedTime[project.remaining_time.unit || 'seconds'],
+      total: project.remaining_time.total
+    });
+
+    return remainingTextObj;
+  },
+
   toggleProp = function(defaultState, alternateState){
     var p = m.prop(defaultState);
     p.toggle = function(){
@@ -49,6 +66,7 @@ window.c.h = (function(m, moment){
     formatNumber: formatNumber,
     idVM: idVM,
     toggleProp: toggleProp,
+    generateRemaingTime: generateRemaingTime,
     loader: loader
   };
 }(window.m, window.moment));
