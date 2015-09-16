@@ -8,15 +8,15 @@ window.c.ProjectCard = (function(m, h, models){
 
       return m('.w-col.w-col-4', [
         m('.card-project.card.u-radius', [
-          m('a.card-project-thumb[href="' +  project.permalink + '"][target="_blank"]', {style: {'background-image': 'url(' + project.project_img + ')', 'display': 'block'}}),
+          m('a.card-project-thumb[href="' +  project.permalink + '"]', {style: {'background-image': 'url(' + project.project_img + ')', 'display': 'block'}}),
           m('.card-project-description.alt', [
             m('.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base', [
-              m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.project_name)
+              m('a.link-hidden[href="/' + project.permalink + '"]', project.project_name)
             ]
           ),
             m('.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20', 'por ' + project.owner_name),
             m('.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller', [
-              m('a.link-hidden[target="_blank"][href="/' + project.permalink + '"]', project.headline)
+              m('a.link-hidden[href="/' + project.permalink + '"]', project.headline)
             ])
           ]),
           m('.w-hidden-small.w-hidden-tiny.card-project-author.altt', [
