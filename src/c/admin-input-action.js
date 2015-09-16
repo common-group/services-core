@@ -7,8 +7,8 @@ window.c.AdminInputAction = (function(m, h, c){
           fail = m.prop(false),
           data = {},
           item = args.item,
-          key = builder.getKey,
-          newValue = m.prop('');
+          key = builder.property,
+          newValue = m.prop(builder.forceValue || '');
 
       h.idVM.id(item[builder.updateKey]);
 
@@ -30,7 +30,7 @@ window.c.AdminInputAction = (function(m, h, c){
         context.onunload = function(){
           complete(false);
           error(false);
-          newValue('');
+          newValue(builder.forceValue || '');
         };
       };
 
@@ -58,7 +58,8 @@ window.c.AdminInputAction = (function(m, h, c){
               onsubmit: ctrl.submit
             }, (!ctrl.complete()) ? [
                   m('label', data.innerLabel),
-                  m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {onchange: m.withAttr('value', ctrl.newValue), value: ctrl.newValue()}),
+                  (!data.forceValue) ?
+                  m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {onchange: m.withAttr('value', ctrl.newValue), value: ctrl.newValue()}) : '',
                   m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
                 ] : (!ctrl.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
