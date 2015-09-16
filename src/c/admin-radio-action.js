@@ -80,7 +80,6 @@ window.c.AdminRadioAction = (function(m, h, c){
     },
     view: function(ctrl, args){
       var data = args.data,
-          setters = [],
           btnValue = (ctrl.setLoader() || ctrl.getLoader()) ? 'por favor, aguarde...' : data.callToAction;
 
       return m('.w-col.w-col-2',[
@@ -99,11 +98,10 @@ window.c.AdminRadioAction = (function(m, h, c){
                         ctrl.setDescription(radio.description);
                       };
                       var selected = (radio.id === args.item.reward.id) ? true : false;
-                      setters[index] = set;
 
                       return m('.w-radio', [
                         m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + ((selected) ? '[checked]' : ''),{
-                          onclick: setters[index]
+                          onclick: set
                         }),
                         m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.minimum_value)
                       ]);
