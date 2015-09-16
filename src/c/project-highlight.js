@@ -16,10 +16,9 @@ window.c.ProjectHighlight = (function(m, _, h){
         ]) : m('span.no-video')),
         m('.project-blurb', project.headline),
         m('.u-text-center-small-only.u-marginbottom-30', [
-          (!_.isEmpty(project.address_city) ?
+          (!_.isEmpty(project.address) ?
             m('a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="js:void(0);"]', [
-              m('span.fa.fa-map-marker'), ' ',
-              project.address_city
+              m('span.fa.fa-map-marker'), ' ' + project.address.city + ', ' + project.address.state_acronym
             ]) : ''
           ),
           m('a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light[href="/explore/by_category_id/#"' + project.category_id + ']', [
