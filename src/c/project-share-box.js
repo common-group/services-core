@@ -1,7 +1,38 @@
 window.c.ProjectShareBox = (function(m){
   return {
-    view: function() {
-      return m('.pop-share[data-ix=\'display-none-on-load\']', {style: {'display': ' block'}}, [m('.w-hidden-main.w-hidden-medium.w-clearfix', [m('a.btn.btn-small.btn-terciary.btn-inline.u-right[data-ix=\'close-popshare\'][href=\'#\']', {style: {'transition': ' all 0.5s ease 0s'}}, 'Fechar'),m('.fontsize-small.fontweight-semibold.u-marginbottom-30', 'Compartilhe este projeto')]),m('.w-widget.w-widget-facebook.w-hidden-small.w-hidden-tiny.share-block', [m('iframe[allowtransparency=\'true\'][frameborder=\'0\'][scrolling=\'no\'][src=\'//www.facebook.com/plugins/like.php?href=https%3A%2F%2Ffacebook.com%2Fwebflow&layout=button_count&locale=en_US&action=like&show_faces=false&share=false\']', {style: {'border': ' none', ' overflow': ' hidden', ' width': ' 90px', ' height': ' 20px'}})]),m('.w-widget.w-widget-twitter.w-hidden-small.w-hidden-tiny.share-block', [m('iframe[allowtransparency=\'true\'][frameborder=\'0\'][scrolling=\'no\'][src=\'//platform.twitter.com/widgets/tweet_button.html#url=http%3A%2F%2Fwebflow.com&counturl=webflow.com&text=Check%20out%20this%20site&count=horizontal&size=m&dnt=true\']', {style: {'border': ' none', ' overflow': ' hidden', ' width': ' 110px', ' height': ' 20px'}})]),m('a.w-hidden-small.w-hidden-tiny.fontsize-small.link-hidden.fontcolor-secondary[href=\'#\']', '< embed >'),m('.u-margintop-30', [m('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'),m('.w-form', [m('form[data-name=\'Email Form\'][id=\'email-form\'][name=\'email-form\']', [m('input.w-input[data-name=\'Name\'][id=\'name\'][name=\'name\'][placeholder=\'Enter your name\'][type=\'text\']')]),m('.w-form-done', [m('p', 'Thank you! Your submission has been received!')]),m('.w-form-fail', [m('p', 'Oops! Something went wrong while submitting the form')])]),m('.card-embed', [m('.card-project.card.u-radius', [m('.card-project-thumb'),m('.card-project-description', [m('.fontweight-semibold.fontsize-base.u-marginbottom-10.u-text-center-small-only.lineheight-tight', 'Um título de projeto com um nome grande pra caramba'),m('.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller', 'Nova linha de óculos de serragem desenvolvida a partir do reaproveitamento dos resíduos gerados na produção dos óculos Zerezes!')]),m('.w-hidden-small.w-hidden-tiny.w-clearfix.card-project-author.u-text-center-small-only', [m('.w-hidden-small.w-hidden-tiny.thumb.small.u-round.u-left'),m('.card-author-name', [m('a.link-hidden.fontsize-smaller[href=\'#\']', 'Márcio Oliveira')])]),m('.card-project-meter', [m('.meter', [m('.meter-fill')])]),m('.card-project-stats', [m('.w-row', [m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [m('.fontsize-base.fontweight-semibold', '37%')]),m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [m('.fontsize-smaller.fontweight-semibold', 'R$455.555'),m('.fontsize-smallest.lineheight-tightest', 'Levantados')]),m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', [m('.fontsize-smaller.fontweight-semibold', '27 dias'),m('.fontsize-smallest.lineheight-tightest', 'Restantes')])])])])])]),m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-fb.u-marginbottom-20[href=\'#\']', [m('span.fa.fa-facebook', '.'),' Compartilhe']),m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href=\'#\']', [m('span.fa.fa-twitter', '.'),' Tweet']),m('a.w-hidden-main.w-hidden-medium.btn.btn-medium[href=\'#\']', [m('span.fa.fa-whatsapp', '.'),' Whatsapp'])]);
+    view: function(ctrl, args) {
+      return m('.pop-share', [
+        m('.w-hidden-main.w-hidden-medium.w-clearfix', [
+          m('a.btn.btn-small.btn-terciary.btn-inline.u-right', 'Fechar'),
+          m('.fontsize-small.fontweight-semibold.u-marginbottom-30', 'Compartilhe este projeto')
+        ]),
+        m('.w-widget.w-widget-facebook.w-hidden-small.w-hidden-tiny.share-block', [
+          //m('.fb-share-button[data-href="https://www.catarse.me/pt/' + args.project.permalink + '?ref=facebook"][data-layout="button_count"]')
+          m('iframe[allowtransparency="true"][width="150px"][height="22px"][frameborder="0"][scrolling="no"][src="https://www.facebook.com/v2.0/plugins/share_button.php?app_id=173747042661491&channel=https%3A%2F%2Fs-static.ak.facebook.com%2Fconnect%2Fxd_arbiter%2F44OwK74u0Ie.js%3Fversion%3D41%23cb%3Df7d9b900c%26domain%3Dwww.catarse.me%26origin%3Dhttps%253A%252F%252Fwww.catarse.me%252Ff4b3ad0c8%26relation%3Dparent.parent&container_width=0&href=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project.permalink + '%3Fref%3Dfacebook&layout=button_count&locale=pt_BR&sdk=joey"]')
+        ]),
+        m('.w-widget.w-widget-twitter.w-hidden-small.w-hidden-tiny.share-block', [
+          m('iframe[allowtransparency="true"][width="120px"][height="22px"][frameborder="0"][scrolling="no"][src="//platform.twitter.com/widgets/tweet_button.8d007ddfc184e6776be76fe9e5e52d69.en.html#_=1442425984936&count=horizontal&dnt=false&id=twitter-widget-1&lang=en&original_referer=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project.permalink + '&size=m&text=Confira%20o%20projeto%20' + args.project.name + '%20no%20%40catarse&type=share&url=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project.permalink + '%3Fref%3Dtwitter&via=catarse"]')
+        ]),
+        //m('a.w-hidden-small.w-hidden-tiny.fontsize-small.link-hidden.fontcolor-secondary[href=\'#\']', '< embed >'),
+        m('.u-margintop-30', [
+          m('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'),
+          m('.w-form', [
+            m('input.w-input[type="text"][value="<iframe frameborder="0" height="314px" src="https://www.catarse.me/pt/projects/' + args.project.id + '/embed" width="300px" scrolling="no"></iframe>"]')
+          ]),
+          m('.card-embed', [
+            m('iframe[frameborder="0"][height="350px"][src="/projects/' + args.project.id + '/embed"][width="300px"][scrolling="no"]')
+          ])
+        ]),
+        m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-fb.u-marginbottom-20[href=\'#\']', [
+          m('span.fa.fa-facebook'),' Compartilhe'
+        ]),
+        m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href=\'#\']', [
+          m('span.fa.fa-twitter'),' Tweet'
+        ]),
+        //m('a.w-hidden-main.w-hidden-medium.btn.btn-medium[href=\'#\']', [
+        //  m('span.fa.fa-whatsapp', '.'),' Whatsapp'
+        //])
+      ]);
     }
   };
 }(window.m));
