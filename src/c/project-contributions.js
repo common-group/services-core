@@ -2,7 +2,14 @@ window.c.ProjectContributions = (function(m, models, h, _){
   return {
     controller: function(args) {
       var listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
-          filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'});
+          filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'}),
+          generateSort = function(waiting) {
+            return function () {
+              //FIXME: need to find a way to pass false filter
+              filterVM.waiting_payment(waiting);
+              listVM.firstPage(filterVM.parameters()).then(null);
+            };
+          };
 
       filterVM.project_id(args.project.id);
 
@@ -10,14 +17,32 @@ window.c.ProjectContributions = (function(m, models, h, _){
         listVM.firstPage(filterVM.parameters()).then(null);
       }
 
+
       return {
         listVM: listVM,
-        filterVM: filterVM
+        filterVM: filterVM,
+        generateSort: generateSort
       };
     },
-    view: function(ctrl) {
+    view: function(ctrl, args) {
       var list = ctrl.listVM;
       return m('#project_contributions.content.w-col.w-col-12', [
+        (args.project.is_owner_or_admin ?
+          m(".w-row.u-marginbottom-20", [
+            m(".w-col.w-col-1", [
+              m("input[checked='checked'][id='contribution_state_available_to_count'][name='waiting_payment'][type='radio'][value='available_to_count']", {onclick: ctrl.generateSort(false)})
+            ]),
+            m(".w-col.w-col-5", [
+              m("label[for='contribution_state_available_to_count']", "Confirmados")
+            ]),
+            m(".w-col.w-col-1", [
+              m("input[id='contribution_state_waiting_confirmation'][type='radio'][name='waiting_payment'][value='waiting_confirmation']", {onclick: ctrl.generateSort(true)})
+            ]),
+            m(".w-col.w-col-5", [
+              m("label[for='contribution_state_waiting_confirmation']", "Pendentes")
+            ])
+          ])
+         : ''),
         m('.project-contributions', _.map(list.collection(), function(contribution) {
           return m('.w-clearfix', [
             m('.w-row.u-marginbottom-20', [
