@@ -13,10 +13,10 @@ window.c.ProjectHighlight = (function(m, _, h){
       return m('#project-highlight', [
         (project.video_embed_url ? m('.w-embed.w-video.project-video.mf', [
           m('iframe.embedly-embed[itemprop="video"][src=" ' + project.video_embed_url + '"][frameborder="0"][allowFullScreen]')
-        ]) : m('span.no-video')),
+        ]) : m('img.w-embed.w-video.project-video.mf[src="' + (project.video_cover_image || project.original_image) + '"]')),
         m('.project-blurb', project.headline),
         m('.u-text-center-small-only.u-marginbottom-30', [
-          (!_.isEmpty(project.address) ?
+          (!_.isNull(project.address) ?
             m('a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="js:void(0);"]', [
               m('span.fa.fa-map-marker'), ' ' + project.address.city + ', ' + project.address.state_acronym
             ]) : ''
