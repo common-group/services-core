@@ -3,7 +3,7 @@ window.c.ProjectCard = (function(m, h, _){
 
     view: function(ctrl, args) {
       var project = args.project,
-          progress = (_.isEmpty(project.progress) ? project.progress : 0).toFixed(2),
+          progress = (!_.isNull(project.progress) ? project.progress : 0).toFixed(2),
           remainingTextObj = h.generateRemaingTime(project)();
 
       return m(".w-col.w-col-4", [
