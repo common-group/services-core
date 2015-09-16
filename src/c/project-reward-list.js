@@ -1,14 +1,13 @@
 window.c.ProjectRewardList = (function(m, h, models, _){
   return {
     controller: function(args) {
-      var listVM = m.postgrest.paginationVM(models.rewardDetail.getPage),
-          filterVM = m.postgrest.filtersVM({project_id: 'eq'}),
+      var filterVM = m.postgrest.filtersVM({project_id: 'eq'}),
           rewardDetails = m.prop([]);
 
       filterVM.project_id(args.project.id);
+      filterVM.order(undefined);
 
-      //FIXME: row_order rank
-      listVM.firstPage(filterVM.parameters()).then(rewardDetails);
+      models.rewardDetail.getPage(filterVM.parameters()).then(rewardDetails);
 
       return {
         rewardDetails: rewardDetails
