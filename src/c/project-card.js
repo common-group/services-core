@@ -1,9 +1,9 @@
-window.c.ProjectCard = (function(m, h, models){
+window.c.ProjectCard = (function(m, h, _){
   return {
 
     view: function(ctrl, args) {
       var project = args.project,
-          progress = project.progress.toFixed(2),
+          progress = (_.isEmpty(project.progress) ? project.progress : 0).toFixed(2),
           remainingTextObj = h.generateRemaingTime(project)();
 
       return m(".w-col.w-col-4", [
@@ -46,5 +46,5 @@ window.c.ProjectCard = (function(m, h, models){
       ]);
     }
   };
-}(window.m, window.c.h, window.c.models));
+}(window.m, window.c.h, window._));
 
