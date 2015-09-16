@@ -28,18 +28,18 @@ window.c.ProjectContributions = (function(m, models, h, _){
       var list = ctrl.listVM;
       return m('#project_contributions.content.w-col.w-col-12', [
         (args.project.is_owner_or_admin ?
-          m(".w-row.u-marginbottom-20", [
+          m('.w-row.u-marginbottom-20', [
             m(".w-col.w-col-1", [
-              m("input[checked='checked'][id='contribution_state_available_to_count'][name='waiting_payment'][type='radio'][value='available_to_count']", {onclick: ctrl.generateSort(false)})
+              m('input[checked="checked"][id="contribution_state_available_to_count"][name="waiting_payment"][type="radio"][value="available_to_count"]', {onclick: ctrl.generateSort(false)})
+            ]),
+            m('.w-col.w-col-5', [
+              m('label[for="contribution_state_available_to_count"]', 'Confirmados')
+            ]),
+            m('.w-col.w-col-1', [
+              m('input[id="contribution_state_waiting_confirmation"][type="radio"][name="waiting_payment"][value="waiting_confirmation"]', {onclick: ctrl.generateSort(true)})
             ]),
             m(".w-col.w-col-5", [
-              m("label[for='contribution_state_available_to_count']", "Confirmados")
-            ]),
-            m(".w-col.w-col-1", [
-              m("input[id='contribution_state_waiting_confirmation'][type='radio'][name='waiting_payment'][value='waiting_confirmation']", {onclick: ctrl.generateSort(true)})
-            ]),
-            m(".w-col.w-col-5", [
-              m("label[for='contribution_state_waiting_confirmation']", "Pendentes")
+              m('label[for="contribution_state_waiting_confirmation"]', 'Pendentes')
             ])
           ])
          : ''),
