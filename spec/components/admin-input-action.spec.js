@@ -5,10 +5,11 @@ describe('AdminInputAction', function(){
       item = {
         testKey: 'foo'
       },
+      forced = 'testingforce',
       ctrl, $output;
 
   var args = {
-        getKey: 'testKey',
+        property: 'testKey',
         updateKey: 'updateKey',
         callToAction: 'cta',
         innerLabel: 'inner',
@@ -30,6 +31,21 @@ describe('AdminInputAction', function(){
     });
     it('should return a value property to bind to', function(){
       expect(ctrl.newValue).toBeFunction();
+    });
+
+    describe('when forceValue is set', function(){
+      beforeAll(function(){
+        args.forceValue = forced;
+        ctrl = AdminInputAction.controller({data: args, item: item});
+      });
+
+      it('should initialize newValue with forced value', function(){
+        expect(ctrl.newValue()).toEqual(forced);
+      });
+
+      afterAll(function() {
+        delete args.forceValue;
+      });
     });
   });
 
@@ -58,6 +74,21 @@ describe('AdminInputAction', function(){
       });
       it('should render a call to action', function(){
         expect($output.first('input[type="submit"]').attrs.value).toEqual(args.callToAction);
+      });
+
+      describe('when forceValue is set', function(){
+        beforeAll(function(){
+          args.forceValue = forced;
+          ctrl = AdminInputAction.controller({data: args, item: item});
+        });
+
+        it('should initialize newValue with forced value', function(){
+          expect(ctrl.newValue()).toEqual(forced);
+        });
+
+        afterAll(function() {
+          delete args.forceValue;
+        });
       });
     });
 

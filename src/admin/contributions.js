@@ -27,7 +27,7 @@ window.c.admin.Contributions = (function(m, c, h){
             {
               component: 'AdminInputAction',
               data: {
-                getKey: 'user_id',
+                property: 'user_id',
                 updateKey: 'id',
                 property: 'contribution_id',
                 callToAction: 'Transferir',
@@ -48,6 +48,18 @@ window.c.admin.Contributions = (function(m, c, h){
                 outerLabel: 'Recompensa',
                 getModel: c.models.projectDetail,
                 updateModel: c.models.contributionDetail
+              }
+            },
+            {
+              component: 'AdminInputAction',
+              data: {
+                property: 'state',
+                updateKey: 'id',
+                callToAction: 'Apagar',
+                innerLabel: 'Tem certeza que deseja apagar esse apoio?',
+                outerLabel: 'Apagar Apoio',
+                forceValue: 'deleted',
+                model: c.models.contributionDetail
               }
             }
           ],
