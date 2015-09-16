@@ -54,6 +54,10 @@ window.c.h = (function(m, moment){
 
   idVM = m.postgrest.filtersVM({id: 'eq'}),
 
+  hashMatch = function(str) {
+    return window.location.hash === str;
+  },
+
   //Templates
   loader = function(){
     return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
@@ -115,6 +119,7 @@ window.c.h = (function(m, moment){
     generateRemaingTime: generateRemaingTime,
     rewardSouldOut: rewardSouldOut,
     rewardRemaning: rewardRemaning,
-    parseUrl: parseUrl
+    parseUrl: parseUrl,
+    hashMatch: hashMatch
   };
 }(window.m, window.moment));
