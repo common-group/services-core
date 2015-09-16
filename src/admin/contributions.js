@@ -29,11 +29,25 @@ window.c.admin.Contributions = (function(m, c, h){
               data: {
                 getKey: 'user_id',
                 updateKey: 'id',
+                property: 'contribution_id',
                 callToAction: 'Transferir',
                 innerLabel: 'Id do novo apoiador:',
                 outerLabel: 'Transferir Apoio',
                 placeholder: 'ex: 129908',
                 model: c.models.contributionDetail
+              }
+            },
+            {
+              component: 'AdminRadioAction',
+              data: {
+                getKey: 'project_id',
+                updateKey: 'contribution_id',
+                property: 'reward_id',
+                radios: 'rewards',
+                callToAction: 'Alterar Recompensa',
+                outerLabel: 'Recompensa',
+                getModel: c.models.projectDetail,
+                updateModel: c.models.contributionDetail
               }
             }
           ],
