@@ -42,7 +42,6 @@ window.c.h = (function(m, moment){
   },
   formatNumber = generateFormatNumber('.', ','),
 
-  //Object manipulation helpers
   toggleProp = function(defaultState, alternateState){
     var p = m.prop(defaultState);
     p.toggle = function(){
