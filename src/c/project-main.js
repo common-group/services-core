@@ -7,6 +7,7 @@ window.c.ProjectMain = (function(m, c, _, h){
                 c_opts = {project: project},
                 routes = {
                   '#rewards': m('.w-col.w-col-12', m.component(c.ProjectRewardList, c_opts)),
+                  '#contributions': m.component(c.ProjectContributions, c_opts),
                   '#about': m.component(c.ProjectAbout, c_opts),
                   '#comments': m.component(c.ProjectComments, c_opts)
                 };
