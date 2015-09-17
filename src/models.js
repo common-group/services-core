@@ -4,6 +4,7 @@ window.c.models = (function(m){
   projectDetail = m.postgrest.model('project_details'),
   userDetail = m.postgrest.model('user_details'),
   rewardDetail = m.postgrest.model('reward_details'),
+  projectReminder = m.postgrest.model('project_reminders'),
   contributions = m.postgrest.model('contributions'),
   teamTotal = m.postgrest.model('team_totals'),
   projectContribution = m.postgrest.model('project_contributions'),
@@ -29,6 +30,7 @@ window.c.models = (function(m){
     projectContributionsPerDay: projectContributionsPerDay,
     projectContributionsPerLocation: projectContributionsPerLocation,
     projectContribution: projectContribution,
-    projectPostDetail: projectPostDetail
+    projectPostDetail: projectPostDetail,
+    projectReminder: projectReminder
   };
 }(window.m));
