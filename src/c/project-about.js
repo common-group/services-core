@@ -13,7 +13,7 @@ window.c.ProjectAbout = (function(m, c, h){
         ]),
         m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [
           m('.w-hidden-small.w-hidden-tiny.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
-          m.component(c.ProjectRewardList, {project: project}),
+          m.component(c.ProjectRewardList, {project: project, rewardDetails: args.rewardDetails}),
           (project.is_published ?
             m('.funding-period', [
               m('.fontsize-small.fontweight-semibold.u-text-center-small-only', 'Período de campanha'),
