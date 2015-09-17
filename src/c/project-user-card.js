@@ -1,19 +1,7 @@
-window.c.ProjectUserCard = (function(m, _, models, h){
+window.c.ProjectUserCard = (function(m, _, h){
   return {
-    controller: function(args) {
-      var vm = h.idVM,
-          userDetails = m.prop([]);
-
-      vm.id(args.userId);
-
-      models.userDetail.getRowWithToken(vm.parameters()).then(userDetails);
-
-      return {
-        userDetails: userDetails
-      };
-    },
-    view: function(ctrl) {
-      return m('#user-card', _.map(ctrl.userDetails(), function(userDetail){
+    view: function(ctrl, args) {
+      return m('#user-card', _.map(args.userDetails(), function(userDetail){
         return m('.u-marginbottom-30.u-text-center-small-only', [
           m('.w-row', [
             m('.w-col.w-col-4', [
@@ -50,5 +38,5 @@ window.c.ProjectUserCard = (function(m, _, models, h){
       }));
     }
   };
-}(window.m, window._, window.c.models, window.c.h));
+}(window.m, window._, window.c.h));
 
