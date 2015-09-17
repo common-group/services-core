@@ -19,7 +19,8 @@ window.c.project.Show = (function(m, c, _, models){
         return m('.project-show', [
           m.component(c.ProjectHeader, {project: project}),
           m.component(c.ProjectTabs, {project: project}),
-          m.component(c.ProjectMain, {project: project})
+          m.component(c.ProjectMain, {project: project}),
+          (project.is_owner_or_admin ? m.component(c.ProjectNav, {project: project}) : '')
         ]);
       });
     }
