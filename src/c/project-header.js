@@ -16,7 +16,7 @@ window.c.ProjectHeader = (function(m, c){
           m('.w-container', [
             m('.w-row.project-main', [
               m('.w-col.w-col-8.project-highlight', m.component(c.ProjectHighlight, {project: project})),
-              m('.w-col.w-col-4', m.component(c.ProjectSidebar, {project: project}))
+              m('.w-col.w-col-4', m.component(c.ProjectSidebar, {project: project, userDetails: args.userDetails}))
             ])
           ])
         ])
