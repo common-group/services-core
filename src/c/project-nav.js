@@ -3,17 +3,14 @@ window.c.ProjectNav = (function(m, _, h){
     controller: function(args) {
       var body = document.getElementsByTagName('body')[0],
           editLinksToggle = h.toggleProp(false, true),
-          bodyToggleForNav = function() {
-            body.classList.toggle('closed');
-          };
-
-      body.classList.add('body-project', 'open');
+          bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
       if(!args.project.is_published) {
         editLinksToggle.toggle();
       }
 
       return {
+        body: body,
         editLinksToggle: editLinksToggle,
         bodyToggleForNav: bodyToggleForNav
       };
@@ -23,12 +20,14 @@ window.c.ProjectNav = (function(m, _, h){
           editRoute = '/projects/' + project.id + '/edit',
           editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
 
+      ctrl.body.className = ctrl.bodyToggleForNav();
 
       return m('#project-nav', [
         m('.project-nav-wrapper', [
           m('nav.w-section.dashboard-nav.side', [
             m('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [
-              m('img.thumb-project-dashboard[src="' + (_.isNull(project.large_image) ? '/assets/thumb-project.png' : project.large_image) + '"][width="114"]')
+              m('img.thumb-project-dashboard[src="' + (_.isNull(project.large_image) ? '/assets/thumb-project.png' : project.large_image) + '"][width="114"]'),
+              m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name)
             ]),
             m('#info-links', [
               m('a#dashboard_home_link.dashboard-nav-link-left[href="' + editRoute + '#home' + '"]', [
@@ -80,7 +79,7 @@ window.c.ProjectNav = (function(m, _, h){
             ]),
           ]),
         ]),
-        m('a.btn-dashboard href="js:void(0);"', {onclick: ctrl.bodyToggleForNav}, [
+        m('a.btn-dashboard href="js:void(0);"', {onclick: ctrl.bodyToggleForNav.toggle}, [
           m('span.fa.fa-bars.fa-lg')
         ])
       ]);
