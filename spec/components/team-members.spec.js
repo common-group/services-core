@@ -1,12 +1,13 @@
-describe('TeamMembers', function() {
-  var TeamMembers = window.c.TeamMembers;
+describe('TeamMembers', () => {
+  var $output,
+      TeamMembers = window.c.TeamMembers;
 
-  describe('view', function() {
-    beforeAll(function() {
+  describe('view', () => {
+    beforeAll(() => {
       $output = mq(TeamMembers);
     });
 
-    it('should render fetched team members', function() {
+    it('should render fetched team members', () => {
       expect($output.has('#team-members-static')).toEqual(true);
       expect($output.find('.team-member').length).toEqual(TeamMembersMockery(10).length);
     });
