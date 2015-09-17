@@ -1,24 +1,10 @@
-window.c.ProjectRewardList = (function(m, h, models, _){
+window.c.ProjectRewardList = (function(m, h, _){
   return {
-    controller: function(args) {
-      var filterVM = m.postgrest.filtersVM({project_id: 'eq'}),
-          rewardDetails = m.prop([]);
-
-      filterVM.project_id(args.project.id);
-      filterVM.order(undefined);
-
-      models.rewardDetail.getPage(filterVM.parameters()).then(rewardDetails);
-
-      return {
-        rewardDetails: rewardDetails
-      };
-    },
-
     view: function(ctrl, args) {
       //FIXME: MISSING ADJUSTS
       // - add draft admin modifications
       var project = args.project;
-      return m('#rewards.u-marginbottom-30', _.map(ctrl.rewardDetails(), function(reward) {
+      return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), function(reward) {
         var contributionUrlWithReward = '/projects/' + project.id + '/contributions/new?reward_id=' + reward.id;
 
         return m('a[class="' + (h.rewardSouldOut(reward) ? "card-gone" : "card-reward " + (project.open_for_contributions ? 'clickable' : '') ) + ' card card-secondary u-marginbottom-10"][href="' + (project.open_for_contributions ? contributionUrlWithReward : 'js:void(0);') + '"]', [
@@ -54,4 +40,4 @@ window.c.ProjectRewardList = (function(m, h, models, _){
       }));
     }
   };
-}(window.m, window.c.h, window.c.models, window._));
+}(window.m, window.c.h, window._));
