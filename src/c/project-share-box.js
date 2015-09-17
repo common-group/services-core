@@ -1,13 +1,12 @@
 window.c.ProjectShareBox = (function(m){
   return {
     view: function(ctrl, args) {
-      return m('.pop-share', [
+      return m('.pop-share', {style: 'display: block;'}, [
         m('.w-hidden-main.w-hidden-medium.w-clearfix', [
           m('a.btn.btn-small.btn-terciary.btn-inline.u-right', 'Fechar'),
           m('.fontsize-small.fontweight-semibold.u-marginbottom-30', 'Compartilhe este projeto')
         ]),
         m('.w-widget.w-widget-facebook.w-hidden-small.w-hidden-tiny.share-block', [
-          //m('.fb-share-button[data-href="https://www.catarse.me/pt/' + args.project.permalink + '?ref=facebook"][data-layout="button_count"]')
           m('iframe[allowtransparency="true"][width="150px"][height="22px"][frameborder="0"][scrolling="no"][src="https://www.facebook.com/v2.0/plugins/share_button.php?app_id=173747042661491&channel=https%3A%2F%2Fs-static.ak.facebook.com%2Fconnect%2Fxd_arbiter%2F44OwK74u0Ie.js%3Fversion%3D41%23cb%3Df7d9b900c%26domain%3Dwww.catarse.me%26origin%3Dhttps%253A%252F%252Fwww.catarse.me%252Ff4b3ad0c8%26relation%3Dparent.parent&container_width=0&href=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project.permalink + '%3Fref%3Dfacebook&layout=button_count&locale=pt_BR&sdk=joey"]')
         ]),
         m('.w-widget.w-widget-twitter.w-hidden-small.w-hidden-tiny.share-block', [
