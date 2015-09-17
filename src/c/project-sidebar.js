@@ -59,12 +59,7 @@ window.c.ProjectSidebar = (function(m, h, c){
             ])
           ]),
           (project.open_for_contributions ? m('a.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''),
-          (project.open_for_contributions ? m('.u-text-center.u-marginbottom-30', [
-            m('a.link-hidden.fontsize-small.fontcolor-secondary.fontweight-semibold[href="js:void(0);"]', [
-              m('span.fa.fa-clock-o'),
-              '  Lembrar-me'
-            ])
-          ]) : ''),
+          ((project.open_for_contributions && project.user_signed_in) ? m.component(c.ProjectReminder, {project: project}) : ''),
           m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText())
         ]),
         m('.user-c', m.component(c.ProjectUserCard, {userId: project.user_id}))
