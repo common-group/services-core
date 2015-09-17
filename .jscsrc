@@ -74,5 +74,6 @@
         "checkTypes": "capitalizedNativeCase",
         "checkRedundantAccess": true,
         "requireNewlineAfterDescription": true
-    }
+    },
+    "esnext": true
 }
