@@ -13,7 +13,7 @@ window.c.ProjectContributions = (function(m, models, h, _){
 
       filterVM.project_id(args.project.id);
 
-      if (!listVM.collection().length && listVM.firstPage(filterVM.parameters())) {
+      if (!listVM.collection().length) {
         listVM.firstPage(filterVM.parameters()).then(null);
       }
 
