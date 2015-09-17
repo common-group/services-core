@@ -30,7 +30,7 @@ Then, in you catarse repository, run:
 
 ## Flowtype && ES6
 
-Currently we are moving our code to ES6 + Flowtype. All new components should be written on this new paradigm. For doing such, we deeply recommend a clear understand of both [Flow](http://flowtype.org/) and [Babel](https://babeljs.io/) - our ES6 transpile tool. 
+Currently we are moving our code to ES6 + Flowtype. All new components should be written on this new paradigm. For doing such, we deeply recommend a clear understand of both [Flow](http://flowtype.org/), ES6 and [Babel](https://babeljs.io/) - our ES6 transpile tool. 
 
 ## Troubleshooting
 
