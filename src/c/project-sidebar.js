@@ -62,7 +62,7 @@ window.c.ProjectSidebar = (function(m, h, c){
           ((project.open_for_contributions && project.user_signed_in) ? m.component(c.ProjectReminder, {project: project}) : ''),
           m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText())
         ]),
-        m('.user-c', m.component(c.ProjectUserCard, {userId: project.user_id}))
+        m('.user-c', m.component(c.ProjectUserCard, {userDetails: args.userDetails}))
       ]);
     }
   };
