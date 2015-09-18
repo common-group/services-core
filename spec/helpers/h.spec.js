@@ -59,3 +59,14 @@ describe('h.rewardRemaning', () => {
     expect(rewardRemaning(reward)).toEqual(5);
   });
 });
+
+describe('h.parseUrl', () => {
+  let url,
+    parseUrl = window.c.h.parseUrl;
+
+  it('should create an a element', () => {
+    url = 'http://google.com';
+    expect(parseUrl(url).hostname).toEqual('google.com');
+  });
+});
+
