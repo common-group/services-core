@@ -18,6 +18,8 @@ beforeAll(function(){
       reminder_count: 23,
       remaining_time: {total: 22, unit: "days"},
       user: {id: 123, name: "Lorem ipsum"},
+      video_embed_url: "//www.youtube.com/embed/6Klp834jk3M",
+      video_url: "https://youtu.be/6Klp834jk3M",
       address: {
         city: "Parnamirim",
         state_acronym: "RN",
