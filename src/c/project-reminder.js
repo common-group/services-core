@@ -27,7 +27,7 @@ window.c.ProjectReminder = ((m, models, h) => {
       return m('.u-text-center.u-marginbottom-30', [
         m('a[class="link-hidden fontsize-small ' + (ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary') + ' fontweight-semibold"][href="js:void(0);"]', {onclick: ctrl.submitReminder},[
           m('span.fa.fa-clock-o'),
-          (ctrl.complete() ? 'aguarde ...' : (ctrl.inReminder() ? ' Lembrete ativo' : '  Lembrar-me'))
+          (ctrl.complete() ? 'aguarde ...' : (ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me'))
         ])
       ]);
     }
