@@ -20,7 +20,7 @@ window.c.ProjectRewardList = (function(m, h, _){
               ]) : m('.u-margintop-10', [
                 m('span.badge.badge-attention.fontsize-smaller', [
                   m('span.fontweight-bold', 'Limitada'),
-                  ' ( ' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)'
+                  ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)'
                 ])
               ]))
             ] : ''),
