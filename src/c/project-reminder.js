@@ -1,19 +1,15 @@
-window.c.ProjectReminder = (function(m, models, h) {
+window.c.ProjectReminder = ((m, models, h) => {
   return {
-    controller: function(args) {
-      var inReminder = h.toggleProp(false, true),
+    controller: (args) => {
+      let inReminder = h.toggleProp(false, true),
           filterVM = m.postgrest.filtersVM({project_id: 'eq'}),
           complete = m.prop(false),
-          submitReminder = function() {
-            var l;
+          submitReminder = () => {
+            let loaderOpts = inReminder() ? models.projectReminder.deleteOptions(filterVM.parameters())
+                  : models.projectReminder.postOptions({project_id: args.project.id}),
+                l = m.postgrest.loaderWithToken(loaderOpts);
 
-            if (inReminder()) {
-              l = m.postgrest.loaderWithToken(models.projectReminder.deleteOptions(filterVM.parameters()));
-            } else {
-              l = m.postgrest.loaderWithToken(models.projectReminder.postOptions({project_id: args.project.id}));
-            }
-
-            l.load().then(function(){
+            l.load().then(() => {
               inReminder.toggle();
             });
           };
@@ -27,7 +23,7 @@ window.c.ProjectReminder = (function(m, models, h) {
         complete: complete
       };
     },
-    view: function(ctrl) {
+    view: (ctrl) => {
       return m('.u-text-center.u-marginbottom-30', [
         m('a[class="link-hidden fontsize-small ' + (ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary') + ' fontweight-semibold"][href="js:void(0);"]', {onclick: ctrl.submitReminder},[
           m('span.fa.fa-clock-o'),
