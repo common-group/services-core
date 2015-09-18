@@ -1,43 +1,38 @@
-describe('ProjectRow', function() {
-  var ProjectRow = window.c.ProjectRow;
+describe('ProjectRow', () => {
+  var $output,
+      ProjectRow = window.c.ProjectRow;
 
-  describe('view', function() {
-    var collection = {
+  describe('view', () => {
+    let collection = {
       title: 'test collection',
       hash: 'testhash',
       collection: m.prop([])
     };
 
-    describe('when collection is empty', function() {
-      beforeAll(function() {
-        component = m.component(ProjectRow);
-        view = component.view(null, {collection: collection});
+    describe('when collection is empty', () => {
+      beforeAll(() => {
+        let component = m.component(ProjectRow),
+            view = component.view(null, {collection: collection});
         $output = mq(view);
       });
 
-      it("should not render row", function() {
+      it('should not render row', () => {
         expect($output.find('.w-section').length).toEqual(0);
       });
     });
 
-    describe('when collection has projects', function() {
-      beforeAll(function() {
+    describe('when collection has projects', () => {
+      beforeAll(() => {
         collection.collection(ProjectMockery());
-        component = m.component(ProjectRow);
-        view = component.view(null, {collection: collection});
+        let component = m.component(ProjectRow),
+            view = component.view(null, {collection: collection});
         $output = mq(view);
       });
 
-      it("should render projects in row", function() {
+      it('should render projects in row', () => {
         expect($output.find('.w-section').length).toEqual(1);
       });
-      
     });
 
   });
 });
-
-
-
-
-

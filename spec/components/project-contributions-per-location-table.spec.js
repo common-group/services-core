@@ -1,13 +1,13 @@
-//ProjectContributionsPerLocationMockery
-describe('ProjectContributionsPerLocationTable', function(){
-  var ProjectContributionsPerLocationTable = window.c.ProjectContributionsPerLocationTable;
+describe('ProjectContributionsPerLocationTable', () =>{
+  var ProjectContributionsPerLocationTable = window.c.ProjectContributionsPerLocationTable,
+      $output;
 
-  describe('view', function() {
-    beforeAll(function() {
+  describe('view', () => {
+    beforeAll(() => {
       $output = mq(m.component(ProjectContributionsPerLocationTable, {resourceId: 1234}));
     });
 
-    it("should render states", function() {
+    it('should render states', () => {
       expect($output.find('.w-row.table-row').length).toEqual(3);
     });
   });

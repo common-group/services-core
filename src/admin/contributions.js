@@ -29,7 +29,6 @@ window.c.admin.Contributions = (function(m, c, h){
               data: {
                 property: 'user_id',
                 updateKey: 'id',
-                property: 'contribution_id',
                 callToAction: 'Transferir',
                 innerLabel: 'Id do novo apoiador:',
                 outerLabel: 'Transferir Apoio',
