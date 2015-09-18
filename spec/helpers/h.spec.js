@@ -45,3 +45,17 @@ describe('h.rewardSouldOut', () => {
   });
 });
 
+describe('h.rewardRemaning', () => {
+  let reward,
+    rewardRemaning = window.c.h.rewardRemaning;
+
+  it('should return the total remaning rewards', () => {
+    reward = {
+      maximum_contributions: 10,
+      paid_count: 3,
+      waiting_payment_count: 2
+    };
+
+    expect(rewardRemaning(reward)).toEqual(5);
+  });
+});
