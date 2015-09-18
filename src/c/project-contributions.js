@@ -1,10 +1,10 @@
-window.c.ProjectContributions = (function(m, models, h, _){
+window.c.ProjectContributions = ((m, models, h, _) => {
   return {
-    controller: function(args) {
-      var listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
+    controller: (args) => {
+      let listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
           filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'}),
-          generateSort = function(waiting) {
-            return function () {
+          generateSort = (waiting = false) => {
+            return () => {
               //FIXME: need to find a way to pass false filter
               filterVM.waiting_payment(waiting);
               listVM.firstPage(filterVM.parameters()).then(null);
@@ -17,15 +17,14 @@ window.c.ProjectContributions = (function(m, models, h, _){
         listVM.firstPage(filterVM.parameters()).then(null);
       }
 
-
       return {
         listVM: listVM,
         filterVM: filterVM,
         generateSort: generateSort
       };
     },
-    view: function(ctrl, args) {
-      var list = ctrl.listVM;
+    view: (ctrl, args) => {
+      let list = ctrl.listVM;
       return m('#project_contributions.content.w-col.w-col-12', [
         (args.project.is_owner_or_admin ?
           m('.w-row.u-marginbottom-20', [
@@ -43,7 +42,7 @@ window.c.ProjectContributions = (function(m, models, h, _){
             ])
           ])
          : ''),
-        m('.project-contributions', _.map(list.collection(), function(contribution) {
+        m('.project-contributions', _.map(list.collection(), (contribution) => {
           return m('.w-clearfix', [
             m('.w-row.u-marginbottom-20', [
               m('.w-col.w-col-1', [
