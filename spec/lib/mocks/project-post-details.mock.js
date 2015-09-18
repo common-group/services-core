@@ -19,6 +19,3 @@ beforeAll(function() {
     'responseText' : JSON.stringify(ProjectPostDetailsMockery())
   });
 });
-
-
-
