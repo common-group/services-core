@@ -11,7 +11,7 @@ window.c.ProjectHighlight = (function(m, _, h, c){
     view: function(ctrl, args) {
       var project = args.project;
       return m('#project-highlight', [
-        (project.video_embed_url ? m('.w-embed.w-video.project-video.mf', [
+        (project.video_embed_url ? m('.w-embed.w-video.project-video.mf', {style: 'min-height: 240px;'}, [
           m('iframe.embedly-embed[itemprop="video"][src=" ' + project.video_embed_url + '"][frameborder="0"][allowFullScreen]')
         ]) : m('img.w-embed.w-video.project-video.mf[src="' + (project.original_image) + '"]')),
         m('.project-blurb', project.headline),
