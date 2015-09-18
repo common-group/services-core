@@ -1,33 +1,33 @@
 window.c.contribution.projectsHome = (function(m, c){
   return {
-
     controller: function() {
-      var vm = {recommendedCollection: m.prop([]),
-                recentCollection: m.prop([]),
-                nearMeCollection: m.prop([]),
-                expiringCollection: m.prop([])
-          },
-          project = c.models.project,
+      var vm = {
+        recommendedCollection: m.prop([]),
+        recentCollection: m.prop([]),
+        nearMeCollection: m.prop([]),
+        expiringCollection: m.prop([])
+      },
+      project = c.models.project,
 
-          expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'});
-          expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
-          expiring.state('online');
+      expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'}),
+      nearMe = m.postgrest.filtersVM({near_me: 'eq', state: 'eq'}),
+      recents = m.postgrest.filtersVM({online_date: 'gte', state: 'eq'}),
+      recommended = m.postgrest.filtersVM({recommended: 'eq', state: 'eq'});
 
-          nearMe = m.postgrest.filtersVM({near_me: 'eq', state: 'eq'});
-          nearMe.near_me('true').state('online');
+      expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
+      expiring.state('online');
 
-          recents = m.postgrest.filtersVM({online_date: 'gte', state: 'eq'});
-          recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
-          recents.state('online');
+      nearMe.near_me('true').state('online');
 
-          recommended = m.postgrest.filtersVM({recommended: 'eq', state: 'eq'});
-          recommended.recommended('true').state('online');
+      recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
+      recents.state('online');
+
+      recommended.recommended('true').state('online');
 
       project.getPage(nearMe.parameters()).then(vm.nearMeCollection);
       project.getPage(recommended.parameters()).then(vm.recommendedCollection);
       project.getPage(recents.parameters()).then(vm.recentCollection);
       project.getPage(expiring.parameters()).then(vm.expiringCollection);
-
 
       var collections = [
         {
@@ -52,17 +52,15 @@ window.c.contribution.projectsHome = (function(m, c){
         }
       ];
 
-
       return {
         collections: collections
       };
     },
 
     view: function(ctrl) {
-      return [
-        _.map(ctrl.collections, function(collection){
-          return m.component(c.ProjectRow, {collection: collection});
-        })];
-
-  }};
+      return _.map(ctrl.collections, function(collection){
+        return m.component(c.ProjectRow, {collection: collection});
+      });
+    }
+  };
 }(window.m, window.c));

@@ -1,12 +1,13 @@
-describe('TeamTotal', function() {
-  var TeamTotal = window.c.TeamTotal;
+describe('TeamTotal', () => {
+  let $output,
+      TeamTotal = window.c.TeamTotal;
 
-  describe('view', function() {
-    beforeAll(function() {
+  describe('view', () => {
+    beforeAll(() => {
       $output = mq(TeamTotal);
     });
 
-    it('should render fetched team total info', function() {
+    it('should render fetched team total info', () => {
       expect($output.find('#team-total-static').length).toEqual(1);
     });
   });

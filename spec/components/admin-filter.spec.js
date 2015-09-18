@@ -1,31 +1,30 @@
-describe('AdminFilter', function(){
-  var ctrl,
-      submit,
-      fakeForm,
-      formDesc,
+describe('AdminFilter', () => {
+  let ctrl, submit, fakeForm,
+      formDesc, filterDescriber,
+      $output,
       c = window.c,
       vm = c.admin.contributionFilterVM,
       AdminFilter = c.AdminFilter;
 
-  describe('controller', function(){
-    beforeAll(function(){
+  describe('controller', () => {
+    beforeAll(() => {
       ctrl = AdminFilter.controller();
     });
 
-    it('should instantiate a toggler', function(){
+    it('should instantiate a toggler', () => {
       expect(ctrl.toggler).toBeDefined();
     });
   });
 
-  describe('view', function(){
-    beforeAll(function(){
+  describe('view', () => {
+    beforeAll(() => {
       spyOn(m, 'component').and.callThrough();
       submit = jasmine.createSpy('submit');
       filterDescriber = FilterDescriberMock();
       $output = mq(AdminFilter, {filterBuilder: filterDescriber, submit: submit});
     });
 
-    it('should render the main filter on render', function(){
+    it('should render the main filter on render', () => {
       expect(m.component).toHaveBeenCalledWith(c.FilterMain, filterDescriber[0].data);
     });
 
