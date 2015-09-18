@@ -70,3 +70,17 @@ describe('h.parseUrl', () => {
   });
 });
 
+describe('h.pluralize', () => {
+  let count,
+    pluralize = window.c.h.pluralize;
+
+  it('should use plural when count greater 1', () => {
+    count = 3;
+    expect(pluralize(count, ' dia', ' dias')).toEqual('3 dias');
+  });
+
+  it('should use singular when count less or equal 1', () => {
+    count = 1;
+    expect(pluralize(count, ' dia', ' dias')).toEqual('1 dia');
+  });
+});
