@@ -10,7 +10,7 @@ window.c.ProjectShareBox = (function(m, h){
     view: function(ctrl, args) {
       return m('.pop-share', {style: 'display: block;'}, [
         m('.w-hidden-main.w-hidden-medium.w-clearfix', [
-          m('a.btn.btn-small.btn-terciary.btn-inline.u-right', 'Fechar'),
+          m('a.btn.btn-small.btn-terciary.btn-inline.u-right', {onclick: args.displayShareBox.toggle}, 'Fechar'),
           m('.fontsize-small.fontweight-semibold.u-marginbottom-30', 'Compartilhe este projeto')
         ]),
         m('.w-widget.w-widget-facebook.w-hidden-small.w-hidden-tiny.share-block', [
@@ -29,10 +29,10 @@ window.c.ProjectShareBox = (function(m, h){
             m('iframe[frameborder="0"][height="350px"][src="/projects/' + args.project.id + '/embed"][width="300px"][scrolling="no"]')
           ])
         ]) : ''),
-        m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-fb.u-marginbottom-20[href=\'#\']', [
+        m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-fb.u-marginbottom-20[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/' + args.project.permalink + '?ref=facebook&title=' + args.project.name + '"][target="_blank"]', [
           m('span.fa.fa-facebook'),' Compartilhe'
         ]),
-        m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href=\'#\']', [
+        m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href="http://twitter.com/?status=Acabei de apoiar o projeto ' + args.project.name + ' htts://www.catarse.me/' + args.project.permalink + '?ref=twitterr"][target="_blank"]', [
           m('span.fa.fa-twitter'),' Tweet'
         ]),
         //m('a.w-hidden-main.w-hidden-medium.btn.btn-medium[href=\'#\']', [
