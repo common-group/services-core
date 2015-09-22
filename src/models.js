@@ -7,7 +7,8 @@ window.c.models = (function(m){
   projectContributionsPerDay = m.postgrest.model('project_contributions_per_day'),
   projectContributionsPerLocation = m.postgrest.model('project_contributions_per_location'),
   project = m.postgrest.model('projects'),
-  teamMember = m.postgrest.model('team_members');
+  teamMember = m.postgrest.model('team_members'),
+  statistic = m.postgrest.model('statistics');
   teamMember.pageSize(40);
   project.pageSize(3);
 
@@ -19,6 +20,7 @@ window.c.models = (function(m){
     teamMember: teamMember,
     project: project,
     projectContributionsPerDay: projectContributionsPerDay,
-    projectContributionsPerLocation: projectContributionsPerLocation
+    projectContributionsPerLocation: projectContributionsPerLocation,
+    statistic: statistic
   };
 }(window.m));
