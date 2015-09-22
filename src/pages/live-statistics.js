@@ -1,15 +1,28 @@
-window.c.pages.LiveStatistics = ((m, models, h, _) => {
+window.c.pages.LiveStatistics = ((m, models, h, _, JSON) => {
   return {
-    controller: () => {
-      let pageStatistics = m.prop([]);
+    controller: (args = {}) => {
+      let pageStatistics = m.prop([]),
+          notificationData = m.prop({});
 
-      models.statistic.getRowWithToken().then(pageStatistics);
+      models.statistic.getRow().then(pageStatistics);
+      // args.socket is a socket provided by socket.io
+      // can see there https://github.com/catarse/catarse-live/blob/master/public/index.js#L8
+      if(args.socket && _.isFunction(args.socket.on)) {
+        args.socket.on('new_paid_contributions', (msg) => {
+          notificationData(JSON.parse(msg.payload));
+          models.statistic.getRow().then(pageStatistics);
+          m.redraw();
+        });
+      }
 
       return {
-        pageStatistics: pageStatistics
+        pageStatistics: pageStatistics,
+        notificationData: notificationData
       };
     },
     view: (ctrl) => {
+      let data = ctrl.notificationData();
+
       return m('.w-section.bg-stats.section.min-height-100', [
         m('.w-container.u-text-center', _.map(ctrl.pageStatistics(), (stat) => {
           return [ m('img.u-marginbottom-60[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/55ada5dd11b36a52616d97df_symbol-catarse.png"]'),
@@ -22,17 +35,17 @@ window.c.pages.LiveStatistics = ((m, models, h, _) => {
             m('.fontsize-large', 'Pessoas já apoiaram pelo menos 1 projeto no Catarse')
           ])];
         })),
-        m('.w-container', [
+        (!_.isEmpty(data) ? m('.w-container', [
           m('div', [
             m('.card.u-radius.u-marginbottom-60.medium', [
               m('.w-row', [
                 m('.w-col.w-col-4', [
                   m('.w-row', [
                     m('.w-col.w-col-4.w-col-small-4', [
-                      m('img.thumb.u-round[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5409e86a50c3bd3f1b90aec7_user-avatar.jpeg"]')
+                      m('img.thumb.u-round[src="' + data.user_image + '"]')
                     ]),
                     m('.w-col.w-col-8.w-col-small-8', [
-                      m('.fontsize-large.lineheight-tight', 'Ricardo Matos dos Santos')
+                      m('.fontsize-large.lineheight-tight', data.user_name)
                     ])
                   ])
                 ]),
@@ -42,30 +55,23 @@ window.c.pages.LiveStatistics = ((m, models, h, _) => {
                 m('.w-col.w-col-4', [
                   m('.w-row', [
                     m('.w-col.w-col-4.w-col-small-4', [
-                      m('img.thumb-project.u-radius[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5485dfa838fa8324238733f7_project_thumb_10304019_328175090684874_7563008857993874086_n.png"][width="75"]')
+                      m('img.thumb-project.u-radius[src="' + data.project_image + '"][width="75"]')
                     ]),
                     m('.w-col.w-col-8.w-col-small-8', [
-                      m('.fontsize-large.lineheight-tight', 'Ping point no Lardo do Batata')
+                      m('.fontsize-large.lineheight-tight', data.project_name)
                     ])
                   ])
                 ])
               ])
             ])
           ])
-        ]),
+        ]) : ''),
         m('.u-text-center.fontsize-large.u-marginbottom-10.fontcolor-negative', [
-          m('span.fa.fa-github', '.'),' Open Source com orgulho! '
+          m('a.link-hidden.fontcolor-negative[href="https://github.com/catarse"][target="_blank"]', [
+            m('span.fa.fa-github', '.'),' Open Source com orgulho! '
+          ])
         ]),
-        m('.u-text-center.fontsize-small', [
-          ' ',
-          m('span.fa.fa-refresh', '.'),
-          ' 11.233 Commits     ',
-          m('span.fa.fa-users', '.'),
-          ' 43 Contribuidores     ',
-          m('span.fa.fa-star', '.'),
-          ' 847 Stars'
-        ])
       ]);
     }
   };
-}(window.m, window.c.models, window.c.h, window._));
+}(window.m, window.c.models, window.c.h, window._, window.JSON));
