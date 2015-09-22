@@ -28,7 +28,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
       return m('#project_contributions.content.w-col.w-col-12', [
         (args.project.is_owner_or_admin ?
           m('.w-row.u-marginbottom-20', [
-            m(".w-col.w-col-1", [
+            m('.w-col.w-col-1', [
               m('input[checked="checked"][id="contribution_state_available_to_count"][name="waiting_payment"][type="radio"][value="available_to_count"]', {onclick: ctrl.generateSort(false)})
             ]),
             m('.w-col.w-col-5', [
@@ -37,7 +37,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
             m('.w-col.w-col-1', [
               m('input[id="contribution_state_waiting_confirmation"][type="radio"][name="waiting_payment"][value="waiting_confirmation"]', {onclick: ctrl.generateSort(true)})
             ]),
-            m(".w-col.w-col-5", [
+            m('.w-col.w-col-5', [
               m('label[for="contribution_state_waiting_confirmation"]', 'Pendentes')
             ])
           ])
@@ -65,7 +65,8 @@ window.c.ProjectContributions = ((m, models, h, _) => {
               ]),
             m('.divider.u-marginbottom-20')
           ]);
-      })),
+        })
+      ),
       m('.w-row',[
         m('.w-col.w-col-2.w-col-push-5',[
           !list.isLoading() ?

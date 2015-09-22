@@ -5,7 +5,7 @@ window.c.ProjectNav = (function(m, _, h){
           editLinksToggle = h.toggleProp(false, true),
           bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
-      if(!args.project.is_published) {
+      if (!args.project.is_published) {
         editLinksToggle.toggle();
       }
 
@@ -40,7 +40,7 @@ window.c.ProjectNav = (function(m, _, h){
                 m('a#dashboard_reports_link.dashboard-nav-link-left.u-marginbottom-30[href="' + editRoute + '#posts' + '"]', [
                   m('span.fa.fa-bullhorn.fa-fw.fa-lg'), ' Novidades ', m('span.badge', project.posts_count)
                 ])
-              ] : '' )
+              ] : '')
             ]),
             m('.edit-project-div', [
               (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {onclick: ctrl.editLinksToggle.toggle}, [

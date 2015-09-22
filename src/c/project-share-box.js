@@ -3,7 +3,7 @@ window.c.ProjectShareBox = (function(m, h){
     controller: function() {
       var displayEmbed = h.toggleProp(false, true);
 
-      return  {
+      return {
         displayEmbed: displayEmbed
       };
     },
