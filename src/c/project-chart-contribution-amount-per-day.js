@@ -39,7 +39,7 @@ window.c.ProjectChartContributionAmountPerDay = (function(m, Chart, _, h){
       return m('.card.u-radius.medium.u-marginbottom-30', [
         m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'R$ arrecadados por dia'),
         m('.w-row',[
-          m('.w-col.w-col-12', [
+          m('.w-col.w-col-12.overflow-auto', [
             m('canvas[id="chart"][width="860"][height="300"]', {config: ctrl.renderChart})
           ]),
         ])
