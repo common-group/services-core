@@ -1,4 +1,4 @@
-window.c.contribution.projectsHome = ((m, c) => {
+window.c.contribution.ProjectsHome = ((m, c) => {
   return {
     controller: () => {
       let vm = {
