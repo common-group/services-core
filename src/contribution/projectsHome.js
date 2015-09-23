@@ -1,7 +1,7 @@
-window.c.contribution.projectsHome = (function(m, c){
+window.c.contribution.projectsHome = ((m, c) => {
   return {
-    controller: function() {
-      var vm = {
+    controller: () => {
+      let vm = {
         recommendedCollection: m.prop([]),
         recentCollection: m.prop([]),
         nearMeCollection: m.prop([]),
@@ -29,7 +29,7 @@ window.c.contribution.projectsHome = (function(m, c){
       project.getPage(recents.parameters()).then(vm.recentCollection);
       project.getPage(expiring.parameters()).then(vm.expiringCollection);
 
-      var collections = [
+      let collections = [
         {
           title: 'Próximos a você',
           hash: 'near_of',
@@ -57,9 +57,9 @@ window.c.contribution.projectsHome = (function(m, c){
       };
     },
 
-    view: function(ctrl) {
-      return _.map(ctrl.collections, function(collection){
-        return m.component(c.ProjectRow, {collection: collection});
+    view: (ctrl) => {
+      return _.map(ctrl.collections, (collection) => {
+        return m.component(c.ProjectRow, {collection: collection, ref: `home_${collection.hash}`});
       });
     }
   };
