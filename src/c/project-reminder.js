@@ -18,7 +18,7 @@ window.c.ProjectReminder = ((m, models, h, c) => {
                 setTimeout(() => {
                   popNotification(false);
                   m.redraw();
-                }, 3000);
+                }, 5000);
               } else {
                 popNotification(false);
               }
