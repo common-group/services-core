@@ -34,7 +34,7 @@ window.c.ProjectCard = ((m, h, models) => {
                 m('.fontsize-base.fontweight-semibold', `${Math.ceil(project.progress)}%`)
               ]),
               m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
-                m('.fontsize-smaller.fontweight-semibold', `R$ ${project.pledged}`),
+                m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
                 m('.fontsize-smallest.lineheight-tightest', 'Levantados')
               ]),
               m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', [
