@@ -42,7 +42,7 @@ window.c.pages.LiveStatistics = ((m, models, h, _, JSON) => {
                 m('.w-col.w-col-4', [
                   m('.w-row', [
                     m('.w-col.w-col-4.w-col-small-4', [
-                      m('img.thumb.u-round[src="' + data.user_image + '"]')
+                      m('img.thumb.u-round[src="' + h.useAvatarOrDefault(data.user_image) + '"]')
                     ]),
                     m('.w-col.w-col-8.w-col-small-8', [
                       m('.fontsize-large.lineheight-tight', data.user_name)

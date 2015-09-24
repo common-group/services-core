@@ -53,6 +53,10 @@ window.c.h = (function(m, moment){
 
   idVM = m.postgrest.filtersVM({id: 'eq'}),
 
+  useAvatarOrDefault = function(avatarPath) {
+    return avatarPath || '/assets/catarse_bootstrap/user.jpg';
+  },
+
   //Templates
   loader = function(){
     return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
@@ -67,6 +71,7 @@ window.c.h = (function(m, moment){
     idVM: idVM,
     toggleProp: toggleProp,
     generateRemaingTime: generateRemaingTime,
-    loader: loader
+    loader: loader,
+    useAvatarOrDefault: useAvatarOrDefault
   };
 }(window.m, window.moment));

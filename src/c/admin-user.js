@@ -1,13 +1,10 @@
-window.c.AdminUser = (function(m){
+window.c.AdminUser = (function(m, h){
   return {
     view: function(ctrl, args) {
       var user = args.item;
-      var userProfile = function(){
-        return user.user_profile_img || '/assets/catarse_bootstrap/user.jpg';
-      };
       return m('.w-row.admin-user',[
         m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10',[
-          m('img.user-avatar[src="' + userProfile() + '"]')
+          m('img.user-avatar[src="' + h.useAvatarOrDefault(user.user_profile_img) + '"]')
         ]),
         m('.w-col.w-col-9.w-col-small-9',[
           m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [
@@ -20,4 +17,4 @@ window.c.AdminUser = (function(m){
       ]);
     }
   };
-}(window.m));
+}(window.m, window.c.h));
