@@ -8,6 +8,8 @@ window.c.models = (function(m){
   project = m.postgrest.model('projects'),
   teamMember = m.postgrest.model('team_members'),
   userDetail = m.postgrest.model('user_details');
+  statistic = m.postgrest.model('statistics');
+
   teamMember.pageSize(40);
   project.pageSize(3);
 
@@ -20,6 +22,7 @@ window.c.models = (function(m){
     userDetail: userDetail,
     project: project,
     projectContributionsPerDay: projectContributionsPerDay,
-    projectContributionsPerLocation: projectContributionsPerLocation
+    projectContributionsPerLocation: projectContributionsPerLocation,
+    statistic: statistic
   };
 }(window.m));
