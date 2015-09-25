@@ -57,6 +57,10 @@ window.c.h = (function(m, moment){
     return window.location.hash === str;
   },
 
+  useAvatarOrDefault = function(avatarPath) {
+    return avatarPath || '/assets/catarse_bootstrap/user.jpg';
+  },
+
   //Templates
   loader = function(){
     return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
@@ -119,6 +123,7 @@ window.c.h = (function(m, moment){
     rewardSouldOut: rewardSouldOut,
     rewardRemaning: rewardRemaning,
     parseUrl: parseUrl,
-    hashMatch: hashMatch
+    hashMatch: hashMatch,
+    useAvatarOrDefault: useAvatarOrDefault
   };
 }(window.m, window.moment));
