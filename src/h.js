@@ -1,18 +1,18 @@
-window.c.h = (function(m, moment){
+window.c.h = ((m, moment) => {
   //Date Helpers
-  var momentify = function(date, format){
+  const momentify = (date, format) => {
     format = format || 'DD/MM/YYYY';
     return date ? moment(date).format(format) : 'no date';
   },
 
-  momentFromString = function(date, format){
-    var european = moment(date, format || 'DD/MM/YYYY');
+  momentFromString = (date, format) => {
+    const european = moment(date, format || 'DD/MM/YYYY');
     return european.isValid() ? european : moment(date);
   },
 
   //Object manipulation helpers
-  generateRemaingTime = function(project) {
-    var remainingTextObj = m.prop({}),
+  generateRemaingTime = (project) =>  {
+    const remainingTextObj = m.prop({}),
         translatedTime = {
           days: 'dias',
           minutes: 'minutos',
@@ -29,22 +29,22 @@ window.c.h = (function(m, moment){
   },
 
   //Number formatting helpers
-  generateFormatNumber = function(s, c){
-    return function(number, n, x) {
+  generateFormatNumber = (s, c) => {
+    return (number, n, x) =>  {
       if (number === null || number === undefined) {
         return null;
       }
 
-      var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+      const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
           num = number.toFixed(Math.max(0, ~~n));
       return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
     };
   },
   formatNumber = generateFormatNumber('.', ','),
 
-  toggleProp = function(defaultState, alternateState){
-    var p = m.prop(defaultState);
-    p.toggle = function(){
+  toggleProp = (defaultState, alternateState) => {
+    const p = m.prop(defaultState);
+    p.toggle = () => {
       p(((p() === alternateState) ? defaultState : alternateState));
     };
 
@@ -53,23 +53,23 @@ window.c.h = (function(m, moment){
 
   idVM = m.postgrest.filtersVM({id: 'eq'}),
 
-  hashMatch = function(str) {
+  hashMatch = (str) => {
     return window.location.hash === str;
   },
 
-  useAvatarOrDefault = function(avatarPath) {
+  useAvatarOrDefault = (avatarPath) => {
     return avatarPath || '/assets/catarse_bootstrap/user.jpg';
   },
 
   //Templates
-  loader = function(){
+  loader = () => {
     return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
       m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
     ]);
   },
 
-  fbParse = function() {
-    var tryParse = function() {
+  fbParse = () => {
+    const tryParse = () => {
       try {
         window.FB.XFBML.parse();
       } catch (e) {
@@ -80,11 +80,11 @@ window.c.h = (function(m, moment){
     return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
   },
 
-  pluralize = function(count, s, p) {
+  pluralize = (count, s, p) => {
     return (count > 1 ? count + p : count + s);
   },
 
-  simpleFormat = function(str) {
+  simpleFormat = (str) => {
     str = str.replace(/\r\n?/, '\n');
     if (str.length > 0) {
       str = str.replace(/\n\n+/g, '</p><p>');
@@ -94,17 +94,17 @@ window.c.h = (function(m, moment){
     return str;
   },
 
-  rewardSouldOut = function(reward) {
+  rewardSouldOut = (reward) => {
     return (reward.maximum_contributions > 0 ?
         (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
   },
 
-  rewardRemaning = function(reward) {
+  rewardRemaning = (reward) => {
     return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
   },
 
-  parseUrl = function(href) {
-    var l = document.createElement('a');
+  parseUrl = (href) => {
+    const l = document.createElement('a');
     l.href = href;
     return l;
   };
