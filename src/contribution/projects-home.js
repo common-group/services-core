@@ -24,7 +24,7 @@ window.c.contribution.ProjectsHome = ((m, c) => {
 
       recommended.recommended('true').state('online');
 
-      project.getPage(nearMe.parameters()).then(vm.nearMeCollection);
+      project.getPageWithToken(nearMe.parameters()).then(vm.nearMeCollection);
       project.getPage(recommended.parameters()).then(vm.recommendedCollection);
       project.getPage(recents.parameters()).then(vm.recentCollection);
       project.getPage(expiring.parameters()).then(vm.expiringCollection);
