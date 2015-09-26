@@ -7,7 +7,7 @@ window.c.models = (function(m){
   projectContributionsPerLocation = m.postgrest.model('project_contributions_per_location'),
   project = m.postgrest.model('projects'),
   teamMember = m.postgrest.model('team_members'),
-  userDetail = m.postgrest.model('user_details');
+  userDetail = m.postgrest.model('user_details'),
   statistic = m.postgrest.model('statistics');
 
   teamMember.pageSize(40);
