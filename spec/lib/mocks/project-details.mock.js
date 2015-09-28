@@ -25,13 +25,7 @@ beforeAll(function(){
         state_acronym: "RN",
         state: "RN"
       },
-      rewards: [
-        {
-          id: 25494, project_id: 6051, description: "3 livrinhos impressos (frete grátis)",
-          minimum_value: 45.0, maximum_contributions: null, deliver_at: "2015-10-01T03:00:00",
-          updated_at: "2015-07-13T14:27:54.030958", paid_count:16, waiting_payment_count:2
-        }
-      ]
+      about_html: 'Lorem ipsum'
     };
 
     data = _.extend(data, attrs);
