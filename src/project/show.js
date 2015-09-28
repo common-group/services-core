@@ -1,16 +1,16 @@
-window.c.project.Show = (function(m, c, _, models, h){
+window.c.project.Show = ((m, c, _, models, h) => {
   return {
-    controller: function(args) {
-      var vm = m.postgrest.filtersVM({project_id: 'eq'}),
-          idVM = h.idVM,
-          projectDetails = m.prop([]),
-          userDetails = m.prop([]),
-          rewardDetails = m.prop([]);
+    controller: (args) => {
+      const vm = m.postgrest.filtersVM({project_id: 'eq'}),
+            idVM = h.idVM,
+            projectDetails = m.prop([]),
+            userDetails = m.prop([]),
+            rewardDetails = m.prop([]);
 
       vm.project_id(args.project_id);
 
-      models.projectDetail.getRowWithToken(vm.parameters()).then(function(data) {
-        var project = data[0];
+      models.projectDetail.getRowWithToken(vm.parameters()).then((data) => {
+        let project = data[0];
         projectDetails(data);
 
         idVM.id(project.user_id);
@@ -20,15 +20,14 @@ window.c.project.Show = (function(m, c, _, models, h){
       models.rewardDetail.getPage(vm.parameters()).then(rewardDetails);
 
       return {
-        vm: vm,
         projectDetails: projectDetails,
         userDetails: userDetails,
         rewardDetails: rewardDetails
       };
     },
 
-    view: function(ctrl) {
-      return _.map(ctrl.projectDetails(), function(project){
+    view: (ctrl) => {
+      return _.map(ctrl.projectDetails(), (project) => {
         return m('.project-show', [
           m.component(c.ProjectHeader, {project: project, userDetails: ctrl.userDetails}),
           m.component(c.ProjectTabs, {project: project}),
