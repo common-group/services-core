@@ -84,7 +84,7 @@ window.c.h = ((m, moment) => {
     return (count > 1 ? count + p : count + s);
   },
 
-  simpleFormat = (str) => {
+  simpleFormat = (str = '') => {
     str = str.replace(/\r\n?/, '\n');
     if (str.length > 0) {
       str = str.replace(/\n\n+/g, '</p><p>');
