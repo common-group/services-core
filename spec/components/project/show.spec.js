@@ -11,10 +11,10 @@ describe('ProjectShow', () => {
 
   it('should render project some details', () => {
     expect($output.contains(projectDetail.name)).toEqual(true);
-    expect($output.find('#project-sidebar').length).toEqual(1);
-    expect($output.find('#project-header').length).toEqual(1);
-    expect($output.find('.project-highlight').length).toEqual(1);
-    expect($output.find('.project-nav.mf').length).toEqual(1);
-    expect($output.find('#rewards').length).toEqual(1);
+    $output.should.have('#project-sidebar');
+    $output.should.have('#project-header');
+    $output.should.have('.project-highlight');
+    $output.should.have('.project-nav.mf');
+    $output.should.have('#rewards');
   });
 });
