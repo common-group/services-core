@@ -7,7 +7,7 @@ window.c.project.Show = (function(m, c, _, models, h){
           userDetails = m.prop([]),
           rewardDetails = m.prop([]);
 
-      vm.project_id(args.root.getAttribute('data-id'));
+      vm.project_id(args.project_id);
 
       models.projectDetail.getRowWithToken(vm.parameters()).then(function(data) {
         var project = data[0];
