@@ -1,13 +1,9 @@
-window.c.ProjectShareBox = (function(m, h){
+window.c.ProjectShareBox = ((m, h) => {
   return {
-    controller: function() {
-      var displayEmbed = h.toggleProp(false, true);
-
-      return {
-        displayEmbed: displayEmbed
-      };
+    controller: () => {
+      return {displayEmbed: h.toggleProp(false, true)};
     },
-    view: function(ctrl, args) {
+    view: (ctrl, args) => {
       return m('.pop-share', {style: 'display: block;'}, [
         m('.w-hidden-main.w-hidden-medium.w-clearfix', [
           m('a.btn.btn-small.btn-terciary.btn-inline.u-right', {onclick: args.displayShareBox.toggle}, 'Fechar'),
@@ -19,8 +15,8 @@ window.c.ProjectShareBox = (function(m, h){
         m('.w-widget.w-widget-twitter.w-hidden-small.w-hidden-tiny.share-block', [
           m('iframe[allowtransparency="true"][width="120px"][height="22px"][frameborder="0"][scrolling="no"][src="//platform.twitter.com/widgets/tweet_button.8d007ddfc184e6776be76fe9e5e52d69.en.html#_=1442425984936&count=horizontal&dnt=false&id=twitter-widget-1&lang=en&original_referer=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project.permalink + '&size=m&text=Confira%20o%20projeto%20' + args.project.name + '%20no%20%40catarse&type=share&url=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project.permalink + '%3Fref%3Dtwitter&via=catarse"]')
         ]),
-        m('a.w-hidden-small.w-hidden-tiny.fontsize-small.link-hidden.fontcolor-secondary[href="js:void(0);"]', {onclick: ctrl.displayEmbed.toggle}, '< embed >'),
-        (ctrl.displayEmbed() ? m('.u-margintop-30', [
+        m('a.w-hidden-small.widget-embed.w-hidden-tiny.fontsize-small.link-hidden.fontcolor-secondary[href="js:void(0);"]', {onclick: ctrl.displayEmbed.toggle}, '< embed >'),
+        (ctrl.displayEmbed() ? m('.embed-expanded.u-margintop-30', [
           m('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'),
           m('.w-form', [
             m('input.w-input[type="text"][value="<iframe frameborder="0" height="314px" src="https://www.catarse.me/pt/projects/' + args.project.id + '/embed" width="300px" scrolling="no"></iframe>"]')
@@ -35,9 +31,6 @@ window.c.ProjectShareBox = (function(m, h){
         m('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href="http://twitter.com/?status=Acabei de apoiar o projeto ' + args.project.name + ' htts://www.catarse.me/' + args.project.permalink + '?ref=twitterr"][target="_blank"]', [
           m('span.fa.fa-twitter'),' Tweet'
         ]),
-        //m('a.w-hidden-main.w-hidden-medium.btn.btn-medium[href=\'#\']', [
-        //  m('span.fa.fa-whatsapp', '.'),' Whatsapp'
-        //])
       ]);
     }
   };
