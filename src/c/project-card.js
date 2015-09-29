@@ -47,5 +47,5 @@ window.c.ProjectCard = ((m, h, models) => {
       ]);
     }
   };
-}(window.m, window.c.h, window.c.models));
+}(window.m, window.c.h, window._));
 
