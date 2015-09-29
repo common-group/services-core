@@ -133,14 +133,15 @@ window.c.admin.Contributions = (function(m, c, h){
         itemActions: itemActions,
         itemBuilder: itemBuilder,
         listVM: {list: listVM, error: error},
+        data: {label: 'Apoios'},
         submit: submit
       };
     },
 
     view: function(ctrl){
       return [
-        m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, submit: ctrl.submit}),
-        m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions})
+        m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, data: ctrl.data, submit: ctrl.submit}),
+        m.component(c.AdminList, {vm: ctrl.listVM, data: ctrl.data, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions})
       ];
     }
   };
