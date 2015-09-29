@@ -18,7 +18,7 @@ describe('ProjectHighlight', () => {
       projectDetail = ProjectDetailsMockery()[0];
       let component = m.component(ProjectHighlight, {project: projectDetail}),
           view = component.view(component.controller(), {project: projectDetail});
-      $output = mq(view, {project: projectDetail});
+      $output = mq(ProjectHighlight, {project: projectDetail});
     });
 
     it('should render project video, headline, category and address info', () => {

@@ -8,7 +8,7 @@ describe('ProjectShareBox', () => {
       let args = {project: projectDetail, displayShareBox: {toggle: jasmine.any(Function)}},
           component = m.component(ProjectShareBox, args),
           view = component.view(component.controller(), args);
-      $output = mq(view, args);
+      $output = mq(ProjectShareBox, args);
     });
 
     it('should render project project share pop', () => {
@@ -20,7 +20,6 @@ describe('ProjectShareBox', () => {
 
     it('should open embed box when click on embed', () => {
       $output.click('a.widget-embed');
-      //$output.redraw();
       $output.should.have('.embed-expanded');
     });
   });
