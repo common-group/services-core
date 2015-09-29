@@ -1,13 +1,13 @@
-window.c.ProjectPosts = (function(m, models, h, _){
+window.c.ProjectPosts = ((m, models, h, _) => {
   return {
-    controller: function(args) {
-      var listVM = m.postgrest.paginationVM(models.projectPostDetail.getPageWithToken),
-          filterVM = m.postgrest.filtersVM({project_id: 'eq'});
+    controller: (args) => {
+      const listVM = m.postgrest.paginationVM(models.projectPostDetail.getPageWithToken),
+            filterVM = m.postgrest.filtersVM({project_id: 'eq'});
 
       filterVM.project_id(args.project.id);
 
       if (!listVM.collection().length) {
-        listVM.firstPage(filterVM.parameters()).then(null);
+        listVM.firstPage(filterVM.parameters());
       }
 
       return {
@@ -15,12 +15,12 @@ window.c.ProjectPosts = (function(m, models, h, _){
         filterVM: filterVM
       };
     },
-    view: function(ctrl) {
-      var list = ctrl.listVM;
+    view: (ctrl) => {
+      const list = ctrl.listVM;
 
       return m('.project-posts.w-section', [
         m('.w-container.u-margintop-20', [
-          (_.map(list.collection(), function(post) {
+          (_.map(list.collection(), (post) => {
             return m('.w-row', [
               m('.w-col.w-col-1'),
               m('.w-col.w-col-10', [
