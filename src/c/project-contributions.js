@@ -1,15 +1,15 @@
 window.c.ProjectContributions = ((m, models, h, _) => {
   return {
     controller: (args) => {
-      let listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
-          filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'}),
-          generateSort = (waiting = false) => {
-            return () => {
-              //FIXME: need to find a way to pass false filter
-              filterVM.waiting_payment(waiting);
-              listVM.firstPage(filterVM.parameters());
+      const listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
+            filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'}),
+            toggleWaiting = (waiting = false) => {
+              return () => {
+                //FIXME: need to find a way to pass false filter
+                filterVM.waiting_payment(waiting);
+                listVM.firstPage(filterVM.parameters());
+              };
             };
-          };
 
       filterVM.project_id(args.project.id);
 
@@ -20,22 +20,22 @@ window.c.ProjectContributions = ((m, models, h, _) => {
       return {
         listVM: listVM,
         filterVM: filterVM,
-        generateSort: generateSort
+        toggleWaiting: toggleWaiting
       };
     },
     view: (ctrl, args) => {
-      let list = ctrl.listVM;
+      const list = ctrl.listVM;
       return m('#project_contributions.content.w-col.w-col-12', [
         (args.project.is_owner_or_admin ?
           m('.w-row.u-marginbottom-20', [
             m('.w-col.w-col-1', [
-              m('input[checked="checked"][id="contribution_state_available_to_count"][name="waiting_payment"][type="radio"][value="available_to_count"]', {onclick: ctrl.generateSort(false)})
+              m('input[checked="checked"][id="contribution_state_available_to_count"][name="waiting_payment"][type="radio"][value="available_to_count"]', {onclick: ctrl.toggleWaiting()})
             ]),
             m('.w-col.w-col-5', [
               m('label[for="contribution_state_available_to_count"]', 'Confirmados')
             ]),
             m('.w-col.w-col-1', [
-              m('input[id="contribution_state_waiting_confirmation"][type="radio"][name="waiting_payment"][value="waiting_confirmation"]', {onclick: ctrl.generateSort(true)})
+              m('input[id="contribution_state_waiting_confirmation"][type="radio"][name="waiting_payment"][value="waiting_confirmation"]', {onclick: ctrl.toggleWaiting(true)})
             ]),
             m('.w-col.w-col-5', [
               m('label[for="contribution_state_waiting_confirmation"]', 'Pendentes')
