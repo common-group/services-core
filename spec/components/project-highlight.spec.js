@@ -18,7 +18,7 @@ describe('ProjectHighlight', () => {
       projectDetail = ProjectDetailsMockery()[0];
       let component = m.component(ProjectHighlight, {project: projectDetail}),
           view = component.view(component.controller(), {project: projectDetail});
-      $output = mq(view);
+      $output = mq(view, {project: projectDetail});
     });
 
     it('should render project video, headline, category and address info', () => {
@@ -27,16 +27,10 @@ describe('ProjectHighlight', () => {
       expect($output.contains(projectDetail.address.city)).toEqual(true);
     });
 
-    //FIXME: Pending spec
-    //describe('display share', () => {
-    //  beforeAll(() => {
-    //    $output.click('a#share-box');
-    //  });
-
-    //  it('should render project share box when click on share', () => {
-    //    $output.redraw();
-    //    expect(m.component).toHaveBeenCalledWith(c.ProjectShareBox, {project: projectDetail});
-    //  });
+    //it('should render project share box when click on share', () => {
+    //  $output.click('a#share-box');
+    //  $output.redraw();
+    //  $output.should.have('.pop-share');
     //});
   });
 });
