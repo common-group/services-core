@@ -7,14 +7,14 @@ window.c.ProjectContributions = ((m, models, h, _) => {
             return () => {
               //FIXME: need to find a way to pass false filter
               filterVM.waiting_payment(waiting);
-              listVM.firstPage(filterVM.parameters()).then(null);
+              listVM.firstPage(filterVM.parameters());
             };
           };
 
       filterVM.project_id(args.project.id);
 
       if (!listVM.collection().length) {
-        listVM.firstPage(filterVM.parameters()).then(null);
+        listVM.firstPage(filterVM.parameters());
       }
 
       return {
