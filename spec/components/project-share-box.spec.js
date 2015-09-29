@@ -18,11 +18,11 @@ describe('ProjectShareBox', () => {
       $output.should.have('.widget-embed');
     });
 
-    //it('should open embed box when click on embed', () => {
-    //  $output.click('a.widget-embed');
-    //  //$output.redraw();
-    //  $output.should.have('.embed-expanded');
-    //});
+    it('should open embed box when click on embed', () => {
+      $output.click('a.widget-embed');
+      //$output.redraw();
+      $output.should.have('.embed-expanded');
+    });
   });
 });
 
