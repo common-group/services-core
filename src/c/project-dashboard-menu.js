@@ -1,7 +1,7 @@
-window.c.ProjectNav = (function(m, _, h){
+window.c.ProjectDashboardMenu = ((m, _, h) => {
   return {
-    controller: function(args) {
-      var body = document.getElementsByTagName('body')[0],
+    controller: (args) => {
+      const body = document.getElementsByTagName('body')[0],
           editLinksToggle = h.toggleProp(false, true),
           bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
@@ -15,10 +15,10 @@ window.c.ProjectNav = (function(m, _, h){
         bodyToggleForNav: bodyToggleForNav
       };
     },
-    view: function(ctrl, args) {
-      var project = args.project,
-          editRoute = '/projects/' + project.id + '/edit',
-          editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
+    view: (ctrl, args) => {
+      const project = args.project,
+            editRoute = '/projects/' + project.id + '/edit',
+            editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
 
       ctrl.body.className = ctrl.bodyToggleForNav();
 

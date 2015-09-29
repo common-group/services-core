@@ -32,7 +32,7 @@ window.c.project.Show = ((m, c, _, models, h) => {
           m.component(c.ProjectHeader, {project: project, userDetails: ctrl.userDetails}),
           m.component(c.ProjectTabs, {project: project}),
           m.component(c.ProjectMain, {project: project, rewardDetails: ctrl.rewardDetails}),
-          (project.is_owner_or_admin ? m.component(c.ProjectNav, {project: project}) : '')
+          (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {project: project}) : '')
         ]);
       });
     }
