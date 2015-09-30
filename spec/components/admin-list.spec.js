@@ -2,6 +2,7 @@ describe('AdminList',() => {
   let c = window.c,
       AdminList = c.AdminList,
       ctrl, fakeVM, $output,
+      parameters = (fakeVM) => { return {vm: fakeVM, data: {label:'foo'}}; },
       VMfaker = (opts) => {
         opts = opts || {};
         let total = opts.total || 0,
@@ -29,7 +30,7 @@ describe('AdminList',() => {
     beforeAll(() => {
       fakeVM = VMfaker();
       spyOn(fakeVM.list, 'firstPage').and.callThrough();
-      ctrl = AdminList.controller({vm: fakeVM});
+      ctrl = AdminList.controller(parameters(fakeVM));
     });
 
     it('should call firstPage if collection is empty', () => {
@@ -39,7 +40,7 @@ describe('AdminList',() => {
   describe('view', () => {
     beforeAll(() => {
       fakeVM = VMfaker({collection: ContributionDetailMockery(10)});
-      $output = mq(AdminList, {vm: fakeVM});
+      $output = mq(AdminList, parameters(fakeVM));
     });
 
     it('should render fetched contributions cards', () => {
@@ -48,7 +49,7 @@ describe('AdminList',() => {
     describe('when loading', () => {
       beforeAll(() => {
         fakeVM = VMfaker({isLoading: true});
-        $output = mq(AdminList, {vm: fakeVM});
+        $output = mq(AdminList, parameters(fakeVM));
       });
 
       it('should show a loading icon', () => {
@@ -57,8 +58,8 @@ describe('AdminList',() => {
     });
     describe('when error', () => {
       beforeAll(() => {
-        fakeVM = VMfaker({error: true});
-        $output = mq(AdminList, {vm: fakeVM});
+        params = parameters(VMfaker({error: true}));
+        $output = mq(AdminList, params);
       });
 
       it('should show an error info', () => {
