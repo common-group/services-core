@@ -35,7 +35,7 @@ describe('AdminRadioAction', function(){
   describe('controller', function(){
     beforeAll(function(){
       spyOn(testModel, 'patchOptions');
-      spyOn(testModel, 'getRowOptions');
+      spyOn(testModel, 'getPageOptions');
       spyOn(m, 'redraw');
       ctrl = AdminRadioAction.controller({data: args, item: item});
       spyOn(ctrl.setLoader, 'load').and.returnValue({
@@ -85,7 +85,7 @@ describe('AdminRadioAction', function(){
     it('should instantiate a get loader with filter set', function(){
       var filterSample = {};
       filterSample[args.getKey] = 'eq.' + item.testKey;
-      expect(testModel.getRowOptions).toHaveBeenCalledWith(filterSample);
+      expect(testModel.getPageOptions).toHaveBeenCalledWith(filterSample);
     });
     it('should instantiate a set loader with filter set', function(){
       var filterSample = {};

@@ -1,6 +1,5 @@
 window.c.models = (function(m){
   var contributionDetail = m.postgrest.model('contribution_details'),
-
   projectDetail = m.postgrest.model('project_details'),
   userDetail = m.postgrest.model('user_details'),
   rewardDetail = m.postgrest.model('reward_details'),
@@ -16,7 +15,7 @@ window.c.models = (function(m){
   statistic = m.postgrest.model('statistics');
 
   teamMember.pageSize(40);
-  rewardDetail.pageSize(200);
+  rewardDetail.pageSize(false);
   project.pageSize(3);
 
   return {
