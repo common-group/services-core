@@ -15,11 +15,9 @@ describe('AdminRadioAction', function(){
       testStr = 'updated',
       fakeData = {},
       ctrl, $output;
-  var response = [
-    function(callback, err){
-      callback([fakeData]);
-    }
-  ];
+  var response = function(callback, err){
+    callback(fakeData);
+  };
 
   var args = {
         getKey: 'testKey',
@@ -109,7 +107,7 @@ describe('AdminRadioAction', function(){
   describe('view', function(){
     beforeAll(function(){
       ctrl = AdminRadioAction.controller({data: args, item: item});
-      fakeData[args.radios] = [
+      fakeData = [
         {
           id: 1,
           description: 'description_1',
@@ -122,7 +120,7 @@ describe('AdminRadioAction', function(){
         }
       ];
       spyOn(m, 'request').and.returnValue({
-        then: response[0]
+        then: response
       });
       $output = mq(AdminRadioAction, {data: args, item: item});
 
@@ -139,7 +137,7 @@ describe('AdminRadioAction', function(){
       });
 
       it('should render a row of radio inputs', function(){
-        expect($output.find('input[type="radio"]').length).toEqual(fakeData[args.radios].length);
+        expect($output.find('input[type="radio"]').length).toEqual(fakeData.length);
       });
       it('should render the description of the default selected radio', function(){
         expect($output.contains(item.reward.description)).toBeTrue();
