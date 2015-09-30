@@ -26,7 +26,7 @@ window.c.AdminRadioAction = (function(m, h, c){
       var getVM = m.postgrest.filtersVM(getFilter);
       getVM[getKey](item[getKey]);
 
-      var getLoader = m.postgrest.loaderWithToken(builder.getModel.getRowOptions(getVM.parameters()));
+      var getLoader = m.postgrest.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
 
       var setLoader = m.postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
@@ -37,7 +37,7 @@ window.c.AdminRadioAction = (function(m, h, c){
 
       var fetch = function(){
         getLoader.load().then(function(item){
-          radios(item[0][getAttr]);
+          radios(item);
         }, error);
       };
 

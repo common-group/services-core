@@ -45,7 +45,7 @@ window.c.admin.Contributions = (function(m, c, h){
                 radios: 'rewards',
                 callToAction: 'Alterar Recompensa',
                 outerLabel: 'Recompensa',
-                getModel: c.models.projectDetail,
+                getModel: c.models.rewardDetail,
                 updateModel: c.models.contributionDetail
               }
             },
