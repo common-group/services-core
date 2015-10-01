@@ -22,7 +22,10 @@ window.c.AdminInputAction = (function(m, h, c){
 
       var submit = function(){
         data[key] = newValue();
-        l.load().then(updateItem, error);
+        l.load().then(updateItem, function(){
+          complete(true);
+          error(true);
+        });
         return false;
       };
 
