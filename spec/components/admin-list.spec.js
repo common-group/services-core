@@ -58,7 +58,7 @@ describe('AdminList',() => {
     });
     describe('when error', () => {
       beforeAll(() => {
-        params = parameters(VMfaker({error: true}));
+        var params = parameters(VMfaker({error: true}));
         $output = mq(AdminList, params);
       });
 
