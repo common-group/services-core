@@ -121,6 +121,7 @@ window.c.admin.Contributions = (function(m, c, h){
             }
           ],
           submit = function(){
+            error(false);
             listVM.firstPage(filterVM.parameters()).then(null, function(serverError){
               error(serverError.message);
             });
