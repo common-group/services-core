@@ -1,7 +1,8 @@
-window.c.contribution.ProjectsHome = ((m, c) => {
+window.c.contribution.ProjectsHome = (((m, c, moment, _) => {
   return {
     controller: () => {
-      let vm = {
+      let sample3 = _.partial(_.sample, _, 3),
+      vm = {
         recommendedCollection: m.prop([]),
         recentCollection: m.prop([]),
         nearMeCollection: m.prop([]),
@@ -24,10 +25,10 @@ window.c.contribution.ProjectsHome = ((m, c) => {
 
       recommended.recommended('true').state('online');
 
-      project.getPageWithToken(nearMe.parameters()).then(vm.nearMeCollection);
-      project.getPage(recommended.parameters()).then(vm.recommendedCollection);
-      project.getPage(recents.parameters()).then(vm.recentCollection);
-      project.getPage(expiring.parameters()).then(vm.expiringCollection);
+      project.getPageWithToken(nearMe.parameters()).then(_.compose(vm.nearMeCollection, sample3));
+      project.getPage(recommended.parameters()).then(_.compose(vm.recommendedCollection, sample3));
+      project.getPage(recents.parameters()).then(_.compose(vm.recentCollection, sample3));
+      project.getPage(expiring.parameters()).then(_.compose(vm.expiringCollection, sample3));
 
       let collections = [
         {
@@ -63,4 +64,4 @@ window.c.contribution.ProjectsHome = ((m, c) => {
       });
     }
   };
-}(window.m, window.c));
+})(window.m, window.c, window.moment, window._));
