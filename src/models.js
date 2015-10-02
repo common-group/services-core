@@ -16,7 +16,7 @@ window.c.models = (function(m){
 
   teamMember.pageSize(40);
   rewardDetail.pageSize(false);
-  project.pageSize(3);
+  project.pageSize(30);
 
   return {
     contributionDetail: contributionDetail,
