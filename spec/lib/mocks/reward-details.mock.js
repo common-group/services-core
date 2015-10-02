@@ -18,6 +18,6 @@ beforeAll(function() {
   };
 
   jasmine.Ajax.stubRequest(new RegExp("("+apiPrefix + '\/reward_details)'+'(.*)')).andReturn({
-    'responseText' : JSON.stringify(ProjectPostDetailsMockery())
+    'responseText' : JSON.stringify(RewardDetailsMockery())
   });
 });
