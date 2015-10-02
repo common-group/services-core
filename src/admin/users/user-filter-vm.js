@@ -1,6 +1,6 @@
-window.c.admin.userFilterVM = (function(m){
+window.c.admin.userFilterVM = (function(m, replaceDiacritics){
   var vm = m.postgrest.filtersVM({
-    name: 'like',
+    full_text_index: '@@'
   }),
 
   paramToString = function(p){
@@ -8,8 +8,12 @@ window.c.admin.userFilterVM = (function(m){
   };
 
   // Set default values
-  vm.name('');
   vm.order({id: 'desc'});
 
+  vm.full_text_index.toFilter = function(){
+    var filter = paramToString(vm.full_text_index());
+    return filter && replaceDiacritics(filter) || undefined;
+  };
+
   return vm;
-}(window.m));
+}(window.m, window.replaceDiacritics));

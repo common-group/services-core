@@ -15,8 +15,8 @@ window.c.admin.Users = (function(m, c, h){
             { //name
               component: 'FilterMain',
               data: {
-                vm: filterVM.name,
-                placeholder: 'Busque por nome...',
+                vm: filterVM.full_text_index,
+                placeholder: 'Busque por nome, e-mail, Ids do usuário...',
               },
             },
           ],
