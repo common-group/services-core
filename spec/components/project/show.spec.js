@@ -4,7 +4,7 @@ describe('ProjectShow', () => {
 
   beforeAll(() => {
     projectDetail = ProjectDetailsMockery()[0];
-    let component = m.component(ProjectShow, {project_id: 123}),
+    let component = m.component(ProjectShow, {project_id: 123, project_user_id: 1231}),
         view = component.view(component.controller());
     $output = mq(view);
   });

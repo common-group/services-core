@@ -8,16 +8,14 @@ window.c.project.Show = ((m, c, _, models, h) => {
             rewardDetails = m.prop([]);
 
       vm.project_id(args.project_id);
+      idVM.id(args.project_user_id);
 
       models.projectDetail.getRowWithToken(vm.parameters()).then((data) => {
-        let project = data[0];
-        projectDetails(data);
-
-        idVM.id(project.user_id);
         models.userDetail.getRowWithToken(idVM.parameters()).then(userDetails);
-      });
+        models.rewardDetail.getPageWithToken(vm.parameters()).then(rewardDetails);
 
-      models.rewardDetail.getPage(vm.parameters()).then(rewardDetails);
+        projectDetails(data);
+      });
 
       return {
         projectDetails: projectDetails,
