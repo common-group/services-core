@@ -23,6 +23,17 @@ window.c.admin.Contributions = (function(m, c, h){
               wrapperClass: '.w-col.w-col-2'
             }
           ],
+          itemDetails = [
+            {
+              component: 'AdminTransaction'
+            },
+            {
+              component: 'AdminTransactionHistory'
+            },
+            {
+              component: 'AdminReward'
+            }
+          ],
           itemActions = [
             {
               component: 'AdminInputAction',
@@ -131,6 +142,7 @@ window.c.admin.Contributions = (function(m, c, h){
         filterVM: filterVM,
         filterBuilder: filterBuilder,
         itemActions: itemActions,
+        itemDetails: itemDetails,
         itemBuilder: itemBuilder,
         listVM: {list: listVM, error: error},
         data: {label: 'Apoios'},
@@ -141,7 +153,7 @@ window.c.admin.Contributions = (function(m, c, h){
     view: function(ctrl){
       return [
         m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, data: ctrl.data, submit: ctrl.submit}),
-        m.component(c.AdminList, {vm: ctrl.listVM, data: ctrl.data, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions})
+        m.component(c.AdminList, {vm: ctrl.listVM, data: ctrl.data, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions, itemDetails: ctrl.itemDetails})
       ];
     }
   };

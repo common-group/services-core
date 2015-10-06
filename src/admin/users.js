@@ -31,6 +31,7 @@ window.c.admin.Users = (function(m, c, h){
         filterVM: filterVM,
         filterBuilder: filterBuilder,
         itemActions: [],
+        itemDetails: [],
         itemBuilder: itemBuilder,
         listVM: {list: listVM, error: error},
         data: {label: 'Usuários'},
@@ -41,7 +42,7 @@ window.c.admin.Users = (function(m, c, h){
     view: function(ctrl){
       return [
         m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, data: ctrl.data, submit: ctrl.submit}),
-        m.component(c.AdminList, {vm: ctrl.listVM, data: ctrl.data, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions})
+        m.component(c.AdminList, {vm: ctrl.listVM, data: ctrl.data, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions, itemDetails: ctrl.itemDetails})
       ];
     }
   };
