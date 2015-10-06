@@ -5,7 +5,7 @@ describe('AdminTransaction', () => {
 
   beforeAll(() => {
     contribution = m.prop(ContributionDetailMockery(1, {gateway_data: null}));
-    detailedBox = m.component(c.AdminTransaction,  {contribution: contribution()[0]});
+    detailedBox = m.component(c.AdminTransaction,  {item: contribution()[0]});
     view = detailedBox.view(null, {contribution: contribution});
     $output = mq(view);
   });
