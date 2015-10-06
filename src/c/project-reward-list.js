@@ -1,10 +1,10 @@
-window.c.ProjectRewardList = (function(m, h, _){
+window.c.ProjectRewardList = ((m, h, _) => {
   return {
-    view: function(ctrl, args) {
+    view: (ctrl, args) => {
       //FIXME: MISSING ADJUSTS
       // - add draft admin modifications
       var project = args.project;
-      return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), function(reward) {
+      return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
         var contributionUrlWithReward = '/projects/' + project.id + '/contributions/new?reward_id=' + reward.id;
 
         return m('a[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"][href="' + (project.open_for_contributions && !h.rewardSouldOut(reward) ? contributionUrlWithReward : 'js:void(0);') + '"]', [
