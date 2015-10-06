@@ -1,7 +1,7 @@
-window.c.ProjectTabs = (function(m, h){
+window.c.ProjectTabs = ((m, h) => {
   return {
-    view: function(ctrl, args) {
-      var project = args.project;
+    view: (ctrl, args) => {
+      const project = args.project;
       return m('.w-section.project-nav.mf',[
         m('.w-container', [
           m('.w-row', [
@@ -9,15 +9,15 @@ window.c.ProjectTabs = (function(m, h){
               m('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ' + (h.hashMatch('#rewards') ? 'selected' : '') + '"][href="#rewards"]', {style: 'float: left;'}, 'Recompensas'),
               m('a[id="about-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#about') || h.hashMatch('') ? 'selected' : '') + ' "][href="#about"]', {style: 'float: left;'}, 'Sobre'),
               m('a[id="posts-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#posts') ? 'selected' : '') + '"][href="#posts"]', {style: 'float: left;'}, [
-                'Novidades',
+                'Novidades ',
                 m('span.badge', project.posts_count)
               ]),
-              m('a[id="contributions-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {style: 'float: left;'}, [
-                'Apoios',
+              m('a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {style: 'float: left;'}, [
+                'Apoios ',
                 m('span.badge.w-hidden-small.w-hidden-tiny', project.total_contributions)
               ]),
               m('a[id="comments-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#comments') ? 'selected' : '') + '"][href="#comments"]', {style: 'float: left;'}, [
-                'Comentarios',
+                'Comentarios ',
                 m('fb:comments-count[href="http://www.catarse.me/' + project.permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;'))
               ]),
             ])
