@@ -13,7 +13,8 @@ window.c.AdminList = (function(m, h, c){
 
     view: function(ctrl, args) {
       var list = args.vm.list,
-          error = args.vm.error;
+          error = args.vm.error,
+          label = args.label || '';
       return m('.w-section.section', [
         m('.w-container',
           error() ?
@@ -23,8 +24,8 @@ window.c.AdminList = (function(m, h, c){
                 m('.w-col.w-col-9', [
                   m('.fontsize-base',
                     list.isLoading() ?
-                      'Buscando apoios...' :
-                      [m('span.fontweight-semibold', list.total()), ' apoios encontrados']
+                      `Carregando ${label.toLowerCase()}...` :
+                      [m('span.fontweight-semibold', list.total()), ` ${label.toLowerCase()} encontrados`]
                    )
                 ])
               ]),

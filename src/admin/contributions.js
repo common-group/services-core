@@ -75,6 +75,7 @@ window.c.admin.Contributions = (function(m, c, h){
         filterVM: filterVM,
         filterBuilder: filterBuilder,
         listVM: {list: listVM, error: error},
+        data: {label: 'Apoios'},
         submit: submit
       };
     },
