@@ -12,7 +12,7 @@ window.c.ProjectTabs = ((m, h) => {
                 'Novidades ',
                 m('span.badge', project.posts_count)
               ]),
-              m('a[id="contributions-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {style: 'float: left;'}, [
+              m('a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {style: 'float: left;'}, [
                 'Apoios ',
                 m('span.badge.w-hidden-small.w-hidden-tiny', project.total_contributions)
               ]),
