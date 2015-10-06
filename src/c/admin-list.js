@@ -5,6 +5,7 @@ window.c.AdminList = (function(m, h, c){
       var list = args.vm.list;
       if (!list.collection().length && list.firstPage) {
         list.firstPage().then(null, function(serverError) {
+          console.log('error', serverError);
           args.vm.error(serverError.message);
         });
       }
@@ -12,7 +13,8 @@ window.c.AdminList = (function(m, h, c){
 
     view: function(ctrl, args) {
       var list = args.vm.list,
-          error = args.vm.error;
+          error = args.vm.error,
+          label = args.label || '';
       return m('.w-section.section', [
         m('.w-container',
           error() ?
@@ -22,22 +24,22 @@ window.c.AdminList = (function(m, h, c){
                 m('.w-col.w-col-9', [
                   m('.fontsize-base',
                     list.isLoading() ?
-                      'Buscando apoios...' :
-                      [m('span.fontweight-semibold', list.total()), ' apoios encontrados']
+                      `Carregando ${label.toLowerCase()}...` :
+                      [m('span.fontweight-semibold', list.total()), ` ${label.toLowerCase()} encontrados`]
                    )
                 ])
               ]),
               m('#admin-contributions-list.w-container',[
                 list.collection().map(function(item) {
-                  return m.component(c.AdminItem, {builder: args.itemBuilder, actions: args.itemActions, item: item, key: item.key});
+                  return m.component(c.AdminItem, {listItem: args.listItem, listDetail: args.listDetail, item: item, key: item.id});
                 }),
                 m('.w-section.section',[
                   m('.w-container',[
                     m('.w-row',[
                       m('.w-col.w-col-2.w-col-push-5',[
-                        !list.isLoading() ?
-                          m('button#load-more.btn.btn-medium.btn-terciary', {onclick: list.nextPage}, 'Carregar mais') :
-                          h.loader(),
+                        list.isLoading() ?
+                          h.loader() :
+                          m('button#load-more.btn.btn-medium.btn-terciary', {onclick: list.nextPage}, 'Carregar mais'),
                       ])
                     ])
                   ])

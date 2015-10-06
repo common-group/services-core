@@ -1,21 +1,33 @@
 describe('AdminItem', function(){
   var c = window.c,
       AdminItem = c.AdminItem,
-      item, $output, itemDescriber;
+      item, $output, ListItemMock, ListDetailMock;
+
+  beforeAll(function(){
+    ListItemMock = {
+      view: function(ctrl, args) { return m('.list-item-mock'); }
+    };
+    ListDetailMock = {
+      view: function(ctrl, args) { return m('.list-detail-mock'); }
+    };
+  });
 
   describe('view', function(){
-    beforeAll(function(){
-      spyOn(m, 'component').and.callThrough();
-      item = ContributionDetailMockery(1)[0];
-      itemDescriber = ItemDescriberMock();
-      $output = mq(AdminItem, {builder: itemDescriber, item: item});
+    beforeEach(function(){
+      $output = mq(AdminItem, {listItem: ListItemMock, listDetail: ListDetailMock, item: item});
     });
 
-    it('should build an item from an item describer', function(){
-      expect($output.has('.admin-user')).toBeTrue();
-      expect($output.has('.admin-project')).toBeTrue();
-      expect($output.has('.admin-contribution')).toBeTrue();
-      expect($output.has('.payment-status')).toBeTrue();
+    it('should render list item', function(){
+      $output.should.have('.list-item-mock');
+    });
+
+    it('should render list detail when toggle details is true', function(){
+      $output.click('button');
+      $output.should.have('.list-detail-mock');
+    });
+
+    it('should not render list detail when toggle details is false', function(){
+      $output.should.not.have('.list-detail-mock');
     });
   });
 

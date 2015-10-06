@@ -18,9 +18,6 @@ describe('admin.Contributions', function(){
       expect(ctrl.filterVM).toBeDefined();
     });
 
-    it('should instantiate an item builder', function(){
-      expect(ctrl.itemBuilder).toBeDefined();
-    });
   });
 
   describe('view', function(){
