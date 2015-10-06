@@ -1,7 +1,7 @@
 window.c.AdminTransactionHistory = (function(m, h, _){
   return {
     controller: function(args) {
-      var contribution = args.item,
+      var contribution = args.contribution,
           mapEvents = _.reduce([
         {date: contribution.paid_at, name: 'Apoio confirmado'},
         {date: contribution.pending_refund_at, name: 'Reembolso solicitado'},

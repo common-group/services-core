@@ -1,7 +1,7 @@
 window.c.AdminTransaction = (function(m, h){
   return {
     view: function(ctrl, args) {
-      var contribution = args.item;
+      var contribution = args.contribution;
       return m('.w-col.w-col-4',[
         m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Detalhes do apoio'),
         m('.fontsize-smallest.lineheight-looser',[

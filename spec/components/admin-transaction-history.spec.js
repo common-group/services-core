@@ -5,7 +5,7 @@ describe('AdminTransactionHistory', () =>  {
 
   beforeAll(() => {
     contribution = m.prop(ContributionDetailMockery(1));
-    historyBox = m.component(c.AdminTransactionHistory,  {item: contribution()[0]});
+    historyBox = m.component(c.AdminTransactionHistory,  {contribution: contribution()[0]});
     ctrl = historyBox.controller();
     view = historyBox.view(ctrl, {contribution: contribution});
     $output = mq(view);
