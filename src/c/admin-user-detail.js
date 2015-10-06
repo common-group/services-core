@@ -8,17 +8,7 @@ window.c.AdminUserDetail = (function(m, _, c){
           details = args.details;
       return m('#admin-contribution-detail-box', [
         m('.divider.u-margintop-20.u-marginbottom-20'),
-        m('.w-row.u-marginbottom-30',
-          _.map(actions, function(action){
-            return m.component(c[action.component], {data: action.data, item: args.item});
-          })
-        ),
-        details.length > 0 ?
-          m('.w-row.card.card-terciary.u-radius',
-            _.map(details, function(detail){
-              return m.component(c[detail.component], {item: item, key: item.key});
-            })
-          ) : ''
+        m('.w-row.u-marginbottom-30', []), /* actions go here */
       ]);
     }
   };
