@@ -16,7 +16,7 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
         m('.project-blurb', project.headline),
         m('.u-text-center-small-only.u-marginbottom-30', [
           (!_.isNull(project.address) ?
-            m('a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="js:void(0);"]', [
+            m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="/pt/explore#near_of/${project.address.state_acronym}"]`, [
               m('span.fa.fa-map-marker'), ` ${project.address.city}, ${project.address.state_acronym}`
             ]) : ''
           ),
