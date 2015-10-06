@@ -4,7 +4,8 @@ window.c.AdminDetail = (function(m, _, c){
     },
     view: function(ctrl, args){
       var actions = args.actions,
-          item = args.item;
+          item = args.item,
+          details = args.details;
       return m('#admin-contribution-detail-box', [
         m('.divider.u-margintop-20.u-marginbottom-20'),
         m('.w-row.u-marginbottom-30',
@@ -12,11 +13,12 @@ window.c.AdminDetail = (function(m, _, c){
             return m.component(c[action.component], {data: action.data, item: args.item});
           })
         ),
-        m('.w-row.card.card-terciary.u-radius',[
-          m.component(c.AdminTransaction, {contribution: item}),
-          m.component(c.AdminTransactionHistory, {contribution: item}),
-          m.component(c.AdminReward, {contribution: item, key: item.key})
-        ])
+        details.length > 0 ?
+          m('.w-row.card.card-terciary.u-radius',
+            _.map(details, function(detail){
+              return m.component(c[detail.component], {item: item, key: item.key});
+            })
+          ) : ''
       ]);
     }
   };

@@ -1,7 +1,7 @@
 window.c.AdminReward = (function(m, h, _){
   return {
     view: function(ctrl, args) {
-      var reward = args.contribution.reward || {},
+      var reward = args.item.reward || {},
           available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
 
       return m('.w-col.w-col-4',[

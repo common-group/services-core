@@ -21,7 +21,7 @@ window.c.AdminItem = (function(m, _, h, c){
           })
         ]),
         m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {onclick: ctrl.displayDetailBox.toggle}),
-        ctrl.displayDetailBox() ? m.component(c.AdminDetail, {item: item, actions: args.actions, key: item.key}) : ''
+        ctrl.displayDetailBox() ? m.component(c.AdminDetail, {item: item, actions: args.actions, details: args.details, key: item.key}) : ''
       ]);
     }
   };
