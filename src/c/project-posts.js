@@ -15,11 +15,21 @@ window.c.ProjectPosts = ((m, models, h, _) => {
         filterVM: filterVM
       };
     },
-    view: (ctrl) => {
-      const list = ctrl.listVM;
+    view: (ctrl, args) => {
+      const list = ctrl.listVM,
+            project = args.project;
 
       return m('.project-posts.w-section', [
         m('.w-container.u-margintop-20', [
+          (project.is_owner_or_admin ?
+            m('.w-row.u-marginbottom-20', [
+              m('.w-col.w-col-4'),
+              m('.w-col.w-col-4', [
+                m(`a.btn.btn-edit.btn-small[href='/pt/projects/${project.id}/edit#posts']`, 'Escrever novidade')
+              ]),
+              m('.w-col.w-col-4'),
+            ])
+           : ''),
           (_.map(list.collection(), (post) => {
             return m('.w-row', [
               m('.w-col.w-col-1'),
