@@ -1,64 +1,74 @@
-window.c.AdminContributionDetail = (function(m, _, c){
+window.c.AdminContributionDetail = (function(m, _, c, h){
   return {
-    controller: function(){
+    controller: function(args){
+      const loadReward = () => {
+        const model = c.models.rewardDetail,
+              reward_id = args.item.reward_id,
+              opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
+              l = m.postgrest.loaderWithToken(opts),
+              reward = m.prop({});
+
+        if (reward_id) {
+          l.load().then(_.compose(reward, _.first));
+        }
+        return reward;
+      };
+      const reward = loadReward();
       return {
-        actions: [
-            {
-              component: 'AdminInputAction',
-              data: {
-                property: 'user_id',
-                updateKey: 'id',
-                callToAction: 'Transferir',
-                innerLabel: 'Id do novo apoiador:',
-                outerLabel: 'Transferir Apoio',
-                placeholder: 'ex: 129908',
-                model: c.models.contributionDetail
-              }
-            },
-            {
-              component: 'AdminRadioAction',
-              data: {
-                getKey: 'project_id',
-                updateKey: 'contribution_id',
-                property: 'reward_id',
-                radios: 'rewards',
-                callToAction: 'Alterar Recompensa',
-                outerLabel: 'Recompensa',
-                getModel: c.models.rewardDetail,
-                updateModel: c.models.contributionDetail
-              }
-            },
-            {
-              component: 'AdminInputAction',
-              data: {
-                property: 'state',
-                updateKey: 'id',
-                callToAction: 'Apagar',
-                innerLabel: 'Tem certeza que deseja apagar esse apoio?',
-                outerLabel: 'Apagar Apoio',
-                forceValue: 'deleted',
-                model: c.models.contributionDetail
-              }
-            }
-        ]
+        reward: reward,
+        actions: {
+          transfer: {
+            property: 'user_id',
+            updateKey: 'id',
+            callToAction: 'Transferir',
+            innerLabel: 'Id do novo apoiador:',
+            outerLabel: 'Transferir Apoio',
+            placeholder: 'ex: 129908',
+            model: c.models.contributionDetail
+          },
+          reward: {
+            getKey: 'project_id',
+            updateKey: 'contribution_id',
+            selectKey: 'reward_id',
+            radios: 'rewards',
+            callToAction: 'Alterar Recompensa',
+            outerLabel: 'Recompensa',
+            getModel: c.models.rewardDetail,
+            updateModel: c.models.contributionDetail,
+            selectedItem: reward
+          },
+          remove: {
+            property: 'state',
+            updateKey: 'id',
+            callToAction: 'Apagar',
+            innerLabel: 'Tem certeza que deseja apagar esse apoio?',
+            outerLabel: 'Apagar Apoio',
+            forceValue: 'deleted',
+            model: c.models.contributionDetail
+          }
+        },
       };
     },
+
     view: function(ctrl, args){
-      var actions = args.actions,
-          item = args.item;
+      var actions = ctrl.actions,
+          item = args.item,
+          reward = ctrl.reward;
       return m('#admin-contribution-detail-box', [
         m('.divider.u-margintop-20.u-marginbottom-20'),
         m('.w-row.u-marginbottom-30',
-          _.map(ctrl.actions, function(action){
-            return m.component(c[action.component], {data: action.data, item: args.item});
-          })
+          [
+            m.component(c.AdminInputAction, {data: actions.transfer, item: args.item}),
+            m.component(c.AdminRadioAction, {data: actions.reward, item: reward()}),
+            m.component(c.AdminInputAction, {data: actions.remove, item: args.item})
+          ]
         ),
         m('.w-row.card.card-terciary.u-radius',[
           m.component(c.AdminTransaction, {contribution: item}),
           m.component(c.AdminTransactionHistory, {contribution: item}),
-          m.component(c.AdminReward, {contribution: item, key: item.key})
+          m.component(c.AdminReward, {reward: reward, key: item.key})
         ])
       ]);
     }
   };
-}(window.m, window._, window.c));
+}(window.m, window._, window.c, window.c.h));

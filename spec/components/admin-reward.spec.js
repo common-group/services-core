@@ -1,7 +1,6 @@
 describe('AdminReward', () => {
   let ctrl,
       $output,
-      args = {contribution: {reward_id: 1}},
       c = window.c,
       AdminReward = c.AdminReward;
 
@@ -10,7 +9,7 @@ describe('AdminReward', () => {
 
     describe("when contribution has no reward", function() {
       beforeAll(() => {
-        $output = mq(AdminReward, {contribution: {}});
+        $output = mq(AdminReward.view(undefined, {reward: m.prop({})} ));
       });
 
       it('should render "no reward" text when reward_id is null', () => {
@@ -19,15 +18,15 @@ describe('AdminReward', () => {
     });
 
     describe("when contribution has reward", function() {
+      let reward;
+
       beforeAll(() => {
-        $output = mq(AdminReward, args);
-        let lastRequest = jasmine.Ajax.requests.mostRecent();
-        reward = JSON.parse(lastRequest.responseText)[0];
-        console.log(JSON.stringify($output));
+        reward = m.prop(RewardDetailsMockery()[0]);
+        $output = mq(AdminReward.view(undefined, {reward: reward}));
       });
 
       it("should render reward description when we have a reward_id", function() {
-        $output.should.contain(reward.description);
+        $output.should.contain(reward().description);
       });
     });
   });

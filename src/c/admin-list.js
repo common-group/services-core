@@ -5,7 +5,6 @@ window.c.AdminList = (function(m, h, c){
       var list = args.vm.list;
       if (!list.collection().length && list.firstPage) {
         list.firstPage().then(null, function(serverError) {
-          console.log('error', serverError);
           args.vm.error(serverError.message);
         });
       }

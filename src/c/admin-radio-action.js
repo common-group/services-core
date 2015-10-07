@@ -16,7 +16,8 @@ window.c.AdminRadioAction = (function(m, h, c, _){
           radios = m.prop(),
           getKey = builder.getKey,
           getAttr = builder.radios,
-          updateKey = builder.updateKey;
+          updateKey = builder.updateKey,
+          selectedItem = builder.selectedItem || m.prop();
 
       setFilter[updateKey] = 'eq';
       var setVM = m.postgrest.filtersVM(setFilter);
@@ -31,13 +32,11 @@ window.c.AdminRadioAction = (function(m, h, c, _){
       var setLoader = m.postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
       var updateItem = function(data){
-        if(data.length > 0){
-          const newItem = _.findWhere(radios, {id: data[0].id});
-          _.extend(item, newItem);
-        }
-        else
-        {
-          error("Nenhum item atualizado");
+        if (data.length > 0){
+          const newItem = _.findWhere(radios(), {id: data[0][builder.selectKey]});
+          selectedItem(newItem);
+        } else {
+          error('Nenhum item atualizado');
         }
         complete(true);
       };
@@ -48,7 +47,7 @@ window.c.AdminRadioAction = (function(m, h, c, _){
 
       var submit = function(){
         if (newValue()) {
-          data[builder.property] = newValue();
+          data[builder.selectKey] = newValue();
           setLoader.load().then(updateItem, error);
         }
         return false;
@@ -102,7 +101,7 @@ window.c.AdminRadioAction = (function(m, h, c, _){
                         ctrl.newValue(radio.id);
                         ctrl.setDescription(radio.description);
                       };
-                      var selected = (radio.id === args.item.reward.id) ? true : false;
+                      var selected = (radio.id === (args.item[data.selectKey] || args.item.id)) ? true : false;
 
                       return m('.w-radio', [
                         m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + ((selected) ? '[checked]' : ''),{
