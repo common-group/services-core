@@ -5,63 +5,6 @@ window.c.admin.Contributions = (function(m, c, h){
       var listVM = admin.contributionListVM,
           filterVM = admin.contributionFilterVM,
           error = m.prop(''),
-          itemBuilder = [
-            {
-              component: 'AdminUser',
-              wrapperClass: '.w-col.w-col-4'
-            },
-            {
-              component: 'AdminProject',
-              wrapperClass: '.w-col.w-col-4'
-            },
-            {
-              component: 'AdminContribution',
-              wrapperClass: '.w-col.w-col-2'
-            },
-            {
-              component: 'PaymentStatus',
-              wrapperClass: '.w-col.w-col-2'
-            }
-          ],
-          itemActions = [
-            {
-              component: 'AdminInputAction',
-              data: {
-                property: 'user_id',
-                updateKey: 'id',
-                callToAction: 'Transferir',
-                innerLabel: 'Id do novo apoiador:',
-                outerLabel: 'Transferir Apoio',
-                placeholder: 'ex: 129908',
-                model: c.models.contributionDetail
-              }
-            },
-            {
-              component: 'AdminRadioAction',
-              data: {
-                getKey: 'project_id',
-                updateKey: 'contribution_id',
-                property: 'reward_id',
-                radios: 'rewards',
-                callToAction: 'Alterar Recompensa',
-                outerLabel: 'Recompensa',
-                getModel: c.models.rewardDetail,
-                updateModel: c.models.contributionDetail
-              }
-            },
-            {
-              component: 'AdminInputAction',
-              data: {
-                property: 'state',
-                updateKey: 'id',
-                callToAction: 'Apagar',
-                innerLabel: 'Tem certeza que deseja apagar esse apoio?',
-                outerLabel: 'Apagar Apoio',
-                forceValue: 'deleted',
-                model: c.models.contributionDetail
-              }
-            }
-          ],
           filterBuilder = [
             { //full_text_index
               component: 'FilterMain',
@@ -131,9 +74,8 @@ window.c.admin.Contributions = (function(m, c, h){
       return {
         filterVM: filterVM,
         filterBuilder: filterBuilder,
-        itemActions: itemActions,
-        itemBuilder: itemBuilder,
         listVM: {list: listVM, error: error},
+        data: {label: 'Apoios'},
         submit: submit
       };
     },
@@ -141,7 +83,7 @@ window.c.admin.Contributions = (function(m, c, h){
     view: function(ctrl){
       return [
         m.component(c.AdminFilter,{form: ctrl.filterVM.formDescriber, filterBuilder: ctrl.filterBuilder, submit: ctrl.submit}),
-        m.component(c.AdminList, {vm: ctrl.listVM, itemBuilder: ctrl.itemBuilder, itemActions: ctrl.itemActions})
+        m.component(c.AdminList, {vm: ctrl.listVM, listItem: c.AdminContributionItem, listDetail: c.AdminContributionDetail})
       ];
     }
   };

@@ -5,13 +5,15 @@ window.c.AdminFilter = (function(c, m, _, h){
         toggler: h.toggleProp(false, true)
       };
     },
-    view: function(ctrl, args){
+    view: (ctrl, args) => {
       var filterBuilder = args.filterBuilder,
+          data = args.data,
+          label = args.label || '',
           main = _.findWhere(filterBuilder, {component: 'FilterMain'});
 
       return m('#admin-contributions-filter.w-section.page-header', [
         m('.w-container', [
-          m('.fontsize-larger.u-text-center.u-marginbottom-30', 'Apoios'),
+          m('.fontsize-larger.u-text-center.u-marginbottom-30', label),
           m('.w-form', [
             m('form', {
               onsubmit: args.submit

@@ -21,7 +21,7 @@ describe('AdminFilter', () => {
       spyOn(m, 'component').and.callThrough();
       submit = jasmine.createSpy('submit');
       filterDescriber = FilterDescriberMock();
-      $output = mq(AdminFilter, {filterBuilder: filterDescriber, submit: submit});
+      $output = mq(AdminFilter, {filterBuilder: filterDescriber, data:{label: 'foo'}, submit: submit});
     });
 
     it('should render the main filter on render', () => {

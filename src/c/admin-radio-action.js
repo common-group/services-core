@@ -1,14 +1,14 @@
-window.c.AdminRadioAction = (function(m, h, c){
+window.c.AdminRadioAction = (function(m, h, c, _){
   return {
     controller: function(args){
       var builder = args.data,
           complete = m.prop(false),
           data = {},
           //TODO: Implement a descriptor to abstract the initial description
-          description = m.prop(args.item.reward.description || ''),
           error = m.prop(false),
           fail = m.prop(false),
           item = args.item,
+          description = m.prop(item.description || ''),
           key = builder.getKey,
           newValue = m.prop(''),
           getFilter = {},
@@ -16,7 +16,8 @@ window.c.AdminRadioAction = (function(m, h, c){
           radios = m.prop(),
           getKey = builder.getKey,
           getAttr = builder.radios,
-          updateKey = builder.updateKey;
+          updateKey = builder.updateKey,
+          selectedItem = builder.selectedItem || m.prop();
 
       setFilter[updateKey] = 'eq';
       var setVM = m.postgrest.filtersVM(setFilter);
@@ -31,19 +32,22 @@ window.c.AdminRadioAction = (function(m, h, c){
       var setLoader = m.postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
       var updateItem = function(data){
-        _.extend(item, data[0]);
+        if (data.length > 0){
+          const newItem = _.findWhere(radios(), {id: data[0][builder.selectKey]});
+          selectedItem(newItem);
+        } else {
+          error('Nenhum item atualizado');
+        }
         complete(true);
       };
 
-      var fetch = function(){
-        getLoader.load().then(function(item){
-          radios(item);
-        }, error);
+      const fetch = function(){
+        getLoader.load().then(radios, error);
       };
 
       var submit = function(){
         if (newValue()) {
-          data[builder.property] = newValue();
+          data[builder.selectKey] = newValue();
           setLoader.load().then(updateItem, error);
         }
         return false;
@@ -97,7 +101,7 @@ window.c.AdminRadioAction = (function(m, h, c){
                         ctrl.newValue(radio.id);
                         ctrl.setDescription(radio.description);
                       };
-                      var selected = (radio.id === args.item.reward.id) ? true : false;
+                      var selected = (radio.id === (args.item[data.selectKey] || args.item.id)) ? true : false;
 
                       return m('.w-radio', [
                         m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + ((selected) ? '[checked]' : ''),{
@@ -124,4 +128,4 @@ window.c.AdminRadioAction = (function(m, h, c){
       ]);
     }
   };
-}(window.m, window.c.h, window.c));
+}(window.m, window.c.h, window.c, window._));

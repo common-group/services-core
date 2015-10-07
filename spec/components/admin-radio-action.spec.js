@@ -1,127 +1,28 @@
 describe('AdminRadioAction', function(){
   var c = window.c, m = window.m, models = window.c.models,
       AdminRadioAction = c.AdminRadioAction,
-      testModel = m.postgrest.model('test'),
-      item = {
-        getKey: 1,
-        updateKey: 1,
-        testKey: 'foo',
-        reward: {
-          id: 1,
-          description: 'description'
-        }
-      },
-      error = false,
+      testModel = m.postgrest.model('reward_details'),
+      error = false, item,
       testStr = 'updated',
       fakeData = {},
       ctrl, $output;
-  var response = function(callback, err){
-    callback(fakeData);
-  };
 
   var args = {
-        getKey: 'testKey',
-        updateKey: 'updateKey',
-        property: 'test',
-        radios: 'rewards',
-        callToAction: 'cta',
-        outerLabel: 'outer',
-        getModel: testModel,
-        updateModel: testModel
-      };
+    getKey: 'project_id',
+    updateKey: 'contribution_id',
+    selectKey: 'reward_id',
+    radios: 'rewards',
+    callToAction: 'Alterar Recompensa',
+    outerLabel: 'Recompensa',
+    getModel: testModel,
+    updateModel: testModel,
+  };
 
-  describe('controller', function(){
-    beforeAll(function(){
-      spyOn(testModel, 'patchOptions');
-      spyOn(testModel, 'getPageOptions');
-      spyOn(m, 'redraw');
-      ctrl = AdminRadioAction.controller({data: args, item: item});
-      spyOn(ctrl.setLoader, 'load').and.returnValue({
-        then: function(callback, err){
-          item.updateKey = testStr;
-          callback(item);
-        }
-      });
-    });
-
-    it('should return a function called complete', function(){
-      expect(ctrl.complete).toBeFunction();
-    });
-    it('should return a function called description', function(){
-      expect(ctrl.description).toBeFunction();
-    });
-    it('should return a function called setDescription', function(){
-      expect(ctrl.setDescription).toBeFunction();
-    });
-    it('should return a function called error', function(){
-      expect(ctrl.error).toBeFunction();
-    });
-    it('should return a function called setLoader', function(){
-      expect(ctrl.setLoader).toBeFunction();
-    });
-    it('should return a function called getLoader', function(){
-      expect(ctrl.getLoader).toBeFunction();
-    });
-    it('should return a function called newValue', function(){
-      expect(ctrl.newValue).toBeFunction();
-    });
-    it('should return a function called submit', function(){
-      expect(ctrl.submit).toBeFunction();
-    });
-    it('should return a function called submit', function(){
-      expect(ctrl.submit).toBeFunction();
-    });
-    it('should return a function called toggler', function(){
-      expect(ctrl.toggler).toBeFunction();
-    });
-    it('should return a function called unload', function(){
-      expect(ctrl.unload).toBeFunction();
-    });
-    it('should return a function called unload', function(){
-      expect(ctrl.radios).toBeFunction();
-    });
-    it('should instantiate a get loader with filter set', function(){
-      var filterSample = {};
-      filterSample[args.getKey] = 'eq.' + item.testKey;
-      expect(testModel.getPageOptions).toHaveBeenCalledWith(filterSample);
-    });
-    it('should instantiate a set loader with filter set', function(){
-      var filterSample = {};
-      filterSample[args.updateKey] = 'eq.' + item.updateKey;
-      expect(testModel.patchOptions).toHaveBeenCalledWith(filterSample, {});
-    });
-    it('should set complete to true and updateItem on submit', function(){
-      ctrl.newValue(testStr);
-      ctrl.submit();
-      expect(ctrl.setLoader.load).toHaveBeenCalled();
-      expect(ctrl.complete()).toBeTrue();
-      expect(item.updateKey).toEqual(testStr);
-    });
-    it('should set a new description and call redraw on setDescription', function(){
-      var desc = testStr;
-      ctrl.setDescription(desc);
-      expect(ctrl.description()).toEqual(testStr);
-      expect(m.redraw).toHaveBeenCalled();
-    });
-  });
   describe('view', function(){
     beforeAll(function(){
+      item = _.first(RewardDetailsMockery());
+      args.selectedItem = m.prop(item);
       ctrl = AdminRadioAction.controller({data: args, item: item});
-      fakeData = [
-        {
-          id: 1,
-          description: 'description_1',
-          minimum_value: 10
-        },
-        {
-          id: 2,
-          description: 'description_2',
-          minimum_value: 20
-        }
-      ];
-      spyOn(m, 'request').and.returnValue({
-        then: response
-      });
       $output = mq(AdminRadioAction, {data: args, item: item});
 
     });
@@ -137,16 +38,20 @@ describe('AdminRadioAction', function(){
       });
 
       it('should render a row of radio inputs', function(){
-        expect($output.find('input[type="radio"]').length).toEqual(fakeData.length);
+        const lastRequest = jasmine.Ajax.requests.mostRecent();
+        expect($output.find('input[type="radio"]').length).toEqual(JSON.parse(lastRequest.responseText).length);
       });
+
       it('should render the description of the default selected radio', function(){
-        expect($output.contains(item.reward.description)).toBeTrue();
+        $output.should.contain(item.description);
       });
+
       it('should send an patch request on form submit', function(){
-        $output.click('#r-1');
+        $output.click('#r-0');
         $output.trigger('form', 'submit');
-        //One request to get another one to set
-        expect(m.request.calls.count()).toEqual(2);
+        const lastRequest = jasmine.Ajax.requests.mostRecent();
+        // Should make a patch request to update item
+        expect(lastRequest.method).toEqual('PATCH');
       });
     });
   });
