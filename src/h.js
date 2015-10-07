@@ -57,6 +57,11 @@ window.c.h = ((m, moment) => {
     return window.location.hash === str;
   },
 
+  locationActionMatch = (action) => {
+    const act = window.location.pathname.split('/').slice(-1)[0];
+    return action === act;
+  },
+
   useAvatarOrDefault = (avatarPath) => {
     return avatarPath || '/assets/catarse_bootstrap/user.jpg';
   },
@@ -124,6 +129,7 @@ window.c.h = ((m, moment) => {
     rewardRemaning: rewardRemaning,
     parseUrl: parseUrl,
     hashMatch: hashMatch,
-    useAvatarOrDefault: useAvatarOrDefault
+    useAvatarOrDefault: useAvatarOrDefault,
+    locationActionMatch: locationActionMatch
   };
 }(window.m, window.moment));
