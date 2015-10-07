@@ -7,7 +7,7 @@ window.c.project.Insights = (function(m, c, models, _){
 
       vm.project_id(args.root.getAttribute('data-id'));
 
-      models.projectDetail.getRow(vm.parameters()).then(projectDetails);
+      models.projectDetail.getRowWithToken(vm.parameters()).then(projectDetails);
       models.projectContributionsPerDay.getRow(vm.parameters()).then(contributionsPerDay);
 
       return {
@@ -19,6 +19,7 @@ window.c.project.Insights = (function(m, c, models, _){
     view: function(ctrl) {
       return _.map(ctrl.projectDetails(), function(project){
         return m('.project-insights',[
+          (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {project: project}) : ''),
           m('.w-container', [
             m('.w-row.u-marginbottom-40', [
               m('.w-col.w-col-2'),
