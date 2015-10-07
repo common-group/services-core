@@ -17,7 +17,8 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
     },
     view: (ctrl, args) => {
       const project = args.project,
-            editRoute = '/projects/' + project.id + '/edit',
+            projectRoute = '/projects/' + project.id,
+            editRoute = projectRoute + '/edit',
             editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
 
       ctrl.body.className = ctrl.bodyToggleForNav();
@@ -30,7 +31,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
               m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name)
             ]),
             m('#info-links', [
-              m('a#dashboard_home_link.dashboard-nav-link-left[href="' + editRoute + '#home' + '"]', [
+              m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [
                 m('span.fa.fa-bar-chart.fa-lg.fa-fw'), ' Minha Campanha'
               ]),
               (project.is_published ? [
