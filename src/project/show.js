@@ -26,7 +26,7 @@ window.c.project.Show = ((m, c, _, models, h) => {
 
     view: (ctrl) => {
       return _.map(ctrl.projectDetails(), (project) => {
-        return m('.project-show', [
+        return m('.project-show',{config: h.mixpanelTrack()},[
           m.component(c.ProjectHeader, {project: project, userDetails: ctrl.userDetails}),
           m.component(c.ProjectTabs, {project: project}),
           m.component(c.ProjectMain, {project: project, rewardDetails: ctrl.rewardDetails}),
