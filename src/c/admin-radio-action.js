@@ -17,11 +17,12 @@ window.c.AdminRadioAction = (function(m, h, c, _){
           getKey = builder.getKey,
           getAttr = builder.radios,
           updateKey = builder.updateKey,
+          updateKeyValue = args.updateKeyValue,
           selectedItem = builder.selectedItem || m.prop();
 
       setFilter[updateKey] = 'eq';
       var setVM = m.postgrest.filtersVM(setFilter);
-      setVM[updateKey](item[updateKey]);
+      setVM[updateKey](updateKeyValue);
 
       getFilter[getKey] = 'eq';
       var getVM = m.postgrest.filtersVM(getFilter);

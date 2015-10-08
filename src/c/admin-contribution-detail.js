@@ -58,9 +58,9 @@ window.c.AdminContributionDetail = (function(m, _, c, h){
         m('.divider.u-margintop-20.u-marginbottom-20'),
         m('.w-row.u-marginbottom-30',
           [
-            m.component(c.AdminInputAction, {data: actions.transfer, item: args.item}),
-            m.component(c.AdminRadioAction, {data: actions.reward, item: reward()}),
-            m.component(c.AdminInputAction, {data: actions.remove, item: args.item})
+            m.component(c.AdminInputAction, {data: actions.transfer, item: item}),
+            m.component(c.AdminRadioAction, {data: actions.reward, item: reward(), updateKeyValue: item.contribution_id}),
+            m.component(c.AdminInputAction, {data: actions.remove, item: item})
           ]
         ),
         m('.w-row.card.card-terciary.u-radius',[
