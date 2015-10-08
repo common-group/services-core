@@ -1,7 +1,7 @@
 window.c.ProjectContributions = ((m, models, h, _) => {
   return {
     controller: (args) => {
-      const listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
+      const listVM = m.postgrest.paginationVM(models.projectContribution),
             filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'}),
             toggleWaiting = (waiting = false) => {
               return () => {

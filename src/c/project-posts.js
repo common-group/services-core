@@ -1,7 +1,7 @@
 window.c.ProjectPosts = ((m, models, h, _) => {
   return {
     controller: (args) => {
-      const listVM = m.postgrest.paginationVM(models.projectPostDetail.getPageWithToken),
+      const listVM = m.postgrest.paginationVM(models.projectPostDetail),
             filterVM = m.postgrest.filtersVM({project_id: 'eq'});
 
       filterVM.project_id(args.project.id);
