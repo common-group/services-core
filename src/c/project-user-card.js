@@ -31,7 +31,7 @@ window.c.ProjectUserCard = ((m, _, h) => {
                   ]) : '');
                 })
               ]),
-              (!_.isEmpty(userDetail.email) ? m('a.w-hidden-small.w-hidden-tiny.fontsize-smallest.alt-link.fontweight-semibold[href="mailto:' + userDetail.email + '"][itemprop="email"][target="_blank"]', 'Enviar mensagem') : '')
+              (!_.isEmpty(userDetail.email) ? m('.w-hidden-small.w-hidden-tiny.fontsize-smallest.alt-link.fontweight-semibold[itemprop="email"][target="_blank"]', userDetail.email) : '')
             ]),
           ]),
         ]);
