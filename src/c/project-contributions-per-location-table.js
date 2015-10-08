@@ -46,13 +46,13 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
               ]),
               m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [
                 m('a.link-hidden[href="javascript:void(0);"]', {onclick: ctrl.generateSort('total_contributions')}, [
-                  'Apoios  ',m('span.fa.fa-sort')
+                  'Apoios ',m('span.fa.fa-sort')
                 ])
               ]),
               m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [
                 m('a.link-hidden[href="javascript:void(0);"]', {onclick: ctrl.generateSort('total_contributed')}, [
                   'R$ apoiados ',
-                  m('span.w-hidden-small.w-hidden-tiny','(% do total) '),
+                  m('span.w-hidden-small.w-hidden-tiny','(% do total) '),
                   ' ',m('span.fa.fa-sort')
                 ])
               ])
@@ -61,7 +61,7 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
               _.map(contributionLocation.source, function(source) {
                 return m('.w-row.table-row', [
                   m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                    m('div', source.state_acronym)
+                    m('div', source.state_acronym || 'Outro/other')
                   ]),
                   m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
                     m('div', source.total_contributions)
@@ -70,7 +70,7 @@ window.c.ProjectContributionsPerLocationTable = (function(m, models, h, _) {
                     m('div', [
                       'R$ ',
                       h.formatNumber(source.total_contributed, 2, 3),
-                      m('span.w-hidden-small.w-hidden-tiny', '  (' + source.total_on_percentage.toFixed(2) + '%)')
+                      m('span.w-hidden-small.w-hidden-tiny', ' (' + source.total_on_percentage.toFixed(2) + '%)')
                     ])
                   ])
                 ]);
