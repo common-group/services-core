@@ -1,7 +1,7 @@
 window.c.ProjectContributions = ((m, models, h, _) => {
   return {
     controller: (args) => {
-      const listVM = m.postgrest.paginationVM(models.projectContribution.getPageWithToken),
+      const listVM = m.postgrest.paginationVM(models.projectContribution),
             filterVM = m.postgrest.filtersVM({project_id: 'eq', waiting_payment: 'eq'}),
             toggleWaiting = (waiting = false) => {
               return () => {
@@ -70,7 +70,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
       m('.w-row',[
         m('.w-col.w-col-2.w-col-push-5',[
           !list.isLoading() ?
-            m('button#load-more.btn.btn-medium.btn-terciary', {onclick: list.nextPage}, 'Carregar mais') :
+            (list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {onclick: list.nextPage}, 'Carregar mais')) :
             h.loader(),
         ])
       ])

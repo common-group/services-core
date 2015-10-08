@@ -16,7 +16,7 @@ describe('AdminList',() => {
     };
     model = m.postgrest.model('items');
     vm = {
-      list: m.postgrest.paginationVM(model.getPage),
+      list: m.postgrest.paginationVM(model),
       error: m.prop()
     };
     listParameters = {
