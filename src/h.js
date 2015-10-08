@@ -112,6 +112,14 @@ window.c.h = ((m, moment) => {
     const l = document.createElement('a');
     l.href = href;
     return l;
+  },
+
+  mixpanelTrack = () => {
+    return (el, isInitialized) => {
+      if (!isInitialized){
+        window.CatarseMixpanel.activate();
+      }
+    };
   };
 
   return {
@@ -130,6 +138,7 @@ window.c.h = ((m, moment) => {
     parseUrl: parseUrl,
     hashMatch: hashMatch,
     useAvatarOrDefault: useAvatarOrDefault,
-    locationActionMatch: locationActionMatch
+    locationActionMatch: locationActionMatch,
+    mixpanelTrack: mixpanelTrack
   };
 }(window.m, window.moment));
