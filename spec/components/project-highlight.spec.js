@@ -8,7 +8,7 @@ describe('ProjectHighlight', () => {
         view = component.view(component.controller(), {project: projectDetail});
     $output = mq(view);
 
-    expect($output.find('img.project-video-image').length).toEqual(1);
+    expect($output.find('.project-image').length).toEqual(1);
     expect($output.find('iframe.embedly-embed').length).toEqual(0);
   });
 
