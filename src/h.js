@@ -120,6 +120,14 @@ window.c.h = ((m, moment) => {
         window.CatarseMixpanel.activate();
       }
     };
+  },
+
+  UIHelper = () => {
+    return (el, isInitialized) => {
+      if (!isInitialized && $){
+        window.UIHelper.setupResponsiveIframes($(el));
+      }
+    };
   };
 
   return {
@@ -139,6 +147,7 @@ window.c.h = ((m, moment) => {
     hashMatch: hashMatch,
     useAvatarOrDefault: useAvatarOrDefault,
     locationActionMatch: locationActionMatch,
-    mixpanelTrack: mixpanelTrack
+    mixpanelTrack: mixpanelTrack,
+    UIHelper: UIHelper
   };
 }(window.m, window.moment));
