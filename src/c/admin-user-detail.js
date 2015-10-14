@@ -11,6 +11,15 @@ window.c.AdminUserDetail = (function(m, _, c){
             outerLabel: 'Redefinir senha',
             placeholder: 'ex: 123mud@r',
             model: c.models.userDetail
+          },
+          reactivate: {
+            property: 'state',
+            updateKey: 'id',
+            callToAction: 'Reativar',
+            innerLabel: 'Tem certeza que deseja reativar esse usuário?',
+            outerLabel: 'Reativar usuário',
+            forceValue: 'deleted',
+            model: c.models.userDetail
           }
         }
       };
@@ -24,6 +33,7 @@ window.c.AdminUserDetail = (function(m, _, c){
         m('.divider.u-margintop-20.u-marginbottom-20'),
         m('.w-row.u-marginbottom-30', [
             m.component(c.AdminInputAction, {data: actions.reset, item: item}),
+            m.component(c.AdminInputAction, {data: actions.reactivate, item: item})
         ]),
       ]);
     }
