@@ -38,7 +38,7 @@ window.c.ProjectPosts = ((m, models, h, _) => {
               m('.w-col.w-col-1'),
               m('.w-col.w-col-10', [
                 m('.post', [
-                  m('.u-marginbottom-60', [
+                  m('.u-marginbottom-60 .w-clearfix', [
                     m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
                     m('.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', post.title),
                     (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores.'))
