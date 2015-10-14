@@ -2,8 +2,8 @@ window.c.ProjectAbout = (function(m, c, h){
   return {
     view: function(ctrl, args) {
       var project = args.project;
-      return m('#project-about', [
-        m('.project-about.w-col.w-col-8', [
+      return m('#project-about',[
+        m('.project-about.w-col.w-col-8',  {config: h.UIHelper()} ,[
           m('p.fontsize-base', [
             m('strong', 'O projeto'),
           ]),
