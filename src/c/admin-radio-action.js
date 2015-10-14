@@ -18,6 +18,7 @@ window.c.AdminRadioAction = (function(m, h, c, _){
           getAttr = builder.radios,
           updateKey = builder.updateKey,
           updateKeyValue = args.updateKeyValue,
+          validate = builder.validate,
           selectedItem = builder.selectedItem || m.prop();
 
       setFilter[updateKey] = 'eq';
@@ -37,7 +38,7 @@ window.c.AdminRadioAction = (function(m, h, c, _){
           const newItem = _.findWhere(radios(), {id: data[0][builder.selectKey]});
           selectedItem(newItem);
         } else {
-          error('Nenhum item atualizado');
+          error({message: 'Nenhum item atualizado'});
         }
         complete(true);
       };
@@ -48,8 +49,14 @@ window.c.AdminRadioAction = (function(m, h, c, _){
 
       var submit = function(){
         if (newValue()) {
-          data[builder.selectKey] = newValue();
-          setLoader.load().then(updateItem, error);
+          let validation = validate(newValue());
+          if (_.isUndefined(validation)) {
+            data[builder.selectKey] = newValue();
+            setLoader.load().then(updateItem, error);
+          } else {
+            complete(true);
+            error({message: validation});
+          }
         }
         return false;
       };
@@ -120,7 +127,7 @@ window.c.AdminRadioAction = (function(m, h, c, _){
                     ])
                   ] : [
                     m('.w-form-error[style="display:block;"]', [
-                      m('p', 'Houve um problema na requisição. O apoio não foi transferido!')
+                      m('p', ctrl.error().message)
                     ])
                   ]
             )

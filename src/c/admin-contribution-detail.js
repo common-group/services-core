@@ -35,7 +35,10 @@ window.c.AdminContributionDetail = (function(m, _, c, h){
             outerLabel: 'Recompensa',
             getModel: c.models.rewardDetail,
             updateModel: c.models.contributionDetail,
-            selectedItem: reward
+            selectedItem: reward,
+            validate: (newRewardValue) => {
+              return (args.item.value > newRewardValue) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
+            }
           },
           remove: {
             property: 'state',
