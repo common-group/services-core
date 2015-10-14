@@ -19,7 +19,6 @@ window.c.AdminRadioAction = (function(m, h, c, _){
           updateKey = builder.updateKey,
           updateKeyValue = args.updateKeyValue,
           validate = builder.validate,
-          validateErrorMessage = builder.validateErrorMessage,
           selectedItem = builder.selectedItem || m.prop();
 
       setFilter[updateKey] = 'eq';
@@ -50,12 +49,13 @@ window.c.AdminRadioAction = (function(m, h, c, _){
 
       var submit = function(){
         if (newValue()) {
-          if (validate(newValue())) {
+          let validation = validate(newValue());
+          if (_.isUndefined(validation)) {
             data[builder.selectKey] = newValue();
             setLoader.load().then(updateItem, error);
           } else {
             complete(true);
-            error({message: validateErrorMessage});
+            error({message: validation});
           }
         }
         return false;

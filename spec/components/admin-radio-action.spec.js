@@ -2,7 +2,7 @@ describe('AdminRadioAction', () => {
   const c = window.c, m = window.m, models = window.c.models,
         AdminRadioAction = c.AdminRadioAction,
         testModel = m.postgrest.model('reward_details'),
-        testStr = 'updated';
+        testStr = 'updated', errorStr = 'error!';
 
   let error = false, item,
       fakeData = {},
@@ -17,12 +17,11 @@ describe('AdminRadioAction', () => {
     outerLabel: 'Recompensa',
     getModel: testModel,
     updateModel: testModel,
-    validate: () => { return true; }
+    validate: () => { return undefined; }
   };
 
   let errorArgs = _.extend({}, args, {
-    validate: () => { return false; },
-    validateErrorMessage: 'error!'
+    validate: () => { return errorStr; }
   });
 
   describe('view', () => {
@@ -69,7 +68,7 @@ describe('AdminRadioAction', () => {
 
         it('should present an error message when new value is invalid', () => {
           $output.trigger('form', 'submit');
-          $output.should.contain(errorArgs.validateErrorMessage);
+          $output.should.contain(errorStr);
         });
       });
     });
