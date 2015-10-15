@@ -16,15 +16,15 @@ window.c.contribution.ProjectsHome = (((m, c, moment, h, _) => {
         recents = m.postgrest.filtersVM({online_date: 'gte', state: 'eq'}),
         recommended = m.postgrest.filtersVM({recommended: 'eq', state: 'eq'});
 
-        expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
-        expiring.state('online');
+      expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
+      expiring.state('online');
 
-        nearMe.near_me('true').state('online');
+      nearMe.near_me('true').state('online');
 
-        recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
-        recents.state('online');
+      recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
+      recents.state('online');
 
-        recommended.recommended('true').state('online');
+      recommended.recommended('true').state('online');
 
       let nearMeLoader = loader(project.getPageOptions(nearMe.parameters()));
       nearMeLoader.load().then(_.compose(vm.nearMeCollection, sample3));
