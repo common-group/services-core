@@ -74,7 +74,7 @@ window.c.h = ((m, moment) => {
 
   //Templates
   loader = () => {
-    return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
+    return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
       m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
     ]);
   },
