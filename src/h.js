@@ -2,7 +2,7 @@ window.c.h = ((m, moment) => {
   //Date Helpers
   const setMomentifyLocale = () => {
     moment.locale('pt', {
-      monthsShort : 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+      monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
     });
   },
 
@@ -134,6 +134,11 @@ window.c.h = ((m, moment) => {
         window.UIHelper.setupResponsiveIframes($(el));
       }
     };
+  },
+
+  navigateToDevise = () => {
+    window.location.href = '/pt/login';
+    return false;
   };
 
   setMomentifyLocale();
@@ -156,6 +161,7 @@ window.c.h = ((m, moment) => {
     useAvatarOrDefault: useAvatarOrDefault,
     locationActionMatch: locationActionMatch,
     mixpanelTrack: mixpanelTrack,
+    navigateToDevise: navigateToDevise,
     UIHelper: UIHelper
   };
 }(window.m, window.moment));
