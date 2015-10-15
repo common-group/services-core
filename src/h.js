@@ -1,8 +1,14 @@
 window.c.h = ((m, moment) => {
   //Date Helpers
-  const momentify = (date, format) => {
+  const setMomentifyLocale = () => {
+    moment.locale('pt', {
+      monthsShort : 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+    });
+  },
+
+  momentify = (date, format) => {
     format = format || 'DD/MM/YYYY';
-    return date ? moment(date).format(format) : 'no date';
+    return date ? moment(date).locale('pt').format(format) : 'no date';
   },
 
   momentFromString = (date, format) => {
@@ -129,6 +135,8 @@ window.c.h = ((m, moment) => {
       }
     };
   };
+
+  setMomentifyLocale();
 
   return {
     momentify: momentify,
