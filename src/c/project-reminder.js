@@ -4,8 +4,12 @@ window.c.ProjectReminder = ((m, models, h, c) => {
       let inReminder = h.toggleProp(false, true),
           filterVM = m.postgrest.filtersVM({project_id: 'eq'}),
           complete = m.prop(false),
+          project = args.project,
           popNotification = m.prop(false),
           submitReminder = () => {
+            if (!project.user_signed_in) {
+              return h.navigateToDevise();
+            }
             let loaderOpts = inReminder() ? models.projectReminder.deleteOptions(filterVM.parameters())
                   : models.projectReminder.postOptions({project_id: args.project.id}),
                 l = m.postgrest.loaderWithToken(loaderOpts);
@@ -37,7 +41,7 @@ window.c.ProjectReminder = ((m, models, h, c) => {
     },
     view: (ctrl) => {
       return m('#project-reminder.u-text-center.u-marginbottom-30', [
-        m('a[class="link-hidden fontsize-small ' + (ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary') + ' fontweight-semibold"][href="js:void(0);"]', {onclick: ctrl.submitReminder},[
+        m('button[class="btn-link link-hidden fontsize-small ' + (ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary') + ' fontweight-semibold"]', {onclick: ctrl.submitReminder},[
           m('span.fa.fa-clock-o'),
           (ctrl.complete() ? 'aguarde ...' : (ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me'))
         ]),
