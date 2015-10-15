@@ -25,7 +25,7 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
             m('span.fa.fa-tag'), ' ',
             project.category_name
           ]),
-          m('a#share-box.btn.btn-small.btn-terciary.btn-inline[href="js:void(0);"]', {onclick: ctrl.displayShareBox.toggle}, 'Compartilhar'),
+          m('button#share-box.btn.btn-small.btn-terciary.btn-inline', {onclick: ctrl.displayShareBox.toggle}, 'Compartilhar'),
           (ctrl.displayShareBox() ? m.component(c.ProjectShareBox, {project: project, displayShareBox: ctrl.displayShareBox}) : '')
         ])
       ]);
