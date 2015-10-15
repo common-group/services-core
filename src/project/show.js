@@ -10,9 +10,13 @@ window.c.project.Show = ((m, c, _, models, h) => {
       vm.project_id(args.project_id);
       idVM.id(args.project_user_id);
 
-      models.projectDetail.getRowWithToken(vm.parameters()).then((data) => {
-        models.userDetail.getRowWithToken(idVM.parameters()).then(userDetails);
-        models.rewardDetail.getPageWithToken(vm.parameters()).then(rewardDetails);
+      const lProject = m.postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
+            lUser = m.postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
+            lReward = m.postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
+
+      lProject.load().then((data) => {
+        lUser.load().then(userDetails);
+        lReward.load().then(rewardDetails);
 
         projectDetails(data);
       });
@@ -20,19 +24,22 @@ window.c.project.Show = ((m, c, _, models, h) => {
       return {
         projectDetails: projectDetails,
         userDetails: userDetails,
-        rewardDetails: rewardDetails
+        rewardDetails: rewardDetails,
+        lProject: lProject,
+        lUser: lUser,
+        lReward: lReward
       };
     },
 
     view: (ctrl) => {
-      return _.map(ctrl.projectDetails(), (project) => {
+      return (!ctrl.lProject()) ? _.map(ctrl.projectDetails(), (project) => {
         return m('.project-show',{config: h.mixpanelTrack()},[
-          m.component(c.ProjectHeader, {project: project, userDetails: ctrl.userDetails}),
+          (!ctrl.lUser()) ? m.component(c.ProjectHeader, {project: project, userDetails: ctrl.userDetails}) : h.loader(),
           m.component(c.ProjectTabs, {project: project}),
-          m.component(c.ProjectMain, {project: project, rewardDetails: ctrl.rewardDetails}),
+          (!ctrl.lReward()) ? m.component(c.ProjectMain, {project: project, rewardDetails: ctrl.rewardDetails}) : h.loader(),
           (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {project: project}) : '')
         ]);
-      });
+      }) : h.loader();
     }
   };
 }(window.m, window.c, window._, window.c.models, window.c.h));

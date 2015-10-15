@@ -1,8 +1,14 @@
 window.c.h = ((m, moment) => {
   //Date Helpers
-  const momentify = (date, format) => {
+  const setMomentifyLocale = () => {
+    moment.locale('pt', {
+      monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+    });
+  },
+
+  momentify = (date, format) => {
     format = format || 'DD/MM/YYYY';
-    return date ? moment(date).format(format) : 'no date';
+    return date ? moment(date).locale('pt').format(format) : 'no date';
   },
 
   momentFromString = (date, format) => {
@@ -68,7 +74,7 @@ window.c.h = ((m, moment) => {
 
   //Templates
   loader = () => {
-    return m('.u-text-center.u-margintop-30[style="margin-bottom:-110px;"]', [
+    return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
       m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
     ]);
   },
@@ -128,7 +134,14 @@ window.c.h = ((m, moment) => {
         window.UIHelper.setupResponsiveIframes($(el));
       }
     };
+  },
+
+  navigateToDevise = () => {
+    window.location.href = '/pt/login';
+    return false;
   };
+
+  setMomentifyLocale();
 
   return {
     momentify: momentify,
@@ -148,6 +161,7 @@ window.c.h = ((m, moment) => {
     useAvatarOrDefault: useAvatarOrDefault,
     locationActionMatch: locationActionMatch,
     mixpanelTrack: mixpanelTrack,
+    navigateToDevise: navigateToDevise,
     UIHelper: UIHelper
   };
 }(window.m, window.moment));
