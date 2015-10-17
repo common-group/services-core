@@ -33,7 +33,6 @@ window.c.AdminExternalAction = ((function(m, h, c, _){
             };
 
             const requestError = (err) => {
-                console.log('err', err);
                 complete(true);
                 error(true);
             };
@@ -45,7 +44,6 @@ window.c.AdminExternalAction = ((function(m, h, c, _){
             };
 
             const submit = () => {
-                console.log('options on submit', builder.requestOptions.url);
                 l.load().then(reloadItem, requestError);
                 return false;
             };
