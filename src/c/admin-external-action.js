@@ -1,39 +1,57 @@
-window.c.AdminInputAction = (function(m, h, c) {
+/**
+ * window.c.AdminExternalAction component
+ * Makes arbitrary ajax requests and update underlying
+ * data from source endpoint.
+ *
+ * Example:
+ * m.component(c.AdminExternalAction, {
+ *     data: {},
+ *     item: rowFromDatabase
+ * })
+ */
+window.c.AdminExternalAction = ((function(m, h, c, _) {
     return {
         controller: function(args) {
-            var builder = args.data,
+            let builder = args.data,
                 complete = m.prop(false),
                 error = m.prop(false),
                 fail = m.prop(false),
                 data = {},
-                item = args.item,
-                key = builder.property,
-                newValue = m.prop(builder.forceValue || '');
+                item = args.item;
 
-            h.idVM.id(item[builder.updateKey]);
+            builder.requestOptions.config = (xhr) => {
+                if (window.document.querySelectorAll('meta[name="csrf-token"]').length > 0) {
+                    xhr.setRequestHeader('X-CSRF-Token', window.document.querySelectorAll('meta[name="csrf-token"]')[0].content);
+                }
+            };
 
-            var l = m.postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
+            const reload = _.compose(builder.model.getRow, h.idVM.id(item[builder.updateKey]).parameters),
+                l = m.postgrest.loader(builder.requestOptions, m.request);
 
-            var updateItem = function(res) {
+            const reloadItem = (data) => {
+                reload().then(updateItem);
+            };
+
+            const requestError = (err) => {
+                complete(true);
+                error(true);
+            };
+
+            const updateItem = (res) => {
                 _.extend(item, res[0]);
                 complete(true);
                 error(false);
             };
 
-            var submit = function() {
-                data[key] = newValue();
-                l.load().then(updateItem, function() {
-                    complete(true);
-                    error(true);
-                });
+            const submit = () => {
+                l.load().then(reloadItem, requestError);
                 return false;
             };
 
-            var unload = function(el, isinit, context) {
+            const unload = (el, isinit, context) => {
                 context.onunload = function() {
                     complete(false);
                     error(false);
-                    newValue(builder.forceValue || '');
                 };
             };
 
@@ -41,7 +59,6 @@ window.c.AdminInputAction = (function(m, h, c) {
                 complete: complete,
                 error: error,
                 l: l,
-                newValue: newValue,
                 submit: submit,
                 toggler: h.toggleProp(false, true),
                 unload: unload
@@ -61,23 +78,19 @@ window.c.AdminInputAction = (function(m, h, c) {
                     m('form.w-form', {
                         onsubmit: ctrl.submit
                     }, (!ctrl.complete()) ? [
-                        m('label', data.innerLabel), (!data.forceValue) ?
-                        m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
-                            onchange: m.withAttr('value', ctrl.newValue),
-                            value: ctrl.newValue()
-                        }) : '',
+                        m('label', data.innerLabel),
                         m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
                     ] : (!ctrl.error()) ? [
                         m('.w-form-done[style="display:block;"]', [
-                            m('p', 'Apoio transferido com sucesso!')
+                            m('p', 'Requisição feita com sucesso.')
                         ])
                     ] : [
                         m('.w-form-error[style="display:block;"]', [
-                            m('p', 'Houve um problema na requisição. O apoio não foi transferido!')
+                            m('p', 'Houve um problema na requisição.')
                         ])
                     ])
                 ]) : ''
             ]);
         }
     };
-}(window.m, window.c.h, window.c));
+})(window.m, window.c.h, window.c, window._));
