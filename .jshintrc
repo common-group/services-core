@@ -1,6 +1,6 @@
 {
   "camelcase" : true,
-  "indent": 2,
+  "indent": 4,
   "esnext": true,
   "undef": true,
   "quotmark": "single",

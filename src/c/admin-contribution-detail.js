@@ -1,12 +1,12 @@
-window.c.AdminContributionDetail = (function(m, _, c, h){
+window.c.AdminContributionDetail = (function(m, _, c, h) {
     return {
-        controller: function(args){
+        controller: function(args) {
             const loadReward = () => {
                 const model = c.models.rewardDetail,
-                      reward_id = args.item.reward_id,
-                      opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
-                      l = m.postgrest.loaderWithToken(opts),
-                      reward = m.prop({});
+                    reward_id = args.item.reward_id,
+                    opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
+                    l = m.postgrest.loaderWithToken(opts),
+                    reward = m.prop({});
 
                 if (reward_id) {
                     l.load().then(_.compose(reward, _.first));
@@ -60,29 +60,52 @@ window.c.AdminContributionDetail = (function(m, _, c, h){
             };
         },
 
-        view: function(ctrl, args){
+        view: function(ctrl, args) {
             var actions = ctrl.actions,
                 item = args.item,
                 reward = ctrl.reward;
 
             const addOptions = (builder, id) => {
-                return _.extend({}, builder, {requestOptions: {url: (`/admin/contributions/${id}/gateway_refund`), method: 'PUT'}});
+                return _.extend({}, builder, {
+                    requestOptions: {
+                        url: (`/admin/contributions/${id}/gateway_refund`),
+                        method: 'PUT'
+                    }
+                });
             };
 
             return m('#admin-contribution-detail-box', [
                 m('.divider.u-margintop-20.u-marginbottom-20'),
-                m('.w-row.u-marginbottom-30',
-                  [
-                      m.component(c.AdminInputAction, {data: actions.transfer, item: item}),
-                      m.component(c.AdminRadioAction, {data: actions.reward, item: reward(), updateKeyValue: item.contribution_id}),
-                      m.component(c.AdminExternalAction, {data: addOptions(actions.refund, item.id), item: item}),
-                      m.component(c.AdminInputAction, {data: actions.remove, item: item})
-                  ]
-                 ),
-                m('.w-row.card.card-terciary.u-radius',[
-                    m.component(c.AdminTransaction, {contribution: item}),
-                    m.component(c.AdminTransactionHistory, {contribution: item}),
-                    m.component(c.AdminReward, {reward: reward, key: item.key})
+                m('.w-row.u-marginbottom-30', [
+                    m.component(c.AdminInputAction, {
+                        data: actions.transfer,
+                        item: item
+                    }),
+                    m.component(c.AdminRadioAction, {
+                        data: actions.reward,
+                        item: reward(),
+                        updateKeyValue: item.contribution_id
+                    }),
+                    m.component(c.AdminExternalAction, {
+                        data: addOptions(actions.refund, item.id),
+                        item: item
+                    }),
+                    m.component(c.AdminInputAction, {
+                        data: actions.remove,
+                        item: item
+                    })
+                ]),
+                m('.w-row.card.card-terciary.u-radius', [
+                    m.component(c.AdminTransaction, {
+                        contribution: item
+                    }),
+                    m.component(c.AdminTransactionHistory, {
+                        contribution: item
+                    }),
+                    m.component(c.AdminReward, {
+                        reward: reward,
+                        key: item.key
+                    })
                 ])
             ]);
         }
