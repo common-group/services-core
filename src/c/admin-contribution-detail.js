@@ -36,8 +36,9 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                         getModel: c.models.rewardDetail,
                         updateModel: c.models.contributionDetail,
                         selectedItem: reward,
-                        validate: (newRewardValue) => {
-                            return (args.item.value >= newRewardValue) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
+                        validate: (rewards, newRewardID) => {
+                            let reward = _.findWhere(rewards, {id: newRewardID});
+                            return (args.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
                         }
                     },
                     refund: {

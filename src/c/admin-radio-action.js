@@ -11,7 +11,6 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                 description = m.prop(item.description || ''),
                 key = builder.getKey,
                 newID = m.prop(''),
-                newValue = m.prop(0),
                 getFilter = {},
                 setFilter = {},
                 radios = m.prop(),
@@ -55,7 +54,7 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
 
             var submit = function() {
                 if (newID()) {
-                    let validation = validate(newValue());
+                    let validation = validate(radios(), newID());
                     if (_.isUndefined(validation)) {
                         data[builder.selectKey] = newID();
                         setLoader.load().then(updateItem, error);
@@ -92,7 +91,6 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                 setLoader: setLoader,
                 getLoader: getLoader,
                 newID: newID,
-                newValue: newValue,
                 submit: submit,
                 toggler: h.toggleProp(false, true),
                 unload: unload,
@@ -119,7 +117,6 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                             var set = function() {
                                 ctrl.newID(radio.id);
                                 ctrl.setDescription(radio.description);
-                                ctrl.newValue(radio.minimum_value);
                             };
                             var selected = (radio.id === (item[data.selectKey] || item.id)) ? true : false;
 
