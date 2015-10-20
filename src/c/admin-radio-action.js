@@ -7,15 +7,17 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                 //TODO: Implement a descriptor to abstract the initial description
                 error = m.prop(false),
                 fail = m.prop(false),
-                item = args.item,
+                item = args.item(),
                 description = m.prop(item.description || ''),
                 key = builder.getKey,
-                newValue = m.prop(''),
+                newID = m.prop(''),
+                newValue = m.prop(0),
                 getFilter = {},
                 setFilter = {},
                 radios = m.prop(),
-                getKey = builder.getKey,
                 getAttr = builder.radios,
+                getKey = builder.getKey,
+                getKeyValue = args.getKeyValue,
                 updateKey = builder.updateKey,
                 updateKeyValue = args.updateKeyValue,
                 validate = builder.validate,
@@ -27,7 +29,7 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
 
             getFilter[getKey] = 'eq';
             var getVM = m.postgrest.filtersVM(getFilter);
-            getVM[getKey](item[getKey]);
+            getVM[getKey](getKeyValue);
 
             var getLoader = m.postgrest.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
 
@@ -52,10 +54,10 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
             };
 
             var submit = function() {
-                if (newValue()) {
+                if (newID()) {
                     let validation = validate(newValue());
                     if (_.isUndefined(validation)) {
-                        data[builder.selectKey] = newValue();
+                        data[builder.selectKey] = newID();
                         setLoader.load().then(updateItem, error);
                     } else {
                         complete(true);
@@ -71,7 +73,7 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                 context.onunload = function() {
                     complete(false);
                     error(false);
-                    newValue('');
+                    newID('');
                 };
             };
 
@@ -89,6 +91,7 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                 error: error,
                 setLoader: setLoader,
                 getLoader: getLoader,
+                newID: newID,
                 newValue: newValue,
                 submit: submit,
                 toggler: h.toggleProp(false, true),
@@ -97,7 +100,8 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
             };
         },
         view: function(ctrl, args) {
-            var data = args.data,
+            let data = args.data,
+                item = args.item(),
                 btnValue = (ctrl.setLoader() || ctrl.getLoader()) ? 'por favor, aguarde...' : data.callToAction;
 
             return m('.w-col.w-col-2', [
@@ -113,10 +117,11 @@ window.c.AdminRadioAction = (function(m, h, c, _) {
                         (ctrl.radios()) ?
                         _.map(ctrl.radios(), function(radio, index) {
                             var set = function() {
-                                ctrl.newValue(radio.id);
+                                ctrl.newID(radio.id);
                                 ctrl.setDescription(radio.description);
+                                ctrl.newValue(radio.minimum_value);
                             };
-                            var selected = (radio.id === (args.item[data.selectKey] || args.item.id)) ? true : false;
+                            var selected = (radio.id === (item[data.selectKey] || item.id)) ? true : false;
 
                             return m('.w-radio', [
                                 m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + ((selected) ? '[checked]' : ''), {
