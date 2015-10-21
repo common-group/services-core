@@ -70,11 +70,11 @@ window.c.AdminInputAction = (function(m, h, c) {
                         m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
                     ] : (!ctrl.error()) ? [
                         m('.w-form-done[style="display:block;"]', [
-                            m('p', 'Apoio transferido com sucesso!')
+                            m('p', data.successMessage)
                         ])
                     ] : [
                         m('.w-form-error[style="display:block;"]', [
-                            m('p', 'Houve um problema na requisição. O apoio não foi transferido!')
+                            m('p', 'Houve um problema na requisição. ' + data.errorMessage)
                         ])
                     ])
                 ]) : ''
