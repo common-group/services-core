@@ -13,12 +13,12 @@ window.c.AdminUserDetail = (function(m, _, c){
                         model: c.models.userDetail
                     },
                     reactivate: {
-                        property: 'state',
+                        property: 'deactivated_at',
                         updateKey: 'id',
                         callToAction: 'Reativar',
                         innerLabel: 'Tem certeza que deseja reativar esse usuário?',
                         outerLabel: 'Reativar usuário',
-                        forceValue: 'deleted',
+                        forceValue: null,
                         model: c.models.userDetail
                     }
                 }
