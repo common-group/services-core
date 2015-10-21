@@ -1,3 +1,13 @@
+/**
+ * window.c.AdminUserDetail component
+ * Return action inputs to be used inside AdminList component.
+ *
+ * Example:
+ * m.component(c.AdminList, {
+ *     data: {},
+ *     listDetail: c.AdminUserDetail
+ * })
+ */
 window.c.AdminUserDetail = (function(m, _, c){
     return {
         controller: function(){

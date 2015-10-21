@@ -1,3 +1,18 @@
+/**
+ * window.c.AdminContributionUser component
+ * An itembuilder component that returns additional data
+ * to be included in AdminUser.
+ *
+ * Example:
+ * controller: function() {
+ *     return {
+ *         itemBuilder: [{
+ *             component: 'AdminContributionUser',
+ *             wrapperClass: '.w-col.w-col-4'
+ *         }]
+ *     }
+ * }
+ */
 window.c.AdminContributionUser = (function(m) {
     return {
         view: (ctrl, args) => {
