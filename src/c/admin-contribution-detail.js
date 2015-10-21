@@ -1,13 +1,13 @@
 window.c.AdminContributionDetail = (function(m, _, c, h) {
     return {
         controller: function(args) {
+            let l;
             const loadReward = () => {
                 const model = c.models.rewardDetail,
                     reward_id = args.item.reward_id,
                     opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
-                    l = m.postgrest.loaderWithToken(opts),
                     reward = m.prop({});
-
+                l = m.postgrest.loaderWithToken(opts);
                 if (reward_id) {
                     l.load().then(_.compose(reward, _.first));
                 }
@@ -38,8 +38,9 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                         getModel: c.models.rewardDetail,
                         updateModel: c.models.contributionDetail,
                         selectedItem: reward,
-                        validate: (newRewardValue) => {
-                            return (args.item.value > newRewardValue) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
+                        validate: (rewards, newRewardID) => {
+                            let reward = _.findWhere(rewards, {id: newRewardID});
+                            return (args.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
                         }
                     },
                     refund: {
@@ -59,6 +60,7 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                         model: c.models.contributionDetail
                     }
                 },
+                l: l
             };
         },
 
@@ -83,9 +85,11 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                         data: actions.transfer,
                         item: item
                     }),
+                    (ctrl.l()) ? h.loader :
                     m.component(c.AdminRadioAction, {
                         data: actions.reward,
-                        item: reward(),
+                        item: reward,
+                        getKeyValue: item.project_id,
                         updateKeyValue: item.contribution_id
                     }),
                     m.component(c.AdminExternalAction, {
@@ -104,6 +108,7 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                     m.component(c.AdminTransactionHistory, {
                         contribution: item
                     }),
+                    (ctrl.l()) ? h.loader :
                     m.component(c.AdminReward, {
                         reward: reward,
                         key: item.key

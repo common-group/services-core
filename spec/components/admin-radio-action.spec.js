@@ -38,7 +38,7 @@ describe('AdminRadioAction', () => {
             args.selectedItem = m.prop(item);
             $output = mq(AdminRadioAction, {
                 data: args,
-                item: item
+                item: m.prop(item)
             });
         });
 
@@ -73,7 +73,7 @@ describe('AdminRadioAction', () => {
                 beforeAll(() => {
                     $output = mq(AdminRadioAction, {
                         data: errorArgs,
-                        item: item
+                        item: m.prop(item)
                     });
                     $output.click('button');
                     $output.click('#r-0');

@@ -2,7 +2,8 @@ window.c.contribution.ProjectsHome = (((m, c, moment, h, _) => {
     return {
         controller: () => {
             let sample3 = _.partial(_.sample, _, 3),
-                loader = m.postgrest.loaderWithToken,
+                loaderWithToken = m.postgrest.loaderWithToken,
+                loader = _.partial(m.postgrest.loader, _, m.postgrest.request),
                 vm = {
                     recommendedCollection: m.prop([]),
                     recentCollection: m.prop([]),
@@ -38,7 +39,7 @@ window.c.contribution.ProjectsHome = (((m, c, moment, h, _) => {
 
             recommended.recommended('true').state('online');
 
-            let nearMeLoader = loader(project.getPageOptions(nearMe.parameters()));
+            let nearMeLoader = loaderWithToken(project.getPageOptions(nearMe.parameters()));
             nearMeLoader.load().then(_.compose(vm.nearMeCollection, sample3));
             let recommendedLoader = loader(project.getPageOptions(recommended.parameters()));
             recommendedLoader.load().then(_.compose(vm.recommendedCollection, sample3));

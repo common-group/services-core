@@ -21,7 +21,7 @@ window.c.ProjectMain = ((m, c, _, h) => {
 
                     h.fbParse();
 
-                    if (_.isEmpty(hash) || hash === '#_=_') {
+                    if (_.isEmpty(hash) || hash === '#_=_' || hash === '#preview') {
                         return tabs['#about'];
                     }
 

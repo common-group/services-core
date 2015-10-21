@@ -70,7 +70,7 @@ describe('ProjectSidebar', () => {
                 expect(output.find('#project-reminder').length).toEqual(1);
             });
 
-            it('should not render reminder when project is open_for_contributions and user not signed in', () => {
+            it('should render reminder when project is open_for_contributions and user not signed in', () => {
                 let {
                     output, projectDetail
                 } = generateContextByNewState({
@@ -78,7 +78,7 @@ describe('ProjectSidebar', () => {
                     user_signed_in: false
                 });
 
-                expect(output.find('#project-reminder').length).toEqual(0);
+                expect(output.find('#project-reminder').length).toEqual(1);
             });
 
             it('should not render reminder when project is not open_for_contributions and user signed in', () => {
