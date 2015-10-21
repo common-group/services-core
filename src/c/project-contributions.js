@@ -8,13 +8,12 @@ window.c.ProjectContributions = ((m, models, h, _) => {
                 }),
                 toggleWaiting = (waiting = false) => {
                     return () => {
-                        //FIXME: need to find a way to pass false filter
                         filterVM.waiting_payment(waiting);
                         listVM.firstPage(filterVM.parameters());
                     };
                 };
 
-            filterVM.project_id(args.project.id);
+            filterVM.project_id(args.project.id).waiting_payment(toggleWaiting());
 
             if (!listVM.collection().length) {
                 listVM.firstPage(filterVM.parameters());

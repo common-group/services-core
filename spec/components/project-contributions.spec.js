@@ -4,7 +4,7 @@ describe('ProjectContributions', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            jasmine.Ajax.stubRequest(new RegExp('(' + apiPrefix + '\/project_contributions)(.*)')).andReturn({
+            jasmine.Ajax.stubRequest(new RegExp('(' + apiPrefix + '\/project_contributions)(.*)(waiting_payment)(.*)')).andReturn({
                 'responseText': JSON.stringify(ProjectContributionsMockery())
             });
 
