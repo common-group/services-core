@@ -7,7 +7,7 @@ window.c.ProjectReminder = ((m, models, h, c) => {
           project = args.project,
           popNotification = m.prop(false),
           submitReminder = () => {
-            if (!project.user_signed_in) {
+            if (!h.getUser()) {
               return h.navigateToDevise();
             }
             let loaderOpts = inReminder() ? models.projectReminder.deleteOptions(filterVM.parameters())
