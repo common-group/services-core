@@ -1,21 +1,23 @@
 window.c.ProjectReminder = ((m, models, h, c) => {
     return {
         controller: (args) => {
-            let inReminder = h.toggleProp(false, true),
+            let project = args.project,
+                inReminder = h.toggleProp(false, true),
                 filterVM = m.postgrest.filtersVM({
                     project_id: 'eq'
                 }),
-                complete = m.prop(false),
-                project = args.project,
+                storeReminderName = 'remind_' + project.id,
+                l = m.prop(false),
                 popNotification = m.prop(false),
                 submitReminder = () => {
                     if (!h.getUser()) {
+                        h.storeAction(storeReminderName, submitReminder);
                         return h.navigateToDevise();
                     }
                     let loaderOpts = inReminder() ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
-                            project_id: args.project.id
-                        }),
-                        l = m.postgrest.loaderWithToken(loaderOpts);
+                        project_id: project.id
+                    });
+                    l = m.postgrest.loaderWithToken(loaderOpts);
 
                     l.load().then(() => {
                         inReminder.toggle();
@@ -32,13 +34,14 @@ window.c.ProjectReminder = ((m, models, h, c) => {
                     });
                 };
 
-            filterVM.project_id(args.project.id);
-            inReminder(args.project.in_reminder);
+            h.callStoredAction(storeReminderName, submitReminder);
+            filterVM.project_id(project.id);
+            inReminder(project.in_reminder);
 
             return {
                 inReminder: inReminder,
                 submitReminder: submitReminder,
-                complete: complete,
+                l: l,
                 popNotification: popNotification
             };
         },
@@ -47,7 +50,7 @@ window.c.ProjectReminder = ((m, models, h, c) => {
                 m('button[class="btn-link link-hidden fontsize-small ' + (ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary') + ' fontweight-semibold"]', {
                     onclick: ctrl.submitReminder
                 }, [
-                    m('span.fa.fa-clock-o'), (ctrl.complete() ? 'aguarde ...' : (ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me'))
+                    (ctrl.l() ? 'aguarde ...' : m('span.fa.fa-clock-o', ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me'))
                 ]), (ctrl.popNotification() ? m.component(c.PopNotification, {
                     message: 'Ok! Vamos te mandar um lembrete por e-mail 48 horas antes do fim da campanha'
                 }) : '')
