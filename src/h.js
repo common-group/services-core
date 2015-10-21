@@ -61,6 +61,16 @@ window.c.h = ((m, moment) => {
               id: 'eq'
           }),
 
+          getUser = () => {
+            const body = document.getElementsByTagName('body'),
+                data = _.first(body).getAttribute('data-user');
+            if(data){
+                return JSON.parse(data);
+            }else{
+                return false;
+            }
+          },
+
           hashMatch = (str) => {
               return window.location.hash === str;
           },
@@ -150,6 +160,7 @@ window.c.h = ((m, moment) => {
         momentFromString: momentFromString,
         formatNumber: formatNumber,
         idVM: idVM,
+        getUser: getUser,
         toggleProp: toggleProp,
         loader: loader,
         fbParse: fbParse,
