@@ -13,7 +13,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
                     };
                 };
 
-            filterVM.project_id(args.project.id).waiting_payment(toggleWaiting());
+            filterVM.project_id(args.project.id).waiting_payment(false);
 
             if (!listVM.collection().length) {
                 listVM.firstPage(filterVM.parameters());
