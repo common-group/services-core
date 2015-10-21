@@ -33,7 +33,8 @@ window.c.AdminUserDetail = (function(m, _, c){
                 m('.divider.u-margintop-20.u-marginbottom-20'),
                 m('.w-row.u-marginbottom-30', [
                     m.component(c.AdminInputAction, {data: actions.reset, item: item}),
-                    m.component(c.AdminInputAction, {data: actions.reactivate, item: item})
+                    (item.deactivated_at) ?
+                    m.component(c.AdminInputAction, {data: actions.reactivate, item: item}) : ''
                 ]),
             ]);
         }
