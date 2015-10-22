@@ -24,6 +24,8 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                         innerLabel: 'Id do novo apoiador:',
                         outerLabel: 'Transferir Apoio',
                         placeholder: 'ex: 129908',
+                        successMessage: 'Apoio transferido com sucesso!',
+                        errorMessage: 'O apoio não foi transferido!',
                         model: c.models.contributionDetail
                     },
                     reward: {

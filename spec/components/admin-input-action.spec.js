@@ -7,7 +7,7 @@ describe('AdminInputAction', function() {
         item = {
             testKey: 'foo'
         },
-        forced = 'testingforce',
+        forced = null,
         ctrl, $output;
 
     var args = {
@@ -55,6 +55,7 @@ describe('AdminInputAction', function() {
                 delete args.forceValue;
             });
         });
+
     });
 
     describe('view', function() {
