@@ -40,7 +40,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                 timeObj = h.generateRemaingTime(project)();
 
             return m('#project-sidebar.aside', [
-                m('.project-stats.mf', [
+                m('.project-stats', [
                     m('.w-clearfix.u-marginbottom-20', [
                         m('.w-col.w-col-tiny-6.w-col-small-4.fontweight-semibold.u-marginbottom-20', [
                             m('.fontsize-largest', 'R$ ' + h.formatNumber(project.pledged)),
