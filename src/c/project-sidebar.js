@@ -54,7 +54,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                             m('.fontsize-largest', (project.is_published ? timeObj.total : (project.online_days || 0))),
                             m('.fontsize-smaller.lineheight-tightest', [
                                 m('span[style="text-transform:capitalize;"]', (project.is_published ? timeObj.unit : 'dias')),
-                                ' restantes'
+                                (timeObj.total > 1) ? ' restantes' : ' restante'
                             ])
                         ])
                     ]), (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {

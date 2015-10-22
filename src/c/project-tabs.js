@@ -27,7 +27,7 @@ window.c.ProjectTabs = ((m, h) => {
                             m('a[id="comments-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#comments') ? 'selected' : '') + '"][href="#comments"]', {
                                 style: 'float: left;'
                             }, [
-                                'Comentarios ',
+                                'Comentários ',
                                 m('fb:comments-count[href="http://www.catarse.me/' + project.permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;'))
                             ]),
                         ])
