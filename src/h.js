@@ -32,16 +32,22 @@ window.c.h = ((m, moment) => {
         //Object manipulation helpers
         generateRemaingTime = (project) => {
             const remainingTextObj = m.prop({}),
-                translatedTime = {
-                    days: 'dias',
-                    minutes: 'minutos',
-                    hours: 'horas',
-                    seconds: 'segundos'
-                };
+                  remainingTime = project.remaining_time.total,
+                  translatedTime = {
+                      days: 'dias',
+                      minutes: 'minutos',
+                      hours: 'horas',
+                      seconds: 'segundos'
+                  },
+                  unit = () => {
+                    const projUnit = translatedTime[project.remaining_time.unit || 'seconds'];
+
+                    return (remainingTime <= 1) ? projUnit.slice(0, -1) : projUnit;
+                  };
 
             remainingTextObj({
-                unit: translatedTime[project.remaining_time.unit || 'seconds'],
-                total: project.remaining_time.total
+                unit: unit(),
+                total: remainingTime
             });
 
             return remainingTextObj;

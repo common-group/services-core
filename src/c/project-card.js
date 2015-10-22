@@ -47,7 +47,7 @@ window.c.ProjectCard = ((m, h, models) => {
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', [
                                 m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
-                                m('.fontsize-smallest.lineheight-tightest', 'Restantes')
+                                m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
                             ])
                         ])
                     ])
