@@ -24,8 +24,8 @@ window.c.AdminContributionUser = (function(m) {
                       email: item.email,
                   };
 
-            const additional_data = m('.fontsize-smallest.fontcolor-secondary', 'Gateway: ' + item.payer_email);
-            return m.component(c.AdminUser, {item: user, additional_data: additional_data});
+            const additionalData = m('.fontsize-smallest.fontcolor-secondary', 'Gateway: ' + item.payer_email);
+            return m.component(c.AdminUser, {item: user, additional_data: additionalData});
         }
     };
 }(window.m));
