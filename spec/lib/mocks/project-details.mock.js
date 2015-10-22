@@ -2,6 +2,8 @@ beforeAll(function(){
   ProjectDetailsMockery = function(attrs){
     var attrs = attrs || {};
     var data = {
+      name: "Histórias de Verdade",
+      headline: "Historinhas bíblicas para crianças",
       project_id: 6051,
       progress: 41,
       pledged: 5220.0,
@@ -16,13 +18,14 @@ beforeAll(function(){
       reminder_count: 23,
       remaining_time: {total: 22, unit: "days"},
       user: {id: 123, name: "Lorem ipsum"},
-      rewards: [
-        {
-          id: 25494, project_id: 6051, description: "3 livrinhos impressos (frete grátis)",
-          minimum_value: 45.0, maximum_contributions: null, deliver_at: "2015-10-01T03:00:00",
-          updated_at: "2015-07-13T14:27:54.030958", paid_count:16, waiting_payment_count:2
-        }
-      ]
+      video_embed_url: "//www.youtube.com/embed/6Klp834jk3M",
+      video_url: "https://youtu.be/6Klp834jk3M",
+      address: {
+        city: "Parnamirim",
+        state_acronym: "RN",
+        state: "RN"
+      },
+      about_html: 'Lorem ipsum'
     };
 
     data = _.extend(data, attrs);

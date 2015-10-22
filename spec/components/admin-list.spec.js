@@ -1,69 +1,86 @@
-describe('AdminList',() => {
-  let c = window.c,
-      AdminList = c.AdminList,
-      ctrl, fakeVM, $output,
-      VMfaker = (opts) => {
-        opts = opts || {};
-        let total = opts.total || 0,
-            collection = opts.collection || [],
-            isLoading = opts.isLoading || false,
-            error = opts.error || false;
-        return {
-          list: {
-            total: m.prop(total),
-            collection: m.prop(collection),
-            firstPage: () => {
-              let deferred = m.deferred();
-              setTimeout(() => {
-                deferred.resolve();
-              });
-              return deferred.promise;
-            },
-            isLoading: m.prop(isLoading)
-          },
-          error: m.prop(error)
+describe('AdminList', () => {
+    let c = window.c,
+        AdminList = c.AdminList,
+        $output, model, vm, ListItemMock, ListDetailMock,
+        results = [{
+            id: 1
+        }],
+        listParameters, endpoint;
+
+    beforeAll(() => {
+        endpoint = mockEndpoint('items', results);
+
+        ListItemMock = {
+            view: function(ctrl, args) {
+                return m('.list-item-mock');
+            }
         };
-      };
-
-  describe('controller', () => {
-    beforeAll(() => {
-      fakeVM = VMfaker();
-      spyOn(fakeVM.list, 'firstPage').and.callThrough();
-      ctrl = AdminList.controller({vm: fakeVM});
+        ListDetailMock = {
+            view: function(ctrl, args) {
+                return m('');
+            }
+        };
+        model = m.postgrest.model('items');
+        vm = {
+            list: m.postgrest.paginationVM(model),
+            error: m.prop()
+        };
+        listParameters = {
+            vm: vm,
+            listItem: ListItemMock,
+            listDetail: ListDetailMock
+        };
     });
 
-    it('should call firstPage if collection is empty', () => {
-      expect(fakeVM.list.firstPage).toHaveBeenCalled();
-    });
-  });
-  describe('view', () => {
-    beforeAll(() => {
-      fakeVM = VMfaker({collection: ContributionDetailMockery(10)});
-      $output = mq(AdminList, {vm: fakeVM});
-    });
+    describe('view', () => {
+        describe('when not loading', () => {
+            beforeEach(() => {
+                spyOn(vm.list, "isLoading").and.returnValue(false);
+                $output = mq(
+                    AdminList,
+                    listParameters
+                );
+            });
 
-    it('should render fetched contributions cards', () => {
-      expect($output.find('.card').length).toEqual(10);
-    });
-    describe('when loading', () => {
-      beforeAll(() => {
-        fakeVM = VMfaker({isLoading: true});
-        $output = mq(AdminList, {vm: fakeVM});
-      });
+            it('should render fetched items', () => {
+                expect($output.find('.card').length).toEqual(results.length);
+            });
 
-      it('should show a loading icon', () => {
-        expect($output.has('img[alt="Loader"]')).toBeTrue();
-      });
-    });
-    describe('when error', () => {
-      beforeAll(() => {
-        fakeVM = VMfaker({error: true});
-        $output = mq(AdminList, {vm: fakeVM});
-      });
+            it('should not show a loading icon', () => {
+                $output.should.not.have('img[alt="Loader"]');
+            });
+        });
 
-      it('should show an error info', () => {
-        expect($output.has('.card-error')).toBeTrue();
-      });
+        describe('when loading', () => {
+            beforeEach(() => {
+                spyOn(vm.list, "isLoading").and.returnValue(true);
+                $output = mq(
+                    AdminList,
+                    listParameters
+                );
+            });
+
+            it('should render fetched items', () => {
+                expect($output.find('.card').length).toEqual(results.length);
+            });
+
+            it('should show a loading icon', () => {
+                $output.should.have('img[alt="Loader"]');
+            });
+        });
+
+        describe('when error', () => {
+            beforeEach(() => {
+                vm.error('endpoint error');
+                $output = mq(
+                    AdminList,
+                    listParameters
+                );
+            });
+
+            it('should show an error info', () => {
+                expect($output.has('.card-error')).toBeTrue();
+            });
+        });
     });
-  });
 });
