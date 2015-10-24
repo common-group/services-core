@@ -24,6 +24,18 @@ window.c.h = ((m, moment) => {
               }
           },
 
+          discuss = (page, identifier) => {
+            const d = document, s = d.createElement('script');
+            window.disqus_config = function() {
+              this.page.url = page;
+              this.page.identifier = identifier;
+            };
+            s.src = '//catarseflex.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            return m('#disqus_thread');
+          },
+
           momentFromString = (date, format) => {
               const european = moment(date, format || 'DD/MM/YYYY');
               return european.isValid() ? european : moment(date);
@@ -175,6 +187,7 @@ window.c.h = ((m, moment) => {
     setMomentifyLocale();
 
     return {
+        discuss: discuss,
         momentify: momentify,
         momentFromString: momentFromString,
         formatNumber: formatNumber,
