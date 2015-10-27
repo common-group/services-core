@@ -2,192 +2,199 @@ window.c.h = ((m, moment) => {
     //Date Helpers
     const setMomentifyLocale = () => {
         moment.locale('pt', {
-            monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
-        });
+                monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+            });
     },
 
-          momentify = (date, format) => {
-              format = format || 'DD/MM/YYYY';
-              return date ? moment(date).locale('pt').format(format) : 'no date';
-          },
+        momentify = (date, format) => {
+            format = format || 'DD/MM/YYYY';
+            return date ? moment(date).locale('pt').format(format) : 'no date';
+        },
 
-          storeAction = (action) => {
-              if (!sessionStorage.getItem(action)) {
-                  return sessionStorage.setItem(action, action);
-              }
-          },
+        storeAction = (action) => {
+            if (!sessionStorage.getItem(action)) {
+                return sessionStorage.setItem(action, action);
+            }
+        },
 
-          callStoredAction = (action, func) => {
-              if (sessionStorage.getItem(action)) {
-                  func.call();
-                  return sessionStorage.removeItem(action);
-              }
-          },
+        callStoredAction = (action, func) => {
+            if (sessionStorage.getItem(action)) {
+                func.call();
+                return sessionStorage.removeItem(action);
+            }
+        },
 
-          discuss = (page, identifier) => {
-            const d = document, s = d.createElement('script');
+        discuss = (page, identifier) => {
+            const d = document,
+                s = d.createElement('script');
             window.disqus_config = function() {
-              this.page.url = page;
-              this.page.identifier = identifier;
+                this.page.url = page;
+                this.page.identifier = identifier;
             };
             s.src = '//catarseflex.disqus.com/embed.js';
             s.setAttribute('data-timestamp', +new Date());
             (d.head || d.body).appendChild(s);
-            return m('#disqus_thread');
-          },
+            return m('');
+        },
 
-          momentFromString = (date, format) => {
-              const european = moment(date, format || 'DD/MM/YYYY');
-              return european.isValid() ? european : moment(date);
-          },
+        momentFromString = (date, format) => {
+            const european = moment(date, format || 'DD/MM/YYYY');
+            return european.isValid() ? european : moment(date);
+        },
 
-          //Object manipulation helpers
-          generateRemaingTime = (project) => {
-              const remainingTextObj = m.prop({}),
-                    remainingTime = project.remaining_time.total,
-                    translatedTime = {
-                        days: 'dias',
-                        minutes: 'minutos',
-                        hours: 'horas',
-                        seconds: 'segundos'
-                    },
-                    unit = () => {
-                        const projUnit = translatedTime[project.remaining_time.unit || 'seconds'];
+        //Object manipulation helpers
+        generateRemaingTime = (project) => {
+            const remainingTextObj = m.prop({}),
+                remainingTime = project.remaining_time.total,
+                translatedTime = {
+                    days: 'dias',
+                    minutes: 'minutos',
+                    hours: 'horas',
+                    seconds: 'segundos'
+                },
+                unit = () => {
+                    const projUnit = translatedTime[project.remaining_time.unit || 'seconds'];
 
-                        return (remainingTime <= 1) ? projUnit.slice(0, -1) : projUnit;
-                    };
+                    return (remainingTime <= 1) ? projUnit.slice(0, -1) : projUnit;
+                };
 
-              remainingTextObj({
-                  unit: unit(),
-                  total: remainingTime
-              });
+            remainingTextObj({
+                unit: unit(),
+                total: remainingTime
+            });
 
-              return remainingTextObj;
-          },
+            return remainingTextObj;
+        },
 
-          //Number formatting helpers
-          generateFormatNumber = (s, c) => {
-              return (number, n, x) => {
-                  if (number === null || number === undefined) {
-                      return null;
-                  }
+        //Number formatting helpers
+        generateFormatNumber = (s, c) => {
+            return (number, n, x) => {
+                if (number === null || number === undefined) {
+                    return null;
+                }
 
-                  const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-                        num = number.toFixed(Math.max(0, ~~n));
-                  return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-              };
-          },
-          formatNumber = generateFormatNumber('.', ','),
+                const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+                    num = number.toFixed(Math.max(0, ~~n));
+                return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+            };
+        },
+        formatNumber = generateFormatNumber('.', ','),
 
-          toggleProp = (defaultState, alternateState) => {
-              const p = m.prop(defaultState);
-              p.toggle = () => {
-                  p(((p() === alternateState) ? defaultState : alternateState));
-              };
+        toggleProp = (defaultState, alternateState) => {
+            const p = m.prop(defaultState);
+            p.toggle = () => {
+                p(((p() === alternateState) ? defaultState : alternateState));
+            };
 
-              return p;
-          },
+            return p;
+        },
 
-          idVM = m.postgrest.filtersVM({
-              id: 'eq'
-          }),
+        idVM = m.postgrest.filtersVM({
+            id: 'eq'
+        }),
 
-          getUser = () => {
-              const body = document.getElementsByTagName('body'),
-                    data = _.first(body).getAttribute('data-user');
-              if (data) {
-                  return JSON.parse(data);
-              } else {
-                  return false;
-              }
-          },
+        getUser = () => {
+            const body = document.getElementsByTagName('body'),
+                data = _.first(body).getAttribute('data-user');
+            if (data) {
+                return JSON.parse(data);
+            } else {
+                return false;
+            }
+        },
 
-          hashMatch = (str) => {
-              return window.location.hash === str;
-          },
+        hashMatch = (str) => {
+            return window.location.hash === str;
+        },
 
-          locationActionMatch = (action) => {
-              const act = window.location.pathname.split('/').slice(-1)[0];
-              return action === act;
-          },
+        locationActionMatch = (action) => {
+            const act = window.location.pathname.split('/').slice(-1)[0];
+            return action === act;
+        },
 
-          useAvatarOrDefault = (avatarPath) => {
-              return avatarPath || '/assets/catarse_bootstrap/user.jpg';
-          },
+        useAvatarOrDefault = (avatarPath) => {
+            return avatarPath || '/assets/catarse_bootstrap/user.jpg';
+        },
 
-          //Templates
-          loader = () => {
-              return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
-                  m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
-              ]);
-          },
+        //Templates
+        loader = () => {
+            return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
+                m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
+            ]);
+        },
 
-          fbParse = () => {
-              const tryParse = () => {
-                  try {
-                      window.FB.XFBML.parse();
-                  } catch (e) {
-                      console.log(e);
-                  }
-              };
+        fbParse = () => {
+            const tryParse = () => {
+                try {
+                    window.FB.XFBML.parse();
+                } catch (e) {
+                    console.log(e);
+                }
+            };
 
-              return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
-          },
+            return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
+        },
 
-          pluralize = (count, s, p) => {
-              return (count > 1 ? count + p : count + s);
-          },
+        pluralize = (count, s, p) => {
+            return (count > 1 ? count + p : count + s);
+        },
 
-          simpleFormat = (str = '') => {
-              str = str.replace(/\r\n?/, '\n');
-              if (str.length > 0) {
-                  str = str.replace(/\n\n+/g, '</p><p>');
-                  str = str.replace(/\n/g, '<br />');
-                  str = '<p>' + str + '</p>';
-              }
-              return str;
-          },
+        simpleFormat = (str = '') => {
+            str = str.replace(/\r\n?/, '\n');
+            if (str.length > 0) {
+                str = str.replace(/\n\n+/g, '</p><p>');
+                str = str.replace(/\n/g, '<br />');
+                str = '<p>' + str + '</p>';
+            }
+            return str;
+        },
 
-          rewardSouldOut = (reward) => {
-              return (reward.maximum_contributions > 0 ?
-                      (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
-          },
+        rewardSouldOut = (reward) => {
+            return (reward.maximum_contributions > 0 ?
+                (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
+        },
 
-          rewardRemaning = (reward) => {
-              return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
-          },
+        rewardRemaning = (reward) => {
+            return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
+        },
 
-          parseUrl = (href) => {
-              const l = document.createElement('a');
-              l.href = href;
-              return l;
-          },
+        parseUrl = (href) => {
+            const l = document.createElement('a');
+            l.href = href;
+            return l;
+        },
 
-          mixpanelTrack = () => {
-              return (el, isInitialized) => {
-                  if (!isInitialized) {
-                      window.CatarseMixpanel.activate();
-                  }
-              };
-          },
+        mixpanelTrack = () => {
+            return (el, isInitialized) => {
+                if (!isInitialized) {
+                    window.CatarseMixpanel.activate();
+                }
+            };
+        },
 
-          UIHelper = () => {
-              return (el, isInitialized) => {
-                  if (!isInitialized && $) {
-                      window.UIHelper.setupResponsiveIframes($(el));
-                  }
-              };
-          },
+        UIHelper = () => {
+            return (el, isInitialized) => {
+                if (!isInitialized && $) {
+                    window.UIHelper.setupResponsiveIframes($(el));
+                }
+            };
+        },
 
-          navigateToDevise = () => {
-              window.location.href = '/pt/login';
-              return false;
-          };
+        validateEmail = (email) => {
+            const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            return re.test(email);
+        },
+
+        navigateToDevise = () => {
+            window.location.href = '/pt/login';
+            return false;
+        };
 
     setMomentifyLocale();
 
     return {
         discuss: discuss,
+        validateEmail: validateEmail,
         momentify: momentify,
         momentFromString: momentFromString,
         formatNumber: formatNumber,

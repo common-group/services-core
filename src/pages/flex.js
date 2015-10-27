@@ -1,10 +1,19 @@
 window.c.pages.Flex = (function(m, c, h) {
     return {
         controller: function() {
-          const builder = {};
-          return {
-            builder: builder
-          };
+            const builder = {
+                    customAction: '//catarse.us5.list-manage.com/subscribe/post?u=ebfcd0d16dbb0001a0bea3639&amp;id=8a4c1a33ce'
+                },
+                addDisqus = (el, isInitialized) => {
+                    if (!isInitialized) {
+                        h.discuss('https://catarse.me/flex', 'flex_page');
+                    }
+                };
+
+            return {
+                addDisqus: addDisqus,
+                builder: builder
+            };
         },
         view: function(ctrl, args) {
             return [
@@ -17,7 +26,9 @@ window.c.pages.Flex = (function(m, c, h) {
                         ]),
                         m('.w-row', [
                             m('.w-col.w-col-2'),
-                            m.component(c.landingSignup, {builder: ctrl.builder}),
+                            m.component(c.landingSignup, {
+                                builder: ctrl.builder
+                            }),
                             m('.w-col.w-col-2')
                         ])
                     ])
@@ -26,7 +37,7 @@ window.c.pages.Flex = (function(m, c, h) {
                         m('.w-container', [
                             m('.w-editable.fontsize-largest.u-margintop-40.u-text-center', 'Pra quem será?'), m('.w-editable.fontsize-base.u-text-center.u-marginbottom-60', 'Iniciaremos a fase de testes com categorias de projetos específicas'), m('div', [
                                 m('.w-row.u-marginbottom-60', [
-                                     m('.w-col.w-col-6', [
+                                    m('.w-col.w-col-6', [
                                         m('.u-text-center.u-marginbottom-20', [
                                             m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/560e393a01b66e250aca67cb_icon-zelo-com.png\'][width=\'210\']'), m('.w-editable.fontsize-largest.lineheight-loose', 'Causas')
                                         ]), m('p.w-editable.fontsize-base', 'Flexibilidade para causas de impacto! Estaremos abertos a campanhas de organizações ou pessoas físicas para arrecadação de recursos para causas pessoais, projetos de assistencialismo, saúde, ajudas humanitárias, proteção aos animais, empreendedorismo socioambiental, ativismo ou qualquer coisa que una as pessoas para fazer o bem.')
@@ -110,7 +121,9 @@ window.c.pages.Flex = (function(m, c, h) {
                         m('.w-container.fontcolor-negative', [
                             m('.w-editable.fontsize-largest', 'Fique por dentro!'), m('.w-editable.fontsize-base.u-marginbottom-60', 'Receba notícias e acompanhe a evolução do CatarseFlex'), m('.w-row', [
                                 m('.w-col.w-col-2'),
-                                m.component(c.landingSignup, {builder: ctrl.builder}),
+                                m.component(c.landingSignup, {
+                                    builder: ctrl.builder
+                                }),
                                 m('.w-col.w-col-2')
                             ])
                         ])
@@ -118,7 +131,10 @@ window.c.pages.Flex = (function(m, c, h) {
                         m('.w-container', [
                             m('.u-text-center', [
                                 m('.w-editable.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m('.w-editable.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
-                            ]), h.discuss('https://catarse.me/flex', 'flex_page')
+                            ]),
+                            m('#disqus_thread', {
+                                config: ctrl.addDisqus
+                            })
                         ])
                     ])
                 ]
