@@ -1,3 +1,17 @@
+/**
+ * window.c.landingQA component
+ * A visual component that displays a question/answer box with toggle
+ *
+ * Example:
+ * view: () => {
+ *      ...
+ *      m.component(c.landingQA, {
+ *          question: 'Whats your name?',
+ *          answer: 'Darth Vader.'
+ *      })
+ *      ...
+ *  }
+ */
 window.c.landingQA = (function(m, h) {
     return {
         controller: (args) => {
