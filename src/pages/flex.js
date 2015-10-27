@@ -1,7 +1,9 @@
-window.c.pages.Flex = (function(m, c, h) {
+window.c.pages.Flex = (function(m, c, h, models) {
     return {
         controller: function() {
-            const builder = {
+            const stats = m.prop([]),
+                l = m.prop(),
+                builder = {
                     customAction: '//catarse.us5.list-manage.com/subscribe/post?u=ebfcd0d16dbb0001a0bea3639&amp;id=8a4c1a33ce'
                 },
                 addDisqus = (el, isInitialized) => {
@@ -10,12 +12,18 @@ window.c.pages.Flex = (function(m, c, h) {
                     }
                 };
 
+            const loader = m.postgrest.loaderWithToken(models.statistic.getRowOptions());
+            loader.load().then(stats);
+
             return {
                 addDisqus: addDisqus,
-                builder: builder
+                builder: builder,
+                loader: loader,
+                stats: stats
             };
         },
         view: function(ctrl, args) {
+            let stats = _.first(ctrl.stats());
             return [
                 m('.w-section.hero-full.hero-zelo', [
                     m('.w-container.u-text-center', [
@@ -107,15 +115,20 @@ window.c.pages.Flex = (function(m, c, h) {
                         ])
                     ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large', [
                         m('.w-container.u-text-center', [
-                            m('.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O Flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.   '), m('.w-row.u-text-center', [
-                                m('.w-col.w-col-4', [
-                                    m('.fontsize-jumbo.text-success.lineheight-loose', '200.000'), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
-                                ]), m('.w-col.w-col-4', [
-                                    m('.fontsize-jumbo.text-success.lineheight-loose', '1.000'), m('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')
-                                ]), m('.w-col.w-col-4', [
-                                    m('.fontsize-jumbo.text-success.lineheight-loose', '16 milhões'), m('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')
-                                ])
-                            ])
+                            m('.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O Flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.   '),
+                            m('.w-row.u-text-center',
+                                (ctrl.loader()) ? h.loader() : [
+                                    m('.w-col.w-col-4', [
+                                        m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
+                                    ]),
+                                    m('.w-col.w-col-4', [
+                                        m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')
+                                    ]),
+                                    m('.w-col.w-col-4', [
+                                        m('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')
+                                    ])
+                                ]
+                            )
                         ])
                     ]), m('.w-section.section-large.u-text-center.bg-blue-one', [
                         m('.w-container.fontcolor-negative', [
@@ -141,4 +154,4 @@ window.c.pages.Flex = (function(m, c, h) {
             ];
         }
     };
-}(window.m, window.c, window.c.h));
+}(window.m, window.c, window.c.h, window.c.models));
