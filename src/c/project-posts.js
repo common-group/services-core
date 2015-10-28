@@ -24,9 +24,10 @@ window.c.ProjectPosts = ((m, models, h, _) => {
             return m('.project-posts.w-section', [
                 m('.w-container.u-margintop-20', [
                     (project.is_owner_or_admin ? [
+                        (!list.isLoading()) ?
                         (_.isEmpty(list.collection()) ? m('.w-hidden-small.w-hidden-tiny', [
                             m('.fontsize-base.u-marginbottom-30.u-margintop-20', 'Toda novidade publicada no Catarse é enviada diretamente para o email de quem já apoiou seu projeto e também fica disponível para visualização no site. Você pode optar por deixá-la pública, ou visível somente para seus apoiadores aqui nesta aba.')
-                        ]) : ''),
+                        ]) : '') : '',
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-4'),
                             m('.w-col.w-col-4', [
