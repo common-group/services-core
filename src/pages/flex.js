@@ -130,7 +130,8 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 ]
                             )
                         ])
-                    ]), m('.w-section.section-large.u-text-center.bg-blue-one', [
+                    ]), 
+                    m('.w-section.section-large.u-text-center.bg-purple', [
                         m('.w-container.fontcolor-negative', [
                             m('.fontsize-largest', 'Fique por dentro!'), m('.fontsize-base.u-marginbottom-60', 'Receba notícias e acompanhe a evolução do CatarseFlex'), m('.w-row', [
                                 m('.w-col.w-col-2'),
@@ -140,7 +141,47 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 m('.w-col.w-col-2')
                             ])
                         ])
-                    ]), m('.w-section.section-large.bg-purple', [
+                    ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large', [
+                        m('.w-container.u-text-center', [
+                            m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O Flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.   '),
+                            m('.w-row.u-text-center', (ctrl.loader()) ? h.loader() : [
+                                m('.w-col.w-col-4', [
+                                    m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
+                                ]),
+                                m('.w-col.w-col-4', [
+                                    m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')
+                                ]),
+                                m('.w-col.w-col-4', [
+                                    m('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')
+                                ])
+                            ])
+                        ])
+                    ]),
+                    m('.w-section.section.bg-blue-one', [
+                        m('.w-container', [
+                            m('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o CatarseFlex para seus amigos'),
+                            m('.w-row', [
+                                m('.w-col.w-col-2'),
+                                m('.w-col.w-col-8', [
+                                    m('.w-row', [
+                                        m('.w-col.w-col-6', [
+                                            m('.div-share-mobile-fb', [
+                                                m('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'),
+                                                m('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')
+                                            ])
+                                        ]),
+                                        m('.w-col.w-col-6', [
+                                            m('.div-share-mobile-fb', [
+                                                m('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'),
+                                                m('a.w-button.btn.btn-large.btn-tweet[href="http://twitter.com/?status=' + encodeURIComponent('Conheça o novo Catarse Flex! ') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')
+                                            ])
+                                        ])
+                                    ])
+                                ]),
+                                m('.w-col.w-col-2')
+                            ])
+                        ])
+                    ]), m('.w-section.section-large.bg-greenlime', [
                         m('.w-container', [
                             m('.u-text-center', [
                                 m('.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
