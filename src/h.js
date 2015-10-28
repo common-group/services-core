@@ -2,8 +2,8 @@ window.c.h = ((m, moment) => {
     //Date Helpers
     const setMomentifyLocale = () => {
         moment.locale('pt', {
-            monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
-        });
+                monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+            });
     },
 
         momentify = (date, format) => {
@@ -24,6 +24,19 @@ window.c.h = ((m, moment) => {
             }
         },
 
+        discuss = (page, identifier) => {
+            const d = document,
+                s = d.createElement('script');
+            window.disqus_config = function() {
+                this.page.url = page;
+                this.page.identifier = identifier;
+            };
+            s.src = '//catarseflex.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+            return m('');
+        },
+
         momentFromString = (date, format) => {
             const european = moment(date, format || 'DD/MM/YYYY');
             return european.isValid() ? european : moment(date);
@@ -32,16 +45,22 @@ window.c.h = ((m, moment) => {
         //Object manipulation helpers
         generateRemaingTime = (project) => {
             const remainingTextObj = m.prop({}),
+                remainingTime = project.remaining_time.total,
                 translatedTime = {
                     days: 'dias',
                     minutes: 'minutos',
                     hours: 'horas',
                     seconds: 'segundos'
+                },
+                unit = () => {
+                    const projUnit = translatedTime[project.remaining_time.unit || 'seconds'];
+
+                    return (remainingTime <= 1) ? projUnit.slice(0, -1) : projUnit;
                 };
 
             remainingTextObj({
-                unit: translatedTime[project.remaining_time.unit || 'seconds'],
-                total: project.remaining_time.total
+                unit: unit(),
+                total: remainingTime
             });
 
             return remainingTextObj;
@@ -161,6 +180,11 @@ window.c.h = ((m, moment) => {
             };
         },
 
+        validateEmail = (email) => {
+            const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            return re.test(email);
+        },
+
         navigateToDevise = () => {
             window.location.href = '/pt/login';
             return false;
@@ -169,6 +193,8 @@ window.c.h = ((m, moment) => {
     setMomentifyLocale();
 
     return {
+        discuss: discuss,
+        validateEmail: validateEmail,
         momentify: momentify,
         momentFromString: momentFromString,
         formatNumber: formatNumber,

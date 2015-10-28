@@ -14,7 +14,7 @@ describe('ProjectTabs', () => {
         });
 
         it('should render project-tabs', () => {
-            expect($output.find('a.dashboard-nav-link.mf').length).toEqual(5);
+            expect($output.find('a.dashboard-nav-link').length).toEqual(5);
             expect($output.find('a#about-link').length).toEqual(1);
         });
 

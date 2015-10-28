@@ -3,7 +3,7 @@ window.c.AdminContributionItem = (function(m, c, h) {
         controller: function() {
             return {
                 itemBuilder: [{
-                    component: 'AdminUser',
+                    component: 'AdminContributionUser',
                     wrapperClass: '.w-col.w-col-4'
                 }, {
                     component: 'AdminProject',

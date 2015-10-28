@@ -40,7 +40,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                 timeObj = h.generateRemaingTime(project)();
 
             return m('#project-sidebar.aside', [
-                m('.project-stats.mf', [
+                m('.project-stats', [
                     m('.w-clearfix.u-marginbottom-20', [
                         m('.w-col.w-col-tiny-6.w-col-small-4.fontweight-semibold.u-marginbottom-20', [
                             m('.fontsize-largest', 'R$ ' + h.formatNumber(project.pledged)),
@@ -54,7 +54,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                             m('.fontsize-largest', (project.is_published ? timeObj.total : (project.online_days || 0))),
                             m('.fontsize-smaller.lineheight-tightest', [
                                 m('span[style="text-transform:capitalize;"]', (project.is_published ? timeObj.unit : 'dias')),
-                                ' restantes'
+                                (timeObj.total > 1) ? ' restantes' : ' restante'
                             ])
                         ])
                     ]), (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
