@@ -112,7 +112,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 ])
                             ])
                         ])
-                    ]), 
+                    ]),
                     m('.w-section.section-large.u-text-center.bg-purple', [
                         m('.w-container.fontcolor-negative', [
                             m('.fontsize-largest', 'Fique por dentro!'), m('.fontsize-base.u-marginbottom-60', 'Receba notícias e acompanhe a evolução do CatarseFlex'), m('.w-row', [
