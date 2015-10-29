@@ -20,7 +20,7 @@ window.c.AdminUserDetail = (function(m, _, c){
                         innerLabel: 'Nova senha de Usuário:',
                         outerLabel: 'Redefinir senha',
                         placeholder: 'ex: 123mud@r',
-                        model: c.models.userFullDetail
+                        model: c.models.user
                     },
                     reactivate: {
                         property: 'deactivated_at',
@@ -31,7 +31,7 @@ window.c.AdminUserDetail = (function(m, _, c){
                         errorMessage: 'O usuário não pôde ser reativado!',
                         outerLabel: 'Reativar usuário',
                         forceValue: null,
-                        model: c.models.userFullDetail
+                        model: c.models.user
                     }
                 }
             };
