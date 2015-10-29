@@ -23,8 +23,8 @@ window.c.landingQA = (function(m, h) {
             return m('.card.qa-card.u-marginbottom-20.u-radius.btn-terciary', {
                 onclick: ctrl.showAnswer.toggle
             },[
-                m('.w-editable.fontsize-base', args.question),
-                ctrl.showAnswer() ? m('p.w-editable.u-margintop-20.fontsize-small', args.answer) : ''
+                m('.fontsize-base', args.question),
+                ctrl.showAnswer() ? m('p.u-margintop-20.fontsize-small', args.answer) : ''
             ]);
         }
     };
