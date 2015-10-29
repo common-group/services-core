@@ -155,7 +155,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                             m('div', [
                                                 m('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'),
-                                                m('a.w-button.btn.btn-large.btn-tweet[href="http://twitter.com/?status=' + encodeURIComponent('Conheça o novo Catarse Flex! ') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')
+                                                m('a.w-button.btn.btn-large.btn-tweet[href="http://twitter.com/?status=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')
                                             ])
                                         ])
                                     ])
