@@ -47,7 +47,7 @@ window.c.landingSignup = (function(m, h) {
                     (ctrl.error() ? m('span.fontsize-smaller.text-error', 'E-mail inválido') : '')
                 ]),
                 m('.w-col.w-col-3', [
-                    m('input.w-editable.w-button.btn.btn-large[type="submit"][value="Cadastrar"]')
+                    m('input.w-button.btn.btn-large[type="submit"][value="Cadastrar"]')
                 ])
             ]);
         }

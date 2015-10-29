@@ -42,7 +42,7 @@ window.c.project.Insights = (function(m, c, models, _) {
                         if (project.is_published) {
                             return [
                                 m('.divider'),
-                                m('.w-section.section-one-column.bg-gray.before-footer', [
+                                m('.w-section.section-one-column.section.bg-gray.before-footer', [
                                     m('.w-container', [
                                         m('.w-row', [
                                             m('.w-col.w-col-12.u-text-center', {

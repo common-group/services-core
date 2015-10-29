@@ -15,7 +15,7 @@ window.c.TeamTotal = (function(m, h, models) {
         },
 
         view: function(ctrl) {
-            return m('#team-total-static.w-section.section-one-column.u-margintop-40.u-text-center.u-marginbottom-20', [
+            return m('#team-total-static.w-section.section-one-column.section.u-margintop-40.u-text-center.u-marginbottom-20', [
                 ctrl.vm.collection().map(function(teamTotal) {
                     return m('.w-container', [
                         m('.w-row', [
