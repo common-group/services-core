@@ -34,20 +34,22 @@ window.c.project.Show = ((m, c, _, models, h) => {
         },
 
         view: (ctrl) => {
-            return (!ctrl.lProject()) ? _.map(ctrl.projectDetails(), (project) => {
+            return (!(ctrl.lProject() || ctrl.lUser() || ctrl.lReward())) ? _.map(ctrl.projectDetails(), (project) => {
                 return m('.project-show', {
                     config: h.mixpanelTrack()
                 }, [
-                    (!ctrl.lUser()) ? m.component(c.ProjectHeader, {
+                    m.component(c.ProjectHeader, {
                         project: project,
                         userDetails: ctrl.userDetails
-                    }) : h.loader(),
+                    }),
                     m.component(c.ProjectTabs, {
                         project: project
-                    }), (!ctrl.lReward()) ? m.component(c.ProjectMain, {
+                    }),
+                    m.component(c.ProjectMain, {
                         project: project,
                         rewardDetails: ctrl.rewardDetails
-                    }) : h.loader(), (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
+                    }),
+                    (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
                         project: project
                     }) : '')
                 ]);
