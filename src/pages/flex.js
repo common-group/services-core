@@ -90,7 +90,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'De onde vem o dinheiro do meu projeto?',
-                                        answer: 'Como no Catarse, enviar um projeto não custa nada! Estamos estudando opções para entender qual será a taxa cobrada no serviço Catarse Flex.'
+                                        answer: 'Família, amigos, fãs e membros de comunidades que você faz parte são seus maiores colaboradores. São eles que irão divulgar sua campanha para as pessoas que eles conhecem, e assim o círculo de apoiadores vai aumentando e a sua campanha ganha força.'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'Qual a diferença entre o flexível e o "tudo ou nada"?',
