@@ -27,7 +27,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
             return [
                 m('.w-section.hero-full.hero-zelo', [
                     m('.w-container.u-text-center', [
-                        m('img.logo-flex-home[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5626e670595f80b338f5bf5c_logo-flex.png\'][width=\'359\']'),
+                        m('img.logo-flex-home[src=\'/assets/logo-flex.png\'][width=\'359\']'),
                         m('.w-row', [
                             m('.w-col.fontsize-large.u-marginbottom-60.w-col-push-2.w-col-8', 'Vamos construir uma nova modalidade de crowdfunding para o Catarse!  Junte-se a nós, inscreva seu email!')
                         ]),
@@ -123,7 +123,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 m('.w-col.w-col-2')
                             ])
                         ])
-                    ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large', [
+                    ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [
                         m('.w-container.u-text-center', [
                             m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O Flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'),
                             m('.w-row.u-text-center', (ctrl.loader()) ? h.loader() : [
@@ -165,10 +165,10 @@ window.c.pages.Flex = (function(m, c, h, models) {
                         ])
                     ]), m('.w-section.section-large.bg-greenlime', [
                         m('.w-container', [
-                            m('.u-text-center', [
-                                m('.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
+                            m('#participe-do-debate.u-text-center', {config: h.toAnchor()}, [
+                                m('h1.fontsize-largest.fontcolor-negative','Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
                             ]),
-                            m('#disqus_thread.card.u-radius', {
+                            m('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
                                 config: ctrl.addDisqus
                             })
                         ])
