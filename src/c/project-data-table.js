@@ -1,84 +1,92 @@
+/**
+ * window.c.ProjectDataTable component
+ * A table interface constructor that should be used on project related dashboards.
+ * It takes an array and a lable as it's sources.
+ * The first item in the array is the header descriptor and the rest of them are row data.
+ * Rows may return a string or an array and this value will be used as a row output.
+ * All table rows are sortable by default. If you want to use a custom value as sort parameter
+ * you may set a 2D array as row. In this case, the first array value will be the custom value
+ * while the other will be the actual output.
+ * Example:
+ * m.component(c.ProjectDataTable, {
+ *      label: 'Table label',
+ *      table: [
+ *          ['col header 1', 'col header 2'],
+ *          ['value 1x1', [3, 'value 1x2']],
+ *          ['value 2x1', [1, 'value 2x2']] //We are using a custom comparator two col 2 values
+ *      ]
+ *  })
+ */
 window.c.ProjectDataTable = ((m, models, h, _) => {
     return {
         controller: (args) => {
-            let vm = m.postgrest.filtersVM({
-                    project_id: 'eq'
-                }),
-                contributions = args.contributions,
-                generateSort = (field) => {
-                    return () => {
-                        let collection = args.collection(),
-                            resource = _.first(collection),
-                            orderedSource = _.sortBy(resource.source, field);
+            let table = m.prop(args.table),
+                sortIndex = m.prop(-1);
 
-                        if (resource.orderFilter === undefined) {
-                            resource.orderFilter = 'DESC';
-                        }
+            const comparator = (a, b) => {
+                let idx = sortIndex(),
+                    x = _.isArray(a[idx]) ? a[idx][0] : a[idx],
+                    y = _.isArray(b[idx]) ? b[idx][0] : b[idx];
+                //Check if a custom comparator is used => Read component description
+                if (x < y){
+                    return -1;
+                }
+                if (y < x){
+                    return 1;
+                }
+                return 0;
+            };
 
-                        if (resource.orderFilter === 'DESC') {
-                            orderedSource = orderedSource.reverse();
-                        }
+            const sortTable = (idx) => {
+                let header = _.first(table()),
+                    body;
+                if (sortIndex() === idx){
+                    body = _.rest(table()).reverse();
+                } else {
+                    sortIndex(idx);
+                    body = _.rest(table()).sort(comparator);
+                }
 
-                        resource.source = orderedSource;
-                        resource.orderFilter = (resource.orderFilter === 'DESC' ? 'ASC' : 'DESC');
-                        contributions(collection);
-                    };
-                };
-
-            generateSort[args.defaultSort]();
+                table(_.union([header],body));
+            };
 
             return {
-                contributions: contributions,
-                generateSort: generateSort
+                table: table,
+                sortTable: sortTable
             };
         },
-        view: function(ctrl, args) {
+        view: (ctrl, args) => {
+            let header = _.first(ctrl.table()),
+                body = _.rest(ctrl.table());
             return m('.project-contributions-per-location', [
                 m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
-                args.contributions().map(function(contribution) {
-                    return m('.table-outer.u-marginbottom-60', [
-                        m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header', [
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                m('div', 'Estado')
-                            ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [
+                m('.table-outer.u-marginbottom-60', [
+                    m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
+                        _.map(header, (heading, idx) => {
+                            let sort = () => ctrl.sortTable(idx);
+                            return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
                                 m('a.link-hidden[href="javascript:void(0);"]', {
-                                    onclick: ctrl.generateSort('total_contributions')
+                                    onclick: sort
                                 }, [
-                                    'Apoios ', m('span.fa.fa-sort')
+                                    `${heading} `, m('span.fa.fa-sort')
                                 ])
-                            ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col[data-ix="sort-arrows"]', [
-                                m('a.link-hidden[href="javascript:void(0);"]', {
-                                    onclick: ctrl.generateSort('total_contributed')
-                                }, [
-                                    'R$ apoiados ',
-                                    m('span.w-hidden-small.w-hidden-tiny', '(% do total) '),
-                                    ' ', m('span.fa.fa-sort')
-                                ])
-                            ])
-                        ]),
-                        m('.table-inner.fontsize-small', [
-                            _.map(contribution.source, function(source) {
-                                return m('.w-row.table-row', [
-                                    m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                        m('div', source.state_acronym || 'Outro/other')
-                                    ]),
-                                    m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                        m('div', source.total_contributions)
-                                    ]),
-                                    m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                        m('div', [
-                                            'R$ ',
-                                            h.formatNumber(source.total_contributed, 2, 3),
-                                            m('span.w-hidden-small.w-hidden-tiny', ' (' + source.total_on_percentage.toFixed(2) + '%)')
-                                        ])
-                                    ])
-                                ]);
-                            })
-                        ])
-                    ]);
-                })
+                            ]);
+                        })
+                    ), m('.table-inner.fontsize-small',
+                        _.map(body, (rowData) => {
+                            return m('.w-row.table-row',
+                                _.map(rowData, (row) => {
+                                    //Check if a custom comparator is used => Read component description
+                                    row = _.isArray(row && row.length > 1) ? row[1] : row;
+                                    return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
+                                        m('div', row)
+                                    ]);
+                                })
+                            );
+                        })
+                    )
+                ])
+
             ]);
         }
     };
