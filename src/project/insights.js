@@ -96,7 +96,8 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                                     m.component(c.ProjectDataChart, {
                                         collection: ctrl.contributionsPerDay,
                                         label: 'R$ arrecadados por dia',
-                                        dataKey: 'total_amount'
+                                        dataKey: 'total_amount',
+                                        xAxis: (item) => h.momentify(item.paid_at)
                                     })
                                 ]),
                             ]),
@@ -109,7 +110,8 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                                     m.component(c.ProjectDataChart, {
                                         collection: ctrl.contributionsPerDay,
                                         label: 'Apoios confirmados por dia',
-                                        dataKey: 'total'
+                                        dataKey: 'total',
+                                        xAxis: (item) => h.momentify(item.paid_at)
                                     })
                                 ]),
                             ]),

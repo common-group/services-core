@@ -8,7 +8,7 @@
  *     dataKey: 'total_amount'
  * })
  */
-window.c.ProjectDataChart = ((m, Chart, _, h) => {
+window.c.ProjectDataChart = ((m, Chart, _) => {
     return {
         controller: (args) => {
             const resource = _.first(args.collection()),
@@ -31,7 +31,7 @@ window.c.ProjectDataChart = ((m, Chart, _, h) => {
 
                         new Chart(ctx).Line({
                             labels: _.map(resource.source, (item) => {
-                                return h.momentify(item.paid_at);
+                                return args.xAxis(item);
                             }),
                             datasets: mountDataset()
                         });
@@ -56,4 +56,4 @@ window.c.ProjectDataChart = ((m, Chart, _, h) => {
             ]);
         }
     };
-}(window.m, window.Chart, window._, window.c.h));
+}(window.m, window.Chart, window._));
