@@ -177,7 +177,7 @@ window.c.h = ((m, moment) => {
                 if (!isInitialized && $) {
                     window.UIHelper.setupResponsiveIframes($(el));
                 }
-            };  
+            };
         },
 
         toAnchor = () => {
