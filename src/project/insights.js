@@ -7,6 +7,7 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                 insightsVM = c.InsightsVM,
                 projectDetails = m.prop([]),
                 contributionsPerDay = m.prop([]),
+                contributionsPerLocation = m.prop([]),
                 l = m.prop(false);
 
             filtersVM.project_id(args.root.getAttribute('data-id'));
@@ -16,14 +17,49 @@ window.c.project.Insights = ((m, c, h, models, _) => {
 
             models.projectContributionsPerDay.getRow(filtersVM.parameters()).then(contributionsPerDay);
 
-            models.projectContributionsPerLocation.getRow(filtersVM.parameters()).then(contributionsPerLocation);
+            let contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
+            const buildPerLocationTable = (contributions) => {
+                return _.map(_.first(contributions).source, (contribution) => {
+                    let column = [];
+
+                    column.push(contribution.state_acronym || 'Outro/other');
+                    column.push(contribution.total_contributions);
+                    column.push([contribution.total_contributed,[//Adding row with custom comparator => read project-data-table description
+                        m(`input[type="hidden"][value="${contribution.total_contributed}"`),
+                        'R$ ',
+                        h.formatNumber(contribution.total_contributed, 2, 3),
+                        m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
+                    ]]);
+                    return contributionsPerLocationTable.push(column);
+                });
+            };
+            models.projectContributionsPerLocation.getRow(filtersVM.parameters()).then(buildPerLocationTable);
+
+            let contributionsPerRefTable = [['Fonte', 'Apoios', 'R$ apoiados (% do total)']];
+            const buildPerRefTable = (contributions) => {
+                return _.map(_.first(contributions).source, (contribution) => {
+                    let column = [];
+
+                    column.push(contribution.referral_link || 'direto');
+                    column.push(contribution.total);
+                    column.push([contribution.total_amount,[//Adding row with custom comparator => read project-data-table description
+                        m(`input[type="hidden"][value="${contribution.total_contributed}"`),
+                        'R$ ',
+                        h.formatNumber(contribution.total_amount, 2, 3),
+                        m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
+                    ]]);
+                    return contributionsPerRefTable.push(column);
+                });
+            };
+            models.projectContributionsPerRef.getRow(filtersVM.parameters()).then(buildPerRefTable);
 
             return {
                 l: l,
                 filtersVM: filtersVM,
                 projectDetails: projectDetails,
                 contributionsPerDay: contributionsPerDay,
-                contributionsPerLocation: contributionsPerLocation
+                contributionsPerLocationTable: contributionsPerLocationTable,
+                contributionsPerRefTable: contributionsPerRefTable
             };
         },
         view: (ctrl) => {
@@ -80,16 +116,16 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                             m('.w-row', [
                                 m('.w-col.w-col-12.u-text-center', [
                                     m.component(c.ProjectDataTable, {
-                                        label: 'Localização geográfica dos apoios'
-                                        contributions: ctrl.contributionsPerLocation
+                                        label: 'Localização geográfica dos apoios',
+                                        table: ctrl.contributionsPerLocationTable
                                     })
                                 ]),
                             ]),
                             m('.w-row', [
                                 m('.w-col.w-col-12.u-text-center', [
                                     m.component(c.ProjectDataTable, {
-                                        label: 'Origem dos apoios'
-                                        resourceId: ctrl.filtersVM.project_id()
+                                        label: 'Origem dos apoios',
+                                        table: ctrl.contributionsPerRefTable
                                     })
                                 ]),
                             ]),
