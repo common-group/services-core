@@ -1,3 +1,13 @@
+/**
+ * window.c.ProjectDataChart component
+ * A graph builder interface to be used on project related dashboards.
+ * Example:
+ * m.component(c.ProjectDataChart, {
+ *     collection: ctrl.contributionsPerDay,
+ *     label: 'R$ arrecadados por dia',
+ *     dataKey: 'total_amount'
+ * })
+ */
 window.c.ProjectDataChart = ((m, Chart, _, h) => {
     return {
         controller: (args) => {
