@@ -19,7 +19,7 @@ window.c.project.Insights = ((m, c, h, models, _) => {
 
             let contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
             const buildPerLocationTable = (contributions) => {
-                return _.map(_.first(contributions).source, (contribution) => {
+                return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                     let column = [];
 
                     column.push(contribution.state_acronym || 'Outro/other');
@@ -31,13 +31,13 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                         m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
                     ]]);
                     return contributionsPerLocationTable.push(column);
-                });
+                }) : [];
             };
             models.projectContributionsPerLocation.getRow(filtersVM.parameters()).then(buildPerLocationTable);
 
             let contributionsPerRefTable = [['Fonte', 'Apoios', 'R$ apoiados (% do total)']];
             const buildPerRefTable = (contributions) => {
-                return _.map(_.first(contributions).source, (contribution) => {
+                return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                     let column = [];
 
                     column.push(contribution.referral_link || 'direto');
@@ -49,7 +49,7 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                         m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
                     ]]);
                     return contributionsPerRefTable.push(column);
-                });
+                }) : [];
             };
             models.projectContributionsPerRef.getRow(filtersVM.parameters()).then(buildPerRefTable);
 
