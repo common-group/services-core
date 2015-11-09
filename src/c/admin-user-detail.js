@@ -14,13 +14,12 @@ window.c.AdminUserDetail = (function(m, _, c){
             return {
                 actions: {
                     reset: {
-                        property: 'user_password',
-                        updateKey: 'password',
+                        property: 'password',
                         callToAction: 'Redefinir',
                         innerLabel: 'Nova senha de Usuário:',
                         outerLabel: 'Redefinir senha',
                         placeholder: 'ex: 123mud@r',
-                        model: c.models.userDetail
+                        model: c.models.user
                     },
                     reactivate: {
                         property: 'deactivated_at',
@@ -31,7 +30,7 @@ window.c.AdminUserDetail = (function(m, _, c){
                         errorMessage: 'O usuário não pôde ser reativado!',
                         outerLabel: 'Reativar usuário',
                         forceValue: null,
-                        model: c.models.userDetail
+                        model: c.models.user
                     }
                 }
             };
@@ -41,12 +40,25 @@ window.c.AdminUserDetail = (function(m, _, c){
             var actions = ctrl.actions,
                 item = args.item,
                 details = args.details;
+
+            const addOptions = (builder, id) => {
+                return _.extend({}, builder, {
+                    requestOptions: {
+                        url: (`/users/${id}/new_password`),
+                        method: 'POST'
+                    }
+                });
+            };
+
             return m('#admin-contribution-detail-box', [
                 m('.divider.u-margintop-20.u-marginbottom-20'),
                 m('.w-row.u-marginbottom-30', [
-                    m.component(c.AdminInputAction, {data: actions.reset, item: item}),
+                    m.component(c.AdminResetPassword, {
+                        data: addOptions(actions.reset, item.id),
+                        item: item
+                    }),
                     (item.deactivated_at) ?
-                    m.component(c.AdminInputAction, {data: actions.reactivate, item: item}) : ''
+                        m.component(c.AdminInputAction, {data: actions.reactivate, item: item}) : ''
                 ]),
             ]);
         }

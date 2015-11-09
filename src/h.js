@@ -180,6 +180,20 @@ window.c.h = ((m, moment) => {
             };
         },
 
+        toAnchor = () => {
+            return (el, isInitialized) => {
+                if (!isInitialized){
+                    const hash = window.location.hash.substr(1);
+                    if (hash === el.id) {
+                        window.location.hash = '';
+                        setTimeout(function(){
+                            window.location.hash = el.id;
+                        });
+                    }
+                }
+            };
+        },
+
         validateEmail = (email) => {
             const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
             return re.test(email);
@@ -216,6 +230,7 @@ window.c.h = ((m, moment) => {
         navigateToDevise: navigateToDevise,
         storeAction: storeAction,
         callStoredAction: callStoredAction,
-        UIHelper: UIHelper
+        UIHelper: UIHelper,
+        toAnchor: toAnchor
     };
 }(window.m, window.moment));
