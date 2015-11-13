@@ -15,6 +15,23 @@ window.c.admin.Users = (function(m, c, h) {
                         vm: filterVM.full_text_index,
                         placeholder: 'Busque por nome, e-mail, Ids do usuário...',
                     },
+                }, { //status
+                    component: 'FilterDropdown',
+                    data: {
+                        label: 'Com o estado',
+                        name: 'status',
+                        vm: filterVM.deactivated_at,
+                        options: [{
+                            value: '',
+                            option: 'Qualquer um'
+                        }, {
+                            value: null,
+                            option: 'ativo'
+                        }, {
+                            value: !null,
+                            option: 'desativado'
+                        }]
+                    }
                 }],
                 submit = function() {
                     listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
