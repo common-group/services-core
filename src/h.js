@@ -52,7 +52,6 @@ window.c.h = ((m, moment) => {
         translatedTime = (time) => {
             const translatedTime = translatedTimeUnits,
                 unit = () => {
-                    console.log(JSON.stringify(time));
                     const projUnit = translatedTime[time.unit || 'seconds'];
 
                     return (time.total <= 1) ? projUnit.slice(0, -1) : projUnit;
