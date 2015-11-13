@@ -13,7 +13,7 @@ window.c.ProjectAbout = (function(m, c, h) {
                     m('p.fontsize-large.fontweight-semibold', 'Orçamento'),
                     m('p.fontsize-base', m.trust(project.budget))
                 ]),
-                m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [
+                m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', args.rewardDetails() ? [
                     m('.w-hidden-small.w-hidden-tiny.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                     m.component(c.ProjectRewardList, {
                         project: project,
@@ -25,7 +25,7 @@ window.c.ProjectAbout = (function(m, c, h) {
                                 h.momentify(project.online_date), ' - ', h.momentify(project.zone_expires_at), ' (' + project.online_days + ' dias) '
                             ])
                         ]) : '')
-                ])
+                ] : '')
             ]);
         }
     };
