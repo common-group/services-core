@@ -43,7 +43,6 @@ window.c.AdminProjectDetailsCard = (function(m, h) {
 
                     return statusTextObj;
                 };
-            console.log(project.remaining_time);
             return {
                 project: project,
                 statusTextObj: generateStatusText(),
