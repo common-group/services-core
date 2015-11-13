@@ -1,4 +1,15 @@
-window.c.projectMode = ((m, c, h) => {
+/**
+ * window.c.ProjectMode component
+ * A simple component that displays a badge with the current project mode
+ * together with a description of the mode, shown inside a tooltip.
+ * It receives a project as resource
+ *
+ * Example:
+ *  view: {
+ *      return m.component(c.ProjectMode, {project: project})
+ *  }
+ */
+window.c.ProjectMode = ((m, c, h) => {
     return {
         controller: (args) => {
             const project = args.project,
@@ -15,7 +26,7 @@ window.c.projectMode = ((m, c, h) => {
                 modeImgSrc = (mode === 'aon') ? '/assets/aon-badge.png' : '/assets/flex-badge.png',
                 modeTitle = (mode === 'aon') ? 'Campanha Tudo-ou-nada ' : 'Campanha Flexível ',
                 tooltip = (el) => {
-                    return m.component(c.tooltip, {
+                    return m.component(c.Tooltip, {
                         el: el,
                         text: ctrl.tooltipText,
                         width: 280

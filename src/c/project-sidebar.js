@@ -99,7 +99,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                             ])
                         ]),
                         m('.w-row', [
-                            m.component(c.projectMode, {
+                            m.component(c.ProjectMode, {
                                 project: project
                             })
                         ])
