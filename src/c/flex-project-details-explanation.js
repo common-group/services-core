@@ -9,7 +9,7 @@ window.c.FlexAdminProjectDetailsExplanation = ((m, h, _) => {
                              m('a.alt-link[href="/projects/' + resource.id + '/edit#announce_expiration"]', 'Quero iniciar'),
                              ' a reta final de 7 dias'
                          ])
-                         : m('span', 'Você recebe tudo que arrecadar até as 23h59seg de ' + h.momentify(resource.zone_expires_at)) )
+                         : m('span', 'Você recebe tudo que arrecadar até as 23h59seg de ' + h.momentify(resource.zone_expires_at)))
                     ],
                     successful: [
                         m('span.fontweight-semibold', resource.user.name + ', comemore que você merece!'),

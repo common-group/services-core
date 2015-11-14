@@ -113,4 +113,4 @@ window.c.AdminProjectDetailsCard = ((m, h, moment) => {
             ]);
         }
     };
-    }(window.m, window.c.h, window.moment));
+}(window.m, window.c.h, window.moment));

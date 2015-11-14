@@ -1,11 +1,11 @@
-describe('AdminProjectDetailsExplanation', () => {
-    let AdminProjectDetailsExplanation = window.c.AdminProjectDetailsExplanation,
+describe('AonAdminProjectDetailsExplanation', () => {
+    let AonAdminProjectDetailsExplanation = window.c.AonAdminProjectDetailsExplanation,
         $output;
     let outputForState = (currentState) => {
         let projectDetail = ProjectDetailsMockery({
             state: currentState
         })[0];
-        let component = m.component(AdminProjectDetailsExplanation, {
+        let component = m.component(AonAdminProjectDetailsExplanation, {
             resource: projectDetail
         });
         let view = component.view(component.controller, {
