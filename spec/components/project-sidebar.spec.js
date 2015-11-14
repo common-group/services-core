@@ -40,7 +40,26 @@ describe('ProjectSidebar', () => {
 
             expect(output.find('#project-sidebar.aside').length).toEqual(1);
             expect(output.find('.card-success').length).toEqual(1);
-            expect(output.contains('atingidos de R$ ' + window.c.h.formatNumber(projectDetail.goal))).toEqual(true);
+        });
+
+        it('should render a all or nothing badge when is aon', () => {
+            let {
+                output, projectDetail
+            } = generateContextByNewState({
+                mode: 'aon'
+            });
+
+            expect(output.find('#aon').length).toEqual(1);
+        });
+
+        it('should render a flex badge when project mode is flexible', () => {
+            let {
+                output, projectDetail
+            } = generateContextByNewState({
+                mode: 'flex'
+            });
+
+            expect(output.find('#flex').length).toEqual(1);
         });
 
         describe('reminder', () => {

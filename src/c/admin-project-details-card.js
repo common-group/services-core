@@ -43,11 +43,10 @@ window.c.AdminProjectDetailsCard = (function(m, h) {
 
                     return statusTextObj;
                 };
-
             return {
                 project: project,
                 statusTextObj: generateStatusText(),
-                remainingTextObj: h.generateRemaingTime(project)
+                remainingTextObj: h.translatedTime(project.remaining_time)
             };
         },
 
@@ -55,7 +54,7 @@ window.c.AdminProjectDetailsCard = (function(m, h) {
             var project = ctrl.project,
                 progress = project.progress.toFixed(2),
                 statusTextObj = ctrl.statusTextObj(),
-                remainingTextObj = ctrl.remainingTextObj();
+                remainingTextObj = ctrl.remainingTextObj;
 
             return m('.project-details-card.card.u-radius.card-terciary.u-marginbottom-20', [
                 m('div', [

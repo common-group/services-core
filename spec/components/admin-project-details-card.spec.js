@@ -39,8 +39,8 @@ describe('AdminProjectDetailsCard', () => {
                         unit: 'days'
                     }
                 });
-                expect(ctrl.remainingTextObj().total).toEqual(10);
-                expect(ctrl.remainingTextObj().unit).toEqual('dias');
+                expect(ctrl.remainingTextObj.total).toEqual(10);
+                expect(ctrl.remainingTextObj.unit).toEqual('dias');
             });
 
             it('when remaining time is in seconds', () => {
@@ -50,8 +50,8 @@ describe('AdminProjectDetailsCard', () => {
                         unit: 'seconds'
                     }
                 });
-                expect(ctrl.remainingTextObj().total).toEqual(12);
-                expect(ctrl.remainingTextObj().unit).toEqual('segundos');
+                expect(ctrl.remainingTextObj.total).toEqual(12);
+                expect(ctrl.remainingTextObj.unit).toEqual('segundos');
             });
 
             it('when remaining time is in hours', () => {
@@ -61,8 +61,8 @@ describe('AdminProjectDetailsCard', () => {
                         unit: 'hours'
                     }
                 });
-                expect(ctrl.remainingTextObj().total).toEqual(2);
-                expect(ctrl.remainingTextObj().unit).toEqual('horas');
+                expect(ctrl.remainingTextObj.total).toEqual(2);
+                expect(ctrl.remainingTextObj.unit).toEqual('horas');
             });
         });
     });
@@ -81,7 +81,7 @@ describe('AdminProjectDetailsCard', () => {
         });
 
         it('should render details of the project in card', () => {
-            let remaningTimeObj = ctrl.remainingTextObj(),
+            let remaningTimeObj = ctrl.remainingTextObj,
                 statusTextObj = ctrl.statusTextObj();
 
             expect($output.find('.project-details-card').length).toEqual(1);
