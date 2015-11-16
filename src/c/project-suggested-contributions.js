@@ -15,9 +15,8 @@ window.c.ProjectSuggestedContributions = (function(m, c, _) {
         view: (ctrl, args) => {
             const project = args.project;
             let suggestionUrl = (ammount) => {
-                ammount = _.isNumber(ammount) ? ammount : 0;
                 return `/projects/${project.project_id}/contributions/new?ammount=${ammount}`;
-            }, suggestedValues = [10, 25, 50, 100, '???'];
+            }, suggestedValues = [10, 25, 50, 100];
 
             return m('#suggestions', _.map(suggestedValues, (ammount) => {
                 return m(`a[href="${suggestionUrl(ammount)}"].card-reward.card-big.card-secondary.u-marginbottom-20`, [
