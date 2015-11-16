@@ -53,13 +53,23 @@ window.c.project.Insights = ((m, c, h, models, _) => {
             };
             models.projectContributionsPerRef.getRow(filtersVM.parameters()).then(buildPerRefTable);
 
+            const explanationModeComponent = (projectMode) => {
+                const modes = {
+                    'aon': c.AonAdminProjectDetailsExplanation,
+                    'flex': c.FlexAdminProjectDetailsExplanation
+                };
+
+                return modes[projectMode];
+            };
+
             return {
                 l: l,
                 filtersVM: filtersVM,
                 projectDetails: projectDetails,
                 contributionsPerDay: contributionsPerDay,
                 contributionsPerLocationTable: contributionsPerLocationTable,
-                contributionsPerRefTable: contributionsPerRefTable
+                contributionsPerRefTable: contributionsPerRefTable,
+                explanationModeComponent: explanationModeComponent
             };
         },
         view: (ctrl) => {
@@ -77,7 +87,7 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                             m.component(c.AdminProjectDetailsCard, {
                                 resource: project
                             }),
-                            m.component(c.AdminProjectDetailsExplanation, {
+                            m.component(ctrl.explanationModeComponent(project.mode), {
                                 resource: project
                             })
                         ]),

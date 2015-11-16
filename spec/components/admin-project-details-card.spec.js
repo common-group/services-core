@@ -87,9 +87,6 @@ describe('AdminProjectDetailsCard', () => {
             expect($output.find('.project-details-card').length).toEqual(1);
             expect($output.contains(projectDetail.total_contributions)).toEqual(true);
             expect($output.contains('R$ ' + window.c.h.formatNumber(projectDetail.pledged, 2))).toEqual(true);
-            expect($output.contains(projectDetail.progress.toFixed(2) + '%')).toEqual(true);
-            expect($output.contains(remaningTimeObj.unit + ' restantes')).toEqual(true);
-            expect($output.contains(statusTextObj.text)).toEqual(true);
         });
     });
 });
