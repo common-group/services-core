@@ -1,3 +1,13 @@
+/**
+ * window.c.ProjectDashboardMenu component
+ * build dashboard project menu for project owners
+ * and admin.
+ *
+ * Example:
+ * m.component(c.ProjectDashboardMenu, {
+ *     project: projectDetail Object,
+ * })
+ */
 window.c.ProjectDashboardMenu = ((m, _, h) => {
     return {
         controller: (args) => {
@@ -20,7 +30,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                   projectRoute = '/projects/' + project.id,
                   editRoute = projectRoute + '/edit',
                   editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
-            let optionalOpt = (project.mode == 'flex' ? m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)') : '');
+            let optionalOpt = (project.mode === 'flex' ? m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)') : '');
 
             ctrl.body.className = ctrl.bodyToggleForNav();
 
@@ -53,7 +63,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                     ((!project.is_published || project.is_admin_role) ? [
                                         m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', 'Básico'),
                                         m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]',
-                                          (project.mode == 'aon' ? 'Meta e prazo' : 'Financiamento')),
+                                          (project.mode === 'aon' ? 'Meta e prazo' : 'Financiamento')),
                                     ] : ''),
                                     m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', 'Descrição'),
                                     m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
@@ -77,7 +87,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                             ]) : ''),
                             (!project.is_published ? [
                                 m('.btn-send-draft-fixed',
-                                  (project.mode == 'aon' ? [
+                                  (project.mode === 'aon' ? [
                                       (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', 'Enviar') : ''),
                                       (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/publish"]', [
                                           'Publicar', m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
@@ -89,7 +99,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                   ])
                                  )
                             ] : [
-                                (project.mode == 'flex' ? [
+                                (project.mode === 'flex' ? [
                                     m('.btn-send-draft-fixed',
                                       (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-small.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', 'Iniciar reta final') : ''))
                                 ] : '')

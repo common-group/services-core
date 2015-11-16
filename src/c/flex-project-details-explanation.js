@@ -1,3 +1,12 @@
+/**
+ * window.c.FlexAdminProjectDetailsExplanation component
+ * render an explanation about project flex project mde.
+ *
+ * Example:
+ * m.component(c.FlexAdminProjectDetailsExplanation, {
+ *     project: projectDetail Object,
+ * })
+ */
 window.c.FlexAdminProjectDetailsExplanation = ((m, h, _) => {
     return {
         controller: (args) => {

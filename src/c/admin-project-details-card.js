@@ -1,3 +1,12 @@
+/**
+ * window.c.AdminProjectDetailsCard component
+ * render an box with some project statistics info
+ *
+ * Example:
+ * m.component(c.AdminProjectDetailsCard, {
+ *     resource: projectDetail Object,
+ * })
+ */
 window.c.AdminProjectDetailsCard = ((m, h, moment) => {
     return {
         controller: (args) => {

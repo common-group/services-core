@@ -1,11 +1,11 @@
 describe('FlexAdminProjectDetailsExplanation', () => {
-    let AdminProjectDetailsExplanation = window.c.FlexAdminProjectDetailsExplanation,
+    let FlexAdminProjectDetailsExplanation = window.c.FlexAdminProjectDetailsExplanation,
         $output;
     let outputForState = (currentState) => {
         let projectDetail = ProjectDetailsMockery({
             state: currentState
         })[0];
-        let component = m.component(AdminProjectDetailsExplanation, {
+        let component = m.component(FlexAdminProjectDetailsExplanation, {
             resource: projectDetail
         });
         let view = component.view(component.controller, {
