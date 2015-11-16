@@ -19,7 +19,8 @@ window.c.admin.Users = (function(m, c, h) {
                     component: 'FilterDropdown',
                     data: {
                         label: 'Com o estado',
-                        name: 'status',
+                        index: 'status',
+                        name: 'deactivated_at',
                         vm: filterVM.deactivated_at,
                         options: [{
                             value: '',

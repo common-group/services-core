@@ -9,13 +9,12 @@ window.c.admin.userFilterVM = (function(m, replaceDiacritics) {
         };
 
     // Set default values
-    vm.deactivated_at(null);
-    vm.order({
+    vm.deactivated_at(null).order({
         id: 'desc'
     });
 
     vm.deactivated_at.toFilter = function() {
-        var filter = vm.deactivated_at();
+        var filter = JSON.parse(vm.deactivated_at());
         return filter;
     };
 
