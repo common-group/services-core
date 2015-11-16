@@ -2,6 +2,39 @@ window.c.ProjectSidebar = (function(m, h, c) {
     return {
         controller: function(args) {
             var project = args.project,
+                animateProgress = (el, isInitialized) => {
+                    if (!isInitialized) {
+                        let animation, progress = 0,
+                            pledged = 0,
+                            contributors = 0,
+                            pledgedIncrement = project.pledged / project.progress,
+                            contributorsIncrement = project.total_contributors / project.progress;
+
+                        const progressBar = document.getElementById('progressBar'),
+                            pledgedEl = document.getElementById('pledged'),
+                            contributorsEl = document.getElementById('contributors'),
+                            animate = () => {
+                                animation = setInterval(incrementProgress, 28);
+                            },
+                            incrementProgress = () => {
+                                if (progress <= parseInt(project.progress)) {
+                                    progressBar.style.width = `${progress}%`;
+                                    pledgedEl.innerText = `R$ ${h.formatNumber(pledged)}`;
+                                    contributorsEl.innerText = `${parseInt(contributors)} pessoas`;
+                                    el.innerText = `${progress}%`;
+                                    pledged = pledged + pledgedIncrement;
+                                    contributors = contributors + contributorsIncrement;
+                                    progress = progress + 1;
+                                } else {
+                                    clearInterval(animation);
+                                }
+                            };
+                        setTimeout(() => {
+                            animate();
+                        }, 1800);
+
+                    }
+                },
                 displayCardClass = function() {
                     var states = {
                         'waiting_funds': 'card-waiting',
@@ -30,6 +63,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                 };
 
             return {
+                animateProgress: animateProgress,
                 displayCardClass: displayCardClass,
                 displayStatusText: displayStatusText
             };
@@ -37,27 +71,40 @@ window.c.ProjectSidebar = (function(m, h, c) {
 
         view: function(ctrl, args) {
             var project = args.project,
-                timeObj = h.generateRemaingTime(project)();
+                elapsed = h.translatedTime(project.elapsed_time),
+                remaining = h.translatedTime(project.remaining_time);
 
             return m('#project-sidebar.aside', [
                 m('.project-stats', [
-                    m('.w-clearfix.u-marginbottom-20', [
-                        m('.w-col.w-col-tiny-6.w-col-small-4.fontweight-semibold.u-marginbottom-20', [
-                            m('.fontsize-largest', 'R$ ' + h.formatNumber(project.pledged)),
-                            m('.fontsize-smaller.lineheight-tightest', 'atingidos de R$ ' + h.formatNumber(project.goal))
-                        ]),
-                        m('.w-col.w-col-tiny-3.w-col-small-4.fontweight-semibold.u-marginbottom-20', [
-                            m('.fontsize-largest', project.total_contributions),
-                            m('.fontsize-smaller.lineheight-tightest', 'apoios')
-                        ]),
-                        m('.w-col.w-col-tiny-3.w-col-small-4.u-marginbottom-10.fontweight-semibold', [
-                            m('.fontsize-largest', (project.is_published ? timeObj.total : (project.online_days || 0))),
-                            m('.fontsize-smaller.lineheight-tightest', [
-                                m('span[style="text-transform:capitalize;"]', (project.is_published ? timeObj.unit : 'dias')),
-                                (timeObj.total > 1) ? ' restantes' : ' restante'
+                    m('.project-stats-inner', [
+                        m('.project-stats-info', [
+                            m('.u-marginbottom-20', [
+                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', 'R$ 0'),
+                                m('.fontsize-small.u-text-center-small-only', ['apoiados por ', m('span#contributors.fontweight-semibold', '0 pessoas'), !remaining.total ? ` em ${elapsed.total} ${elapsed.unit}` : ''])
+                            ]),
+                            m('.meter', [
+                                m('#progressBar.meter-fill[style="width: 0;"]')
+                            ]),
+                            m('.w-row.u-margintop-10', [
+                                m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
+                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', {
+                                        config: ctrl.animateProgress
+                                    }, '0%')
+                                ]),
+                                m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
+                                    m('.u-right.fontsize-small.lineheight-tighter', remaining.total ? [
+                                        m('span.fontweight-semibold', remaining.total), ` ${remaining.unit} restantes`
+                                    ] : '')
+                                ])
                             ])
+                        ]),
+                        m('.w-row', [
+                            m.component(c.ProjectMode, {
+                                project: project
+                            })
                         ])
-                    ]), (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
+                    ])
+                    , (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
                         project: project
                     }) : ''),
                     m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText())

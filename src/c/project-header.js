@@ -3,6 +3,7 @@ window.c.ProjectHeader = (function(m, c) {
         view: function(ctrl, args) {
             var project = args.project;
             return m('#project-header', [
+                m('.w-section.section-product.' + project.mode),
                 m('.w-section.page-header.u-text-center', [
                     m('.w-container', [
                         m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', project.name),

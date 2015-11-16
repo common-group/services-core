@@ -1,3 +1,13 @@
+/**
+ * window.c.ProjectDashboardMenu component
+ * build dashboard project menu for project owners
+ * and admin.
+ *
+ * Example:
+ * m.component(c.ProjectDashboardMenu, {
+ *     project: projectDetail Object,
+ * })
+ */
 window.c.ProjectDashboardMenu = ((m, _, h) => {
     return {
         controller: (args) => {
@@ -17,9 +27,10 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
         },
         view: (ctrl, args) => {
             const project = args.project,
-                projectRoute = '/projects/' + project.id,
-                editRoute = projectRoute + '/edit',
-                editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
+                  projectRoute = '/projects/' + project.id,
+                  editRoute = projectRoute + '/edit',
+                  editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
+            let optionalOpt = (project.mode === 'flex' ? m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)') : '');
 
             ctrl.body.className = ctrl.bodyToggleForNav();
 
@@ -51,13 +62,20 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                 m('#dashboard-links', [
                                     ((!project.is_published || project.is_admin_role) ? [
                                         m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', 'Básico'),
-                                        m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', 'Meta e prazo'),
+                                        m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]',
+                                          (project.mode === 'aon' ? 'Meta e prazo' : 'Financiamento')),
                                     ] : ''),
                                     m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', 'Descrição'),
-                                    m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', 'Vídeo'),
-                                    m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', 'Orçamento'),
+                                    m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
+                                        'Vídeo', optionalOpt
+                                    ]),
+                                    m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', [
+                                        'Orçamento', optionalOpt
+                                    ]),
                                     m('a#card_link[class="' + editLinkClass + '"][href="' + editRoute + '#card' + '"]', 'Card do projeto'),
-                                    m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', 'Recompensas'),
+                                    m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', [
+                                        'Recompensas', optionalOpt
+                                    ]),
                                     m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', 'Sobre você'), ((project.is_published || project.state === 'approved') || project.is_admin_role ? [
                                         m('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', 'Conta'),
                                     ] : ''), (!project.is_published ? [
@@ -66,13 +84,26 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                         ]),
                                     ] : '')
                                 ])
-                            ]) : ''), (!project.is_published ? [
-                                m('.btn-send-draft-fixed', [
-                                    (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', 'Enviar') : ''), (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/publish"]', [
-                                        'Publicar', m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
-                                    ]) : '')
-                                ])
-                            ] : '')
+                            ]) : ''),
+                            (!project.is_published ? [
+                                m('.btn-send-draft-fixed',
+                                  (project.mode === 'aon' ? [
+                                      (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', 'Enviar') : ''),
+                                      (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/publish"]', [
+                                          'Publicar', m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                      ]) : '')
+                                  ] : [
+                                      (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/edit#preview"]', [
+                                          'Publicar', m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                      ]) : '')
+                                  ])
+                                 )
+                            ] : [
+                                (project.mode === 'flex' ? [
+                                    m('.btn-send-draft-fixed',
+                                      (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-small.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', 'Iniciar reta final') : ''))
+                                ] : '')
+                            ])
                         ]),
                     ]),
                 ]),

@@ -28,7 +28,7 @@ window.c.ProjectDataTable = ((m, models, h, _) => {
                     //Check if a custom comparator is used => Read component description
                     x = (_.isArray(a[idx]) && a[idx].length > 1) ? a[idx][0] : a[idx],
                     y = (_.isArray(b[idx]) && b[idx].length > 1) ? b[idx][0] : b[idx];
-                
+
                 if (x < y){
                     return -1;
                 }
