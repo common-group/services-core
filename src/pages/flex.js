@@ -72,7 +72,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 m('.w-col.w-col-6', [
                                     m('.u-text-center', [
                                         m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/560e39fb01b66e250aca67e3_icon-curad.png\'][width=\'180\']')
-                                    ]), m('.fontsize-large.u-marginbottom-10.u-text-center.fontweight-semibold', 'Você mesmo publica seu projeto'), m('p.u-text-center.fontsize-base', 'Todos os projetos inscritos no Flex entram no ar. Agilidade e facilidade para você captar recursos através da internet.')
+                                    ]), m('.fontsize-large.u-marginbottom-10.u-text-center.fontweight-semibold', 'Você mesmo publica seu projeto'), m('p.u-text-center.fontsize-base', 'Todos os projetos inscritos no flex entram no ar. Agilidade e facilidade para você captar recursos através da internet.')
                                 ]), m('.w-col.w-col-6', [
                                     m('.u-text-center', [
                                         m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/560e39e77c013d4a3ee687d4_icon-time.png\'][width=\'180\']')
@@ -86,7 +86,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 m('.w-col.w-col-6', [
                                     m.component(c.landingQA, {
                                         question: 'Quais são as taxas da modalidade flexível? ',
-                                        answer: 'Como no Catarse, enviar um projeto não custa nada! Estamos estudando opções para entender qual será a taxa cobrada no serviço Catarse Flex.'
+                                        answer: 'Como no Catarse, enviar um projeto não custa nada! Estamos estudando opções para entender qual será a taxa cobrada no serviço Catarse flex.'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'De onde vem o dinheiro do meu projeto?',
@@ -102,12 +102,12 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                         answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
                                     }),
                                     m.component(c.landingQA, {
-                                        question: 'Por quê vocês querem fazer o CatarseFlex?',
-                                        answer: 'Acreditamos que o ambiente do crowdfunding brasileiro ainda tem espaço para muitas ações, testes e experimentações para entender de fato o que as pessoas precisam. Sonhamos com tornar o financiamento coletivo um hábito no Brasil. O CatarseFlex é mais um passo nessa direção.'
+                                        question: 'Por quê vocês querem fazer o Catarse flex?',
+                                        answer: 'Acreditamos que o ambiente do crowdfunding brasileiro ainda tem espaço para muitas ações, testes e experimentações para entender de fato o que as pessoas precisam. Sonhamos com tornar o financiamento coletivo um hábito no Brasil. O Catarse flex é mais um passo nessa direção.'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'Quando vocês irão lançar o Catarse flex?',
-                                        answer: 'Ainda não sabemos quando abriremos o Flex para o público. Iremos primeiramente passar por um período de testes e depois estabelecer uma data de lançamento. Se você deseja acompanhar e receber notícias sobre essa caminhada, inscreva seu email nessa página.'
+                                        answer: 'Ainda não sabemos quando abriremos o flex para o público. Iremos primeiramente passar por um período de testes e depois estabelecer uma data de lançamento. Se você deseja acompanhar e receber notícias sobre essa caminhada, inscreva seu email nessa página.'
                                     })
                                 ])
                             ])
@@ -125,7 +125,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                         ])
                     ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [
                         m('.w-container.u-text-center', [
-                            m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O Flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'),
+                            m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'),
                             m('.w-row.u-text-center', (ctrl.loader()) ? h.loader() : [
                                 m('.w-col.w-col-4', [
                                     m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')

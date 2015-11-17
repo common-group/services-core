@@ -1,4 +1,13 @@
-window.c.AdminProjectDetailsExplanation = (function(m, h) {
+/**
+ * window.c.AonAdminProjectDetailsExplanation component
+ * render an explanation about project all or nothing project mde.
+ *
+ * Example:
+ * m.component(c.AonAdminProjectDetailsExplanation, {
+ *     project: projectDetail Object,
+ * })
+ */
+window.c.AonAdminProjectDetailsExplanation = (function(m, h) {
     return {
         controller: function(args) {
             var explanation = function(resource) {

@@ -11,9 +11,13 @@ beforeAll(function(){
       recommended: 'true',
       project_img: 'http://foo.com/foo.jpg',
       remaining_time: {
-          unit: 'days',
-          total: '10'
-        },
+        unit: 'days',
+        total: '10'
+      },
+      elapsed_time: {
+        unit: 'days',
+        total: '0'
+      },
       expires_at: "2015-09-12T02:59:59",
       pledged: 5220.0,
       progress: 41,

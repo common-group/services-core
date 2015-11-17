@@ -1,10 +1,9 @@
 window.c.ProjectCard = ((m, h, models) => {
     return {
-
         view: (ctrl, args) => {
             const project = args.project,
                 progress = project.progress.toFixed(2),
-                remainingTextObj = h.generateRemaingTime(project)(),
+                remainingTextObj = h.translatedTime(project.remaining_time),
                 link = '/' + project.permalink + (args.ref ? '?ref=' + args.ref : '');
 
             return m('.w-col.w-col-4', [

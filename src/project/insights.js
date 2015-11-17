@@ -19,7 +19,7 @@ window.c.project.Insights = ((m, c, h, models, _) => {
 
             let contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
             const buildPerLocationTable = (contributions) => {
-                return _.map(_.first(contributions).source, (contribution) => {
+                return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                     let column = [];
 
                     column.push(contribution.state_acronym || 'Outro/other');
@@ -31,13 +31,13 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                         m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
                     ]]);
                     return contributionsPerLocationTable.push(column);
-                });
+                }) : [];
             };
             models.projectContributionsPerLocation.getRow(filtersVM.parameters()).then(buildPerLocationTable);
 
             let contributionsPerRefTable = [['Fonte', 'Apoios', 'R$ apoiados (% do total)']];
             const buildPerRefTable = (contributions) => {
-                return _.map(_.first(contributions).source, (contribution) => {
+                return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                     let column = [];
 
                     column.push(contribution.referral_link || 'direto');
@@ -49,9 +49,18 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                         m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
                     ]]);
                     return contributionsPerRefTable.push(column);
-                });
+                }) : [];
             };
             models.projectContributionsPerRef.getRow(filtersVM.parameters()).then(buildPerRefTable);
+
+            const explanationModeComponent = (projectMode) => {
+                const modes = {
+                    'aon': c.AonAdminProjectDetailsExplanation,
+                    'flex': c.FlexAdminProjectDetailsExplanation
+                };
+
+                return modes[projectMode];
+            };
 
             return {
                 l: l,
@@ -59,7 +68,8 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                 projectDetails: projectDetails,
                 contributionsPerDay: contributionsPerDay,
                 contributionsPerLocationTable: contributionsPerLocationTable,
-                contributionsPerRefTable: contributionsPerRefTable
+                contributionsPerRefTable: contributionsPerRefTable,
+                explanationModeComponent: explanationModeComponent
             };
         },
         view: (ctrl) => {
@@ -77,7 +87,7 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                             m.component(c.AdminProjectDetailsCard, {
                                 resource: project
                             }),
-                            m.component(c.AdminProjectDetailsExplanation, {
+                            m.component(ctrl.explanationModeComponent(project.mode), {
                                 resource: project
                             })
                         ]),

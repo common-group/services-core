@@ -15,7 +15,7 @@ describe('ProjectCard', () => {
         });
 
         it('should render the project card', () => {
-            let remainingTimeObj = window.c.h.generateRemaingTime(project)();
+            let remainingTimeObj = window.c.h.translatedTime(project.remaining_time);
 
             expect($output.find('.card-project').length).toEqual(1);
             expect($output.contains(project.owner_name)).toEqual(true);
