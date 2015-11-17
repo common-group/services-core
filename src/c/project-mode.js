@@ -9,7 +9,7 @@
  *      return m.component(c.ProjectMode, {project: project})
  *  }
  */
-window.c.ProjectMode = ((m, c, h) => {
+window.c.ProjectMode = ((m, c, h, _) => {
     return {
         controller: (args) => {
             const project = args.project,
@@ -25,6 +25,7 @@ window.c.ProjectMode = ((m, c, h) => {
             let mode = ctrl.mode,
                 modeImgSrc = (mode === 'aon') ? '/assets/aon-badge.png' : '/assets/flex-badge.png',
                 modeTitle = (mode === 'aon') ? 'Campanha Tudo-ou-nada ' : 'Campanha Flexível ',
+                goal = (_.isNull(args.project.goal) ? 'não definida' : args.project.goal),
                 tooltip = (el) => {
                     return m.component(c.Tooltip, {
                         el: el,
@@ -38,7 +39,7 @@ window.c.ProjectMode = ((m, c, h) => {
                     m(`img[src="${modeImgSrc}"][width='30']`)
                 ]),
                 m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
-                    m('.fontsize-smaller.fontweight-semibold', 'Meta R$' + h.formatNumber(args.project.goal)),
+                    m('.fontsize-smaller.fontweight-semibold', 'Meta R$ ' + h.formatNumber(goal)),
                     m('.w-inline-block.fontsize-smallest._w-inline-block', [
                         modeTitle,
                         tooltip('span.w-inline-block._w-inline-block.fa.fa-question-circle.fontcolor-secondary')
@@ -47,4 +48,4 @@ window.c.ProjectMode = ((m, c, h) => {
             ]);
         }
     };
-}(window.m, window.c, window.c.h));
+}(window.m, window.c, window.c.h, window._));

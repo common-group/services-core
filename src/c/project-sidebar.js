@@ -54,9 +54,9 @@ window.c.ProjectSidebar = (function(m, h, c) {
                         'failed': 'Este projeto não atingiu o mínimo de R$ ' + h.formatNumber(project.goal) + ' até ' + h.momentify(project.zone_expires_at) + ' e não foi financiado',
                         'rejected': 'Este projeto não foi aceito. Não é possível realizar um apoio.',
                         'in_analysis': 'Este projeto está em análise e ainda não está aberto para receber apoios.',
-                        'successful': 'Este projeto foi bem-sucedido e foi financiado em ' + h.momentify(project.zone_expires_at),
+                        'successful': 'Este projeto foi financiado em ' + h.momentify(project.zone_expires_at),
                         'waiting_funds': 'O prazo de captação desse projeto está encerrado. Estamos aguardando a confirmação dos últimos pagamentos.',
-                        'draft': 'Este projeto é apenas um rascunho e ainda não pode receber apoios.',
+                        'draft': 'Este projeto é apenas um rascunho e ainda não pode receber apoios.'
                     };
 
                     return states[project.state];

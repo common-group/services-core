@@ -19,7 +19,7 @@ window.c.ProjectAbout = ((m, c, h) => {
                         m('strong', 'O projeto'),
                     ]),
                     m('.fontsize-base[itemprop="about"]', m.trust(project.about_html)),
-                    m('p.fontsize-large.fontweight-semibold', 'Orçamento'),
+                    m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
                     m('p.fontsize-base', m.trust(project.budget))
                 ]),
                 m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', args.rewardDetails() ? [
