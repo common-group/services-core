@@ -40,7 +40,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                         m('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [
                             m('img.thumb-project-dashboard[src="' + (_.isNull(project.large_image) ? '/assets/thumb-project.png' : project.large_image) + '"][width="114"]'),
                             m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
-                            m(`img[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"][width=80]`)
+                            m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"][width=80]`)
 
                         ]),
                         m('#info-links', [
