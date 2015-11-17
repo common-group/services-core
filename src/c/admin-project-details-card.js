@@ -110,7 +110,7 @@ window.c.AdminProjectDetailsCard = ((m, h, moment) => {
                                             m('.fontweight-semibold.fontsize-large.lineheight-tight', elapsedTextObj.total + ' ' + elapsedTextObj.unit)
                                         ] : [
                                              m('.fontcolor-secondary.lineheight-tighter.fontsize-small', 'restam'),
-                                             m('.fontweight-semibold.fontsize-large.lineheight-tight.text-success', remainingTextObj.total + ' ' + remainingTextObj.unit)
+                                             m('.fontweight-semibold.fontsize-large.lineheight-tight', remainingTextObj.total + ' ' + remainingTextObj.unit)
                                          ])
                                     ])
                                 ])
