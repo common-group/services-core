@@ -1,6 +1,7 @@
 window.c.admin.userFilterVM = (function(m, replaceDiacritics) {
     var vm = m.postgrest.filtersVM({
-            full_text_index: '@@'
+            full_text_index: '@@',
+            deactivated_at: 'is.null'
         }),
 
         paramToString = function(p) {
@@ -8,9 +9,14 @@ window.c.admin.userFilterVM = (function(m, replaceDiacritics) {
         };
 
     // Set default values
-    vm.order({
+    vm.deactivated_at(null).order({
         id: 'desc'
     });
+
+    vm.deactivated_at.toFilter = function() {
+        var filter = JSON.parse(vm.deactivated_at());
+        return filter;
+    };
 
     vm.full_text_index.toFilter = function() {
         var filter = paramToString(vm.full_text_index());
