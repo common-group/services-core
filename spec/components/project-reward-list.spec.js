@@ -56,7 +56,7 @@ describe('ProjectRewardList', () => {
             expect(output.find('.card-reward').length).toEqual(1);
             expect(output.contains('Limitada')).toEqual(true);
             expect(output.contains('(3 de 10 disponíveis)')).toEqual(true);
-            expect(output.contains('2 apoiadores')).toEqual(true);
+            expect(output.contains('2 apoios')).toEqual(true);
             expect(output.contains('5 apoios em prazo de confirmação')).toEqual(true);
         });
 

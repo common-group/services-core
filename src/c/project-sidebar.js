@@ -79,17 +79,19 @@ window.c.ProjectSidebar = (function(m, h, c) {
                     m('.project-stats-inner', [
                         m('.project-stats-info', [
                             m('.u-marginbottom-20', [
-                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', 'R$ 0'),
-                                m('.fontsize-small.u-text-center-small-only', ['apoiados por ', m('span#contributors.fontweight-semibold', '0 pessoas'), !remaining.total ? ` em ${elapsed.total} ${elapsed.unit}` : ''])
+                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${h.formatNumber(project.pledged)}`),
+                                m('.fontsize-small.u-text-center-small-only', ['apoiados por ', m('span#contributors.fontweight-semibold', `${parseInt(project.total_contributors)} pessoas`), !remaining.total ? ` em ${elapsed.total} ${elapsed.unit}` : ''])
                             ]),
                             m('.meter', [
-                                m('#progressBar.meter-fill[style="width: 0;"]')
+                                m('#progressBar.meter-fill', {
+                                    style: {
+                                        width: `${project.progress}%`
+                                    }
+                                })
                             ]),
                             m('.w-row.u-margintop-10', [
                                 m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', {
-                                        config: ctrl.animateProgress
-                                    }, '0%')
+                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${parseInt(project.progress)}%`)
                                 ]),
                                 m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
                                     m('.u-right.fontsize-small.lineheight-tighter', remaining.total ? [
