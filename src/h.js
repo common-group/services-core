@@ -5,6 +5,9 @@ window.c.h = ((m, moment) => {
                 monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
             });
     },
+        existy = (x) => {
+            return x != null;
+        },
 
         momentify = (date, format) => {
             format = format || 'DD/MM/YYYY';
@@ -66,7 +69,7 @@ window.c.h = ((m, moment) => {
         //Number formatting helpers
         generateFormatNumber = (s, c) => {
             return (number, n, x) => {
-                if (number === null || number === undefined) {
+                if (!_.isNumber(number)) {
                     return null;
                 }
 
@@ -220,6 +223,7 @@ window.c.h = ((m, moment) => {
     return {
         cumulativeOffset: cumulativeOffset,
         discuss: discuss,
+        existy: existy,
         validateEmail: validateEmail,
         momentify: momentify,
         momentFromString: momentFromString,
