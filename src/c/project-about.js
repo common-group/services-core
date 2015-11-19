@@ -20,7 +20,7 @@ window.c.ProjectAbout = ((m, c, h) => {
                     m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
                     m('p.fontsize-base', m.trust(project.budget))
                 ]),
-                m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', args.rewardDetails() ? [
+                m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', !_.isEmpty(args.rewardDetails()) ? [
                     m('.w-hidden-small.w-hidden-tiny.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                     m.component(c.ProjectRewardList, {
                         project: project,
