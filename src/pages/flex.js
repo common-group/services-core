@@ -139,7 +139,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                             ])
                         ])
                     ]),
-                    m('.w-section.section.bg-blue-one', [
+                    m('.w-section.section.bg-blue-one.fontcolor-negative', [
                         m('.w-container', [
                             m('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '),
                             m('.w-row', [
