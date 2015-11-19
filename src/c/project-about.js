@@ -3,11 +3,9 @@ window.c.ProjectAbout = ((m, c, h) => {
         view: (ctrl, args) => {
             const project = args.project;
             let fundingPeriod = () => {
-                return project.is_published ? m('.funding-period', [
+                return (project.is_published && h.existy(project.zone_expires_at)) ? m('.funding-period', [
                     m('.fontsize-small.fontweight-semibold.u-text-center-small-only', 'Período de campanha'),
-                    m('.fontsize-small.u-text-center-small-only', [
-                        h.momentify(project.online_date), ' - ', h.momentify(project.zone_expires_at), ' (' + project.online_days + ' dias) '
-                    ])
+                    m('.fontsize-small.u-text-center-small-only', `${h.momentify(project.online_date)} - ${h.momentify(project.zone_expires_at)} (${project.online_days} dias)`)
                 ]) : '';
             };
 
@@ -22,7 +20,7 @@ window.c.ProjectAbout = ((m, c, h) => {
                     m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
                     m('p.fontsize-base', m.trust(project.budget))
                 ]),
-                m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', args.rewardDetails() ? [
+                m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', !_.isEmpty(args.rewardDetails()) ? [
                     m('.w-hidden-small.w-hidden-tiny.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                     m.component(c.ProjectRewardList, {
                         project: project,
