@@ -50,7 +50,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                 displayStatusText = function() {
                     var states = {
                         'approved': 'Esse projeto já foi aprovado pelo Catarse. Em breve ele entrará no ar e estará pronto para receber apoios.',
-                        'online': 'Você pode apoiar este projeto até o dia ' + h.momentify(project.zone_expires_at) + ' às 23h59m59s',
+                        'online': h.existy(project.zone_expires_at) ? 'Você pode apoiar este projeto até o dia ' + h.momentify(project.zone_expires_at) + ' às 23h59m59s' : '',
                         'failed': 'Este projeto não atingiu o mínimo de R$ ' + h.formatNumber(project.goal) + ' até ' + h.momentify(project.zone_expires_at) + ' e não foi financiado',
                         'rejected': 'Este projeto não foi aceito. Não é possível realizar um apoio.',
                         'in_analysis': 'Este projeto está em análise e ainda não está aberto para receber apoios.',
