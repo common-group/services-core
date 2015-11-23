@@ -2,7 +2,7 @@ window.c.ProjectTabs = ((m, h) => {
     return {
         view: (ctrl, args) => {
             const project = args.project;
-            return m('.w-section.project-nav.mf', [
+            return m('.w-section.project-nav', [
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-9', [
