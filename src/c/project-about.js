@@ -1,11 +1,17 @@
 window.c.ProjectAbout = ((m, c, h) => {
     return {
         view: (ctrl, args) => {
-            const project = args.project;
+            const project = args.project,
+                onlineDays = () => {
+                    let diff = moment(project.online_date).diff(moment(project.zone_expires_at)),
+                        duration = moment.duration(diff);
+
+                    return -Math.ceil(duration.asDays());
+                };
             let fundingPeriod = () => {
                 return (project.is_published && h.existy(project.zone_expires_at)) ? m('.funding-period', [
                     m('.fontsize-small.fontweight-semibold.u-text-center-small-only', 'Período de campanha'),
-                    m('.fontsize-small.u-text-center-small-only', `${h.momentify(project.online_date)} - ${h.momentify(project.zone_expires_at)} (${project.online_days} dias)`)
+                    m('.fontsize-small.u-text-center-small-only', `${h.momentify(project.online_date)} - ${h.momentify(project.zone_expires_at)} (${project.online_days || onlineDays()} dias)`)
                 ]) : '';
             };
 
