@@ -8,7 +8,7 @@ window.c.ProjectUserCard = ((m, _, h) => {
                             m('img.thumb.u-marginbottom-30.u-round[width="100"][itemprop="image"][src="' + userDetail.profile_img_thumbnail + '"]')
                         ]),
                         m('.w-col.w-col-8', [
-                            m('.fontsize-small.link-hidden.fontweight-semibold.lineheight-looser[itemprop="name"]', [
+                            m('.fontsize-small.link-hidden.fontweight-semibold.u-marginbottom-10.lineheight-tight[itemprop="name"]', [
                                 m('a.link-hidden[href="/users/' + userDetail.id + '"]', userDetail.name)
                             ]),
                             m('.fontsize-smallest', [
