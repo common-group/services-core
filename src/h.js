@@ -218,7 +218,6 @@ window.c.h = ((m, moment) => {
             };
         },
 
-
         closeFlash = () => {
             let el = document.getElementsByClassName('icon-close')[0];
             if (_.isElement(el)){
