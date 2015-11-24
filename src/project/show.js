@@ -43,7 +43,8 @@ window.c.project.Show = ((m, c, _, models, h) => {
                         userDetails: ctrl.userDetails
                     }),
                     m.component(c.ProjectTabs, {
-                        project: project
+                        project: project,
+                        rewardDetails: ctrl.rewardDetails
                     }),
                     m.component(c.ProjectMain, {
                         project: project,
