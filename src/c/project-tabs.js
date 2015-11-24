@@ -1,14 +1,18 @@
 window.c.ProjectTabs = ((m, h) => {
     return {
         view: (ctrl, args) => {
-            const project = args.project;
-            return m('.w-section.project-nav.mf', [
+            const project = args.project,
+                rewards = args.rewardDetails;
+            return m('.w-section.project-nav', [
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-9', [
-                            m('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ' + (h.hashMatch('#rewards') ? 'selected' : '') + '"][href="#rewards"]', {
-                                style: 'float: left;'
-                            }, 'Recompensas'),
+                            !_.isEmpty(rewards()) ?
+                                m('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ' + (h.hashMatch('#rewards') ? 'selected' : '') + '"][href="#rewards"]', {
+                                    style: 'float: left;'
+                                }, 'Recompensas') : m('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ' + (h.hashMatch('#contribution_suggestions') ? 'selected' : '') + '"][href="#contribution_suggestions"]', {
+                                    style: 'float: left;'
+                                }, 'Valores Sugeridos'),
                             m('a[id="about-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#about') || h.hashMatch('') ? 'selected' : '') + ' "][href="#about"]', {
                                 style: 'float: left;'
                             }, 'Sobre'),

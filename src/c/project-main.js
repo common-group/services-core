@@ -11,6 +11,7 @@ window.c.ProjectMain = ((m, c, _, h) => {
                             '#rewards': m('.w-col.w-col-12', m.component(c.ProjectRewardList, _.extend({}, {
                                 rewardDetails: args.rewardDetails
                             }, c_opts))),
+                            '#contribution_suggestions': m.component(c.ProjectSuggestedContributions, c_opts),
                             '#contributions': m.component(c.ProjectContributions, c_opts),
                             '#about': m.component(c.ProjectAbout, _.extend({}, {
                                 rewardDetails: args.rewardDetails

@@ -14,7 +14,7 @@ describe('ProjectShow', () => {
     $output.should.have('#project-sidebar');
     $output.should.have('#project-header');
     $output.should.have('.project-highlight');
-    $output.should.have('.project-nav.mf');
+    $output.should.have('.project-nav');
     $output.should.have('#rewards');
   });
 });

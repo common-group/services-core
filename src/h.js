@@ -216,9 +216,21 @@ window.c.h = ((m, moment) => {
                 top: top,
                 left: left
             };
+        },
+
+        closeFlash = () => {
+            let el = document.getElementsByClassName('icon-close')[0];
+            if (_.isElement(el)){
+                el.onclick = (event) => {
+                    event.preventDefault();
+
+                    el.parentElement.remove();
+                };
+            };
         };
 
     setMomentifyLocale();
+    closeFlash();
 
     return {
         cumulativeOffset: cumulativeOffset,
