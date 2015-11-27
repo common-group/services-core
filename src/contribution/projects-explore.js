@@ -96,77 +96,7 @@ window.c.contribution.ProjectsExplore = ((m, c) => {
 
         view: (ctrl) => {
             return [
-
                 m('.w-section.hero-search', [
-
-                    m('.w-container.u-marginbottom-10', [
-                        m('.w-row.w-hidden-main.w-hidden-medium', [
-                            m('.w-col.w-col-11', [
-                                m('.header-search', [
-                                    m('.w-row', [
-                                        m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
-                                            m('.w-form', [
-                                                m('form[data-name=\'Email Form\'][id=\'email-form\'][name=\'email-form\']', [
-                                                    m('input.w-input.text-field.prefix.negative[data-name=\'form-search\'][id=\'form-search\'][name=\'form-search\'][placeholder=\'Busque projetos\'][type=\'text\']')
-                                                ])
-                                            ]),
-                                            m('.search-pre-result', [
-                                                m('.w-row.u-marginbottom-10', [
-                                                    m('.w-col.w-col-3.w-hidden-small.w-hidden-tiny', [
-                                                        m('img.thumb.small.u-radius[src=\'../images/project_thumb_open-uri20141210-2-fc9lvc.jpeg\']')
-                                                    ]),
-                                                    m('.w-col.w-col-9', [
-                                                        m('.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', 'Um título de projeto aqui'),
-                                                        m('.meter.small', [
-                                                            m('.meter-fill')
-                                                        ]),
-                                                        m('.w-row', [
-                                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
-                                                                m('.fontsize-small.fontweight-semibold.lineheight-tightest', '35%')
-                                                            ]),
-                                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.u-text-center-small-only', [
-                                                                m('.fontsize-smallest.lineheight-tightest', '27 dias'),
-                                                                m('.fontsize-smallest.lineheight-tightest', 'Restantes')
-                                                            ])
-                                                        ])
-                                                    ])
-                                                ]),
-                                                m('.divider.u-marginbottom-10'),
-                                                m('.w-row.u-marginbottom-10', [
-                                                    m('.w-col.w-col-3.w-hidden-small.w-hidden-tiny', [
-                                                        m('img.thumb.small.u-radius[src=\'../images/project_thumb_open-uri20141210-2-fc9lvc.jpeg\']')
-                                                    ]),
-                                                    m('.w-col.w-col-9', [
-                                                        m('.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', 'Um título de projeto aqui'),
-                                                        m('.meter.small', [
-                                                            m('.meter-fill')
-                                                        ]),
-                                                        m('.w-row', [
-                                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
-                                                                m('.fontsize-small.fontweight-semibold.lineheight-tightest', '35%')
-                                                            ]),
-                                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.u-text-center-small-only', [
-                                                                m('.fontsize-smallest.lineheight-tightest', '27 dias'),
-                                                                m('.fontsize-smallest.lineheight-tightest', 'Restantes')
-                                                            ])
-                                                        ])
-                                                    ])
-                                                ]),
-                                                m('.divider.u-marginbottom-10'),
-                                                m('a.btn.btn-small.btn-terciary[href=\'#\']', 'ver todos')
-                                            ])
-                                        ]),
-                                        m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [
-                                            m('a.w-inline-block.btn.btn-attached.postfix.btn-dark[href=\'#\']', [
-                                                m('img.header-lupa[src=\'../images/lupa.png\']')
-                                            ])
-                                        ])
-                                    ])
-                                ])
-                            ]),
-                            m('.w-col.w-col-1')
-                        ])
-                    ]),
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
                             m('.a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: ctrl.vm.toggleCategories}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
