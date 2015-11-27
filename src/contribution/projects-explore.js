@@ -10,7 +10,7 @@ window.c.contribution.ProjectsExplore = ((m, c) => {
 
                 loadCategory: (category) => {
                     let byCategoryId = m.postgrest.filtersVM({category_id: 'eq'});
-                    vm.categoryName(category.name_pt);
+                    vm.categoryName(category.name);
                     vm.categoryFollowers(category.followers);
                     byCategoryId.category_id(category.id);
                     project.getPage(byCategoryId.parameters()).then(vm.projectCollection);
@@ -176,10 +176,10 @@ window.c.contribution.ProjectsExplore = ((m, c) => {
                             m('.w-row', [
                                 _.map(ctrl.categories(), (category) => {
                                     return m('.w-col.w-col-2.w-col-small-6.w-col-tiny-6', [
-                                        m(`a.w-inline-block.btn-category${category.name_pt.length > 13 ? '.double-line' : ''}[href='#by_category_id/#${category.id}']`,
+                                        m(`a.w-inline-block.btn-category${category.name.length > 13 ? '.double-line' : ''}[href='#by_category_id/#${category.id}']`,
                                           {onclick: ctrl.vm.loadCategory.bind(ctrl, category)}, [
                                               m('div', [
-                                                  category.name_pt,
+                                                  category.name,
                                                   m('span.badge.explore', category.online_projects)
                                               ])
                                           ])
