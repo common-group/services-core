@@ -9,10 +9,7 @@ describe('ProjectTabs', () => {
                 project: projectDetail,
                 rewardDetails: m.prop([])
             });
-            $output = mq(component.view, {
-                project: projectDetail,
-                rewardDetails: m.prop([])
-            });
+            $output = mq(component);
         });
 
         it('should render project-tabs', () => {
