@@ -14,6 +14,7 @@ window.c.models = (function(m) {
         projectContributionsPerRef = m.postgrest.model('project_contributions_per_ref'),
         project = m.postgrest.model('projects'),
         teamMember = m.postgrest.model('team_members'),
+        notification = m.postgrest.model('notifications'),
         statistic = m.postgrest.model('statistics');
 
     teamMember.pageSize(40);
@@ -36,6 +37,7 @@ window.c.models = (function(m) {
         projectContribution: projectContribution,
         projectPostDetail: projectPostDetail,
         projectReminder: projectReminder,
+        notification: notification,
         statistic: statistic
     };
 }(window.m));
