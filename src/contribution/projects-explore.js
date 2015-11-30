@@ -2,92 +2,78 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
     return {
 
         controller: () => {
-            let vm = {
-                categoryCollection: m.prop([]),
-                projectCollection: m.prop([]),
-                categoryName: m.prop(),
-                categoryFollowers: m.prop(),
+            const filters = m.postgrest.filtersVM,
+                  nearMe = filters({near_me: 'eq', state: 'eq'}).near_me(true),
+                  expiring = filters({expires_at: 'lte', state: 'eq'}).state('online').expires_at(moment().add(14, 'days').format('YYYY-MM-DD')),
+                  recents = filters({online_date: 'gte', state: 'eq'}).state('online').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
+                  recommended = filters({recommended: 'eq', state: 'eq'}).recommended('true').state('online'),
+                  online = filters({state: 'eq'}).state('online'),
+                  byCategory = filters({category_id: 'eq'}),
+                  projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
+                  successful = filters({state: 'eq'}).state('successful'),
+                  category = c.models.category,
+                  categories = filters({}),
+                  lCategories = m.postgrest.loader(category.getPageOptions(categories.order({name: 'asc'}).parameters()), m.postgrest.request, true);
 
-                loadCategory: (category) => {
-                    let byCategoryId = m.postgrest.filtersVM({category_id: 'eq'});
-                    vm.categoryName(category.name);
-                    vm.categoryFollowers(category.followers);
-                    byCategoryId.category_id(category.id);
-                    project.getPage(byCategoryId.parameters()).then(vm.projectCollection);
-                    vm.toggleCategories();
+            const filtersMap = {
+                recommended: {
+                    title: 'Recomendados',
+                    filter: recommended
                 },
+                online: {
+                    title: 'No ar',
+                    filter: online
+                },
+                expiring: {
+                    title: 'Reta final',
+                    filter: expiring
+                },
+                successful: {
+                    title: 'Bem-sucedidos',
+                    filter: successful
+                },
+                recents: {
+                    title: 'Recentes',
+                    filter: recents
+                },
+                near_me: {
+                    title: 'Próximos a mim',
+                    filter: nearMe
+                }
+            };
 
-                loadProjects: (filter) => {
-                    vm.categoryName(filter.title);
-                    vm.categoryFollowers(null);
-                    if (filter.filter === nearMe){
-                        project.getPageWithToken(nearMe.parameters()).then(vm.projectCollection);
-                    } else {
-                        project.getPage(filter.filter.parameters()).then(vm.projectCollection);
-                    }
-                    vm.toggleCategories();
+            const vm = {
+                categoryCollection: m.prop([]),
+                title: m.prop(),
+                category: m.prop(),
+
+                loadProjects: () => {
+                    let filter = filtersMap.recommended;
+                    vm.title(filter.title);
+                    vm.category(undefined);
+                    projects.firstPage(filter.filter.parameters());
+                    vm.toggleCategories.toggle();
                 },
 
                 toggleCategories: h.toggleProp(false, true)
             };
 
-            let
-                project = c.models.project,
-                category = c.models.category,
-                categories = m.postgrest.filtersVM({}),
+            window.addEventListener('hashchange', () => {
+                vm.loadProjects();
+                m.redraw();
+            }, false);
 
-                nearMe = m.postgrest.filtersVM({near_me: 'eq', state: 'eq'}),
-                expiring = m.postgrest.filtersVM({expires_at: 'lte', state: 'eq'}),
-                recents = m.postgrest.filtersVM({online_date: 'gte', state: 'eq'}),
-                recommended = m.postgrest.filtersVM({recommended: 'eq', state: 'eq'}),
-                online = m.postgrest.filtersVM({state: 'eq'}),
-                successful = m.postgrest.filtersVM({state: 'eq'});
-
-            expiring.expires_at(moment().add(14, 'days').format('YYYY-MM-DD'));
-            recents.online_date(moment().subtract(5, 'days').format('YYYY-MM-DD'));
-            recents.state('online');
-            expiring.state('online');
-            online.state('online');
-            successful.state('successful');
-            recommended.recommended('true').state('online');
-            nearMe.near_me('true');
-
-            project.pageSize(9);
-            category.getPage(categories.order({name: 'asc'}).parameters()).then(vm.categoryCollection);
-
-            let filters = [
-                {
-                    title: 'Recomendados',
-                    filter: recommended
-                },
-                {
-                    title: 'No ar',
-                    filter: online
-                },
-                {
-                    title: 'Reta final',
-                    filter: expiring
-                },
-                {
-                    title: 'Bem-sucedidos',
-                    filter: successful
-                },
-                {
-                    title: 'Recentes',
-                    filter: recents
-                },
-                {
-                    title: 'Próximos a mim',
-                    filter: nearMe
-                }
-            ];
+            // Initial loads
+            lCategories.load().then(vm.categoryCollection);
+            vm.loadProjects();
 
             return {
                 categories: vm.categoryCollection,
-                projects: vm.projectCollection,
-                categoryName: vm.categoryName,
-                categoryFollowers: vm.categoryFollowers,
-                filters: filters,
+                projects: projects,
+                category: vm.category,
+                title: vm.title,
+                filtersMap: filtersMap,
+                lCategories: lCategories,
                 vm: vm
             };
         },
@@ -102,14 +88,15 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
 
                         m('#categories.category-slider', ctrl.vm.toggleCategories() ? [
                             m('.w-row', [
+                                ctrl.lCategories() ? '...' :
                                 _.map(ctrl.categories(), (category) => {
                                     return m.component(c.CategoryButton, {category: category});
                                 })
                             ]),
 
                             m('.w-row.u-marginbottom-30', [
-                                _.map(ctrl.filters, (filter) => {
-                                    return m.component(c.FilterButton, {filter: filter});
+                                _.map(ctrl.filtersMap, (filter, href) => {
+                                    return m.component(c.FilterButton, {filter: filter, href: href});
                                 })
 
                             ])
@@ -121,13 +108,13 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-col.w-col-6.w-col-tiny-6', [
-                                m('.fontsize-larger', ctrl.categoryName())
+                                m('.fontsize-larger', ctrl.title())
                             ]),
 
-                            (ctrl.categoryFollowers()) ? m('.w-col.w-col-6.w-col-tiny-6', [
+                            (ctrl.category() !== undefined) ? m('.w-col.w-col-6.w-col-tiny-6', [
                                 m('.w-row', [
                                     m('.w-col.w-col-9.w-col-tiny-6.w-clearfix', [
-                                        m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.categoryFollowers()} seguidores`)
+                                        m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.category().followers} seguidores`)
                                     ]),
                                     m('.w-col.w-col-3.w-col-tiny-6', [
                                         m('a.btn.btn-small[href=\'#\']', 'Seguindo ')
@@ -142,7 +129,8 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-row', _.map(ctrl.projects(), (project) => {
+                            ctrl.projects.isLoading() ? h.loader() :
+                            m('.w-row', _.map(ctrl.projects.collection(), (project) => {
                                 return m.component(c.ProjectCard, {project: project});
                             }))
                         ])
