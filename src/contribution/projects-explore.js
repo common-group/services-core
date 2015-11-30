@@ -53,7 +53,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
             nearMe.near_me('true');
 
             project.pageSize(9);
-            category.getPage(categories.parameters()).then(vm.categoryCollection);
+            category.getPage(categories.order({name: 'asc'}).parameters()).then(vm.categoryCollection);
 
             let filters = [
                 {
@@ -97,7 +97,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                 m('.w-section.hero-search', [
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('.a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: ctrl.vm.toggleCategories.toggle}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
+                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: ctrl.vm.toggleCategories.toggle}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
                         ]),
 
                         m('#categories.category-slider', ctrl.vm.toggleCategories() ? [
