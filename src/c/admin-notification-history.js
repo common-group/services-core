@@ -4,7 +4,7 @@ window.c.AdminNotificationHistory = ((m, h, _, models) => {
             const notifications = m.prop([]),
                 getNotifications = (user) => {
                     let notification = models.notification;
-                    notification.getPageWithToken(m.postgrest.filtersVM({user_id: 'eq'}).user_id(user.id).parameters()).then(function(data){
+                    notification.getPageWithToken(m.postgrest.filtersVM({user_id: 'eq', sent_at: 'is.null'}).user_id(user.id).sent_at(!null).order({sent_at: 'desc'}).parameters()).then(function(data){
                         notifications(data);
                     });
                     return notifications();
@@ -23,10 +23,8 @@ window.c.AdminNotificationHistory = ((m, h, _, models) => {
                 ctrl.notifications().map(function(cEvent) {
                     return m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
                         m('.w-col.w-col-24', [
-                            m('.fontcolor-secondary',
-                              'notificação: ', cEvent.template_name, ', ',
-                              'criada em: ', h.momentify(cEvent.created_at, 'DD/MM/YYYY, HH:mm'), ', ',
-                              'enviada em: ', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'))
+                            m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'),
+                              ' - ', cEvent.template_name)
                         ]),
                     ]);
                 })
