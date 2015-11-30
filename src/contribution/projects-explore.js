@@ -1,4 +1,4 @@
-window.c.contribution.ProjectsExplore = ((m, c) => {
+window.c.contribution.ProjectsExplore = ((m, c, h) => {
     return {
 
         controller: () => {
@@ -28,9 +28,7 @@ window.c.contribution.ProjectsExplore = ((m, c) => {
                     vm.toggleCategories();
                 },
 
-                toggleCategories: () => {
-                    document.getElementById('categories').classList.toggle('closed');
-                }
+                toggleCategories: h.toggleProp(false, true)
             };
 
             let
@@ -99,37 +97,23 @@ window.c.contribution.ProjectsExplore = ((m, c) => {
                 m('.w-section.hero-search', [
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('.a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: ctrl.vm.toggleCategories}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
+                            m('.a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: ctrl.vm.toggleCategories.toggle}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
                         ]),
 
-                        m('#categories.category-slider',[
+                        m('#categories.category-slider', ctrl.vm.toggleCategories() ? [
                             m('.w-row', [
                                 _.map(ctrl.categories(), (category) => {
-                                    return m('.w-col.w-col-2.w-col-small-6.w-col-tiny-6', [
-                                        m(`a.w-inline-block.btn-category${category.name.length > 13 ? '.double-line' : ''}[href='#by_category_id/#${category.id}']`,
-                                          {onclick: ctrl.vm.loadCategory.bind(ctrl, category)}, [
-                                              m('div', [
-                                                  category.name,
-                                                  m('span.badge.explore', category.online_projects)
-                                              ])
-                                          ])
-                                    ]);
+                                    return m.component(c.CategoryButton, {category: category});
                                 })
                             ]),
 
                             m('.w-row.u-marginbottom-30', [
                                 _.map(ctrl.filters, (filter) => {
-                                    return m('.w-col.w-col-2.w-col-small-6.w-col-tiny-6', [
-                                        m(`a.w-inline-block.btn-category.filters${filter.length > 13 ? '.double-line' : ''}[href='#recommended']`, {onclick: ctrl.vm.loadProjects.bind(ctrl, filter)}, [
-                                            m('div', [
-                                                filter.title
-                                            ])
-                                        ])
-                                    ]);
+                                    return m.component(c.FilterButton, {filter: filter});
                                 })
 
                             ])
-                        ]),
+                        ] : ''),
                     ])
                 ]),
 
@@ -178,4 +162,4 @@ window.c.contribution.ProjectsExplore = ((m, c) => {
                 ])];
         }
     };
-}(window.m, window.c));
+}(window.m, window.c, window.c.h));
