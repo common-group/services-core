@@ -2,24 +2,37 @@ window.c.pages.Flex = (function(m, c, h, models) {
     return {
         controller: function() {
             const stats = m.prop([]),
-                  l = m.prop(),
-                  builder = {
-                      customAction: '//catarse.us5.list-manage.com/subscribe/post?u=ebfcd0d16dbb0001a0bea3639&amp;id=8a4c1a33ce'
-                  },
-                  addDisqus = (el, isInitialized) => {
-                      if (!isInitialized) {
-                          h.discuss('https://catarse.me/flex', 'flex_page');
-                      }
-                  },
-                  loader = m.postgrest.loaderWithToken(models.statistic.getRowOptions());
+                projects = m.prop([]),
+                l = m.prop(),
+                sample3 = _.partial(_.sample, _, 3),
+                builder = {
+                    customAction: '//catarse.us5.list-manage.com/subscribe/post?u=ebfcd0d16dbb0001a0bea3639&amp;id=8a4c1a33ce'
+                },
+                addDisqus = (el, isInitialized) => {
+                    if (!isInitialized) {
+                        h.discuss('https://catarse.me/flex', 'flex_page');
+                    }
+                },
+                flexVM = m.postgrest.filtersVM({
+                    mode: 'eq'
+                }),
+                statsLoader = m.postgrest.loaderWithToken(models.statistic.getRowOptions());
 
-            loader.load().then(stats);
+            flexVM.mode('flex');
+
+            const projectsLoader = m.postgrest.loader(models.project.getPageOptions(flexVM.parameters()), m.postgrest.request);
+
+            statsLoader.load().then(stats);
+
+            projectsLoader.load().then(_.compose(projects, sample3));
 
             return {
                 addDisqus: addDisqus,
                 builder: builder,
-                loader: loader,
-                stats: stats
+                statsLoader: statsLoader,
+                stats: stats,
+                projectsLoader: projectsLoader,
+                projects: {collection: projects}
             };
         },
         view: function(ctrl, args) {
@@ -80,7 +93,17 @@ window.c.pages.Flex = (function(m, c, h, models) {
                                 ])
                             ])
                         ])
-                    ]), m('.w-section.section', [
+                    ]),
+
+                    m('.w-section.section', [
+                        m('.w-container', [
+                            m('.w-editable.fontsize-larger.u-margintop-40.u-text-center.u-marginbottom-40', 'Conheça os primeiros projetos flex'),
+                            ctrl.projectsLoader() ? h.loader() : m.component(c.projectRow, ctrl.projects)
+                        ])
+                    ]),
+
+                    m('.w-section.divider'),
+                    m('.w-section.section', [
                         m('.w-container', [
                             m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', 'Dúvidas'), m('.w-row.u-marginbottom-60', [
                                 m('.w-col.w-col-6', [
@@ -126,7 +149,7 @@ window.c.pages.Flex = (function(m, c, h, models) {
                     ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [
                         m('.w-container.u-text-center', [
                             m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'),
-                            m('.w-row.u-text-center', (ctrl.loader()) ? h.loader() : [
+                            m('.w-row.u-text-center', (ctrl.statsLoader()) ? h.loader() : [
                                 m('.w-col.w-col-4', [
                                     m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
                                 ]),
