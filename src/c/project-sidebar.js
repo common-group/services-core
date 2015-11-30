@@ -107,7 +107,8 @@ window.c.ProjectSidebar = (function(m, h, c) {
                         ])
                     ])
                     , (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
-                        project: project
+                        project: project,
+                        type: 'link'
                     }) : ''),
                     m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText())
                 ]),
