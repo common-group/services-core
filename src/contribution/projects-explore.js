@@ -19,9 +19,13 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                   byCategory = filters({category_id: 'eq'}),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
                   successful = filters({state: 'eq'}).state('successful'),
-                  category = c.models.category,
-                  categories = filters({}),
-                  lCategories = m.postgrest.loader(category.getPageOptions(categories.order({name: 'asc'}).parameters()), m.postgrest.request, true);
+                  lCategories = m.postgrest.loader(
+                      c.models.category.getPageOptions(
+                          filters({}).order({name: 'asc'}).parameters()
+                      )
+                      , m.postgrest.request
+                      , true
+                  );
 
             const filtersMap = {
                 recommended: {
