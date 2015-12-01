@@ -79,15 +79,10 @@ window.c.ProjectTabs = ((m, h) => {
                             m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [
                                 m('.w-row.project-nav-back-button', [
                                     m('.w-col.w-col-6', [
-                                        m('a.w-button.btn[href=\'#\']', 'Apoiar ‍este projeto')
+                                        m('a.w-button.btn[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar ‍este projeto')
                                     ]),
                                     m('.w-col.w-col-6', [
-                                        m('a.w-button.btn.btn-terciary.btn-no-border[href=\'#\']', [
-                                            '‍‍',
-                                            m('span.fa.fa-clock-o', '.'),
-                                            '  ',
-                                            m('span.w-hidden-medium', 'Lembrar-me')
-                                        ])
+                                        m.component(c.ProjectReminder, {project: project, type: 'button'})
                                     ])
                                 ])
                             ])

@@ -1,3 +1,13 @@
+/**
+ * window.c.ProjectReminder component
+ * A component that displays a clickable project reminder element.
+ * The component can be of two types: a 'link' or a 'button'
+ *
+ * Example:
+ *  view: {
+ *      return m.component(c.ProjectReminder, {project: project, type: 'button'})
+ *  }
+ */
 window.c.ProjectReminder = ((m, models, h, c) => {
     return {
         controller: (args) => {
@@ -45,9 +55,12 @@ window.c.ProjectReminder = ((m, models, h, c) => {
                 popNotification: popNotification
             };
         },
-        view: (ctrl) => {
-            return m('#project-reminder.u-text-center.u-marginbottom-30', [
-                m('button[class="btn-link link-hidden fontsize-small ' + (ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary') + ' fontweight-semibold"]', {
+        view: (ctrl, args) => {
+            const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
+                buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small';
+
+            return m(`#project-reminder${mainClass}`, [
+                m(`button[class="${buttonClass} ${(ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
                     onclick: ctrl.submitReminder
                 }, [
                     (ctrl.l() ? 'aguarde ...' : m('span.fa.fa-clock-o', ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me'))
