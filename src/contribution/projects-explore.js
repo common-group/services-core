@@ -1,4 +1,12 @@
-window.c.contribution.ProjectsExplore = ((m, c, h) => {
+/**
+ * window.c.contribution.ProjectsExplore component
+ * A root component to show projects according to user defined filters
+ *
+ * Example:
+ * To mount this component just create a DOM element like:
+ * <div data-mithril="ProjectsExplore">
+ */
+window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
     return {
 
         controller: () => {
@@ -47,25 +55,46 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                 title: m.prop(),
                 category: m.prop(),
 
-                loadProjects: () => {
-                    let filter = filtersMap.recommended;
-                    vm.title(filter.title);
-                    vm.category(undefined);
-                    projects.firstPage(filter.filter.parameters());
+                loadProjects: (title, filter, category) => {
+                    vm.title(title);
+                    vm.category(category);
+                    projects.firstPage(filter.parameters());
                     vm.toggleCategories.toggle();
+                },
+
+                loadRoute: () => {
+                    const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
+                          categoryFromRoute = () =>{
+                              return route &&
+                                        route[2] &&
+                                        _.find(vm.categoryCollection(), function(c){ return c.id === parseInt(route[2]); });
+                          },
+
+                          filterFromRoute =  () =>{
+                              const cat = categoryFromRoute();
+                              return route &&
+                                  route[1] &&
+                                  filtersMap[route[1]] ||
+                                  cat &&
+                                  {title: cat.name, filter: byCategory.category_id(cat.id)};
+                          },
+
+                          filter = filterFromRoute() || filtersMap.recommended;
+                    return vm.loadProjects(filter.title, filter.filter, categoryFromRoute());
                 },
 
                 toggleCategories: h.toggleProp(false, true)
             };
 
             window.addEventListener('hashchange', () => {
-                vm.loadProjects();
+                vm.loadRoute();
                 m.redraw();
             }, false);
 
             // Initial loads
             lCategories.load().then(vm.categoryCollection);
-            vm.loadProjects();
+            vm.loadRoute();
+            window.cat = vm.categoryCollection;
 
             return {
                 categories: vm.categoryCollection,
@@ -83,7 +112,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                 m('.w-section.hero-search', [
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: ctrl.vm.toggleCategories.toggle}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
+                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: () => { ctrl.vm.toggleCategories.toggle(); return false;}}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
                         ]),
 
                         m('#categories.category-slider', ctrl.vm.toggleCategories() ? [
@@ -111,7 +140,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                                 m('.fontsize-larger', ctrl.title())
                             ]),
 
-                            (ctrl.category() !== undefined) ? m('.w-col.w-col-6.w-col-tiny-6', [
+                            _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-tiny-6', [
                                 m('.w-row', [
                                     m('.w-col.w-col-9.w-col-tiny-6.w-clearfix', [
                                         m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.category().followers} seguidores`)
@@ -150,4 +179,4 @@ window.c.contribution.ProjectsExplore = ((m, c, h) => {
                 ])];
         }
     };
-}(window.m, window.c, window.c.h));
+}(window.m, window.c, window.c.h, window._));
