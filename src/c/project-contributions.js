@@ -61,7 +61,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
                                         m('.fontsize-smaller', [
                                             'R$ ' + h.formatNumber(contribution.value, 2, 3), (contribution.anonymous ? [m.trust('&nbsp;-&nbsp;'), m('strong', 'Apoiador anônimo')] : '')
                                         ]) : ''),
-                                    m('.fontsize-smaller', h.momentify(contribution.zone_created_at, 'DD/MM/YYYY, HH:mm') + 'h'),
+                                    m('.fontsize-smaller', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm') + 'h'),
                                     m('.fontsize-smaller', (contribution.total_contributed_projects > 1 ? 'Apoiou este e mais outros ' + contribution.total_contributed_projects + ' projetos' : 'Apoiou somente este projeto até agora'))
                                 ])
                             ])
