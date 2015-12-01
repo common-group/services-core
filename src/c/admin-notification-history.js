@@ -1,3 +1,13 @@
+/**
+ * window.c.AdminNotificationHistory component
+ * Return notifications list from an User object.
+ *
+ * Example:
+ * m.component(c.AdminNotificationHistory, {
+ *     user: user
+ * })
+ */
+
 window.c.AdminNotificationHistory = ((m, h, _, models) => {
     return {
         controller: (args) => {
