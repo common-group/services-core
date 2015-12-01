@@ -14,10 +14,7 @@ window.c.AdminNotificationHistory = ((m, h, _, models) => {
                         sent_at: 'desc'
                     })
                     .parameters())
-                    .then((data) => {
-                        notifications(data);
-                    });
-                    return notifications();
+                    .then(notifications);
                 };
 
             getNotifications(args.user);
