@@ -14,11 +14,12 @@ window.c.pages.Flex = (function(m, c, h, models) {
                     }
                 },
                 flexVM = m.postgrest.filtersVM({
-                    mode: 'eq'
+                    mode: 'eq',
+                    state: 'eq'
                 }),
                 statsLoader = m.postgrest.loaderWithToken(models.statistic.getRowOptions());
 
-            flexVM.mode('flex');
+            flexVM.mode('flex').state('online');
 
             const projectsLoader = m.postgrest.loader(models.project.getPageOptions(flexVM.parameters()), m.postgrest.request);
 
@@ -97,8 +98,8 @@ window.c.pages.Flex = (function(m, c, h, models) {
 
                     m('.w-section.section', [
                         m('.w-container', [
-                            m('.w-editable.fontsize-larger.u-margintop-40.u-text-center.u-marginbottom-40', 'Conheça os primeiros projetos flex'),
-                            ctrl.projectsLoader() ? h.loader() : m.component(c.projectRow, ctrl.projects)
+                            m('.w-editable.fontsize-larger.u-margintop-40.u-margin-bottom-40.u-text-center', 'Conheça os primeiros projetos flex'),
+                            ctrl.projectsLoader() ? h.loader() : m.component(c.ProjectRow, {collection: ctrl.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40'})
                         ])
                     ]),
 
