@@ -95,14 +95,12 @@ window.c.pages.Flex = (function(m, c, h, models) {
                             ])
                         ])
                     ]),
-
                     m('.w-section.section', [
                         m('.w-container', [
                             m('.w-editable.fontsize-larger.u-margintop-40.u-margin-bottom-40.u-text-center', 'Conheça os primeiros projetos flex'),
                             ctrl.projectsLoader() ? h.loader() : m.component(c.ProjectRow, {collection: ctrl.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40'})
                         ])
                     ]),
-
                     m('.w-section.divider'),
                     m('.w-section.section', [
                         m('.w-container', [
