@@ -76,7 +76,7 @@ window.c.ProjectTabs = ((m, h) => {
                                     m('fb:comments-count[href="http://www.catarse.me/' + project.permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;'))
                                 ]),
                             ]),
-                            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [
+                            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project.open_for_contributions ? [
                                 m('.w-row.project-nav-back-button', [
                                     m('.w-col.w-col-6', [
                                         m('a.w-button.btn[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar ‍este projeto')
@@ -85,7 +85,7 @@ window.c.ProjectTabs = ((m, h) => {
                                         m.component(c.ProjectReminder, {project: project, type: 'button'})
                                     ])
                                 ])
-                            ])
+                            ] : '')
                         ])
                     ])
                 ]),
