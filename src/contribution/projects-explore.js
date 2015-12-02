@@ -16,7 +16,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                   recents = filters({online_date: 'gte', state: 'eq'}).state('online').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
                   recommended = filters({recommended: 'eq', state: 'eq'}).recommended('true').state('online'),
                   online = filters({state: 'eq'}).state('online'),
-                  byCategory = filters({category_id: 'eq'}),
+                  byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published'),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
                   successful = filters({state: 'eq'}).state('successful'),
                   lCategories = m.postgrest.loaderWithToken(
@@ -60,7 +60,11 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 loadProjects: (title, filter, category) => {
                     vm.title(title);
                     vm.category(category);
-                    projects.firstPage(filter.parameters());
+                    projects.firstPage(filter.order({
+                        open_for_contributions: 'desc',
+                        state_order: 'asc',
+                        project_id: 'desc'
+                    }).parameters());
                     vm.toggleCategories.toggle();
                 },
 
@@ -94,6 +98,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
             }, false);
 
             // Initial loads
+            c.models.project.pageSize(9);
             lCategories.load().then(vm.categoryCollection);
             vm.loadRoute();
             window.cat = vm.categoryCollection;
