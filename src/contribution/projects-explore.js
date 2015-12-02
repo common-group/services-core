@@ -19,12 +19,10 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                   byCategory = filters({category_id: 'eq'}),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
                   successful = filters({state: 'eq'}).state('successful'),
-                  lCategories = m.postgrest.loader(
+                  lCategories = m.postgrest.loaderWithToken(
                       c.models.category.getPageOptions(
                           filters({}).order({name: 'asc'}).parameters()
                       )
-                      , m.postgrest.request
-                      , true
                   );
 
             const filtersMap = {
@@ -140,17 +138,19 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-col.w-col-6.w-col-tiny-6', [
+                            m('.w-col.w-col-6.w-col-small-7.w-col-tiny-7', [
                                 m('.fontsize-larger', ctrl.title())
                             ]),
 
-                            _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-tiny-6', [
+                            _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-small-5.w-col-tiny-5', [
                                 m('.w-row', [
-                                    m('.w-col.w-col-9.w-col-tiny-6.w-clearfix', [
+                                    m('.w-col.w-col-8.w-hidden-small.w-hidden-tiny.w-clearfix', [
                                         m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.category().followers} seguidores`)
                                     ]),
-                                    m('.w-col.w-col-3.w-col-tiny-6', [
-                                        m('a.btn.btn-small[href=\'#\']', 'Seguindo ')
+                                    m('.w-col.w-col-4.w-col-small-12.w-col-tiny-12', [
+                                        ctrl.category().following ?
+                                            m('a.btn.btn-medium.btn-terciary.unfollow-btn[href=\'#\']', 'Deixar de seguir') :
+                                            m('a.btn.btn-medium.follow-btn[href=\'#\']', 'Seguir')
                                     ])
                                 ])
                             ]) : ''
