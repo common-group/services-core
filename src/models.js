@@ -14,6 +14,7 @@ window.c.models = (function(m) {
         projectContributionsPerRef = m.postgrest.model('project_contributions_per_ref'),
         project = m.postgrest.model('projects'),
         category = m.postgrest.model('categories'),
+        categoryFollower = m.postgrest.model('category_followers'),
         teamMember = m.postgrest.model('team_members'),
         notification = m.postgrest.model('notifications'),
         statistic = m.postgrest.model('statistics');
@@ -34,6 +35,7 @@ window.c.models = (function(m) {
         teamMember: teamMember,
         project: project,
         category: category,
+        categoryFollower: categoryFollower,
         projectContributionsPerDay: projectContributionsPerDay,
         projectContributionsPerLocation: projectContributionsPerLocation,
         projectContributionsPerRef: projectContributionsPerRef,

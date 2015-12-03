@@ -11,23 +11,46 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
+                  follow = c.models.categoryFollower,
                   byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published'),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
-                  lCategories = m.postgrest.loaderWithToken(
-                      c.models.category.getPageOptions(
-                          filters({}).order({name: 'asc'}).parameters()
-                      )
-                  ),
                   filtersMap = c.contribution.projectFilters(),
                   categoryCollection = m.prop([]),
                   title = m.prop(),
-                  category = m.prop(),
+                  categoryId = m.prop(),
+                  findCategory = (id) => {
+                      return _.find(categoryCollection(), function(c){ return c.id === parseInt(id); });
+                  },
+                  category = _.compose(findCategory, categoryId),
+
+                  loadCategories = () => {
+                      return c.models.category.getPageWithToken(filters({}).order({name: 'asc'}).parameters()).then(categoryCollection);
+                  },
+
+                  reloadCategories = () => {
+                      loadCategories().then(() => {
+                          m.redraw();
+                      });
+                  },
+
+                  followCategory = (id) => {
+                      return () => {
+                          follow.postWithToken({category_id: id}).then(reloadCategories);
+                          return false;
+                      };
+                  },
+                  unFollowCategory = (id) => {
+                      return () => {
+                          follow.deleteWithToken(filters({category_id: 'eq'}).category_id(id).parameters()).then(reloadCategories);
+                          return false;
+                      };
+                  },
 
                   loadRoute = () => {
                       const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
                             loadProjects = (pageTitle, filter, selectedCategory) => {
                                 title(pageTitle);
-                                category(selectedCategory);
+                                categoryId(selectedCategory && selectedCategory.id);
                                 projects.firstPage(filter.order({
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
@@ -39,7 +62,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                             categoryFromRoute = () =>{
                                 return route &&
                                     route[2] &&
-                                    _.find(categoryCollection(), function(c){ return c.id === parseInt(route[2]); });
+                                    findCategory(route[2]);
                             },
 
                             filterFromRoute =  () =>{
@@ -65,16 +88,18 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
             // Initial loads
             c.models.project.pageSize(9);
-            lCategories.load().then(categoryCollection);
-            loadRoute();
+            loadCategories().then(() => {
+                loadRoute();
+            });
 
             return {
                 categories: categoryCollection,
+                followCategory: followCategory,
+                unFollowCategory: unFollowCategory,
                 projects: projects,
                 category: category,
                 title: title,
                 filtersMap: filtersMap,
-                lCategories: lCategories,
                 toggleCategories: toggleCategories
             };
         },
@@ -89,10 +114,9 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
                         m('#categories.category-slider', ctrl.toggleCategories() ? [
                             m('.w-row', [
-                                ctrl.lCategories() ? '...' :
-                                    _.map(ctrl.categories(), (category) => {
-                                        return m.component(c.CategoryButton, {category: category});
-                                    })
+                                _.map(ctrl.categories(), (category) => {
+                                    return m.component(c.CategoryButton, {category: category});
+                                })
                             ]),
 
                             m('.w-row.u-marginbottom-30', [
@@ -119,8 +143,8 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                     ]),
                                     m('.w-col.w-col-4.w-col-small-12.w-col-tiny-12', [
                                         ctrl.category().following ?
-                                            m('a.btn.btn-medium.btn-terciary.unfollow-btn[href=\'#\']', 'Deixar de seguir') :
-                                            m('a.btn.btn-medium.follow-btn[href=\'#\']', 'Seguir')
+                                            m('a.btn.btn-medium.btn-terciary.unfollow-btn[href=\'#\']', {onclick: ctrl.unFollowCategory(ctrl.category().id)}, 'Deixar de seguir') :
+                                            m('a.btn.btn-medium.follow-btn[href=\'#\']', {onclick: ctrl.followCategory(ctrl.category().id)}, 'Seguir')
                                     ])
                                 ])
                             ]) : ''
