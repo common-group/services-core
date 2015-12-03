@@ -1,4 +1,6 @@
-window.c.ProjectCard = ((m, h, models) => {
+window.c.ProjectCard = ((m, h, models, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.card');
+
     return {
         view: (ctrl, args) => {
             const project = args.project,
@@ -18,7 +20,7 @@ window.c.ProjectCard = ((m, h, models) => {
                         m('.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base', [
                             m(`a.link-hidden[href="${link}"]`, project.project_name)
                         ]),
-                        m('.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20', `por ${project.owner_name}`),
+                        m('.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20', `${I18n.t('by', I18nScope())} ${project.owner_name}`),
                         m('.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller', [
                             m(`a.link-hidden[href="${link}"]`, project.headline)
                         ])
@@ -27,12 +29,8 @@ window.c.ProjectCard = ((m, h, models) => {
                         m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), ` ${project.city_name}, ${project.state_acronym}`])
                     ]),
                     m(`.card-project-meter.${project.state}`, [
-                        (project.state === 'successful') ?
-                            m('div', 'Bem-sucedido') :
-                        (project.state === 'failed') ?
-                            m('div', 'Não-financiado') :
-                        (project.state === 'waiting_funds') ?
-                            m('div', 'Prazo encerrado') :
+                        (project.state === 'successful' || 'failed' || 'waiting_funds') ?
+                            m('div', I18n('display_status.' + project.state), I18nScope()) :
                         m('.meter', [
                             m('.meter-fill', {
                                 style: {
@@ -62,4 +60,4 @@ window.c.ProjectCard = ((m, h, models) => {
             ]);
         }
     };
-}(window.m, window.c.h, window._));
+}(window.m, window.c.h, window._, window.I18n));
