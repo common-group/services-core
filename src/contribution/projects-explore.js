@@ -11,106 +11,71 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
-                  nearMe = filters({near_me: 'eq', open_for_contributions: 'eq'}).near_me(true),
-                  expiring = filters({expires_at: 'lte', open_for_contributions: 'eq'}).open_for_contributions('true').expires_at(moment().add(14, 'days').format('YYYY-MM-DD')),
-                  recents = filters({online_date: 'gte', open_for_contributions: 'eq'}).open_for_contributions('true').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
-                  recommended = filters({recommended: 'eq', open_for_contributions: 'eq'}).recommended('true').open_for_contributions('true'),
-                  online = filters({open_for_contributions: 'eq'}).open_for_contributions('true'),
                   byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published'),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
-                  successful = filters({state: 'eq'}).state('successful'),
                   lCategories = m.postgrest.loaderWithToken(
                       c.models.category.getPageOptions(
                           filters({}).order({name: 'asc'}).parameters()
                       )
-                  );
+                  ),
+                  filtersMap = c.contribution.projectFilters(),
+                  categoryCollection = m.prop([]),
+                  title = m.prop(),
+                  category = m.prop(),
 
-            const filtersMap = {
-                recommended: {
-                    title: 'Recomendados',
-                    filter: recommended
-                },
-                online: {
-                    title: 'No ar',
-                    filter: online
-                },
-                expiring: {
-                    title: 'Reta final',
-                    filter: expiring
-                },
-                successful: {
-                    title: 'Bem-sucedidos',
-                    filter: successful
-                },
-                recents: {
-                    title: 'Recentes',
-                    filter: recents
-                },
-                near_me: {
-                    title: 'Próximos a mim',
-                    filter: nearMe
-                }
-            };
+                  loadRoute = () => {
+                      const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
+                            loadProjects = (pageTitle, filter, selectedCategory) => {
+                                title(pageTitle);
+                                category(selectedCategory);
+                                projects.firstPage(filter.order({
+                                    open_for_contributions: 'desc',
+                                    state_order: 'asc',
+                                    project_id: 'desc'
+                                }).parameters());
+                                toggleCategories.toggle();
+                            },
 
-            const vm = {
-                categoryCollection: m.prop([]),
-                title: m.prop(),
-                category: m.prop(),
+                            categoryFromRoute = () =>{
+                                return route &&
+                                    route[2] &&
+                                    _.find(categoryCollection(), function(c){ return c.id === parseInt(route[2]); });
+                            },
 
-                loadProjects: (title, filter, category) => {
-                    vm.title(title);
-                    vm.category(category);
-                    projects.firstPage(filter.order({
-                        open_for_contributions: 'desc',
-                        state_order: 'asc',
-                        project_id: 'desc'
-                    }).parameters());
-                    vm.toggleCategories.toggle();
-                },
+                            filterFromRoute =  () =>{
+                                const cat = categoryFromRoute();
+                                return route &&
+                                    route[1] &&
+                                    filtersMap[route[1]] ||
+                                    cat &&
+                                    {title: cat.name, filter: byCategory.category_id(cat.id)};
+                            },
 
-                loadRoute: () => {
-                    const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
-                          categoryFromRoute = () =>{
-                              return route &&
-                                        route[2] &&
-                                        _.find(vm.categoryCollection(), function(c){ return c.id === parseInt(route[2]); });
-                          },
+                            filter = filterFromRoute() || filtersMap.recommended;
 
-                          filterFromRoute =  () =>{
-                              const cat = categoryFromRoute();
-                              return route &&
-                                  route[1] &&
-                                  filtersMap[route[1]] ||
-                                  cat &&
-                                  {title: cat.name, filter: byCategory.category_id(cat.id)};
-                          },
+                      return loadProjects(filter.title, filter.filter, categoryFromRoute());
+                  },
 
-                          filter = filterFromRoute() || filtersMap.recommended;
-                    return vm.loadProjects(filter.title, filter.filter, categoryFromRoute());
-                },
-
-                toggleCategories: h.toggleProp(false, true)
-            };
+                  toggleCategories = h.toggleProp(false, true);
 
             window.addEventListener('hashchange', () => {
-                vm.loadRoute();
+                loadRoute();
                 m.redraw();
             }, false);
 
             // Initial loads
             c.models.project.pageSize(9);
-            lCategories.load().then(vm.categoryCollection);
-            vm.loadRoute();
-            window.cat = vm.categoryCollection;
+            lCategories.load().then(categoryCollection);
+            loadRoute();
 
             return {
-                categories: vm.categoryCollection,
+                categories: categoryCollection,
                 projects: projects,
-                category: vm.category,
-                title: vm.title,
+                category: category,
+                title: title,
                 filtersMap: filtersMap,
                 lCategories: lCategories,
-                vm: vm
+                toggleCategories: toggleCategories
             };
         },
 
@@ -119,15 +84,15 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 m('.w-section.hero-search', [
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: () => { ctrl.vm.toggleCategories.toggle(); return false;}}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
+                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: () => { ctrl.toggleCategories.toggle(); return false;}}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
                         ]),
 
-                        m('#categories.category-slider', ctrl.vm.toggleCategories() ? [
+                        m('#categories.category-slider', ctrl.toggleCategories() ? [
                             m('.w-row', [
                                 ctrl.lCategories() ? '...' :
-                                _.map(ctrl.categories(), (category) => {
-                                    return m.component(c.CategoryButton, {category: category});
-                                })
+                                    _.map(ctrl.categories(), (category) => {
+                                        return m.component(c.CategoryButton, {category: category});
+                                    })
                             ]),
 
                             m('.w-row.u-marginbottom-30', [
@@ -167,10 +132,10 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-row', [
-                            ctrl.projects.isLoading() ? h.loader() :
                             m('.w-row', _.map(ctrl.projects.collection(), (project) => {
                                 return m.component(c.ProjectCard, {project: project});
-                            }))
+                            })),
+                            ctrl.projects.isLoading() ? h.loader() : ''
                         ])
                     ])
                 ]),
