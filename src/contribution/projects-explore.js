@@ -11,11 +11,11 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
-                  nearMe = filters({near_me: 'eq', state: 'eq'}).near_me(true),
-                  expiring = filters({expires_at: 'lte', state: 'eq'}).state('online').expires_at(moment().add(14, 'days').format('YYYY-MM-DD')),
-                  recents = filters({online_date: 'gte', state: 'eq'}).state('online').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
-                  recommended = filters({recommended: 'eq', state: 'eq'}).recommended('true').state('online'),
-                  online = filters({state: 'eq'}).state('online'),
+                  nearMe = filters({near_me: 'eq', open_for_contributions: 'eq'}).near_me(true),
+                  expiring = filters({expires_at: 'lte', open_for_contributions: 'eq'}).open_for_contributions('true').expires_at(moment().add(14, 'days').format('YYYY-MM-DD')),
+                  recents = filters({online_date: 'gte', open_for_contributions: 'eq'}).open_for_contributions('true').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
+                  recommended = filters({recommended: 'eq', open_for_contributions: 'eq'}).recommended('true').open_for_contributions('true'),
+                  online = filters({open_for_contributions: 'eq'}).open_for_contributions('true'),
                   byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published'),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
                   successful = filters({state: 'eq'}).state('successful'),
