@@ -13,6 +13,7 @@ window.c.models = (function(m) {
         projectContributionsPerLocation = m.postgrest.model('project_contributions_per_location'),
         projectContributionsPerRef = m.postgrest.model('project_contributions_per_ref'),
         project = m.postgrest.model('projects'),
+        category = m.postgrest.model('categories'),
         teamMember = m.postgrest.model('team_members'),
         notification = m.postgrest.model('notifications'),
         statistic = m.postgrest.model('statistics');
@@ -20,6 +21,7 @@ window.c.models = (function(m) {
     teamMember.pageSize(40);
     rewardDetail.pageSize(false);
     project.pageSize(30);
+    category.pageSize(50);
 
     return {
         contributionDetail: contributionDetail,
@@ -31,6 +33,7 @@ window.c.models = (function(m) {
         teamTotal: teamTotal,
         teamMember: teamMember,
         project: project,
+        category: category,
         projectContributionsPerDay: projectContributionsPerDay,
         projectContributionsPerLocation: projectContributionsPerLocation,
         projectContributionsPerRef: projectContributionsPerRef,
