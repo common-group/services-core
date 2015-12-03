@@ -1,7 +1,9 @@
-window.c.ProjectSidebar = (function(m, h, c) {
+window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
+
     return {
-        controller: function(args) {
-            var project = args.project,
+        controller: (args) => {
+            const project = args.project,
                 animateProgress = (el, isInitialized) => {
                     if (!isInitialized) {
                         let animation, progress = 0,
@@ -29,14 +31,14 @@ window.c.ProjectSidebar = (function(m, h, c) {
                                     clearInterval(animation);
                                 }
                             };
+
                         setTimeout(() => {
                             animate();
                         }, 1800);
-
                     }
                 },
-                displayCardClass = function() {
-                    var states = {
+                displayCardClass = () => {
+                    const states = {
                         'waiting_funds': 'card-waiting',
                         'successful': 'card-success',
                         'failed': 'card-error',
@@ -47,16 +49,16 @@ window.c.ProjectSidebar = (function(m, h, c) {
 
                     return (states[project.state] ? 'card u-radius zindex-10 ' + states[project.state] : '');
                 },
-                displayStatusText = function() {
-                    var states = {
-                        'approved': 'Esse projeto já foi aprovado pelo Catarse. Em breve ele entrará no ar e estará pronto para receber apoios.',
-                        'online': h.existy(project.zone_expires_at) ? 'Você pode apoiar este projeto até o dia ' + h.momentify(project.zone_expires_at) + ' às 23h59m59s' : '',
-                        'failed': 'Este projeto não atingiu o mínimo de R$ ' + h.formatNumber(project.goal) + ' até ' + h.momentify(project.zone_expires_at) + ' e não foi financiado',
-                        'rejected': 'Este projeto não foi aceito. Não é possível realizar um apoio.',
-                        'in_analysis': 'Este projeto está em análise e ainda não está aberto para receber apoios.',
-                        'successful': 'Este projeto foi financiado em ' + h.momentify(project.zone_expires_at),
-                        'waiting_funds': 'O prazo de captação desse projeto está encerrado. Estamos aguardando a confirmação dos últimos pagamentos.',
-                        'draft': 'Este projeto é apenas um rascunho e ainda não pode receber apoios.'
+                displayStatusText = () => {
+                    const states = {
+                        'approved': I18n.t('display_status.approved', I18nScope()),
+                        'online': h.existy(project.zone_expires_at) ? I18n.t('display_status.online', I18nScope({date: h.momentify(project.zone_expires_at)})) : '',
+                        'failed': I18n.t('display_status.failed', I18nScope({date: h.momentify(project.zone_expires_at), goal: project.goal})),
+                        'rejected': I18n.t('display_status.rejected', I18nScope()),
+                        'in_analysis': I18n.t('display_status.in_analysis', I18nScope()),
+                        'successful': I18n.t('display_status.successful', I18nScope({date: h.momentify(project.zone_expires_at)})),
+                        'waiting_funds': I18n.t('display_status.waiting_funds', I18nScope()),
+                        'draft': I18n.t('display_status.draft', I18nScope())
                     };
 
                     return states[project.state];
@@ -71,8 +73,8 @@ window.c.ProjectSidebar = (function(m, h, c) {
 
         view: function(ctrl, args) {
             var project = args.project,
-                elapsed = h.translatedTime(project.elapsed_time),
-                remaining = h.translatedTime(project.remaining_time);
+                elapsed = project.elapsed_time,
+                remaining = project.remaining_time;
 
             return m('#project-sidebar.aside', [
                 m('.project-stats', [
@@ -80,7 +82,11 @@ window.c.ProjectSidebar = (function(m, h, c) {
                         m('.project-stats-info', [
                             m('.u-marginbottom-20', [
                                 m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${h.formatNumber(project.pledged)}`),
-                                m('.fontsize-small.u-text-center-small-only', ['apoiados por ', m('span#contributors.fontweight-semibold', `${parseInt(project.total_contributors)} pessoas`), !remaining.total ? ` em ${elapsed.total} ${elapsed.unit}` : ''])
+                                m('.fontsize-small.u-text-center-small-only', [
+                                    I18n.t('contributors_call', I18nScope()),
+                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({count: project.total_contributors}))),
+                                    remaining.total ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
+                                ])
                             ]),
                             m('.meter', [
                                 m('#progressBar.meter-fill', {
@@ -95,7 +101,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                                 ]),
                                 m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
                                     m('.u-right.fontsize-small.lineheight-tighter', remaining.total ? [
-                                        m('span.fontweight-semibold', remaining.total), ` ${remaining.unit} restantes`
+                                        m('span.fontweight-semibold', remaining.total), I18n.t('remaining_time.' + remaining.unit, I18nScope({count: remaining.total}))
                                     ] : '')
                                 ])
                             ])
@@ -106,7 +112,7 @@ window.c.ProjectSidebar = (function(m, h, c) {
                             })
                         ])
                     ])
-                    , (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar este projeto') : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
+                    , (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', I18n.t('submit', I18nScope())) : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
                         project: project,
                         type: 'link'
                     }) : ''),
@@ -118,4 +124,4 @@ window.c.ProjectSidebar = (function(m, h, c) {
             ]);
         }
     };
-}(window.m, window.c.h, window.c));
+}(window.m, window.c.h, window.c, window._, window.I18n));
