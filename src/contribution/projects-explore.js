@@ -97,7 +97,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
                             m('.w-row.u-marginbottom-30', [
                                 _.map(ctrl.filtersMap, (filter, href) => {
-                                    return m.component(c.FilterButton, {filter: filter, href: href});
+                                    return m.component(c.FilterButton, {title: filter.title, href: href});
                                 })
 
                             ])

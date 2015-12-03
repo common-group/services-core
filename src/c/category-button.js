@@ -1,3 +1,17 @@
+/**
+ * window.c.CategoryButton component
+ * Return a link with a btn-category class.
+ * It uses a category parameter.
+ *
+ * Example:
+ * m.component(c.CategoryButton, {
+ *     category: {
+ *         id: 1,
+ *         name: 'Video',
+ *         online_projects: 1
+ *     }
+ * })
+ */
 window.c.CategoryButton = ((m, c) => {
     return {
         view: (ctrl, args) => {
