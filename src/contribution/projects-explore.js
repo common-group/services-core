@@ -27,21 +27,15 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                       return c.models.category.getPageWithToken(filters({}).order({name: 'asc'}).parameters()).then(categoryCollection);
                   },
 
-                  reloadCategories = () => {
-                      loadCategories().then(() => {
-                          m.redraw();
-                      });
-                  },
-
                   followCategory = (id) => {
                       return () => {
-                          follow.postWithToken({category_id: id}).then(reloadCategories);
+                          follow.postWithToken({category_id: id}).then(loadCategories);
                           return false;
                       };
                   },
                   unFollowCategory = (id) => {
                       return () => {
-                          follow.deleteWithToken(filters({category_id: 'eq'}).category_id(id).parameters()).then(reloadCategories);
+                          follow.deleteWithToken(filters({category_id: 'eq'}).category_id(id).parameters()).then(loadCategories);
                           return false;
                       };
                   },
