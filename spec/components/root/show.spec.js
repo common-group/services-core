@@ -3,6 +3,7 @@ describe('ProjectShow', () => {
       ProjectShow = window.c.project.Show;
 
   beforeAll(() => {
+    window.location.hash = '';
     projectDetail = ProjectDetailsMockery()[0];
     let component = m.component(ProjectShow, {project_id: 123, project_user_id: 1231}),
         view = component.view(component.controller());
