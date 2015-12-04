@@ -82,9 +82,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
             // Initial loads
             c.models.project.pageSize(9);
-            loadCategories().then(() => {
-                loadRoute();
-            });
+            loadCategories().then(loadRoute);
 
             return {
                 categories: categoryCollection,
