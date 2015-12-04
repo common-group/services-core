@@ -14,7 +14,8 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                   follow = c.models.categoryFollower,
                   filtersMap = c.contribution.projectFilters(),
                   categoryCollection = m.prop([]),
-                  projects = m.prop({}),
+                  // Fake projects object to be able to render page while loadding (in case of search)
+                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }}),
                   title = m.prop(),
                   categoryId = m.prop(),
                   findCategory = (id) => {
@@ -60,12 +61,13 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                             search = h.paramByName('pg_search'),
 
                             searchProjects = () => {
-                                const page = { // We build an object with the same interface as paginationVM
-                                    collection: m.prop([]),
-                                    isLoading: () => { return false; },
-                                    nextPage: () => { return false; }
-                                };
-                                c.models.projectSearch.postWithToken({query: search}).then(page.collection);
+                                const l = m.postgrest.loaderWithToken(c.models.projectSearch.postOptions({query: search})),
+                                      page = { // We build an object with the same interface as paginationVM
+                                          collection: m.prop([]),
+                                          isLoading: l,
+                                          nextPage: () => { return false; }
+                                      };
+                                l.load().then(page.collection);
                                 return page;
                             },
 
