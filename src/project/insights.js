@@ -1,4 +1,6 @@
-window.c.project.Insights = ((m, c, h, models, _) => {
+window.c.project.Insights = ((m, c, h, models, _, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.insights.referral');
+
     return {
         controller: (args) => {
             let filtersVM = m.postgrest.filtersVM({
@@ -40,9 +42,9 @@ window.c.project.Insights = ((m, c, h, models, _) => {
                 return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                     let column = [];
 
-                    column.push(contribution.referral_link || 'direto');
+                    column.push(contribution.referral_link ? I18n.t(contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : 'Outros');
                     column.push(contribution.total);
-                    column.push([contribution.total_amount,[//Adding row with custom comparator => read project-data-table description
+                    column.push([contribution.total_amount,[
                         m(`input[type="hidden"][value="${contribution.total_contributed}"`),
                         'R$ ',
                         h.formatNumber(contribution.total_amount, 2, 3),
@@ -154,4 +156,4 @@ window.c.project.Insights = ((m, c, h, models, _) => {
             ] : h.loader());
         }
     };
-}(window.m, window.c, window.c.h, window.c.models, window._));
+}(window.m, window.c, window.c.h, window.c.models, window._, window.I18n));
