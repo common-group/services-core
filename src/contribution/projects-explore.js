@@ -12,7 +12,6 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
         controller: () => {
             const filters = m.postgrest.filtersVM,
                   follow = c.models.categoryFollower,
-                  byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published'),
                   projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
                   filtersMap = c.contribution.projectFilters(),
                   categoryCollection = m.prop([]),
@@ -60,7 +59,9 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                             },
 
                             filterFromRoute =  () =>{
-                                const cat = categoryFromRoute();
+                                const cat = categoryFromRoute(),
+                                      byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published');
+
                                 return route &&
                                     route[1] &&
                                     filtersMap[route[1]] ||
