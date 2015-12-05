@@ -1,12 +1,12 @@
 window.c.h = ((m, moment) => {
     //Date Helpers
 
-    const hashMatch = (str) => {return window.location.hash === str;},
+    const hashMatch = (str) => { return window.location.hash === str; },
         paramByName = (name) => {
-          const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
+            const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
                 regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
                 results = regex.exec(location.search);
-          return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         },
         setMomentifyLocale = () => {
             moment.locale('pt', {
@@ -109,10 +109,6 @@ window.c.h = ((m, moment) => {
             } else {
                 return false;
             }
-        },
-
-        hashMatch = (str) => {
-            return window.location.hash === str;
         },
 
         locationActionMatch = (action) => {
@@ -273,7 +269,7 @@ window.c.h = ((m, moment) => {
         callStoredAction: callStoredAction,
         UIHelper: UIHelper,
         toAnchor: toAnchor,
-        paramByName: paramByName
+        paramByName: paramByName,
         i18nScope: i18nScope
     };
 }(window.m, window.moment));
