@@ -91,7 +91,7 @@ window.c.h = ((m, moment) => {
         toggleProp = (defaultState, alternateState) => {
             const p = m.prop(defaultState);
             p.toggle = () => {
-                p(((p() === alternateState) ? defaultState : alternateState));
+                return p(((p() === alternateState) ? defaultState : alternateState));
             };
 
             return p;
