@@ -146,7 +146,8 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                 m('.w-col.w-col-12.u-text-center', [
                                     m.component(c.ProjectDataTable, {
                                         label: 'Origem dos apoios',
-                                        table: ctrl.contributionsPerRefTable
+                                        table: ctrl.contributionsPerRefTable,
+                                        defaultSortIndex: -2
                                     })
                                 ]),
                             ]),

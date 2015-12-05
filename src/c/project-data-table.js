@@ -14,7 +14,11 @@
  *          ['col header 1', 'col header 2'],
  *          ['value 1x1', [3, 'value 1x2']],
  *          ['value 2x1', [1, 'value 2x2']] //We are using a custom comparator two col 2 values
- *      ]
+ *      ],
+ *      //Allows you to set a specific column to be ordered by default.
+ *      //If no value is set, the first row will be the default one to be ordered.
+ *      //Negative values mean that the order should be reverted
+ *      defaultSortIndex: -3
  *  })
  */
 window.c.ProjectDataTable = ((m, models, h, _) => {
@@ -50,6 +54,12 @@ window.c.ProjectDataTable = ((m, models, h, _) => {
 
                 table(_.union([header],body));
             };
+
+            sortTable(Math.abs(args.defaultSortIndex) || 0);
+
+            if (args.defaultSortIndex < 0){
+                sortTable(Math.abs(args.defaultSortIndex) || 0);
+            }
 
             return {
                 table: table,
