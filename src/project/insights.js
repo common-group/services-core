@@ -40,9 +40,16 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
             let contributionsPerRefTable = [['Fonte', 'Apoios', 'R$ apoiados (% do total)']];
             const buildPerRefTable = (contributions) => {
                 return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
+                    const re = /(ctrse_[a-z]*)/,
+                        test = re.exec(contribution.referral_link);
+
                     let column = [];
 
-                    column.push(contribution.referral_link ? I18n.t(contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : 'Outros');
+                    if (test){
+                        contribution.referral_link = test[0];
+                    }
+
+                    column.push(contribution.referral_link ? I18n.t(contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : 'outros');
                     column.push(contribution.total);
                     column.push([contribution.total_amount,[
                         m(`input[type="hidden"][value="${contribution.total_contributed}"`),
