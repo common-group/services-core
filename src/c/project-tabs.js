@@ -78,11 +78,11 @@ window.c.ProjectTabs = ((m, h) => {
                             ]),
                             m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project.open_for_contributions ? [
                                 m('.w-row.project-nav-back-button', [
-                                    m('.w-col.w-col-6', [
+                                    m('.w-col.w-col-6.w-col-medium-8', [
                                         m('a.w-button.btn[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar ‍este projeto')
                                     ]),
-                                    m('.w-col.w-col-6', [
-                                        m.component(c.ProjectReminder, {project: project, type: 'button'})
+                                    m('.w-col.w-col-6.w-col-medium-4', [
+                                        m.component(c.ProjectReminder, {project: project, type: 'button', hideTextOnMobile: true})
                                     ])
                                 ])
                             ] : '')

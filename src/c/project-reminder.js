@@ -57,13 +57,16 @@ window.c.ProjectReminder = ((m, models, h, c) => {
         },
         view: (ctrl, args) => {
             const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
-                buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small';
+                buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small',
+                hideTextOnMobile = args.hideTextOnMobile || false;
 
             return m(`#project-reminder${mainClass}`, [
                 m(`button[class="${buttonClass} ${(ctrl.inReminder() ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
                     onclick: ctrl.submitReminder
                 }, [
-                    (ctrl.l() ? 'aguarde ...' : m('span.fa.fa-clock-o', ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me'))
+                    (ctrl.l() ? 'aguarde ...' : m('span.fa.fa-clock-o', [
+                        m(`span${hideTextOnMobile ? '.w-hidden-medium' : ''}`, ctrl.inReminder() ? ' Lembrete ativo' : ' Lembrar-me')
+                    ]))
                 ]), (ctrl.popNotification() ? m.component(c.PopNotification, {
                     message: 'Ok! Vamos te mandar um lembrete por e-mail 48 horas antes do fim da campanha'
                 }) : '')
