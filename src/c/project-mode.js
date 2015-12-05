@@ -42,7 +42,7 @@ window.c.ProjectMode = ((m, c, h, _) => {
                     m('.fontsize-smaller.fontweight-semibold', 'Meta R$ ' + goal),
                     m('.w-inline-block.fontsize-smallest._w-inline-block', [
                         modeTitle,
-                        tooltip('span.w-inline-block._w-inline-block.fa.fa-question-circle.fontcolor-secondary')
+                        tooltip('span.w-inline-block.fa.fa-question-circle.fontcolor-secondary')
                     ])
                 ])
             ]);
