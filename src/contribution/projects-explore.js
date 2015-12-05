@@ -12,10 +12,10 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
         controller: () => {
             const filters = m.postgrest.filtersVM,
                   follow = c.models.categoryFollower,
-                  byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published'),
-                  projects = m.postgrest.paginationVM(c.models.project, 'project_id.desc'),
                   filtersMap = c.contribution.projectFilters(),
                   categoryCollection = m.prop([]),
+                  // Fake projects object to be able to render page while loadding (in case of search)
+                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }}),
                   title = m.prop(),
                   categoryId = m.prop(),
                   findCategory = (id) => {
@@ -42,25 +42,14 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
 
                   loadRoute = () => {
                       const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
-                            loadProjects = (pageTitle, filter, selectedCategory) => {
-                                title(pageTitle);
-                                categoryId(selectedCategory && selectedCategory.id);
-                                projects.firstPage(filter.order({
-                                    open_for_contributions: 'desc',
-                                    state_order: 'asc',
-                                    project_id: 'desc'
-                                }).parameters());
-                                toggleCategories.toggle();
-                            },
 
-                            categoryFromRoute = () =>{
-                                return route &&
-                                    route[2] &&
-                                    findCategory(route[2]);
-                            },
+                            cat = route &&
+                                route[2] &&
+                                findCategory(route[2]),
 
                             filterFromRoute =  () =>{
-                                const cat = categoryFromRoute();
+                                const byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published');
+
                                 return route &&
                                     route[1] &&
                                     filtersMap[route[1]] ||
@@ -68,9 +57,39 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                     {title: cat.name, filter: byCategory.category_id(cat.id)};
                             },
 
-                            filter = filterFromRoute() || filtersMap.recommended;
+                            filter = filterFromRoute() || filtersMap.recommended,
+                            search = h.paramByName('pg_search'),
 
-                      return loadProjects(filter.title, filter.filter, categoryFromRoute());
+                            searchProjects = () => {
+                                const l = m.postgrest.loaderWithToken(c.models.projectSearch.postOptions({query: search})),
+                                      page = { // We build an object with the same interface as paginationVM
+                                          collection: m.prop([]),
+                                          isLoading: l,
+                                          nextPage: () => { return false; }
+                                      };
+                                l.load().then(page.collection);
+                                return page;
+                            },
+
+                            loadProjects = () => {
+                                const pages = m.postgrest.paginationVM(c.models.project);
+                                pages.firstPage(filter.filter.order({
+                                    open_for_contributions: 'desc',
+                                    state_order: 'asc',
+                                    project_id: 'desc'
+                                }).parameters());
+                                return pages;
+                            };
+
+                      if (_.isString(search) && search.length > 0 && route === null) {
+                          title('Busca ' + search);
+                          projects(searchProjects());
+                      } else {
+                          title(filter.title);
+                          projects(loadProjects());
+                      }
+                      categoryId(cat && cat.id);
+                      toggleCategories.toggle();
                   },
 
                   toggleCategories = h.toggleProp(false, true);
@@ -148,10 +167,10 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-row', _.map(ctrl.projects.collection(), (project) => {
+                            m('.w-row', _.map(ctrl.projects().collection(), (project) => {
                                 return m.component(c.ProjectCard, {project: project});
                             })),
-                            ctrl.projects.isLoading() ? h.loader() : ''
+                            ctrl.projects().isLoading() ? h.loader() : ''
                         ])
                     ])
                 ]),
@@ -161,7 +180,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                         m('.w-row', [
                             m('.w-col.w-col-5'),
                             m('.w-col.w-col-2', [
-                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: ctrl.projects.nextPage}, 'Carregar mais')
+                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: ctrl.projects().nextPage}, 'Carregar mais')
                             ]),
                             m('.w-col.w-col-5')
                         ])
