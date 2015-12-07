@@ -30,7 +30,7 @@ window.c.ProjectCard = ((m, h, models, I18n) => {
                     ]),
                     m(`.card-project-meter.${project.state}`, [
                         (project.state === 'successful' || 'failed' || 'waiting_funds') ?
-                            m('div', I18n.t('display_status.' + project.state), I18nScope()) :
+                            m('div', I18n.t('display_status.' + project.state, I18nScope())) :
                         m('.meter', [
                             m('.meter-fill', {
                                 style: {
