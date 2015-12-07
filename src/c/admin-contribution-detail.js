@@ -57,6 +57,8 @@ window.c.AdminContributionDetail = (function(m, _, c, h) {
                         innerLabel: 'Tem certeza que deseja apagar esse apoio?',
                         outerLabel: 'Apagar Apoio',
                         forceValue: 'deleted',
+                        successMessage: 'Apoio removido com sucesso!',
+                        errorMessage: 'O apoio não foi removido!',
                         model: c.models.contributionDetail
                     }
                 },
