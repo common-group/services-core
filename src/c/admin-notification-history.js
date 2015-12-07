@@ -41,7 +41,7 @@ window.c.AdminNotificationHistory = ((m, h, _, models) => {
                     return m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
                         m('.w-col.w-col-24', [
                             m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'),
-                              ' - ', cEvent.template_name)
+                              ' - ', cEvent.template_name, cEvent.origin ? ' - ' + cEvent.origin : '')
                         ]),
                     ]);
                 })
