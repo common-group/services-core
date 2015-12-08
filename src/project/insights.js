@@ -86,7 +86,17 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
             };
         },
         view: (ctrl) => {
-            const project = _.first(ctrl.projectDetails());
+            const project = _.first(ctrl.projectDetails()),
+                tooltip = (el) => {
+                    return m.component(c.Tooltip, {
+                        el: el,
+                        text: [
+                            'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
+                            m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                        ],
+                        width: 380
+                    });
+                };
 
             return m('.project-insights', !ctrl.l() ? [
                 (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
@@ -141,9 +151,14 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                             m('.w-row', [
                                 m('.w-col.w-col-12.u-text-center', [
                                     m('.project-contributions-per-ref', [
-                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
+                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
+                                            I18n.t('ref_origin_title', I18nScope()),
+                                            h.newFeatureBadge(),
+                                            tooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
+                                        ]),
                                         m.component(c.ProjectDataTable, {
-                                            table: ctrl.contributionsPerLocationTable
+                                            table: ctrl.contributionsPerRefTable,
+                                            defaultSortIndex: -2
                                         })
                                     ])
                                 ]),
@@ -151,10 +166,9 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                             m('.w-row', [
                                 m('.w-col.w-col-12.u-text-center', [
                                     m('.project-contributions-per-ref', [
-                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('ref_origin_title', I18nScope())),
+                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
                                         m.component(c.ProjectDataTable, {
-                                            table: ctrl.contributionsPerRefTable,
-                                            defaultSortIndex: -2
+                                            table: ctrl.contributionsPerLocationTable
                                         })
                                     ])
                                 ]),
