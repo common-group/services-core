@@ -1,5 +1,5 @@
 window.c.project.Insights = ((m, c, h, models, _, I18n) => {
-    const I18nScope = _.partial(h.i18nScope, 'projects.insights.referral');
+    const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
     return {
         controller: (args) => {
@@ -37,7 +37,11 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
             };
             models.projectContributionsPerLocation.getRow(filtersVM.parameters()).then(buildPerLocationTable);
 
-            let contributionsPerRefTable = [['Fonte', 'Apoios', 'R$ apoiados (% do total)']];
+            let contributionsPerRefTable = [[
+                I18n.t('ref_table.header.origin', I18nScope()),
+                I18n.t('ref_table.header.contributions', I18nScope()),
+                I18n.t('ref_table.header.amount', I18nScope())
+            ]];
             const buildPerRefTable = (contributions) => {
                 return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                     const re = /(ctrse_[a-z]*)/,
@@ -49,7 +53,7 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                         contribution.referral_link = test[0];
                     }
 
-                    column.push(contribution.referral_link ? I18n.t(contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : 'outros');
+                    column.push(contribution.referral_link ? I18n.t('referral.' + contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : I18n.t('referral.others', I18nScope()));
                     column.push(contribution.total);
                     column.push([contribution.total_amount,[
                         m(`input[type="hidden"][value="${contribution.total_contributed}"`),
@@ -82,7 +86,17 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
             };
         },
         view: (ctrl) => {
-            const project = _.first(ctrl.projectDetails());
+            const project = _.first(ctrl.projectDetails()),
+                tooltip = (el) => {
+                    return m.component(c.Tooltip, {
+                        el: el,
+                        text: [
+                            'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
+                            m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                        ],
+                        width: 380
+                    });
+                };
 
             return m('.project-insights', !ctrl.l() ? [
                 (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
@@ -92,7 +106,7 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                     m('.w-row.u-marginbottom-40', [
                         m('.w-col.w-col-2'),
                         m('.w-col.w-col-8.dashboard-header.u-text-center', [
-                            m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', 'Minha campanha'),
+                            m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
                             m.component(c.AdminProjectDetailsCard, {
                                 resource: project
                             }),
@@ -114,7 +128,7 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                 }, [
                                     m.component(c.ProjectDataChart, {
                                         collection: ctrl.contributionsPerDay,
-                                        label: 'R$ arrecadados por dia',
+                                        label: I18n.t('amount_per_day_label', I18nScope()),
                                         dataKey: 'total_amount',
                                         xAxis: (item) => h.momentify(item.paid_at)
                                     })
@@ -128,7 +142,7 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                 }, [
                                     m.component(c.ProjectDataChart, {
                                         collection: ctrl.contributionsPerDay,
-                                        label: 'Apoios confirmados por dia',
+                                        label: I18n.t('contributions_per_day_label', I18nScope()),
                                         dataKey: 'total',
                                         xAxis: (item) => h.momentify(item.paid_at)
                                     })
@@ -136,19 +150,27 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                             ]),
                             m('.w-row', [
                                 m('.w-col.w-col-12.u-text-center', [
-                                    m.component(c.ProjectDataTable, {
-                                        label: 'Localização geográfica dos apoios',
-                                        table: ctrl.contributionsPerLocationTable
-                                    })
+                                    m('.project-contributions-per-ref', [
+                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
+                                            I18n.t('ref_origin_title', I18nScope()),
+                                            h.newFeatureBadge(),
+                                            tooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
+                                        ]),
+                                        m.component(c.ProjectDataTable, {
+                                            table: ctrl.contributionsPerRefTable,
+                                            defaultSortIndex: -2
+                                        })
+                                    ])
                                 ]),
                             ]),
                             m('.w-row', [
                                 m('.w-col.w-col-12.u-text-center', [
-                                    m.component(c.ProjectDataTable, {
-                                        label: 'Origem dos apoios',
-                                        table: ctrl.contributionsPerRefTable,
-                                        defaultSortIndex: -2
-                                    })
+                                    m('.project-contributions-per-ref', [
+                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
+                                        m.component(c.ProjectDataTable, {
+                                            table: ctrl.contributionsPerLocationTable
+                                        })
+                                    ])
                                 ]),
                             ]),
                             m('.w-row', [
