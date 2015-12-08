@@ -1,4 +1,4 @@
-window.c.h = ((m, moment) => {
+window.c.h = ((m, moment, I18n) => {
     //Date Helpers
 
     const hashMatch = (str) => { return window.location.hash === str; },
@@ -127,6 +127,10 @@ window.c.h = ((m, moment) => {
             ]);
         },
 
+        newFeatureBadge = () => {
+            return m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge'));
+        },
+
         fbParse = () => {
             const tryParse = () => {
                 try {
@@ -253,6 +257,7 @@ window.c.h = ((m, moment) => {
         getUser: getUser,
         toggleProp: toggleProp,
         loader: loader,
+        newFeatureBadge: newFeatureBadge,
         fbParse: fbParse,
         pluralize: pluralize,
         simpleFormat: simpleFormat,
@@ -272,4 +277,4 @@ window.c.h = ((m, moment) => {
         paramByName: paramByName,
         i18nScope: i18nScope
     };
-}(window.m, window.moment));
+}(window.m, window.moment, window.I18n));
