@@ -19,6 +19,7 @@ module.exports = function(config) {
       'spec/lib/jasmine-species/jasmine-grammar.js',
       'spec/lib/jasmine-matchers.js',
       'spec/lib/jasmine-ajax/mock-ajax.js',
+      'spec/lib/i18n/i18n.js',
       'spec/lib/matchers.js',
       'bower_components/mithril/mithril.js',
       'bower_components/underscore/underscore.js',

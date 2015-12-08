@@ -17,6 +17,8 @@ beforeAll(function(){
       open_for_contributions: true,
       reminder_count: 23,
       remaining_time: {total: 22, unit: "days"},
+      elapsed_time: {total: 20, unit: 'days'},
+      mode: 'aon',
       user: {id: 123, name: "Lorem ipsum"},
       video_embed_url: "//www.youtube.com/embed/6Klp834jk3M",
       video_url: "https://youtu.be/6Klp834jk3M",

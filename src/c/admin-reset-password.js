@@ -26,9 +26,11 @@ window.c.AdminResetPassword = ((function(m, h, c, _) {
             };
 
             const l = m.postgrest.loader(_.extend({}, {data: data}, builder.requestOptions), m.request),
-                newPassword = m.prop('');
+                newPassword = m.prop(''),
+                error_message = m.prop('');
 
             const requestError = (err) => {
+                error_message(err.errors[0]);
                 complete(true);
                 error(true);
             };
@@ -54,6 +56,7 @@ window.c.AdminResetPassword = ((function(m, h, c, _) {
             return {
                 complete: complete,
                 error: error,
+                error_message: error_message,
                 l: l,
                 newPassword: newPassword,
                 submit: submit,
@@ -87,7 +90,7 @@ window.c.AdminResetPassword = ((function(m, h, c, _) {
                         ])
                     ] : [
                         m('.w-form-error[style="display:block;"]', [
-                            m('p', 'Houve um problema na requisição.')
+                            m('p', ctrl.error_message())
                         ])
                     ])
                 ]) : ''

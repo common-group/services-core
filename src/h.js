@@ -1,10 +1,21 @@
 window.c.h = ((m, moment) => {
     //Date Helpers
-    const setMomentifyLocale = () => {
-        moment.locale('pt', {
-                monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
-            });
-    },
+
+    const hashMatch = (str) => { return window.location.hash === str; },
+        paramByName = (name) => {
+            const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
+                regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
+                results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        },
+        setMomentifyLocale = () => {
+            moment.locale('pt', {
+                    monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+                });
+        },
+        existy = (x) => {
+            return x != null;
+        },
 
         momentify = (date, format) => {
             format = format || 'DD/MM/YYYY';
@@ -42,34 +53,31 @@ window.c.h = ((m, moment) => {
             return european.isValid() ? european : moment(date);
         },
 
+        translatedTimeUnits = {
+            days: 'dias',
+            minutes: 'minutos',
+            hours: 'horas',
+            seconds: 'segundos'
+        },
         //Object manipulation helpers
-        generateRemaingTime = (project) => {
-            const remainingTextObj = m.prop({}),
-                remainingTime = project.remaining_time.total,
-                translatedTime = {
-                    days: 'dias',
-                    minutes: 'minutos',
-                    hours: 'horas',
-                    seconds: 'segundos'
-                },
+        translatedTime = (time) => {
+            const translatedTime = translatedTimeUnits,
                 unit = () => {
-                    const projUnit = translatedTime[project.remaining_time.unit || 'seconds'];
+                    const projUnit = translatedTime[time.unit || 'seconds'];
 
-                    return (remainingTime <= 1) ? projUnit.slice(0, -1) : projUnit;
+                    return (time.total <= 1) ? projUnit.slice(0, -1) : projUnit;
                 };
 
-            remainingTextObj({
+            return {
                 unit: unit(),
-                total: remainingTime
-            });
-
-            return remainingTextObj;
+                total: time.total
+            };
         },
 
         //Number formatting helpers
         generateFormatNumber = (s, c) => {
             return (number, n, x) => {
-                if (number === null || number === undefined) {
+                if (!_.isNumber(number)) {
                     return null;
                 }
 
@@ -83,7 +91,7 @@ window.c.h = ((m, moment) => {
         toggleProp = (defaultState, alternateState) => {
             const p = m.prop(defaultState);
             p.toggle = () => {
-                p(((p() === alternateState) ? defaultState : alternateState));
+                return p(((p() === alternateState) ? defaultState : alternateState));
             };
 
             return p;
@@ -101,10 +109,6 @@ window.c.h = ((m, moment) => {
             } else {
                 return false;
             }
-        },
-
-        hashMatch = (str) => {
-            return window.location.hash === str;
         },
 
         locationActionMatch = (action) => {
@@ -202,12 +206,45 @@ window.c.h = ((m, moment) => {
         navigateToDevise = () => {
             window.location.href = '/pt/login';
             return false;
+        },
+
+        cumulativeOffset = (element) => {
+            let top = 0, left = 0;
+            do {
+                top += element.offsetTop  || 0;
+                left += element.offsetLeft || 0;
+                element = element.offsetParent;
+            } while (element);
+
+            return {
+                top: top,
+                left: left
+            };
+        },
+
+        closeFlash = () => {
+            let el = document.getElementsByClassName('icon-close')[0];
+            if (_.isElement(el)){
+                el.onclick = (event) => {
+                    event.preventDefault();
+
+                    el.parentElement.remove();
+                };
+            };
+        },
+
+        i18nScope = (scope, obj) => {
+            obj = obj || {};
+            return _.extend({}, obj, {scope: scope});
         };
 
     setMomentifyLocale();
+    closeFlash();
 
     return {
+        cumulativeOffset: cumulativeOffset,
         discuss: discuss,
+        existy: existy,
         validateEmail: validateEmail,
         momentify: momentify,
         momentFromString: momentFromString,
@@ -219,7 +256,7 @@ window.c.h = ((m, moment) => {
         fbParse: fbParse,
         pluralize: pluralize,
         simpleFormat: simpleFormat,
-        generateRemaingTime: generateRemaingTime,
+        translatedTime: translatedTime,
         rewardSouldOut: rewardSouldOut,
         rewardRemaning: rewardRemaning,
         parseUrl: parseUrl,
@@ -231,6 +268,8 @@ window.c.h = ((m, moment) => {
         storeAction: storeAction,
         callStoredAction: callStoredAction,
         UIHelper: UIHelper,
-        toAnchor: toAnchor
+        toAnchor: toAnchor,
+        paramByName: paramByName,
+        i18nScope: i18nScope
     };
 }(window.m, window.moment));

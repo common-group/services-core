@@ -12,6 +12,8 @@ window.c.ProjectDataChart = ((m, Chart, _) => {
     return {
         controller: (args) => {
             const resource = _.first(args.collection()),
+                  source = (!_.isUndefined(resource) ? resource.source : []),
+
                 mountDataset = () => {
                     return [{
                         fillColor: 'rgba(126,194,69,0.2)',
@@ -20,7 +22,7 @@ window.c.ProjectDataChart = ((m, Chart, _) => {
                         pointStrokeColor: '#fff',
                         pointHighlightFill: '#fff',
                         pointHighlightStroke: 'rgba(220,220,220,1)',
-                        data: _.map(resource.source, (item) => {
+                        data: _.map(source, (item) => {
                             return item[args.dataKey];
                         })
                     }];
@@ -30,7 +32,7 @@ window.c.ProjectDataChart = ((m, Chart, _) => {
                         const ctx = element.getContext('2d');
 
                         new Chart(ctx).Line({
-                            labels: _.map(resource.source, (item) => {
+                            labels: _.map(source, (item) => {
                                 return args.xAxis(item);
                             }),
                             datasets: mountDataset()

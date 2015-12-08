@@ -6,11 +6,10 @@ describe('ProjectTabs', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
             let component = m.component(ProjectTabs, {
-                project: projectDetail
+                project: projectDetail,
+                rewardDetails: m.prop([])
             });
-            $output = mq(component.view, {
-                project: projectDetail
-            });
+            $output = mq(component);
         });
 
         it('should render project-tabs', () => {

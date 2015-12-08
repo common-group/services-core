@@ -60,6 +60,11 @@ window.c.AdminUserDetail = (function(m, _, c){
                     (item.deactivated_at) ?
                         m.component(c.AdminInputAction, {data: actions.reactivate, item: item}) : ''
                 ]),
+                m('.w-row.card.card-terciary.u-radius', [
+                    m.component(c.AdminNotificationHistory, {
+                        user: item
+                    }),
+                ]),
             ]);
         }
     };
