@@ -6,7 +6,7 @@ window.c.contribution.projectFilters = ((m, h, moment) => {
                   near_me: 'eq',
                   open_for_contributions: 'eq',
                   online_date: 'gt'
-              }).near_me(true).online_date(moment().subtract(30, 'days').format('YYYY-MM-DD')),
+              }).open_for_contributions('true').near_me(true).online_date(moment().subtract(30, 'days').format('YYYY-MM-DD')),
 
               expiring = filters({
                   expires_at: 'lte',
