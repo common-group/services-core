@@ -180,7 +180,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                         m('.w-row', [
                             m('.w-col.w-col-5'),
                             m('.w-col.w-col-2', [
-                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: ctrl.projects().nextPage}, 'Carregar mais')
+                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
                             ]),
                             m('.w-col.w-col-5')
                         ])
