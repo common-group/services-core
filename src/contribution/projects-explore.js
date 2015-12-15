@@ -175,7 +175,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                     ])
                 ]),
 
-                m('.w-section.section.loadmore', [
+                m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-col.w-col-5'),
