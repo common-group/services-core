@@ -4,8 +4,9 @@ window.c.contribution.projectFilters = ((m, h, moment) => {
 
               nearMe = filters({
                   near_me: 'eq',
-                  open_for_contributions: 'eq'
-              }).near_me(true),
+                  open_for_contributions: 'eq',
+                  online_date: 'gt'
+              }).open_for_contributions('true').near_me(true).online_date(moment().subtract(30, 'days').format('YYYY-MM-DD')),
 
               expiring = filters({
                   expires_at: 'lte',
@@ -27,8 +28,9 @@ window.c.contribution.projectFilters = ((m, h, moment) => {
               }).open_for_contributions('true'),
 
               successful = filters({
-                  state: 'eq'
-              }).state('successful');
+                  state: 'eq',
+                  expires_at: 'gt'
+              }).state('successful').expires_at(moment().subtract(30, 'days').format('YYYY-MM-DD'));
 
         return {
             recommended: {

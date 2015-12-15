@@ -38,27 +38,24 @@ window.c.Tooltip = ((m, c, h) => {
                     parentOffset(h.cumulativeOffset(el));
                 }
             },
-                  setPosition = (el, isInitialized) => {
-                      if (!isInitialized){
-                          let elTop = el.offsetHeight + el.offsetParent.offsetHeight;
-                          let style = window.getComputedStyle(el);
+                setPosition = (el, isInitialized) => {
+                    if (!isInitialized){
+                        let elTop = el.offsetHeight + el.offsetParent.offsetHeight;
+                        let style = window.getComputedStyle(el);
 
-                          if (window.innerWidth < (el.offsetWidth + 2 * parseFloat(style.paddingLeft) + 30)){ //30 here is a safe margin
-                              el.style.width = window.innerWidth - 30; //Adding the safe margin
-                              left(-parentOffset().left + 15); //positioning center of window, considering margin
-                          } else if ((parentOffset().left + (el.offsetWidth / 2)) <= window.innerWidth && (parentOffset().left - (el.offsetWidth / 2)) >= 0){
-                              console.log('Positioning center');
-                              left(-el.offsetWidth / 2); //Positioning to the center
-                          } else if ((parentOffset().left + (el.offsetWidth / 2)) > window.innerWidth) {
-                              console.log('Positioning right');
-                              left(-el.offsetWidth + el.offsetParent.offsetWidth); //Positioning to the left
-                          } else if ((parentOffset().left - (el.offsetWidth / 2)) < 0) {
-                              console.log('positioning left');
-                              left(-el.offsetParent.offsetWidth); //Positioning to the right
-                          }
-                          top(-elTop); //Setting top position
-                      }
-                  };
+                        if (window.innerWidth < (el.offsetWidth + 2 * parseFloat(style.paddingLeft) + 30)){ //30 here is a safe margin
+                            el.style.width = window.innerWidth - 30; //Adding the safe margin
+                            left(-parentOffset().left + 15); //positioning center of window, considering margin
+                        } else if ((parentOffset().left + (el.offsetWidth / 2)) <= window.innerWidth && (parentOffset().left - (el.offsetWidth / 2)) >= 0){
+                            left(-el.offsetWidth / 2); //Positioning to the center
+                        } else if ((parentOffset().left + (el.offsetWidth / 2)) > window.innerWidth) {
+                            left(-el.offsetWidth + el.offsetParent.offsetWidth); //Positioning to the left
+                        } else if ((parentOffset().left - (el.offsetWidth / 2)) < 0) {
+                            left(-el.offsetParent.offsetWidth); //Positioning to the right
+                        }
+                        top(-elTop); //Setting top position
+                    }
+                };
 
             return {
                 width: width,
@@ -74,8 +71,7 @@ window.c.Tooltip = ((m, c, h) => {
         view: (ctrl, args) => {
             let width = ctrl.width();
             return m(args.el, {
-                onmouseenter: ctrl.toggle,
-                onmouseleave: ctrl.toggle,
+                onclick: ctrl.toggle,
                 config: ctrl.setParentPosition,
                 style: {cursor: 'pointer'}
             }, ctrl.tooltip() ? [

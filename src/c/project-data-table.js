@@ -69,35 +69,31 @@ window.c.ProjectDataTable = ((m, models, h, _) => {
         view: (ctrl, args) => {
             let header = _.first(ctrl.table()),
                 body = _.rest(ctrl.table());
-            return m('.project-contributions-per-location', [
-                m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
-                m('.table-outer.u-marginbottom-60', [
-                    m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
-                        _.map(header, (heading, idx) => {
-                            let sort = () => ctrl.sortTable(idx);
-                            return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                m('a.link-hidden[href="javascript:void(0);"]', {
-                                    onclick: sort
-                                }, [
-                                    `${heading} `, m('span.fa.fa-sort')
-                                ])
-                            ]);
-                        })
-                    ), m('.table-inner.fontsize-small',
-                        _.map(body, (rowData) => {
-                            return m('.w-row.table-row',
-                                _.map(rowData, (row) => {
-                                    //Check if a custom comparator is used => Read component description
-                                    row = (_.isArray(row) && row.length > 1) ? row[1] : row;
-                                    return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                        m('div', row)
-                                    ]);
-                                })
-                            );
-                        })
-                    )
-                ])
-
+            return m('.table-outer.u-marginbottom-60', [
+                m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
+                    _.map(header, (heading, idx) => {
+                        let sort = () => ctrl.sortTable(idx);
+                        return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
+                            m('a.link-hidden[href="javascript:void(0);"]', {
+                                onclick: sort
+                            }, [
+                                `${heading} `, m('span.fa.fa-sort')
+                            ])
+                        ]);
+                    })
+                ), m('.table-inner.fontsize-small',
+                    _.map(body, (rowData) => {
+                        return m('.w-row.table-row',
+                            _.map(rowData, (row) => {
+                                //Check if a custom comparator is used => Read component description
+                                row = (_.isArray(row) && row.length > 1) ? row[1] : row;
+                                return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
+                                    m('div', row)
+                                ]);
+                            })
+                        );
+                    })
+                )
             ]);
         }
     };
