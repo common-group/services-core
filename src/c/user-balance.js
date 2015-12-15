@@ -23,13 +23,12 @@ window.c.UserBalance = ((m, h, _, models, c) => {
             loadBalance.load().then(userBalances);
 
             return {
-                loadBalance: loadBalance,
                 userBalances: userBalances,
                 displayModal: displayModal
             };
         },
-        view: (ctrl) => {
-            let balance = _.first(ctrl.userBalances()) || {amount: 0},
+        view: (ctrl, args) => {
+            let balance = _.first(ctrl.userBalances()) || {amount: 0, user_id: args.user_id},
                 balanceRequestModalC = [
                     'UserBalanceRequestModalContent',
                     {balance: balance}
