@@ -1,4 +1,6 @@
-window.c.pages.Start = ((m, c, h, models) => {
+window.c.pages.Start = ((m, c, h, models, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'pages.start');
+
     return {
         controller: () => {
             const stats = m.prop([]),
@@ -7,7 +9,7 @@ window.c.pages.Start = ((m, c, h, models) => {
                 selectedCategory = m.prop([]),
                 featuredProjects = m.prop([]),
                 selectedCategoryIdx = m.prop(-1),
-                startvm = c.pages.startVM(),
+                startvm = c.pages.startVM(I18n),
                 categoryvm = m.postgrest.filtersVM({
                     category_id: 'eq'
                 }),
@@ -75,7 +77,8 @@ window.c.pages.Start = ((m, c, h, models) => {
                 selectPane: selectPane,
                 selectedPane: selectedPane,
                 featuredProjects: featuredProjects,
-                testimonials: startvm.testimonials
+                testimonials: startvm.testimonials,
+                questions: startvm.questions
             };
         },
         view: (ctrl, args) => {
@@ -99,24 +102,24 @@ window.c.pages.Start = ((m, c, h, models) => {
             return [
                 m('.w-section.hero-full.hero-start', [
                     m('.w-container.u-text-center', [
-                        m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', 'Tire o seu projeto do papel'),
+                        m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-4.w-col-push-4', [
-                                m('a.btn.btn-large.u-marginbottom-10[href=\'/projects/new\']', 'Comece gratuitamente')
+                                m('a.btn.btn-large.u-marginbottom-10[href=\'/projects/new\']',  I18n.t('submit', I18nScope()))
                             ])
                         ]),
                         m('.w-row', _.isEmpty(stats) ? '' : [
                             m('.w-col.w-col-4', [
                                 m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)),
-                                m('p.fontsize-small.start-stats', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
+                                m('p.fontsize-small.start-stats', I18n.t('header.people', I18nScope()))
                             ]),
                             m('.w-col.w-col-4', [
                                 m('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'),
-                                m('p.fontsize-small.start-stats', 'Foram investidos em ideias publicadas no Catarse')
+                                m('p.fontsize-small.start-stats', I18n.t('header.money', I18nScope()))
                             ]),
                             m('.w-col.w-col-4', [
                                 m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)),
-                                m('p.fontsize-small.start-stats', 'Projetos ja foram financiados por aqui')
+                                m('p.fontsize-small.start-stats', I18n.t('header.success', I18nScope()))
                             ])
                         ])
                     ])
@@ -125,36 +128,44 @@ window.c.pages.Start = ((m, c, h, models) => {
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-col.w-col-10.w-col-push-1.u-text-center', [
-                                m('.w-editable.fontsize-larger.u-marginbottom-10.fontweight-semibold', 'Como funciona o Catarse?'),
-                                m('.w-editable.fontsize-small', 'Conheça os pilares básicos de uma campanha de financiamento coletivo')
+                                m('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n.t('page-title', I18nScope())),
+                                m('.fontsize-small', I18n.t('page-subtitle', I18nScope()))
                             ]),
                         ]),
                         m('.w-clearfix.how-row', [
                             m('.w-hidden-small.w-hidden-tiny.how-col-01', [
                                 m('.info-howworks-backers', [
-                                    m('.w-editable.fontweight-semibold.fontsize-large', 'Apoiadores'),
-                                    m('.w-editable.fontsize-base', 'Seus amigos, familiares e interessados no projeto.')
+                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.1', I18nScope())),
+                                    m('.fontsize-base', I18n.t('banner.2', I18nScope()))
                                 ]),
                                 m('.info-howworks-backers', [
-                                    m('.w-editable.fontweight-semibold.fontsize-large', 'Recompensas'),
-                                    m('.w-editable.fontsize-base', 'É o que você oferece em troca dos apoios.')
+                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.3', I18nScope())),
+                                    m('.fontsize-base', I18n.t('banner.4', I18nScope()))
                                 ])
                             ]),
                             m('.how-col-02'),
                             m('.how-col-03', [
-                                m('.w-editable.fontweight-semibold.fontsize-large', 'Meta'),
-                                m('.w-editable.fontsize-base', 'O quanto você quer arrecadar no Catarse.'),
-                                m('.w-editable.fontweight-semibold.fontsize-large.u-margintop-30', 'Tempo'),
-                                m('.w-editable.fontsize-base', 'É o período que sua campanha estará aberta a receber apoios.')
+                                m('.fontweight-semibold.fontsize-large', I18n.t('banner.5', I18nScope())),
+                                m('.fontsize-base', I18n.t('banner.6', I18nScope())),
+                                m('.fontweight-semibold.fontsize-large.u-margintop-30', I18n.t('banner.7', I18nScope())),
+                                m('.fontsize-base', I18n.t('banner.8', I18nScope()))
                             ]),
                             m('.w-hidden-main.w-hidden-medium.how-col-01', [
                                 m('.info-howworks-backers', [
-                                    m('.w-editable.fontweight-semibold.fontsize-large', 'Apoiadores'),
-                                    m('.w-editable.fontsize-base', 'Em troca de apoios, você pode oferecer recompensas aos seus apoiadores.')
+                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.1', I18nScope())),
+                                    m('.fontsize-base', I18n.t('banner.2', I18nScope()))
                                 ]),
                                 m('.info-howworks-backers', [
-                                    m('.w-editable.fontweight-semibold.fontsize-large', 'Recompensas'),
-                                    m('.w-editable.fontsize-base', 'Em troca de apoios, você pode oferecer recompensas aos seus apoiadores.')
+                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.3', I18nScope())),
+                                    m('.fontsize-base',  I18n.t('banner.4', I18nScope()))
+                                ]),
+                                m('.info-howworks-backers', [
+                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.5', I18nScope())),
+                                    m('.fontsize-base',  I18n.t('banner.6', I18nScope()))
+                                ]),
+                                m('.info-howworks-backers', [
+                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.7', I18nScope())),
+                                    m('.fontsize-base',  I18n.t('banner.8', I18nScope()))
                                 ])
                             ])
                         ])
@@ -164,19 +175,19 @@ window.c.pages.Start = ((m, c, h, models) => {
                 m('.w-section.section-large', [
                     m('.w-container.u-text-center.u-marginbottom-60', [
                         m('div', [
-                            m('span.fontsize-largest.fontweight-semibold', 'A plataforma ideal para sua campanha')
+                            m('span.fontsize-largest.fontweight-semibold', I18n.t('features.title', I18nScope()))
                         ]),
-                        m('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', 'Conheça as soluções que desenvolvemos para você financiar sua ideia!'),
+                        m('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n.t('features.subtitle', I18nScope())),
                         m('.w-hidden-main.w-hidden-medium.u-margintop-30', [
-                            m('.fontsize-large.u-marginbottom-30', 'Atendimento rápido e ágil'),
-                            m('.fontsize-large.u-marginbottom-30', 'Painel de controle completo'),
-                            m('.fontsize-large.u-marginbottom-30', 'Tenha um blog de campanha'),
-                            m('.fontsize-large.u-marginbottom-30', 'É muito fácil apoiar um projeto'),
-                            m('.fontsize-large.u-marginbottom-30', 'Receba seu dinheiro mais rápido')
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_1', I18nScope())),
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_2', I18nScope())),
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_3', I18nScope())),
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_4', I18nScope())),
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_5', I18nScope()))
                         ])
                     ]),
                     m('.w-container', [
-                        m('.w-tabs.w-hidden-small.w-hidden-tiny[data-duration-in=\'300\'][data-duration-out=\'100\'][data-easing=\'linear\']', [
+                        m('.w-tabs.w-hidden-small.w-hidden-tiny', [
                             m('.w-tab-menu.w-col.w-col-4', _.map(ctrl.paneImages, (pane, idx) => {
                                 return m(`a.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
                                     onclick: ctrl.selectPane(idx)
@@ -192,13 +203,13 @@ window.c.pages.Start = ((m, c, h, models) => {
                 ]),
                 m('.w-section.section-large.bg-blue-one', [
                     m('.w-container.u-text-center', [
-                        m('.w-editable.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [
-                            'Uma campanha de financiamento coletivo é emoção garantida. ',
+                        m('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [
+                            I18n.t('video.title', I18nScope()),
                             m('br'),
-                            'Sente o gostinho...'
+                            I18n.t('video.subtitle', I18nScope())
                         ]),
                         m.component(c.YoutubeLightbox, {
-                            src: 'https://www.youtube.com/watch?v=FlFTcDSKnLM'
+                            src: I18n.t('video.src', I18nScope())
                         })
                     ])
                 ]),
@@ -207,7 +218,7 @@ window.c.pages.Start = ((m, c, h, models) => {
                         m('.u-text-center', [
                             m('.w-row', [
                                 m('.w-col.w-col-10.w-col-push-1', [
-                                    m('.fontsize-large.u-marginbottom-40.fontcolor-negative', 'O Catarse tem espaço para vários tipos de projetos! Conheça nossas categorias!')
+                                    m('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n.t('categories.title', I18nScope()))
                                 ])
                             ])
                         ]),
@@ -241,12 +252,12 @@ window.c.pages.Start = ((m, c, h, models) => {
                                                         m('.w-col.w-col-11', [
                                                             m('.fontsize-base.fontweight-semibold', project.user.name),
                                                             m('.fontsize-smallest', [
-                                                                `Arrecadou R$ ${h.formatNumber(project.pledged)} com ${project.total_contributors} apoios para o projeto `,
+                                                                I18n.t('categories.pledged', I18nScope({pledged: h.formatNumber(project.pledged), contributors: project.total_contributors})),
                                                                 m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
                                                             ])
                                                         ])
-                                                    ]) : m('.fontsize-base', 'carregando projeto destaque...');
-                                                }) : m('.fontsize-base', 'Nenhum projeto em destaque.'),
+                                                    ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()));
+                                                }) : m('.fontsize-base', I18n.t('categories.no_featured', I18nScope())),
                                             ])
                                         ];
                                     }) : h.loader())
@@ -257,48 +268,24 @@ window.c.pages.Start = ((m, c, h, models) => {
                 ]),
                 m.component(c.Slider, {
                     slides: testimonials(),
-                    title: 'O que estão dizendo por aí...'
+                    title: I18n.t('testimonials_title', I18nScope())
                 }),
                 m('.w-section.divider.u-margintop-30'),
                 m('.w-container', [
-                    m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', 'Ainda com dúvidas?'),
+                    m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n.t('qa_title', I18nScope())),
                     m('.w-row.u-marginbottom-60', [
-                        m('.w-col.w-col-6', [
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            }),
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            }),
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            }),
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            })
-                        ]),
-                        m('.w-col.w-col-6', [
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            }),
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            }),
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            }),
-                            m.component(c.landingQA, {
-                                question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
-                            })
-                        ])
+                        m('.w-col.w-col-6', _.map(ctrl.questions.col_1, (question) => {
+                            return m.component(c.landingQA, {
+                                question: question.question,
+                                answer: question.answer
+                            });
+                        })),
+                        m('.w-col.w-col-6', _.map(ctrl.questions.col_2, (question) => {
+                            return m.component(c.landingQA, {
+                                question: question.question,
+                                answer: question.answer
+                            });
+                        }))
                     ])
                 ]),
                 m('.w-section.section-large.u-text-center.bg-purple.before-footer', [
@@ -307,11 +294,11 @@ window.c.pages.Start = ((m, c, h, models) => {
                         m('form[action="/projects/new"][method="GET"].w-row.w-form', [
                             m('.w-col.w-col-2'),
                             m('.w-col.w-col-8', [
-                                m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'Quero iniciar uma campanha chamada'),
+                                m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
                                 m('input.w-input.text-field.medium.u-marginbottom-30[name=\'name\'][type=\'text\']'),
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
                                 m('select.w-select.text-field.medium.u-marginbottom-40[name=\'category_id\']', [
-                                    m('option[value=\'\']', 'Selecione uma categoria'),
+                                    m('option[value=\'\']', I18n.t('form.select_default', I18nScope())),
                                     _.map(ctrl.categories(), (category) => {
                                         return m(`option[value="${category.id}"]`, category.name);
                                     })
@@ -320,7 +307,7 @@ window.c.pages.Start = ((m, c, h, models) => {
                             m('.w-col.w-col-2'),
                             m('.w-row.u-marginbottom-80', [
                                 m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [
-                                    m('input[type="submit"][value="Comece seu rascunho"].w-button.btn.btn-large')
+                                    m(`input[type="submit"][value="${I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
                                 ])
                             ])
                         ])
@@ -329,4 +316,4 @@ window.c.pages.Start = ((m, c, h, models) => {
             ];
         }
     };
-}(window.m, window.c, window.c.h, window.c.models));
+}(window.m, window.c, window.c.h, window.c.models, window.I18n));
