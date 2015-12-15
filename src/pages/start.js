@@ -10,18 +10,19 @@ window.c.pages.Start = ((m, c, h, models, I18n) => {
                 featuredProjects = m.prop([]),
                 selectedCategoryIdx = m.prop(-1),
                 startvm = c.pages.startVM(I18n),
-                categoryvm = m.postgrest.filtersVM({
-                    category_id: 'eq'
-                }),
-                projectvm = m.postgrest.filtersVM({
-                    project_id: 'eq'
-                }),
-                uservm = m.postgrest.filtersVM({
-                    user_id: 'eq'
-                }),
                 filters = m.postgrest.filtersVM,
                 paneImages = startvm.panes,
-                statsLoader = m.postgrest.loaderWithToken(models.statistic.getRowOptions()),
+                categoryvm = filters({
+                    category_id: 'eq'
+                }),
+                projectvm = filters({
+                    project_id: 'eq'
+                }),
+                uservm = filters({
+                    id: 'eq'
+                }),
+                loader = m.postgrest.loaderWithToken,
+                statsLoader = loader(models.statistic.getRowOptions()),
                 loadCategories = () => {
                     return c.models.category.getPageWithToken(filters({}).order({
                         name: 'asc'
@@ -33,13 +34,13 @@ window.c.pages.Start = ((m, c, h, models, I18n) => {
                     };
                 },
                 lCategory = () => {
-                    return m.postgrest.loaderWithToken(models.categoryTotals.getRowOptions(categoryvm.parameters()));
+                    return loader(models.categoryTotals.getRowOptions(categoryvm.parameters()));
                 },
                 lProject = () => {
-                    return m.postgrest.loaderWithToken(models.projectDetail.getRowOptions(projectvm.parameters()));
+                    return loader(models.projectDetail.getRowOptions(projectvm.parameters()));
                 },
                 lUser = () => {
-                    return m.postgrest.loaderWithToken(models.user.getRowOptions(uservm.parameters()));
+                    return loader(models.userDetail.getRowOptions(uservm.parameters()));
                 },
                 selectCategory = (id) => {
                     return () => {
@@ -50,6 +51,16 @@ window.c.pages.Start = ((m, c, h, models, I18n) => {
                         lCategory().load().then(loadCategoryProjects);
                     };
                 },
+                setUser = (user, idx) => {
+                    featuredProjects()[idx] = _.extend({}, featuredProjects()[idx], {
+                        userThumb:  _.first(user).profile_img_thumbnail
+                    });
+                },
+                setProject = (project, idx) => {
+                    featuredProjects()[idx] = _.first(project);
+                    uservm.id(_.first(project).user.id);
+                    lUser().load().then((user) => setUser(user, idx));
+                },
                 loadCategoryProjects = (category) => {
                     selectedCategory(category);
                     let categoryProjects = _.findWhere(startvm.categoryProjects, {
@@ -57,9 +68,11 @@ window.c.pages.Start = ((m, c, h, models, I18n) => {
                     });
                     featuredProjects([]);
                     if (!_.isUndefined(categoryProjects)) {
-                        _.map(categoryProjects.projects, (project_id, idx) => {
-                            projectvm.project_id(project_id);
-                            lProject().load().then((project) => featuredProjects()[idx] = project);
+                        _.map(categoryProjects.sampleProjects, (project_id, idx) => {
+                            if (!_.isUndefined(project_id)) {
+                                projectvm.project_id(project_id);
+                                lProject().load().then((project) => setProject(project, idx));
+                            }
                         });
                     }
                 };
@@ -243,11 +256,9 @@ window.c.pages.Start = ((m, c, h, models, I18n) => {
                                                 m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
                                                 m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects),
                                                 m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
-                                                    project = _.first(project);
-
                                                     return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
                                                         m('.w-col.w-col-1', [
-                                                            m('img.user-avatar[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/558f6f5577ce56cf3faf2397_Screen%20Shot%202015-06-28%20at%2011.51.22%20AM.png\']')
+                                                            m(`img.user-avatar[src="${project.userThumb}"]`)
                                                         ]),
                                                         m('.w-col.w-col-11', [
                                                             m('.fontsize-base.fontweight-semibold', project.user.name),
@@ -298,7 +309,7 @@ window.c.pages.Start = ((m, c, h, models, I18n) => {
                                 m('input.w-input.text-field.medium.u-marginbottom-30[name=\'name\'][type=\'text\']'),
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
                                 m('select.w-select.text-field.medium.u-marginbottom-40[name=\'category_id\']', [
-                                    m('option[value=\'\']', I18n.t('form.select_default', I18nScope())),
+                                    m('option[value=""]', I18n.t('form.select_default', I18nScope())),
                                     _.map(ctrl.categories(), (category) => {
                                         return m(`option[value="${category.id}"]`, category.name);
                                     })
