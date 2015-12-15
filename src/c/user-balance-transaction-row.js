@@ -13,7 +13,7 @@ window.c.UserBalanceTransactionRow = ((m, h) => {
         },
         view: (ctrl, args) => {
             const item = args.item,
-                  createdAt = h.momentFromString(item.created_at);
+                  createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 
             return m(`div[class="${(ctrl.expanded() ? 'card-detailed-open' : '')}"]`,
                      m('.w-clearfix.card.card-clickable', [
@@ -56,10 +56,10 @@ window.c.UserBalanceTransactionRow = ((m, h) => {
                          return m('div',[
                              m(".w-row.fontsize-small.u-marginbottom-10", [
                                  m(".w-col.w-col-2", [
-                                     m(`.text-${(pos ? 'success' : 'error')}`, `+ R$ ${h.formatNumber(transaction.amount, 2, 3)}`)
+                                     m(`.text-${(pos ? 'success' : 'error')}`, `${pos ? '+' : '-'} R$ ${h.formatNumber(Math.abs(transaction.amount), 2, 3)}`)
                                  ]),
                                  m(".w-col.w-col-10", [
-                                     m("div", transaction.event_name)
+                                     m("div", `${transaction.event_name} ${transaction.origin_object.name}`)
                                  ])
                              ]),
                              m(".divider.u-marginbottom-10")
