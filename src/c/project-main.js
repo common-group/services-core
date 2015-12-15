@@ -20,7 +20,6 @@ window.c.ProjectMain = ((m, c, _, h) => {
                             '#posts': m.component(c.ProjectPosts, c_opts)
                         };
 
-
                     if (_.isEmpty(hash) || hash === '#_=_' || hash === '#preview') {
                         return tabs['#about'];
                     }
