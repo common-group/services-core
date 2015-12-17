@@ -25,7 +25,7 @@ window.c.AdminExternalAction = ((function(m, h, c, _) {
                 }
             };
 
-            const reload = _.compose(builder.model.getRow, h.idVM.id(item[builder.updateKey]).parameters),
+            const reload = _.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
                 l = m.postgrest.loader(builder.requestOptions, m.request);
 
             const reloadItem = (data) => {

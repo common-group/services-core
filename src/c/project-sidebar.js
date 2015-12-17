@@ -75,7 +75,7 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
             var project = args.project,
                 elapsed = project.elapsed_time,
                 remaining = project.remaining_time;
-            
+
             return m('#project-sidebar.aside', [
                 m('.project-stats', [
                     m('.project-stats-inner', [
