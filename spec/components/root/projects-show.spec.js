@@ -1,6 +1,6 @@
 describe('ProjectShow', () => {
   let $output, projectDetail,
-      ProjectShow = window.c.root.Show;
+      ProjectShow = window.c.root.ProjectsShow;
 
   beforeAll(() => {
     window.location.hash = '';
