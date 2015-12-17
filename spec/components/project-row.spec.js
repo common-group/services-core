@@ -33,8 +33,8 @@ describe('ProjectRow', () => {
                 $output = mq(view);
             });
 
-            it('should not render row', () => {
-                expect($output.find('.w-section').length).toEqual(0);
+            it('should render loader', () => {
+                expect($output.find('img[alt="Loader"]').length).toEqual(1);
             });
         });
 

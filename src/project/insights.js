@@ -168,7 +168,8 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                     m('.project-contributions-per-ref', [
                                         m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
                                         m.component(c.ProjectDataTable, {
-                                            table: ctrl.contributionsPerLocationTable
+                                            table: ctrl.contributionsPerLocationTable,
+                                            defaultSortIndex: -2
                                         })
                                     ])
                                 ]),

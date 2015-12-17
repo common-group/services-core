@@ -26,10 +26,10 @@ window.c.ProjectCard = ((m, h, models, I18n) => {
                         ])
                     ]),
                     m('.w-hidden-small.w-hidden-tiny.card-project-author.altt', [
-                        m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), ` ${project.city_name}, ${project.state_acronym}`])
+                        m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), ` ${project.city_name ? project.city_name : ''}, ${project.state_acronym ? project.state_acronym : ''}`])
                     ]),
                     m(`.card-project-meter.${project.state}`, [
-                        (project.state === ('successful' || 'failed' || 'waiting_funds')) ?
+                        (_.contains(['successful', 'failed', 'waitint_funds'], project.state)) ?
                             m('div', I18n.t('display_status.' + project.state, I18nScope())) :
                         m('.meter', [
                             m('.meter-fill', {
