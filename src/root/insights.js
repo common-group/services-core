@@ -1,4 +1,4 @@
-window.c.project.Insights = ((m, c, h, models, _, I18n) => {
+window.c.root.Insights = ((m, c, h, models, _, I18n) => {
     const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
     return {

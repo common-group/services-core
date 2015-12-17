@@ -1,4 +1,4 @@
-window.c.pages.Flex = (function(m, c, h, models) {
+window.c.root.Flex = (function(m, c, h, models) {
     return {
         controller: function() {
             const stats = m.prop([]),

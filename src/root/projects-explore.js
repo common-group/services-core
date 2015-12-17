@@ -1,18 +1,18 @@
 /**
- * window.c.contribution.ProjectsExplore component
+ * window.c.root.ProjectsExplore component
  * A root component to show projects according to user defined filters
  *
  * Example:
  * To mount this component just create a DOM element like:
  * <div data-mithril="ProjectsExplore">
  */
-window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
+window.c.root.ProjectsExplore = ((m, c, h, _) => {
     return {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
                   follow = c.models.categoryFollower,
-                  filtersMap = c.contribution.projectFilters(),
+                  filtersMap = c.root.projectFilters(),
                   categoryCollection = m.prop([]),
                   // Fake projects object to be able to render page while loadding (in case of search)
                   projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }}),

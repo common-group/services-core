@@ -1,4 +1,4 @@
-window.c.pages.Start = ((m, c, h, models, I18n) => {
+window.c.root.Start = ((m, c, h, models, I18n) => {
     const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
     return {

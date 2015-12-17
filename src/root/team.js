@@ -1,4 +1,4 @@
-window.c.pages.Team = (function(m, c) {
+window.c.root.Team = (function(m, c) {
     return {
         view: function() {
             return m('#static-team-app', [

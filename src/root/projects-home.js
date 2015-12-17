@@ -1,11 +1,11 @@
-window.c.contribution.ProjectsHome = (((m, c, moment, h, _) => {
+window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
     return {
         controller: () => {
             let sample3 = _.partial(_.sample, _, 3),
                 loaderWithToken = m.postgrest.loaderWithToken,
                 loader = _.partial(m.postgrest.loader, _, m.postgrest.request),
                 project = c.models.project,
-                filters = c.contribution.projectFilters();
+                filters = c.root.projectFilters();
 
             const collections = _.map(['near_me', 'recommended', 'expiring', 'recent'], (name) => {
                 const f = filters[name],

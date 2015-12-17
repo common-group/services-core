@@ -1,4 +1,4 @@
-window.c.contribution.projectFilters = ((m, h, moment) => {
+window.c.root.projectFilters = ((m, h, moment) => {
     return () =>{
         const filters = m.postgrest.filtersVM,
 

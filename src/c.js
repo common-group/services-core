@@ -1,11 +1,8 @@
 window.c = (() => {
     return {
         models: {},
-        pages: {},
-        contribution: {},
+        root: {},
         admin: {},
-        project: {},
-        user: {},
         h: {}
     };
 }());

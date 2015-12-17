@@ -1,4 +1,4 @@
-window.c.project.Show = ((m, c, _, models, h) => {
+window.c.root.ProjectsShow = ((m, c, _, models, h) => {
     return {
         controller: (args) => {
             const vm = m.postgrest.filtersVM({
