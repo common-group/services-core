@@ -120,10 +120,9 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 m('.w-section.hero-search', [
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: () => { ctrl.toggleCategories.toggle(); return false;}}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
+                            m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void();"]',{onclick: () => ctrl.toggleCategories.toggle()}, ['Explore projetos incríveis ',m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
                         ]),
-
-                        m('#categories.category-slider', ctrl.toggleCategories() ? [
+                        m(`#categories.category-slider${ctrl.toggleCategories() ? '.opened' : ''}`, [
                             m('.w-row', [
                                 _.map(ctrl.categories(), (category) => {
                                     return m.component(c.CategoryButton, {category: category});
@@ -136,7 +135,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                 })
 
                             ])
-                        ] : ''),
+                        ]),
                     ])
                 ]),
 
@@ -175,7 +174,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                     ])
                 ]),
 
-                m('.w-section.section.loadmore', [
+                m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-col.w-col-5'),

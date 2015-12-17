@@ -85,7 +85,7 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                                 m('.fontsize-small.u-text-center-small-only', [
                                     I18n.t('contributors_call', I18nScope()),
                                     m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({count: project.total_contributors}))),
-                                    remaining.total ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
+                                    (!project.expires_at) ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
                                 ])
                             ]),
                             m('.meter', [

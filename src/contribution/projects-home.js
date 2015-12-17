@@ -29,11 +29,10 @@ window.c.contribution.ProjectsHome = (((m, c, moment, h, _) => {
 
         view: (ctrl) => {
             return _.map(ctrl.collections, (collection) => {
-                return collection.loader() ? h.loader() :
-                    m.component(c.ProjectRow, {
-                        collection: collection,
-                        ref: `home_${collection.hash}`
-                    });
+                return m.component(c.ProjectRow, {
+                    collection: collection,
+                    ref: `home_${collection.hash}`
+                });
             });
         }
     };

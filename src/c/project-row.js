@@ -1,10 +1,10 @@
-window.c.ProjectRow = ((m, _) => {
+window.c.ProjectRow = ((m, _, h) => {
     return {
         view: (ctrl, args) => {
             const collection = args.collection,
                 ref = args.ref,
                 wrapper = args.wrapper || '.w-section.section.u-marginbottom-40';
-            return collection.collection().length > 0 ? m(wrapper, [
+            return m(wrapper, [
                 m('.w-container', [
                     (!_.isUndefined(collection.title) || !_.isUndefined(collection.hash)) ? m('.w-row.u-marginbottom-30', [
                         m('.w-col.w-col-10.w-col-small-6.w-col-tiny-6', [
@@ -14,14 +14,14 @@ window.c.ProjectRow = ((m, _) => {
                             m(`a.btn.btn-small.btn-terciary[href="/pt/explore?ref=${ref}#${collection.hash}"]`, 'Ver todos')
                         ])
                     ]) : '',
-                    m('.w-row', _.map(collection.collection(), (project) => {
+                    (collection.collection().length) ? m('.w-row', _.map(collection.collection(), (project) => {
                         return m.component(c.ProjectCard, {
                             project: project,
                             ref: ref
                         });
-                    }))
+                    })) : h.loader()
                 ])
-            ]) : m('');
+            ]);
         }
     };
-}(window.m, window._));
+}(window.m, window._, window.c.h));
