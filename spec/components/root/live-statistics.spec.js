@@ -1,6 +1,6 @@
 describe('pages.LiveStatistics', () => {
   let $output, statistic,
-      LiveStatistics = window.c.pages.LiveStatistics;
+      LiveStatistics = window.c.root.LiveStatistics;
 
   describe('view', () => {
     beforeAll(() => {
