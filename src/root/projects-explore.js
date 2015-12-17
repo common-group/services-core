@@ -167,7 +167,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _) => {
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-row', _.map(ctrl.projects().collection(), (project) => {
-                                return m.component(c.ProjectCard, {project: project});
+                                return m.component(c.ProjectCard, {project: project, ref: 'ctrse_explore'});
                             })),
                             ctrl.projects().isLoading() ? h.loader() : ''
                         ])
