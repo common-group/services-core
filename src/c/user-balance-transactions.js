@@ -1,22 +1,14 @@
 window.c.UserBalanceTransactions = ((m, h, models, _) => {
     return {
         controller: (args) => {
-            const vm = m.postgrest.filtersVM({user_id: 'eq'}),
-                  listVM = m.postgrest.paginationVM(
-                      models.balanceTransaction, 'created_at.desc');
-
-            vm.user_id(args.user_id);
-
-            if(!listVM.collection().lengt) {
-                listVM.firstPage(vm.parameters());
-            }
+            args.balanceTransactionManager.load();
 
             return {
-                listVM: listVM
+                list: args.balanceTransactionManager.list
             };
         },
-        view: (ctrl) => {
-            const list = ctrl.listVM;
+        view: (ctrl, args) => {
+            const list = ctrl.list;
 
             return m('.w-section.section.card-terciary.before-footer', [
                 m('.w-container', _.map(list.collection(), (item, index) => {

@@ -12,29 +12,41 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
         controller: (args) => {
             const vm = m.postgrest.filtersVM({user_id: 'eq'}),
                   balance = args.balance,
-                  bankAccounts = m.prop([]),
-                  loadBankA = (() => {
-                      vm.user_id(balance.user_id);
+                  loaderOpts = models.balanceTransfer.postOptions({
+                      user_id: balance.user_id}),
+                  requestLoader = m.postgrest.loaderWithToken(loaderOpts),
+                  displayDone = h.toggleProp(false, true),
+                  requestFund = () => {
+                      requestLoader.load().then((data) => {
+                          args.balanceManager.load();
+                          args.balanceTransactionManager.load();
+                          displayDone.toggle();
+                      });
+                  };
 
-                      return m.postgrest.loaderWithToken(
-                          models.bankAccount.getRowOptions(vm.parameters()));
-                  })();
-
-            loadBankA.load().then(bankAccounts);
+            args.bankAccountManager.load();
 
             return {
-                bankAccounts: bankAccounts
+                requestLoader: requestLoader,
+                requestFund: requestFund,
+                bankAccounts: args.bankAccountManager.collection,
+                displayDone: displayDone,
+                loadBankA: args.bankAccountManager.loader
             };
         },
         view: (ctrl, args) => {
             let balance = args.balance;
 
-            return m('div', _.map(ctrl.bankAccounts(), (item) => {
+            return (ctrl.loadBankA() ? h.loader() : m('div', _.map(ctrl.bankAccounts(), (item) => {
                 return [
                     m('.modal-dialog-header', [
                         m('.fontsize-large.u-text-center', 'Sacar dinheiro')
                     ]),
-                    m('.modal-dialog-content', [
+                    (ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
+                        m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
+                        m('p.fontsize-large',
+                          'Seu saque foi solicitado com sucesso. Em até 10 dias úteis o seu dinheiro estará em sua conta bancária!')
+                    ]) : m('.modal-dialog-content', [
                         m('.fontsize-base.u-marginbottom-20', [
                             m('span.fontweight-semibold', 'Valor:'),
                             m.trust('&nbsp;'),
@@ -74,19 +86,23 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
                             'Não é essa conta? ',
                             m('a.alt-link[href="js:void(0);"]', 'Altere aqui')
                         ])
-                    ]),
-                    m('.modal-dialog-nav-bottom', [
-                        m('.w-row', [
-                            m('.w-col.w-col-3'),
-                            m('.w-col.w-col-6', [
-                                m('a.btn.btn-large[href="js:void(0);"]', 'Solicitar saque')
-                            ]),
-                            m('.w-col.w-col-3')
-                        ])
-                    ])
+                     ])),
+                    (!ctrl.displayDone() ?
+                     m('.modal-dialog-nav-bottom', [
+                         m('.w-row', [
+                             m('.w-col.w-col-3'),
+                             m('.w-col.w-col-6', [
+                                 (ctrl.requestLoader() ?
+                                  h.loader()
+                                  : m('a.btn.btn-large[href="js:void(0);"]',
+                                      {onclick: ctrl.requestFund},
+                                      'Solicitar saque'))
+                             ]),
+                             m('.w-col.w-col-3')
+                         ])
+                     ]) : '')
                 ];
-            }));
+            })));
         }
     };
-
-                                          }(window.m, window.c.h, window._, window.c.models));
+}(window.m, window.c.h, window._, window.c.models));

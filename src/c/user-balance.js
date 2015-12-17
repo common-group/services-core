@@ -10,28 +10,20 @@
 window.c.UserBalance = ((m, h, _, models, c) => {
     return {
         controller: (args) => {
-            const vm = m.postgrest.filtersVM({user_id: 'eq'}),
-                  userBalances = m.prop([]),
-                  loadBalance = (() => {
-                      vm.user_id(args.user_id);
-                      return m.postgrest.loaderWithToken(
-                          models.balance.getRowOptions(vm.parameters()));
-                  })();
-
             let displayModal = h.toggleProp(false, true);
 
-            loadBalance.load().then(userBalances);
+            args.balanceManager.load();
 
             return {
-                userBalances: userBalances,
+                userBalances: args.balanceManager.collection,
                 displayModal: displayModal
             };
         },
         view: (ctrl, args) => {
-            let balance = _.first(ctrl.userBalances()) || {amount: 0, user_id: args.user_id},
+            let balance = _.first(ctrl.userBalances()),
                 balanceRequestModalC = [
                     'UserBalanceRequestModalContent',
-                    {balance: balance}
+                    _.extend({}, {balance: balance}, args)
                 ];
 
             return m('.w-section.section', [
