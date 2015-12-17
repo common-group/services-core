@@ -1,10 +1,8 @@
 window.c = (function() {
     return {
         models: {},
-        pages: {},
-        contribution: {},
+        root: {},
         admin: {},
-        project: {},
         h: {}
     };
 }());

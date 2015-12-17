@@ -1,4 +1,4 @@
-window.c.pages.startVM = ((_) => {
+window.c.root.startVM = ((_) => {
     return (I18n) => {
         const i18nStart = I18n.translations[I18n.currentLocale()].pages.start,
             testimonials = i18nStart.testimonials,
