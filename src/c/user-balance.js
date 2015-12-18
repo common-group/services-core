@@ -26,7 +26,7 @@ window.c.UserBalance = ((m, h, _, models, c) => {
                     _.extend({}, {balance: balance}, args)
                 ];
 
-            return m('.w-section.section', [
+            return m('.w-section.section.user-balance-section', [
                 (ctrl.displayModal() ? m.component(c.ModalBox, {
                     displayModal: ctrl.displayModal,
                     content: balanceRequestModalC

@@ -10,7 +10,7 @@ window.c.UserBalanceTransactions = ((m, h, models, _) => {
         view: (ctrl, args) => {
             const list = ctrl.list;
 
-            return m('.w-section.section.card-terciary.before-footer', [
+            return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
                 m('.w-container', _.map(list.collection(), (item, index) => {
                     return m.component(
                         c.UserBalanceTransactionRow, {item: item, index: index});
