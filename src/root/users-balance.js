@@ -1,13 +1,12 @@
 /**
- * window.c.user.Balance component
+ * window.c.root.Balance component
  * A root component to show user balance and transactions
  *
  * Example:
  * To mount this component just create a DOM element like:
- * <div data-mithril="Balance" data-parameters="{'user_id': 10}">
+ * <div data-mithril="UsersBalance" data-parameters="{'user_id': 10}">
  */
-
-window.c.user.Balance = ((m, _, c, models) => {
+window.c.root.UsersBalance = ((m, _, c, models) => {
     return {
         controller: (args) => {
             const userIdVM = m.postgrest.filtersVM({user_id: 'eq'});
