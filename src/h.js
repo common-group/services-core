@@ -240,12 +240,17 @@ window.c.h = ((m, moment, I18n) => {
         i18nScope = (scope, obj) => {
             obj = obj || {};
             return _.extend({}, obj, {scope: scope});
+        },
+
+        authenticityToken = () => {
+            return _.first(document.querySelectorAll('[data-authenticitytoken]')).dataset.authenticitytoken;
         };
 
     setMomentifyLocale();
     closeFlash();
 
     return {
+        authenticityToken: authenticityToken,
         cumulativeOffset: cumulativeOffset,
         discuss: discuss,
         existy: existy,
