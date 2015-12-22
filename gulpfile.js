@@ -11,7 +11,7 @@ var plumber = require('gulp-plumber');
 var Server = require('karma').Server;
 var flow = require('gulp-flowtype');
 
-var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/c/**/*.js','src/**/*.js'];
+var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/root/**/*.js','src/c/**/*.js','src/**/*.js'];
 var tests = ['spec/**/*.spec.js'];
 
 gulp.task('typecheck', function() {
