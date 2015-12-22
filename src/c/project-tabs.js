@@ -89,7 +89,7 @@ window.c.ProjectTabs = ((m, h) => {
                         ])
                     ])
                 ]),
-                ctrl.isFixed() ? m('.w-section.project-nav') : ''
+                (ctrl.isFixed() && !project.is_owner_or_admin) ? m('.w-section.project-nav') : ''
             ]);
         }
     };
