@@ -1,4 +1,6 @@
 window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.home');
+
     return {
         controller: () => {
             let sample3 = _.partial(_.sample, _, 3),
@@ -28,12 +30,20 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
         },
 
         view: (ctrl) => {
-            return _.map(ctrl.collections, (collection) => {
-                return m.component(c.ProjectRow, {
-                    collection: collection,
-                    ref: `home_${collection.hash}`
-                });
-            });
+            return [
+                m('.w-section.hero-full.hero-2016', [
+                    m('.w-container.u-text-center', [
+                        m('.fontsize-megajumbo.u-marginbottom-60.fontweight-semibold.fontcolor-negative', I18n.t('title', I18nScope())),
+                        m('a[href="http://2015.catarse.me/"].btn.btn-large.u-marginbottom-10.btn-inline', I18n.t('cta', I18nScope()))
+                    ])
+                ]),
+                _.map(ctrl.collections, (collection) => {
+                    return m.component(c.ProjectRow, {
+                        collection: collection,
+                        ref: `home_${collection.hash}`
+                    });
+                })
+            ];
         }
     };
 })(window.m, window.c, window.moment, window.c.h, window._));
