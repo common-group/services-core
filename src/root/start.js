@@ -9,7 +9,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 selectedCategory = m.prop([]),
                 featuredProjects = m.prop([]),
                 selectedCategoryIdx = m.prop(-1),
-                startvm = c.pages.startVM(I18n),
+                startvm = c.root.startVM(I18n),
                 filters = m.postgrest.filtersVM,
                 paneImages = startvm.panes,
                 categoryvm = filters({
