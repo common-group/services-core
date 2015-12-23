@@ -13,6 +13,7 @@ beforeAll(function(){
       online_date: "2015-07-13T10:19:40.193106-03:00",
       sent_to_analysis_at: "2014-07-01T23:01:05.640456",
       is_published: true,
+      is_owner_or_admin: true,
       is_expired: false,
       open_for_contributions: true,
       reminder_count: 23,
