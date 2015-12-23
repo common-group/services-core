@@ -7,7 +7,7 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
                 loaderWithToken = m.postgrest.loaderWithToken,
                 loader = _.partial(m.postgrest.loader, _, m.postgrest.request),
                 project = c.models.project,
-                filters = c.root.projectFilters();
+                filters = c.vms.projectFilters();
 
             const collections = _.map(['near_me', 'recommended', 'expiring', 'recent'], (name) => {
                 const f = filters[name],

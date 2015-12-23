@@ -13,6 +13,9 @@ window.c.root.ProjectsDashboard = ((m, c, h, _) => {
             alert('dashboard');
         },
 
-        view: (ctrl) => {}
+        view: (ctrl) => {
+            return project.is_owner_or_admin ?
+                m.component(c.ProjectDashboardMenu, {project: project}) : '';
+        }
     };
 }(window.m, window.c, window.c.h, window._));
