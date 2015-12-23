@@ -243,7 +243,7 @@ window.c.h = ((m, moment, I18n) => {
         },
 
         authenticityToken = () => {
-            return _.first(document.querySelectorAll('[data-authenticitytoken]')).dataset.authenticitytoken;
+            return _.first(document.querySelectorAll('[name=csrf-token]')).content;
         };
 
     setMomentifyLocale();
