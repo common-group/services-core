@@ -40,7 +40,7 @@ window.c.UserBalance = ((m, h, _, models, c) => {
                             ])
                         ]),
                         m('.w-col.w-col-4', [
-                            m(`a[class="w-button btn btn-medium u-marginbottom-10 ${(balance.amount <= 0 ? "btn-inactive" : "")}"][href="js:void(0);"]`,
+                            m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${(balance.amount <= 0 ? "btn-inactive" : "")}"][href="js:void(0);"]`,
                               {onclick: (balance.amount > 0 ? ctrl.displayModal.toggle : 'js:void(0);')},
                               '$ Realizar Saque')
                         ])
