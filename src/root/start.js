@@ -9,7 +9,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 selectedCategory = m.prop([]),
                 featuredProjects = m.prop([]),
                 selectedCategoryIdx = m.prop(-1),
-                startvm = c.pages.startVM(I18n),
+                startvm = c.root.startVM(I18n),
                 filters = m.postgrest.filtersVM,
                 paneImages = startvm.panes,
                 categoryvm = filters({
@@ -302,13 +302,15 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 m('.w-section.section-large.u-text-center.bg-purple.before-footer', [
                     m('.w-container', [
                         m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
-                        m('form[action="/projects/new"][method="GET"].w-row.w-form', [
+                        m('form[action="/pt/projects"][method="POST"].w-row.w-form', [
                             m('.w-col.w-col-2'),
                             m('.w-col.w-col-8', [
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
-                                m('input.w-input.text-field.medium.u-marginbottom-30[name=\'name\'][type=\'text\']'),
+                                m('input[name="utf8"][type="hidden"][value="✓"]'),
+                                m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
+                                m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {name: 'project[name]'}),
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
-                                m('select.w-select.text-field.medium.u-marginbottom-40[name=\'category_id\']', [
+                                m('select.w-select.text-field.medium.u-marginbottom-40', {name: 'project[category_id]'},[
                                     m('option[value=""]', I18n.t('form.select_default', I18nScope())),
                                     _.map(ctrl.categories(), (category) => {
                                         return m(`option[value="${category.id}"]`, category.name);

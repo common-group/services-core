@@ -6,7 +6,7 @@
  * To mount this component just create a DOM element like:
  * <div data-mithril="ProjectsExplore">
  */
-window.c.root.ProjectsExplore = ((m, c, h, _) => {
+window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
     return {
 
         controller: () => {
@@ -48,7 +48,11 @@ window.c.root.ProjectsExplore = ((m, c, h, _) => {
                                 findCategory(route[2]),
 
                             filterFromRoute =  () =>{
-                                const byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published');
+                                const byCategory = filters({
+                                    state_order: 'gte',
+                                    category_id: 'eq',
+                                    online_date: 'gt'
+                                }).state_order('published').online_date(moment().subtract(60, 'days').format('YYYY-MM-DD'));
 
                                 return route &&
                                     route[1] &&
@@ -167,7 +171,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _) => {
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-row', _.map(ctrl.projects().collection(), (project) => {
-                                return m.component(c.ProjectCard, {project: project});
+                                return m.component(c.ProjectCard, {project: project, ref: 'ctrse_explore'});
                             })),
                             ctrl.projects().isLoading() ? h.loader() : ''
                         ])
@@ -187,4 +191,4 @@ window.c.root.ProjectsExplore = ((m, c, h, _) => {
                 ])];
         }
     };
-}(window.m, window.c, window.c.h, window._));
+}(window.m, window.c, window.c.h, window._, window.moment));
