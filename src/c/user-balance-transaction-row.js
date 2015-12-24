@@ -28,7 +28,7 @@ window.c.UserBalanceTransactionRow = ((m, h) => {
                                          m('div', [
                                              m('span.fontsize-smaller.fontcolor-secondary', 'saída'),
                                              m.trust('&nbsp;'),
-                                             m('span.fontsize-base.text-error', `R$ ${h.formatNumber(item.debit, 2, 3)}`)
+                                             m('span.fontsize-base.text-error', `R$ ${h.formatNumber(Math.abs(item.debit), 2, 3)}`)
                                          ])
                                      ]),
                                      m('.w-col.w-col-4', [
