@@ -81,10 +81,6 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
                                 m.trust('&nbsp;'),
                                 `${item.account}-${item.account_digit}`
                             ])
-                        ]),
-                        m('.fontsize-smallest', [
-                            'Não é essa conta? ',
-                            m('a.alt-link[href="js:void(0);"]', 'Altere aqui')
                         ])
                      ])),
                     (!ctrl.displayDone() ?
@@ -94,7 +90,7 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
                              m('.w-col.w-col-6', [
                                  (ctrl.requestLoader() ?
                                   h.loader()
-                                  : m('a.btn.btn-large[href="js:void(0);"]',
+                                  : m('a.btn.btn-large.btn-request-fund[href="js:void(0);"]',
                                       {onclick: ctrl.requestFund},
                                       'Solicitar saque'))
                              ]),
