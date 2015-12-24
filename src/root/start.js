@@ -255,7 +255,8 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                                                 m('.fontsize-megajumbo.fontcolor-negative', `R$ ${h.formatNumber(category.total_successful_value, 2, 3)}`),
                                                 m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
                                                 m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects),
-                                                // m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
+                                                m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
+                                                // !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
                                                 //     return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
                                                 //         m('.w-col.w-col-1', [
                                                 //             m(`img.user-avatar[src="${project.userThumb}"]`)
