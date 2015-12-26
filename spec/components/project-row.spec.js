@@ -6,7 +6,8 @@ describe('ProjectRow', () => {
         let collection = {
             title: 'test collection',
             hash: 'testhash',
-            collection: m.prop([])
+            collection: m.prop([]),
+            loader: m.prop(false)
         };
 
         describe('when we have a ref parameter', () => {
@@ -23,9 +24,10 @@ describe('ProjectRow', () => {
             });
         });
 
-        describe('when collection is empty', () => {
+        describe('when collection is empty and loader true', () => {
             beforeAll(() => {
                 collection.collection([]);
+                collection.loader(true);
                 let component = m.component(ProjectRow),
                     view = component.view(null, {
                         collection: collection
@@ -35,6 +37,23 @@ describe('ProjectRow', () => {
 
             it('should render loader', () => {
                 expect($output.find('img[alt="Loader"]').length).toEqual(1);
+            });
+        });
+
+        describe('when collection is empty and loader false', () => {
+            beforeAll(() => {
+                collection.collection([]);
+                collection.loader(false);
+                let component = m.component(ProjectRow),
+                    view = component.view(null, {
+                        collection: collection
+                    });
+                $output = mq(view);
+            });
+
+            it('should render nothing', () => {
+                expect($output.find('img[alt="Loader"]').length).toEqual(0);
+                expect($output.find('.w-section').length).toEqual(0);
             });
         });
 
