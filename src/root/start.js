@@ -9,7 +9,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 selectedCategory = m.prop([]),
                 featuredProjects = m.prop([]),
                 selectedCategoryIdx = m.prop(-1),
-                startvm = c.root.startVM(I18n),
+                startvm = c.vms.start(I18n),
                 filters = m.postgrest.filtersVM,
                 paneImages = startvm.panes,
                 categoryvm = filters({
@@ -118,7 +118,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                         m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-4.w-col-push-4', [
-                                m('a.btn.btn-large.u-marginbottom-10[href=\'/projects/new\']',  I18n.t('submit', I18nScope()))
+                                m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]',  I18n.t('submit', I18nScope()))
                             ])
                         ]),
                         m('.w-row', _.isEmpty(stats) ? '' : [
@@ -202,7 +202,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                     m('.w-container', [
                         m('.w-tabs.w-hidden-small.w-hidden-tiny', [
                             m('.w-tab-menu.w-col.w-col-4', _.map(ctrl.paneImages, (pane, idx) => {
-                                return m(`a.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
+                                return m(`btn.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
                                     onclick: ctrl.selectPane(idx)
                                 }, pane.label);
                             })),
@@ -249,29 +249,30 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                                         return [
                                             m('.w-col.w-col-5', [
                                                 m('.fontsize-jumbo.u-marginbottom-20', category.name),
-                                                m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="/projects/new"]', 'Comece o seu projeto')
+                                                m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', 'Comece o seu projeto')
                                             ]),
                                             m('.w-col.w-col-7', [
                                                 m('.fontsize-megajumbo.fontcolor-negative', `R$ ${h.formatNumber(category.total_successful_value, 2, 3)}`),
                                                 m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
                                                 m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects),
-                                                m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
-                                                    return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
-                                                        m('.w-col.w-col-1', [
-                                                            m(`img.user-avatar[src="${project.userThumb}"]`)
-                                                        ]),
-                                                        m('.w-col.w-col-11', [
-                                                            m('.fontsize-base.fontweight-semibold', project.user.name),
-                                                            m('.fontsize-smallest', [
-                                                                I18n.t('categories.pledged', I18nScope({pledged: h.formatNumber(project.pledged), contributors: project.total_contributors})),
-                                                                m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
-                                                            ])
-                                                        ])
-                                                    ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()));
-                                                }) : m('.fontsize-base', I18n.t('categories.no_featured', I18nScope())),
+                                                m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
+                                                // !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
+                                                //     return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
+                                                //         m('.w-col.w-col-1', [
+                                                //             m(`img.user-avatar[src="${project.userThumb}"]`)
+                                                //         ]),
+                                                //         m('.w-col.w-col-11', [
+                                                //             m('.fontsize-base.fontweight-semibold', project.user.name),
+                                                //             m('.fontsize-smallest', [
+                                                //                 I18n.t('categories.pledged', I18nScope({pledged: h.formatNumber(project.pledged), contributors: project.total_contributors})),
+                                                //                 m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
+                                                //             ])
+                                                //         ])
+                                                //     ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()));
+                                                // }) : m('.fontsize-base', I18n.t('categories.no_featured', I18nScope())),
                                             ])
                                         ];
-                                    }) : h.loader())
+                                    }) : '')
                                 ])
                             ])
                         ])
@@ -299,7 +300,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                         }))
                     ])
                 ]),
-                m('.w-section.section-large.u-text-center.bg-purple.before-footer', [
+                m('#start-form.w-section.section-large.u-text-center.bg-purple.before-footer', [
                     m('.w-container', [
                         m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
                         m('form[action="/pt/projects"][method="POST"].w-row.w-form', [

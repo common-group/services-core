@@ -33,7 +33,10 @@ window.c.root.Flex = (function(m, c, h, models) {
                 statsLoader: statsLoader,
                 stats: stats,
                 projectsLoader: projectsLoader,
-                projects: {collection: projects}
+                projects: {
+                    loader: projectsLoader,
+                    collection: projects
+                }
             };
         },
         view: function(ctrl, args) {

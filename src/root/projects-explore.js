@@ -12,7 +12,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
         controller: () => {
             const filters = m.postgrest.filtersVM,
                   follow = c.models.categoryFollower,
-                  filtersMap = c.root.projectFilters(),
+                  filtersMap = c.vms.projectFilters(),
                   categoryCollection = m.prop([]),
                   // Fake projects object to be able to render page while loadding (in case of search)
                   projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }}),
