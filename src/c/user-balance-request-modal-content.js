@@ -7,7 +7,9 @@
  *     balance: {user_id: 123, amount: 123} // userBalance struct
  * })
  */
-window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
+window.c.UserBalanceRequestModalContent = ((m, h, _, models, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'users.balance');
+
     return {
         controller: (args) => {
             const vm = m.postgrest.filtersVM({user_id: 'eq'}),
@@ -40,12 +42,11 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
             return (ctrl.loadBankA() ? h.loader() : m('div', _.map(ctrl.bankAccounts(), (item) => {
                 return [
                     m('.modal-dialog-header', [
-                        m('.fontsize-large.u-text-center', 'Sacar dinheiro')
+                        m('.fontsize-large.u-text-center', I18n.t('withdraw', I18nScope()))
                     ]),
                     (ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
                         m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
-                        m('p.fontsize-large',
-                          'Seu saque foi solicitado com sucesso. Em até 10 dias úteis o seu dinheiro estará em sua conta bancária!')
+                        m('p.fontsize-large', I18n.t('sucess_message', I18nScope()))
                     ]) : m('.modal-dialog-content', [
                         m('.fontsize-base.u-marginbottom-20', [
                             m('span.fontweight-semibold', 'Valor:'),
@@ -53,31 +54,31 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
                             m('span.text-success', `R$ ${h.formatNumber(balance.amount, 2, 3)}`)
                         ]),
                         m('.fontsize-base.u-marginbottom-10', [
-                            m('span', {style: {'font-weight': ' 600'}}, 'Conta:')
+                            m('span', {style: {'font-weight': ' 600'}}, I18n.t('bank.account', I18nScope()))
                         ]),
                         m('.fontsize-small.u-marginbottom-10', [
                             m('div', [
-                                m('span.fontcolor-secondary', 'Nome / Razão Social:'),
+                                m('span.fontcolor-secondary', I18n.t('bank.name', I18nScope())),
                                 m.trust('&nbsp;'),
                                 item.owner_name
                             ]),
                             m('div', [
-                                m('span.fontcolor-secondary', 'CPF / CNPJ:'),
+                                m('span.fontcolor-secondary', I18n.t('bank.cpf_cnpj', I18nScope())),
                                 m.trust('&nbsp;'),
                                 item.owner_document
                             ]),
                             m('div', [
-                                m('span.fontcolor-secondary', 'Banco:'),
+                                m('span.fontcolor-secondary', I18n.t('bank.bank_name', I18nScope())),
                                 m.trust('&nbsp;'),
                                 item.bank_name
                             ]),
-                            m("div", [
-                                m('span.fontcolor-secondary', 'Agência:'),
+                            m('div', [
+                                m('span.fontcolor-secondary', I18n.t('bank.agency', I18nScope())),
                                 m.trust('&nbsp;'),
                                 `${item.agency}-${item.agency_digit}`
                             ]),
                             m('div', [
-                                m('span.fontcolor-secondary', 'Conta:'),
+                                m('span.fontcolor-secondary', I18n.t('bank.account', I18nScope())),
                                 m.trust('&nbsp;'),
                                 `${item.account}-${item.account_digit}`
                             ])
@@ -101,4 +102,4 @@ window.c.UserBalanceRequestModalContent = ((m, h, _, models) => {
             })));
         }
     };
-}(window.m, window.c.h, window._, window.c.models));
+}(window.m, window.c.h, window._, window.c.models, window.I18n));

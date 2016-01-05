@@ -26,7 +26,6 @@ describe('UserBalanceRequestModalContent', () => {
     it('should render user bank account / amount data', () => {
         expect($output.contains('R$ 205,00')).toEqual(true);
         expect($output.contains('Banco XX')).toEqual(true);
-        expect($output.contains('Conta:')).toEqual(true);
         $output.should.have('.btn-request-fund');
     });
 
