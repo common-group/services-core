@@ -1,4 +1,4 @@
-window.c = (function() {
+window.c = (() => {
     return {
         models: {},
         root: {},
