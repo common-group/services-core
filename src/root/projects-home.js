@@ -9,7 +9,7 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
                 project = c.models.project,
                 filters = c.vms.projectFilters();
 
-            const collections = _.map(['near_me', 'recommended', 'expiring', 'recent'], (name) => {
+            const collections = _.map(['recommended'], (name) => {
                 const f = filters[name],
                       cLoader = loaderWithToken(project.getPageOptions(f.filter.parameters())),
                       collection = m.prop([]);
