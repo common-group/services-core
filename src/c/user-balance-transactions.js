@@ -16,7 +16,7 @@ window.c.UserBalanceTransactions = ((m, h, models, _) => {
                         c.UserBalanceTransactionRow, {item: item, index: index});
                 })),
                 m('.container', [
-                    m('.w-row', [
+                    m('.w-row.u-margintop-40', [
                         m('.w-col.w-col-2.w-col-push-5', [
                             !list.isLoading() ? (
                                 list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
