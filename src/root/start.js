@@ -118,7 +118,9 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                         m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-4.w-col-push-4', [
-                                m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]',  I18n.t('submit', I18nScope()))
+                                m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
+                                    config: h.scrollTo()
+                                } ,I18n.t('submit', I18nScope()))
                             ])
                         ]),
                         m('.w-row', _.isEmpty(stats) ? '' : [
