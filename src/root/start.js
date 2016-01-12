@@ -42,11 +42,11 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 lUser = () => {
                     return loader(models.userDetail.getRowOptions(uservm.parameters()));
                 },
-                selectCategory = (id) => {
+                selectCategory = (category) => {
                     return () => {
-                        selectedCategoryIdx(id);
-                        categoryvm.category_id(id);
-                        selectedCategory([]);
+                        selectedCategoryIdx(category.id);
+                        categoryvm.category_id(category.id);
+                        selectedCategory([category]);
                         m.redraw();
                         lCategory().load().then(loadCategoryProjects);
                     };
@@ -118,7 +118,9 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                         m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-4.w-col-push-4', [
-                                m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]',  I18n.t('submit', I18nScope()))
+                                m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
+                                    config: h.scrollTo()
+                                }, I18n.t('submit', I18nScope()))
                             ])
                         ]),
                         m('.w-row', _.isEmpty(stats) ? '' : [
@@ -238,23 +240,25 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                         m('.w-tabs', [
                             m('.w-tab-menu.u-text-center', _.map(ctrl.categories(), (category) => {
                                 return m(`a.w-tab-link.w-inline-block.btn-category.small.btn-inline${(ctrl.selectedCategoryIdx() === category.id) ? '.w--current' : ''}`, {
-                                    onclick: ctrl.selectCategory(category.id)
+                                    onclick: ctrl.selectCategory(category)
                                 }, [
                                     m('div', category.name)
                                 ]);
                             })),
                             m('.w-tab-content.u-margintop-40', [
                                 m('.w-tab-pane.w--tab-active', [
-                                    m('.w-row', (!(_.isEmpty(ctrl.selectedCategory()) && ctrl.selectedCategoryIdx() !== -1)) ? _.map(ctrl.selectedCategory(), (category) => {
+                                    m('.w-row', (ctrl.selectedCategoryIdx() !== -1) ? _.map(ctrl.selectedCategory(), (category) => {
                                         return [
                                             m('.w-col.w-col-5', [
                                                 m('.fontsize-jumbo.u-marginbottom-20', category.name),
-                                                m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', 'Comece o seu projeto')
+                                                m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
+                                                    config: h.scrollTo()
+                                                }, I18n.t('submit', I18nScope()))
                                             ]),
                                             m('.w-col.w-col-7', [
-                                                m('.fontsize-megajumbo.fontcolor-negative', `R$ ${h.formatNumber(category.total_successful_value, 2, 3)}`),
+                                                m('.fontsize-megajumbo.fontcolor-negative', `R$ ${category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...'}`),
                                                 m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
-                                                m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects),
+                                                m('.fontsize-megajumbo.fontcolor-negative', (category.successful_projects) ? category.successful_projects : '...'),
                                                 m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
                                                 // !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
                                                 //     return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [

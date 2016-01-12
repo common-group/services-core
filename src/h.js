@@ -245,6 +245,45 @@ window.c.h = ((m, moment, I18n) => {
         authenticityToken = () => {
             const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
             return meta ? meta.content : undefined;
+        },
+        animateScrollTo = (el) => {
+            let scrolled = window.scrollY;
+
+            const offset = cumulativeOffset(el).top,
+                duration = 300,
+                dFrame = (offset - scrolled) / duration,
+                //EaseInOutCubic easing function. We'll abstract all animation funs later.
+                eased = (t) => t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+                animation = setInterval(() => {
+                    let pos = eased(scrolled / offset) * scrolled;
+
+                    window.scrollTo(0, pos);
+
+                    if (scrolled >= offset) {
+                        clearInterval(animation);
+                    }
+
+                    scrolled = scrolled + dFrame;
+                }, 1);
+        },
+        scrollTo = () => {
+            const setTrigger = (el, anchorId) => {
+                el.onclick = () => {
+                    const anchorEl = document.getElementById(anchorId);
+
+                    if (_.isElement(anchorEl)) {
+                        animateScrollTo(anchorEl);
+                    }
+
+                    return false;
+                };
+            };
+
+            return (el, isInitialized) => {
+                if (!isInitialized) {
+                    setTrigger(el, el.hash.slice(1));
+                }
+            };
         };
 
     setMomentifyLocale();
@@ -281,6 +320,7 @@ window.c.h = ((m, moment, I18n) => {
         UIHelper: UIHelper,
         toAnchor: toAnchor,
         paramByName: paramByName,
-        i18nScope: i18nScope
+        i18nScope: i18nScope,
+        scrollTo: scrollTo
     };
 }(window.m, window.moment, window.I18n));

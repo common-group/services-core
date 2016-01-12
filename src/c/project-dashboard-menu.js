@@ -64,8 +64,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                 m('#dashboard-links', [
                                     ((!project.is_published || project.is_admin_role) ? [
                                         m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', 'Básico'),
-                                        m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]',
-                                          (project.mode === 'aon' ? 'Meta e prazo' : 'Financiamento')),
+                                        m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', 'Financiamento'),
                                     ] : ''),
                                     m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', 'Descrição'),
                                     m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
