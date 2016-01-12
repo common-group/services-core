@@ -1,4 +1,4 @@
-window.c.root.Jobs = ((m, c, h, models, I18n) => {
+window.c.root.Jobs = ((m, I18n, h) => {
     const I18nScope = _.partial(h.i18nScope, 'pages.jobs');
 
     return {
@@ -24,4 +24,4 @@ window.c.root.Jobs = ((m, c, h, models, I18n) => {
             ];
         }
     };
-}(window.m, window.c, window.c.h, window.c.models, window.I18n));
+}(window.m, window.I18n, window.c.h));
