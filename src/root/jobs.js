@@ -3,7 +3,7 @@ window.c.root.Jobs = ((m, I18n, h) => {
 
     return {
         view: (ctrl, args) => {
-            
+
             return [
                 m('.w-section.hero-jobs.hero-medium', [
                     m('.w-containe.u-text-center',[

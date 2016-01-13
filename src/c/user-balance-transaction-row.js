@@ -5,7 +5,7 @@ window.c.UserBalanceTransactionRow = ((m, h) => {
         controller: (args) => {
             const expanded = h.toggleProp(false, true);
 
-            if(args.index == 0) {
+            if (args.index == 0) {
                 expanded.toggle();
             }
 

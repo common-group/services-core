@@ -42,7 +42,7 @@ window.c.UserBalance = ((m, h, _, models, c) => {
                             ])
                         ]),
                         m('.w-col.w-col-4', [
-                            m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${(balance.amount <= 0 ? "btn-inactive" : "")}"][href="js:void(0);"]`,
+                            m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${(balance.amount <= 0 ? 'btn-inactive' : '')}"][href="js:void(0);"]`,
                               {onclick: (balance.amount > 0 ? ctrl.displayModal.toggle : 'js:void(0);')},
                               I18n.t('withdraw_cta', I18nScope()))
                         ])
@@ -51,4 +51,4 @@ window.c.UserBalance = ((m, h, _, models, c) => {
             ]);
         }
     };
-} (window.m, window.c.h, window._, window.c.models, window.c));
+}(window.m, window.c.h, window._, window.c.models, window.c));
