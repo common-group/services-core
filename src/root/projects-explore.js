@@ -50,9 +50,8 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             filterFromRoute =  () =>{
                                 const byCategory = filters({
                                     state_order: 'gte',
-                                    category_id: 'eq',
-                                    online_date: 'gt'
-                                }).state_order('published').online_date(moment().subtract(60, 'days').format('YYYY-MM-DD'));
+                                    category_id: 'eq'
+                                }).state_order('published');
 
                                 return route &&
                                     route[1] &&
