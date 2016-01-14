@@ -242,6 +242,16 @@ window.c.h = ((m, moment, I18n) => {
             return _.extend({}, obj, {scope: scope});
         },
 
+        redrawHashChange = (before) => {
+            const callback = _.isFunction(before) ?
+                      () => {
+                          before();
+                          m.redraw();
+                      } : m.redraw;
+
+            window.addEventListener('hashchange', callback, false);
+        },
+
         authenticityToken = () => {
             const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
             return meta ? meta.content : undefined;
@@ -311,6 +321,7 @@ window.c.h = ((m, moment, I18n) => {
         rewardRemaning: rewardRemaning,
         parseUrl: parseUrl,
         hashMatch: hashMatch,
+        redrawHashChange: redrawHashChange,
         useAvatarOrDefault: useAvatarOrDefault,
         locationActionMatch: locationActionMatch,
         mixpanelTrack: mixpanelTrack,
