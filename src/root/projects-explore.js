@@ -79,6 +79,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 pages.firstPage(filter.filter.order({
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
+                                    state: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
