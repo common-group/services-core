@@ -182,7 +182,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                         m('.w-row', [
                             m('.w-col.w-col-5'),
                             m('.w-col.w-col-2', [
-                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
+                              (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(ctrl.projects().collection())) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
                             ]),
                             m('.w-col.w-col-5')
                         ])
