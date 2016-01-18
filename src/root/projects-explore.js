@@ -95,7 +95,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                       toggleCategories.toggle();
                   },
 
-                  toggleCategories = h.toggleProp(false, true);
+                  toggleCategories = h.toggleProp(true, false);
 
             window.addEventListener('hashchange', () => {
                 loadRoute();
