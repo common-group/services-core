@@ -79,6 +79,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 pages.firstPage(filter.filter.order({
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
+                                    state: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
@@ -95,7 +96,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                       toggleCategories.toggle();
                   },
 
-                  toggleCategories = h.toggleProp(false, true);
+                  toggleCategories = h.toggleProp(true, false);
 
             window.addEventListener('hashchange', () => {
                 loadRoute();
@@ -182,7 +183,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                         m('.w-row', [
                             m('.w-col.w-col-5'),
                             m('.w-col.w-col-2', [
-                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
+                              (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(ctrl.projects().collection())) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
                             ]),
                             m('.w-col.w-col-5')
                         ])
