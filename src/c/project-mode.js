@@ -39,7 +39,7 @@ window.c.ProjectMode = ((m, c, h, _) => {
                     m(`img[src="${modeImgSrc}"][width='30']`)
                 ]),
                 m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
-                    m('.fontsize-smaller.fontweight-semibold', 'Meta R$ ' + goal),
+                    m('.fontsize-smaller.fontweight-semibold', 'Meta R$ ' + h.selfOrEmpty(goal, '--')),
                     m('.w-inline-block.fontsize-smallest._w-inline-block', [
                         modeTitle,
                         tooltip('span.w-inline-block.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')

@@ -9,6 +9,8 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
         },
         view: (ctrl, args) => {
             var project = args.project;
+			project.address = project.address || {state_acronym: '', city: ''};
+
             return m('#project-highlight', [
                 (project.video_embed_url ? m('.w-embed.w-video.project-video', {
                     style: 'min-height: 240px;'

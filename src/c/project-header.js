@@ -1,16 +1,17 @@
-window.c.ProjectHeader = (function(m, c) {
+window.c.ProjectHeader = ((m, c, h) => {
     return {
-        view: function(ctrl, args) {
-            var project = args.project;
+        view: (ctrl, args) => {
+            let project = args.project;
+
             return m('#project-header', [
                 m('.w-section.section-product.' + project.mode),
                 m('.w-section.page-header.u-text-center', [
                     m('.w-container', [
-                        m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', project.name),
-                        m('h2.fontsize-base.lineheight-looser[itemprop="author"]', [
+                        m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project.name)),
+                        m('h2.fontsize-base.lineheight-looser[itemprop="author"]', (project.user) ? [
                             'por ',
-                            project.user.name
-                        ])
+							project.user.name
+                        ] : '')
                     ])
                 ]),
                 m('.w-section.project-main', [
@@ -29,4 +30,4 @@ window.c.ProjectHeader = (function(m, c) {
             ]);
         }
     };
-}(window.m, window.c));
+}(window.m, window.c, window.c.h));
