@@ -8,6 +8,9 @@ window.c.h = ((m, moment, I18n) => {
                 results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         },
+		selfOrEmpty = (obj, emptyState = '') => {
+			return obj ? obj : emptyState;
+		},
         setMomentifyLocale = () => {
             moment.locale('pt', {
                     monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
@@ -172,14 +175,6 @@ window.c.h = ((m, moment, I18n) => {
             return l;
         },
 
-        mixpanelTrack = () => {
-            return (el, isInitialized) => {
-                if (!isInitialized) {
-                    window.CatarseMixpanel.activate();
-                }
-            };
-        },
-
         UIHelper = () => {
             return (el, isInitialized) => {
                 if (!isInitialized && $) {
@@ -324,7 +319,6 @@ window.c.h = ((m, moment, I18n) => {
         redrawHashChange: redrawHashChange,
         useAvatarOrDefault: useAvatarOrDefault,
         locationActionMatch: locationActionMatch,
-        mixpanelTrack: mixpanelTrack,
         navigateToDevise: navigateToDevise,
         storeAction: storeAction,
         callStoredAction: callStoredAction,
@@ -332,6 +326,7 @@ window.c.h = ((m, moment, I18n) => {
         toAnchor: toAnchor,
         paramByName: paramByName,
         i18nScope: i18nScope,
+        selfOrEmpty: selfOrEmpty,
         scrollTo: scrollTo
     };
 }(window.m, window.moment, window.I18n));
