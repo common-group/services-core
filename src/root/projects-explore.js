@@ -15,7 +15,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                   filtersMap = c.vms.projectFilters(),
                   categoryCollection = m.prop([]),
                   // Fake projects object to be able to render page while loadding (in case of search)
-                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }}),
+                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }, isLastPage: () => { return true; }}),
                   title = m.prop(),
                   categoryId = m.prop(),
                   findCategory = (id) => {
@@ -68,6 +68,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                       page = { // We build an object with the same interface as paginationVM
                                           collection: m.prop([]),
                                           isLoading: l,
+                                          isLastPage: () => { return true; },
                                           nextPage: () => { return false; }
                                       };
                                 l.load().then(page.collection);
