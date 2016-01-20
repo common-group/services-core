@@ -10,7 +10,7 @@ window.c.ProjectHeader = ((m, c, h) => {
                         m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project.name)),
                         m('h2.fontsize-base.lineheight-looser[itemprop="author"]', (project.user) ? [
                             'por ',
-							project.user.name
+                            project.user.name
                         ] : '')
                     ])
                 ]),
