@@ -81,11 +81,11 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                     m('.project-stats-inner', [
                         m('.project-stats-info', [
                             m('.u-marginbottom-20', [
-                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${h.formatNumber(project.pledged)}`),
+                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${project.pledged ? h.formatNumber(project.pledged) : '0'}`),
                                 m('.fontsize-small.u-text-center-small-only', [
                                     I18n.t('contributors_call', I18nScope()),
                                     m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({count: project.total_contributors}))),
-                                    (!project.expires_at) ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
+                                    (!project.expires_at && elapsed) ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
                                 ])
                             ]),
                             m('.meter', [
@@ -97,10 +97,10 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                             ]),
                             m('.w-row.u-margintop-10', [
                                 m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${parseInt(project.progress)}%`)
+                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${project.progress ? parseInt(project.progress) : '0'}%`)
                                 ]),
                                 m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
-                                    m('.u-right.fontsize-small.lineheight-tighter', remaining.total ? [
+                                    m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [
                                         m('span.fontweight-semibold', remaining.total), I18n.t('remaining_time.' + remaining.unit, I18nScope({count: remaining.total}))
                                     ] : '')
                                 ])
