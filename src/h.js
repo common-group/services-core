@@ -9,7 +9,7 @@ window.c.h = ((m, moment, I18n) => {
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         },
 		selfOrEmpty = (obj, emptyState = '') => {
-			return obj ? obj : emptyState;
+    return obj ? obj : emptyState;
 		},
         setMomentifyLocale = () => {
             moment.locale('pt', {
