@@ -4,7 +4,7 @@ describe('ProjectHeader', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            projectDetail = ProjectDetailsMockery()[0];
+            projectDetail = m.prop(ProjectDetailsMockery()[0]);
             let component = m.component(ProjectHeader, {
                     project: projectDetail,
                     userDetails: m.prop([])

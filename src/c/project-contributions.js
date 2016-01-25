@@ -13,7 +13,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
                     };
                 };
 
-            filterVM.project_id(args.project.id).waiting_payment(false);
+            filterVM.project_id(args.project().id).waiting_payment(false);
 
             if (!listVM.collection().length) {
                 listVM.firstPage(filterVM.parameters());
@@ -28,7 +28,7 @@ window.c.ProjectContributions = ((m, models, h, _) => {
         view: (ctrl, args) => {
             const list = ctrl.listVM;
             return m('#project_contributions.content.w-col.w-col-12', [
-                (args.project.is_owner_or_admin ?
+                (args.project().is_owner_or_admin ?
                     m('.w-row.u-marginbottom-20', [
                         m('.w-col.w-col-1', [
                             m('input[checked="checked"][id="contribution_state_available_to_count"][name="waiting_payment"][type="radio"][value="available_to_count"]', {

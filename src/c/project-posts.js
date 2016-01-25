@@ -19,7 +19,7 @@ window.c.ProjectPosts = ((m, models, h, _) => {
         },
         view: (ctrl, args) => {
             const list = ctrl.listVM,
-                project = args.project;
+                project = args.project();
 
             return m('.project-posts.w-section', [
                 m('.w-container.u-margintop-20', [

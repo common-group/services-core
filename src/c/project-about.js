@@ -1,7 +1,7 @@
 window.c.ProjectAbout = ((m, c, h) => {
     return {
         view: (ctrl, args) => {
-            const project = args.project,
+            const project = args.project() || {},
                 onlineDays = () => {
                     let diff = moment(project.zone_online_date).diff(moment(project.zone_expires_at)),
                         duration = moment.duration(diff);
@@ -22,7 +22,7 @@ window.c.ProjectAbout = ((m, c, h) => {
                     m('p.fontsize-base', [
                         m('strong', 'O projeto'),
                     ]),
-                    m('.fontsize-base[itemprop="about"]', m.trust(project.about_html)),
+                    m('.fontsize-base[itemprop="about"]', m.trust(h.selfOrEmpty(project.about_html, '...'))),
                     project.budget ? [
                         m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
                         m('p.fontsize-base', m.trust(project.budget))
