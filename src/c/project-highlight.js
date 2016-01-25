@@ -9,6 +9,8 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
         },
         view: (ctrl, args) => {
             var project = args.project;
+            project.address = project.address || {state_acronym: '', city: ''};
+
             return m('#project-highlight', [
                 (project.video_embed_url ? m('.w-embed.w-video.project-video', {
                     style: 'min-height: 240px;'
@@ -20,7 +22,7 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
                 m('.project-blurb', project.headline),
                 m('.u-text-center-small-only.u-marginbottom-30', [
                     (!_.isNull(project.address) ?
-                        m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="/pt/explore#near_of/${project.address.state_acronym}"]`, [
+                     m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="/pt/explore?pg_search=${project.address.state_acronym}"]`, [
                             m('span.fa.fa-map-marker'), ` ${project.address.city}, ${project.address.state_acronym}`
                         ]) : ''
                     ),

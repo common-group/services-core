@@ -1,4 +1,4 @@
-window.c.project.Insights = ((m, c, h, models, _, I18n) => {
+window.c.root.Insights = ((m, c, h, models, _, I18n) => {
     const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
     return {
@@ -10,14 +10,15 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                 projectDetails = m.prop([]),
                 contributionsPerDay = m.prop([]),
                 contributionsPerLocation = m.prop([]),
-                l = m.prop(false);
+                loader = m.postgrest.loaderWithToken;
 
             filtersVM.project_id(args.root.getAttribute('data-id'));
 
-            l = m.postgrest.loaderWithToken(models.projectDetail.getRowOptions(filtersVM.parameters()));
+            const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
             l.load().then(projectDetails);
 
-            models.projectContributionsPerDay.getRow(filtersVM.parameters()).then(contributionsPerDay);
+            const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
+            lContributionsPerDay.load().then(contributionsPerDay);
 
             let contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
             const buildPerLocationTable = (contributions) => {
@@ -35,7 +36,9 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                     return contributionsPerLocationTable.push(column);
                 }) : [];
             };
-            models.projectContributionsPerLocation.getRow(filtersVM.parameters()).then(buildPerLocationTable);
+
+            const lContributionsPerLocation = loader(models.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
+            lContributionsPerLocation.load().then(buildPerLocationTable);
 
             let contributionsPerRefTable = [[
                 I18n.t('ref_table.header.origin', I18nScope()),
@@ -64,7 +67,9 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                     return contributionsPerRefTable.push(column);
                 }) : [];
             };
-            models.projectContributionsPerRef.getRow(filtersVM.parameters()).then(buildPerRefTable);
+
+            const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
+            lContributionsPerRef.load().then(buildPerRefTable);
 
             const explanationModeComponent = (projectMode) => {
                 const modes = {
@@ -77,6 +82,9 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
 
             return {
                 l: l,
+                lContributionsPerRef: lContributionsPerRef,
+                lContributionsPerLocation: lContributionsPerLocation,
+                lContributionsPerDay: lContributionsPerDay,
                 filtersVM: filtersVM,
                 projectDetails: projectDetails,
                 contributionsPerDay: contributionsPerDay,
@@ -126,12 +134,12 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                         'min-height': '300px'
                                     }
                                 }, [
-                                    m.component(c.ProjectDataChart, {
+                                    !ctrl.lContributionsPerDay() ? m.component(c.ProjectDataChart, {
                                         collection: ctrl.contributionsPerDay,
                                         label: I18n.t('amount_per_day_label', I18nScope()),
                                         dataKey: 'total_amount',
                                         xAxis: (item) => h.momentify(item.paid_at)
-                                    })
+                                    }) : h.loader()
                                 ]),
                             ]),
                             m('.w-row', [
@@ -140,12 +148,12 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                         'min-height': '300px'
                                     }
                                 }, [
-                                    m.component(c.ProjectDataChart, {
+                                    !ctrl.lContributionsPerDay() ? m.component(c.ProjectDataChart, {
                                         collection: ctrl.contributionsPerDay,
                                         label: I18n.t('contributions_per_day_label', I18nScope()),
                                         dataKey: 'total',
                                         xAxis: (item) => h.momentify(item.paid_at)
-                                    })
+                                    }) : h.loader()
                                 ]),
                             ]),
                             m('.w-row', [
@@ -156,10 +164,10 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                             h.newFeatureBadge(),
                                             tooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                         ]),
-                                        m.component(c.ProjectDataTable, {
+                                        !ctrl.lContributionsPerRef() ? m.component(c.ProjectDataTable, {
                                             table: ctrl.contributionsPerRefTable,
                                             defaultSortIndex: -2
-                                        })
+                                        }) : h.loader()
                                     ])
                                 ]),
                             ]),
@@ -167,9 +175,10 @@ window.c.project.Insights = ((m, c, h, models, _, I18n) => {
                                 m('.w-col.w-col-12.u-text-center', [
                                     m('.project-contributions-per-ref', [
                                         m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
-                                        m.component(c.ProjectDataTable, {
-                                            table: ctrl.contributionsPerLocationTable
-                                        })
+                                        !ctrl.lContributionsPerLocation() ? m.component(c.ProjectDataTable, {
+                                            table: ctrl.contributionsPerLocationTable,
+                                            defaultSortIndex: -2
+                                        }) : h.loader()
                                     ])
                                 ]),
                             ]),

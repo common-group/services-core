@@ -1,21 +1,21 @@
 /**
- * window.c.contribution.ProjectsExplore component
+ * window.c.root.ProjectsExplore component
  * A root component to show projects according to user defined filters
  *
  * Example:
  * To mount this component just create a DOM element like:
  * <div data-mithril="ProjectsExplore">
  */
-window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
+window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
     return {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
                   follow = c.models.categoryFollower,
-                  filtersMap = c.contribution.projectFilters(),
+                  filtersMap = c.vms.projectFilters(),
                   categoryCollection = m.prop([]),
                   // Fake projects object to be able to render page while loadding (in case of search)
-                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }}),
+                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }, isLastPage: () => { return true; }}),
                   title = m.prop(),
                   categoryId = m.prop(),
                   findCategory = (id) => {
@@ -48,7 +48,10 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                 findCategory(route[2]),
 
                             filterFromRoute =  () =>{
-                                const byCategory = filters({state_order: 'gte', category_id: 'eq'}).state_order('published');
+                                const byCategory = filters({
+                                    state_order: 'gte',
+                                    category_id: 'eq'
+                                }).state_order('published');
 
                                 return route &&
                                     route[1] &&
@@ -65,6 +68,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                       page = { // We build an object with the same interface as paginationVM
                                           collection: m.prop([]),
                                           isLoading: l,
+                                          isLastPage: () => { return true; },
                                           nextPage: () => { return false; }
                                       };
                                 l.load().then(page.collection);
@@ -76,6 +80,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                 pages.firstPage(filter.filter.order({
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
+                                    state: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
@@ -92,7 +97,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                       toggleCategories.toggle();
                   },
 
-                  toggleCategories = h.toggleProp(false, true);
+                  toggleCategories = h.toggleProp(true, false);
 
             window.addEventListener('hashchange', () => {
                 loadRoute();
@@ -120,10 +125,9 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 m('.w-section.hero-search', [
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('a.link-hidden-white.fontweight-light.fontsize-larger[href=\'#\']',{onclick: () => { ctrl.toggleCategories.toggle(); return false;}}, ['Explore projetos incríveis ',m('span.fa.fa-angle-down', '')])
+                            m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void();"]',{onclick: () => ctrl.toggleCategories.toggle()}, ['Explore projetos incríveis ',m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
                         ]),
-
-                        m('#categories.category-slider', ctrl.toggleCategories() ? [
+                        m(`#categories.category-slider${ctrl.toggleCategories() ? '.opened' : ''}`, [
                             m('.w-row', [
                                 _.map(ctrl.categories(), (category) => {
                                     return m.component(c.CategoryButton, {category: category});
@@ -136,7 +140,7 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                                 })
 
                             ])
-                        ] : ''),
+                        ]),
                     ])
                 ]),
 
@@ -168,19 +172,19 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-row', _.map(ctrl.projects().collection(), (project) => {
-                                return m.component(c.ProjectCard, {project: project});
+                                return m.component(c.ProjectCard, {project: project, ref: 'ctrse_explore'});
                             })),
                             ctrl.projects().isLoading() ? h.loader() : ''
                         ])
                     ])
                 ]),
 
-                m('.w-section.section.loadmore', [
+                m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-col.w-col-5'),
                             m('.w-col.w-col-2', [
-                                m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
+                              (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(ctrl.projects().collection())) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
                             ]),
                             m('.w-col.w-col-5')
                         ])
@@ -188,4 +192,4 @@ window.c.contribution.ProjectsExplore = ((m, c, h, _) => {
                 ])];
         }
     };
-}(window.m, window.c, window.c.h, window._));
+}(window.m, window.c, window.c.h, window._, window.moment));

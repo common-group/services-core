@@ -64,8 +64,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                 m('#dashboard-links', [
                                     ((!project.is_published || project.is_admin_role) ? [
                                         m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', 'Básico'),
-                                        m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]',
-                                          (project.mode === 'aon' ? 'Meta e prazo' : 'Financiamento')),
+                                        m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', 'Financiamento'),
                                     ] : ''),
                                     m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', 'Descrição'),
                                     m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
@@ -78,7 +77,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                                     m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', [
                                         'Recompensas', optionalOpt
                                     ]),
-                                    m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', 'Sobre você'), ((project.is_published || project.state === 'approved') || project.is_admin_role ? [
+                                    m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', 'Sobre você'), (project.mode === 'flex' || (project.is_published || project.state === 'approved') || project.is_admin_role ? [
                                         m('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', 'Conta'),
                                     ] : ''), (!project.is_published ? [
                                         m('a#dashboard_preview_link[class="' + editLinkClass + '"][href="' + editRoute + '#preview' + '"]', [

@@ -1,10 +1,9 @@
-window.c = (function() {
+window.c = (() => {
     return {
         models: {},
-        pages: {},
-        contribution: {},
+        root: {},
+        vms: {},
         admin: {},
-        project: {},
         h: {}
     };
 }());

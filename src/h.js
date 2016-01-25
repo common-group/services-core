@@ -8,6 +8,9 @@ window.c.h = ((m, moment, I18n) => {
                 results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         },
+		selfOrEmpty = (obj, emptyState = '') => {
+    return obj ? obj : emptyState;
+		},
         setMomentifyLocale = () => {
             moment.locale('pt', {
                     monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
@@ -172,14 +175,6 @@ window.c.h = ((m, moment, I18n) => {
             return l;
         },
 
-        mixpanelTrack = () => {
-            return (el, isInitialized) => {
-                if (!isInitialized) {
-                    window.CatarseMixpanel.activate();
-                }
-            };
-        },
-
         UIHelper = () => {
             return (el, isInitialized) => {
                 if (!isInitialized && $) {
@@ -240,12 +235,67 @@ window.c.h = ((m, moment, I18n) => {
         i18nScope = (scope, obj) => {
             obj = obj || {};
             return _.extend({}, obj, {scope: scope});
+        },
+
+        redrawHashChange = (before) => {
+            const callback = _.isFunction(before) ?
+                      () => {
+                          before();
+                          m.redraw();
+                      } : m.redraw;
+
+            window.addEventListener('hashchange', callback, false);
+        },
+
+        authenticityToken = () => {
+            const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
+            return meta ? meta.content : undefined;
+        },
+        animateScrollTo = (el) => {
+            let scrolled = window.scrollY;
+
+            const offset = cumulativeOffset(el).top,
+                duration = 300,
+                dFrame = (offset - scrolled) / duration,
+                //EaseInOutCubic easing function. We'll abstract all animation funs later.
+                eased = (t) => t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+                animation = setInterval(() => {
+                    let pos = eased(scrolled / offset) * scrolled;
+
+                    window.scrollTo(0, pos);
+
+                    if (scrolled >= offset) {
+                        clearInterval(animation);
+                    }
+
+                    scrolled = scrolled + dFrame;
+                }, 1);
+        },
+        scrollTo = () => {
+            const setTrigger = (el, anchorId) => {
+                el.onclick = () => {
+                    const anchorEl = document.getElementById(anchorId);
+
+                    if (_.isElement(anchorEl)) {
+                        animateScrollTo(anchorEl);
+                    }
+
+                    return false;
+                };
+            };
+
+            return (el, isInitialized) => {
+                if (!isInitialized) {
+                    setTrigger(el, el.hash.slice(1));
+                }
+            };
         };
 
     setMomentifyLocale();
     closeFlash();
 
     return {
+        authenticityToken: authenticityToken,
         cumulativeOffset: cumulativeOffset,
         discuss: discuss,
         existy: existy,
@@ -266,15 +316,17 @@ window.c.h = ((m, moment, I18n) => {
         rewardRemaning: rewardRemaning,
         parseUrl: parseUrl,
         hashMatch: hashMatch,
+        redrawHashChange: redrawHashChange,
         useAvatarOrDefault: useAvatarOrDefault,
         locationActionMatch: locationActionMatch,
-        mixpanelTrack: mixpanelTrack,
         navigateToDevise: navigateToDevise,
         storeAction: storeAction,
         callStoredAction: callStoredAction,
         UIHelper: UIHelper,
         toAnchor: toAnchor,
         paramByName: paramByName,
-        i18nScope: i18nScope
+        i18nScope: i18nScope,
+        selfOrEmpty: selfOrEmpty,
+        scrollTo: scrollTo
     };
 }(window.m, window.moment, window.I18n));

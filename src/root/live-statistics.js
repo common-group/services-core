@@ -1,4 +1,4 @@
-window.c.pages.LiveStatistics = ((m, models, h, _, JSON) => {
+window.c.root.LiveStatistics = ((m, models, h, _, JSON) => {
     return {
         controller: (args = {}) => {
             let pageStatistics = m.prop([]),

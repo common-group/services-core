@@ -1,6 +1,6 @@
 describe('ProjectsExplore', () => {
     let $output, project, component,
-        ProjectsExplore = window.c.contribution.ProjectsExplore;
+        ProjectsExplore = window.c.root.ProjectsExplore;
 
     beforeAll(() => {
         window.location.hash = '#by_category_id/1';

@@ -40,7 +40,7 @@ window.c.ProjectTabs = ((m, h) => {
             const project = args.project,
                 rewards = args.rewardDetails;
 
-            let mainClass = !ctrl.isFixed() ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
+            let mainClass = (!ctrl.isFixed() || project.is_owner_or_admin) ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
 
             return m('nav-wrapper',[
                 m(mainClass, {
@@ -89,7 +89,7 @@ window.c.ProjectTabs = ((m, h) => {
                         ])
                     ])
                 ]),
-                ctrl.isFixed() ? m('.w-section.project-nav') : ''
+                (ctrl.isFixed() && !project.is_owner_or_admin) ? m('.w-section.project-nav') : ''
             ]);
         }
     };

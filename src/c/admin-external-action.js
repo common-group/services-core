@@ -20,12 +20,12 @@ window.c.AdminExternalAction = ((function(m, h, c, _) {
                 item = args.item;
 
             builder.requestOptions.config = (xhr) => {
-                if (window.document.querySelectorAll('meta[name="csrf-token"]').length > 0) {
-                    xhr.setRequestHeader('X-CSRF-Token', window.document.querySelectorAll('meta[name="csrf-token"]')[0].content);
+                if (h.authenticityToken()) {
+                    xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
                 }
             };
 
-            const reload = _.compose(builder.model.getRow, h.idVM.id(item[builder.updateKey]).parameters),
+            const reload = _.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
                 l = m.postgrest.loader(builder.requestOptions, m.request);
 
             const reloadItem = (data) => {

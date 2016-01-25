@@ -12,7 +12,7 @@ window.c.AdminUser = (function(m, h) {
                     ]),
                     m('.fontsize-smallest', 'Usuário: ' + user.id),
                     m('.fontsize-smallest.fontcolor-secondary', 'Email: ' + user.email),
-                    args.additional_data || m('')
+                    args.additional_data
                 ])
             ]);
         }
