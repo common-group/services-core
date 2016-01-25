@@ -90,12 +90,12 @@ window.c.Slider = ((m, _) => {
                     m('#slide-prev.w-slider-arrow-left.w-hidden-small.w-hidden-tiny', {
                         onclick: () => sliderClick(ctrl.decrementSlide)
                     },[
-                        m('.w-icon-slider-left.fa.fa-chevron-left.fontcolor-terciary')
+                        m('.w-icon-slider-left.fa.fa-angle-left.fontcolor-terciary')
                     ]),
                     m('#slide-next.w-slider-arrow-right.w-hidden-small.w-hidden-tiny', {
                         onclick: () => sliderClick(ctrl.incrementSlide)
                     },[
-                        m('.w-icon-slider-right.fa.fa-chevron-right.fontcolor-terciary')
+                        m('.w-icon-slider-right.fa.fa-angle-right.fontcolor-terciary')
                     ]),
                     m('.w-slider-nav.w-slider-nav-invert.w-round.slide-nav', _(args.slides.length).times((idx) => {
                         return m(`.slide-bullet.w-slider-dot${ctrl.selectedSlideIdx() === idx ? '.w-active' : ''}`, {
