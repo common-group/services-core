@@ -94,10 +94,11 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                           projects(loadProjects());
                       }
                       categoryId(cat && cat.id);
-                      toggleCategories.toggle();
+                      route ? toggleCategories(false) : toggleCategories(true);
+
                   },
 
-                  toggleCategories = h.toggleProp(true, false);
+                  toggleCategories = h.toggleProp(false, true);
 
             window.addEventListener('hashchange', () => {
                 loadRoute();
