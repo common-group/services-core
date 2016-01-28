@@ -21,7 +21,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 uservm = filters({
                     id: 'eq'
                 }),
-                loader = _.partial(m.postgrest.loader, _, m.postgrest.request),
+                loader = m.postgrest.loader,
                 statsLoader = loader(models.statistic.getRowOptions()),
                 loadCategories = () => {
                     return c.models.category.getPage(filters({}).order({

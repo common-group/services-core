@@ -21,7 +21,7 @@ window.c.root.Flex = (function(m, c, h, models) {
 
             flexVM.mode('flex').state('online');
 
-            const projectsLoader = m.postgrest.loader(models.project.getPageOptions(flexVM.parameters()), m.postgrest.request);
+            const projectsLoader = m.postgrest.loader(models.project.getPageOptions(flexVM.parameters()));
 
             statsLoader.load().then(stats);
 

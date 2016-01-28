@@ -26,13 +26,14 @@ window.c.AdminExternalAction = ((function(m, h, c, _) {
             };
 
             const reload = _.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
-                l = m.postgrest.loader(builder.requestOptions, m.request);
+                l = m.prop(false);
 
             const reloadItem = (data) => {
                 reload().then(updateItem);
             };
 
             const requestError = (err) => {
+                l(false)
                 complete(true);
                 error(true);
             };
@@ -44,7 +45,8 @@ window.c.AdminExternalAction = ((function(m, h, c, _) {
             };
 
             const submit = () => {
-                l.load().then(reloadItem, requestError);
+                l(true);
+                m.request(builder.requestOptions).then(reloadItem, requestError);
                 return false;
             };
 
