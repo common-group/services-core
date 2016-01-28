@@ -10,15 +10,14 @@ describe('ProjectContributions', () => {
 
             spyOn(m, 'component').and.callThrough();
             projectContribution = ProjectContributionsMockery()[0];
-            let component = m.component(ProjectContributions, {
-                    project: {
+            const project = m.prop({
                         id: 1231
-                    }
+            });
+            const component = m.component(ProjectContributions, {
+                    project: project
                 }),
                 view = component.view(component.controller({
-                    project: {
-                        id: 1231
-                    }
+                    project: project
                 }));
 
             $output = mq(view);

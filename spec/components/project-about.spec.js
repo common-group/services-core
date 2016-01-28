@@ -7,7 +7,7 @@ describe('ProjectAbout', () => {
             projectDetail = ProjectDetailsMockery()[0];
             rewardDetail = RewardDetailsMockery()[0];
             let component = m.component(ProjectAbout, {
-                    project: projectDetail,
+                    project: m.prop(projectDetail),
                     rewardDetails: m.prop(RewardDetailsMockery())
                 }),
                 view = component.view();

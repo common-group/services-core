@@ -3,10 +3,10 @@ describe('ProjectHighlight', () => {
         ProjectHighlight = window.c.ProjectHighlight;
 
     it('when project video is not filled should render image', () => {
-        projectDetail = _.extend({}, ProjectDetailsMockery()[0], {
+        projectDetail = m.prop(_.extend({}, ProjectDetailsMockery()[0], {
             original_image: 'original_image',
             video_embed_url: null
-        });
+        }));
         let component = m.component(ProjectHighlight, {
                 project: projectDetail
             }),

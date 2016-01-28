@@ -1,7 +1,7 @@
 window.c.ProjectHeader = ((m, c, h) => {
     return {
         view: (ctrl, args) => {
-            let project = args.project;
+            let project = args.project() || {};
 
             return m('#project-header', [
                 m('.w-section.section-product.' + project.mode),

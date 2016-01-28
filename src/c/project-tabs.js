@@ -37,7 +37,7 @@ window.c.ProjectTabs = ((m, h) => {
             };
         },
         view: (ctrl, args) => {
-            const project = args.project,
+            const project = args.project() || {},
                 rewards = args.rewardDetails;
 
             let mainClass = (!ctrl.isFixed() || project.is_owner_or_admin) ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
@@ -61,7 +61,7 @@ window.c.ProjectTabs = ((m, h) => {
                                     style: 'float: left;'
                                 }, [
                                     'Novidades ',
-                                    m('span.badge', project.posts_count)
+                                    m('span.badge', h.selfOrEmpty(project.posts_count, '-'))
                                 ]),
                                 m('a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {
                                     style: 'float: left;'
