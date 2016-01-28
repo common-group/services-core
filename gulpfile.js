@@ -9,7 +9,6 @@ var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var plumber = require('gulp-plumber');
 var Server = require('karma').Server;
-var flow = require('gulp-flowtype');
 
 var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/root/**/*.js','src/c/**/*.js','src/**/*.js'];
 var tests = ['spec/**/*.spec.js'];
