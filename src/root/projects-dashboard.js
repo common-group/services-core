@@ -14,8 +14,8 @@ window.c.root.ProjectsDashboard = ((m, c, h, _, vms) => {
         },
 
         view: (ctrl) => {
-            const project = ctrl.projectDetails();
-            return project.is_owner_or_admin ?
+            const project = ctrl.projectDetails;
+            return project().is_owner_or_admin ?
                 m.component(c.ProjectDashboardMenu, {project: project}) : '';
         }
     };
