@@ -33,7 +33,7 @@ window.c.AdminExternalAction = ((function(m, h, c, _) {
             };
 
             const requestError = (err) => {
-                l(false)
+                l(false);
                 complete(true);
                 error(true);
             };
