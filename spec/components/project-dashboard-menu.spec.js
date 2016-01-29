@@ -6,7 +6,7 @@ describe('ProjectDashboardMenu', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 let body = jasmine.createSpyObj('body', ['className']),
-                    projectDetail = ProjectDetailsMockery(newState)[0],
+                    projectDetail = m.prop(ProjectDetailsMockery(newState)[0]),
                     component = m.component(ProjectDashboardMenu, {
                         project: projectDetail
                     }),

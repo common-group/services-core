@@ -1,5 +1,5 @@
 window.c.vms.project = ((m, h, _, models) => {
-    return (project_id, project_user_id) =>{
+    return (project_id, project_user_id) => {
         const vm = m.postgrest.filtersVM({
             project_id: 'eq'
         }),

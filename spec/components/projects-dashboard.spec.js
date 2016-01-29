@@ -1,11 +1,10 @@
 describe('ProjectsDashboard', () => {
-    let $output, projectDetail, rewardDetail,
+    let $output, projectDetail,
         ProjectsDashboard = window.c.root.ProjectsDashboard;
 
     describe('view', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
-            rewardDetail = RewardDetailsMockery()[0];
             let component = m.component(ProjectsDashboard, {
                 project_id: projectDetail.project_id,
                 project_user_id: projectDetail.user.id,
