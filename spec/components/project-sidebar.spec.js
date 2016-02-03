@@ -6,7 +6,7 @@ describe('ProjectSidebar', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 spyOn(m, 'component').and.callThrough();
-                let projectDetail = _.extend({}, ProjectDetailsMockery()[0], newState),
+                let projectDetail = m.prop(_.extend({}, ProjectDetailsMockery()[0], newState)),
                     component = m.component(ProjectSidebar, {
                         project: projectDetail,
                         userDetails: m.prop([])

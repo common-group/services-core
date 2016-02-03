@@ -9,8 +9,8 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                         let animation, progress = 0,
                             pledged = 0,
                             contributors = 0,
-                            pledgedIncrement = project.pledged / project.progress,
-                            contributorsIncrement = project.total_contributors / project.progress;
+                            pledgedIncrement = project().pledged / project().progress,
+                            contributorsIncrement = project().total_contributors / project().progress;
 
                         const progressBar = document.getElementById('progressBar'),
                             pledgedEl = document.getElementById('pledged'),
@@ -19,7 +19,7 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                                 animation = setInterval(incrementProgress, 28);
                             },
                             incrementProgress = () => {
-                                if (progress <= parseInt(project.progress)) {
+                                if (progress <= parseInt(project().progress)) {
                                     progressBar.style.width = `${progress}%`;
                                     pledgedEl.innerText = `R$ ${h.formatNumber(pledged)}`;
                                     contributorsEl.innerText = `${parseInt(contributors)} pessoas`;
@@ -47,21 +47,21 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                         'approved': 'card-dark'
                     };
 
-                    return (states[project.state] ? 'card u-radius zindex-10 ' + states[project.state] : '');
+                    return (states[project().state] ? 'card u-radius zindex-10 ' + states[project().state] : '');
                 },
                 displayStatusText = () => {
                     const states = {
                         'approved': I18n.t('display_status.approved', I18nScope()),
-                        'online': h.existy(project.zone_expires_at) ? I18n.t('display_status.online', I18nScope({date: h.momentify(project.zone_expires_at)})) : '',
-                        'failed': I18n.t('display_status.failed', I18nScope({date: h.momentify(project.zone_expires_at), goal: project.goal})),
+                        'online': h.existy(project().zone_expires_at) ? I18n.t('display_status.online', I18nScope({date: h.momentify(project().zone_expires_at)})) : '',
+                        'failed': I18n.t('display_status.failed', I18nScope({date: h.momentify(project().zone_expires_at), goal: project().goal})),
                         'rejected': I18n.t('display_status.rejected', I18nScope()),
                         'in_analysis': I18n.t('display_status.in_analysis', I18nScope()),
-                        'successful': I18n.t('display_status.successful', I18nScope({date: h.momentify(project.zone_expires_at)})),
+                        'successful': I18n.t('display_status.successful', I18nScope({date: h.momentify(project().zone_expires_at)})),
                         'waiting_funds': I18n.t('display_status.waiting_funds', I18nScope()),
                         'draft': I18n.t('display_status.draft', I18nScope())
                     };
 
-                    return states[project.state];
+                    return states[project().state];
                 };
 
             return {
@@ -73,31 +73,31 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
 
         view: function(ctrl, args) {
             var project = args.project,
-                elapsed = project.elapsed_time,
-                remaining = project.remaining_time;
+                elapsed = project().elapsed_time,
+                remaining = project().remaining_time;
 
             return m('#project-sidebar.aside', [
                 m('.project-stats', [
                     m('.project-stats-inner', [
                         m('.project-stats-info', [
                             m('.u-marginbottom-20', [
-                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${project.pledged ? h.formatNumber(project.pledged) : '0'}`),
+                                m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${project().pledged ? h.formatNumber(project().pledged) : '0'}`),
                                 m('.fontsize-small.u-text-center-small-only', [
                                     I18n.t('contributors_call', I18nScope()),
-                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({count: project.total_contributors}))),
-                                    (!project.expires_at && elapsed) ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
+                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({count: project().total_contributors}))),
+                                    (!project().expires_at && elapsed) ? ' em ' + I18n.t('datetime.distance_in_words.x_' + elapsed.unit, {count: elapsed.total}, I18nScope()) : ''
                                 ])
                             ]),
                             m('.meter', [
                                 m('#progressBar.meter-fill', {
                                     style: {
-                                        width: `${project.progress}%`
+                                        width: `${project().progress}%`
                                     }
                                 })
                             ]),
                             m('.w-row.u-margintop-10', [
                                 m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${project.progress ? parseInt(project.progress) : '0'}%`)
+                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${project().progress ? parseInt(project().progress) : '0'}%`)
                                 ]),
                                 m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
                                     m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [
@@ -112,7 +112,7 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                             })
                         ])
                     ])
-                    , (project.open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project.id + '/contributions/new"]', I18n.t('submit', I18nScope())) : ''), ((project.open_for_contributions) ? m.component(c.ProjectReminder, {
+                    , (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project().id + '/contributions/new"]', I18n.t('submit', I18nScope())) : ''), ((project().open_for_contributions) ? m.component(c.ProjectReminder, {
                         project: project,
                         type: 'link'
                     }) : ''),

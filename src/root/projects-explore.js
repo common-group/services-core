@@ -81,6 +81,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
                                     state: 'desc',
+                                    recommended: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
@@ -152,18 +153,18 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 m('.fontsize-larger', ctrl.title())
                             ]),
 
-                            _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-small-5.w-col-tiny-5', [
-                                m('.w-row', [
-                                    m('.w-col.w-col-8.w-hidden-small.w-hidden-tiny.w-clearfix', [
-                                        m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.category().followers} seguidores`)
-                                    ]),
-                                    m('.w-col.w-col-4.w-col-small-12.w-col-tiny-12', [
-                                        ctrl.category().following ?
-                                            m('a.btn.btn-medium.btn-terciary.unfollow-btn[href=\'#\']', {onclick: ctrl.unFollowCategory(ctrl.category().id)}, 'Deixar de seguir') :
-                                            m('a.btn.btn-medium.follow-btn[href=\'#\']', {onclick: ctrl.followCategory(ctrl.category().id)}, 'Seguir')
-                                    ])
-                                ])
-                            ]) : ''
+                            // _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-small-5.w-col-tiny-5', [
+                            //     m('.w-row', [
+                            //         m('.w-col.w-col-8.w-hidden-small.w-hidden-tiny.w-clearfix', [
+                            //             m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.category().followers} seguidores`)
+                            //         ]),
+                            //         m('.w-col.w-col-4.w-col-small-12.w-col-tiny-12', [
+                            //             ctrl.category().following ?
+                            //                 m('a.btn.btn-medium.btn-terciary.unfollow-btn[href=\'#\']', {onclick: ctrl.unFollowCategory(ctrl.category().id)}, 'Deixar de seguir') :
+                            //                 m('a.btn.btn-medium.follow-btn[href=\'#\']', {onclick: ctrl.followCategory(ctrl.category().id)}, 'Seguir')
+                            //         ])
+                            //     ])
+                            // ]) : ''
 
                         ])
                     ])
