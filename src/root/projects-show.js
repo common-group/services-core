@@ -6,7 +6,7 @@ window.c.root.ProjectsShow = ((m, c, _, h, vms) => {
 
         view: (ctrl) => {
             let project = ctrl.projectDetails;
-
+            
             return m('.project-show', [
                     m.component(c.ProjectHeader, {
                         project: project,

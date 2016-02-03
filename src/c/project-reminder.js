@@ -11,7 +11,7 @@
 window.c.ProjectReminder = ((m, models, h, c) => {
     return {
         controller: (args) => {
-            let project = args.project,
+            let project = args.project(),
                 filterVM = m.postgrest.filtersVM({
                     project_id: 'eq'
                 }),
@@ -56,7 +56,7 @@ window.c.ProjectReminder = ((m, models, h, c) => {
             const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
                 buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small',
                 hideTextOnMobile = args.hideTextOnMobile || false,
-                project = args.project;
+                project = args.project();
 
             return m(`#project-reminder${mainClass}`, [
                 m(`button[class="${buttonClass} ${(project.in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
