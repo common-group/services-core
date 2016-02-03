@@ -22,7 +22,7 @@ describe('ProjectHighlight', () => {
     describe('view', () => {
         beforeAll(() => {
             spyOn(m, 'component').and.callThrough();
-            projectDetail = ProjectDetailsMockery()[0];
+            projectDetail = m.prop(ProjectDetailsMockery()[0]);
             let component = m.component(ProjectHighlight, {
                     project: projectDetail
                 }),
@@ -37,7 +37,7 @@ describe('ProjectHighlight', () => {
         it('should render project video, headline, category and address info', () => {
             expect($output.find('iframe.embedly-embed').length).toEqual(1);
             expect($output.find('span.fa.fa-map-marker').length).toEqual(1);
-            expect($output.contains(projectDetail.address.city)).toEqual(true);
+            expect($output.contains(projectDetail().address.city)).toEqual(true);
         });
 
         it('should render project share box when click on share', () => {

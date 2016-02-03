@@ -4,7 +4,7 @@ describe('ProjectMode', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            project = ProjectMockery()[0];
+            project = m.prop(ProjectMockery()[0]);
         });
 
         it('should render the project mode', () => {
@@ -17,7 +17,7 @@ describe('ProjectMode', () => {
 
         it('should render the project mode when goal is null', () => {
             component = m.component(ProjectCard, {
-                project: _.extend({}, project, {goal: null})
+                project: m.prop(_.extend({}, project, {goal: null}))
             });
             $output = mq(component);
             expect($output.find('.w-row').length).toEqual(1);

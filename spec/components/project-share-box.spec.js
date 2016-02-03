@@ -4,7 +4,7 @@ describe('ProjectShareBox', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            projectDetail = ProjectDetailsMockery()[0];
+            projectDetail = m.prop(ProjectDetailsMockery()[0]);
             let args = {
                     project: projectDetail,
                     displayShareBox: {
