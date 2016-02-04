@@ -4,7 +4,7 @@ window.c.ProjectHeader = ((m, c, h, _) => {
             let project = args.project;
 
             if (_.isUndefined(project())){
-               project = m.prop({});
+                project = m.prop({});
             }
 
             return m('#project-header', [

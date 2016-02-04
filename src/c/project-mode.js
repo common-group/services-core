@@ -25,7 +25,6 @@ window.c.ProjectMode = ((m, c, h, _) => {
                     });
                 };
 
-
             return m(`#${mode}.w-row`, [
                 m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [
                     m(`img[src="${modeImgSrc}"][width='30']`)
