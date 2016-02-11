@@ -173,14 +173,6 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                                 m('.info-howworks-backers', [
                                     m('.fontweight-semibold.fontsize-large', I18n.t('banner.3', I18nScope())),
                                     m('.fontsize-base',  I18n.t('banner.4', I18nScope()))
-                                ]),
-                                m('.info-howworks-backers', [
-                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.5', I18nScope())),
-                                    m('.fontsize-base',  I18n.t('banner.6', I18nScope()))
-                                ]),
-                                m('.info-howworks-backers', [
-                                    m('.fontweight-semibold.fontsize-large', I18n.t('banner.7', I18nScope())),
-                                    m('.fontsize-base',  I18n.t('banner.8', I18nScope()))
                                 ])
                             ])
                         ])
