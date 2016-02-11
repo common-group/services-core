@@ -9,22 +9,9 @@ var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var plumber = require('gulp-plumber');
 var Server = require('karma').Server;
-var flow = require('gulp-flowtype');
 
 var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/root/**/*.js','src/c/**/*.js','src/**/*.js'];
 var tests = ['spec/**/*.spec.js'];
-
-gulp.task('typecheck', function() {
-  return gulp.src(sources)
-    .pipe(flow({
-      all: false,
-      weak: false,
-      declarations: './declarations',
-      killFlow: false,
-      beep: true,
-      abort: false
-    }));
-});
 
 gulp.task('test', function(done) {
   new Server({
@@ -54,10 +41,10 @@ gulp.task('dist', function(done){
 });
 
 gulp.task('watch', function(){
-  (argv.q) ? gulp.watch(sources, ['typecheck', 'dist']) :
-  (argv.notest) ? gulp.watch(sources, ['lint', 'typecheck', 'dist']) :
-  gulp.watch(sources.concat(tests), ['test', 'lint', 'typecheck', 'dist']);
+  (argv.q) ? gulp.watch(sources, ['dist']) :
+  (argv.notest) ? gulp.watch(sources, ['lint', 'dist']) :
+  gulp.watch(sources.concat(tests), ['test', 'lint', 'dist']);
 });
 
 gulp.task('default', ['watch']);
-gulp.task('build', ['lint', 'test', 'typecheck', 'dist']);
+gulp.task('build', ['lint', 'test', 'dist']);

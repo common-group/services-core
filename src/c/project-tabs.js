@@ -40,9 +40,9 @@ window.c.ProjectTabs = ((m, h) => {
             const project = args.project,
                 rewards = args.rewardDetails;
 
-            let mainClass = (!ctrl.isFixed() || project.is_owner_or_admin) ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
+            let mainClass = (!ctrl.isFixed() || project().is_owner_or_admin) ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
 
-            return m('nav-wrapper',[
+            return m('nav-wrapper', project() ? [
                 m(mainClass, {
                     config: ctrl.navDisplay
                 }, [
@@ -61,36 +61,36 @@ window.c.ProjectTabs = ((m, h) => {
                                     style: 'float: left;'
                                 }, [
                                     'Novidades ',
-                                    m('span.badge', project.posts_count)
+                                    m('span.badge', project() ? project().posts_count : '')
                                 ]),
                                 m('a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {
                                     style: 'float: left;'
                                 }, [
                                     'Apoios ',
-                                    m('span.badge.w-hidden-small.w-hidden-tiny', project.total_contributions)
+                                    m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributions : '-')
                                 ]),
                                 m('a[id="comments-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#comments') ? 'selected' : '') + '"][href="#comments"]', {
                                     style: 'float: left;'
                                 }, [
                                     'Comentários ',
-                                    m('fb:comments-count[href="http://www.catarse.me/' + project.permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;'))
+                                    project() ? m('fb:comments-count[href="http://www.catarse.me/' + project().permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;')) : '-'
                                 ]),
                             ]),
-                            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project.open_for_contributions ? [
+                            project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions ? [
                                 m('.w-row.project-nav-back-button', [
                                     m('.w-col.w-col-6.w-col-medium-8', [
-                                        m('a.w-button.btn[href="/projects/' + project.id + '/contributions/new"]', 'Apoiar ‍este projeto')
+                                        m('a.w-button.btn[href="/projects/' + project().id + '/contributions/new"]', 'Apoiar ‍este projeto')
                                     ]),
                                     m('.w-col.w-col-6.w-col-medium-4', [
                                         m.component(c.ProjectReminder, {project: project, type: 'button', hideTextOnMobile: true})
                                     ])
                                 ])
-                            ] : '')
+                            ] : '') : ''
                         ])
                     ])
                 ]),
-                (ctrl.isFixed() && !project.is_owner_or_admin) ? m('.w-section.project-nav') : ''
-            ]);
+                (ctrl.isFixed() && !project().is_owner_or_admin) ? m('.w-section.project-nav') : ''
+            ] : '');
         }
     };
 }(window.m, window.c.h));

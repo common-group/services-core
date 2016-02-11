@@ -5,8 +5,8 @@ window.c.root.ProjectsShow = ((m, c, _, h, vms) => {
         },
 
         view: (ctrl) => {
-            let project = ctrl.projectDetails();
-            project = project || {is_owner_or_admin: false};
+            let project = ctrl.projectDetails;
+
             return m('.project-show', [
                     m.component(c.ProjectHeader, {
                         project: project,
@@ -20,7 +20,7 @@ window.c.root.ProjectsShow = ((m, c, _, h, vms) => {
                         project: project,
                         rewardDetails: ctrl.rewardDetails
                     }),
-                    (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
+                    (project() && project().is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
                         project: project
                     }) : '')
                 ]);

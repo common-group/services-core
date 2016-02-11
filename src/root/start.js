@@ -21,10 +21,10 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 uservm = filters({
                     id: 'eq'
                 }),
-                loader = m.postgrest.loaderWithToken,
+                loader = m.postgrest.loader,
                 statsLoader = loader(models.statistic.getRowOptions()),
                 loadCategories = () => {
-                    return c.models.category.getPageWithToken(filters({}).order({
+                    return c.models.category.getPage(filters({}).order({
                         name: 'asc'
                     }).parameters()).then(categories);
                 },
@@ -260,20 +260,20 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                                                 m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
                                                 m('.fontsize-megajumbo.fontcolor-negative', (category.successful_projects) ? category.successful_projects : '...'),
                                                 m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
-                                                // !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
-                                                //     return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
-                                                //         m('.w-col.w-col-1', [
-                                                //             m(`img.user-avatar[src="${project.userThumb}"]`)
-                                                //         ]),
-                                                //         m('.w-col.w-col-11', [
-                                                //             m('.fontsize-base.fontweight-semibold', project.user.name),
-                                                //             m('.fontsize-smallest', [
-                                                //                 I18n.t('categories.pledged', I18nScope({pledged: h.formatNumber(project.pledged), contributors: project.total_contributors})),
-                                                //                 m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
-                                                //             ])
-                                                //         ])
-                                                //     ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()));
-                                                // }) : m('.fontsize-base', I18n.t('categories.no_featured', I18nScope())),
+                                                !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
+                                                    return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
+                                                        m('.w-col.w-col-1', [
+                                                            m(`img.user-avatar[src="${h.useAvatarOrDefault(project.userThumb)}"]`)
+                                                        ]),
+                                                        m('.w-col.w-col-11', [
+                                                            m('.fontsize-base.fontweight-semibold', project.user.name),
+                                                            m('.fontsize-smallest', [
+                                                                I18n.t('categories.pledged', I18nScope({pledged: h.formatNumber(project.pledged), contributors: project.total_contributors})),
+                                                                m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
+                                                            ])
+                                                        ])
+                                                    ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()));
+                                                }) : '',
                                             ])
                                         ];
                                     }) : '')

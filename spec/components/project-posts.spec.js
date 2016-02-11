@@ -6,15 +6,12 @@ describe('ProjectPosts', () => {
         beforeAll(() => {
             spyOn(m, 'component').and.callThrough();
             projectPostDetail = ProjectPostDetailsMockery()[0];
-            let component = m.component(ProjectPosts, {
-                    project: {
-                        id: 1231
-                    }
+            const project = m.prop({id: 1231});
+            const component = m.component(ProjectPosts, {
+                    project: project
                 }),
                 view = component.view(component.controller({
-                    project: {
-                        id: 1231
-                    }
+                    project: project
                 }));
 
             $output = mq(view);

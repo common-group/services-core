@@ -1,6 +1,6 @@
 {
   "name": "catarse.js",
-  "version": "0.7.7",
+  "version": "0.8.0",
   "author": "Diogo Biazus",
   "contributors": [
     {
@@ -13,7 +13,6 @@
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-concat": "^2.6.0",
-    "gulp-flowtype": "^0.4.8",
     "gulp-jscs": "^2.0.0",
     "gulp-jshint": "^1.11.2",
     "gulp-plumber": "^1.0.1",

@@ -108,7 +108,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
 
             return m('.project-insights', !ctrl.l() ? [
                 (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
-                    project: project
+                    project: m.prop(project)
                 }) : ''),
                 m('.w-container', [
                     m('.w-row.u-marginbottom-40', [

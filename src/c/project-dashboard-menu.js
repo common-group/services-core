@@ -26,7 +26,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
             };
         },
         view: (ctrl, args) => {
-            const project = args.project,
+            const project = args.project(),
                   projectRoute = '/projects/' + project.id,
                   editRoute = projectRoute + '/edit',
                   editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
