@@ -15,8 +15,7 @@ window.c.FlexAdminProjectDetailsExplanation = ((m, h, _) => {
                     online: [
                         (_.isNull(resource.expires_at) ?
                          m('span', [
-                             m('a.alt-link[href="/projects/' + resource.id + '/edit#announce_expiration"]', 'Quero iniciar'),
-                             ' a reta final de 7 dias'
+                             'Sua campanha ainda está com o prazo em aberto. Para receber os recursos em sua conta bancária, é preciso definir uma data final de arrecadação.', m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]', ' Saiba mais.')
                          ])
                          : m('span', `Você recebe tudo que arrecadar até as ${h.momentify(resource.zone_expires_at, 'HH:mm:ss')} de ${h.momentify(resource.zone_expires_at)}`))
                     ],

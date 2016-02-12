@@ -102,7 +102,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                             ] : [
                                 (project.mode === 'flex' ? [
                                     m('.btn-send-draft-fixed',
-                                      (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-small.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', 'Iniciar reta final') : ''))
+                                      (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-small.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', 'Definir prazo') : ''))
                                 ] : '')
                             ])
                         ]),
