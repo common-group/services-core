@@ -118,9 +118,12 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
                             m.component(c.AdminProjectDetailsCard, {
                                 resource: project
                             }),
-                            m.component(ctrl.explanationModeComponent(project.mode), {
-                                resource: project
-                            })
+                            m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
+                                project.mode === 'flex' && _.isNull(project.expires_at) ? m('span', [
+                                    m('a.alt-link[href="/projects/' + project.id + '/edit#announce_expiration"]', 'Quero iniciar'),
+                                    ' a reta final de 7 dias'
+                                ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: project.zone_expires_at, sent_to_analysis_at: project.sent_to_analysis_at})))
+                            ])
                         ]),
                         m('.w-col.w-col-2')
                     ])
