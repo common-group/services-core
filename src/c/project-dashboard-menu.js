@@ -8,7 +8,9 @@
  *     project: projectDetail Object,
  * })
  */
-window.c.ProjectDashboardMenu = ((m, _, h) => {
+window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
+
     return {
         controller: (args) => {
             let body = document.getElementsByTagName('body')[0],
@@ -45,13 +47,13 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                         ]),
                         m('#info-links', [
                             m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [
-                                m('span.fa.fa-bar-chart.fa-lg.fa-fw'), ' Minha Campanha'
+                                m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
                             ]), (project.is_published ? [
                                 m('a#dashboard_reports_link.dashboard-nav-link-left[href="' + editRoute + '#reports' + '"]', [
-                                    m('span.fa.fa.fa-table.fa-lg.fa-fw'), ' Relatórios de apoios'
+                                    m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
                                 ]),
                                 m('a#dashboard_reports_link.dashboard-nav-link-left.u-marginbottom-30[href="' + editRoute + '#posts' + '"]', [
-                                    m('span.fa.fa-bullhorn.fa-fw.fa-lg'), ' Novidades ', m('span.badge', project.posts_count)
+                                    m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n.t('posts_tab', I18nScope()), m('span.badge', project.posts_count)
                                 ])
                             ] : '')
                         ]),
@@ -59,7 +61,7 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                             (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
                                 onclick: ctrl.editLinksToggle.toggle
                             }, [
-                                m('span.fa.fa-pencil.fa-fw.fa-lg'), ' Editar projeto'
+                                m('span.fa.fa-pencil.fa-fw.fa-lg'), I18n.t('edit_project', I18nScope())
                             ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
                                 m('#dashboard-links', [
                                     ((!project.is_published || project.is_admin_role) ? [
@@ -89,20 +91,20 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
                             (!project.is_published ? [
                                 m('.btn-send-draft-fixed',
                                   (project.mode === 'aon' ? [
-                                      (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', 'Enviar') : ''),
+                                      (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', I18n.t('send', I18nScope())) : ''),
                                       (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/publish"]', [
-                                          'Publicar', m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                          I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                       ]) : '')
                                   ] : [
                                       (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/edit#preview"]', [
-                                          'Publicar', m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                          I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                       ]) : '')
                                   ])
                                  )
                             ] : [
                                 (project.mode === 'flex' ? [
                                     m('.btn-send-draft-fixed',
-                                      (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-small.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', 'Iniciar reta final') : ''))
+                                      (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-small.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', I18n.t('announce_expiration', I18nScope())) : ''))
                                 ] : '')
                             ])
                         ]),
@@ -116,4 +118,4 @@ window.c.ProjectDashboardMenu = ((m, _, h) => {
             ]);
         }
     };
-}(window.m, window._, window.c.h));
+}(window.m, window._, window.c.h, window.I18n));

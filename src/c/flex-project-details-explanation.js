@@ -7,16 +7,17 @@
  *     project: projectDetail Object,
  * })
  */
-window.c.FlexAdminProjectDetailsExplanation = ((m, h, _) => {
+window.c.FlexAdminProjectDetailsExplanation = ((m, h, I18n, _) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_insights');
+
     return {
         controller: (args) => {
             let explanation = (resource) => {
                 let stateText = {
                     online: [
                         (_.isNull(resource.expires_at) ?
-                         m('span', [
-                             m('a.alt-link[href="/projects/' + resource.id + '/edit#announce_expiration"]', 'Quero iniciar'),
-                             ' a reta final de 7 dias'
+                         m('span', [I18n.t('finish_explanation', I18nScope()),
+                             m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]', I18n.t('know_more', I18nScope()))
                          ])
                          : m('span', `Você recebe tudo que arrecadar até as ${h.momentify(resource.zone_expires_at, 'HH:mm:ss')} de ${h.momentify(resource.zone_expires_at)}`))
                     ],
@@ -61,4 +62,4 @@ window.c.FlexAdminProjectDetailsExplanation = ((m, h, _) => {
             return m('p.' + args.resource.state + '-project-text.fontsize-small.lineheight-loose', ctrl.explanation);
         }
     };
-}(window.m, window.c.h, window._));
+}(window.m, window.c.h, window.I18n, window._));
