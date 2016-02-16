@@ -15,11 +15,12 @@ window.c.root.Flex = (function(m, c, h, models) {
                 },
                 flexVM = m.postgrest.filtersVM({
                     mode: 'eq',
-                    state: 'eq'
+                    state: 'eq',
+                    recommended: 'eq'
                 }),
                 statsLoader = m.postgrest.loaderWithToken(models.statistic.getRowOptions());
 
-            flexVM.mode('flex').state('online');
+            flexVM.mode('flex').state('online').recommended(true);
 
             const projectsLoader = m.postgrest.loader(models.project.getPageOptions(flexVM.parameters()));
 
