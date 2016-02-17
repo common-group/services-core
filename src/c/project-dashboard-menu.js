@@ -14,7 +14,7 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
     return {
         controller: (args) => {
             let body = document.getElementsByTagName('body')[0],
-                editLinksToggle = h.toggleProp(false, true),
+                editLinksToggle = h.toggleProp(true, false),
                 bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
             if (!args.project.is_published) {
