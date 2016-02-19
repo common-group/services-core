@@ -221,6 +221,17 @@ window.c.h = ((m, moment, I18n) => {
             };
         },
 
+        closeModal = () => {
+            let el = document.getElementsByClassName('modal-close')[0];
+            if (_.isElement(el)){
+                el.onclick = (event) => {
+                    event.preventDefault();
+
+                    document.getElementsByClassName('modal-backdrop')[0].style.display = 'none';
+                };
+            };
+        },
+
         closeFlash = () => {
             let el = document.getElementsByClassName('icon-close')[0];
             if (_.isElement(el)){
@@ -293,6 +304,7 @@ window.c.h = ((m, moment, I18n) => {
 
     setMomentifyLocale();
     closeFlash();
+    closeModal();
 
     return {
         authenticityToken: authenticityToken,
