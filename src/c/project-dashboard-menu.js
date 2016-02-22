@@ -17,8 +17,8 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
                 editLinksToggle = h.toggleProp(true, false),
                 bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
-            if (!args.project.is_published) {
-                editLinksToggle.toggle();
+            if (args.project().is_published) {
+                editLinksToggle.toggle(false);
             }
 
             return {
