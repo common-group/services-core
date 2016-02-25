@@ -300,6 +300,45 @@ window.c.h = ((m, moment, I18n) => {
                     setTrigger(el, el.hash.slice(1));
                 }
             };
+        },
+
+        projectStateTextClass = (state) => {
+            const statusText = {
+                    online: {
+                        cssClass: 'text-success',
+                        text: 'NO AR'
+                    },
+                    successful: {
+                        cssClass: 'text-success',
+                        text: 'FINANCIADO'
+                    },
+                    failed: {
+                        cssClass: 'text-error',
+                        text: 'NÃO FINANCIADO'
+                    },
+                    waiting_funds: {
+                        cssClass: 'text-waiting',
+                        text: 'AGUARDANDO'
+                    },
+                    rejected: {
+                        cssClass: 'text-error',
+                        text: 'RECUSADO'
+                    },
+                    draft: {
+                        cssClass: '',
+                        text: 'RASCUNHO'
+                    },
+                    in_analysis: {
+                        cssClass: '',
+                        text: 'EM ANÁLISE'
+                    },
+                    approved: {
+                        cssClass: 'text-success',
+                        text: 'APROVADO'
+                    }
+                };
+
+            return statusText[state];
         };
 
     setMomentifyLocale();
@@ -339,6 +378,7 @@ window.c.h = ((m, moment, I18n) => {
         paramByName: paramByName,
         i18nScope: i18nScope,
         selfOrEmpty: selfOrEmpty,
-        scrollTo: scrollTo
+        scrollTo: scrollTo,
+        projectStateTextClass: projectStateTextClass
     };
 }(window.m, window.moment, window.I18n));
