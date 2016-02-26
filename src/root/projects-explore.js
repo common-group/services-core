@@ -125,6 +125,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
         view: (ctrl) => {
             return [
                 m('.w-section.hero-search', [
+                    m.component(c.Search),
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
                             m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]',{onclick: () => ctrl.toggleCategories.toggle()}, ['Explore projetos incríveis ',m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
