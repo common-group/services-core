@@ -36,7 +36,17 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                             animate();
                         }, 1800);
                     }
-                },
+                };
+
+            return {
+                animateProgress: animateProgress
+            };
+        },
+
+        view: function(ctrl, args) {
+            var project = args.project,
+                elapsed = project().elapsed_time,
+                remaining = project().remaining_time,
                 displayCardClass = () => {
                     const states = {
                         'waiting_funds': 'card-waiting',
@@ -63,18 +73,6 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
 
                     return states[project().state];
                 };
-
-            return {
-                animateProgress: animateProgress,
-                displayCardClass: displayCardClass,
-                displayStatusText: displayStatusText
-            };
-        },
-
-        view: function(ctrl, args) {
-            var project = args.project,
-                elapsed = project().elapsed_time,
-                remaining = project().remaining_time;
 
             return m('#project-sidebar.aside', [
                 m('.project-stats', [
@@ -116,7 +114,7 @@ window.c.ProjectSidebar = ((m, h, c, _, I18n) => {
                         project: project,
                         type: 'link'
                     }) : ''),
-                    m('div[class="fontsize-smaller u-marginbottom-30 ' + (ctrl.displayCardClass()) + '"]', ctrl.displayStatusText())
+                    m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())
                 ]),
                 m('.user-c', m.component(c.ProjectUserCard, {
                     userDetails: args.userDetails

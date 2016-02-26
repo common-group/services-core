@@ -20,9 +20,6 @@ describe('ProjectSidebar', () => {
                         userDetails: m.prop([])
                     });
 
-                spyOn(ctrl, 'displayCardClass').and.callThrough();
-                spyOn(ctrl, 'displayStatusText').and.callThrough();
-
                 return {
                     output: mq(view),
                     ctrl: ctrl,
