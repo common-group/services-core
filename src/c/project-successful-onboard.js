@@ -13,7 +13,14 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
             let projectIdVM = m.postgrest.filtersVM({project_id: 'eq'}),
                 projectAccounts = m.prop([]),
                 projectTransfers = m.prop([]),
-                currentStage = m.prop('ProjectSuccessfulOnboardStart'),
+                onboardStages = {
+                    'start': 'ProjectSuccessfulOnboardStart',
+                    'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount',
+                    'error_account': 'ProjectSuccessfulOnboardErrorAccount',
+                    'pending_transfer': 'ProjectSuccessfulOnboardPendingTransfer',
+                    'finished': 'ProjectSuccessfulOnboardFinished'
+                },
+                currentStage = m.prop(onboardStages['start']),
                 loader = m.postgrest.loaderWithToken;
 
             projectIdVM.project_id(args.project.id);
@@ -26,29 +33,36 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
 
             const setStage = (stage) => {
                 return () => {
-                    console.log(stage);
+                    currentStage(onboardStages[stage]);
 
-                    const stages = {
-                        'start': 'ProjectSuccessfulOnboardStart',
-                        'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount'
-                    };
-
-                    currentStage(stages[stage||'start']);
                     return currentStage();
-                };
-            };
+                };},
 
-            const loadCurrentStage = () => {
-                if (!lProjectAccount() && !lProjectTransfer()) {
-                    const pa = _.first(projectAccounts);
+                  loadCurrentStage = () => {
+                      if (!lProjectAccount() && !lProjectTransfer()) {
+                          const pa = _.first(projectAccounts);
 
-                    if (_.isNull(pa.error_reason) && _.isNull(pa.transfer_state)) {
-                        return setStage('start')();
-                    }
-                }
+                          if (_.isNull(pa.error_reason) && _.isNull(pa.transfer_state)) {
+                              return setStage('start')();
+                          }
+                      }
 
-                return void(0);
-            };
+                      return void(0);
+                  },
+
+                  addErrorReason = (errorProp) => {
+                      return () => {
+                          console.log(errorProp());
+                          setStage('error_account')();
+                          return void(0);
+                      };
+                  },
+
+                  acceptAccount = () => {
+                      setStage('pending_transfer')();
+                      return void(0);
+                  };
+
 
             loadCurrentStage();
 
@@ -58,7 +72,9 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                 lProjectAccount: lProjectAccount,
                 lProjectTransfer: lProjectTransfer,
                 setStage: setStage,
-                currentStage: currentStage
+                currentStage: currentStage,
+                addErrorReason: addErrorReason,
+                acceptAccount: acceptAccount
             };
         },
 
@@ -74,7 +90,9 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                  m.component(c[ctrl.currentStage()], {
                      projectTransfer: projectTransfer,
                      projectAccount: projectAccount,
-                     setStage: ctrl.setStage
+                     setStage: ctrl.setStage,
+                     addErrorReason: ctrl.addErrorReason,
+                     acceptAccount: ctrl.acceptAccount
                  }) : '')
 
             ]);
