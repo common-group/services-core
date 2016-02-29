@@ -1,5 +1,5 @@
 /**
- * window.c.ProjectSuccessfulOnboard component
+ * window.c.ProjectSuccessfulOnboardStart component
  * render congratulations message when project is successful and 
  * button to confirm the bank data
  *
