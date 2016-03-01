@@ -34,10 +34,10 @@ window.c.ProjectMain = ((m, c, _, h) => {
             };
         },
 
-        view: (ctrl) => {
+        view: (ctrl, args) => {
             return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
                 m('.w-container', [
-                    m('.w-row', ctrl.displayTabContent())
+                    m('.w-row', args.project() ? ctrl.displayTabContent() : '')
                 ])
             ]);
         }
