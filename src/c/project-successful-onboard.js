@@ -21,12 +21,18 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                     'finished': 'ProjectSuccessfulOnboardFinished'
                 },
                 currentStage = m.prop(onboardStages['start']),
-                loader = m.postgrest.loaderWithToken;
+                loader = m.postgrest.loaderWithToken,
+                acceptAccountLoader = m.postgrest.loaderWithToken(
+                    models.projectAccount.postOptions({project_id: args.project.id})
+                );
 
             projectIdVM.project_id(args.project.id);
 
             const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
-            lProjectAccount.load().then(projectAccounts);
+            lProjectAccount.load().then((data) => {
+                projectAccounts(data);
+                loadCurrentStage();
+            });
 
             const lProjectTransfer = loader(models.projectTransfer.getRowOptions(projectIdVM.parameters()));
             lProjectTransfer.load().then(projectTransfers);
@@ -39,11 +45,15 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                 };},
 
                   loadCurrentStage = () => {
-                      if (!lProjectAccount() && !lProjectTransfer()) {
-                          const pa = _.first(projectAccounts);
+                      if (!lProjectAccount()) {
+                          const pa = _.first(projectAccounts());
 
                           if (_.isNull(pa.error_reason) && _.isNull(pa.transfer_state)) {
                               return setStage('start')();
+                          } else if (!_.isNull(pa.error_reason)) {
+                              return setStage('error_account')();
+                          } else if (!_.isNull(pa.transfer_state)) {
+                              return setStage('pending_transfer')();
                           }
                       }
 
@@ -59,12 +69,13 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   },
 
                   acceptAccount = () => {
-                      setStage('pending_transfer')();
+                      acceptAccountLoader.load().then(() => {
+                          setStage('pending_transfer')();
+                      });
+
                       return void(0);
                   };
 
-
-            loadCurrentStage();
 
             return {
                 projectAccounts: projectAccounts,
@@ -74,7 +85,9 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                 setStage: setStage,
                 currentStage: currentStage,
                 addErrorReason: addErrorReason,
-                acceptAccount: acceptAccount
+                acceptAccount: acceptAccount,
+                acceptAccountLoader: acceptAccountLoader,
+                loadCurrentStage: loadCurrentStage
             };
         },
 
@@ -84,7 +97,6 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   lpa = ctrl.lProjectAccount,
                   lpt = ctrl.lProjectTransfer;
 
-
             return m('.w-section.section', [
                 (!lpa() && !lpt() ?
                  m.component(c[ctrl.currentStage()], {
@@ -92,8 +104,9 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                      projectAccount: projectAccount,
                      setStage: ctrl.setStage,
                      addErrorReason: ctrl.addErrorReason,
-                     acceptAccount: ctrl.acceptAccount
-                 }) : '')
+                     acceptAccount: ctrl.acceptAccount,
+                     acceptAccountLoader: ctrl.acceptAccountLoader
+                 }) : h.loader())
 
             ]);
         }
