@@ -8,9 +8,9 @@
 
 window.c.Search = ((m) => {
     return {
-        view: (ctrl, args) => {
-        	let action = '/pt/explore',
-        		method = 'GET';
+        view: (ctrl, args = {}) => {
+        	let action = args.action || '/pt/explore',
+        		method = args.method || 'GET';
 
             return m('#search.w-container.w-hidden-main.w-hidden-medium', [
             	m('.w-row', [
