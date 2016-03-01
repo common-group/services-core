@@ -96,7 +96,8 @@ window.c.ProjectSuccessfulOnboardConfirmAccount = ((m, c, h, _) => {
                     projectAccount: projectAccount,
                     changeToAction: ctrl.changeToAction,
                     addErrorReason: args.addErrorReason,
-                    acceptAccount: args.acceptAccount
+                    acceptAccount: args.acceptAccount,
+                    acceptAccountLoader: args.acceptAccountLoader
                 })
             ]);
         }

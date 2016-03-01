@@ -22,10 +22,11 @@ window.c.ProjectSuccessfulOnboardConfirmAccountAccept = ((m, c, h, _) => {
                             m('.w-row', [
                                 m('.w-col.w-col-4'),
                                 m('.w-col.w-col-4', [
-                                    m('a.w-button.btn.btn-medium', {
-                                        href: 'js:void(0);',
-                                        onclick: args.acceptAccount
-                                    }, 'Confirmar')
+                                    (!args.acceptAccountLoader() ?
+                                     m('a.w-button.btn.btn-medium', {
+                                         href: 'js:void(0);',
+                                         onclick: args.acceptAccount
+                                     }, 'Confirmar') : h.loader())
                                 ]),
                                 m('.w-col.w-col-4')
                             ])
