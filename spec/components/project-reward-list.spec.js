@@ -8,9 +8,9 @@ describe('ProjectRewardList', () => {
                 spyOn(m, 'component').and.callThrough();
                 let rewardDetail = RewardDetailsMockery(newState),
                     component = m.component(ProjectRewardList, {
-                        project: {
+                        project: m.prop({
                             id: 1231
-                        },
+                        }),
                         rewardDetails: m.prop(rewardDetail)
                     });
 
