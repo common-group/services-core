@@ -1,5 +1,6 @@
 window.c.models = (function(m) {
     var contributionDetail = m.postgrest.model('contribution_details'),
+        contributionActivity = m.postgrest.model('contribution_activities'),
         projectDetail = m.postgrest.model('project_details'),
         userDetail = m.postgrest.model('user_details'),
         balance = m.postgrest.model('balances'),
@@ -32,6 +33,7 @@ window.c.models = (function(m) {
 
     return {
         contributionDetail: contributionDetail,
+        contributionActivity: contributionActivity,
         projectDetail: projectDetail,
         userDetail: userDetail,
         balance: balance,
