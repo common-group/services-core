@@ -47,7 +47,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             ]];
             const buildPerRefTable = (contributions) => {
                 return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
-                    const re = /(ctrse_[a-z]*)/,
+                    const re = /(ctrse_[\w]*)/,
                         test = re.exec(contribution.referral_link);
 
                     let column = [];
