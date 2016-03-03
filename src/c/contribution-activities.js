@@ -17,11 +17,11 @@ window.c.ContributionActivities = ((m, h, models, _) => {
             const collection = m.prop([]),
                   resource = m.prop(),
                   collectionIndex = m.prop(0),
+                  collectionSize = m.prop(),
                   collectionL = m.postgrest.loader(
                       models.contributionActivity.getPageOptions()),
                   nextResource = () => {
-                      console.log('next');
-                      if(collectionIndex() > collection().legnth) {
+                      if((collectionIndex()+1) > collectionSize()) {
                           collectionIndex(0);
                       }
 
@@ -38,6 +38,7 @@ window.c.ContributionActivities = ((m, h, models, _) => {
 
             collectionL.load().then((data) => {
                 collection(data);
+                collectionSize(data.length);
                 resource(_.first(data));
             });
 
@@ -46,12 +47,13 @@ window.c.ContributionActivities = ((m, h, models, _) => {
             return {
                 collection: collection,
                 collectionL: collectionL,
-                resource: resource
+                resource: resource,
+                collectionSize: collectionSize
             };
         },
 
         view: (ctrl, args) => {
-            if(!ctrl.collectionL()) {
+            if(!ctrl.collectionL() && !_.isUndefined(ctrl.resource()) && (ctrl.collectionSize()||0) > 0) {
                 let resource = ctrl.resource(),
                     elapsed = h.translatedTime(resource.elapsed_time),
                     project_link = `https://catarse.me/${resource.permalink}?ref=ctrse_home_activities`;
@@ -75,7 +77,7 @@ window.c.ContributionActivities = ((m, h, models, _) => {
                     ])
                 ]);
             } else {
-                return h.loader();
+                return m('div');
             }
         }
     };
