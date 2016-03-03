@@ -30,6 +30,7 @@ window.c.models = (function(m) {
     rewardDetail.pageSize(false);
     project.pageSize(30);
     category.pageSize(50);
+    contributionActivity.pageSize(40);
 
     return {
         contributionDetail: contributionDetail,
