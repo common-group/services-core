@@ -21,7 +21,7 @@ window.c.ContributionActivities = ((m, h, models, _) => {
                   collectionL = m.postgrest.loader(
                       models.contributionActivity.getPageOptions()),
                   nextResource = () => {
-                      if((collectionIndex()+1) > collectionSize()) {
+                      if ((collectionIndex() + 1) > collectionSize()) {
                           collectionIndex(0);
                       }
 
@@ -53,7 +53,7 @@ window.c.ContributionActivities = ((m, h, models, _) => {
         },
 
         view: (ctrl, args) => {
-            if(!ctrl.collectionL() && !_.isUndefined(ctrl.resource()) && (ctrl.collectionSize()||0) > 0) {
+            if (!ctrl.collectionL() && !_.isUndefined(ctrl.resource()) && (ctrl.collectionSize() || 0) > 0) {
                 let resource = ctrl.resource(),
                     elapsed = h.translatedTime(resource.elapsed_time),
                     project_link = `https://catarse.me/${resource.permalink}?ref=ctrse_home_activities`;

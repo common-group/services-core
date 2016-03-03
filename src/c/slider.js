@@ -63,12 +63,21 @@ window.c.Slider = ((m, _) => {
             };
         },
         view: (ctrl, args) => {
-            const sliderClick = (fn, param) => {
-                fn(param);
-                ctrl.resetSliderTimer();
-            };
+            const slideClass = args.slideClass || '',
+                wrapperClass = args.wrapperClass || '',
+                effect = args.effect || 'slide',
+                sliderClick = (fn, param) => {
+                    fn(param);
+                    ctrl.resetSliderTimer();
+                },
+                effectStyle = (idx, translateStr) => {
+                    const slideFx = `transform: ${translateStr}; -webkit-transform: ${translateStr}; -ms-transform:${translateStr}`,
+                        fadeFx = idx === ctrl.selectedSlideIdx() ? 'opacity: 1;' : 'opacity: 0;';
 
-            return m('.w-slider.slide-testimonials', {
+                    return effect === 'fade' ? fadeFx : slideFx;
+                };
+
+            return m(`.w-slider.${wrapperClass}`, {
                 config: ctrl.config
             }, [
                 m('.fontsize-larger', args.title),
@@ -77,12 +86,12 @@ window.c.Slider = ((m, _) => {
                         let translateValue = (idx - ctrl.selectedSlideIdx()) * ctrl.translationSize(),
                             translateStr = `translate3d(${translateValue}px, 0, 0)`;
 
-                        return m('.slide.w-slide.slide-testimonials-content', {
-                            style: `transform: ${translateStr}; -webkit-transform: ${translateStr}; -ms-transform:${translateStr};`
+                        return m(`.slide.w-slide.${slideClass}`, {
+                            style: `${effectStyle(idx, translateStr)} ${slide.customStyle}`
                         }, [
                             m('.w-container', [
                                 m('.w-row', [
-                                    m('.w-col.w-col-8.w-col-push-2', slide)
+                                    m('.w-col.w-col-8.w-col-push-2', slide.content)
                                 ])
                             ])
                         ]);

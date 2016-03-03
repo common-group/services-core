@@ -98,7 +98,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
             let stats = _.first(ctrl.stats());
             const testimonials = () => {
                 return _.map(ctrl.testimonials, (testimonial) => {
-                    return m('.card.u-radius.card-big.card-terciary', [
+                    const content = m('.card.u-radius.card-big.card-terciary', [
                         m('.u-text-center.u-marginbottom-20', [
                             m(`img.thumb-testimonial.u-round.u-marginbottom-20[src="${testimonial.thumbUrl}"]`)
                         ]),
@@ -108,6 +108,10 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                             m('.fontsize-base', testimonial.totals)
                         ])
                     ]);
+
+                    return {
+                        content: content
+                    };
                 });
 
             };
@@ -276,7 +280,9 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 ]),
                 m.component(c.Slider, {
                     slides: testimonials(),
-                    title: I18n.t('testimonials_title', I18nScope())
+                    title: I18n.t('testimonials_title', I18nScope()),
+                    slideClass: 'slide-testimonials-content',
+                    wrapperClass: 'slide-testimonials'
                 }),
                 m('.w-section.divider.u-margintop-30'),
                 m('.w-container', [
