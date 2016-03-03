@@ -1,37 +1,82 @@
+/**
+ * window.c.ContributionActivities component
+ * Render a component that pass on confirmed contributions in 24hours interval
+ *
+ *
+ * Example of use:
+ * view: () => {
+ *     ...
+ *     m.component(c.ContributionActivities)
+ *     ...
+ * }
+ */
 window.c.ContributionActivities = ((m, h, models, _) => {
     return {
         controller: (args) => {
+            let interval;
             const collection = m.prop([]),
+                  resource = m.prop(),
+                  collectionIndex = m.prop(0),
                   collectionL = m.postgrest.loader(
-                      models.contributionActivity.getPageOptions());
+                      models.contributionActivity.getPageOptions()),
+                  nextResource = () => {
+                      console.log('next');
+                      if(collectionIndex() > collection().legnth) {
+                          collectionIndex(0);
+                      }
 
-            collectionL.load().then(collection);
+                      collectionIndex(collectionIndex() + 1);
+                      resource(collection()[collectionIndex()]);
+                      m.redraw();
+                  },
+                  startConfig = (el, isinitialized, context) => {
+                      context.onunload = () => clearInterval(interval);
+                  },
+                  startTimer = () => {
+                      interval = setInterval(nextResource, 15000);
+                  };
+
+            collectionL.load().then((data) => {
+                collection(data);
+                resource(_.first(data));
+            });
+
+            startTimer();
 
             return {
                 collection: collection,
-                collectionL: collectionL
+                collectionL: collectionL,
+                resource: resource
             };
         },
 
         view: (ctrl, args) => {
-            const l = ctrl.collectionL,
-                  collection = ctrl.collection(),
-                  resource = _.first(_.sample(collection, 1));
+            if(!ctrl.collectionL()) {
+                let resource = ctrl.resource(),
+                    elapsed = h.translatedTime(resource.elapsed_time),
+                    project_link = `https://catarse.me/${resource.permalink}?ref=ctrse_home_activities`;
 
-            return (!l() ? m('.w-section.section.bg-backs-carrosel', [
-                m('.w-container.u-text-center.fontcolor-negative', [
-                    m('.fontsize-large.u-marginbottom-30', `há ${resource.elapsed_time.total} ${resource.elapsed_time.unit} atrás...`),
-                    m('.w-clearfix.w-inline-block.u-marginbottom-10', [
-                        m('img.thumb-author.u-round', {src: resource.thumbnail, width: 80}),
-                        m('img.thumb-author.u-round', {src: 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56d646f7710a7126338b46ff_logo-catarse-back-carrosel.png'}),
-                        m('img.thumb-author.u-round', {src: resource.project_thumbnail, width: 80, style: 'margin-right: 0;'}),
-                    ]),
-                    m('.fontsize-large', `${resource.name} apoiou`),
-                    m('.fontsize-larger', [
-                        m('a.link-hidden-white', {href: 'js:void(0);'}, resource.project_name)
+                return m('.w-section.section.bg-backs-carrosel', {config: ctrl.startConfig}, [
+                    m('.w-container.u-text-center.fontcolor-negative', [
+                        m('.fontsize-large.u-marginbottom-30', `há ${elapsed.total} ${elapsed.unit} atrás...`),
+                        m('.w-clearfix.w-inline-block.u-marginbottom-10', [
+                            m('a', {href: project_link}, [
+                                m('img.thumb-author.u-round', {src: resource.thumbnail, width: 80}),
+                            ]),
+                            m('img.thumb-author.u-round', {src: 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56d646f7710a7126338b46ff_logo-catarse-back-carrosel.png'}),
+                            m('a', {href: project_link}, [
+                                m('img.thumb-author.u-round', {src: resource.project_thumbnail, width: 80, style: 'margin-right: 0;'}),
+                            ])
+                        ]),
+                        m('.fontsize-large', `${resource.name} apoiou`),
+                        m('.fontsize-larger', [
+                            m('a.link-hidden-white', {href: project_link}, resource.project_name)
+                        ])
                     ])
-                ])
-            ]) : h.loader());
+                ]);
+            } else {
+                return h.loader();
+            }
         }
     };
 }(window.m, window.c.h, window.c.models, window._));
