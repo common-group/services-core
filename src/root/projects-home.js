@@ -41,7 +41,8 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
                         collection: collection,
                         ref: `home_${collection.hash}`
                     });
-                })
+                }),
+                m.component(c.ContributionActivities)
             ];
         }
     };
