@@ -54,7 +54,8 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
                     slides: slides(),
                     effect: 'fade',
                     slideClass: 'hero-slide start',
-                    wrapperClass: 'hero-full hero-full-slide'
+                    wrapperClass: 'hero-full hero-full-slide',
+                    sliderTime: 10000
                 }),
                 _.map(ctrl.collections, (collection) => {
                     return m.component(c.ProjectRow, {

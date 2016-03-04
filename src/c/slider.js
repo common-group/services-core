@@ -18,6 +18,7 @@ window.c.Slider = ((m, _) => {
             let interval;
             const selectedSlideIdx = m.prop(0),
                 translationSize = m.prop(1600),
+                sliderTime = args.sliderTime || 6500,
                 decrementSlide = () => {
                     if (selectedSlideIdx() > 0) {
                         selectedSlideIdx(selectedSlideIdx() - 1);
@@ -36,7 +37,7 @@ window.c.Slider = ((m, _) => {
                     interval = setInterval(() => {
                         incrementSlide();
                         m.redraw();
-                    }, 6500);
+                    }, sliderTime);
                 },
                 resetSliderTimer = () => {
                     clearInterval(interval);
@@ -72,7 +73,7 @@ window.c.Slider = ((m, _) => {
                 },
                 effectStyle = (idx, translateStr) => {
                     const slideFx = `transform: ${translateStr}; -webkit-transform: ${translateStr}; -ms-transform:${translateStr}`,
-                        fadeFx = idx === ctrl.selectedSlideIdx() ? 'opacity: 1;' : 'opacity: 0;';
+                        fadeFx = idx === ctrl.selectedSlideIdx() ? 'opacity: 1; visibility: visible;' : 'opacity: 0; visibility: hidden;';
 
                     return effect === 'fade' ? fadeFx : slideFx;
                 };
