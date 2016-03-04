@@ -10,21 +10,32 @@
 window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
     return {
         controller: (args) => {
-            let projectIdVM = m.postgrest.filtersVM({project_id: 'eq'}),
-                projectAccounts = m.prop([]),
-                projectTransfers = m.prop([]),
-                onboardStages = {
-                    'start': 'ProjectSuccessfulOnboardStart',
-                    'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount',
-                    'error_account': 'ProjectSuccessfulOnboardErrorAccount',
-                    'pending_transfer': 'ProjectSuccessfulOnboardPendingTransfer',
-                    'finished': 'ProjectSuccessfulOnboardFinished'
-                },
-                currentStage = m.prop(onboardStages['start']),
-                loader = m.postgrest.loaderWithToken,
-                acceptAccountLoader = m.postgrest.loaderWithToken(
-                    models.projectAccount.postOptions({project_id: args.project.id})
-                );
+            const projectIdVM = m.postgrest.filtersVM({project_id: 'eq'}),
+                  projectAccounts = m.prop([]),
+                  projectTransfers = m.prop([]),
+                  onboardStages = {
+                      'start': 'ProjectSuccessfulOnboardStart',
+                      'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount',
+                      'error_account': 'ProjectSuccessfulOnboardErrorAccount',
+                      'pending_transfer': 'ProjectSuccessfulOnboardPendingTransfer',
+                      'finished': 'ProjectSuccessfulOnboardFinished'
+                  },
+                  currentStage = m.prop(onboardStages['start']),
+                  loader = m.postgrest.loaderWithToken,
+                  declineAccountLoader = (errorMsg) => {
+                      const pa = _.first(projectAccounts());
+
+                      return m.postgrest.loaderWithToken(
+                          models.projectAccountError.postOptions({
+                              project_id: args.project.id,
+                              reason: errorMsg
+                          }));
+                  },
+                  acceptAccountLoader = m.postgrest.loaderWithToken(
+                      models.projectAccount.postOptions({
+                          project_id: args.project.id
+                      })
+                  );
 
             projectIdVM.project_id(args.project.id);
 
@@ -60,10 +71,14 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                       return void(0);
                   },
 
+                  // TODO: need to add an error validation to not null
                   addErrorReason = (errorProp) => {
                       return () => {
-                          console.log(errorProp());
-                          setStage('error_account')();
+                          const fn = declineAccountLoader(errorProp());
+                          fn.load().then(() => {
+                              setStage('error_account')();
+                          });
+
                           return void(0);
                       };
                   },
@@ -87,6 +102,7 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                 addErrorReason: addErrorReason,
                 acceptAccount: acceptAccount,
                 acceptAccountLoader: acceptAccountLoader,
+                declineAccountLoader: declineAccountLoader,
                 loadCurrentStage: loadCurrentStage
             };
         },
