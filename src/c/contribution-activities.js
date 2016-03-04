@@ -60,7 +60,7 @@ window.c.ContributionActivities = ((m, h, models, _) => {
 
                 return m('.w-section.section.bg-backs-carrosel', {config: ctrl.startConfig}, [
                     m('.w-container.u-text-center.fontcolor-negative', [
-                        m('.fontsize-large.u-marginbottom-30', `há ${elapsed.total} ${elapsed.unit} atrás...`),
+                        m('.fontsize-large.u-marginbottom-30', `há ${elapsed.total} ${elapsed.unit}...`),
                         m('.w-clearfix.w-inline-block.u-marginbottom-10', [
                             m('a', {href: project_link}, [
                                 m('img.thumb-author.u-round', {src: resource.thumbnail, width: 80}),
