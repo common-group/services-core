@@ -42,6 +42,11 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
             const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
             lProjectAccount.load().then((data) => {
                 projectAccounts(data);
+
+                declineAccountLoader = m.postgrest.loaderWithToken(
+                    models.projectAccountError.postOptions({project_account_id: _.first(data).project_account_id})
+                );
+
                 loadCurrentStage();
             });
 
