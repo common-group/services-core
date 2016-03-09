@@ -112,7 +112,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                 m('.w-col.w-col-6', [
                                     m.component(c.landingQA, {
                                         question: 'Quais são as taxas da modalidade flexível? ',
-                                        answer: 'Como no Catarse, enviar um projeto não custa nada! Estamos estudando opções para entender qual será a taxa cobrada no serviço Catarse flex.'
+                                        answer: 'Como no Catarse, enviar um projeto não custa nada! A taxa cobrada no serviço Catarse flex é de 13% sobre o valor arrecadado.'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'De onde vem o dinheiro do meu projeto?',
@@ -125,7 +125,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                 ]), m('.w-col.w-col-6', [
                                     m.component(c.landingQA, {
                                         question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                        answer: 'Sim. Ainda estamos em teste, mas você já é super bem vindo! Inscreva seu email e saiba como inscrever o seu projeto no flex!'
+                                        answer: 'Sim. Cadastre seu email e saiba como inscrever o seu projeto no flex!'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'Por quê vocês querem fazer o Catarse flex?',
@@ -133,7 +133,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'Quando vocês irão lançar o Catarse flex?',
-                                        answer: 'Ainda não sabemos quando abriremos o flex para o público. Iremos primeiramente passar por um período de testes e depois estabelecer uma data de lançamento. Se você deseja acompanhar e receber notícias sobre essa caminhada, inscreva seu email nessa página.'
+                                        answer: 'Ainda não sabemos quando abriremos o flex para o público em geral, mas você pode cadastrar seu email nessa página e receber um material especial de como inscrever seu projeto.'
                                     })
                                 ])
                             ])
@@ -141,7 +141,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                     ]),
                     m('.w-section.section-large.u-text-center.bg-purple', [
                         m('.w-container.fontcolor-negative', [
-                            m('.fontsize-largest', 'Inscreva seu projeto!'), m('.fontsize-base.u-marginbottom-60', 'Inscreva seu email e saiba como inscrever o seu projeto no flex!'), m('.w-row', [
+                            m('.fontsize-largest', 'Inscreva seu projeto!'), m('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), m('.w-row', [
                                 m('.w-col.w-col-2'),
                                 m.component(c.landingSignup, {
                                     builder: ctrl.builder

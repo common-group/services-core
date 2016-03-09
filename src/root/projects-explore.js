@@ -42,7 +42,6 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                   loadRoute = () => {
                       const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
-
                             cat = route &&
                                 route[2] &&
                                 findCategory(route[2]),
@@ -85,6 +84,15 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
+                            },
+
+                            loadSuccessfulProjects = () => {
+                                const pages = m.postgrest.paginationVM(c.models.successfulProject);
+                                pages.firstPage(filter.filter.order({
+                                    recommended: 'desc',
+                                    project_id: 'desc'
+                                }).parameters());
+                                return pages;
                             };
 
                       if (_.isString(search) && search.length > 0 && route === null) {
@@ -92,7 +100,11 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                           projects(searchProjects());
                       } else {
                           title(filter.title);
-                          projects(loadProjects());
+                          if (!_.isNull(route) && route[1] == 'successful') {
+                              projects(loadSuccessfulProjects());
+                          } else {
+                              projects(loadProjects());
+                          }
                       }
                       categoryId(cat && cat.id);
                       route ? toggleCategories(false) : toggleCategories(true);

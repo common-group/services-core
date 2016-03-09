@@ -305,7 +305,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 m('#start-form.w-section.section-large.u-text-center.bg-purple.before-footer', [
                     m('.w-container', [
                         m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
-                        m('form[action="/pt/projects"][method="POST"].w-row.w-form', [
+                        m('form[action="/projects/fallback_create"][method="GET"].w-row.w-form', [
                             m('.w-col.w-col-2'),
                             m('.w-col.w-col-8', [
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
@@ -333,3 +333,4 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
         }
     };
 }(window.m, window.c, window.c.h, window.c.models, window.I18n));
+
