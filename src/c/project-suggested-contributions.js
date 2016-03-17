@@ -13,7 +13,7 @@
 window.c.ProjectSuggestedContributions = (function(m, c, _) {
     return {
         view: (ctrl, args) => {
-            const project = args.project;
+            const project = args.project();
             let suggestionUrl = (amount) => {
                 return `/projects/${project.project_id}/contributions/new?amount=${amount}`;
             }, suggestedValues = [10, 25, 50, 100];
