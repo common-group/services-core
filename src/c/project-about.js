@@ -36,7 +36,7 @@ window.c.ProjectAbout = ((m, c, h) => {
                     }), fundingPeriod()
                 ] : [
                     m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Sugestões de apoio'),
-                    m.component(c.ProjectSuggestedContributions, {project: project}),
+                    m.component(c.ProjectSuggestedContributions, {project: args.project}),
                     fundingPeriod()
                 ])
             ]);
