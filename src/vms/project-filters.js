@@ -32,7 +32,7 @@ window.c.vms.projectFilters = ((m, h, moment) => {
 
         return {
             recommended: {
-                title: 'Recomendados',
+                title: 'Populares',
                 filter: recommended
             },
             online: {
