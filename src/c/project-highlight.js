@@ -16,7 +16,7 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
                     style: 'min-height: 240px;'
                 }, [
                     m('iframe.embedly-embed[itemprop="video"][src="' + project().video_embed_url + '"][frameborder="0"][allowFullScreen]')
-                ]) : m('.project-image', {
+                ]) : m('.project-image.project-video', {
                     style: 'background-image:url(' + project().original_image + ');'
                 })),
                 m('.project-blurb', project().headline),
