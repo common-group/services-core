@@ -20,7 +20,7 @@ window.c.ProjectSuccessfulOnboardConfirmAccount = ((m, c, h, _) => {
                       return () => {
                           actionStage(actionStages[stage]);
 
-                          return void(0);
+                          return false;
                       };
                   };
 

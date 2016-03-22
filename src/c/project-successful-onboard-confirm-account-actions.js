@@ -14,10 +14,10 @@ window.c.ProjectSuccessfulOnboardConfirmAccountActions = ((m, c, h, _) => {
             return m('.w-row.bank-transfer-answer', [
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny'),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a.btn.btn-large', {href: 'js:void(0);', onclick: args.changeToAction('accept')}, 'Sim')
+                    m('a.btn.btn-large', {href: '#confirm_account', onclick: args.changeToAction('accept')}, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a.btn.btn-large.btn-terciary', {href: 'js:void(0);', onclick: args.changeToAction('error')}, 'Não')
+                    m('a.btn.btn-large.btn-terciary', {href: '#error_account', onclick: args.changeToAction('error')}, 'Não')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
             ]);
