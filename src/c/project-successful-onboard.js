@@ -18,32 +18,32 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   projectAccounts = m.prop([]),
                   projectTransfers = m.prop([]),
                   onboardComponents = {
-                      'start': 'DashboardInformation',
+                      'start': 'DashboardInfo',
                       'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount',
-                      'error_account': 'ProjectSuccessfulOnboardErrorAccount',
-                      'pending_transfer': 'DashboardInformation',
-                      'finished': 'ProjectSuccessfulOnboardFinished'
+                      'error_account': 'DashboardInfo',
+                      'pending_transfer': 'DashboardInfo',
+                      'finished': 'DashboardInfo'
                   },
                   currentState = m.prop('start'),
                   currentComponent = () => onboardComponents[currentState()],
-                  content = () => insightVM.content(currentState()),
+                  content = () => insightVM.content(currentState(), {account: projectAccounts, transfer: projectTransfers}),
                   loader = m.postgrest.loaderWithToken,
                   declineAccountLoader = (errorMsg) => {
                       const pa = _.first(projectAccounts());
 
                       return m.postgrest.loaderWithToken(
                           models.projectAccountError.postOptions({
-                              project_id: args.project.id,
+                              project_id: args.project().id,
                               reason: errorMsg
                           }));
                   },
                   acceptAccountLoader = m.postgrest.loaderWithToken(
                       models.projectAccount.postOptions({
-                          project_id: args.project.id
+                          project_id: args.project().id
                       })
                   );
 
-            projectIdVM.project_id(args.project.id);
+            projectIdVM.project_id(args.project().id);
 
             const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
             lProjectAccount.load().then((data) => {
@@ -104,7 +104,6 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                       return false;
                   };
 
-
             return {
                 projectAccounts: projectAccounts,
                 projectTransfers: projectTransfers,
@@ -127,7 +126,7 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   projectTransfer = _.first(ctrl.projectTransfers()),
                   lpa = ctrl.lProjectAccount,
                   lpt = ctrl.lProjectTransfer;
-
+            console.log('current component', ctrl.currentComponent());
             return m('.w-section.section', [
                 (!lpa() && !lpt() ?
                  m.component(c[ctrl.currentComponent()], {

@@ -1,16 +1,19 @@
 /**
- * window.c.ProjectSuccessfulOnboardStart component
- * render congratulations message when project is successful and
- * button to confirm the bank data
+ * window.c.DashboardInfo component
+ * render a row of information with an icon and an optional call to action
  *
  * Example:
- * m.component(c.ProjectSuccessfulOnboardStart, {
- *     projectTransfer: projectTransfer,
- *     setStage: setStage // setStage is defined on ProjectSuccessfulOnboard component
+ * m.component(c.DashboardInfo, {
+ *      content: {
+ *          icon: 'url://to.icon',
+ *          title: 'title',
+ *          href: '#where-to',
+ *          cta: 'next step'
+ *      }
  * })
  **/
 
-window.c.DashboardInformation = ((m, c, h) => {
+window.c.DashboardInfo = ((m, c, h) => {
     return {
         view: (ctrl, args) => {
             const content = args.content;
@@ -22,7 +25,7 @@ window.c.DashboardInformation = ((m, c, h) => {
                             m('img.u-marginbottom-20', {src: content.icon, width: 94}),
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-20', content.title),
                             m('.fontsize-base.u-marginbottom-30', m.trust(content.text)),
-                            content.cta ? m('a.btn.btn-large.btn-inline', {href: content.href, onclick: args.nextStage()}, content.cta) : ''
+                            content.cta ? m('a.btn.btn-large.btn-inline', {href: content.href, onclick: args.nextStage}, content.cta) : ''
                         ])
                     ])
                 ])
