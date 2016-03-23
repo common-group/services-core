@@ -7,6 +7,7 @@ window.c.root.Publish = ((m, c, h, models, _, I18n) => {
                     project_id: 'eq'
                 }),
                 publishVM = c.PublishVM,
+                projectAccount = m.prop([]),
                 projectDetails = m.prop([]),
                 acceptTerm = m.prop([true,true,true,true,true,true,true,true,true]),
                 flexAcceptTerm = m.prop([true,true,true,true,true,true,true,true,true]),
@@ -29,21 +30,26 @@ window.c.root.Publish = ((m, c, h, models, _, I18n) => {
 
             filtersVM.project_id(args.root.getAttribute('data-id'));
 
-            const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
+            const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters())),
+                accountL = loader(models.projectAccount.getRowOptions(filtersVM.parameters()));
             l.load().then(projectDetails);
+            accountL.load().then(projectAccount);
 
             return {
                 l: l,
+                accountL: accountL,
                 filtersVM: filtersVM,
                 acceptTerm: acceptTerm,
                 flexAcceptTerm: flexAcceptTerm,
                 showNextTerm: showNextTerm,
+                projectAccount: projectAccount,
                 projectDetails: projectDetails
             };
         },
 
         view: function(ctrl, args) {
             const project = _.first(ctrl.projectDetails()),
+              account = _.first(ctrl.projectAccount()),
               flexTerms = (project) => {
                   return [
                       m('.w-col.w-col-11', [
@@ -250,9 +256,9 @@ window.c.root.Publish = ((m, c, h, models, _, I18n) => {
                         m('div', [m('span.fontweight-semibold', 'Link: '),`www.catarse.me/${project.permalink}`]),
                         m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n.t(project.mode, I18nScope())]),
                         m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '),`R$ ${h.formatNumber(project.goal, 2, 3)}`]),
-                        m('div', [m('span.fontweight-semibold', 'Prazo: '), project.mode == 'flex' ? 'Em aberto' : ` ${project.online_days} dias`]),
+                        (project.mode !== 'flex') ? m('div', [m('span.fontweight-semibold', `Prazo: ${project.online_days} dias`)]) : '',
                         m('div', [m('span.fontweight-semibold', 'Responsável: '), project.user.name]),
-                        m('div', [m('span.fontweight-semibold', 'CPF: '), project.user.cpf])
+                        m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), ctrl.accountL() ? 'carregando informação...' : account.owner_document])
                       ])
                     ])
                   ]),
@@ -273,7 +279,7 @@ window.c.root.Publish = ((m, c, h, models, _, I18n) => {
                     m('.w-row', [
                       m('.w-col.w-col-2'),
                       m('.w-col.w-col-8', [
-                        m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ',m('a.alt-link[href=\'#\'][target=\'_blank\']', 'entre em contato'),'!'])
+                        m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ',m('a.alt-link[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\'][target=\'_blank\']', 'entre em contato'),'!'])
                       ]),
                       m('.w-col.w-col-2')
                     ])
