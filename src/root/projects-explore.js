@@ -107,8 +107,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                           }
                       }
                       categoryId(cat && cat.id);
-                      route ? toggleCategories(false) : toggleCategories(true);
-
+                      route || (_.isString(search) && search.length > 0) ? toggleCategories(false) : toggleCategories(true);
                   },
 
                   toggleCategories = h.toggleProp(false, true);
