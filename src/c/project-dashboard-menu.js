@@ -108,7 +108,7 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
                                   ])
                                  )
                             ] : [
-                                (project.mode === 'flex' ? [
+                                ((project.mode === 'flex' && project.is_published)? [
                                     m('.btn-send-draft-fixed',
                                       (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', I18n.t('announce_expiration', I18nScope())) : ''))
                                 ] : '')
