@@ -47,13 +47,16 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             ]];
             const buildPerRefTable = (contributions) => {
                 return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
-                    const re = /(ctrse_[\w]*)/,
+                    //Test if the string matches a word starting with ctrse_ and followed by any non-digit group of characters
+                    //This allows to remove any versioned referral (i.e.: ctrse_newsletter_123) while still getting ctrse_test_ref
+                    const re = /(ctrse_[\D]*)/,
                         test = re.exec(contribution.referral_link);
 
                     let column = [];
 
                     if (test){
-                        contribution.referral_link = test[0];
+                        //Removes last underscore if it exists
+                        contribution.referral_link = test[0].substr(-1) === '_' ? test[0].substr(0, test[0].length - 1) : test[0];
                     }
 
                     column.push(contribution.referral_link ? I18n.t('referral.' + contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : I18n.t('referral.others', I18nScope()));
