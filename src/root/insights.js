@@ -6,11 +6,16 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             let filtersVM = m.postgrest.filtersVM({
                     project_id: 'eq'
                 }),
+                displayModal = h.toggleProp(false, true),
                 insightsVM = c.InsightsVM,
                 projectDetails = m.prop([]),
                 contributionsPerDay = m.prop([]),
                 contributionsPerLocation = m.prop([]),
                 loader = m.postgrest.loaderWithToken;
+
+            if (h.paramByName('online_success') === 'true') {
+              displayModal.toggle();
+            }
 
             filtersVM.project_id(args.root.getAttribute('data-id'));
 
@@ -88,6 +93,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
                 lContributionsPerRef: lContributionsPerRef,
                 lContributionsPerLocation: lContributionsPerLocation,
                 lContributionsPerDay: lContributionsPerDay,
+                displayModal: displayModal,
                 filtersVM: filtersVM,
                 projectDetails: projectDetails,
                 contributionsPerDay: contributionsPerDay,
@@ -98,6 +104,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
         },
         view: (ctrl) => {
             const project = _.first(ctrl.projectDetails()),
+                successModalC = [ 'OnlineSucessModalContent' ],
                 tooltip = (el) => {
                     return m.component(c.Tooltip, {
                         el: el,
@@ -112,6 +119,10 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             return m('.project-insights', !ctrl.l() ? [
                 (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
                     project: m.prop(project)
+                }) : ''),
+                (ctrl.displayModal() ? m.component(c.ModalBox, {
+                    displayModal: ctrl.displayModal,
+                    content: successModalC
                 }) : ''),
                 m('.w-container', [
                     m('.w-row.u-marginbottom-40', [
