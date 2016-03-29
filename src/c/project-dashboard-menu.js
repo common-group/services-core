@@ -78,9 +78,7 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
                                     m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
                                         'Vídeo', optionalOpt
                                     ]),
-                                    m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', [
-                                        'Orçamento', optionalOpt
-                                    ]),
+                                    m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', 'Orçamento'),
                                     m('a#card_link[class="' + editLinkClass + '"][href="' + editRoute + '#card' + '"]', 'Card do projeto'),
                                     m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', [
                                         'Recompensas', optionalOpt
