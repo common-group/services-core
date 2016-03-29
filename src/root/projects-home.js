@@ -9,7 +9,7 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
                 filters = c.vms.projectFilters(),
                 vm = c.vms.home();
 
-            const collections = _.map(['recommended'], (name) => {
+            const collections = _.map(['score'], (name) => {
                 const f = filters[name],
                       cLoader = loader(project.getPageOptions(f.filter.parameters())),
                       collection = m.prop([]);
