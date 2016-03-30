@@ -15,15 +15,21 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
         controller: (args) => {
             let body = document.getElementsByTagName('body')[0],
                 editLinksToggle = h.toggleProp(true, false),
+                showPublish = h.toggleProp(true, false),
                 bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
             if (args.project().is_published) {
                 editLinksToggle.toggle(false);
             }
 
+            if (args.hidePublish) {
+                showPublish.toggle(false);
+            }
+
             return {
                 body: body,
                 editLinksToggle: editLinksToggle,
+                showPublish: showPublish,
                 bodyToggleForNav: bodyToggleForNav
             };
         },
@@ -72,9 +78,7 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
                                     m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
                                         'Vídeo', optionalOpt
                                     ]),
-                                    m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', [
-                                        'Orçamento', optionalOpt
-                                    ]),
+                                    m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', 'Orçamento'),
                                     m('a#card_link[class="' + editLinkClass + '"][href="' + editRoute + '#card' + '"]', 'Card do projeto'),
                                     m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', [
                                         'Recompensas', optionalOpt
@@ -88,21 +92,21 @@ window.c.ProjectDashboardMenu = ((m, _, h, I18n) => {
                                     ] : '')
                                 ])
                             ]) : ''),
-                            (!project.is_published ? [
+                            ((!project.is_published && ctrl.showPublish()) ? [
                                 m('.btn-send-draft-fixed',
                                   (project.mode === 'aon' ? [
                                       (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', I18n.t('send', I18nScope())) : ''),
-                                      (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/publish"]', [
+                                      (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/validate_publish"]', [
                                           I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                       ]) : '')
                                   ] : [
-                                      (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/edit#preview"]', [
+                                      (project.state === 'draft' ? m('a.btn.btn-medium[href="/flexible_projects/' + project.flex_id + '/validate_publish"]', [
                                           I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                       ]) : '')
                                   ])
                                  )
                             ] : [
-                                (project.mode === 'flex' ? [
+                                ((project.mode === 'flex' && project.is_published)? [
                                     m('.btn-send-draft-fixed',
                                       (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', I18n.t('announce_expiration', I18nScope())) : ''))
                                 ] : '')

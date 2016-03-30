@@ -98,7 +98,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
             let stats = _.first(ctrl.stats());
             const testimonials = () => {
                 return _.map(ctrl.testimonials, (testimonial) => {
-                    return m('.card.u-radius.card-big.card-terciary', [
+                    const content = m('.card.u-radius.card-big.card-terciary', [
                         m('.u-text-center.u-marginbottom-20', [
                             m(`img.thumb-testimonial.u-round.u-marginbottom-20[src="${testimonial.thumbUrl}"]`)
                         ]),
@@ -108,6 +108,10 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                             m('.fontsize-base', testimonial.totals)
                         ])
                     ]);
+
+                    return {
+                        content: content
+                    };
                 });
 
             };
@@ -276,7 +280,9 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 ]),
                 m.component(c.Slider, {
                     slides: testimonials(),
-                    title: I18n.t('testimonials_title', I18nScope())
+                    title: I18n.t('testimonials_title', I18nScope()),
+                    slideClass: 'slide-testimonials-content',
+                    wrapperClass: 'slide-testimonials'
                 }),
                 m('.w-section.divider.u-margintop-30'),
                 m('.w-container', [
@@ -299,7 +305,7 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                 m('#start-form.w-section.section-large.u-text-center.bg-purple.before-footer', [
                     m('.w-container', [
                         m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
-                        m('form[action="/pt/projects"][method="POST"].w-row.w-form', [
+                        m('form[action="/projects/fallback_create"][method="GET"].w-row.w-form', [
                             m('.w-col.w-col-2'),
                             m('.w-col.w-col-8', [
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
@@ -327,3 +333,4 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
         }
     };
 }(window.m, window.c, window.c.h, window.c.models, window.I18n));
+

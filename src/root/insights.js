@@ -6,11 +6,16 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             let filtersVM = m.postgrest.filtersVM({
                     project_id: 'eq'
                 }),
+                displayModal = h.toggleProp(false, true),
                 insightsVM = c.InsightsVM,
                 projectDetails = m.prop([]),
                 contributionsPerDay = m.prop([]),
                 contributionsPerLocation = m.prop([]),
                 loader = m.postgrest.loaderWithToken;
+
+            if (h.paramByName('online_success') === 'true') {
+              displayModal.toggle();
+            }
 
             filtersVM.project_id(args.root.getAttribute('data-id'));
 
@@ -47,13 +52,16 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             ]];
             const buildPerRefTable = (contributions) => {
                 return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
-                    const re = /(ctrse_[a-z]*)/,
+                    //Test if the string matches a word starting with ctrse_ and followed by any non-digit group of characters
+                    //This allows to remove any versioned referral (i.e.: ctrse_newsletter_123) while still getting ctrse_test_ref
+                    const re = /(ctrse_[\D]*)/,
                         test = re.exec(contribution.referral_link);
 
                     let column = [];
 
                     if (test){
-                        contribution.referral_link = test[0];
+                        //Removes last underscore if it exists
+                        contribution.referral_link = test[0].substr(-1) === '_' ? test[0].substr(0, test[0].length - 1) : test[0];
                     }
 
                     column.push(contribution.referral_link ? I18n.t('referral.' + contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : I18n.t('referral.others', I18nScope()));
@@ -85,6 +93,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
                 lContributionsPerRef: lContributionsPerRef,
                 lContributionsPerLocation: lContributionsPerLocation,
                 lContributionsPerDay: lContributionsPerDay,
+                displayModal: displayModal,
                 filtersVM: filtersVM,
                 projectDetails: projectDetails,
                 contributionsPerDay: contributionsPerDay,
@@ -95,20 +104,25 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
         },
         view: (ctrl) => {
             const project = _.first(ctrl.projectDetails()),
-                  tooltip = (el) => {
-                      return m.component(c.Tooltip, {
-                          el: el,
-                          text: [
-                              'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
-                              m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
-                          ],
-                          width: 380
-                      });
-                  };
+                successModalC = [ 'OnlineSucessModalContent' ],
+                tooltip = (el) => {
+                    return m.component(c.Tooltip, {
+                        el: el,
+                        text: [
+                            'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
+                            m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                        ],
+                        width: 380
+                    });
+                };
 
             return m('.project-insights', !ctrl.l() ? [
                 (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
                     project: m.prop(project)
+                }) : ''),
+                (ctrl.displayModal() ? m.component(c.ModalBox, {
+                    displayModal: ctrl.displayModal,
+                    content: successModalC
                 }) : ''),
                 m('.w-container', [
                     (project.state == 'successful' ? m.component(c.ProjectSuccessfulOnboard, {project: project})

@@ -47,7 +47,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                     m('.w-container.u-text-center', [
                         m('img.logo-flex-home[src=\'/assets/logo-flex.png\'][width=\'359\']'),
                         m('.w-row', [
-                            m('.w-col.fontsize-large.u-marginbottom-60.w-col-push-2.w-col-8', 'Vamos construir uma nova modalidade de crowdfunding para o Catarse!  Junte-se a nós, inscreva seu email!')
+                            m('.w-col.fontsize-large.u-marginbottom-60.w-col-push-2.w-col-8', 'Vamos construir uma nova modalidade de crowdfunding! Cadastre seu email e saiba como inscrever o seu projeto no flex!')
                         ]),
                         m('.w-row', [
                             m('.w-col.w-col-2'),
@@ -65,7 +65,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                     m('.w-col.w-col-6', [
                                         m('.u-text-center.u-marginbottom-20', [
                                             m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/560e393a01b66e250aca67cb_icon-zelo-com.png\'][width=\'210\']'), m('.fontsize-largest.lineheight-loose', 'Causas')
-                                        ]), m('p.fontsize-base', 'Flexibilidade para causas de impacto! Estaremos abertos a campanhas de organizações ou pessoas físicas para arrecadação de recursos para causas pessoais, projetos assistencialistas, saúde, ajudas humanitárias, proteção aos animais, empreendedorismo socioambiental, ativismo ou qualquer coisa que una as pessoas para fazer o bem.')
+                                        ]), m('p.fontsize-base', 'Flexibilidade para causas de impacto! Estaremos abertos a campanhas de organizações ou pessoas físicas para arrecadação de recursos para causas pessoais, projetos assistenciais, saúde, ajudas humanitárias, proteção aos animais, empreendedorismo socioambiental, ativismo ou qualquer coisa que una as pessoas para fazer o bem.')
                                     ]), m('.w-col.w-col-6', [
                                         m('.u-text-center.u-marginbottom-20', [
                                             m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/560e3929a0daea230a5f12cd_icon-zelo-pessoal.png\'][width=\'210\']'), m('.fontsize-largest.lineheight-loose', 'Vaquinhas')
@@ -112,7 +112,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                 m('.w-col.w-col-6', [
                                     m.component(c.landingQA, {
                                         question: 'Quais são as taxas da modalidade flexível? ',
-                                        answer: 'Como no Catarse, enviar um projeto não custa nada! Estamos estudando opções para entender qual será a taxa cobrada no serviço Catarse flex.'
+                                        answer: 'Como no Catarse, enviar um projeto não custa nada! A taxa cobrada no serviço Catarse flex é de 13% sobre o valor arrecadado.'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'De onde vem o dinheiro do meu projeto?',
@@ -125,7 +125,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                 ]), m('.w-col.w-col-6', [
                                     m.component(c.landingQA, {
                                         question: 'Posso inscrever projetos para a modalidade flexível já?',
-                                        answer: 'Por enquanto não. A modalidade flex será testada com alguns projetos específicos. Inscreva seu email e participe da conversa nessa página para receber informações, materiais, acompanhar projetos em teste e saber com antecedência a data de lançamento do flex.'
+                                        answer: 'Sim. Cadastre seu email e saiba como inscrever o seu projeto no flex!'
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'Por quê vocês querem fazer o Catarse flex?',
@@ -133,7 +133,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                                     }),
                                     m.component(c.landingQA, {
                                         question: 'Quando vocês irão lançar o Catarse flex?',
-                                        answer: 'Ainda não sabemos quando abriremos o flex para o público. Iremos primeiramente passar por um período de testes e depois estabelecer uma data de lançamento. Se você deseja acompanhar e receber notícias sobre essa caminhada, inscreva seu email nessa página.'
+                                        answer: 'Ainda não sabemos quando abriremos o flex para o público em geral, mas você pode cadastrar seu email nessa página e receber um material especial de como inscrever seu projeto.'
                                     })
                                 ])
                             ])
@@ -141,7 +141,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                     ]),
                     m('.w-section.section-large.u-text-center.bg-purple', [
                         m('.w-container.fontcolor-negative', [
-                            m('.fontsize-largest', 'Fique por dentro!'), m('.fontsize-base.u-marginbottom-60', 'Receba notícias e acompanhe a evolução do Catarse flex'), m('.w-row', [
+                            m('.fontsize-largest', 'Inscreva seu projeto!'), m('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), m('.w-row', [
                                 m('.w-col.w-col-2'),
                                 m.component(c.landingSignup, {
                                     builder: ctrl.builder

@@ -1,5 +1,6 @@
 window.c.models = (function(m) {
     var contributionDetail = m.postgrest.model('contribution_details'),
+        contributionActivity = m.postgrest.model('contribution_activities'),
         projectDetail = m.postgrest.model('project_details'),
         userDetail = m.postgrest.model('user_details'),
         balance = m.postgrest.model('balances'),
@@ -11,6 +12,7 @@ window.c.models = (function(m) {
         projectReminder = m.postgrest.model('project_reminders'),
         contributions = m.postgrest.model('contributions'),
         teamTotal = m.postgrest.model('team_totals'),
+        projectAccount = m.postgrest.model('project_accounts'),
         projectContribution = m.postgrest.model('project_contributions'),
         projectPostDetail = m.postgrest.model('project_posts_details'),
         projectContributionsPerDay = m.postgrest.model('project_contributions_per_day'),
@@ -26,15 +28,19 @@ window.c.models = (function(m) {
         categoryFollower = m.postgrest.model('category_followers'),
         teamMember = m.postgrest.model('team_members'),
         notification = m.postgrest.model('notifications'),
-        statistic = m.postgrest.model('statistics');
+        statistic = m.postgrest.model('statistics'),
+        successfulProject = m.postgrest.model('successful_projects');
 
     teamMember.pageSize(40);
     rewardDetail.pageSize(false);
     project.pageSize(30);
     category.pageSize(50);
+    contributionActivity.pageSize(40);
+    successfulProject.pageSize(9);
 
     return {
         contributionDetail: contributionDetail,
+        contributionActivity: contributionActivity,
         projectDetail: projectDetail,
         userDetail: userDetail,
         balance: balance,
@@ -54,6 +60,7 @@ window.c.models = (function(m) {
         category: category,
         categoryTotals: categoryTotals,
         categoryFollower: categoryFollower,
+        projectAccount: projectAccount,
         projectContributionsPerDay: projectContributionsPerDay,
         projectContributionsPerLocation: projectContributionsPerLocation,
         projectContributionsPerRef: projectContributionsPerRef,
@@ -61,6 +68,7 @@ window.c.models = (function(m) {
         projectPostDetail: projectPostDetail,
         projectReminder: projectReminder,
         notification: notification,
-        statistic: statistic
+        statistic: statistic,
+        successfulProject: successfulProject
     };
 }(window.m));

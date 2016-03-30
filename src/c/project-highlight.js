@@ -26,7 +26,7 @@ window.c.ProjectHighlight = ((m, _, h, c) => {
                             m('span.fa.fa-map-marker'), ` ${address.city}, ${address.state_acronym}`
                         ]) : ''
                     ),
-                    m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light[href="/pt/explore#by_category_id/${project.category_id}"]`, [
+                    m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light[href="/pt/explore#by_category_id/${project().category_id}"]`, [
                         m('span.fa.fa-tag'), ' ',
                         project().category_name
                     ]),

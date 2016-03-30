@@ -42,7 +42,6 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                   loadRoute = () => {
                       const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
-
                             cat = route &&
                                 route[2] &&
                                 findCategory(route[2]),
@@ -60,7 +59,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     {title: cat.name, filter: byCategory.category_id(cat.id)};
                             },
 
-                            filter = filterFromRoute() || filtersMap.recommended,
+                            filter = filterFromRoute() || filtersMap.score,
                             search = h.paramByName('pg_search'),
 
                             searchProjects = () => {
@@ -81,7 +80,16 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
                                     state: 'desc',
-                                    recommended: 'desc',
+                                    score: 'desc',
+                                    project_id: 'desc'
+                                }).parameters());
+                                return pages;
+                            },
+
+                            loadSuccessfulProjects = () => {
+                                const pages = m.postgrest.paginationVM(c.models.successfulProject);
+                                pages.firstPage(filter.filter.order({
+                                    score: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
@@ -92,11 +100,14 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                           projects(searchProjects());
                       } else {
                           title(filter.title);
-                          projects(loadProjects());
+                          if (!_.isNull(route) && route[1] == 'successful') {
+                              projects(loadSuccessfulProjects());
+                          } else {
+                              projects(loadProjects());
+                          }
                       }
                       categoryId(cat && cat.id);
-                      route ? toggleCategories(false) : toggleCategories(true);
-
+                      route || (_.isString(search) && search.length > 0) ? toggleCategories(false) : toggleCategories(true);
                   },
 
                   toggleCategories = h.toggleProp(false, true);
@@ -125,6 +136,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
         view: (ctrl) => {
             return [
                 m('.w-section.hero-search', [
+                    m.component(c.Search),
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
                             m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]',{onclick: () => ctrl.toggleCategories.toggle()}, ['Explore projetos incríveis ',m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
