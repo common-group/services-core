@@ -25,24 +25,28 @@ window.c.AdminResetPassword = ((function(m, h, c, _) {
                 }
             };
 
-            const l = m.postgrest.loader(_.extend({}, {data: data}, builder.requestOptions)),
+            const l = m.prop(false),
+                load = () => m.request(_.extend({}, {data: data}, builder.requestOptions)),
                 newPassword = m.prop(''),
                 error_message = m.prop('');
 
             const requestError = (err) => {
+                l(false);
                 error_message(err.errors[0]);
                 complete(true);
                 error(true);
             };
             const updateItem = (res) => {
+                l(false);
                 _.extend(item, res[0]);
                 complete(true);
                 error(false);
             };
 
             const submit = () => {
+                l(true);
                 data[key] = newPassword();
-                l.load().then(updateItem, requestError);
+                load().then(updateItem, requestError);
                 return false;
             };
 

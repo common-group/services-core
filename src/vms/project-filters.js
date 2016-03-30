@@ -17,10 +17,10 @@ window.c.vms.projectFilters = ((m, h, moment) => {
                   open_for_contributions: 'eq'
               }).open_for_contributions('true').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
 
-              recommended = filters({
-                  recommended: 'eq',
+              score = filters({
+                  score: 'gte',
                   open_for_contributions: 'eq'
-              }).recommended('true').open_for_contributions('true'),
+              }).score('100').open_for_contributions('true'),
 
               online = filters({
                   open_for_contributions: 'eq'
@@ -31,9 +31,9 @@ window.c.vms.projectFilters = ((m, h, moment) => {
               }).state('successful');
 
         return {
-            recommended: {
+            score: {
                 title: 'Populares',
-                filter: recommended
+                filter: score
             },
             online: {
                 title: 'No ar',

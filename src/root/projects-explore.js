@@ -59,7 +59,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     {title: cat.name, filter: byCategory.category_id(cat.id)};
                             },
 
-                            filter = filterFromRoute() || filtersMap.recommended,
+                            filter = filterFromRoute() || filtersMap.score,
                             search = h.paramByName('pg_search'),
 
                             searchProjects = () => {
@@ -80,7 +80,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
                                     state: 'desc',
-                                    recommended: 'desc',
+                                    score: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
@@ -89,7 +89,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             loadSuccessfulProjects = () => {
                                 const pages = m.postgrest.paginationVM(c.models.successfulProject);
                                 pages.firstPage(filter.filter.order({
-                                    recommended: 'desc',
+                                    score: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
