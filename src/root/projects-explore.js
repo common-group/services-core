@@ -89,7 +89,6 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             loadSuccessfulProjects = () => {
                                 const pages = m.postgrest.paginationVM(c.models.successfulProject);
                                 pages.firstPage(filter.filter.order({
-                                    score: 'desc',
                                     project_id: 'desc'
                                 }).parameters());
                                 return pages;
