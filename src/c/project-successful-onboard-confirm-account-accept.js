@@ -8,33 +8,31 @@
  *    changeToAction: ctrl.changeToAction //provided by ProjectSuccessfulOnboardConfirmAccount controller
  * })
  **/
-window.c.ProjectSuccessfulOnboardConfirmAccountAccept = ((m, c, h, _) => {
+window.c.ProjectSuccessfulOnboardConfirmAccountAccept = ((m, c, h, _, I18n) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
+
     return {
         view: (ctrl, args) => {
             return m('.w-row.bank-transfer-answer', [
-                m('.w-col.w-col-3'),
-                m('.w-col.w-col-6', [
+                m('.w-col.w-col-6.w-col-push-3', [
                     m('.w-form.bank-transfer-confirm.card.u-radius', [
                         m('form', [
-                            m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', {href: 'js:void(0);', onclick: args.changeToAction('start')}),
-                            m('label.field-label.fontweight-semibold.u-marginbottom-20', 'Tem certeza?'),
-                            m('.fontsize-smaller.u-marginbottom-30', 'Qualquer informação errada nesse momento pode atrasar o repasse dos recursos!'),
+                            m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', {href: '#confirm_account', onclick: args.changeToAction('start')}),
+                            m('label.field-label.fontweight-semibold.u-marginbottom-20', I18n.t('accept.title', I18nScope())),
+                            m('.fontsize-smaller.u-marginbottom-30', I18n.t('accept.info', I18nScope())),
                             m('.w-row', [
-                                m('.w-col.w-col-4'),
-                                m('.w-col.w-col-4', [
+                                m('.w-col.w-col-4.w-col-push-4', [
                                     (!args.acceptAccountLoader() ?
                                      m('a.w-button.btn.btn-medium', {
-                                         href: 'js:void(0);',
+                                         href: '#accept_account',
                                          onclick: args.acceptAccount
-                                     }, 'Confirmar') : h.loader())
-                                ]),
-                                m('.w-col.w-col-4')
+                                     }, I18n.t('accept.cta', I18nScope())) : h.loader())
+                                ])
                             ])
                         ])
                     ])
-                ]),
-                m('.w-col.w-col-3')
+                ])
             ]);
         }
     };
-}(window.m, window.c, window.c.h, window._));
+}(window.m, window.c, window.c.h, window._, window.I18n));

@@ -103,42 +103,44 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
             };
         },
         view: (ctrl) => {
-            const project = _.first(ctrl.projectDetails()),
-                successModalC = [ 'OnlineSucessModalContent' ],
-                tooltip = (el) => {
-                    return m.component(c.Tooltip, {
-                        el: el,
-                        text: [
-                            'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
-                            m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
-                        ],
-                        width: 380
-                    });
-                };
+            const project = m.prop(_.first(ctrl.projectDetails())),
+                  successModalC = [ 'OnlineSucessModalContent' ],
+                  tooltip = (el) => {
+                      return m.component(c.Tooltip, {
+                          el: el,
+                          text: [
+                              I18n.t('tooltip', I18nScope()),
+                              m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                          ],
+                          width: 380
+                      });
+                  };
 
             return m('.project-insights', !ctrl.l() ? [
-                (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
-                    project: m.prop(project)
+                (project().is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
+                    project: project
                 }) : ''),
                 (ctrl.displayModal() ? m.component(c.ModalBox, {
                     displayModal: ctrl.displayModal,
                     content: successModalC
                 }) : ''),
                 m('.w-container', [
-                    (project.state == 'successful' ? m.component(c.ProjectSuccessfulOnboard, {project: project})
+                    (project().state == 'successful' ? m.component(c.ProjectSuccessfulOnboard, {project: project})
                      : m('.w-row.u-marginbottom-40', [
                          m('.w-col.w-col-2'),
                          m('.w-col.w-col-8.dashboard-header.u-text-center', [
                              m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
-                             m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
-                                 project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [I18n.t('finish_explanation', I18nScope()),
-                                                                                                                                   m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]', I18n.t('know_more', I18nScope()))]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at)})))
+                             m('p.' + project().state + '-project-text.fontsize-small.lineheight-loose', [
+                                 project().mode === 'flex' && _.isNull(project().expires_at) && project().state !== 'draft' ? m('span', [
+                                     I18n.t('finish_explanation', I18nScope()),
+                                     m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]', I18n.t('know_more', I18nScope()))
+                                 ]) : m.trust(I18n.t(`campaign.${project().mode}.${project().state}`, I18nScope({username: project().user.name, expires_at: h.momentify(project().zone_expires_at), sent_to_analysis_at: h.momentify(project().sent_to_analysis_at)})))
                              ])
                          ]),
                          m('.w-col.w-col-2')
                      ])
                     )
-                ]), (project.is_published) ? [
+                ]), (project().is_published) ? [
                     m('.divider'),
                     m('.w-section.section-one-column.section.bg-gray.before-footer', [
                         m('.w-container', [

@@ -8,44 +8,46 @@
  **/
 
 window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
+    const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
+
     return {
         controller: (args) => {
-            const projectIdVM = m.postgrest.filtersVM({project_id: 'eq'}),
+
+            const insightVM = c.vms.insight,
+                  projectIdVM = m.postgrest.filtersVM({project_id: 'eq'}),
                   projectAccounts = m.prop([]),
                   projectTransfers = m.prop([]),
-                  onboardStages = {
-                      'start': 'ProjectSuccessfulOnboardStart',
+                  onboardComponents = {
+                      'start': 'DashboardInfo',
                       'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount',
-                      'error_account': 'ProjectSuccessfulOnboardErrorAccount',
-                      'pending_transfer': 'ProjectSuccessfulOnboardPendingTransfer',
-                      'finished': 'ProjectSuccessfulOnboardFinished'
+                      'error_account': 'DashboardInfo',
+                      'pending_transfer': 'DashboardInfo',
+                      'finished': 'DashboardInfo'
                   },
-                  currentStage = m.prop(onboardStages['start']),
+                  currentState = m.prop('start'),
+                  currentComponent = () => onboardComponents[currentState()],
+                  content = () => insightVM.content(currentState(), {account: projectAccounts, transfer: projectTransfers}),
                   loader = m.postgrest.loaderWithToken,
                   declineAccountLoader = (errorMsg) => {
                       const pa = _.first(projectAccounts());
 
                       return m.postgrest.loaderWithToken(
                           models.projectAccountError.postOptions({
-                              project_id: args.project.id,
+                              project_id: args.project().id,
                               reason: errorMsg
                           }));
                   },
                   acceptAccountLoader = m.postgrest.loaderWithToken(
                       models.projectAccount.postOptions({
-                          project_id: args.project.id
+                          project_id: args.project().id
                       })
                   );
 
-            projectIdVM.project_id(args.project.id);
+            projectIdVM.project_id(args.project().id);
 
             const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
             lProjectAccount.load().then((data) => {
                 projectAccounts(data);
-
-                declineAccountLoader = m.postgrest.loaderWithToken(
-                    models.projectAccountError.postOptions({project_account_id: _.first(data).project_account_id})
-                );
 
                 loadCurrentStage();
             });
@@ -53,13 +55,19 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
             const lProjectTransfer = loader(models.projectTransfer.getRowOptions(projectIdVM.parameters()));
             lProjectTransfer.load().then(projectTransfers);
 
-            const setStage = (stage) => {
-                return () => {
-                    currentStage(onboardStages[stage]);
+            const setStage = (state) => {
+                currentState(state);
 
-                    return currentStage();
-                };},
+                return currentComponent;
+            },
+                  nextStage = () => {
+                      const keys = _.keys(onboardComponents),
+                        nextKey = keys[_.indexOf(keys, currentState()) + 1];
 
+                      currentState(nextKey);
+
+                      return currentComponent;
+                  },
                   loadCurrentStage = () => {
                       if (!lProjectAccount()) {
                           const pa = _.first(projectAccounts());
@@ -73,7 +81,7 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                           }
                       }
 
-                      return void(0);
+                      return false;
                   },
 
                   // TODO: need to add an error validation to not null
@@ -84,7 +92,7 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                               setStage('error_account')();
                           });
 
-                          return void(0);
+                          return false;
                       };
                   },
 
@@ -93,9 +101,8 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                           setStage('pending_transfer')();
                       });
 
-                      return void(0);
+                      return false;
                   };
-
 
             return {
                 projectAccounts: projectAccounts,
@@ -103,10 +110,12 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                 lProjectAccount: lProjectAccount,
                 lProjectTransfer: lProjectTransfer,
                 setStage: setStage,
-                currentStage: currentStage,
+                nextStage: nextStage,
+                currentComponent: currentComponent,
                 addErrorReason: addErrorReason,
                 acceptAccount: acceptAccount,
                 acceptAccountLoader: acceptAccountLoader,
+                content: content,
                 declineAccountLoader: declineAccountLoader,
                 loadCurrentStage: loadCurrentStage
             };
@@ -117,16 +126,18 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   projectTransfer = _.first(ctrl.projectTransfers()),
                   lpa = ctrl.lProjectAccount,
                   lpt = ctrl.lProjectTransfer;
-
+            console.log('current component', ctrl.currentComponent());
             return m('.w-section.section', [
                 (!lpa() && !lpt() ?
-                 m.component(c[ctrl.currentStage()], {
+                 m.component(c[ctrl.currentComponent()], {
                      projectTransfer: projectTransfer,
                      projectAccount: projectAccount,
                      setStage: ctrl.setStage,
                      addErrorReason: ctrl.addErrorReason,
                      acceptAccount: ctrl.acceptAccount,
-                     acceptAccountLoader: ctrl.acceptAccountLoader
+                     acceptAccountLoader: ctrl.acceptAccountLoader,
+                     nextStage: ctrl.nextStage,
+                     content: ctrl.content()
                  }) : h.loader())
 
             ]);

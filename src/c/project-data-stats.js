@@ -12,7 +12,7 @@ window.c.ProjectDataStats = ((m, models, h, _) => {
             return {};
         },
         view: (ctrl, args) => {
-            const project = args.project,
+            const project = args.project(),
                   progress = project.progress.toFixed(2),
                   statusTextObj = h.projectStateTextClass(project.state),
                   remainingTextObj = h.translatedTime(project.remaining_time),
