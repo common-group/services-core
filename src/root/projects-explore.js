@@ -11,8 +11,8 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
-                  follow = c.models.categoryFollower,
                   filtersMap = c.vms.projectFilters(),
+                  contextFilter = m.prop(filtersMap.score),
                   categoryCollection = m.prop([]),
                   // Fake projects object to be able to render page while loadding (in case of search)
                   projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }, isLastPage: () => { return true; }}),
@@ -27,17 +27,9 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                       return c.models.category.getPageWithToken(filters({}).order({name: 'asc'}).parameters()).then(categoryCollection);
                   },
 
-                  followCategory = (id) => {
-                      return () => {
-                          follow.postWithToken({category_id: id}).then(loadCategories);
-                          return false;
-                      };
-                  },
-                  unFollowCategory = (id) => {
-                      return () => {
-                          follow.deleteWithToken(filters({category_id: 'eq'}).category_id(id).parameters()).then(loadCategories);
-                          return false;
-                      };
+                  changeFilter = (newFilter) => {
+                    contextFilter(filtersMap[newFilter]);
+                    loadRoute();
                   },
 
                   loadRoute = () => {
@@ -48,9 +40,8 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                             filterFromRoute =  () =>{
                                 const byCategory = filters({
-                                    state_order: 'gte',
                                     category_id: 'eq'
-                                }).state_order('published');
+                                });
 
                                 return route &&
                                     route[1] &&
@@ -59,7 +50,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     {title: cat.name, filter: byCategory.category_id(cat.id)};
                             },
 
-                            filter = filterFromRoute() || filtersMap.score,
+                            filter = filterFromRoute() || contextFilter(),
                             search = h.paramByName('pg_search'),
 
                             searchProjects = () => {
@@ -76,13 +67,14 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                             loadProjects = () => {
                                 const pages = m.postgrest.paginationVM(c.models.project);
-                                pages.firstPage(filter.filter.order({
+                                const parameters = _.extend({}, contextFilter().filter.parameters(), filter.filter.order({
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
                                     state: 'desc',
                                     score: 'desc',
-                                    project_id: 'desc'
+                                    pledged: 'desc'
                                 }).parameters());
+                                pages.firstPage(parameters);
                                 return pages;
                             },
 
@@ -122,8 +114,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
             return {
                 categories: categoryCollection,
-                followCategory: followCategory,
-                unFollowCategory: unFollowCategory,
+                changeFilter: changeFilter,
                 projects: projects,
                 category: category,
                 title: title,
@@ -145,13 +136,6 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 _.map(ctrl.categories(), (category) => {
                                     return m.component(c.CategoryButton, {category: category});
                                 })
-                            ]),
-
-                            m('.w-row.u-marginbottom-30', [
-                                _.map(ctrl.filtersMap, (filter, href) => {
-                                    return m.component(c.FilterButton, {title: filter.title, href: href});
-                                })
-
                             ])
                         ]),
                     ])
@@ -160,10 +144,16 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-col.w-col-6.w-col-small-7.w-col-tiny-7', [
+                            m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', [
                                 m('.fontsize-larger', ctrl.title())
                             ]),
-
+                            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3', [
+                              m('select.w-select.text-field.positive', {onchange: m.withAttr('value', ctrl.changeFilter)} ,[
+                                m('option[value="score"]', 'Populares'),
+                                m('option[value="successful"]', 'Financiados'),
+                                m('option[value="all"]', 'Todos')
+                              ])
+                            ])
                             // _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-small-5.w-col-tiny-5', [
                             //     m('.w-row', [
                             //         m('.w-col.w-col-8.w-hidden-small.w-hidden-tiny.w-clearfix', [
