@@ -1,7 +1,9 @@
 window.c.vms.projectFilters = ((m, h, moment) => {
     return () =>{
         const filters = m.postgrest.filtersVM,
-              all = filters(),
+              all = filters({
+                  state: 'in'
+              }).state('online,successful,failed'),
 
               nearMe = filters({
                   near_me: 'eq',
@@ -34,11 +36,13 @@ window.c.vms.projectFilters = ((m, h, moment) => {
         return {
             all: {
               title: 'Todas as Categorias',
-              filter: all
+              filter: all,
+              nicename: 'Todos'
             },
             score: {
                 title: 'Todas as Categorias',
-                filter: score
+                filter: score,
+                nicename: 'Populares'
             },
             online: {
                 title: 'No ar',
@@ -50,7 +54,8 @@ window.c.vms.projectFilters = ((m, h, moment) => {
             },
             successful: {
                 title: 'Todas as Categorias',
-                filter: successful
+                filter: successful,
+                nicename: 'Financiados'
             },
             recent: {
                 title: 'Recentes',
