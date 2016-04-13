@@ -60,6 +60,7 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
                 _.map(ctrl.collections, (collection) => {
                     return m.component(c.ProjectRow, {
                         collection: collection,
+                        title: I18n.t('row_title', I18nScope()),
                         ref: `home_${collection.hash}`
                     });
                 }),
