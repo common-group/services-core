@@ -11,6 +11,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
         controller: () => {
             const filters = m.postgrest.filtersVM,
+                  pageFilters = ['score', 'successful', 'all'],
                   filtersMap = c.vms.projectFilters(),
                   contextFilter = m.prop(filtersMap.score),
                   categoryCollection = m.prop([]),
@@ -104,6 +105,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                   toggleCategories = h.toggleProp(false, true);
 
             window.addEventListener('hashchange', () => {
+                contextFilter(filtersMap.score);
                 loadRoute();
                 m.redraw();
             }, false);
@@ -119,6 +121,8 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 category: category,
                 title: title,
                 filtersMap: filtersMap,
+                contextFilter: contextFilter,
+                pageFilters: pageFilters,
                 toggleCategories: toggleCategories
             };
         },
@@ -129,7 +133,9 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                     m.component(c.Search),
                     m('.w-container.u-marginbottom-10', [
                         m('.u-text-center.u-marginbottom-40', [
-                            m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]',{onclick: () => ctrl.toggleCategories.toggle()}, ['Explore projetos incríveis ',m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
+                            m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]',
+                                {onclick: () => ctrl.toggleCategories.toggle()},
+                                ['Explore projetos incríveis ', m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
                         ]),
                         m(`#categories.category-slider${ctrl.toggleCategories() ? '.opened' : ''}`, [
                             m('.w-row', [
@@ -147,26 +153,17 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', [
                                 m('.fontsize-larger', ctrl.title())
                             ]),
-                            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3', [
-                              m('select.w-select.text-field.positive', {onchange: m.withAttr('value', ctrl.changeFilter)} ,[
-                                m('option[value="score"]', 'Populares'),
-                                m('option[value="successful"]', 'Financiados'),
-                                m('option[value="all"]', 'Todos')
-                              ])
-                            ])
-                            // _.isObject(ctrl.category()) ? m('.w-col.w-col-6.w-col-small-5.w-col-tiny-5', [
-                            //     m('.w-row', [
-                            //         m('.w-col.w-col-8.w-hidden-small.w-hidden-tiny.w-clearfix', [
-                            //             m('.following.fontsize-small.fontcolor-secondary.u-right', `${ctrl.category().followers} seguidores`)
-                            //         ]),
-                            //         m('.w-col.w-col-4.w-col-small-12.w-col-tiny-12', [
-                            //             ctrl.category().following ?
-                            //                 m('a.btn.btn-medium.btn-terciary.unfollow-btn[href=\'#\']', {onclick: ctrl.unFollowCategory(ctrl.category().id)}, 'Deixar de seguir') :
-                            //                 m('a.btn.btn-medium.follow-btn[href=\'#\']', {onclick: ctrl.followCategory(ctrl.category().id)}, 'Seguir')
-                            //         ])
-                            //     ])
-                            // ]) : ''
+                            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
+                                m('select.w-select.text-field.positive',
+                                    {onchange: m.withAttr('value', ctrl.changeFilter)},
+                                    _.map(ctrl.pageFilters, (pageFilter) => {
+                                        const nicename = ctrl.filtersMap[pageFilter].nicename,
+                                            isSelected = ctrl.contextFilter().nicename === nicename;
 
+                                        return m(`option[value="${pageFilter}"][${isSelected ? 'selected' : ''}]`, nicename);
+                                    })
+                                )
+                            )
                         ])
                     ])
                 ]),
