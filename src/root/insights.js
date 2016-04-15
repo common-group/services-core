@@ -14,7 +14,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
                 loader = m.postgrest.loaderWithToken;
 
             if (h.paramByName('online_success') === 'true') {
-              displayModal.toggle();
+                displayModal.toggle();
             }
 
             filtersVM.project_id(args.root.getAttribute('data-id'));
@@ -104,7 +104,7 @@ window.c.root.Insights = ((m, c, h, models, _, I18n) => {
         },
         view: (ctrl) => {
             const project = _.first(ctrl.projectDetails()),
-                successModalC = [ 'OnlineSucessModalContent' ],
+                successModalC = ['OnlineSucessModalContent'],
                 tooltip = (el) => {
                     return m.component(c.Tooltip, {
                         el: el,
