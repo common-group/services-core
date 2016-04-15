@@ -17,12 +17,12 @@ window.c.ProjectRow = ((m, _, h) => {
                                 m(`a.btn.btn-small.btn-terciary[href="/pt/explore?ref=${ref}#${collection.hash}"]`, 'Ver todos')
                             ])
                         ]) : '',
-                        collection.loader() ? m('.w-row', _.map(collection.collection(), (project) => {
+                        collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), (project) => {
                             return m.component(c.ProjectCard, {
                                 project: project,
                                 ref: ref
                             });
-                        })) : h.loader()
+                        }))
                     ])
                 ]);
             } else {

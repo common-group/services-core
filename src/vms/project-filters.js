@@ -1,70 +1,105 @@
 window.c.vms.projectFilters = ((m, h, moment) => {
-    return () =>{
-        const filters = m.postgrest.filtersVM,
-              all = filters({
+    return () => {
+        const filtersVM = m.postgrest.filtersVM,
+              all = filtersVM({
                   state: 'in'
               }).state('online,successful,failed'),
 
-              nearMe = filters({
+              nearMe = filtersVM({
                   near_me: 'eq',
                   open_for_contributions: 'eq'
               }).open_for_contributions('true').near_me(true),
 
-              expiring = filters({
+              expiring = filtersVM({
                   expires_at: 'lte',
                   open_for_contributions: 'eq'
               }).open_for_contributions('true').expires_at(moment().add(14, 'days').format('YYYY-MM-DD')),
 
-              recent = filters({
+              recent = filtersVM({
                   online_date: 'gte',
                   open_for_contributions: 'eq'
               }).open_for_contributions('true').online_date(moment().subtract(5, 'days').format('YYYY-MM-DD')),
 
-              score = filters({
+              score = filtersVM({
                   score: 'gte',
                   open_for_contributions: 'eq'
               }).score('100').open_for_contributions('true'),
 
-              online = filters({
+              online = filtersVM({
                   open_for_contributions: 'eq'
               }).open_for_contributions('true'),
 
-              successful = filters({
+              successful = filtersVM({
                   state: 'eq'
-              }).state('successful');
+              }).state('successful'),
+
+              filters = {
+                  all: {
+                      title: 'Todas as Categorias',
+                      filter: all,
+                      nicename: 'Todos',
+                      isContextual: false,
+                      keyName: 'all'
+                  },
+                  score: {
+                      title: 'Todas as Categorias',
+                      filter: score,
+                      nicename: 'Populares',
+                      isContextual: false,
+                      keyName: 'score'
+                  },
+                  online: {
+                      title: 'No ar',
+                      filter: online,
+                      isContextual: false,
+                      keyName: 'online'
+                  },
+                  expiring: {
+                      title: 'Reta final',
+                      filter: expiring,
+                      isContextual: false,
+                      keyName: 'expiring'
+                  },
+                  successful: {
+                      title: 'Todas as Categorias',
+                      filter: successful,
+                      nicename: 'Financiados',
+                      isContextual: false,
+                      keyName: 'successful'
+                  },
+                  recent: {
+                      title: 'Recentes',
+                      filter: recent,
+                      isContextual: false,
+                      keyName: 'recent'
+                  },
+                  near_me: {
+                      title: 'Próximos a mim',
+                      filter: nearMe,
+                      isContextual: false,
+                      keyName: 'near_me'
+                  }
+              };
+
+        const setContextFilters = (contextFilters) => {
+            _.map(contextFilters, (filterKey) => filters[filterKey].isContextual = true);
+
+            return filters;
+        },
+            getContextFilters = () => {
+                return _.filter(filters, (filter) => filter.isContextual);
+            },
+            removeContextFilter = (filter) => {
+                filters[filter.keyName].isContextual = false;
+
+                return filters;
+            };
 
         return {
-            all: {
-              title: 'Todas as Categorias',
-              filter: all,
-              nicename: 'Todos'
-            },
-            score: {
-                title: 'Todas as Categorias',
-                filter: score,
-                nicename: 'Populares'
-            },
-            online: {
-                title: 'No ar',
-                filter: online
-            },
-            expiring: {
-                title: 'Reta final',
-                filter: expiring
-            },
-            successful: {
-                title: 'Todas as Categorias',
-                filter: successful,
-                nicename: 'Financiados'
-            },
-            recent: {
-                title: 'Recentes',
-                filter: recent
-            },
-            near_me: {
-                title: 'Próximos a mim',
-                filter: nearMe
-            }
+            filters: filters,
+            setContextFilters: setContextFilters,
+            getContextFilters: getContextFilters,
+            removeContextFilter: removeContextFilter
         };
     };
 }(window.m, window.c.h, window.moment));

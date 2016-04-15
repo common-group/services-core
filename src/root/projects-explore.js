@@ -7,32 +7,34 @@
  * <div data-mithril="ProjectsExplore">
  */
 window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
-    return {
 
+    return {
         controller: () => {
             const filters = m.postgrest.filtersVM,
-                  pageFilters = ['score', 'successful', 'all'],
-                  filtersMap = c.vms.projectFilters(),
-                  contextFilter = m.prop(filtersMap.score),
+                  projectFilters = c.vms.projectFilters(),
+                  filtersMap = projectFilters.filters,
+                  defaultFilter = 'score',
+                  fallbackFilter = 'all',
+                  currentFilter = m.prop(filtersMap[defaultFilter]),
+                  changeFilter = (newFilter) => {
+                      currentFilter(filtersMap[newFilter]);
+                      loadRoute();
+                  },
+                  resetContextFilter = () => {
+                      currentFilter(filtersMap[defaultFilter]);
+                      projectFilters.setContextFilters(['score', 'successful', 'all']);
+                  },
                   categoryCollection = m.prop([]),
-                  // Fake projects object to be able to render page while loadding (in case of search)
-                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }, isLastPage: () => { return true; }}),
-                  title = m.prop(),
                   categoryId = m.prop(),
                   findCategory = (id) => {
                       return _.find(categoryCollection(), function(c){ return c.id === parseInt(id); });
                   },
                   category = _.compose(findCategory, categoryId),
-
                   loadCategories = () => {
                       return c.models.category.getPageWithToken(filters({}).order({name: 'asc'}).parameters()).then(categoryCollection);
                   },
-
-                  changeFilter = (newFilter) => {
-                    contextFilter(filtersMap[newFilter]);
-                    loadRoute();
-                  },
-
+                  // Fake projects object to be able to render page while loadding (in case of search)
+                  projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }, isLastPage: () => { return true; }}),
                   loadRoute = () => {
                       const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
                             cat = route &&
@@ -51,7 +53,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     {title: cat.name, filter: byCategory.category_id(cat.id)};
                             },
 
-                            filter = filterFromRoute() || contextFilter(),
+                            filter = filterFromRoute() || currentFilter(),
                             search = h.paramByName('pg_search'),
 
                             searchProjects = () => {
@@ -68,7 +70,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                             loadProjects = () => {
                                 const pages = m.postgrest.paginationVM(c.models.project);
-                                const parameters = _.extend({}, contextFilter().filter.parameters(), filter.filter.order({
+                                const parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                                     open_for_contributions: 'desc',
                                     state_order: 'asc',
                                     state: 'desc',
@@ -101,33 +103,41 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                       categoryId(cat && cat.id);
                       route || (_.isString(search) && search.length > 0) ? toggleCategories(false) : toggleCategories(true);
                   },
-
+                  title = m.prop(),
                   toggleCategories = h.toggleProp(false, true);
 
             window.addEventListener('hashchange', () => {
-                contextFilter(filtersMap.score);
+                resetContextFilter();
                 loadRoute();
                 m.redraw();
             }, false);
 
             // Initial loads
+            resetContextFilter();
             c.models.project.pageSize(9);
             loadCategories().then(loadRoute);
 
             return {
                 categories: categoryCollection,
                 changeFilter: changeFilter,
+                fallbackFilter: fallbackFilter,
                 projects: projects,
                 category: category,
                 title: title,
                 filtersMap: filtersMap,
-                contextFilter: contextFilter,
-                pageFilters: pageFilters,
+                currentFilter: currentFilter,
+                projectFilters: projectFilters,
                 toggleCategories: toggleCategories
             };
         },
 
         view: (ctrl) => {
+
+            if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection())){
+                ctrl.projectFilters.removeContextFilter(ctrl.currentFilter());
+                ctrl.changeFilter(ctrl.fallbackFilter);
+            }
+
             return [
                 m('.w-section.hero-search', [
                     m.component(c.Search),
@@ -156,11 +166,11 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                 m('select.w-select.text-field.positive',
                                     {onchange: m.withAttr('value', ctrl.changeFilter)},
-                                    _.map(ctrl.pageFilters, (pageFilter) => {
-                                        const nicename = ctrl.filtersMap[pageFilter].nicename,
-                                            isSelected = ctrl.contextFilter().nicename === nicename;
+                                    _.map(ctrl.projectFilters.getContextFilters(), (pageFilter, idx) => {
+                                        const projects = ctrl.projects(),
+                                            isSelected = ctrl.currentFilter() == pageFilter;
 
-                                        return m(`option[value="${pageFilter}"][${isSelected ? 'selected' : ''}]`, nicename);
+                                        return m(`option[value="${pageFilter.keyName}"][${isSelected ? 'selected' : ''}]`, pageFilter.nicename);
                                     })
                                 )
                             )
@@ -189,7 +199,20 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             m('.w-col.w-col-5')
                         ])
                     ])
-                ])];
+                ]),
+
+                m('.w-section.section-large.before-footer.u-margintop-80.bg-gray.divider', [
+                    m('.w-container.u-text-center', [
+                        m('img.u-marginbottom-20.icon-hero', {src: 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'}),
+                        m('h2.fontsize-larger.u-marginbottom-60', 'Lance sua campanha no Catarse!'),
+                        m('.w-row', [
+                            m('.w-col.w-col-4.w-col-push-4', [
+                                m('a.w-button.btn.btn-large', {href: '/start'}, 'Aprenda como')
+                            ])
+                        ])
+                    ])
+                ])
+            ];
         }
     };
 }(window.m, window.c, window.c.h, window._, window.moment));
