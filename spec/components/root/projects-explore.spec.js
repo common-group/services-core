@@ -13,15 +13,4 @@ describe('ProjectsExplore', () => {
         $output.should.have('.hero-search');
     });
 
-    it('should render category if we have category_id in location hash', () => {
-        // $output.should.have('.btn-category');
-        // $output.should.have('.unfollow-btn');
-    });
-
-    it('should call unfollow api endpoint on unfollow click', () => {
-        // $output.click('.unfollow-btn');
-        // const lastRequest = jasmine.Ajax.requests.mostRecent();
-        // expect(lastRequest.url).toEqual(apiPrefix + '/category_followers?category_id=eq.1');
-        // expect(lastRequest.method).toEqual('DELETE');
-    });
 });
