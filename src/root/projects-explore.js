@@ -41,7 +41,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 route[2] &&
                                 findCategory(route[2]),
 
-                            filterFromRoute =  () =>{
+                            filterFromRoute =  () => {
                                 const byCategory = filters({
                                     category_id: 'eq'
                                 });
@@ -82,16 +82,18 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             },
 
                             loadSuccessfulProjects = () => {
-                                const pages = m.postgrest.paginationVM(c.models.successfulProject);
-                                pages.firstPage(filter.filter.order({
-                                    project_id: 'desc'
-                                }).parameters());
+                                const pages = m.postgrest.paginationVM(c.models.successfulProject),
+                                    parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({ pledged: 'desc' }).parameters());
+                                pages.firstPage(parameters);
+
                                 return pages;
                             };
-
+                      
                       if (_.isString(search) && search.length > 0 && route === null) {
                           title('Busca ' + search);
                           projects(searchProjects());
+                      } else if(currentFilter().keyName === 'successful') {
+                          projects(loadSuccessfulProjects());
                       } else {
                           title(filter.title);
                           if (!_.isNull(route) && route[1] == 'successful') {
