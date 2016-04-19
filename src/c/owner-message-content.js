@@ -83,7 +83,7 @@ window.c.OwnerMessageContent = ((m, h, _, models, I18n) => {
                     [
                       m('.w-col.w-col-3'),
                       m('.w-col.w-col-6',
-                      m('a.btn.btn-large[href=\'js:void(0);\']',{onclick: ctrl.sendMessage },
+                      m('a.btn.btn-large[href=\'javascript:void(0);\']',{onclick: ctrl.sendMessage },
                         'Enviar mensagem'
                         )
                       ),

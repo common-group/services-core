@@ -40,7 +40,7 @@ window.c.ProjectUserCard = ((m,c, _, h) => {
                                         m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', parsedLink.hostname)
                                     ]) : '');
                                 })
-                            ]), (!_.isEmpty(userDetail.email) ? [m("a.w-button.btn.btn-terciary.btn-small.btn-inline[href='js:void(0);']",{onclick: ctrl.displayModal.toggle }, "Enviar mensagem")] : '')
+                            ]), (!_.isEmpty(userDetail.email) ? [m("a.w-button.btn.btn-terciary.btn-small.btn-inline[href='javascript:void(0);']",{onclick: ctrl.displayModal.toggle }, "Enviar mensagem")] : '')
                         ]),
                     ]),
                 ]);
