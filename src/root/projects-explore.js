@@ -162,10 +162,10 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', [
+                            m('.w-col.w-col-9.w-col-small-8.w-col-tiny-8', [
                                 m('.fontsize-larger', ctrl.title())
                             ]),
-                            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
+                            m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
                                 m('select.w-select.text-field.positive',
                                     {onchange: m.withAttr('value', ctrl.changeFilter)},
                                     _.map(ctrl.projectFilters.getContextFilters(), (pageFilter, idx) => {
