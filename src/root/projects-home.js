@@ -6,7 +6,7 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
             let sample6 = _.partial(_.sample, _, 6),
                 loader = m.postgrest.loader,
                 project = c.models.project,
-                filters = c.vms.projectFilters(),
+                filters = c.vms.projectFilters().filters,
                 vm = c.vms.home();
 
             const collections = _.map(['score'], (name) => {
