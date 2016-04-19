@@ -20,6 +20,7 @@ window.c.OwnerMessageContent = ((m, h, _, models, I18n) => {
               l = m.postgrest.loaderWithToken(loaderOpts);
 
               l.load().then(sendSuccess(true));
+              return false;
           };
 
           return {
@@ -43,7 +44,9 @@ window.c.OwnerMessageContent = ((m, h, _, models, I18n) => {
                   [
                     m('.w-form',
                       [
-                        m('form',
+                        m('form',{
+                          onsubmit: ctrl.sendMessage
+                        },
                           [
                             m('.w-row',
                               [
@@ -68,29 +71,28 @@ window.c.OwnerMessageContent = ((m, h, _, models, I18n) => {
                             m('label',
                             'Mensagem'
                             ),
-                            m('textarea.w-input.text-field.height-small[id=\'message_content\'][required]')
+                            m('textarea.w-input.text-field.height-small[id=\'message_content\'][required]'),
+
+                            m('.fontsize-smallest.fontcolor-terciary',
+                            'Você receberá uma cópia desta mensagem em seu email.'
+                            ),
+                            m('.modal-dialog-nav-bottom',
+                              m('.w-row',
+                                  [
+                                    m('.w-col.w-col-3'),
+                                    m('.w-col.w-col-6',
+                                    m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]')
+                                    ),
+                                    m('.w-col.w-col-3')
+                                  ]
+                                )
+                              )
                           ]
                         )
                       ]
                     ),
-                    m('.fontsize-smallest.fontcolor-terciary',
-                    'Você receberá uma cópia desta mensagem em seu email.'
-                    )
                   ]
                 ),
-              m('.modal-dialog-nav-bottom',
-                m('.w-row',
-                    [
-                      m('.w-col.w-col-3'),
-                      m('.w-col.w-col-6',
-                      m('a.btn.btn-large[href=\'javascript:void(0);\']',{onclick: ctrl.sendMessage },
-                        'Enviar mensagem'
-                        )
-                      ),
-                      m('.w-col.w-col-3')
-                    ]
-                  )
-                )
             ];
             return m('div', [
               m('.modal-dialog-header',
