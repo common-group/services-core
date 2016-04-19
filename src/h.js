@@ -104,6 +104,16 @@ window.c.h = ((m, moment, I18n) => {
             id: 'eq'
         }),
 
+        getCurrentProject = () => {
+            const root = document.getElementById('project-show-root'),
+                data = root.getAttribute('data-parameters');
+            if (data) {
+                return JSON.parse(data);
+            } else {
+                return false;
+            }
+        },
+
         getUser = () => {
             const body = document.getElementsByTagName('body'),
                 data = _.first(body).getAttribute('data-user');
@@ -317,6 +327,7 @@ window.c.h = ((m, moment, I18n) => {
         formatNumber: formatNumber,
         idVM: idVM,
         getUser: getUser,
+        getCurrentProject: getCurrentProject,
         toggleProp: toggleProp,
         loader: loader,
         newFeatureBadge: newFeatureBadge,

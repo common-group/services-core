@@ -1,8 +1,19 @@
-window.c.ProjectUserCard = ((m, _, h) => {
+window.c.ProjectUserCard = ((m,c, _, h) => {
     return {
+        controller: (args) => {
+            let displayModal = h.toggleProp(false, true);
+
+            return {displayModal: displayModal};
+        },
+
         view: (ctrl, args) => {
+          const contactModalC = [ 'OwnerMessageContent', args.userDetails ];
             return m('#user-card', _.map(args.userDetails(), (userDetail) => {
                 return m('.u-marginbottom-30.u-text-center-small-only', [
+                    (ctrl.displayModal() ? m.component(c.ModalBox, {
+                        displayModal: ctrl.displayModal,
+                        content: contactModalC
+                    }) : ''),
                     m('.w-row', [
                         m('.w-col.w-col-4', [
                             m('img.thumb.u-marginbottom-30.u-round[width="100"][itemprop="image"][src="' + userDetail.profile_img_thumbnail + '"]')
@@ -29,11 +40,11 @@ window.c.ProjectUserCard = ((m, _, h) => {
                                         m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', parsedLink.hostname)
                                     ]) : '');
                                 })
-                            ]), (!_.isEmpty(userDetail.email) ? m('.w-hidden-small.w-hidden-tiny.fontsize-smallest.alt-link.fontweight-semibold[itemprop="email"][target="_blank"]', userDetail.email) : '')
+                            ]), (!_.isEmpty(userDetail.email) ? [m("a.w-button.btn.btn-terciary.btn-small.btn-inline[href='js:void(0);']",{onclick: ctrl.displayModal.toggle }, "Enviar mensagem")] : '')
                         ]),
                     ]),
                 ]);
             }));
         }
     };
-}(window.m, window._, window.c.h));
+}(window.m, window.c, window._, window.c.h));
