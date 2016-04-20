@@ -7,7 +7,7 @@ window.c.ProjectUserCard = ((m,c, _, h) => {
         },
 
         view: (ctrl, args) => {
-          const contactModalC = [ 'OwnerMessageContent', args.userDetails ];
+            const contactModalC = ['OwnerMessageContent', args.userDetails];
             return m('#user-card', _.map(args.userDetails(), (userDetail) => {
                 return m('.u-marginbottom-30.u-text-center-small-only', [
                     (ctrl.displayModal() ? m.component(c.ModalBox, {
@@ -40,7 +40,7 @@ window.c.ProjectUserCard = ((m,c, _, h) => {
                                         m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', parsedLink.hostname)
                                     ]) : '');
                                 })
-                            ]), (!_.isEmpty(userDetail.email) ? [m("a.w-button.btn.btn-terciary.btn-small.btn-inline[href='javascript:void(0);']",{onclick: ctrl.displayModal.toggle }, "Enviar mensagem")] : '')
+                            ]), (!_.isEmpty(userDetail.email) ? [m('a.w-button.btn.btn-terciary.btn-small.btn-inline[href=\'javascript:void(0);\']',{onclick: ctrl.displayModal.toggle}, 'Enviar mensagem')] : '')
                         ]),
                     ]),
                 ]);
