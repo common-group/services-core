@@ -184,13 +184,20 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-row', _.map(ctrl.projects().collection(), (project, idx) => {
-                                let cardType = 'small';
+                                let cardType = 'small',
+                                    ref = 'ctrse_explore';
 
                                 if (ctrl.currentFilter().keyName === 'score') {
-                                    cardType = idx === 0 ? 'big' : (idx === 1 || idx === 2) ? 'medium' : 'small';
+                                    if (idx === 0) {
+                                        cardType = 'big';
+                                        ref = 'ctrse_explore_featured_big';
+                                    } else if (idx === 1 || idx === 2) {
+                                        cardType = 'medium';
+                                        ref = 'ctrse_explore_featured_medium';
+                                    }
                                 }
 
-                                return m.component(c.ProjectCard, {project: project, ref: 'ctrse_explore', type: cardType});
+                                return m.component(c.ProjectCard, {project: project, ref: ref, type: cardType});
                             })),
                             ctrl.projects().isLoading() ? h.loader() : ''
                         ])
