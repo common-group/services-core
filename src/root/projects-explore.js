@@ -41,7 +41,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 route[2] &&
                                 findCategory(route[2]),
 
-                            filterFromRoute =  () =>{
+                            filterFromRoute =  () => {
                                 const byCategory = filters({
                                     category_id: 'eq'
                                 });
@@ -82,16 +82,18 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             },
 
                             loadSuccessfulProjects = () => {
-                                const pages = m.postgrest.paginationVM(c.models.successfulProject);
-                                pages.firstPage(filter.filter.order({
-                                    project_id: 'desc'
-                                }).parameters());
+                                const pages = m.postgrest.paginationVM(c.models.successfulProject),
+                                    parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({pledged: 'desc'}).parameters());
+                                pages.firstPage(parameters);
+
                                 return pages;
                             };
 
                       if (_.isString(search) && search.length > 0 && route === null) {
                           title('Busca ' + search);
                           projects(searchProjects());
+                      } else if (currentFilter().keyName === 'successful') {
+                          projects(loadSuccessfulProjects());
                       } else {
                           title(filter.title);
                           if (!_.isNull(route) && route[1] == 'successful') {
@@ -160,10 +162,10 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 m('.w-section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', [
+                            m('.w-col.w-col-9.w-col-small-8.w-col-tiny-8', [
                                 m('.fontsize-larger', ctrl.title())
                             ]),
-                            m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
+                            m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
                                 m('select.w-select.text-field.positive',
                                     {onchange: m.withAttr('value', ctrl.changeFilter)},
                                     _.map(ctrl.projectFilters.getContextFilters(), (pageFilter, idx) => {
@@ -181,22 +183,26 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-row', _.map(ctrl.projects().collection(), (project) => {
-                                return m.component(c.ProjectCard, {project: project, ref: 'ctrse_explore'});
+                            m('.w-row', _.map(ctrl.projects().collection(), (project, idx) => {
+                                let cardType = 'small';
+
+                                if (ctrl.currentFilter().keyName === 'score') {
+                                    cardType = idx === 0 ? 'big' : (idx === 1 || idx === 2) ? 'medium' : 'small';
+                                }
+
+                                return m.component(c.ProjectCard, {project: project, ref: 'ctrse_explore', type: cardType});
                             })),
                             ctrl.projects().isLoading() ? h.loader() : ''
                         ])
                     ])
                 ]),
 
-                m('.w-section', [
+                m('.w-section.u-marginbottom-80', [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-col.w-col-5'),
-                            m('.w-col.w-col-2', [
+                            m('.w-col.w-col-2.w-col-push-5', [
                               (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(ctrl.projects().collection())) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
                             ]),
-                            m('.w-col.w-col-5')
                         ])
                     ])
                 ]),
@@ -207,7 +213,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                         m('h2.fontsize-larger.u-marginbottom-60', 'Lance sua campanha no Catarse!'),
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-push-4', [
-                                m('a.w-button.btn.btn-large', {href: '/start'}, 'Aprenda como')
+                                m('a.w-button.btn.btn-large', {href: '/start?ref=ctrse_explore'}, 'Aprenda como')
                             ])
                         ])
                     ])
