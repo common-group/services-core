@@ -221,7 +221,7 @@ window.c.root.Publish = ((m, c, h, models, _, I18n) => {
                   ];
               };
 
-            return [!ctrl.l() ? [
+            return [!ctrl.l() && !ctrl.accountL() ? [
             (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
                 project: m.prop(project),
                 hidePublish: true
@@ -257,8 +257,8 @@ window.c.root.Publish = ((m, c, h, models, _, I18n) => {
                         m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n.t(project.mode, I18nScope())]),
                         m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '),`R$ ${h.formatNumber(project.goal, 2, 3)}`]),
                         (project.mode !== 'flex') ? m('div', [m('span.fontweight-semibold', `Prazo: ${project.online_days} dias`)]) : '',
-                        m('div', [m('span.fontweight-semibold', 'Responsável: '), project.user.name]),
-                        m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), ctrl.accountL() ? 'carregando informação...' : account.owner_document])
+                        m('div', [m('span.fontweight-semibold', 'Responsável: '), account.owner_name]),
+                        m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])
                       ])
                     ])
                   ]),
