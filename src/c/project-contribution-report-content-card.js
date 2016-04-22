@@ -40,14 +40,14 @@ window.c.ProjectContributionReportContentCard = ((m, c, _,h) => {
                             ]),
                              m(".w-col.w-col-3.w-hidden-small.w-hidden-tiny", [
                                  m(".fontsize-smallest.fontweight-semibold", `Recompensa: R$ ${h.formatNumber(reward.minimum_value, 2, 3)}`),
-                                 m(".fontsize-smallest", reward.description)
-                             ]),
+                                 m(".fontsize-smallest", reward.description.substring(0, 80) + '...')
+                             ])/*,
                             m(".w-col.w-col-2.w-hidden-small.w-hidden-tiny.u-text-center", [
                                 m(".fontsize-smallest.fontcolor-secondary", "Enviei!"),
                                 m(".fontsize-smallest.u-marginbottom-20.lineheight-loose", [
                                     m("a.checkbox-big[href='#']", ".")
                                 ])
-                            ]),/*
+                            ]),
                             m(".w-col.w-col-2", [
                                 m(".fontsize-smallest", [
                                     m("a.link-hidden[href='#']", "Questionário")

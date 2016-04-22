@@ -3,6 +3,7 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
         controller: (args) => {
             const listVM = m.postgrest.paginationVM(models.projectContribution, 'id.desc', {'Prefer': 'count=exact'}),
                   filterVM = c.root.ProjectsContributionReportVM,
+                  rewards = m.prop([]),
                   filterBuilder = [
                       {
                           component: 'FilterMain',
@@ -62,6 +63,29 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
 
             filterVM.project_id(args.root.getAttribute('data-id'));
 
+            const lReward = m.postgrest.loaderWithToken(models.rewardDetail.getPageOptions({project_id: `eq.${filterVM.project_id()}`}));
+
+            lReward.load().then(rewards);
+
+            const mapRewardsToOptions = () => {
+                let options = [];
+                if(!lReward()) {
+                    options = _.map(rewards(), (r) => {
+                        return {
+                            value: r.id,
+                            option: `R$ ${h.formatNumber(r.minimum_value, 2, 3)} - ${r.description.substring(0, 20)}`
+                        };
+                    });
+                }
+
+                options.unshift({
+                    value: '',
+                    option: 'Todas'
+                });
+
+                return options;
+            };
+
             if(!listVM.collection().length) {
                 listVM.firstPage(filterVM.parameters());
             }
@@ -70,7 +94,10 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
                 listVM: listVM,
                 filterVM: filterVM,
                 filterBuilder: filterBuilder,
-                submit: submit
+                submit: submit,
+                lReward: lReward,
+                rewards: rewards,
+                mapRewardsToOptions: mapRewardsToOptions
             };
         },
         view: (ctrl, args) => {
@@ -80,7 +107,9 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
                 m.component(c.ProjectContributionReportHeader, {
                     submit: ctrl.submit,
                     filterBuilder: ctrl.filterBuilder,
-                    form: ctrl.filterVM.formDescriber
+                    form: ctrl.filterVM.formDescriber,
+                    mapRewardsToOptions: ctrl.mapRewardsToOptions,
+                    filterVM: ctrl.filterVM
                 }),
                 m('.divider.u-margintop-30'),
                 m.component(c.ProjectContributionReportContent, {

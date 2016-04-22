@@ -4,7 +4,11 @@ window.c.ProjectContributionReportHeader = ((m, c, _, h) => {
             const filterBuilder = args.filterBuilder,
                   paymentStateFilter =  _.findWhere(filterBuilder, {label: 'payment_state'}),
                   rewardFilter = _.findWhere(filterBuilder, {label: 'reward_filter'}),
-                  mainFilter = _.findWhere(filterBuilder, {component: 'FilterMain'});
+                  mainFilter = _.findWhere(filterBuilder, {component: 'FilterMain'}),
+                  project_id = args.filterVM.project_id();
+
+            rewardFilter.data.options = args.mapRewardsToOptions();
+
             return m('.w-section.dashboard-header', [
                 m('.w-container', [
                     m('.w-row', [
@@ -16,19 +20,19 @@ window.c.ProjectContributionReportHeader = ((m, c, _, h) => {
                     m('.w-form', [
                         m('form', {onsubmit: args.submit}, [
                             m('.w-row', [
-                                m('.w-col.w-col-6', [
+                                m('.w-col.w-col-5', [
                                     m('.w-row', [
                                         m.component(c[paymentStateFilter.component], paymentStateFilter.data),
                                             m.component(c[rewardFilter.component], rewardFilter.data)
                                     ])
                                 ]),
-                                m('.w-col.w-col-6.u-margintop-20', [
+                                m('.w-col.w-col-7.u-margintop-20', [
                                     m('.w-row', [
-                                        m('.w-col.w-col-7._w-sub-col', [
+                                        m('.w-col.w-col-8._w-sub-col', [
                                             m.component(c[mainFilter.component], mainFilter.data)
                                         ]),
-                                        m('.w-col.w-col-5.w-clearfix.w-hidden-small.w-hidden-tiny', [
-                                            m('a.alt-link.u-right.fontsize-small.lineheight-looser[href="#"]', [
+                                        m('.w-col.w-col-4.w-clearfix.w-hidden-small.w-hidden-tiny', [
+                                            m(`a.alt-link.u-right.fontsize-small.lineheight-looser[target="__blank" href="/projects/${project_id}/edit#reports"]`, [
                                                 m('span.fa.fa-download', '.'),
                                                 ' Baixar relatórios'
                                             ])

@@ -12,6 +12,8 @@ window.c.ProjectContributionReportContent = ((m, c, _, h) => {
                             ]),
                             //m(".fontsize-large.fontweight-semibold", "R$ 12.000,00")
                         ]),
+                        /*
+                         TODO: ordering filter template
                         m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
                             m(".w-form", [
                                 m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
@@ -24,7 +26,7 @@ window.c.ProjectContributionReportContent = ((m, c, _, h) => {
                                     ])
                                 ])
                             ])
-                        ])
+                        ])*/
                     ]),
                     _.map(list.collection(), (item) => {
                         const contribution = m.prop(item);
@@ -34,12 +36,12 @@ window.c.ProjectContributionReportContent = ((m, c, _, h) => {
                 m('.w-section.section.bg-gray', [
                     m('.w-container', [
                         m('.w-row.u-marginbottom-60', [
-                            m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?
-                                                              (list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                                                  onclick: list.nextPage
-                                                              }, 'Carregar mais')) :
-                                                              h.loader(),
-                                                             ])
+                            m('.w-col.w-col-2.w-col-push-5', [
+                                (!list.isLoading() ?
+                                 (list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
+                                     onclick: list.nextPage
+                                 }, 'Carregar mais')) : h.loader())
+                            ])
                         ])
 
                     ])
