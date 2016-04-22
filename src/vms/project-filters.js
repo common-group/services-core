@@ -3,7 +3,7 @@ window.c.vms.projectFilters = ((m, h, moment) => {
         const filtersVM = m.postgrest.filtersVM,
               all = filtersVM({
                   state: 'in'
-              }).state('online,successful,failed'),
+              }).state('online,waiting_funds'),
 
               nearMe = filtersVM({
                   near_me: 'eq',
@@ -23,7 +23,7 @@ window.c.vms.projectFilters = ((m, h, moment) => {
               score = filtersVM({
                   score: 'gte',
                   open_for_contributions: 'eq'
-              }).score('100').open_for_contributions('true'),
+              }).score('1').open_for_contributions('true'),
 
               online = filtersVM({
                   open_for_contributions: 'eq'
