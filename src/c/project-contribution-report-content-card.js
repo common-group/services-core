@@ -21,15 +21,22 @@ window.c.ProjectContributionReportContentCard = ((m, c, _,h) => {
             let contribution = args.contribution(),
                 profile_img = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
                 reward = contribution.reward || {minimum_value: 0, description: 'Nenhuma recompensa selecionada'};
-            return m(".w-clearfix.card.card-clickable", [
-                m(".w-row", [
-                    m(".w-col.w-col-1.w-col-tiny-1", [
+            return m('.w-clearfix.card.card-clickable', [
+                m('.w-row', [
+                    m('.w-col.w-col-1.w-col-tiny-1', [
                         m(`img.user-avatar.u-marginbottom-10[src='${profile_img}']`)
                     ]),
-                    m(".w-col.w-col-11.w-col-tiny-11", [
-                        m(".w-row", [
-                            m(".w-col.w-col-3", [
-                                m(".fontweight-semibold.fontsize-smaller.lineheight-tighter", contribution.user_name)
+                    m('.w-col.w-col-11.w-col-tiny-11', [
+                        m('.w-row', [
+                            m('.w-col.w-col-3', [
+                                m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.user_name),
+                                m('.fontsize-smallest.lineheight-looser', [
+                                    (contribution.has_another ? [
+                                        m('a.link-hidden-light.badge.badge-light', '+1 apoio'),
+                                        m.trust('&nbsp;')
+                                    ] : '' ),
+                                    (contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary') : '' )
+                                ])
                             ]),
                             m(".w-col.w-col-3", [
                                 m(".lineheight-tighter", [
@@ -59,7 +66,7 @@ window.c.ProjectContributionReportContentCard = ((m, c, _,h) => {
                         ])
                     ])
                 ]),
-                m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-detail-box'][href='#']")
+                //m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-detail-box'][href='#']")
             ]);
 
         }

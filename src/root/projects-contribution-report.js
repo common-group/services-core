@@ -3,6 +3,7 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
         controller: (args) => {
             const listVM = m.postgrest.paginationVM(models.projectContribution, 'id.desc', {'Prefer': 'count=exact'}),
                   filterVM = c.root.ProjectsContributionReportVM,
+                  project = m.prop({}),
                   rewards = m.prop([]),
                   filterBuilder = [
                       {
@@ -33,7 +34,7 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
                               wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6._w-sub-col-middle',
                               options: [{
                                   value: '',
-                                  option: 'Status do apoio'
+                                  option: 'Todos'
                               }, {
                                   value: 'paid',
                                   option: 'Pago'
@@ -64,8 +65,10 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
             filterVM.project_id(args.root.getAttribute('data-id'));
 
             const lReward = m.postgrest.loaderWithToken(models.rewardDetail.getPageOptions({project_id: `eq.${filterVM.project_id()}`}));
+            const lProject = m.postgrest.loaderWithToken(models.projectDetail.getPageOptions({project_id: `eq.${filterVM.project_id()}`}));
 
             lReward.load().then(rewards);
+            lProject.load().then(project);
 
             const mapRewardsToOptions = () => {
                 let options = [];
@@ -97,6 +100,7 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
                 submit: submit,
                 lReward: lReward,
                 rewards: rewards,
+                project: project,
                 mapRewardsToOptions: mapRewardsToOptions
             };
         },
@@ -104,6 +108,7 @@ window.c.root.ProjectsContributionReport = ((m, c, _, h, models) => {
             const list = ctrl.listVM;
 
             return [
+                m.component(c.ProjectDashboardMenu, {project: m.prop(_.first(ctrl.project()))}),
                 m.component(c.ProjectContributionReportHeader, {
                     submit: ctrl.submit,
                     filterBuilder: ctrl.filterBuilder,
