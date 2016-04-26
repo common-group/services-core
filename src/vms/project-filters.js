@@ -33,6 +33,8 @@ window.c.vms.projectFilters = ((m, h, moment) => {
                   state: 'eq'
               }).state('successful'),
 
+              finished = filtersVM({}),
+
               filters = {
                   all: {
                       title: 'Todas as Categorias',
@@ -66,6 +68,13 @@ window.c.vms.projectFilters = ((m, h, moment) => {
                       nicename: 'Financiados',
                       isContextual: false,
                       keyName: 'successful'
+                  },
+                  finished: {
+                      title: 'Todas as Categorias',
+                      filter: finished,
+                      nicename: 'Finalizados',
+                      isContextual: false,
+                      keyName: 'finished'
                   },
                   recent: {
                       title: 'Recentes',

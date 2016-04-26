@@ -22,7 +22,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                   },
                   resetContextFilter = () => {
                       currentFilter(filtersMap[defaultFilter]);
-                      projectFilters.setContextFilters(['score', 'successful', 'all']);
+                      projectFilters.setContextFilters(['score', 'finished', 'all']);
                   },
                   categoryCollection = m.prop([]),
                   categoryId = m.prop(),
@@ -81,9 +81,13 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 return pages;
                             },
 
-                            loadSuccessfulProjects = () => {
-                                const pages = m.postgrest.paginationVM(c.models.successfulProject),
-                                    parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({pledged: 'desc'}).parameters());
+                            loadFinishedProjects = () => {
+                                const pages = m.postgrest.paginationVM(c.models.finishedProject),
+                                      parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
+                                          state_order: 'asc',
+                                          state: 'desc',
+                                          pledged: 'desc'
+                                      }).parameters());
                                 pages.firstPage(parameters);
 
                                 return pages;
@@ -92,12 +96,12 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                       if (_.isString(search) && search.length > 0 && route === null) {
                           title('Busca ' + search);
                           projects(searchProjects());
-                      } else if (currentFilter().keyName === 'successful') {
-                          projects(loadSuccessfulProjects());
+                      } else if (currentFilter().keyName === 'finished') {
+                          projects(loadFinishedProjects());
                       } else {
                           title(filter.title);
-                          if (!_.isNull(route) && route[1] == 'successful') {
-                              projects(loadSuccessfulProjects());
+                          if (!_.isNull(route) && route[1] == 'finished') {
+                              projects(loadFinishedProjects());
                           } else {
                               projects(loadProjects());
                           }
