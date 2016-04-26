@@ -50,7 +50,7 @@ window.c.OwnerMessageContent = ((m, h, _, models, I18n) => {
                           [
                             m('.w-row',
                               [
-                                m('.w-col.w-col-6',
+                                m('.w-col.w-col-6.w-sub-col',
                                   [
                                     m('label.fontsize-smaller',
                                     'Seu nome'
