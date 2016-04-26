@@ -2,8 +2,8 @@ window.c.vms.projectFilters = ((m, h, moment) => {
     return () => {
         const filtersVM = m.postgrest.filtersVM,
               all = filtersVM({
-                  state: 'in'
-              }).state('online,waiting_funds'),
+                  state: 'eq'
+              }).state('online'),
 
               nearMe = filtersVM({
                   near_me: 'eq',
@@ -32,6 +32,8 @@ window.c.vms.projectFilters = ((m, h, moment) => {
               successful = filtersVM({
                   state: 'eq'
               }).state('successful'),
+
+              finished = filtersVM({}),
 
               filters = {
                   all: {
@@ -66,6 +68,13 @@ window.c.vms.projectFilters = ((m, h, moment) => {
                       nicename: 'Financiados',
                       isContextual: false,
                       keyName: 'successful'
+                  },
+                  finished: {
+                      title: 'Todas as Categorias',
+                      filter: finished,
+                      nicename: 'Finalizados',
+                      isContextual: false,
+                      keyName: 'finished'
                   },
                   recent: {
                       title: 'Recentes',
