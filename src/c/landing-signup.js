@@ -41,6 +41,7 @@ window.c.landingSignup = (function(m, h) {
             },[
                 m('.w-col.w-col-5', [
                     m(`input${errorClasses}.w-input.text-field.medium[name="EMAIL"][placeholder="Digite seu email"][type="text"]`, {
+                        config: h.RDTracker('landing-flex'),
                         onchange: m.withAttr('value', ctrl.email),
                         value: ctrl.email()
                     }),
