@@ -27,5 +27,8 @@
     "replace-diacritics": "https://raw.githubusercontent.com/yvg/js-replace-diacritics/master/replace-diacritics.js",
     "moment-timezone": "~0.4.0",
     "chartjs": "1.0.2"
+  },
+  "resolutions": {
+    "mithril": "0.2.4"
   }
 }
