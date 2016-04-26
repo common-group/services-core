@@ -198,6 +198,8 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                     } else if (idx === 1 || idx === 2) {
                                         cardType = 'medium';
                                         ref = 'ctrse_explore_featured_medium';
+                                    } else {
+                                        ref = 'ctrse_explore_featured';
                                     }
                                 }
 
