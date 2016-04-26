@@ -18,7 +18,7 @@ describe('ProjectHeader', () => {
 
         it('should a project header', () => {
             expect($output.find('#project-header').length).toEqual(1);
-            expect($output.contains(projectDetail.name)).toEqual(true);
+            expect($output.contains(projectDetail().name)).toEqual(true);
         });
 
         it('should render project-highlight / project-sidebar component area', () => {
