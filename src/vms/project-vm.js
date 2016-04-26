@@ -1,6 +1,6 @@
 window.c.vms.project = ((m, h, _, models) => {
     return (project_id, project_user_id) => {
-        const vm = m.postgrest.filtersVM({
+        const vm = postgrest.filtersVM({
             project_id: 'eq'
         }),
               idVM = h.idVM,
@@ -11,9 +11,9 @@ window.c.vms.project = ((m, h, _, models) => {
         vm.project_id(project_id);
         idVM.id(project_user_id);
 
-        const lProject = m.postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
-              lUser = m.postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
-              lReward = m.postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters())),
+        const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
+              lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
+              lReward = postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters())),
               isLoading = () => { return (lProject() || lUser() || lReward()); };
 
         lProject.load().then((data) => {

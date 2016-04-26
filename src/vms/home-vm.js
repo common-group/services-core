@@ -1,4 +1,6 @@
-window.c.vms.home = ((I18n) => {
+import I18n from 'i18n-js';
+
+const homeVM = I18n => {
     return () => {
         const i18nStart = I18n.translations[I18n.currentLocale()].projects.home,
             banners = i18nStart.banners;
@@ -7,4 +9,6 @@ window.c.vms.home = ((I18n) => {
             banners: banners
         };
     };
-}(window.I18n));
+};
+
+export default homeVM;

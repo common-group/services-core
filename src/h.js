@@ -1,5 +1,7 @@
-window.c.h = ((m, moment, I18n) => {
-    //Date Helpers
+import m from 'mithril';
+import moment from 'moment';
+import I18n from 'i18n-js';
+
 
     const hashMatch = (str) => { return window.location.hash === str; },
         paramByName = (name) => {
@@ -100,7 +102,7 @@ window.c.h = ((m, moment, I18n) => {
             return p;
         },
 
-        idVM = m.postgrest.filtersVM({
+        idVM = postgrest.filtersVM({
             id: 'eq'
         }),
 
@@ -340,41 +342,40 @@ window.c.h = ((m, moment, I18n) => {
     closeFlash();
     closeModal();
 
-    return {
-        authenticityToken: authenticityToken,
-        cumulativeOffset: cumulativeOffset,
-        discuss: discuss,
-        existy: existy,
-        validateEmail: validateEmail,
-        momentify: momentify,
-        momentFromString: momentFromString,
-        formatNumber: formatNumber,
-        idVM: idVM,
-        getUser: getUser,
-        getCurrentProject: getCurrentProject,
-        toggleProp: toggleProp,
-        loader: loader,
-        newFeatureBadge: newFeatureBadge,
-        fbParse: fbParse,
-        pluralize: pluralize,
-        simpleFormat: simpleFormat,
-        translatedTime: translatedTime,
-        rewardSouldOut: rewardSouldOut,
-        rewardRemaning: rewardRemaning,
-        parseUrl: parseUrl,
-        hashMatch: hashMatch,
-        redrawHashChange: redrawHashChange,
-        useAvatarOrDefault: useAvatarOrDefault,
-        locationActionMatch: locationActionMatch,
-        navigateToDevise: navigateToDevise,
-        storeAction: storeAction,
-        callStoredAction: callStoredAction,
-        UIHelper: UIHelper,
-        toAnchor: toAnchor,
-        paramByName: paramByName,
-        i18nScope: i18nScope,
-        RDTracker: RDTracker,
-        selfOrEmpty: selfOrEmpty,
-        scrollTo: scrollTo
-    };
-}(window.m, window.moment, window.I18n));
+export default {
+    authenticityToken,
+    cumulativeOffset,
+    discuss,
+    existy,
+    validateEmail,
+    momentify,
+    momentFromString,
+    formatNumber,
+    idVM,
+    getUser,
+    getCurrentProject,
+    toggleProp,
+    loader,
+    newFeatureBadge,
+    fbParse,
+    pluralize,
+    simpleFormat,
+    translatedTime,
+    rewardSouldOut,
+    rewardRemaning,
+    parseUrl,
+    hashMatch,
+    redrawHashChange,
+    useAvatarOrDefault,
+    locationActionMatch,
+    navigateToDevise,
+    storeAction,
+    callStoredAction,
+    UIHelper,
+    toAnchor,
+    paramByName,
+    i18nScope,
+    RDTracker,
+    selfOrEmpty,
+    scrollTo
+};

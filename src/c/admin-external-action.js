@@ -9,90 +9,92 @@
  *     item: rowFromDatabase
  * })
  */
-window.c.AdminExternalAction = ((function(m, h, c, _) {
-    return {
-        controller: function(args) {
-            let builder = args.data,
-                complete = m.prop(false),
-                error = m.prop(false),
-                fail = m.prop(false),
-                data = {},
-                item = args.item;
+import m from 'mithril';
+import _ from 'underscore';
+import h from 'h';
 
-            builder.requestOptions.config = (xhr) => {
-                if (h.authenticityToken()) {
-                    xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
-                }
-            };
+const adminExternalAction = {
+    controller (args) {
+        let builder = args.data,
+            complete = m.prop(false),
+            error = m.prop(false),
+            fail = m.prop(false),
+            data = {},
+            item = args.item;
 
-            const reload = _.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
-                l = m.prop(false);
+        builder.requestOptions.config = (xhr) => {
+            if (h.authenticityToken()) {
+                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+            }
+        };
 
-            const reloadItem = (data) => {
-                reload().then(updateItem);
-            };
+        const reload = _.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
+            l = m.prop(false);
 
-            const requestError = (err) => {
-                l(false);
-                complete(true);
-                error(true);
-            };
+        const reloadItem = () => reload().then(updateItem);
 
-            const updateItem = (res) => {
-                _.extend(item, res[0]);
-                complete(true);
+        const requestError = (err) => {
+            l(false);
+            complete(true);
+            error(true);
+        };
+
+        const updateItem = (res) => {
+            _.extend(item, res[0]);
+            complete(true);
+            error(false);
+        };
+
+        const submit = () => {
+            l(true);
+            m.request(builder.requestOptions).then(reloadItem, requestError);
+            return false;
+        };
+
+        const unload = (el, isinit, context) => {
+            context.onunload = function() {
+                complete(false);
                 error(false);
             };
+        };
 
-            const submit = () => {
-                l(true);
-                m.request(builder.requestOptions).then(reloadItem, requestError);
-                return false;
-            };
+        return {
+            l: l,
+            complete: complete,
+            error: error,
+            submit: submit,
+            toggler: h.toggleProp(false, true),
+            unload: unload
+        };
+    },
+    view (ctrl, args) {
+        const data = args.data,
+            btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
 
-            const unload = (el, isinit, context) => {
-                context.onunload = function() {
-                    complete(false);
-                    error(false);
-                };
-            };
-
-            return {
-                complete: complete,
-                error: error,
-                l: l,
-                submit: submit,
-                toggler: h.toggleProp(false, true),
-                unload: unload
-            };
-        },
-        view: function(ctrl, args) {
-            var data = args.data,
-                btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
-
-            return m('.w-col.w-col-2', [
-                m('button.btn.btn-small.btn-terciary', {
-                    onclick: ctrl.toggler.toggle
-                }, data.outerLabel), (ctrl.toggler()) ?
-                m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                    config: ctrl.unload
-                }, [
-                    m('form.w-form', {
-                        onsubmit: ctrl.submit
-                    }, (!ctrl.complete()) ? [
-                        m('label', data.innerLabel),
-                        m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
-                    ] : (!ctrl.error()) ? [
-                        m('.w-form-done[style="display:block;"]', [
-                            m('p', 'Requisição feita com sucesso.')
-                        ])
-                    ] : [
-                        m('.w-form-error[style="display:block;"]', [
-                            m('p', 'Houve um problema na requisição.')
-                        ])
+        return m('.w-col.w-col-2', [
+            m('button.btn.btn-small.btn-terciary', {
+                onclick: ctrl.toggler.toggle
+            }, data.outerLabel), (ctrl.toggler()) ?
+            m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+                config: ctrl.unload
+            }, [
+                m('form.w-form', {
+                    onsubmit: ctrl.submit
+                }, (!ctrl.complete()) ? [
+                    m('label', data.innerLabel),
+                    m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
+                ] : (!ctrl.error()) ? [
+                    m('.w-form-done[style="display:block;"]', [
+                        m('p', 'Requisição feita com sucesso.')
                     ])
-                ]) : ''
-            ]);
-        }
-    };
-})(window.m, window.c.h, window.c, window._));
+                ] : [
+                    m('.w-form-error[style="display:block;"]', [
+                        m('p', 'Houve um problema na requisição.')
+                    ])
+                ])
+            ]) : ''
+        ]);
+    }
+}
+
+export default adminExternalAction;

@@ -13,19 +13,22 @@
  *     }
  * }
  */
-window.c.AdminContributionUser = (function(m) {
-    return {
-        view: (ctrl, args) => {
-            const item = args.item,
-                  user = {
-                      profile_img_thumbnail: item.user_profile_img,
-                      id: item.user_id,
-                      name: item.user_name,
-                      email: item.email,
-                  };
+import m from 'mithril';
+import adminUser from 'admin-user';
 
-            const additionalData = m('.fontsize-smallest.fontcolor-secondary', 'Gateway: ' + item.payer_email);
-            return m.component(c.AdminUser, {item: user, additional_data: additionalData});
-        }
-    };
-}(window.m));
+const adminContributionUser = {
+    view (ctrl, args) {
+        const item = args.item,
+              user = {
+                  profile_img_thumbnail: item.user_profile_img,
+                  id: item.user_id,
+                  name: item.user_name,
+                  email: item.email,
+              };
+
+        const additionalData = m('.fontsize-smallest.fontcolor-secondary', 'Gateway: ' + item.payer_email);
+        return m.component(adminUser, {item: user, additional_data: additionalData});
+    }
+};
+
+export default adminContributionUser;

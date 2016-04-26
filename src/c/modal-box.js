@@ -13,20 +13,21 @@
  *                  m('.modal-dialog-nav-bottom', []),
  *              ])
  */
+import m from 'mithril';
 
-window.c.ModalBox = ((m, c, _) => {
-    return {
-        view: (ctrl, args) => {
-            return m('.modal-backdrop', [
-                m('.modal-dialog-outer', [
-                    m('.modal-dialog-inner.modal-dialog-small', [
-                        m('a.w-inline-block.modal-close.fa.fa-close.fa-lg[href="js:void(0);"]', {
-                            onclick: args.displayModal.toggle
-                        }),
-                        m.component(c[args.content[0]], args.content[1])
-                    ]),
-                ])
-            ]);
-        }
-    };
-}(window.m, window.c, window._));
+const modalBox = {
+    view (ctrl, args) {
+        return m('.modal-backdrop', [
+            m('.modal-dialog-outer', [
+                m('.modal-dialog-inner.modal-dialog-small', [
+                    m('a.w-inline-block.modal-close.fa.fa-close.fa-lg[href="javascript:void(0);"]', {
+                        onclick: args.displayModal.toggle
+                    }),
+                    m.component(args.content[0], args.content[1])
+                ]),
+            ])
+        ]);
+    }
+}
+
+export default modalBox;
