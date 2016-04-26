@@ -6,7 +6,7 @@ window.c.root.Flex = (function(m, c, h, models) {
                 l = m.prop(),
                 sample3 = _.partial(_.sample, _, 3),
                 builder = {
-                    customAction: '//catarse.us5.list-manage.com/subscribe/post?u=ebfcd0d16dbb0001a0bea3639&amp;id=8a4c1a33ce'
+                    customAction: 'http://fazum.catarse.me/obrigado-landing-catarse-flex'
                 },
                 addDisqus = (el, isInitialized) => {
                     if (!isInitialized) {
