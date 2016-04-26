@@ -2,8 +2,8 @@ window.c.vms.projectFilters = ((m, h, moment) => {
     return () => {
         const filtersVM = m.postgrest.filtersVM,
               all = filtersVM({
-                  state: 'in'
-              }).state('online,waiting_funds'),
+                  state: 'eq'
+              }).state('online'),
 
               nearMe = filtersVM({
                   near_me: 'eq',
