@@ -176,7 +176,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                         const projects = ctrl.projects(),
                                             isSelected = ctrl.currentFilter() == pageFilter;
 
-                                        return m(`option[value="${pageFilter.keyName}"][${isSelected ? 'selected' : ''}]`, pageFilter.nicename);
+                                        return m(`option[value="${pageFilter.keyName}"]`,{ selected: isSelected },pageFilter.nicename);
                                     })
                                 )
                             )
