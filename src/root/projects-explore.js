@@ -13,7 +13,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
             const filters = m.postgrest.filtersVM,
                   projectFilters = c.vms.projectFilters(),
                   filtersMap = projectFilters.filters,
-                  defaultFilter = 'score',
+                  defaultFilter = h.getParameter('filter') || 'score',
                   fallbackFilter = 'all',
                   currentFilter = m.prop(filtersMap[defaultFilter]),
                   changeFilter = (newFilter) => {
@@ -122,6 +122,10 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
             resetContextFilter();
             c.models.project.pageSize(9);
             loadCategories().then(loadRoute);
+
+            if (!currentFilter()) {
+                currentFilter(filtersMap[defaultFilter]);
+            }
 
             return {
                 categories: categoryCollection,

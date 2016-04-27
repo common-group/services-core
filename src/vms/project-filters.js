@@ -39,7 +39,7 @@ window.c.vms.projectFilters = ((m, h, moment) => {
                   all: {
                       title: 'Todas as Categorias',
                       filter: all,
-                      nicename: 'Todos',
+                      nicename: 'No ar',
                       isContextual: false,
                       keyName: 'all'
                   },
