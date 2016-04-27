@@ -130,7 +130,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void();"]',{onclick: () => ctrl.toggleCategories.toggle()}, ['Explore projetos incríveis ',m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
                         ]),
                         m(`#categories.category-slider${ctrl.toggleCategories() ? '.opened' : ''}`, [
-                            m('.w-row', [
+                            m('.w-row.u-marginbottom-30', [
                                 _.map(ctrl.categories(), (category) => {
                                     return m.component(c.CategoryButton, {category: category});
                                 })
