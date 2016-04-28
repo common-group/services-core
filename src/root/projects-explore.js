@@ -24,6 +24,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                       currentFilter(filtersMap[defaultFilter]);
                       projectFilters.setContextFilters(['score', 'finished', 'all']);
                   },
+                  isSearch = m.prop(false),
                   categoryCollection = m.prop([]),
                   categoryId = m.prop(),
                   findCategory = (id) => {
@@ -94,11 +95,14 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                             };
 
                       if (_.isString(search) && search.length > 0 && route === null) {
+                          isSearch(true);
                           title('Busca ' + search);
                           projects(searchProjects());
                       } else if (currentFilter().keyName === 'finished') {
+                          isSearch(false);
                           projects(loadFinishedProjects());
                       } else {
+                          isSearch(false);
                           title(filter.title);
                           if (!_.isNull(route) && route[1] == 'finished') {
                               projects(loadFinishedProjects());
@@ -137,13 +141,14 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 filtersMap: filtersMap,
                 currentFilter: currentFilter,
                 projectFilters: projectFilters,
-                toggleCategories: toggleCategories
+                toggleCategories: toggleCategories,
+                isSearch: isSearch
             };
         },
 
         view: (ctrl) => {
 
-            if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection())){
+            if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection()) && !ctrl.isSearch()){
                 ctrl.projectFilters.removeContextFilter(ctrl.currentFilter());
                 ctrl.changeFilter(ctrl.fallbackFilter);
             }
@@ -174,7 +179,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 m('.fontsize-larger', ctrl.title())
                             ]),
                             m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
-                                m('select.w-select.text-field.positive',
+                                !ctrl.isSearch() ? m('select.w-select.text-field.positive',
                                     {onchange: m.withAttr('value', ctrl.changeFilter)},
                                     _.map(ctrl.projectFilters.getContextFilters(), (pageFilter, idx) => {
                                         const projects = ctrl.projects(),
@@ -182,7 +187,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                                         return m(`option[value="${pageFilter.keyName}"]`,{ selected: isSelected },pageFilter.nicename);
                                     })
-                                )
+                                ) : ''
                             )
                         ])
                     ])
@@ -209,7 +214,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
 
                                 return m.component(c.ProjectCard, {project: project, ref: ref, type: cardType});
                             })),
-                            ctrl.projects().isLoading() ? h.loader() : ''
+                            ctrl.projects().isLoading() ? h.loader() : _.isEmpty(ctrl.projects().collection()) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
                         ])
                     ])
                 ]),
