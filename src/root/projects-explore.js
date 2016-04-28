@@ -13,7 +13,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
             const filters = m.postgrest.filtersVM,
                   projectFilters = c.vms.projectFilters(),
                   filtersMap = projectFilters.filters,
-                  defaultFilter = h.getParameter('filter') || 'score',
+                  defaultFilter = h.paramByName('filter') || 'score',
                   fallbackFilter = 'all',
                   currentFilter = m.prop(filtersMap[defaultFilter]),
                   changeFilter = (newFilter) => {
