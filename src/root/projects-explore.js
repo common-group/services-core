@@ -200,7 +200,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 let cardType = 'small',
                                     ref = 'ctrse_explore';
 
-                                if (ctrl.currentFilter().keyName === 'score') {
+                                if (ctrl.currentFilter().keyName === 'score' && !ctrl.isSearch()) {
                                     if (idx === 0) {
                                         cardType = 'big';
                                         ref = 'ctrse_explore_featured_big';
