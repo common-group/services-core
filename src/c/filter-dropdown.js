@@ -1,7 +1,8 @@
 window.c.FilterDropdown = (function(m, c, _) {
     return {
         view: function(ctrl, args) {
-            return m('.w-col.w-col-3.w-col-small-6', [
+            const wrapper_c = args.wrapper_class || '.w-col.w-col-3.w-col-small-6';
+            return m(wrapper_c, [
                 m('label.fontsize-smaller[for="' + args.index + '"]', args.label),
                 m.component(c.Dropdown, {
                     id: args.index,

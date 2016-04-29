@@ -1,6 +1,6 @@
 {
   "name": "catarse.js",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "author": "Diogo Biazus",
   "contributors": [
     {
@@ -25,6 +25,7 @@
     "karma": "^0.13.9",
     "karma-babel-preprocessor": "^5.2.2",
     "karma-jasmine": "^0.3.6",
+    "karma-nodewebkit-launcher": "0.0.12",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-spec-reporter": "0.0.20",
     "mithril-query": "^0.7.5",

@@ -114,6 +114,12 @@ window.c.h = ((m, moment, I18n) => {
             }
         },
 
+        getRdToken = () => {
+            const meta = _.first(document.querySelectorAll('[name=rd-token]'));
+
+            return meta ? meta.content : undefined;
+        },
+
         getUser = () => {
             const body = document.getElementsByTagName('body'),
                 data = _.first(body).getAttribute('data-user');
@@ -349,6 +355,23 @@ window.c.h = ((m, moment, I18n) => {
                 };
 
             return statusText[state];
+        },
+        RDTracker = (eventId) => {
+            return (el, isInitialized) => {
+                if (!isInitialized) {
+                    const integrationScript = document.createElement('script');
+                    integrationScript.type = 'text/javascript';
+                    integrationScript.id = 'RDIntegration';
+
+                    if (!document.getElementById(integrationScript.id)){
+                        document.body.appendChild(integrationScript);
+                        integrationScript.onload = () => RdIntegration.integrate(getRdToken(), eventId);
+                        integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
+                    }
+
+                    return false;
+                }
+            };
         };
 
     setMomentifyLocale();
@@ -388,6 +411,7 @@ window.c.h = ((m, moment, I18n) => {
         toAnchor: toAnchor,
         paramByName: paramByName,
         i18nScope: i18nScope,
+        RDTracker: RDTracker,
         selfOrEmpty: selfOrEmpty,
         scrollTo: scrollTo,
         projectStateTextClass: projectStateTextClass

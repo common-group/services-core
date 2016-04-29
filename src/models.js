@@ -30,7 +30,8 @@ window.c.models = (function(m) {
         teamMember = m.postgrest.model('team_members'),
         notification = m.postgrest.model('notifications'),
         statistic = m.postgrest.model('statistics'),
-        successfulProject = m.postgrest.model('successful_projects');
+        successfulProject = m.postgrest.model('successful_projects'),
+        finishedProject = m.postgrest.model('finished_projects');
 
     teamMember.pageSize(40);
     rewardDetail.pageSize(false);
@@ -38,6 +39,7 @@ window.c.models = (function(m) {
     category.pageSize(50);
     contributionActivity.pageSize(40);
     successfulProject.pageSize(9);
+    finishedProject.pageSize(9);
 
     return {
         contributionDetail: contributionDetail,
@@ -71,6 +73,7 @@ window.c.models = (function(m) {
         projectReminder: projectReminder,
         notification: notification,
         statistic: statistic,
-        successfulProject: successfulProject
+        successfulProject: successfulProject,
+        finishedProject: finishedProject
     };
 }(window.m));

@@ -18,9 +18,9 @@ describe('ProjectDashboardMenu', () => {
                 spyOn(ctrl, 'body').and.returnValue(body);
 
                 return {
-                    output: mq(component.view(ctrl, {
+                    output: mq(component, {
                         project: projectDetail
-                    })),
+                    }),
                     projectDetail: projectDetail
                 };
             };
@@ -33,7 +33,7 @@ describe('ProjectDashboardMenu', () => {
                 state: 'online'
             });
 
-            output.should.contain(projectDetail.name);
+            output.should.contain(projectDetail().name);
             output.should.have('#info-links');
         });
     });

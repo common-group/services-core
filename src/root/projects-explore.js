@@ -13,7 +13,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
             const filters = m.postgrest.filtersVM,
                   projectFilters = c.vms.projectFilters(),
                   filtersMap = projectFilters.filters,
-                  defaultFilter = 'score',
+                  defaultFilter = h.paramByName('filter') || 'score',
                   fallbackFilter = 'all',
                   currentFilter = m.prop(filtersMap[defaultFilter]),
                   changeFilter = (newFilter) => {
@@ -22,8 +22,9 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                   },
                   resetContextFilter = () => {
                       currentFilter(filtersMap[defaultFilter]);
-                      projectFilters.setContextFilters(['score', 'successful', 'all']);
+                      projectFilters.setContextFilters(['score', 'finished', 'all']);
                   },
+                  isSearch = m.prop(false),
                   categoryCollection = m.prop([]),
                   categoryId = m.prop(),
                   findCategory = (id) => {
@@ -81,23 +82,30 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 return pages;
                             },
 
-                            loadSuccessfulProjects = () => {
-                                const pages = m.postgrest.paginationVM(c.models.successfulProject),
-                                    parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({pledged: 'desc'}).parameters());
+                            loadFinishedProjects = () => {
+                                const pages = m.postgrest.paginationVM(c.models.finishedProject),
+                                      parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
+                                          state_order: 'asc',
+                                          state: 'desc',
+                                          pledged: 'desc'
+                                      }).parameters());
                                 pages.firstPage(parameters);
 
                                 return pages;
                             };
 
                       if (_.isString(search) && search.length > 0 && route === null) {
+                          isSearch(true);
                           title('Busca ' + search);
                           projects(searchProjects());
-                      } else if (currentFilter().keyName === 'successful') {
-                          projects(loadSuccessfulProjects());
+                      } else if (currentFilter().keyName === 'finished') {
+                          isSearch(false);
+                          projects(loadFinishedProjects());
                       } else {
+                          isSearch(false);
                           title(filter.title);
-                          if (!_.isNull(route) && route[1] == 'successful') {
-                              projects(loadSuccessfulProjects());
+                          if (!_.isNull(route) && route[1] == 'finished') {
+                              projects(loadFinishedProjects());
                           } else {
                               projects(loadProjects());
                           }
@@ -119,6 +127,10 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
             c.models.project.pageSize(9);
             loadCategories().then(loadRoute);
 
+            if (!currentFilter()) {
+                currentFilter(filtersMap[defaultFilter]);
+            }
+
             return {
                 categories: categoryCollection,
                 changeFilter: changeFilter,
@@ -129,13 +141,14 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                 filtersMap: filtersMap,
                 currentFilter: currentFilter,
                 projectFilters: projectFilters,
-                toggleCategories: toggleCategories
+                toggleCategories: toggleCategories,
+                isSearch: isSearch
             };
         },
 
         view: (ctrl) => {
 
-            if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection())){
+            if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection()) && !ctrl.isSearch()){
                 ctrl.projectFilters.removeContextFilter(ctrl.currentFilter());
                 ctrl.changeFilter(ctrl.fallbackFilter);
             }
@@ -150,7 +163,7 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 ['Explore projetos incríveis ', m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
                         ]),
                         m(`#categories.category-slider${ctrl.toggleCategories() ? '.opened' : ''}`, [
-                            m('.w-row', [
+                            m('.w-row.u-marginbottom-30', [
                                 _.map(ctrl.categories(), (category) => {
                                     return m.component(c.CategoryButton, {category: category});
                                 })
@@ -166,15 +179,15 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 m('.fontsize-larger', ctrl.title())
                             ]),
                             m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
-                                m('select.w-select.text-field.positive',
+                                !ctrl.isSearch() ? m('select.w-select.text-field.positive',
                                     {onchange: m.withAttr('value', ctrl.changeFilter)},
                                     _.map(ctrl.projectFilters.getContextFilters(), (pageFilter, idx) => {
                                         const projects = ctrl.projects(),
                                             isSelected = ctrl.currentFilter() == pageFilter;
 
-                                        return m(`option[value="${pageFilter.keyName}"][${isSelected ? 'selected' : ''}]`, pageFilter.nicename);
+                                        return m(`option[value="${pageFilter.keyName}"]`,{ selected: isSelected },pageFilter.nicename);
                                     })
-                                )
+                                ) : ''
                             )
                         ])
                     ])
@@ -187,19 +200,21 @@ window.c.root.ProjectsExplore = ((m, c, h, _, moment) => {
                                 let cardType = 'small',
                                     ref = 'ctrse_explore';
 
-                                if (ctrl.currentFilter().keyName === 'score') {
+                                if (ctrl.currentFilter().keyName === 'score' && !ctrl.isSearch()) {
                                     if (idx === 0) {
                                         cardType = 'big';
                                         ref = 'ctrse_explore_featured_big';
                                     } else if (idx === 1 || idx === 2) {
                                         cardType = 'medium';
                                         ref = 'ctrse_explore_featured_medium';
+                                    } else {
+                                        ref = 'ctrse_explore_featured';
                                     }
                                 }
 
                                 return m.component(c.ProjectCard, {project: project, ref: ref, type: cardType});
                             })),
-                            ctrl.projects().isLoading() ? h.loader() : ''
+                            ctrl.projects().isLoading() ? h.loader() : _.isEmpty(ctrl.projects().collection()) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
                         ])
                     ])
                 ]),
