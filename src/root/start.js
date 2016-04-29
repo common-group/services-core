@@ -5,9 +5,9 @@ import models from 'models';
 import h from 'h';
 import I18n from 'i18n-js';
 import startVM from 'start-vm';
-import youtubeLightbox 'youtube-lightbox';
-import slider 'slider';
-import landingQA 'landing-qa';
+import youtubeLightbox from 'youtube-lightbox';
+import slider from 'slider';
+import landingQA from 'landing-qa';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 

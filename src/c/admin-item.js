@@ -5,7 +5,7 @@ import h from 'h';
 const adminItem = {
     controller (args) {
         return {
-            displayDetailBox : h.toggleProp(false, true);
+            displayDetailBox : h.toggleProp(false, true)
         }
     },
     view (ctrl, args) {

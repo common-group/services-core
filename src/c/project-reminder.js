@@ -15,12 +15,12 @@ import popNotification from 'pop-notification';
 
 const projectReminder = {
     controller (args) {
+        let l = m.prop(false);
         const project = args.project,
             filterVM = postgrest.filtersVM({
                 project_id: 'eq'
             }),
             storeReminderName = 'remind_' + project().id,
-            l = m.prop(false),
             popNotification = m.prop(false),
             submitReminder = () => {
                 if (!h.getUser()) {

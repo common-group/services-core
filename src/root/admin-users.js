@@ -41,7 +41,7 @@ const adminUsers = {
                     }]
                 }
             }],
-            submit () {
+            submit = () => {
                 listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
                     error(serverError.message);
                 });

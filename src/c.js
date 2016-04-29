@@ -1,16 +1,16 @@
 import flex from 'flex';
-import insights 'insights';
-import jobs 'jobs';
-import liveStatistics 'live-statistics';
-import projectsContributionReport 'projects-contribution-report';
-import projectsDashboard 'projects-dashboard';
-import projectsExplore 'projects-explore';
-import projectsHome 'projects-home';
-import projectsShow 'projects-show';
-import publish 'publish';
-import start 'start';
-import team 'team';
-import usersBalance 'user-balance';
+import insights from 'insights';
+import jobs from 'jobs';
+import liveStatistics from 'live-statistics';
+import projectsContributionReport from 'projects-contribution-report';
+import projectsDashboard from 'projects-dashboard';
+import projectsExplore from 'projects-explore';
+import projectsHome from 'projects-home';
+import projectsShow from 'projects-show';
+import publish from 'publish';
+import start from 'start';
+import team from 'team';
+import usersBalanceMain from 'user-balance-main';
 
 const c = {
     root: {
@@ -26,7 +26,7 @@ const c = {
         Publish: publish,
         Start: start,
         Team: team,
-        UsersBalance: usersBalance
+        UsersBalance: usersBalanceMain
     }
 };
 

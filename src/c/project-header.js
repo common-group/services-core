@@ -6,7 +6,7 @@ import projectSidebar from 'project-sidebar';
 
 const projectHeader = {
     view (ctrl, args) {
-        const project = args.project;
+        let project = args.project;
 
         if (_.isUndefined(project())){
             project = m.prop({});

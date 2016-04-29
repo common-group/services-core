@@ -88,7 +88,7 @@ const adminConstributions = {
                     last: filterVM.created_at.lte
                 }
             }],
-            submit () {
+            submit = () => {
                 error(false);
                 listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
                     error(serverError.message);

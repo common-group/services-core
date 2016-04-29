@@ -4,7 +4,7 @@ import h from 'h';
 const popNotification = {
     controller () {
         return {
-            displayNotification: h.toggleProp(true, false);
+            displayNotification: h.toggleProp(true, false)
         };
     },
     view (ctrl, args) {

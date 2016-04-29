@@ -7,7 +7,6 @@
  *     user_id: 123,
  * })
  */
-
 import m from 'mithril';
 import _ from 'underscore';
 import models from 'models';
@@ -22,7 +21,7 @@ const userBalance = {
 
         return {
             userBalances: args.balanceManager.collection,
-            displayModal: h.toggleProp(false, true);
+            displayModal: h.toggleProp(false, true)
         };
     },
     view (ctrl, args) {

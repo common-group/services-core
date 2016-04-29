@@ -5,7 +5,6 @@ import models from 'models';
 import adminInputAction from 'admin-input-action';
 import adminRadioAction from 'admin-radio-action';
 import adminExternalAction from 'admin-external-action';
-import adminInputAction from 'admin-input-action';
 import adminTransaction from 'admin-transaction';
 import adminTransactionHistory from 'admin-transaction-history';
 import adminReward from 'admin-reward';

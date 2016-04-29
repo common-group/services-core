@@ -13,7 +13,7 @@ import models from 'models';
 import userBalance from 'user-balance';
 import userBalanceTransactions from 'user-balance-transactions';
 
-const userBalance = {
+const userBalancePage = {
     controller (args) {
         const userIdVM = postgrest.filtersVM({user_id: 'eq'});
 
@@ -83,4 +83,4 @@ const userBalance = {
     }
 }
 
-export default userBalance;
+export default userBalancePage;

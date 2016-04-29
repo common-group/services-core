@@ -62,14 +62,26 @@ const projectFiltersVM = () => {
                   isContextual: false,
                   keyName: 'expiring'
               },
-              successful: {}
-
-window.c.vms.projectFilters = ((m, h, moment) => {
-    return () =>
-}(window.m, window.c.h, window.moment));nt,
-                  isContextual: false,
-                  keyName: 'recent'
-              },
+              successful: {
+                    title: 'Todas as Categorias',
+                    filter: successful,
+                    nicename: 'Financiados',
+                    isContextual: false,
+                    keyName: 'successful'
+                },
+                finished: {
+                    title: 'Todas as Categorias',
+                    filter: finished,
+                    nicename: 'Finalizados',
+                    isContextual: false,
+                    keyName: 'finished'
+                },
+                recent: {
+                    title: 'Recentes',
+                    filter: recent,
+                    isContextual: false,
+                    keyName: 'recent'
+                },
               near_me: {
                   title: 'Próximos a mim',
                   filter: nearMe,

@@ -2,7 +2,7 @@ import m from 'mithril';
 
 const paymentStatus = {
     controller (args) {
-        const payment = args.item,
+        let payment = args.item,
             card = null,
             displayPaymentMethod, paymentMethodClass, stateClass;
 
