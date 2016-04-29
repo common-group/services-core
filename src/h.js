@@ -334,17 +334,6 @@ window.c.h = ((m, moment, I18n) => {
                     return false;
                 }
             }
-        },
-
-        getParameter = (val) => {
-            let result,
-                tmp = [];
-            window.location.search.substr(1).split("&").forEach(function (item) {
-                tmp = item.split("=");
-                if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
-            });
-
-            return result;
         };
 
     setMomentifyLocale();
@@ -386,7 +375,6 @@ window.c.h = ((m, moment, I18n) => {
         i18nScope: i18nScope,
         RDTracker: RDTracker,
         selfOrEmpty: selfOrEmpty,
-        scrollTo: scrollTo,
-        getParameter: getParameter
+        scrollTo: scrollTo
     };
 }(window.m, window.moment, window.I18n));
