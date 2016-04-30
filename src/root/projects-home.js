@@ -1,13 +1,21 @@
-window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
+window.c.root.ProjectsHome = (((m, models, c, moment, h, _, I18n) => {
     const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
     return {
-        controller: () => {
+        controller: (args) => {
             let sample6 = _.partial(_.sample, _, 6),
                 loader = m.postgrest.loader,
                 project = c.models.project,
                 filters = c.vms.projectFilters().filters,
+                userFriendVM = m.postgrest.filtersVM({
+                    user_id: 'eq'
+                }),
+                friendListVM = m.postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+                    'Prefer':  'count=exact'
+                }),
                 vm = c.vms.home();
+
+            userFriendVM.user_id(args.root.getAttribute('data-currentuserid'));
 
             const collections = _.map(['score'], (name) => {
                 const f = filters[name],
@@ -22,11 +30,18 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
                     collection: collection,
                     loader: cLoader
                 };
-            });
+            }),
+                  userSignedIn = !_.isNull(userFriendVM.user_id());
+
+            if (userSignedIn && !friendListVM.collection().length) {
+                friendListVM.firstPage(userFriendVM.parameters());
+            }
 
             return {
                 collections: collections,
-                slidesContent: vm.banners
+                slidesContent: vm.banners,
+                userSignedIn: userSignedIn,
+                friendListVM: friendListVM
             };
         },
 
@@ -64,8 +79,9 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
                         ref: `home_${collection.hash}`
                     });
                 }),
-                m.component(c.ContributionActivities)
+                (ctrl.userSignedIn ?
+                 m.component(c.SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(c.UnsignedFriendFacebookConnect) )
             ];
         }
     };
-})(window.m, window.c, window.moment, window.c.h, window._, window.I18n));
+})(window.m, window.c.models, window.c, window.moment, window.c.h, window._, window.I18n));
