@@ -28,7 +28,8 @@ window.c.models = (function(m) {
         notification = m.postgrest.model('notifications'),
         statistic = m.postgrest.model('statistics'),
         successfulProject = m.postgrest.model('successful_projects'),
-        finishedProject = m.postgrest.model('finished_projects');
+        finishedProject = m.postgrest.model('finished_projects'),
+        userFriend = m.postgrest.model('user_friends');
 
     teamMember.pageSize(40);
     rewardDetail.pageSize(false);
@@ -68,6 +69,7 @@ window.c.models = (function(m) {
         notification: notification,
         statistic: statistic,
         successfulProject: successfulProject,
-        finishedProject: finishedProject
+        finishedProject: finishedProject,
+        userFriend: userFriend
     };
 }(window.m));
