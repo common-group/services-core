@@ -36,6 +36,7 @@ window.c.models = (function(m) {
     project.pageSize(30);
     category.pageSize(50);
     contributionActivity.pageSize(40);
+    userFriend.pageSize(40);
     successfulProject.pageSize(9);
     finishedProject.pageSize(9);
 
