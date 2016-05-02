@@ -12,8 +12,8 @@
 
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import tooltip from 'tooltip';
+import h from '../h';
+import tooltip from './tooltip';
 
 const projectMode = {
     view (ctrl, args) {

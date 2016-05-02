@@ -15,7 +15,7 @@
  *  }
  */
 import m from 'mithril';
-import h from 'h';
+import h from '../h';
 
 const landingSignup = {
     controller (args) {

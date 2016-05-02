@@ -10,8 +10,8 @@
 import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
-import h from 'h';
-import models from 'models';
+import h from '../h';
+import models from '../models';
 
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 

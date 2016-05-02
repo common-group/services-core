@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import projectShareBox from 'project-share-box';
+import h from '../h';
+import projectShareBox from './project-share-box';
 
 const projectHighlight = {
     controller () {

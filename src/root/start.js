@@ -1,13 +1,13 @@
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
-import models from 'models';
-import h from 'h';
+import models from '../models';
+import h from '../h';
 import I18n from 'i18n-js';
-import startVM from 'start-vm';
-import youtubeLightbox from 'youtube-lightbox';
-import slider from 'slider';
-import landingQA from 'landing-qa';
+import startVM from '../vms/start-vm';
+import youtubeLightbox from '../c/youtube-lightbox';
+import slider from '../c/slider';
+import landingQA from '../c/landing-qa';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 

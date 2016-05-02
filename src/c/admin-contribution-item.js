@@ -1,5 +1,5 @@
 import m from 'mithril';
-import h from 'h';
+import h from '../h';
 import adminProject from 'admin-project';
 import adminContribution from 'admin-contribution';
 import adminContributionUser from 'admin-contribution-user';

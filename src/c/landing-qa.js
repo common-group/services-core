@@ -13,7 +13,7 @@
  *  }
  */
 import m from 'mithril';
-import h from 'h';
+import h from '../h';
 
 const landingQA = {
     controller (args) {

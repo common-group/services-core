@@ -11,8 +11,8 @@
  */
 
 import m from 'mithril';
-import models from 'models';
-import h from 'h';
+import models from '../models';
+import h from '../h';
 
 const youtubeLightbox = {
     controller (args) {

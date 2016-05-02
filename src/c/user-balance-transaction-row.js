@@ -1,5 +1,5 @@
 import m from 'mithril';
-import h from 'h';
+import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 

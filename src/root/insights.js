@@ -1,17 +1,16 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgres';
+import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import I18n from 'i18n-js';
-import h from 'h';
-import models from 'models';
-import insightsVM from 'insights-vm';
-import tooltip from 'tooltip';
-import projectDashboardMenu from 'project-dashboard-menu';
-import modalBox from 'modal-box';
-import adminProjectDetailsCard from 'admin-project-details-card';
-import projectDataChart from 'project-data-chart';
-import projectDataTable from 'project-data-table';
-import projectReminderCount from 'project-reminder-count';
+import h from '../h';
+import models from '../models';
+import tooltip from '../c/tooltip';
+import projectDashboardMenu from '../c/project-dashboard-menu';
+import modalBox from '../c/modal-box';
+import adminProjectDetailsCard from '../c/admin-project-details-card';
+import projectDataChart from '../c/project-data-chart';
+import projectDataTable from '../c/project-data-table';
+import projectReminderCount from '../c/project-reminder-count';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -21,7 +20,6 @@ const insights = {
                 project_id: 'eq'
             }),
             displayModal = h.toggleProp(false, true),
-            insightsVM = insightsVM,
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
             contributionsPerLocation = m.prop([]),

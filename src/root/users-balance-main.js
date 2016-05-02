@@ -9,11 +9,11 @@
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
-import models from 'models';
-import userBalance from 'user-balance';
-import userBalanceTransactions from 'user-balance-transactions';
+import models from '../models';
+import userBalance from '../c/user-balance';
+import userBalanceTransactions from '../c/user-balance-transactions';
 
-const userBalancePage = {
+const userBalanceMain = {
     controller (args) {
         const userIdVM = postgrest.filtersVM({user_id: 'eq'});
 
@@ -83,4 +83,4 @@ const userBalancePage = {
     }
 }
 
-export default userBalancePage;
+export default userBalanceMain;

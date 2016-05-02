@@ -11,7 +11,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
-import h from 'h';
+import h from '../h';
 
 const projectDashboardMenu = {
     controller (args) {
@@ -36,6 +36,7 @@ const projectDashboardMenu = {
         };
     },
     view (ctrl, args) {
+        console.log('will render project-dashboard-menu');
         const project = args.project(),
               projectRoute = '/projects/' + project.id,
               editRoute = projectRoute + '/edit',

@@ -1,33 +1,38 @@
-window.c.vms.project = ((m, h, _, models) => {
-    return (project_id, project_user_id) => {
-        const vm = postgrest.filtersVM({
-            project_id: 'eq'
-        }),
-              idVM = h.idVM,
-              projectDetails = m.prop([]),
-              userDetails = m.prop([]),
-              rewardDetails = m.prop([]);
+import m from 'mithril';
+import _ from 'underscore';
+import h from '../h';
+import models from '../models';
 
-        vm.project_id(project_id);
-        idVM.id(project_user_id);
+const projectVM = (project_id, project_user_id) => {
+    const vm = postgrest.filtersVM({
+        project_id: 'eq'
+    }),
+          idVM = h.idVM,
+          projectDetails = m.prop([]),
+          userDetails = m.prop([]),
+          rewardDetails = m.prop([]);
 
-        const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
-              lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
-              lReward = postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters())),
-              isLoading = () => { return (lProject() || lUser() || lReward()); };
+    vm.project_id(project_id);
+    idVM.id(project_user_id);
 
-        lProject.load().then((data) => {
-            lUser.load().then(userDetails);
-            lReward.load().then(rewardDetails);
+    const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
+          lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
+          lReward = postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters())),
+          isLoading = () => { return (lProject() || lUser() || lReward()); };
 
-            projectDetails(data);
-        });
+    lProject.load().then((data) => {
+        lUser.load().then(userDetails);
+        lReward.load().then(rewardDetails);
 
-        return {
-            projectDetails: _.compose(_.first, projectDetails),
-            userDetails: userDetails,
-            rewardDetails: rewardDetails,
-            isLoading: isLoading
-        };
+        projectDetails(data);
+    });
+
+    return {
+        projectDetails: _.compose(_.first, projectDetails),
+        userDetails: userDetails,
+        rewardDetails: rewardDetails,
+        isLoading: isLoading
     };
-}(window.m, window.c.h, window._, window.c.models));
+};
+
+export default projectVM;

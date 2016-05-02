@@ -1,12 +1,12 @@
 import m from 'mithril';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
-import models from 'models';
-import h from 'h';
-import projectDashboardMenu from 'project-dashboard-menu';
-import projectContributionReportHeader from 'project-contribution-report-header';
-import projectContributionReportContent from 'project-contribution-report-content';
-import projectsContributionReportVM from 'projects-contribution-report-vm';
+import models from '../models';
+import h from '../h';
+import projectDashboardMenu from '../c/project-dashboard-menu';
+import projectContributionReportHeader from '../c/project-contribution-report-header';
+import projectContributionReportContent from '../c/project-contribution-report-content';
+import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 
 const projectContributionReport = {
     controller (args) {

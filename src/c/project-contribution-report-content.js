@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import projectContributionReportContentCard from 'project-contribution-report-content-card';
+import h from '../h';
+import projectContributionReportContentCard from './project-contribution-report-content-card';
 
 const projectContributionReportContent = {
     view (ctrl, args) {

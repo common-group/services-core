@@ -8,9 +8,9 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import projectVM from 'project-vm';
-import projectDashboardMenu from 'project-dashboard-menu';
+import h from '../h';
+import projectVM from '../vms/project-vm';
+import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsDashboard = {
     controller (args) {

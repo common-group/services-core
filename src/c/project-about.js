@@ -1,7 +1,7 @@
 import m from 'mithril';
-import h from 'h';
-import projectRewardList from 'project-reward-list';
-import ProjectSuggestedContributions from 'project-suggested-contributions';
+import h from '../h';
+import projectRewardList from './project-reward-list';
+import ProjectSuggestedContributions from './project-suggested-contributions';
 
 const projectAbout = {
     view (ctrl, args) {

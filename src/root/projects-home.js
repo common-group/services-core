@@ -2,13 +2,13 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
-import h from 'h';
-import models from 'models';
-import projectFilters from 'project-filters-vm';
-import homeVM from 'projects-home-vm';
-import slider from 'slider';
-import projectRow from 'project-row';
-import contributionActivities from 'contribution-activities';
+import h from '../h';
+import models from '../models';
+import projectFilters from '../vms/project-filters-vm';
+import homeVM from '../vms/home-vm';
+import slider from '../c/slider';
+import projectRow from '../c/project-row';
+import contributionActivities from '../c/contribution-activities';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 

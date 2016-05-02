@@ -12,8 +12,8 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import models from 'models';
+import h from '../h';
+import models from '../models';
 
 const contributionActivities = {
     controller (args) {

@@ -1,6 +1,6 @@
 import m from 'mithril';
-import h from 'h';
-import models from 'models';
+import h from '../h';
+import models from '../models';
 
 const teamTotal = {
     controller () {

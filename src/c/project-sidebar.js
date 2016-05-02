@@ -1,10 +1,12 @@
 import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
-import h from 'h';
-import projectMode from 'project-mode';
-import projectReminder from 'project-reminder';
-import projectUserCard from 'project-user-card';
+import h from '../h';
+import projectMode from './project-mode';
+import projectReminder from './project-reminder';
+import projectUserCard from './project-user-card';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
 const projectSidebar = {
     controller (args) {

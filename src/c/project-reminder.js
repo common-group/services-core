@@ -9,9 +9,9 @@
  *  }
  */
 import m from 'mithril';
-import models from 'models';
-import h from 'h';
-import popNotification from 'pop-notification';
+import models from '../models';
+import h from '../h';
+import popNotification from './pop-notification';
 
 const projectReminder = {
     controller (args) {

@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import projectCard from 'project-card'
+import h from '../h';
+import projectCard from './project-card'
 
 const projectRow = {
     view (ctrl, args) {

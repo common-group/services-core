@@ -10,7 +10,7 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
+import h from '../h';
 
 const adminResetPassword = {
     controller (args) {

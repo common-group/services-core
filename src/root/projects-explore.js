@@ -10,12 +10,12 @@ import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import moment from 'moment';
-import h from 'h';
-import models from 'models';
-import projectFilters from 'project-filters-vm';
-import search from 'search';
-import categoryButton from 'category-button';
-import projectCard from 'project-card';
+import h from '../h';
+import models from '../models';
+import projectFilters from '../vms/project-filters-vm';
+import search from '../c/search';
+import categoryButton from '../c/category-button';
+import projectCard from '../c/project-card';
 
 
 const projectsExplore = {

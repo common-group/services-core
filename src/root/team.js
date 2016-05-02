@@ -1,6 +1,6 @@
 import m from 'mithril';
-import teamTotal from 'team-total';
-import teamMembers from 'team-members';
+import teamTotal from '../c/team-total';
+import teamMembers from '../c/team-members';
 
 const team = {
     view () {

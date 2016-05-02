@@ -1,5 +1,6 @@
 import m from 'mithril';
 import I18n from 'i18n-js';
+import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.jobs');
 

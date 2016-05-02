@@ -1,10 +1,10 @@
-import m from 'mithril'
-import postgrest from 'mithril-postgrest'
-import h from '../h'
-import models from '../models'
-import landingSignup from '../c/landing-signup'
-import projectRow from '../c/project-row'
-import landingQA from '../c/landing-qa'
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import h from '../h';
+import models from '../models';
+import landingSignup from '../c/landing-signup';
+import projectRow from '../c/project-row';
+import landingQA from '../c/landing-qa';
 
 const Flex = {
     controller () {

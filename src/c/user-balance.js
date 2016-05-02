@@ -9,9 +9,9 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import models from 'models';
-import h from 'h';
-import modalBox from 'modal-box';
+import models from '../models';
+import h from '../h';
+import modalBox from './modal-box';
 
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 

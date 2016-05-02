@@ -23,8 +23,8 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import models from 'models';
-import h from 'h';
+import models from '../models';
+import h from '../h';
 
 const projectDataTable = {
     controller (args) {

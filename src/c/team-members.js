@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import models from 'models';
+import models from '../models';
 
 const teamMembers = {
     controller () {

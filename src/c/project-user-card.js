@@ -1,8 +1,8 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from 'h';
-import ownerMessageContent from 'owner-message-content';
-import modalBox from 'modal-box';
+import h from '../h';
+import ownerMessageContent from './owner-message-content';
+import modalBox from './modal-box';
 
 const projectUserCard = {
     controller (args) {

@@ -1,10 +1,9 @@
 import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
-import models from 'models';
-import h from 'h';
-import publishVM from 'publish-vm';
-import projectDashboardMenu from 'project-dashboard-menu';
+import models from '../models';
+import h from '../h';
+import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.publish');
 
@@ -13,7 +12,6 @@ const publish = {
         let filtersVM = postgrest.filtersVM({
                 project_id: 'eq'
             }),
-            publishVM = publishVM,
             projectAccount = m.prop([]),
             projectDetails = m.prop([]),
             acceptTerm = m.prop([true,true,true,true,true,true,true,true,true]),
