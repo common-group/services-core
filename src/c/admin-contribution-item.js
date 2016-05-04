@@ -1,9 +1,9 @@
 import m from 'mithril';
 import h from '../h';
-import adminProject from 'admin-project';
-import adminContribution from 'admin-contribution';
-import adminContributionUser from 'admin-contribution-user';
-import paymentStatus from 'payment-status';
+import adminProject from './admin-project';
+import adminContribution from './admin-contribution';
+import adminContributionUser from './admin-contribution-user';
+import paymentStatus from './payment-status';
 
 const adminContributionItem = {
     controller () {

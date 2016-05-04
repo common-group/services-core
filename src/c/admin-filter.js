@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import filterMain from 'filter-main';
+import filterMain from './filter-main';
 
 const adminFilter = {
     controller () {

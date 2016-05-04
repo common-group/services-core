@@ -1,6 +1,6 @@
 import m from 'mithril';
 import h from '../h';
-import adminItem from 'admin-item';
+import adminItem from './admin-item';
 
 const adminList = {
     controller (args) {

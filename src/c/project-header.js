@@ -6,7 +6,6 @@ import projectSidebar from './project-sidebar';
 
 const projectHeader = {
     view (ctrl, args) {
-        console.log('will render project header');
         let project = args.project;
 
         if (_.isUndefined(project())){

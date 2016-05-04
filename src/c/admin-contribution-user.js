@@ -14,7 +14,7 @@
  * }
  */
 import m from 'mithril';
-import adminUser from 'admin-user';
+import adminUser from './admin-user';
 
 const adminContributionUser = {
     view (ctrl, args) {

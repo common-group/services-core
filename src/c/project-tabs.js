@@ -1,6 +1,6 @@
 import m from 'mithril';
 import h from '../h';
-// import projectReminder from './project-reminder';
+import projectReminder from './project-reminder';
 
 const projectTabs = {
     controller (args) {
@@ -40,7 +40,6 @@ const projectTabs = {
         };
     },
     view (ctrl, args) {
-        console.log('Will render project tabs');
         const project = args.project,
             rewards = args.rewardDetails;
 
@@ -86,7 +85,7 @@ const projectTabs = {
                                     m('a.w-button.btn[href="/projects/' + project().id + '/contributions/new"]', 'Apoiar ‍este projeto')
                                 ]),
                                 m('.w-col.w-col-6.w-col-medium-4', [
-                                    // m.component(projectReminder, {project: project, type: 'button', hideTextOnMobile: true})
+                                    m.component(projectReminder, {project: project, type: 'button', hideTextOnMobile: true})
                                 ])
                             ])
                         ] : '') : ''

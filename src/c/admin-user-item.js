@@ -1,6 +1,6 @@
 import m from 'mithril';
 import h from '../h';
-import adminUser from 'admin-user';
+import adminUser from './admin-user';
 
 const adminUserItem = {
     view (ctrl, args) {

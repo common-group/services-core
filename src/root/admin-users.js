@@ -2,10 +2,10 @@ import m from 'mithril';
 import h from '../h';
 import userListVM from '../vms/user-list-vm';
 import userFilterVM from '../vms/user-filter-vm';
-import adminFilter from 'admin-filter';
-import adminList from 'admin-list';
-import adminUserItem from 'admin-user-item';
-import adminUserDetail from 'admin-user-details';
+import adminFilter from '../c/admin-filter';
+import adminList from '../c/admin-list';
+import adminUserItem from '../c/admin-user-item';
+import adminUserDetail from '../c/admin-user-detail';
 
 const adminUsers = {
     controller () {

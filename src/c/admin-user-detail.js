@@ -10,9 +10,9 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import adminResetPassword from 'admin-reset-password';
-import adminInputAction from 'admin-input-action';
-import adminNotificationHistory from 'admin-notification-history';
+import adminResetPassword from './admin-reset-password';
+import adminInputAction from './admin-input-action';
+import adminNotificationHistory from './admin-notification-history';
 
 const adminUserDetail = {
     controller () {

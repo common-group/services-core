@@ -105,9 +105,13 @@ const insights = {
         };
     },
     view (ctrl) {
-        const project = _.first(ctrl.projectDetails()),
+        const project = _.first(ctrl.projectDetails()) || {
+            user: {
+                name: 'Realizador'
+            }
+        },
             successModalC = ['OnlineSucessModalContent'],
-            tooltip = (el) => {
+            buildTooltip = (el) => {
                 return m.component(tooltip, {
                     el: el,
                     text: [
@@ -181,7 +185,7 @@ const insights = {
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
                                         I18n.t('ref_origin_title', I18nScope()),
                                         h.newFeatureBadge(),
-                                        tooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
+                                        buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
                                     !ctrl.lContributionsPerRef() ? m.component(projectDataTable, {
                                         table: ctrl.contributionsPerRefTable,

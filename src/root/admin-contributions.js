@@ -1,11 +1,11 @@
 import m from 'mithril';
 import h from '../h';
-import contributionListVM from 'contribution-list-vm';
-import contributionFilterVM from 'contribution-filter-vm';
-import adminList from 'admin-list';
-import adminFilter from 'admin-filter';
-import adminContributionItem from 'admin-contribution-item';
-import adminContributionDetail from 'admin-contribution-detail';
+import contributionListVM from '../vms/contribution-list-vm';
+import contributionFilterVM from '../vms/contribution-filter-vm';
+import adminList from '../c/admin-list';
+import adminFilter from '../c/admin-filter';
+import adminContributionItem from '../c/admin-contribution-item';
+import adminContributionDetail from '../c/admin-contribution-detail';
 
 const adminConstributions = {
     controller () {

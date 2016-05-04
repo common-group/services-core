@@ -13,6 +13,8 @@ import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 
+const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
+
 const projectDashboardMenu = {
     controller (args) {
         let body = document.getElementsByTagName('body')[0],
@@ -36,7 +38,6 @@ const projectDashboardMenu = {
         };
     },
     view (ctrl, args) {
-        console.log('will render project-dashboard-menu');
         const project = args.project(),
               projectRoute = '/projects/' + project.id,
               editRoute = projectRoute + '/edit',

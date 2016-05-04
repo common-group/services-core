@@ -43,7 +43,6 @@ const projectMain = {
         };
     },
     view (ctrl, args) {
-        console.log('Will render project-main');
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
             m('.w-container', [
                 m('.w-row', args.project() ? ctrl.displayTabContent() : '')

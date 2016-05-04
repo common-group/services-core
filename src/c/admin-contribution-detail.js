@@ -2,12 +2,12 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
-import adminInputAction from 'admin-input-action';
-import adminRadioAction from 'admin-radio-action';
-import adminExternalAction from 'admin-external-action';
-import adminTransaction from 'admin-transaction';
-import adminTransactionHistory from 'admin-transaction-history';
-import adminReward from 'admin-reward';
+import adminInputAction from './admin-input-action';
+import adminRadioAction from './admin-radio-action';
+import adminExternalAction from './admin-external-action';
+import adminTransaction from './admin-transaction';
+import adminTransactionHistory from './admin-transaction-history';
+import adminReward from './admin-reward';
 
 const adminContributionDetail = {
     controller (args) {
