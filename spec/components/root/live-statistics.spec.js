@@ -1,11 +1,12 @@
+import liveStatistics from '../../../src/root/live-statistics'
+
 describe('pages.LiveStatistics', () => {
-  let $output, statistic,
-      LiveStatistics = window.c.root.LiveStatistics;
+  let $output, statistic;
 
   describe('view', () => {
     beforeAll(() => {
       statistic = StatisticMockery()[0];
-      let component = m.component(LiveStatistics);
+      let component = m.component(liveStatistics);
       $output = mq(component.view(component.controller(), {}));
     });
 
@@ -15,4 +16,3 @@ describe('pages.LiveStatistics', () => {
     });
   });
 });
-

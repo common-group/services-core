@@ -1,11 +1,13 @@
+import m from 'mithril';
+import adminNotificationHistory from '../../src/c/admin-notification-history';
+
 describe('AdminNotificationHistory', () => {
-    let c = window.c,
-        user, historyBox,
+    let user, historyBox,
         ctrl, view, $output;
 
     beforeAll(() => {
         user = m.prop(UserDetailMockery(1));
-        $output = mq(c.AdminNotificationHistory, {user: user()[0]});
+        $output = mq(adminNotificationHistory, {user: user()[0]});
     });
 
     describe('view', () => {

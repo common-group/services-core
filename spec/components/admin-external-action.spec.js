@@ -1,9 +1,8 @@
-describe('AdminExternalAction', function() {
-    var c = window.c,
-        m = window.m,
-        models = window.c.models,
-        AdminExternalAction = c.AdminExternalAction,
-        testModel = m.postgrest.model('reloadAction'),
+import models from '../../src/models';
+import adminExternalAction from '../../src/c/admin-external-action';
+
+describe('adminExternalAction', () => {
+    var testModel = postgrest.model('reloadAction'),
         item = {
             testKey: 'foo'
         },
@@ -20,48 +19,48 @@ describe('AdminExternalAction', function() {
         }
     };
 
-    describe('view', function() {
-        beforeAll(function() {
+    describe('view', () => {
+        beforeAll(() => {
             jasmine.Ajax.stubRequest(args.requestOptions.url).andReturn({
                 'responseText': JSON.stringify([])
             });
         });
 
-        beforeEach(function() {
-            $output = mq(AdminExternalAction, {
+        beforeEach(() => {
+            $output = mq(adminExternalAction, {
                 data: args,
                 item: item
             });
         });
 
-        it('shoud render the outerLabel on first render', function() {
+        it('shoud render the outerLabel on first render', () => {
             expect($output.contains(args.outerLabel)).toBeTrue();
             expect($output.contains(args.innerLabel)).toBeFalse();
             expect($output.contains(args.placeholder)).toBeFalse();
             expect($output.contains(args.callToAction)).toBeFalse();
         });
 
-        describe('on button click', function() {
-            beforeEach(function() {
+        describe('on button click', () => {
+            beforeEach(() => {
                 $output.click('button');
             });
 
-            it('should render an inner label', function() {
+            it('should render an inner label', () => {
                 expect($output.contains(args.innerLabel)).toBeTrue();
             });
 
-            it('should render a call to action', function() {
+            it('should render a call to action', () => {
                 expect($output.first('input[type="submit"]').attrs.value).toEqual(args.callToAction);
             });
 
         });
 
-        describe('on form submit', function() {
-            beforeEach(function() {
+        describe('on form submit', () => {
+            beforeEach(() => {
                 $output.click('button');
             });
 
-            it('should call a submit function on form submit', function() {
+            it('should call a submit function on form submit', () => {
                 $output.trigger('form', 'submit');
                 const lastRequest = jasmine.Ajax.requests.mostRecent();
                 expect(lastRequest.url).toEqual('https://api.catarse.me/reloadAction');

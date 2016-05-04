@@ -126,4 +126,4 @@ const adminConstributions = {
     }
 };
 
-export default adminConstributions;
+export default adminContributions;

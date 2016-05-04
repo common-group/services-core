@@ -1,11 +1,12 @@
+import projectShow from '../../../src/root/project-show';
+
 describe('ProjectShow', () => {
-  let $output, projectDetail,
-      ProjectShow = window.c.root.ProjectsShow;
+  let $output, projectDetail;
 
   beforeAll(() => {
     window.location.hash = '';
     projectDetail = ProjectDetailsMockery()[0];
-    let component = m.component(ProjectShow, {project_id: 123, project_user_id: 1231}),
+    let component = m.component(projectShow, {project_id: 123, project_user_id: 1231}),
         view = component.view(component.controller());
     $output = mq(view);
   });

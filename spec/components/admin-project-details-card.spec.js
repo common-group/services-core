@@ -1,12 +1,14 @@
+import m from 'mithril';
+import adminProjectDetailsCard from '../../src/c/admin-project-details-card';
+
 describe('AdminProjectDetailsCard', () => {
-    let AdminProjectDetailsCard = window.c.AdminProjectDetailsCard,
-        generateController, ctrl, projectDetail, component, view, $output;
+    let generateController, ctrl, projectDetail, component, view, $output;
 
     describe('controller', () => {
         beforeAll(() => {
             generateController = (attrs) => {
                 projectDetail = ProjectDetailsMockery(attrs)[0];
-                component = m.component(AdminProjectDetailsCard, {
+                component = m.component(adminProjectDetailsCard, {
                     resource: projectDetail
                 });
                 return component.controller();
@@ -70,7 +72,7 @@ describe('AdminProjectDetailsCard', () => {
     describe('view', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
-            component = m.component(AdminProjectDetailsCard, {
+            component = m.component(adminProjectDetailsCard, {
                 resource: projectDetail
             });
             ctrl = component.controller();

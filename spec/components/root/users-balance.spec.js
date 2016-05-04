@@ -1,9 +1,10 @@
+import usersBalance from '../../../src/root/users-balance'
+
 describe('UsersBalance', () => {
-    let $output, component,
-        UsersBalance = window.c.root.UsersBalance;
+    let $output, component;
 
     beforeAll(() => {
-        component = m.component(UsersBalance, {user_id: 1});
+        component = m.component(usersBalance, {user_id: 1});
         $output = mq(component);
     });
 

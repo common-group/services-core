@@ -1,12 +1,13 @@
 import babel from 'rollup-plugin-babel';
+import multiEntry from 'rollup-plugin-multi-entry';
 
 export default {
-  entry: 'src/c.js',
-  dest: 'dist/catarse.js',
+  entry: 'spec/**/*.spec.js',
+  dest: 'spec/bundle.spec.js',
   sourceMap: true,
   format: 'iife',
-  moduleName: 'c',
-  plugins: [babel()],
+  moduleName: 'tests',
+  plugins: [babel(), multiEntry()],
   globals: {
       underscore: '_',
       moment: 'moment',

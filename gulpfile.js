@@ -1,7 +1,8 @@
 var gulp = require('gulp');
-var argv = require('yargs').argv;
-var babel = require('gulp-babel');
 var concat = require('gulp-concat');
+var argv = require('yargs').argv;
+var babel = require('rollup-plugin-babel');
+var rollup = require('gulp-rollup');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
@@ -27,12 +28,31 @@ gulp.task('lint', function(){
 });
 
 gulp.task('dist', function(done){
-  gulp.src(sources)
+  gulp.src('src/c.js')
   .pipe(plumber())
   .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(concat('catarse.js'))
+    .pipe(rollup({
+      entry: 'src/c.js',
+      format: 'iife',
+      moduleName: 'c',
+      plugins: [
+          babel({
+              exclude: 'node_modules/**',
+              "presets": [ "es2015-rollup" ]
+          })
+      ],
+      globals: {
+          underscore: '_',
+          moment: 'moment',
+          mithril: 'm',
+          'chartjs': 'Chart',
+          'replaceDiacritics': 'replaceDiacritics',
+          ['mithril-postgrest']: 'postgrest',
+          ['i18n-js']: 'I18n'
+      }
+    }))
   .pipe(sourcemaps.write())
+  .pipe(rename('catarse.js'))
   .pipe(gulp.dest('dist'))
   .pipe(uglify())
   .pipe(rename('catarse.min.js'))
