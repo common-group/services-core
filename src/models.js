@@ -21,6 +21,7 @@ window.c.models = (function(m) {
         projectContributionsPerRef = m.postgrest.model('project_contributions_per_ref'),
         project = m.postgrest.model('projects'),
         projectSearch = m.postgrest.model('rpc/project_search'),
+        followAllFriends = m.postgrest.model('rpc/follow_all_friends'),
         category = m.postgrest.model('categories'),
         categoryTotals = m.postgrest.model('category_totals'),
         categoryFollower = m.postgrest.model('category_followers'),
@@ -29,7 +30,8 @@ window.c.models = (function(m) {
         statistic = m.postgrest.model('statistics'),
         successfulProject = m.postgrest.model('successful_projects'),
         finishedProject = m.postgrest.model('finished_projects'),
-        userFriend = m.postgrest.model('user_friends');
+        userFriend = m.postgrest.model('user_friends'),
+        userFollow = m.postgrest.model('user_follows');
 
     teamMember.pageSize(40);
     rewardDetail.pageSize(false);
@@ -57,6 +59,7 @@ window.c.models = (function(m) {
         teamMember: teamMember,
         project: project,
         projectSearch: projectSearch,
+        followAllFriends: followAllFriends,
         category: category,
         categoryTotals: categoryTotals,
         categoryFollower: categoryFollower,
@@ -71,6 +74,7 @@ window.c.models = (function(m) {
         statistic: statistic,
         successfulProject: successfulProject,
         finishedProject: finishedProject,
-        userFriend: userFriend
+        userFriend: userFriend,
+        userFollow: userFollow
     };
 }(window.m));
