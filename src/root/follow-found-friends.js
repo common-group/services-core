@@ -6,9 +6,19 @@ window.c.root.FollowFoundFriends = ((m, c, h, _, models) => {
             const userFriendVM = m.postgrest.filtersVM({
                 user_id: 'eq'
             }),
-            friendListVM = m.postgrest.paginationVM(models.userFriend, "total_contributed_projects.desc", {
-                'Prefer':  'count=exact'
-            });
+                  friendListVM = m.postgrest.paginationVM(models.userFriend, "total_contributed_projects.desc", {
+                      'Prefer':  'count=exact'
+                  }),
+                  allLoading = m.prop(false),
+                  followAll = () => {
+                      allLoading(true);
+                      const l = m.postgrest.loaderWithToken(models.followAllFriends.postOptions({}));
+
+                      l.load().then(() => {
+                          friendListVM.firstPage(userFriendVM.parameters());
+                          allLoading(false);
+                      });
+                  };
 
             userFriendVM.user_id(args.root.getAttribute('data-currentuserid'));
 
@@ -17,7 +27,9 @@ window.c.root.FollowFoundFriends = ((m, c, h, _, models) => {
             }
 
             return {
-                friendListVM: friendListVM
+                friendListVM: friendListVM,
+                followAll: followAll,
+                allLoading: allLoading
             };
         },
         view: (ctrl, args) => {
@@ -43,7 +55,10 @@ window.c.root.FollowFoundFriends = ((m, c, h, _, models) => {
                                 m('.fontsize-small', 'Comece agora! Siga todos os seus amigos ou somente alguns deles para descobrir projetos juntos!')
                             ]),
                             m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                                m("a.w-button.btn.btn-medium[href='#']", `Siga todos os seus ${listVM.total() ? listVM.total() : ''} amigos`)
+                                (ctrl.allLoading() ? h.loader()
+                                 : m("a.w-button.btn.btn-medium", {
+                                    onclick: ctrl.followAll
+                                 },`Siga todos os seus ${listVM.total() ? listVM.total() : ''} amigos`))
                             ])
                         ]),
 
@@ -52,7 +67,7 @@ window.c.root.FollowFoundFriends = ((m, c, h, _, models) => {
 
                             return m('.card.card-clickable', [
                                 m('.w-row', [
-                                    m('.w-col.w-col-10.w-col-small-10', [
+                                    m('.w-col.w-col-9.w-col-small-9', [
                                         m('.w-row', [
                                             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-6', [
                                                 m(`img.thumb.u-round.u-marginright-20[src='${profile_img}']`)
@@ -67,9 +82,7 @@ window.c.root.FollowFoundFriends = ((m, c, h, _, models) => {
                                             ])
                                         ])
                                     ]),
-                                    m(".w-col.w-col-2.w-col-small-2", [
-                                        m("a.w-button.btn.btn-medium.btn-terciary.u-margintop-20[href='#']", "Seguir")
-                                    ])
+                                    m(".w-col.w-col-3.w-col-small-3", m.component(c.UserFollowBtn, {following: friend.following, follow_id: friend.friend_id}))
                                 ])
                             ]);
                         }),
