@@ -3,7 +3,7 @@ window.c.SignedFriendFacebookConnect = ((m, c, _, h) => {
         controller: (args) => {
             const mapWithAvatar = () => {
                 return _.filter(args.friendListVM.collection(), (item) => {
-                    return !_.isNull(item.friend_details.avatar);
+                    return !_.isNull(item.avatar);
                 });
             };
 
@@ -28,7 +28,7 @@ window.c.SignedFriendFacebookConnect = ((m, c, _, h) => {
                                     m('.fontsize-smallest.u-marginbottom-10', `${total} dos seus amigos estão no Catarse!`),
                                     m('.u-marginbottom-20', [
                                         _.shuffle(_.map(ctrl.mapWithAvatar(), (item) => {
-                                            return m(`img.thumb.small.u-round.u-marginbottom-10[src="${item.friend_details.avatar}"]`);
+                                            return m(`img.thumb.small.u-round.u-marginbottom-10[src="${item.avatar}"]`);
                                         })).slice(0, 8),
                                     ]),
                                     m('a.w-button.btn.btn-large[href="/follow-fb-friends"]', 'Procure seus amigos')
