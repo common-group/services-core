@@ -1,13 +1,15 @@
+import m from 'mithril';
+import projectRewardList from '../../src/c/project-reward-list';
+
 describe('ProjectRewardList', () => {
-    let generateContextByNewState,
-        ProjectRewardList = window.c.ProjectRewardList;
+    let generateContextByNewState;
 
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 spyOn(m, 'component').and.callThrough();
                 let rewardDetail = RewardDetailsMockery(newState),
-                    component = m.component(ProjectRewardList, {
+                    component = m.component(projectRewardList, {
                         project: m.prop({
                             id: 1231
                         }),

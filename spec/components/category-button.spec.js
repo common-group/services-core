@@ -1,3 +1,6 @@
+import m from 'mithril';
+import categoryButton from '../../src/c/category-button';
+
 describe('CategoryButton', () => {
     let $output,
         c = window.c;

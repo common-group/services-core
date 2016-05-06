@@ -1,11 +1,13 @@
+import m from 'mithril';
+import projectsDashboard from '../../src/root/projects-dashboard';
+
 describe('ProjectsDashboard', () => {
-    let $output, projectDetail,
-        ProjectsDashboard = window.c.root.ProjectsDashboard;
+    let $output, projectDetail;
 
     describe('view', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
-            let component = m.component(ProjectsDashboard, {
+            let component = m.component(projectsDashboard, {
                 project_id: projectDetail.project_id,
                 project_user_id: projectDetail.user.id,
             });

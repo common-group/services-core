@@ -1,13 +1,12 @@
+import search from '../../src/c/search';
+
 describe('Search', () => {
-    let $output,
-        c = window.c,
-        Search = c.Search,
-        action = '/test',
+    let $outputaction = '/test',
         method = 'POST';
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(Search.view({}, {action: action, method: method}));
+            $output = mq(search.view({}, {action: action, method: method}));
         });
 
         it('should render the search form', () => {

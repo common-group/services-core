@@ -1,19 +1,21 @@
-describe('ProjectContributions', () => {
-    let $output, projectContribution,
-        ProjectContributions = window.c.ProjectContributions;
+import m from 'mithril';
+import projectContributions from '../../src/c/project-contributions';
+
+describe('projectContributions', () => {
+    let $output, projectContribution;
 
     describe('view', () => {
         beforeAll(() => {
             jasmine.Ajax.stubRequest(new RegExp('(' + apiPrefix + '\/project_contributions)(.*)(waiting_payment)(.*)')).andReturn({
-                'responseText': JSON.stringify(ProjectContributionsMockery())
+                'responseText': JSON.stringify(projectContributionsMockery())
             });
 
             spyOn(m, 'component').and.callThrough();
-            projectContribution = ProjectContributionsMockery()[0];
+            projectContribution = projectContributionsMockery()[0];
             const project = m.prop({
                         id: 1231
             });
-            const component = m.component(ProjectContributions, {
+            const component = m.component(projectContributions, {
                     project: project
                 }),
                 view = component.view(component.controller({

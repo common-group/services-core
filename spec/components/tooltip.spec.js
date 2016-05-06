@@ -1,11 +1,12 @@
+import m from 'mithril';
+import tooltip from '../../src/c/tooltip';
+
 describe('Tooltip', () => {
     let $output,
-        c = window.c,
-        m = window.m,
         element = 'a#tooltip-trigger[href="#"]',
         text = 'tooltipText',
         tooltip = (el) => {
-            return m.component(c.Tooltip, {
+            return m.component(tooltip, {
                 el: el,
                 text: text,
                 width: 320

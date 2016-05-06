@@ -1,6 +1,8 @@
+import h from '../../src/h';
+
 describe("h.formatNumber", () => {
     let number = null,
-        formatNumber = window.c.h.formatNumber;
+            formatNumber = h.formatNumber;
 
     it("should format number", () => {
         number = 120.20;
@@ -12,7 +14,7 @@ describe("h.formatNumber", () => {
 
 describe('h.rewardSouldOut', () => {
     let reward = null,
-        rewardSouldOut = window.c.h.rewardSouldOut;
+            rewardSouldOut = h.rewardSouldOut;
 
     it('return true when reward already sould out', () => {
         reward = {
@@ -47,7 +49,7 @@ describe('h.rewardSouldOut', () => {
 
 describe('h.rewardRemaning', () => {
     let reward,
-        rewardRemaning = window.c.h.rewardRemaning;
+            rewardRemaning = h.rewardRemaning;
 
     it('should return the total remaning rewards', () => {
         reward = {
@@ -62,7 +64,7 @@ describe('h.rewardRemaning', () => {
 
 describe('h.parseUrl', () => {
     let url,
-        parseUrl = window.c.h.parseUrl;
+            parseUrl = h.parseUrl;
 
     it('should create an a element', () => {
         url = 'http://google.com';
@@ -72,7 +74,7 @@ describe('h.parseUrl', () => {
 
 describe('h.pluralize', () => {
     let count,
-        pluralize = window.c.h.pluralize;
+            pluralize = h.pluralize;
 
     it('should use plural when count greater 1', () => {
         count = 3;

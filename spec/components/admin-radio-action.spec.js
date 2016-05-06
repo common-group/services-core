@@ -1,9 +1,9 @@
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import adminRadioAction from '../../src/c/admin-radio-action';
+
 describe('AdminRadioAction', () => {
-    const c = window.c,
-        m = window.m,
-        models = window.c.models,
-        AdminRadioAction = c.AdminRadioAction,
-        testModel = m.postgrest.model('reward_details'),
+    const testModel = m.postgrest.model('reward_details'),
         testStr = 'updated',
         errorStr = 'error!';
 

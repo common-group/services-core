@@ -1,11 +1,13 @@
+import m from 'mithril';
+import usersBalance from '../../src/root/users-balance';
+import userBalanceTransactions from '../../src/c/user-balance-transactions';
+
 describe('UserBalanceTransactions', () => {
-    let $output, component, parentComponent,
-        UsersBalance = window.c.root.UsersBalance,
-        UserBalanceTransactions = window.c.UserBalanceTransactions;
+    let $output, component, parentComponent;
 
     beforeAll(() => {
-        parentComponent = m.component(UsersBalance, {user_id: 1});
-        component = m.component(UserBalanceTransactions, _.extend({}, parentComponent.controller(), {user_id: 1}));
+        parentComponent = m.component(usersBalance, {user_id: 1});
+        component = m.component(userBalanceTransactions, _.extend({}, parentComponent.controller(), {user_id: 1}));
         $output = mq(component);
     });
 

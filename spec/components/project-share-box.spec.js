@@ -1,6 +1,8 @@
+import m from 'mithril';
+import projectShareBox from '../../src/c/project-share-box';
+
 describe('ProjectShareBox', () => {
-    let $output, projectDetail,
-        ProjectShareBox = window.c.ProjectShareBox;
+    let $output, projectDetail;
 
     describe('view', () => {
         beforeAll(() => {
@@ -11,7 +13,7 @@ describe('ProjectShareBox', () => {
                         toggle: jasmine.any(Function)
                     }
                 },
-                component = m.component(ProjectShareBox, args),
+                component = m.component(projectShareBox, args),
                 view = component.view(component.controller(), args);
             $output = mq(ProjectShareBox, args);
         });

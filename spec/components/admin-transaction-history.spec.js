@@ -1,11 +1,14 @@
-describe('AdminTransactionHistory', () => {
+import m from 'mithril';
+import adminTransactionHistory from '../../src/c/admin-transaction-history';
+
+describe('adminTransactionHistory', () => {
     let c = window.c,
         contribution, historyBox,
         ctrl, view, $output;
 
     beforeAll(() => {
         contribution = m.prop(ContributionDetailMockery(1));
-        historyBox = m.component(c.AdminTransactionHistory, {
+        historyBox = m.component(adminTransactionHistory, {
             contribution: contribution()[0]
         });
         ctrl = historyBox.controller();
