@@ -126,7 +126,7 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   projectTransfer = _.first(ctrl.projectTransfers()),
                   lpa = ctrl.lProjectAccount,
                   lpt = ctrl.lProjectTransfer;
-            console.log('current component', ctrl.currentComponent());
+
             return m('.w-section.section', [
                 (!lpa() && !lpt() ?
                  m.component(c[ctrl.currentComponent()], {
