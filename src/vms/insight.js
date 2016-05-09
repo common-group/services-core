@@ -10,27 +10,13 @@ window.c.vms.insight = ((I18n, h, _) => {
                   user_email: account.user_email
               };
           },
-          parseTaxData = (data) => {
-              let r = {};
-              if(data.showTaxModal) {
-                  r = {
-                      tax_link: m.trust(m('a.alt-link', {
-                          onclick: data.showTaxModal.toggle
-                      }, 'veja extrato'))
-                  };
-              }
-
-              return r;
-          },
           content = (state, data) => {
-              const translations = I18n.translations[I18n.currentLocale()].projects.successful_onboard[state],
-                    translationContext = _.extend(
-                        {},
-                        parseTaxData(data),
-                        parseAccountData(
-                            _.first(data.account()),
-                            _.first(data.transfer())
-                        )
+              const translations = I18n.translations[
+                  I18n.currentLocale()
+              ].projects.successful_onboard[state],
+                    translationContext = parseAccountData(
+                        _.first(data.account()),
+                        _.first(data.transfer())
                     );
               let contentObj = {};
 
