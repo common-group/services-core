@@ -17,6 +17,7 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   projectIdVM = m.postgrest.filtersVM({project_id: 'eq'}),
                   projectAccounts = m.prop([]),
                   projectTransfers = m.prop([]),
+                  showTaxModal = h.toggleProp(false, true),
                   onboardComponents = {
                       'start': 'DashboardInfo',
                       'confirm_account': 'ProjectSuccessfulOnboardConfirmAccount',
@@ -26,7 +27,11 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   },
                   currentState = m.prop('start'),
                   currentComponent = () => onboardComponents[currentState()],
-                  content = () => insightVM.content(currentState(), {account: projectAccounts, transfer: projectTransfers}),
+                  content = () => insightVM.content(currentState(), {
+                      account: projectAccounts,
+                      transfer: projectTransfers,
+                      showTaxModal: showTaxModal
+                  }),
                   loader = m.postgrest.loaderWithToken,
                   declineAccountLoader = (errorMsg) => {
                       const pa = _.first(projectAccounts());
@@ -117,7 +122,8 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                 acceptAccountLoader: acceptAccountLoader,
                 content: content,
                 declineAccountLoader: declineAccountLoader,
-                loadCurrentStage: loadCurrentStage
+                loadCurrentStage: loadCurrentStage,
+                showTaxModal: showTaxModal
             };
         },
 
@@ -126,6 +132,8 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   projectTransfer = _.first(ctrl.projectTransfers()),
                   lpa = ctrl.lProjectAccount,
                   lpt = ctrl.lProjectTransfer;
+
+            console.log(ctrl.showTaxModal());
 
             return m('.w-section.section', [
                 (!lpa() && !lpt() ?
