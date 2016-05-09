@@ -13,8 +13,29 @@
  * })
  **/
 
-window.c.DashboardInfo = ((m, c, h) => {
+window.c.DashboardInfo = ((m, c, _, h) => {
     return {
+        controller: (args) => {
+            const toRedraw = args.dataToRedraw || {},
+                  listenToReplace = (element, isInitialized, context) => {
+
+                      if(isInitialized) return;
+
+                      _.map(element.children, function(item) {
+                          let toR = toRedraw[item.getAttribute('id')];
+
+                          if(toR) {
+                              item[toR.action] = toR.actionSource;
+                          }
+
+                          console.log(item);
+                      });
+                  };
+
+            return {
+                listenToReplace: listenToReplace
+            };
+        },
         view: (ctrl, args) => {
             const content = args.content;
 
@@ -24,7 +45,7 @@ window.c.DashboardInfo = ((m, c, h) => {
                         m('.u-text-center', [
                             m('img.u-marginbottom-20', {src: content.icon, width: 94}),
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-20', content.title),
-                            m('.fontsize-base.u-marginbottom-30', m.trust(content.text)),
+                            m('.fontsize-base.u-marginbottom-30', {config: ctrl.listenToReplace}, m.trust(content.text)),
                             content.cta ? m('a.btn.btn-large.btn-inline', {href: content.href, onclick: args.nextStage}, content.cta) : ''
                         ])
                     ])
@@ -32,4 +53,4 @@ window.c.DashboardInfo = ((m, c, h) => {
             ]);
         }
     };
-}(window.m, window.c, window.c.h));
+}(window.m, window.c, window._, window.c.h));

@@ -145,7 +145,16 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                      acceptAccount: ctrl.acceptAccount,
                      acceptAccountLoader: ctrl.acceptAccountLoader,
                      nextStage: ctrl.nextStage,
-                     content: ctrl.content()
+                     content: ctrl.content(),
+                     dataToRedraw: {
+                         'tax_link': {
+                             action: 'onclick',
+                             actionSource: () => {
+                                 ctrl.showTaxModal.toggle();
+                                 m.redraw();
+                             }
+                         }
+                     }
                  }) : h.loader())
 
             ]);
