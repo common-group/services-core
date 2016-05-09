@@ -1,5 +1,5 @@
 import m from 'mithril';
-import adminTransaction from 'admin-transaction';
+import adminTransaction from '../../src/c/admin-transaction';
 
 describe('AdminTransaction', () => {
     let contribution, detailedBox,

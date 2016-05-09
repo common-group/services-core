@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import h from '../h';
 import filterMain from './filter-main';
 
 const adminFilter = {

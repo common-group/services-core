@@ -1,10 +1,10 @@
-import usersBalance from '../../../src/root/users-balance'
+import usersBalanceMain from '../../../src/root/users-balance-main'
 
-describe('UsersBalance', () => {
+export default describe('UsersBalanceMain', () => {
     let $output, component;
 
     beforeAll(() => {
-        component = m.component(usersBalance, {user_id: 1});
+        component = m.component(usersBalanceMain, {user_id: 1});
         $output = mq(component);
     });
 

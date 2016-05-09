@@ -1,11 +1,10 @@
 import adminContributions from '../../../src/root/admin-contributions';
 
-fdescribe('adminContributions', () => {
-  var ctrl, $output;
+export default describe('adminContributions', () => {
+  let ctrl, $output;
 
   beforeAll(() => {
-    AdminContributions = m.component(adminContributions);
-    ctrl = AdminContributions.controller();
+    ctrl = m.component(adminContributions).controller();
   });
 
   describe('controller', () => {
@@ -21,7 +20,7 @@ fdescribe('adminContributions', () => {
 
   describe('view', () => {
     beforeAll(() => {
-      $output = mq(Contributions);
+      $output = mq(adminContributions);
     });
 
     it('should render AdminFilter nested component', () => {

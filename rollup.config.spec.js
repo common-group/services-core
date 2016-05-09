@@ -2,11 +2,11 @@ import babel from 'rollup-plugin-babel';
 import multiEntry from 'rollup-plugin-multi-entry';
 
 export default {
-  entry: 'spec/**/*.spec.js',
+  entry: ['spec/components/**/*.spec.js', 'src/**/*.js'],
   dest: 'spec/bundle.spec.js',
   sourceMap: true,
   format: 'iife',
-  moduleName: 'tests',
+  moduleName: 'catarseSpecs',
   plugins: [babel(), multiEntry()],
   globals: {
       underscore: '_',
@@ -14,7 +14,7 @@ export default {
       mithril: 'm',
       'chartjs': 'Chart',
       'replaceDiacritics': 'replaceDiacritics',
-      ['mithril-postgrest']: 'postgrest',
-      ['i18n-js']: 'I18n'
+      'mithril-postgrest': 'postgrest',
+      'i18n-js': 'I18n'
   }
 };

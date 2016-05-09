@@ -1,5 +1,5 @@
 import m from 'mithril';
-import usersBalance from '../../src/root/users-balance';
+import usersBalanceMain from '../../src/root/users-balance-main';
 import userBalance from '../../src/c/user-balance';
 
 describe('UserBalance', () => {

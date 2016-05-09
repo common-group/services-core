@@ -21,8 +21,8 @@ import projectCard from '../c/project-card';
 const projectsExplore = {
     controller () {
         const filters = postgrest.filtersVM,
-              projectFilters = projectFilters(),
-              filtersMap = projectFilters.filters,
+              projectFiltersVM = projectFilters(),
+              filtersMap = projectFiltersVM.filters,
               defaultFilter = h.paramByName('filter') || 'score',
               fallbackFilter = 'all',
               currentFilter = m.prop(filtersMap[defaultFilter]),
@@ -32,7 +32,7 @@ const projectsExplore = {
               },
               resetContextFilter = () => {
                   currentFilter(filtersMap[defaultFilter]);
-                  projectFilters.setContextFilters(['score', 'finished', 'all']);
+                  projectFiltersVM.setContextFilters(['score', 'finished', 'all']);
               },
               isSearch = m.prop(false),
               categoryCollection = m.prop([]),
@@ -150,14 +150,14 @@ const projectsExplore = {
             title: title,
             filtersMap: filtersMap,
             currentFilter: currentFilter,
-            projectFilters: projectFilters,
+            projectFiltersVM: projectFiltersVM,
             toggleCategories: toggleCategories,
             isSearch: isSearch
         };
     },
     view (ctrl, args) {
         if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection()) && !ctrl.isSearch()){
-            ctrl.projectFilters.removeContextFilter(ctrl.currentFilter());
+            ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
             ctrl.changeFilter(ctrl.fallbackFilter);
         }
 
@@ -189,7 +189,7 @@ const projectsExplore = {
                         m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
                             !ctrl.isSearch() ? m('select.w-select.text-field.positive',
                                 {onchange: m.withAttr('value', ctrl.changeFilter)},
-                                _.map(ctrl.projectFilters.getContextFilters(), (pageFilter, idx) => {
+                                _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => {
                                     const projects = ctrl.projects(),
                                         isSelected = ctrl.currentFilter() == pageFilter;
 

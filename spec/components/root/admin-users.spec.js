@@ -1,11 +1,10 @@
 import adminUsers from '../../../src/root/admin-users'
 
-describe('adminUsers', () => {
-  var ctrl, $output;
+export default describe('adminUsers', () => {
+  let ctrl, $output;
 
   beforeAll(() => {
-    AdminUsers = m.component(adminUsers);
-    ctrl = AdminUsers.controller();
+    ctrl = m.component(adminUsers).controller();
   });
 
   describe('controller', () => {
@@ -21,7 +20,7 @@ describe('adminUsers', () => {
 
   describe('view', () => {
     beforeAll(() => {
-      $output = mq(Users);
+      $output = mq(adminUsers);
     });
 
     it('should render AdminFilter nested component', () => {

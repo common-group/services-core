@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
+import userBalanceTransactionRow from './user-balance-transaction-row';
 
 const userBalanceTransactions = {
     controller (args) {
@@ -17,7 +18,7 @@ const userBalanceTransactions = {
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
             m('.w-container', _.map(list.collection(), (item, index) => {
                 return m.component(
-                    c.UserBalanceTransactionRow, {item: item, index: index});
+                    userBalanceTransactionRow, {item: item, index: index});
             })),
             m('.container', [
                 m('.w-row.u-margintop-40', [

@@ -1,6 +1,7 @@
-import liveStatistics from '../../../src/root/live-statistics'
+import liveStatistics from '../../../src/root/live-statistics';
+import h from '../../../src/h';
 
-describe('pages.LiveStatistics', () => {
+export default describe('pages.LiveStatistics', () => {
   let $output, statistic;
 
   describe('view', () => {
@@ -11,7 +12,7 @@ describe('pages.LiveStatistics', () => {
     });
 
     it('should render statistics', () => {
-      expect($output.contains(window.c.h.formatNumber(statistic.total_contributed, 2, 3))).toEqual(true);
+      expect($output.contains(h.formatNumber(statistic.total_contributed, 2, 3))).toEqual(true);
       expect($output.contains(statistic.total_contributors)).toEqual(true);
     });
   });

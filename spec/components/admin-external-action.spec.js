@@ -1,5 +1,6 @@
 import models from '../../src/models';
 import adminExternalAction from '../../src/c/admin-external-action';
+import postgrest from 'mithril-postgrest';
 
 describe('adminExternalAction', () => {
     var testModel = postgrest.model('reloadAction'),
