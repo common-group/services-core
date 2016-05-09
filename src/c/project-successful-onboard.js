@@ -133,9 +133,13 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                   lpa = ctrl.lProjectAccount,
                   lpt = ctrl.lProjectTransfer;
 
-            console.log(ctrl.showTaxModal());
-
             return m('.w-section.section', [
+                (ctrl.showTaxModal() ? m.component(c.ModalBox, {
+                    displayModal: ctrl.showTaxModal,
+                    content: ['SuccessfulProjectTaxModal', {
+                        projectTransfer: projectTransfer
+                    }]
+                }) : ''),
                 (!lpa() && !lpt() ?
                  m.component(c[ctrl.currentComponent()], {
                      projectTransfer: projectTransfer,
