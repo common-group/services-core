@@ -24,6 +24,8 @@ window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
                 };
             });
 
+            project.pageSize(20);
+
             return {
                 collections: collections,
                 slidesContent: vm.banners
