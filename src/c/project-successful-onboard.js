@@ -82,7 +82,11 @@ window.c.ProjectSuccessfulOnboard = ((m, c, models, h, _) => {
                           } else if (!_.isNull(pa.error_reason)) {
                               return setStage('error_account')();
                           } else if (!_.isNull(pa.transfer_state)) {
-                              return setStage('pending_transfer')();
+                              if(pa.transfer_state == 'transferred') {
+                                  return setStage('finished')();
+                              } else {
+                                  return setStage('pending_transfer')();
+                              }
                           }
                       }
 
