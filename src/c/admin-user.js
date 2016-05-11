@@ -1,4 +1,5 @@
 import m from 'mithril';
+import h from '../h';
 
 const adminUser = {
     view (ctrl, args) {

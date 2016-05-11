@@ -1,5 +1,5 @@
 import m from 'mithril';
-import h from 'underscore';
+import h from '../h';
 
 const adminTransaction = {
     view (ctrl, args) {

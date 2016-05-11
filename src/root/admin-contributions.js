@@ -6,20 +6,24 @@ import adminList from '../c/admin-list';
 import adminFilter from '../c/admin-filter';
 import adminContributionItem from '../c/admin-contribution-item';
 import adminContributionDetail from '../c/admin-contribution-detail';
+import filterMain from '../c/filter-main';
+import filterDropdown from '../c/filter-dropdown';
+import filterNumberRange from '../c/filter-number-range';
+import filterDateRange from '../c/filter-date-range';
 
-const adminConstributions = {
+const adminContributions = {
     controller () {
         var listVM = contributionListVM,
             filterVM = contributionFilterVM,
             error = m.prop(''),
             filterBuilder = [{ //full_text_index
-                component: 'FilterMain',
+                component: filterMain,
                 data: {
                     vm: filterVM.full_text_index,
                     placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
                 }
             }, { //state
-                component: 'FilterDropdown',
+                component: filterDropdown,
                 data: {
                     label: 'Com o estado',
                     name: 'state',
@@ -51,7 +55,7 @@ const adminConstributions = {
                     }]
                 }
             }, { //gateway
-                component: 'FilterDropdown',
+                component: filterDropdown,
                 data: {
                     label: 'gateway',
                     name: 'gateway',
@@ -74,14 +78,14 @@ const adminConstributions = {
                     }]
                 }
             }, { //value
-                component: 'FilterNumberRange',
+                component: filterNumberRange,
                 data: {
                     label: 'Valores entre',
                     first: filterVM.value.gte,
                     last: filterVM.value.lte
                 }
             }, { //created_at
-                component: 'FilterDateRange',
+                component: filterDateRange,
                 data: {
                     label: 'Período do apoio',
                     first: filterVM.created_at.gte,
@@ -90,7 +94,7 @@ const adminConstributions = {
             }],
             submit = () => {
                 error(false);
-                listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
+                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
                     error(serverError.message);
                 });
                 return false;
@@ -126,4 +130,4 @@ const adminConstributions = {
     }
 };
 
-export default adminConstributions;
+export default adminContributions;

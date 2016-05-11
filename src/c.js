@@ -1,3 +1,5 @@
+import adminUsers from './root/admin-users';
+import adminContributions from './root/admin-contributions';
 import flex from './root/flex';
 import insights from './root/insights';
 import jobs from './root/jobs';
@@ -14,6 +16,8 @@ import usersBalanceMain from './root/users-balance-main';
 
 const c = {
     root: {
+        AdminUsers: adminUsers,
+        AdminContributions: adminContributions,
         Flex: flex,
         Insights: insights,
         Jobs: jobs,

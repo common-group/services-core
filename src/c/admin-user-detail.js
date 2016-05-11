@@ -10,6 +10,7 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
+import models from '../models';
 import adminResetPassword from './admin-reset-password';
 import adminInputAction from './admin-input-action';
 import adminNotificationHistory from './admin-notification-history';
@@ -24,7 +25,7 @@ const adminUserDetail = {
                     innerLabel: 'Nova senha de Usuário:',
                     outerLabel: 'Redefinir senha',
                     placeholder: 'ex: 123mud@r',
-                    model: c.models.user
+                    model: models.user
                 },
                 reactivate: {
                     property: 'deactivated_at',
@@ -35,7 +36,7 @@ const adminUserDetail = {
                     errorMessage: 'O usuário não pôde ser reativado!',
                     outerLabel: 'Reativar usuário',
                     forceValue: null,
-                    model: c.models.user
+                    model: models.user
                 }
             }
         };

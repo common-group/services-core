@@ -6,6 +6,9 @@ import adminFilter from '../c/admin-filter';
 import adminList from '../c/admin-list';
 import adminUserItem from '../c/admin-user-item';
 import adminUserDetail from '../c/admin-user-detail';
+import adminUser from '../c/admin-user';
+import filterMain from '../c/filter-main';
+import filterDropdown from '../c/filter-dropdown';
 
 const adminUsers = {
     controller () {
@@ -13,17 +16,17 @@ const adminUsers = {
             filterVM = userFilterVM,
             error = m.prop(''),
             itemBuilder = [{
-                component: 'AdminUser',
+                component: adminUser,
                 wrapperClass: '.w-col.w-col-4'
             }],
             filterBuilder = [{ //name
-                component: 'FilterMain',
+                component: filterMain,
                 data: {
                     vm: filterVM.full_text_index,
                     placeholder: 'Busque por nome, e-mail, Ids do usuário...',
                 },
             }, { //status
-                component: 'FilterDropdown',
+                component: filterDropdown,
                 data: {
                     label: 'Com o estado',
                     index: 'status',
