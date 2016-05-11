@@ -6,7 +6,7 @@ describe('UserBalanceRequestModalContent', () => {
     let $output, component, parentComponent;
 
     beforeAll(() => {
-        parentComponent = m.component(usersBalance, {user_id: 1});
+        parentComponent = m.component(usersBalanceMain, {user_id: 1});
         component = m.component(userBalanceRequestModalContent, _.extend(
             {},
             parentComponent.controller(),

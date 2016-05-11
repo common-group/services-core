@@ -15,7 +15,7 @@ describe('ProjectShareBox', () => {
                 },
                 component = m.component(projectShareBox, args),
                 view = component.view(component.controller(), args);
-            $output = mq(ProjectShareBox, args);
+            $output = mq(projectShareBox, args);
         });
 
         it('should render project project share pop', () => {

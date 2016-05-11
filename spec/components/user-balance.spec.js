@@ -6,7 +6,7 @@ describe('UserBalance', () => {
     let $output, component, parentComponent;
 
     beforeAll(() => {
-        parentComponent = m.component(usersBalance, {user_id: 1});
+        parentComponent = m.component(usersBalanceMain, {user_id: 1});
         component = m.component(userBalance, _.extend({}, parentComponent.controller(), {user_id: 1}));
         $output = mq(component);
     });

@@ -5,7 +5,7 @@ describe('Tooltip', () => {
     let $output,
         element = 'a#tooltip-trigger[href="#"]',
         text = 'tooltipText',
-        tooltip = (el) => {
+        tooltipEl = (el) => {
             return m.component(tooltip, {
                 el: el,
                 text: text,
@@ -15,7 +15,7 @@ describe('Tooltip', () => {
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(tooltip(element));
+            $output = mq(tooltipEl(element));
         });
 
         it('should not render the tooltip at first', () => {

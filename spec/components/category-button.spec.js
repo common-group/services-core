@@ -7,7 +7,7 @@ describe('CategoryButton', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(m.component(c.CategoryButton, {
+            $output = mq(m.component(categoryButton, {
                 category: {
                     id: 1,
                     name: 'cat',

@@ -2,20 +2,17 @@ import m from 'mithril';
 import adminTransaction from '../../src/c/admin-transaction';
 
 describe('AdminTransaction', () => {
-    let contribution, detailedBox,
+    let contribution,
         view, $output;
 
     beforeAll(() => {
         contribution = m.prop(ContributionDetailMockery(1, {
             gateway_data: null
         }));
-        detailedBox = m.component(adminTransaction, {
+
+        $output = mq(m.component(adminTransaction, {
             contribution: contribution()[0]
-        });
-        view = detailedBox.view(null, {
-            contribution: contribution
-        });
-        $output = mq(view);
+        }).view);
     });
 
     describe('view', () => {

@@ -5,7 +5,7 @@ import models from '../models';
 import h from '../h';
 
 const projectPosts = {
-    ctrl (args) {
+    controller (args) {
         const listVM = postgrest.paginationVM(models.projectPostDetail),
             filterVM = postgrest.filtersVM({
                 project_id: 'eq'

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import h from '../../src/h';
 import adminProjectDetailsCard from '../../src/c/admin-project-details-card';
 
 describe('AdminProjectDetailsCard', () => {
@@ -88,7 +89,7 @@ describe('AdminProjectDetailsCard', () => {
 
             expect($output.find('.project-details-card').length).toEqual(1);
             expect($output.contains(projectDetail.total_contributions)).toEqual(true);
-            expect($output.contains('R$ ' + window.c.h.formatNumber(projectDetail.pledged, 2))).toEqual(true);
+            expect($output.contains('R$ ' + h.formatNumber(projectDetail.pledged, 2))).toEqual(true);
         });
     });
 });

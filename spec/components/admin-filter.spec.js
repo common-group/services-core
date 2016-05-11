@@ -1,6 +1,9 @@
 import m from 'mithril';
 import adminFilter from '../../src/c/admin-filter';
 import filterMain from '../../src/c/filter-main';
+import filterDropdown from '../../src/c/filter-dropdown';
+import filterNumberRange from '../../src/c/filter-number-range';
+import filterDateRange from '../../src/c/filter-date-range';
 
 describe('AdminFilter', () => {
     let ctrl, submit, fakeForm,
@@ -21,7 +24,7 @@ describe('AdminFilter', () => {
         beforeAll(() => {
             spyOn(m, 'component').and.callThrough();
             submit = jasmine.createSpy('submit');
-            filterDescriber = FilterDescriberMock();
+            filterDescriber = FilterDescriberMock(filterMain, filterDropdown, filterNumberRange, filterDateRange);
             $output = mq(adminFilter, {
                 filterBuilder: filterDescriber,
                 data: {

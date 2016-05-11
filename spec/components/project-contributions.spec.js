@@ -7,11 +7,11 @@ describe('projectContributions', () => {
     describe('view', () => {
         beforeAll(() => {
             jasmine.Ajax.stubRequest(new RegExp('(' + apiPrefix + '\/project_contributions)(.*)(waiting_payment)(.*)')).andReturn({
-                'responseText': JSON.stringify(projectContributionsMockery())
+                'responseText': JSON.stringify(ProjectContributionsMockery())
             });
 
             spyOn(m, 'component').and.callThrough();
-            projectContribution = projectContributionsMockery()[0];
+            projectContribution = ProjectContributionsMockery()[0];
             const project = m.prop({
                         id: 1231
             });

@@ -1,7 +1,8 @@
 import search from '../../src/c/search';
 
 describe('Search', () => {
-    let $outputaction = '/test',
+    let $output,
+        action = '/test',
         method = 'POST';
 
     describe('view', () => {

@@ -1,13 +1,13 @@
-var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
+var c = (function (m,moment$1,I18n$1,replaceDiacritics,_$1,postgrest$1,Chart) {
   'use strict';
 
   m = 'default' in m ? m['default'] : m;
-  postgrest$1 = 'default' in postgrest$1 ? postgrest$1['default'] : postgrest$1;
   moment$1 = 'default' in moment$1 ? moment$1['default'] : moment$1;
   I18n$1 = 'default' in I18n$1 ? I18n$1['default'] : I18n$1;
-  _$1 = 'default' in _$1 ? _$1['default'] : _$1;
-  Chart = 'default' in Chart ? Chart['default'] : Chart;
   replaceDiacritics = 'default' in replaceDiacritics ? replaceDiacritics['default'] : replaceDiacritics;
+  _$1 = 'default' in _$1 ? _$1['default'] : _$1;
+  postgrest$1 = 'default' in postgrest$1 ? postgrest$1['default'] : postgrest$1;
+  Chart = 'default' in Chart ? Chart['default'] : Chart;
 
   var hashMatch = function hashMatch(str) {
       return window.location.hash === str;
@@ -395,6 +395,1107 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
   models.category.pageSize(50);
   models.contributionActivity.pageSize(40);
   models.successfulProject.pageSize(9);
+
+  var userListVM = postgrest.paginationVM(models.user, 'id.desc', { 'Prefer': 'count=exact' });
+
+  var vm = postgrest.filtersVM({
+      full_text_index: '@@',
+      deactivated_at: 'is.null'
+  });
+  var paramToString = function paramToString(p) {
+      return (p || '').toString().trim();
+  };
+  // Set default values
+  vm.deactivated_at(null).order({
+      id: 'desc'
+  });
+
+  vm.deactivated_at.toFilter = function () {
+      var filter = JSON.parse(vm.deactivated_at());
+      return filter;
+  };
+
+  vm.full_text_index.toFilter = function () {
+      var filter = paramToString(vm.full_text_index());
+      return filter && replaceDiacritics(filter) || undefined;
+  };
+
+  var filterMain = {
+      view: function view(ctrl, args) {
+          var inputWrapperClass = args.inputWrapperClass || '.w-input.text-field.positive.medium',
+              btnClass = args.btnClass || '.btn.btn-large.u-marginbottom-10';
+
+          return m('.w-row', [m('.w-col.w-col-10', [m('input' + inputWrapperClass + '[placeholder="' + args.placeholder + '"][type="text"]', {
+              onchange: m.withAttr('value', args.vm),
+              value: args.vm()
+          })]), m('.w-col.w-col-2', [m('input#filter-btn' + btnClass + '[type="submit"][value="Buscar"]')])]);
+      }
+  };
+
+  var adminFilter = {
+      controller: function controller() {
+          return {
+              toggler: h.toggleProp(false, true)
+          };
+      },
+      view: function view(ctrl, args) {
+          var filterBuilder = args.filterBuilder,
+              data = args.data,
+              label = args.label || '',
+              main = _$1.findWhere(filterBuilder, {
+              component: filterMain
+          });
+
+          return m('#admin-contributions-filter.w-section.page-header', [m('.w-container', [m('.fontsize-larger.u-text-center.u-marginbottom-30', label), m('.w-form', [m('form', {
+              onsubmit: args.submit
+          }, [main ? m.component(main.component, main.data) : '', m('.u-marginbottom-20.w-row', m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"][type="button"]', {
+              onclick: ctrl.toggler.toggle
+          }, 'Filtros avançados  >')), ctrl.toggler() ? m('#advanced-search.w-row.admin-filters', [_$1.map(filterBuilder, function (f) {
+              return f.component !== filterMain ? m.component(f.component, f.data) : '';
+          })]) : ''])])])]);
+      }
+  };
+
+  var adminItem = {
+      controller: function controller(args) {
+          return {
+              displayDetailBox: h.toggleProp(false, true)
+          };
+      },
+      view: function view(ctrl, args) {
+          var item = args.item;
+
+          return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', [m.component(args.listItem, {
+              item: item,
+              key: args.key
+          }), m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
+              onclick: ctrl.displayDetailBox.toggle
+          }), ctrl.displayDetailBox() ? m.component(args.listDetail, {
+              item: item,
+              key: args.key
+          }) : '']);
+      }
+  };
+
+  var adminList = {
+      controller: function controller(args) {
+          var list = args.vm.list;
+
+          if (!list.collection().length && list.firstPage) {
+              list.firstPage().then(null, function (serverError) {
+                  args.vm.error(serverError.message);
+              });
+          }
+      },
+      view: function view(ctrl, args) {
+          var list = args.vm.list,
+              error = args.vm.error,
+              label = args.label || '';
+
+          return m('.w-section.section', [m('.w-container', error() ? m('.card.card-error.u-radius.fontweight-bold', error()) : [m('.w-row.u-marginbottom-20', [m('.w-col.w-col-9', [m('.fontsize-base', list.isLoading() ? 'Carregando ' + label.toLowerCase() + '...' : [m('span.fontweight-semibold', list.total()), ' ' + label.toLowerCase() + ' encontrados'])])]), m('#admin-contributions-list.w-container', [list.collection().map(function (item) {
+              return m.component(adminItem, {
+                  listItem: args.listItem,
+                  listDetail: args.listDetail,
+                  item: item,
+                  key: item.id
+              });
+          }), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-2.w-col-push-5', [list.isLoading() ? h.loader() : m('button#load-more.btn.btn-medium.btn-terciary', {
+              onclick: list.nextPage
+          }, 'Carregar mais')])])])])])])]);
+      }
+  };
+
+  var adminUser = {
+      view: function view(ctrl, args) {
+          var user = args.item;
+
+          return m('.w-row.admin-user', [m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [m('img.user-avatar[src="' + h.useAvatarOrDefault(user.profile_img_thumbnail) + '"]')]), m('.w-col.w-col-9.w-col-small-9', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [m('a.alt-link[target="_blank"][href="/users/' + user.id + '/edit"]', user.name || user.email)]), m('.fontsize-smallest', 'Usuário: ' + user.id), m('.fontsize-smallest.fontcolor-secondary', 'Email: ' + user.email), args.additional_data])]);
+      }
+  };
+
+  var adminUserItem = {
+      view: function view(ctrl, args) {
+          return m('.w-row', [m('.w-col.w-col-4', [m.component(adminUser, args)])]);
+      }
+  };
+
+  var adminResetPassword = {
+      controller: function controller(args) {
+          var builder = args.data,
+              complete = m.prop(false),
+              error = m.prop(false),
+              fail = m.prop(false),
+              key = builder.property,
+              data = {},
+              item = args.item;
+
+          builder.requestOptions.config = function (xhr) {
+              if (h.authenticityToken()) {
+                  xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+              }
+          };
+
+          var l = m.prop(false),
+              load = function load() {
+              return m.request(_$1.extend({}, { data: data }, builder.requestOptions));
+          },
+              newPassword = m.prop(''),
+              error_message = m.prop('');
+
+          var requestError = function requestError(err) {
+              l(false);
+              error_message(err.errors[0]);
+              complete(true);
+              error(true);
+          };
+          var updateItem = function updateItem(res) {
+              l(false);
+              _$1.extend(item, res[0]);
+              complete(true);
+              error(false);
+          };
+
+          var submit = function submit() {
+              l(true);
+              data[key] = newPassword();
+              load().then(updateItem, requestError);
+              return false;
+          };
+
+          var unload = function unload(el, isinit, context) {
+              context.onunload = function () {
+                  complete(false);
+                  error(false);
+              };
+          };
+
+          return {
+              complete: complete,
+              error: error,
+              error_message: error_message,
+              l: l,
+              newPassword: newPassword,
+              submit: submit,
+              toggler: h.toggleProp(false, true),
+              unload: unload
+          };
+      },
+      view: function view(ctrl, args) {
+          var data = args.data,
+              btnValue = ctrl.l() ? 'por favor, aguarde...' : data.callToAction;
+
+          return m('.w-col.w-col-2', [m('button.btn.btn-small.btn-terciary', {
+              onclick: ctrl.toggler.toggle
+          }, data.outerLabel), ctrl.toggler() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+              config: ctrl.unload
+          }, [m('form.w-form', {
+              onsubmit: ctrl.submit
+          }, !ctrl.complete() ? [m('label', data.innerLabel), m('input.w-input.text-field[type="text"][name="' + data.property + '"][placeholder="' + data.placeholder + '"]', {
+              onchange: m.withAttr('value', ctrl.newPassword),
+              value: ctrl.newPassword()
+          }), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')] : !ctrl.error() ? [m('.w-form-done[style="display:block;"]', [m('p', 'Senha alterada com sucesso.')])] : [m('.w-form-error[style="display:block;"]', [m('p', ctrl.error_message())])])]) : '']);
+      }
+  };
+
+  var adminInputAction = {
+      controller: function controller(args) {
+          var builder = args.data,
+              complete = m.prop(false),
+              error = m.prop(false),
+              fail = m.prop(false),
+              data = {},
+              item = args.item,
+              key = builder.property,
+              forceValue = builder.forceValue || null,
+              newValue = m.prop(forceValue);
+
+          h.idVM.id(item[builder.updateKey]);
+
+          var l = postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
+
+          var updateItem = function updateItem(res) {
+              _.extend(item, res[0]);
+              complete(true);
+              error(false);
+          };
+
+          var submit = function submit() {
+              data[key] = newValue();
+              l.load().then(updateItem, function () {
+                  complete(true);
+                  error(true);
+              });
+              return false;
+          };
+
+          var unload = function unload(el, isinit, context) {
+              context.onunload = function () {
+                  complete(false);
+                  error(false);
+                  newValue(forceValue);
+              };
+          };
+
+          return {
+              complete: complete,
+              error: error,
+              l: l,
+              newValue: newValue,
+              submit: submit,
+              toggler: h.toggleProp(false, true),
+              unload: unload
+          };
+      },
+      view: function view(ctrl, args) {
+          var data = args.data,
+              btnValue = ctrl.l() ? 'por favor, aguarde...' : data.callToAction;
+
+          return m('.w-col.w-col-2', [m('button.btn.btn-small.btn-terciary', {
+              onclick: ctrl.toggler.toggle
+          }, data.outerLabel), ctrl.toggler() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+              config: ctrl.unload
+          }, [m('form.w-form', {
+              onsubmit: ctrl.submit
+          }, !ctrl.complete() ? [m('label', data.innerLabel), data.forceValue === undefined ? m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
+              onchange: m.withAttr('value', ctrl.newValue),
+              value: ctrl.newValue()
+          }) : '', m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')] : !ctrl.error() ? [m('.w-form-done[style="display:block;"]', [m('p', data.successMessage)])] : [m('.w-form-error[style="display:block;"]', [m('p', 'Houve um problema na requisição. ' + data.errorMessage)])])]) : '']);
+      }
+  };
+
+  var adminNotificationHistory = {
+      controller: function controller(args) {
+          var notifications = m.prop([]),
+              getNotifications = function getNotifications(user) {
+              var notification = models.notification;
+              notification.getPageWithToken(postgrest.filtersVM({
+                  user_id: 'eq',
+                  sent_at: 'is.null'
+              }).user_id(user.id).sent_at(!null).order({
+                  sent_at: 'desc'
+              }).parameters()).then(notifications);
+          };
+
+          getNotifications(args.user);
+
+          return {
+              notifications: notifications
+          };
+      },
+      view: function view(ctrl) {
+          return m('.w-col.w-col-4', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico de notificações'), ctrl.notifications().map(function (cEvent) {
+              return m('.w-row.fontsize-smallest.lineheight-looser.date-event', [m('.w-col.w-col-24', [m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'), ' - ', cEvent.template_name, cEvent.origin ? ' - ' + cEvent.origin : '')])]);
+          })]);
+      }
+  };
+
+  var adminUserDetail = {
+      controller: function controller() {
+          return {
+              actions: {
+                  reset: {
+                      property: 'password',
+                      callToAction: 'Redefinir',
+                      innerLabel: 'Nova senha de Usuário:',
+                      outerLabel: 'Redefinir senha',
+                      placeholder: 'ex: 123mud@r',
+                      model: models.user
+                  },
+                  reactivate: {
+                      property: 'deactivated_at',
+                      updateKey: 'id',
+                      callToAction: 'Reativar',
+                      innerLabel: 'Tem certeza que deseja reativar esse usuário?',
+                      successMessage: 'Usuário reativado com sucesso!',
+                      errorMessage: 'O usuário não pôde ser reativado!',
+                      outerLabel: 'Reativar usuário',
+                      forceValue: null,
+                      model: models.user
+                  }
+              }
+          };
+      },
+      view: function view(ctrl, args) {
+          var actions = ctrl.actions,
+              item = args.item,
+              details = args.details,
+              addOptions = function addOptions(builder, id) {
+              return _$1.extend({}, builder, {
+                  requestOptions: {
+                      url: '/users/' + id + '/new_password',
+                      method: 'POST'
+                  }
+              });
+          };
+
+          return m('#admin-contribution-detail-box', [m('.divider.u-margintop-20.u-marginbottom-20'), m('.w-row.u-marginbottom-30', [m.component(adminResetPassword, {
+              data: addOptions(actions.reset, item.id),
+              item: item
+          }), item.deactivated_at ? m.component(adminInputAction, { data: actions.reactivate, item: item }) : '']), m('.w-row.card.card-terciary.u-radius', [m.component(adminNotificationHistory, {
+              user: item
+          })])]);
+      }
+  };
+
+  var dropdown = {
+      view: function view(ctrl, args) {
+          return m('select' + args.classes + '[id="' + args.id + '"]', {
+              onchange: m.withAttr('value', args.valueProp),
+              value: args.valueProp()
+          }, _$1.map(args.options, function (data) {
+              return m('option[value="' + data.value + '"]', data.option);
+          }));
+      }
+  };
+
+  var filterDropdown = {
+      view: function view(ctrl, args) {
+          var wrapper_c = args.wrapper_class || '.w-col.w-col-3.w-col-small-6';
+          return m(wrapper_c, [m('label.fontsize-smaller[for="' + args.index + '"]', args.label), m.component(dropdown, {
+              id: args.index,
+              classes: '.w-select.text-field.positive',
+              valueProp: args.vm,
+              options: args.options
+          })]);
+      }
+  };
+
+  var adminUsers = {
+      controller: function controller() {
+          var listVM = userListVM,
+              filterVM = vm,
+              error = m.prop(''),
+              itemBuilder = [{
+              component: adminUser,
+              wrapperClass: '.w-col.w-col-4'
+          }],
+              filterBuilder = [{ //name
+              component: filterMain,
+              data: {
+                  vm: filterVM.full_text_index,
+                  placeholder: 'Busque por nome, e-mail, Ids do usuário...'
+              }
+          }, { //status
+              component: filterDropdown,
+              data: {
+                  label: 'Com o estado',
+                  index: 'status',
+                  name: 'deactivated_at',
+                  vm: filterVM.deactivated_at,
+                  options: [{
+                      value: '',
+                      option: 'Qualquer um'
+                  }, {
+                      value: null,
+                      option: 'ativo'
+                  }, {
+                      value: !null,
+                      option: 'desativado'
+                  }]
+              }
+          }],
+              submit = function submit() {
+              listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+                  error(serverError.message);
+              });
+              return false;
+          };
+
+          return {
+              filterVM: filterVM,
+              filterBuilder: filterBuilder,
+              listVM: {
+                  list: listVM,
+                  error: error
+              },
+              submit: submit
+          };
+      },
+      view: function view(ctrl) {
+          var label = 'Usuários';
+
+          return [m.component(adminFilter, {
+              form: ctrl.filterVM.formDescriber,
+              filterBuilder: ctrl.filterBuilder,
+              label: label,
+              submit: ctrl.submit
+          }), m.component(adminList, {
+              vm: ctrl.listVM,
+              label: label,
+              listItem: adminUserItem,
+              listDetail: adminUserDetail
+          })];
+      }
+  };
+
+  var contributionListVM = postgrest.paginationVM(models.contributionDetail, 'id.desc', { 'Prefer': 'count=exact' });
+
+  var vm$1 = postgrest$1.filtersVM({
+      full_text_index: '@@',
+      state: 'eq',
+      gateway: 'eq',
+      value: 'between',
+      created_at: 'between'
+  });
+  var paramToString$1 = function paramToString(p) {
+      return (p || '').toString().trim();
+  };
+  // Set default values
+  vm$1.state('');
+  vm$1.gateway('');
+  vm$1.order({
+      id: 'desc'
+  });
+
+  vm$1.created_at.lte.toFilter = function () {
+      var filter = paramToString$1(vm$1.created_at.lte());
+      return filter && h.momentFromString(filter).endOf('day').format('');
+  };
+
+  vm$1.created_at.gte.toFilter = function () {
+      var filter = paramToString$1(vm$1.created_at.gte());
+      return filter && h.momentFromString(filter).format();
+  };
+
+  vm$1.full_text_index.toFilter = function () {
+      var filter = paramToString$1(vm$1.full_text_index());
+      return filter && replaceDiacritics(filter) || undefined;
+  };
+
+  var adminProject = {
+      view: function view(ctrl, args) {
+          var project = args.item;
+          return m('.w-row.admin-project', [m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [m('img.thumb-project.u-radius[src=' + project.project_img + '][width=50]')]), m('.w-col.w-col-9.w-col-small-9', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [m('a.alt-link[target="_blank"][href="/' + project.permalink + '"]', project.project_name)]), m('.fontsize-smallest.fontweight-semibold', project.project_state), m('.fontsize-smallest.fontcolor-secondary', h.momentify(project.project_online_date) + ' a ' + h.momentify(project.project_expires_at))])]);
+      }
+  };
+
+  var adminContribution = {
+      view: function view(ctrl, args) {
+          var contribution = args.item;
+          return m('.w-row.admin-contribution', [m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', 'R$' + contribution.value), m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.created_at, 'DD/MM/YYYY HH:mm[h]')), m('.fontsize-smallest', ['ID do Gateway: ', m('a.alt-link[target="_blank"][href="https://dashboard.pagar.me/#/transactions/' + contribution.gateway_id + '"]', contribution.gateway_id)])]);
+      }
+  };
+
+  var adminContributionUser = {
+      view: function view(ctrl, args) {
+          var item = args.item,
+              user = {
+              profile_img_thumbnail: item.user_profile_img,
+              id: item.user_id,
+              name: item.user_name,
+              email: item.email
+          };
+
+          var additionalData = m('.fontsize-smallest.fontcolor-secondary', 'Gateway: ' + item.payer_email);
+          return m.component(adminUser, { item: user, additional_data: additionalData });
+      }
+  };
+
+  var paymentStatus = {
+      controller: function controller(args) {
+          var payment = args.item,
+              card = null,
+              displayPaymentMethod = void 0,
+              paymentMethodClass = void 0,
+              stateClass = void 0;
+
+          card = function card() {
+              if (payment.gateway_data) {
+                  switch (payment.gateway.toLowerCase()) {
+                      case 'moip':
+                          return {
+                              first_digits: payment.gateway_data.cartao_bin,
+                              last_digits: payment.gateway_data.cartao_final,
+                              brand: payment.gateway_data.cartao_bandeira
+                          };
+                      case 'pagarme':
+                          return {
+                              first_digits: payment.gateway_data.card_first_digits,
+                              last_digits: payment.gateway_data.card_last_digits,
+                              brand: payment.gateway_data.card_brand
+                          };
+                  }
+              }
+          };
+
+          displayPaymentMethod = function displayPaymentMethod() {
+              switch (payment.payment_method.toLowerCase()) {
+                  case 'boletobancario':
+                      return m('span#boleto-detail', '');
+                  case 'cartaodecredito':
+                      var cardData = card();
+                      if (cardData) {
+                          return m('#creditcard-detail.fontsize-smallest.fontcolor-secondary.lineheight-tight', [cardData.first_digits + '******' + cardData.last_digits, m('br'), cardData.brand + ' ' + payment.installments + 'x']);
+                      }
+                      return '';
+              }
+          };
+
+          paymentMethodClass = function paymentMethodClass() {
+              switch (payment.payment_method.toLowerCase()) {
+                  case 'boletobancario':
+                      return '.fa-barcode';
+                  case 'cartaodecredito':
+                      return '.fa-credit-card';
+                  default:
+                      return '.fa-question';
+              }
+          };
+
+          stateClass = function stateClass() {
+              switch (payment.state) {
+                  case 'paid':
+                      return '.text-success';
+                  case 'refunded':
+                      return '.text-refunded';
+                  case 'pending':
+                  case 'pending_refund':
+                      return '.text-waiting';
+                  default:
+                      return '.text-error';
+              }
+          };
+
+          return {
+              displayPaymentMethod: displayPaymentMethod,
+              paymentMethodClass: paymentMethodClass,
+              stateClass: stateClass
+          };
+      },
+      view: function view(ctrl, args) {
+          var payment = args.item;
+
+          return m('.w-row.payment-status', [m('.fontsize-smallest.lineheight-looser.fontweight-semibold', [m('span.fa.fa-circle' + ctrl.stateClass()), ' ' + payment.state]), m('.fontsize-smallest.fontweight-semibold', [m('span.fa' + ctrl.paymentMethodClass()), ' ', m('a.link-hidden[href="#"]', payment.payment_method)]), m('.fontsize-smallest.fontcolor-secondary.lineheight-tight', [ctrl.displayPaymentMethod()])]);
+      }
+  };
+
+  var adminContributionItem = {
+      controller: function controller() {
+          return {
+              itemBuilder: [{
+                  component: adminContributionUser,
+                  wrapperClass: '.w-col.w-col-4'
+              }, {
+                  component: adminProject,
+                  wrapperClass: '.w-col.w-col-4'
+              }, {
+                  component: adminContribution,
+                  wrapperClass: '.w-col.w-col-2'
+              }, {
+                  component: paymentStatus,
+                  wrapperClass: '.w-col.w-col-2'
+              }]
+          };
+      },
+      view: function view(ctrl, args) {
+          return m('.w-row', _.map(ctrl.itemBuilder, function (panel) {
+              return m(panel.wrapperClass, [m.component(panel.component, {
+                  item: args.item,
+                  key: args.key
+              })]);
+          }));
+      }
+  };
+
+  var adminRadioAction = {
+      controller: function controller(args) {
+          var builder = args.data,
+              complete = m.prop(false),
+              data = {},
+              error = m.prop(false),
+              fail = m.prop(false),
+              item = args.item(),
+              description = m.prop(item.description || ''),
+              key = builder.getKey,
+              newID = m.prop(''),
+              getFilter = {},
+              setFilter = {},
+              radios = m.prop(),
+              getAttr = builder.radios,
+              getKey = builder.getKey,
+              getKeyValue = args.getKeyValue,
+              updateKey = builder.updateKey,
+              updateKeyValue = args.updateKeyValue,
+              validate = builder.validate,
+              selectedItem = builder.selectedItem || m.prop();
+
+          setFilter[updateKey] = 'eq';
+          var setVM = postgrest.filtersVM(setFilter);
+          setVM[updateKey](updateKeyValue);
+
+          getFilter[getKey] = 'eq';
+          var getVM = postgrest.filtersVM(getFilter);
+          getVM[getKey](getKeyValue);
+
+          var getLoader = postgrest.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
+
+          var setLoader = postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
+
+          var updateItem = function updateItem(data) {
+              if (data.length > 0) {
+                  var newItem = _$1.findWhere(radios(), {
+                      id: data[0][builder.selectKey]
+                  });
+                  selectedItem(newItem);
+              } else {
+                  error({
+                      message: 'Nenhum item atualizado'
+                  });
+              }
+              complete(true);
+          };
+
+          var fetch = function fetch() {
+              getLoader.load().then(radios, error);
+          };
+
+          var submit = function submit() {
+              if (newID()) {
+                  var validation = validate(radios(), newID());
+                  if (_$1.isUndefined(validation)) {
+                      data[builder.selectKey] = newID();
+                      setLoader.load().then(updateItem, error);
+                  } else {
+                      complete(true);
+                      error({
+                          message: validation
+                      });
+                  }
+              }
+              return false;
+          };
+
+          var unload = function unload(el, isinit, context) {
+              context.onunload = function () {
+                  complete(false);
+                  error(false);
+                  newID('');
+              };
+          };
+
+          var setDescription = function setDescription(text) {
+              description(text);
+              m.redraw();
+          };
+
+          fetch();
+
+          return {
+              complete: complete,
+              description: description,
+              setDescription: setDescription,
+              error: error,
+              setLoader: setLoader,
+              getLoader: getLoader,
+              newID: newID,
+              submit: submit,
+              toggler: h.toggleProp(false, true),
+              unload: unload,
+              radios: radios
+          };
+      },
+      view: function view(ctrl, args) {
+          var data = args.data,
+              item = args.item(),
+              btnValue = ctrl.setLoader() || ctrl.getLoader() ? 'por favor, aguarde...' : data.callToAction;
+
+          return m('.w-col.w-col-2', [m('button.btn.btn-small.btn-terciary', {
+              onclick: ctrl.toggler.toggle
+          }, data.outerLabel), ctrl.toggler() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+              config: ctrl.unload
+          }, [m('form.w-form', {
+              onsubmit: ctrl.submit
+          }, !ctrl.complete() ? [ctrl.radios() ? _$1.map(ctrl.radios(), function (radio, index) {
+              var set = function set() {
+                  ctrl.newID(radio.id);
+                  ctrl.setDescription(radio.description);
+              };
+              var selected = radio.id === (item[data.selectKey] || item.id) ? true : false;
+
+              return m('.w-radio', [m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + (selected ? '[checked]' : ''), {
+                  onclick: set
+              }), m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.minimum_value)]);
+          }) : h.loader(), m('strong', 'Descrição'), m('p', ctrl.description()), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')] : !ctrl.error() ? [m('.w-form-done[style="display:block;"]', [m('p', 'Recompensa alterada com sucesso!')])] : [m('.w-form-error[style="display:block;"]', [m('p', ctrl.error().message)])])]) : '']);
+      }
+  };
+
+  var adminExternalAction = {
+      controller: function controller(args) {
+          var builder = args.data,
+              complete = m.prop(false),
+              error = m.prop(false),
+              fail = m.prop(false),
+              data = {},
+              item = args.item;
+
+          builder.requestOptions.config = function (xhr) {
+              if (h.authenticityToken()) {
+                  xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+              }
+          };
+
+          var reload = _$1.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
+              l = m.prop(false);
+
+          var reloadItem = function reloadItem() {
+              return reload().then(updateItem);
+          };
+
+          var requestError = function requestError(err) {
+              l(false);
+              complete(true);
+              error(true);
+          };
+
+          var updateItem = function updateItem(res) {
+              _$1.extend(item, res[0]);
+              complete(true);
+              error(false);
+          };
+
+          var submit = function submit() {
+              l(true);
+              m.request(builder.requestOptions).then(reloadItem, requestError);
+              return false;
+          };
+
+          var unload = function unload(el, isinit, context) {
+              context.onunload = function () {
+                  complete(false);
+                  error(false);
+              };
+          };
+
+          return {
+              l: l,
+              complete: complete,
+              error: error,
+              submit: submit,
+              toggler: h.toggleProp(false, true),
+              unload: unload
+          };
+      },
+      view: function view(ctrl, args) {
+          var data = args.data,
+              btnValue = ctrl.l() ? 'por favor, aguarde...' : data.callToAction;
+
+          return m('.w-col.w-col-2', [m('button.btn.btn-small.btn-terciary', {
+              onclick: ctrl.toggler.toggle
+          }, data.outerLabel), ctrl.toggler() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+              config: ctrl.unload
+          }, [m('form.w-form', {
+              onsubmit: ctrl.submit
+          }, !ctrl.complete() ? [m('label', data.innerLabel), m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')] : !ctrl.error() ? [m('.w-form-done[style="display:block;"]', [m('p', 'Requisição feita com sucesso.')])] : [m('.w-form-error[style="display:block;"]', [m('p', 'Houve um problema na requisição.')])])]) : '']);
+      }
+  };
+
+  var adminTransaction = {
+      view: function view(ctrl, args) {
+          var contribution = args.contribution;
+          return m('.w-col.w-col-4', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Detalhes do apoio'), m('.fontsize-smallest.lineheight-looser', ['Valor: R$' + h.formatNumber(contribution.value, 2, 3), m('br'), 'Taxa: R$' + h.formatNumber(contribution.gateway_fee, 2, 3), m('br'), 'Aguardando Confirmação: ' + (contribution.waiting_payment ? 'Sim' : 'Não'), m('br'), 'Anônimo: ' + (contribution.anonymous ? 'Sim' : 'Não'), m('br'), 'Id pagamento: ' + contribution.gateway_id, m('br'), 'Apoio: ' + contribution.contribution_id, m('br'), 'Chave: \n', m('br'), contribution.key, m('br'), 'Meio: ' + contribution.gateway, m('br'), 'Operadora: ' + (contribution.gateway_data && contribution.gateway_data.acquirer_name), m('br'), contribution.is_second_slip ? [m('a.link-hidden[href="#"]', 'Boleto bancário'), ' ', m('span.badge', '2a via')] : ''])]);
+      }
+  };
+
+  var adminTransactionHistory = {
+      controller: function controller(args) {
+          var contribution = args.contribution,
+              mapEvents = _$1.reduce([{
+              date: contribution.paid_at,
+              name: 'Apoio confirmado'
+          }, {
+              date: contribution.pending_refund_at,
+              name: 'Reembolso solicitado'
+          }, {
+              date: contribution.refunded_at,
+              name: 'Estorno realizado'
+          }, {
+              date: contribution.created_at,
+              name: 'Apoio criado'
+          }, {
+              date: contribution.refused_at,
+              name: 'Apoio cancelado'
+          }, {
+              date: contribution.deleted_at,
+              name: 'Apoio excluído'
+          }, {
+              date: contribution.chargeback_at,
+              name: 'Chargeback'
+          }], function (memo, item) {
+              if (item.date !== null && item.date !== undefined) {
+                  item.originalDate = item.date;
+                  item.date = h.momentify(item.date, 'DD/MM/YYYY, HH:mm');
+                  return memo.concat(item);
+              }
+
+              return memo;
+          }, []);
+
+          return {
+              orderedEvents: _$1.sortBy(mapEvents, 'originalDate')
+          };
+      },
+      view: function view(ctrl) {
+          return m('.w-col.w-col-4', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico da transação'), ctrl.orderedEvents.map(function (cEvent) {
+              return m('.w-row.fontsize-smallest.lineheight-looser.date-event', [m('.w-col.w-col-6', [m('.fontcolor-secondary', cEvent.date)]), m('.w-col.w-col-6', [m('div', cEvent.name)])]);
+          })]);
+      }
+  };
+
+  var adminReward = {
+      view: function view(ctrl, args) {
+          var reward = args.reward(),
+              available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
+
+          return m('.w-col.w-col-4', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Recompensa'), m('.fontsize-smallest.lineheight-looser', reward.id ? ['ID: ' + reward.id, m('br'), 'Valor mínimo: R$' + h.formatNumber(reward.minimum_value, 2, 3), m('br'), m.trust('Disponíveis: ' + available + ' / ' + (reward.maximum_contributions || '&infin;')), m('br'), 'Aguardando confirmação: ' + reward.waiting_payment_count, m('br'), 'Descrição: ' + reward.description] : 'Apoio sem recompensa')]);
+      }
+  };
+
+  var adminContributionDetail = {
+      controller: function controller(args) {
+          var l = void 0;
+          var loadReward = function loadReward() {
+              var model = models.rewardDetail,
+                  reward_id = args.item.reward_id,
+                  opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
+                  reward = m.prop({});
+
+              l = postgrest.loaderWithToken(opts);
+
+              if (reward_id) {
+                  l.load().then(_$1.compose(reward, _$1.first));
+              }
+
+              return reward;
+          };
+
+          return {
+              reward: loadReward(),
+              actions: {
+                  transfer: {
+                      property: 'user_id',
+                      updateKey: 'id',
+                      callToAction: 'Transferir',
+                      innerLabel: 'Id do novo apoiador:',
+                      outerLabel: 'Transferir Apoio',
+                      placeholder: 'ex: 129908',
+                      successMessage: 'Apoio transferido com sucesso!',
+                      errorMessage: 'O apoio não foi transferido!',
+                      model: models.contributionDetail
+                  },
+                  reward: {
+                      getKey: 'project_id',
+                      updateKey: 'contribution_id',
+                      selectKey: 'reward_id',
+                      radios: 'rewards',
+                      callToAction: 'Alterar Recompensa',
+                      outerLabel: 'Recompensa',
+                      getModel: models.rewardDetail,
+                      updateModel: models.contributionDetail,
+                      selectedItem: loadReward(),
+                      validate: function validate(rewards, newRewardID) {
+                          var reward = _$1.findWhere(rewards, { id: newRewardID });
+                          return args.item.value >= reward.minimum_value ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
+                      }
+                  },
+                  refund: {
+                      updateKey: 'id',
+                      callToAction: 'Reembolso direto',
+                      innerLabel: 'Tem certeza que deseja reembolsar esse apoio?',
+                      outerLabel: 'Reembolsar Apoio',
+                      model: models.contributionDetail
+                  },
+                  remove: {
+                      property: 'state',
+                      updateKey: 'id',
+                      callToAction: 'Apagar',
+                      innerLabel: 'Tem certeza que deseja apagar esse apoio?',
+                      outerLabel: 'Apagar Apoio',
+                      forceValue: 'deleted',
+                      successMessage: 'Apoio removido com sucesso!',
+                      errorMessage: 'O apoio não foi removido!',
+                      model: models.contributionDetail
+                  }
+              },
+              l: l
+          };
+      },
+      view: function view(ctrl, args) {
+          var actions = ctrl.actions,
+              item = args.item,
+              reward = ctrl.reward;
+
+          var addOptions = function addOptions(builder, id) {
+              return _$1.extend({}, builder, {
+                  requestOptions: {
+                      url: '/admin/contributions/' + id + '/gateway_refund',
+                      method: 'PUT'
+                  }
+              });
+          };
+
+          return m('#admin-contribution-detail-box', [m('.divider.u-margintop-20.u-marginbottom-20'), m('.w-row.u-marginbottom-30', [m.component(adminInputAction, {
+              data: actions.transfer,
+              item: item
+          }), ctrl.l() ? h.loader : m.component(adminRadioAction, {
+              data: actions.reward,
+              item: reward,
+              getKeyValue: item.project_id,
+              updateKeyValue: item.contribution_id
+          }), m.component(adminExternalAction, {
+              data: addOptions(actions.refund, item.id),
+              item: item
+          }), m.component(adminInputAction, {
+              data: actions.remove,
+              item: item
+          })]), m('.w-row.card.card-terciary.u-radius', [m.component(adminTransaction, {
+              contribution: item
+          }), m.component(adminTransactionHistory, {
+              contribution: item
+          }), ctrl.l() ? h.loader : m.component(adminReward, {
+              reward: reward,
+              key: item.key
+          })])]);
+      }
+  };
+
+  var filterNumberRange = {
+      view: function view(ctrl, args) {
+          return m('.w-col.w-col-3.w-col-small-6', [m('label.fontsize-smaller[for="' + args.index + '"]', args.label), m('.w-row', [m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [m('input.w-input.text-field.positive[id="' + args.index + '"][type="text"]', {
+              onchange: m.withAttr('value', args.first),
+              value: args.first()
+          })]), m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [m('.fontsize-smaller.u-text-center.lineheight-looser', 'e')]), m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [m('input.w-input.text-field.positive[type="text"]', {
+              onchange: m.withAttr('value', args.last),
+              value: args.last()
+          })])])]);
+      }
+  };
+
+  var filterDateRange = {
+      view: function view(ctrl, args) {
+          return m('.w-col.w-col-3.w-col-small-6', [m('label.fontsize-smaller[for="' + args.index + '"]', args.label), m('.w-row', [m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [m('input.w-input.text-field.positive[id="' + args.index + '"][type="text"]', {
+              onchange: m.withAttr('value', args.first),
+              value: args.first()
+          })]), m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [m('.fontsize-smaller.u-text-center.lineheight-looser', 'e')]), m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [m('input.w-input.text-field.positive[type="text"]', {
+              onchange: m.withAttr('value', args.last),
+              value: args.last()
+          })])])]);
+      }
+  };
+
+  var adminContributions = {
+      controller: function controller() {
+          var listVM = contributionListVM,
+              filterVM = vm$1,
+              error = m.prop(''),
+              filterBuilder = [{ //full_text_index
+              component: filterMain,
+              data: {
+                  vm: filterVM.full_text_index,
+                  placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
+              }
+          }, { //state
+              component: filterDropdown,
+              data: {
+                  label: 'Com o estado',
+                  name: 'state',
+                  vm: filterVM.state,
+                  options: [{
+                      value: '',
+                      option: 'Qualquer um'
+                  }, {
+                      value: 'paid',
+                      option: 'paid'
+                  }, {
+                      value: 'refused',
+                      option: 'refused'
+                  }, {
+                      value: 'pending',
+                      option: 'pending'
+                  }, {
+                      value: 'pending_refund',
+                      option: 'pending_refund'
+                  }, {
+                      value: 'refunded',
+                      option: 'refunded'
+                  }, {
+                      value: 'chargeback',
+                      option: 'chargeback'
+                  }, {
+                      value: 'deleted',
+                      option: 'deleted'
+                  }]
+              }
+          }, { //gateway
+              component: filterDropdown,
+              data: {
+                  label: 'gateway',
+                  name: 'gateway',
+                  vm: filterVM.gateway,
+                  options: [{
+                      value: '',
+                      option: 'Qualquer um'
+                  }, {
+                      value: 'Pagarme',
+                      option: 'Pagarme'
+                  }, {
+                      value: 'MoIP',
+                      option: 'MoIP'
+                  }, {
+                      value: 'PayPal',
+                      option: 'PayPal'
+                  }, {
+                      value: 'Credits',
+                      option: 'Créditos'
+                  }]
+              }
+          }, { //value
+              component: filterNumberRange,
+              data: {
+                  label: 'Valores entre',
+                  first: filterVM.value.gte,
+                  last: filterVM.value.lte
+              }
+          }, { //created_at
+              component: filterDateRange,
+              data: {
+                  label: 'Período do apoio',
+                  first: filterVM.created_at.gte,
+                  last: filterVM.created_at.lte
+              }
+          }],
+              submit = function submit() {
+              error(false);
+              listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+                  error(serverError.message);
+              });
+              return false;
+          };
+
+          return {
+              filterVM: filterVM,
+              filterBuilder: filterBuilder,
+              listVM: {
+                  list: listVM,
+                  error: error
+              },
+              data: {
+                  label: 'Apoios'
+              },
+              submit: submit
+          };
+      },
+      view: function view(ctrl) {
+          return [m.component(adminFilter, {
+              form: ctrl.filterVM.formDescriber,
+              filterBuilder: ctrl.filterBuilder,
+              submit: ctrl.submit
+          }), m.component(adminList, {
+              vm: ctrl.listVM,
+              listItem: adminContributionItem,
+              listDetail: adminContributionDetail
+          })];
+      }
+  };
 
   var landingSignup = {
       controller: function controller(args) {
@@ -1152,29 +2253,29 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
       }
   };
 
-  var vm = postgrest.filtersVM({
+  var vm$2 = postgrest.filtersVM({
       full_text_index: '@@',
       state: 'eq',
       reward_id: 'eq',
       project_id: 'eq'
   });
-  var paramToString = function paramToString(p) {
+  var paramToString$2 = function paramToString(p) {
       return (p || '').toString().trim();
   };
-  vm.state('');
-  vm.order({
+  vm$2.state('');
+  vm$2.order({
       id: 'desc'
   });
 
-  vm.full_text_index.toFilter = function () {
-      var filter = paramToString(vm.full_text_index());
+  vm$2.full_text_index.toFilter = function () {
+      var filter = paramToString$2(vm$2.full_text_index());
       return filter && replaceDiacritics(filter) || undefined;
   };
 
   var projectContributionReport = {
       controller: function controller(args) {
           var listVM = postgrest$1.paginationVM(models.projectContribution, 'id.desc', { 'Prefer': 'count=exact' }),
-              filterVM = vm,
+              filterVM = vm$2,
               project = m.prop({}),
               rewards = m.prop([]),
               filterBuilder = [{
@@ -1464,8 +2565,8 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
   var projectsExplore = {
       controller: function controller() {
           var filters = postgrest$1.filtersVM,
-              projectFilters = projectFilters(),
-              filtersMap = projectFilters.filters,
+              projectFiltersVM$$ = projectFiltersVM(),
+              filtersMap = projectFiltersVM$$.filters,
               defaultFilter = h.paramByName('filter') || 'score',
               fallbackFilter = 'all',
               currentFilter = m.prop(filtersMap[defaultFilter]),
@@ -1475,7 +2576,7 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
           },
               resetContextFilter = function resetContextFilter() {
               currentFilter(filtersMap[defaultFilter]);
-              projectFilters.setContextFilters(['score', 'finished', 'all']);
+              projectFiltersVM$$.setContextFilters(['score', 'finished', 'all']);
           },
               isSearch = m.prop(false),
               categoryCollection = m.prop([]),
@@ -1593,14 +2694,14 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
               title: title,
               filtersMap: filtersMap,
               currentFilter: currentFilter,
-              projectFilters: projectFilters,
+              projectFiltersVM: projectFiltersVM$$,
               toggleCategories: toggleCategories,
               isSearch: isSearch
           };
       },
       view: function view(ctrl, args) {
           if (!ctrl.projects().isLoading() && _$1.isEmpty(ctrl.projects().collection()) && !ctrl.isSearch()) {
-              ctrl.projectFilters.removeContextFilter(ctrl.currentFilter());
+              ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
               ctrl.changeFilter(ctrl.fallbackFilter);
           }
 
@@ -1608,7 +2709,7 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
                   return ctrl.toggleCategories.toggle();
               } }, ['Explore projetos incríveis ', m('span#explore-btn.fa.fa-angle-down' + (ctrl.toggleCategories() ? '.opened' : ''), '')])]), m('#categories.category-slider' + (ctrl.toggleCategories() ? '.opened' : ''), [m('.w-row.u-marginbottom-30', [_$1.map(ctrl.categories(), function (category) {
               return m.component(categoryButton, { category: category });
-          })])])])]), m('.w-section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-9.w-col-small-8.w-col-tiny-8', [m('.fontsize-larger', ctrl.title())]), m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4', !ctrl.isSearch() ? m('select.w-select.text-field.positive', { onchange: m.withAttr('value', ctrl.changeFilter) }, _$1.map(ctrl.projectFilters.getContextFilters(), function (pageFilter, idx) {
+          })])])])]), m('.w-section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-9.w-col-small-8.w-col-tiny-8', [m('.fontsize-larger', ctrl.title())]), m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4', !ctrl.isSearch() ? m('select.w-select.text-field.positive', { onchange: m.withAttr('value', ctrl.changeFilter) }, _$1.map(ctrl.projectFiltersVM.getContextFilters(), function (pageFilter, idx) {
               var projects = ctrl.projects(),
                   isSelected = ctrl.currentFilter() == pageFilter;
 
@@ -2801,6 +3902,32 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
       }
   };
 
+  var I18nScope$9 = _.partial(h.i18nScope, 'users.balance');
+
+  var userBalanceTrasactionRow = {
+      controller: function controller(args) {
+          var expanded = h.toggleProp(false, true);
+
+          if (args.index == 0) {
+              expanded.toggle();
+          }
+
+          return {
+              expanded: expanded
+          };
+      },
+      view: function view(ctrl, args) {
+          var item = args.item,
+              createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
+
+          return m('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m('.w-clearfix.card.card-clickable', [m('.w-row', [m('.w-col.w-col-2.w-col-tiny-2', [m('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m('.w-col.w-col-10.w-col-tiny-10', [m('.w-row', [m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$9())), m.trust('&nbsp;'), m('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$9())), m.trust('&nbsp;'), m('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$9())), m.trust('&nbsp;'), m('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m('.card', _.map(item.source, function (transaction) {
+              var pos = transaction.amount >= 0;
+
+              return m('div', [m('.w-row.fontsize-small.u-marginbottom-10', [m('.w-col.w-col-2', [m('.text-' + (pos ? 'success' : 'error'), (pos ? '+' : '-') + ' R$ ' + h.formatNumber(Math.abs(transaction.amount), 2, 3))]), m('.w-col.w-col-10', [m('div', transaction.event_name + ' ' + transaction.origin_object.name)])]), m('.divider.u-marginbottom-10')]);
+          })) : '');
+      }
+  };
+
   var userBalanceTransactions = {
       controller: function controller(args) {
           args.balanceTransactionManager.load();
@@ -2813,7 +3940,7 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
           var list = ctrl.list;
 
           return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [m('.w-container', _$1.map(list.collection(), function (item, index) {
-              return m.component(c.UserBalanceTransactionRow, { item: item, index: index });
+              return m.component(userBalanceTrasactionRow, { item: item, index: index });
           })), m('.container', [m('.w-row.u-margintop-40', [m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ? list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
               onclick: list.nextPage
           }, 'Carregar mais') : h.loader()])])])]);
@@ -2885,6 +4012,8 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
 
   var c$1 = {
       root: {
+          AdminUsers: adminUsers,
+          AdminContributions: adminContributions,
           Flex: Flex,
           Insights: insights,
           Jobs: jobs,
@@ -2903,5 +4032,5 @@ var c = (function (m,postgrest$1,moment$1,I18n$1,_$1,Chart,replaceDiacritics) {
 
   return c$1;
 
-}(m,postgrest,moment,I18n,_,Chart,replaceDiacritics));
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJjLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBmbGV4IGZyb20gJy4vcm9vdC9mbGV4JztcbmltcG9ydCBpbnNpZ2h0cyBmcm9tICcuL3Jvb3QvaW5zaWdodHMnO1xuaW1wb3J0IGpvYnMgZnJvbSAnLi9yb290L2pvYnMnO1xuaW1wb3J0IGxpdmVTdGF0aXN0aWNzIGZyb20gJy4vcm9vdC9saXZlLXN0YXRpc3RpY3MnO1xuaW1wb3J0IHByb2plY3RzQ29udHJpYnV0aW9uUmVwb3J0IGZyb20gJy4vcm9vdC9wcm9qZWN0cy1jb250cmlidXRpb24tcmVwb3J0JztcbmltcG9ydCBwcm9qZWN0c0Rhc2hib2FyZCBmcm9tICcuL3Jvb3QvcHJvamVjdHMtZGFzaGJvYXJkJztcbmltcG9ydCBwcm9qZWN0c0V4cGxvcmUgZnJvbSAnLi9yb290L3Byb2plY3RzLWV4cGxvcmUnO1xuaW1wb3J0IHByb2plY3RzSG9tZSBmcm9tICcuL3Jvb3QvcHJvamVjdHMtaG9tZSc7XG5pbXBvcnQgcHJvamVjdHNTaG93IGZyb20gJy4vcm9vdC9wcm9qZWN0cy1zaG93JztcbmltcG9ydCBwdWJsaXNoIGZyb20gJy4vcm9vdC9wdWJsaXNoJztcbmltcG9ydCBzdGFydCBmcm9tICcuL3Jvb3Qvc3RhcnQnO1xuaW1wb3J0IHRlYW0gZnJvbSAnLi9yb290L3RlYW0nO1xuaW1wb3J0IHVzZXJzQmFsYW5jZU1haW4gZnJvbSAnLi9yb290L3VzZXJzLWJhbGFuY2UtbWFpbic7XG5cbmNvbnN0IGMgPSB7XG4gICAgcm9vdDoge1xuICAgICAgICBGbGV4OiBmbGV4LFxuICAgICAgICBJbnNpZ2h0czogaW5zaWdodHMsXG4gICAgICAgIEpvYnM6IGpvYnMsXG4gICAgICAgIExpdmVTdGF0aXN0aWNzOiBsaXZlU3RhdGlzdGljcyxcbiAgICAgICAgUHJvamVjdHNDb250cmlidXRpb25SZXBvcnQ6IHByb2plY3RzQ29udHJpYnV0aW9uUmVwb3J0LFxuICAgICAgICBQcm9qZWN0c0Rhc2hib2FyZDogcHJvamVjdHNEYXNoYm9hcmQsXG4gICAgICAgIFByb2plY3RzRXhwbG9yZTogcHJvamVjdHNFeHBsb3JlLFxuICAgICAgICBQcm9qZWN0c0hvbWU6IHByb2plY3RzSG9tZSxcbiAgICAgICAgUHJvamVjdHNTaG93OiBwcm9qZWN0c1Nob3csXG4gICAgICAgIFB1Ymxpc2g6IHB1Ymxpc2gsXG4gICAgICAgIFN0YXJ0OiBzdGFydCxcbiAgICAgICAgVGVhbTogdGVhbSxcbiAgICAgICAgVXNlcnNCYWxhbmNlOiB1c2Vyc0JhbGFuY2VNYWluXG4gICAgfVxufTtcblxuZXhwb3J0IGRlZmF1bHQgYztcbiJdLCJmaWxlIjoiYy5qcyIsInNvdXJjZVJvb3QiOiIvc291cmNlLyJ9
+}(m,moment,I18n,replaceDiacritics,_,postgrest,Chart));
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJjLmpzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhZG1pblVzZXJzIGZyb20gJy4vcm9vdC9hZG1pbi11c2Vycyc7XG5pbXBvcnQgYWRtaW5Db250cmlidXRpb25zIGZyb20gJy4vcm9vdC9hZG1pbi1jb250cmlidXRpb25zJztcbmltcG9ydCBmbGV4IGZyb20gJy4vcm9vdC9mbGV4JztcbmltcG9ydCBpbnNpZ2h0cyBmcm9tICcuL3Jvb3QvaW5zaWdodHMnO1xuaW1wb3J0IGpvYnMgZnJvbSAnLi9yb290L2pvYnMnO1xuaW1wb3J0IGxpdmVTdGF0aXN0aWNzIGZyb20gJy4vcm9vdC9saXZlLXN0YXRpc3RpY3MnO1xuaW1wb3J0IHByb2plY3RzQ29udHJpYnV0aW9uUmVwb3J0IGZyb20gJy4vcm9vdC9wcm9qZWN0cy1jb250cmlidXRpb24tcmVwb3J0JztcbmltcG9ydCBwcm9qZWN0c0Rhc2hib2FyZCBmcm9tICcuL3Jvb3QvcHJvamVjdHMtZGFzaGJvYXJkJztcbmltcG9ydCBwcm9qZWN0c0V4cGxvcmUgZnJvbSAnLi9yb290L3Byb2plY3RzLWV4cGxvcmUnO1xuaW1wb3J0IHByb2plY3RzSG9tZSBmcm9tICcuL3Jvb3QvcHJvamVjdHMtaG9tZSc7XG5pbXBvcnQgcHJvamVjdHNTaG93IGZyb20gJy4vcm9vdC9wcm9qZWN0cy1zaG93JztcbmltcG9ydCBwdWJsaXNoIGZyb20gJy4vcm9vdC9wdWJsaXNoJztcbmltcG9ydCBzdGFydCBmcm9tICcuL3Jvb3Qvc3RhcnQnO1xuaW1wb3J0IHRlYW0gZnJvbSAnLi9yb290L3RlYW0nO1xuaW1wb3J0IHVzZXJzQmFsYW5jZU1haW4gZnJvbSAnLi9yb290L3VzZXJzLWJhbGFuY2UtbWFpbic7XG5cbmNvbnN0IGMgPSB7XG4gICAgcm9vdDoge1xuICAgICAgICBBZG1pblVzZXJzOiBhZG1pblVzZXJzLFxuICAgICAgICBBZG1pbkNvbnRyaWJ1dGlvbnM6IGFkbWluQ29udHJpYnV0aW9ucyxcbiAgICAgICAgRmxleDogZmxleCxcbiAgICAgICAgSW5zaWdodHM6IGluc2lnaHRzLFxuICAgICAgICBKb2JzOiBqb2JzLFxuICAgICAgICBMaXZlU3RhdGlzdGljczogbGl2ZVN0YXRpc3RpY3MsXG4gICAgICAgIFByb2plY3RzQ29udHJpYnV0aW9uUmVwb3J0OiBwcm9qZWN0c0NvbnRyaWJ1dGlvblJlcG9ydCxcbiAgICAgICAgUHJvamVjdHNEYXNoYm9hcmQ6IHByb2plY3RzRGFzaGJvYXJkLFxuICAgICAgICBQcm9qZWN0c0V4cGxvcmU6IHByb2plY3RzRXhwbG9yZSxcbiAgICAgICAgUHJvamVjdHNIb21lOiBwcm9qZWN0c0hvbWUsXG4gICAgICAgIFByb2plY3RzU2hvdzogcHJvamVjdHNTaG93LFxuICAgICAgICBQdWJsaXNoOiBwdWJsaXNoLFxuICAgICAgICBTdGFydDogc3RhcnQsXG4gICAgICAgIFRlYW06IHRlYW0sXG4gICAgICAgIFVzZXJzQmFsYW5jZTogdXNlcnNCYWxhbmNlTWFpblxuICAgIH1cbn07XG5cbmV4cG9ydCBkZWZhdWx0IGM7XG4iXSwiZmlsZSI6ImMuanMiLCJzb3VyY2VSb290IjoiL3NvdXJjZS8ifQ==

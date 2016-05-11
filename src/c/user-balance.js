@@ -12,6 +12,7 @@ import _ from 'underscore';
 import models from '../models';
 import h from '../h';
 import modalBox from './modal-box';
+import userBalanceRequestModalContent from './user-balance-request-modal-content';
 
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
@@ -27,7 +28,7 @@ const userBalance = {
     view (ctrl, args) {
         const balance = _.first(ctrl.userBalances()),
             balanceRequestModalC = [
-                'UserBalanceRequestModalContent',
+                userBalanceRequestModalContent,
                 _.extend({}, {balance: balance}, args)
             ];
 
