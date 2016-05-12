@@ -1,6 +1,9 @@
 import babel from 'rollup-plugin-babel';
 import multiEntry from 'rollup-plugin-multi-entry';
 
+//This is the standalone rollup config file to bundle the specs.
+//With rollup installed globally in your environment, you can simple run `rollup -c rollup.config.spec.js`
+
 export default {
   entry: ['spec/components/**/*.spec.js', 'src/**/*.js'],
   dest: 'spec/bundle.spec.js',
