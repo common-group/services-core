@@ -23,7 +23,7 @@ module.exports = function(config) {
       'spec/lib/matchers.js',
       'node_modules/mithril/mithril.js',
       'node_modules/underscore/underscore.js',
-      'node_modules/mithril-postgrest/mithril-postgrest.js',
+      'bower_components/mithril-postgrest/mithril-postgrest.umd.js',
       'bower_components/chartjs/Chart.js',
       'node_modules/moment/moment.js',
       'bower_components/replace-diacritics/index.js',
@@ -34,23 +34,6 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [
     ],
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    // preprocessors: {
-    //   'spec/**/*.spec.js': ['babel']
-    // },
-    // babelPreprocessor: {
-    //   options: {
-    //     sourceMap: 'inline'
-    //   },
-    //   filename: function(file) {
-    //     return file.originalPath.replace(/\.js$/, '.es5.js');
-    //   },
-    //   sourceFileName: function(file) {
-    //     return file.originalPath;
-    //   }
-    // },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
