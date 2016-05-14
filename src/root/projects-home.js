@@ -37,6 +37,8 @@ window.c.root.ProjectsHome = (((m, models, c, moment, h, _, I18n) => {
                 friendListVM.firstPage(userFriendVM.parameters());
             }
 
+            project.pageSize(20);
+
             return {
                 collections: collections,
                 slidesContent: vm.banners,
