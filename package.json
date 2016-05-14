@@ -44,6 +44,9 @@
   "dependencies": {
     "chartjs": "^0.3.23",
     "diacritics": "^1.2.3",
-    "moment-timezone": "^0.5.4"
+    "mithril": "^0.2.4",
+    "moment": "^2.13.0",
+    "moment-timezone": "^0.5.4",
+    "underscore": "^1.8.3"
   }
 }
