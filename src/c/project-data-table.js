@@ -21,80 +21,85 @@
  *      defaultSortIndex: -3
  *  })
  */
-window.c.ProjectDataTable = ((m, models, h, _) => {
-    return {
-        controller: (args) => {
-            let table = m.prop(args.table),
-                sortIndex = m.prop(-1);
+import m from 'mithril';
+import _ from 'underscore';
+import models from '../models';
+import h from '../h';
 
-            const comparator = (a, b) => {
-                let idx = sortIndex(),
-                    //Check if a custom comparator is used => Read component description
-                    x = (_.isArray(a[idx]) && a[idx].length > 1) ? a[idx][0] : a[idx],
-                    y = (_.isArray(b[idx]) && b[idx].length > 1) ? b[idx][0] : b[idx];
+const projectDataTable = {
+    controller (args) {
+        const table = m.prop(args.table),
+            sortIndex = m.prop(-1);
 
-                if (x < y){
-                    return -1;
-                }
-                if (y < x){
-                    return 1;
-                }
-                return 0;
-            };
+        const comparator = (a, b) => {
+            let idx = sortIndex(),
+                //Check if a custom comparator is used => Read component description
+                x = (_.isArray(a[idx]) && a[idx].length > 1) ? a[idx][0] : a[idx],
+                y = (_.isArray(b[idx]) && b[idx].length > 1) ? b[idx][0] : b[idx];
 
-            const sortTable = (idx) => {
-                let header = _.first(table()),
-                    body;
-                if (sortIndex() === idx){
-                    body = _.rest(table()).reverse();
-                } else {
-                    sortIndex(idx);
-                    body = _.rest(table()).sort(comparator);
-                }
+            if (x < y){
+                return -1;
+            }
+            if (y < x){
+                return 1;
+            }
+            return 0;
+        };
 
-                table(_.union([header],body));
-            };
-
-            sortTable(Math.abs(args.defaultSortIndex) || 0);
-
-            if (args.defaultSortIndex < 0){
-                sortTable(Math.abs(args.defaultSortIndex) || 0);
+        const sortTable = (idx) => {
+            let header = _.first(table()),
+                body;
+            if (sortIndex() === idx){
+                body = _.rest(table()).reverse();
+            } else {
+                sortIndex(idx);
+                body = _.rest(table()).sort(comparator);
             }
 
-            return {
-                table: table,
-                sortTable: sortTable
-            };
-        },
-        view: (ctrl, args) => {
-            let header = _.first(ctrl.table()),
-                body = _.rest(ctrl.table());
-            return m('.table-outer.u-marginbottom-60', [
-                m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
-                    _.map(header, (heading, idx) => {
-                        let sort = () => ctrl.sortTable(idx);
-                        return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                            m('a.link-hidden[href="javascript:void(0);"]', {
-                                onclick: sort
-                            }, [
-                                `${heading} `, m('span.fa.fa-sort')
-                            ])
-                        ]);
-                    })
-                ), m('.table-inner.fontsize-small',
-                    _.map(body, (rowData) => {
-                        return m('.w-row.table-row',
-                            _.map(rowData, (row) => {
-                                //Check if a custom comparator is used => Read component description
-                                row = (_.isArray(row) && row.length > 1) ? row[1] : row;
-                                return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
-                                    m('div', row)
-                                ]);
-                            })
-                        );
-                    })
-                )
-            ]);
+            table(_.union([header],body));
+        };
+
+        sortTable(Math.abs(args.defaultSortIndex) || 0);
+
+        if (args.defaultSortIndex < 0){
+            sortTable(Math.abs(args.defaultSortIndex) || 0);
         }
-    };
-}(window.m, window.c.models, window.c.h, window._));
+
+        return {
+            table: table,
+            sortTable: sortTable
+        };
+    },
+    view (ctrl, args) {
+        const header = _.first(ctrl.table()),
+            body = _.rest(ctrl.table());
+        return m('.table-outer.u-marginbottom-60', [
+            m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
+                _.map(header, (heading, idx) => {
+                    let sort = () => ctrl.sortTable(idx);
+                    return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
+                        m('a.link-hidden[href="javascript:void(0);"]', {
+                            onclick: sort
+                        }, [
+                            `${heading} `, m('span.fa.fa-sort')
+                        ])
+                    ]);
+                })
+            ), m('.table-inner.fontsize-small',
+                _.map(body, (rowData) => {
+                    return m('.w-row.table-row',
+                        _.map(rowData, (row) => {
+                            //Check if a custom comparator is used => Read component description
+                            row = (_.isArray(row) && row.length > 1) ? row[1] : row;
+                            return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
+                                m('div', row)
+                            ]);
+                        })
+                    );
+                })
+            )
+        ]);
+    }
+}
+
+export default projectDataTable;

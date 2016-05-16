@@ -1,6 +1,8 @@
-describe('ProjectContributions', () => {
-    let $output, projectContribution,
-        ProjectContributions = window.c.ProjectContributions;
+import m from 'mithril';
+import projectContributions from '../../src/c/project-contributions';
+
+describe('projectContributions', () => {
+    let $output, projectContribution;
 
     describe('view', () => {
         beforeAll(() => {
@@ -13,7 +15,7 @@ describe('ProjectContributions', () => {
             const project = m.prop({
                         id: 1231
             });
-            const component = m.component(ProjectContributions, {
+            const component = m.component(projectContributions, {
                     project: project
                 }),
                 view = component.view(component.controller({

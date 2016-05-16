@@ -1,6 +1,8 @@
+import m from 'mithril';
+import projectRow from '../../src/c/project-row';
+
 describe('ProjectRow', () => {
-    var $output,
-        ProjectRow = window.c.ProjectRow;
+    var $output;
 
     describe('view', () => {
         let collection = {
@@ -14,7 +16,7 @@ describe('ProjectRow', () => {
             it('should not render row', () => {
                 let [project] = ProjectMockery();
                 collection.collection([project]);
-                let component = m.component(ProjectRow),
+                let component = m.component(projectRow),
                     view = component.view(null, {
                         collection: collection,
                         ref: 'ref_test'
@@ -28,7 +30,7 @@ describe('ProjectRow', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(true);
-                let component = m.component(ProjectRow),
+                let component = m.component(projectRow),
                     view = component.view(null, {
                         collection: collection
                     });
@@ -44,7 +46,7 @@ describe('ProjectRow', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(false);
-                let component = m.component(ProjectRow),
+                let component = m.component(projectRow),
                     view = component.view(null, {
                         collection: collection
                     });
@@ -60,7 +62,7 @@ describe('ProjectRow', () => {
         describe('when collection has projects', () => {
             beforeAll(() => {
                 collection.collection(ProjectMockery());
-                let component = m.component(ProjectRow),
+                let component = m.component(projectRow),
                     view = component.view(null, {
                         collection: collection
                     });

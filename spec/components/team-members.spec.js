@@ -1,10 +1,11 @@
+import teamMembers from '../../src/c/team-members';
+
 describe('TeamMembers', () => {
-    var $output,
-        TeamMembers = window.c.TeamMembers;
+    let $output;
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(TeamMembers);
+            $output = mq(teamMembers);
         });
 
         it('should render fetched team members', () => {

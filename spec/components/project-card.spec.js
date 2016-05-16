@@ -1,12 +1,15 @@
+import m from 'mithril';
+import h from '../../src/h';
+import projectCard from '../../src/c/project-card';
+
 describe('ProjectCard', () => {
-    let ProjectCard = window.c.ProjectCard,
-        project, component, view, $output, $customOutput, remainingTimeObj;
+    let project, component, view, $output, $customOutput, remainingTimeObj;
 
     describe('view', () => {
         beforeAll(() => {
             project = ProjectMockery()[0];
-            remainingTimeObj = window.c.h.translatedTime(project.remaining_time);
-            $output = (type) => mq(m.component(ProjectCard, {
+            remainingTimeObj = h.translatedTime(project.remaining_time);
+            $output = (type) => mq(m.component(projectCard, {
                 project: project, type: type
             }));
         });

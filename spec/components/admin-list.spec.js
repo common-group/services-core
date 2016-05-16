@@ -1,7 +1,9 @@
-describe('AdminList', () => {
-    let c = window.c,
-        AdminList = c.AdminList,
-        $output, model, vm, ListItemMock, ListDetailMock,
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import adminList from '../../src/c/admin-list';
+
+describe('adminList', () => {
+    let $output, model, vm, ListItemMock, ListDetailMock,
         results = [{
             id: 1
         }],
@@ -20,9 +22,9 @@ describe('AdminList', () => {
                 return m('');
             }
         };
-        model = m.postgrest.model('items');
+        model = postgrest.model('items');
         vm = {
-            list: m.postgrest.paginationVM(model),
+            list: postgrest.paginationVM(model),
             error: m.prop()
         };
         listParameters = {
@@ -37,7 +39,7 @@ describe('AdminList', () => {
             beforeEach(() => {
                 spyOn(vm.list, "isLoading").and.returnValue(false);
                 $output = mq(
-                    AdminList,
+                    adminList,
                     listParameters
                 );
             });
@@ -55,7 +57,7 @@ describe('AdminList', () => {
             beforeEach(() => {
                 spyOn(vm.list, "isLoading").and.returnValue(true);
                 $output = mq(
-                    AdminList,
+                    adminList,
                     listParameters
                 );
             });
@@ -73,7 +75,7 @@ describe('AdminList', () => {
             beforeEach(() => {
                 vm.error('endpoint error');
                 $output = mq(
-                    AdminList,
+                    adminList,
                     listParameters
                 );
             });

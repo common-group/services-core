@@ -21,42 +21,19 @@ module.exports = function(config) {
       'spec/lib/jasmine-ajax/mock-ajax.js',
       'spec/lib/i18n/i18n.js',
       'spec/lib/matchers.js',
-      'bower_components/mithril/mithril.js',
-      'bower_components/underscore/underscore.js',
-      'bower_components/mithril.postgrest/dist/mithril.postgrest.js',
-      'bower_components/moment/moment.js',
-      'bower_components/moment-timezone/moment-timezone.js',
+      'node_modules/mithril/mithril.js',
+      'node_modules/underscore/underscore.js',
+      'bower_components/mithril-postgrest/mithril-postgrest.umd.js',
+      'bower_components/chartjs/Chart.js',
+      'node_modules/moment/moment.js',
       'bower_components/replace-diacritics/index.js',
       'spec/lib/mocks/*mock.js',
-      'src/c.js',
-      'src/h.js',
-      'src/models.js',
-      'src/c/**/*.js',
-      'src/**/*.js',
-      'spec/**/*.spec.js'
+      'spec/bundle.spec.js',
     ],
 
     // list of files to exclude
     exclude: [
     ],
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      'spec/**/*.spec.js': ['babel'],
-      'src/**/*.js': ['babel']
-    },
-    babelPreprocessor: {
-      options: {
-        sourceMap: 'inline'
-      },
-      filename: function(file) {
-        return file.originalPath.replace(/\.js$/, '.es5.js');
-      },
-      sourceFileName: function(file) {
-        return file.originalPath;
-      }
-    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

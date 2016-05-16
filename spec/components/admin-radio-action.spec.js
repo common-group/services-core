@@ -1,9 +1,9 @@
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import adminRadioAction from '../../src/c/admin-radio-action';
+
 describe('AdminRadioAction', () => {
-    const c = window.c,
-        m = window.m,
-        models = window.c.models,
-        AdminRadioAction = c.AdminRadioAction,
-        testModel = m.postgrest.model('reward_details'),
+    const testModel = postgrest.model('reward_details'),
         testStr = 'updated',
         errorStr = 'error!';
 
@@ -36,7 +36,7 @@ describe('AdminRadioAction', () => {
         beforeAll(() => {
             item = _.first(RewardDetailsMockery());
             args.selectedItem = m.prop(item);
-            $output = mq(AdminRadioAction, {
+            $output = mq(adminRadioAction, {
                 data: args,
                 item: m.prop(item)
             });
@@ -71,7 +71,7 @@ describe('AdminRadioAction', () => {
 
             describe('when new value is not valid', () => {
                 beforeAll(() => {
-                    $output = mq(AdminRadioAction, {
+                    $output = mq(adminRadioAction, {
                         data: errorArgs,
                         item: m.prop(item)
                     });

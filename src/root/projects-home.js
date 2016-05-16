@@ -1,73 +1,84 @@
-window.c.root.ProjectsHome = (((m, c, moment, h, _, I18n) => {
-    const I18nScope = _.partial(h.i18nScope, 'projects.home');
+import m from 'mithril';
+import _ from 'underscore';
+import I18n from 'i18n-js';
+import moment from 'moment';
+import h from '../h';
+import models from '../models';
+import projectFilters from '../vms/project-filters-vm';
+import homeVM from '../vms/home-vm';
+import slider from '../c/slider';
+import projectRow from '../c/project-row';
+import contributionActivities from '../c/contribution-activities';
 
-    return {
-        controller: () => {
-            let sample6 = _.partial(_.sample, _, 6),
-                loader = m.postgrest.loader,
-                project = c.models.project,
-                filters = c.vms.projectFilters().filters,
-                vm = c.vms.home();
+const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
-            const collections = _.map(['score'], (name) => {
-                const f = filters[name],
-                      cLoader = loader(project.getPageOptions(f.filter.parameters())),
-                      collection = m.prop([]);
+const projectsHome = {
+    controller () {
+        let sample6 = _.partial(_.sample, _, 6),
+            loader = postgrest.loader,
+            project = models.project,
+            filters = projectFilters().filters,
+            vm = homeVM();
 
-                cLoader.load().then(_.compose(collection, sample6));
+        const collections = _.map(['score'], (name) => {
+            const f = filters[name],
+                  cLoader = loader(project.getPageOptions(f.filter.parameters())),
+                  collection = m.prop([]);
 
-                return {
-                    title: f.title,
-                    hash: name,
-                    collection: collection,
-                    loader: cLoader
-                };
-            });
+            cLoader.load().then(_.compose(collection, sample6));
 
             project.pageSize(20);
 
             return {
-                collections: collections,
-                slidesContent: vm.banners
+                title: f.title,
+                hash: name,
+                collection: collection,
+                loader: cLoader
             };
-        },
+        });
 
-        view: (ctrl) => {
-            const slides = () => {
-                return _.map(ctrl.slidesContent, (slide) => {
-                    const customStyle = `background-image: url(${slide.image});`;
-                    const content = m('.w-container.u-text-center',[
-                        m('.w-row.u-marginbottom-40', [
-                            m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', slide.title),
-                            m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
-                        ]),
-                        m('a.btn.btn-large.u-marginbottom-10.btn-inline',{href: slide.link}, slide.cta)
-                    ]);
+        return {
+            collections: collections,
+            slidesContent: vm.banners
+        };
+    },
+    view (ctrl) {
+        const slides = () => {
+            return _.map(ctrl.slidesContent, (slide) => {
+                const customStyle = `background-image: url(${slide.image});`;
+                const content = m('.w-container.u-text-center',[
+                    m('.w-row.u-marginbottom-40', [
+                        m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', slide.title),
+                        m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
+                    ]),
+                    m('a.btn.btn-large.u-marginbottom-10.btn-inline',{href: slide.link}, slide.cta)
+                ]);
 
-                    return {
-                        content: content,
-                        customStyle: customStyle
-                    };
+                return {
+                    content: content,
+                    customStyle: customStyle
+                };
+            });
+        };
+
+        return [
+            m.component(slider, {
+                slides: slides(),
+                effect: 'fade',
+                slideClass: 'hero-slide start',
+                wrapperClass: 'hero-full hero-full-slide',
+                sliderTime: 10000
+            }),
+            _.map(ctrl.collections, (collection) => {
+                return m.component(projectRow, {
+                    collection: collection,
+                    title: I18n.t('row_title', I18nScope()),
+                    ref: `home_${collection.hash}`
                 });
-            };
+            }),
+            m.component(contributionActivities)
+        ];
+    }
+};
 
-            return [
-                m.component(c.Slider, {
-                    slides: slides(),
-                    effect: 'fade',
-                    slideClass: 'hero-slide start',
-                    wrapperClass: 'hero-full hero-full-slide',
-                    sliderTime: 10000
-                }),
-                _.map(ctrl.collections, (collection) => {
-                    return m.component(c.ProjectRow, {
-                        collection: collection,
-                        title: I18n.t('row_title', I18nScope()),
-                        ref: `home_${collection.hash}`
-                    });
-                }),
-                m.component(c.ContributionActivities)
-            ];
-        }
-    };
-})(window.m, window.c, window.moment, window.c.h, window._, window.I18n));
+export default projectsHome;
