@@ -16,7 +16,7 @@
 import m from 'mithril';
 
 const modalBox = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('.modal-backdrop', [
             m('.modal-dialog-outer', [
                 m('.modal-dialog-inner.modal-dialog-small', [
@@ -28,6 +28,6 @@ const modalBox = {
             ])
         ]);
     }
-}
+};
 
 export default modalBox;

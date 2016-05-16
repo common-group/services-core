@@ -12,7 +12,7 @@ import filterNumberRange from '../c/filter-number-range';
 import filterDateRange from '../c/filter-date-range';
 
 const adminContributions = {
-    controller () {
+    controller() {
         var listVM = contributionListVM,
             filterVM = contributionFilterVM,
             error = m.prop(''),
@@ -114,7 +114,7 @@ const adminContributions = {
         };
     },
 
-    view (ctrl) {
+    view(ctrl) {
         return [
             m.component(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
@@ -126,7 +126,7 @@ const adminContributions = {
                 listItem: adminContributionItem,
                 listDetail: adminContributionDetail
             })
-        ]
+        ];
     }
 };
 

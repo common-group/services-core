@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const adminTransactionHistory = {
-    controller (args) {
+    controller(args) {
         const contribution = args.contribution,
             mapEvents = _.reduce([{
                 date: contribution.paid_at,
@@ -40,7 +40,7 @@ const adminTransactionHistory = {
             orderedEvents: _.sortBy(mapEvents, 'originalDate')
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico da transação'),
             ctrl.orderedEvents.map((cEvent) => {

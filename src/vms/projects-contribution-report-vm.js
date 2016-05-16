@@ -9,7 +9,7 @@ const vm = postgrest.filtersVM({
     project_id: 'eq'
 }),
       paramToString = (p) => {
-          return (p||'').toString().trim();
+          return (p || '').toString().trim();
       };
 
 vm.state('');

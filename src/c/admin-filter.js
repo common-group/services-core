@@ -4,12 +4,12 @@ import h from '../h';
 import filterMain from './filter-main';
 
 const adminFilter = {
-    controller () {
+    controller() {
         return {
             toggler: h.toggleProp(false, true)
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const filterBuilder = args.filterBuilder,
             data = args.data,
             label = args.label || '',

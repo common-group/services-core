@@ -17,7 +17,7 @@ import userBalanceRequestModalContent from './user-balance-request-modal-content
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalance = {
-    controller (args) {
+    controller(args) {
         args.balanceManager.load();
 
         return {
@@ -25,7 +25,7 @@ const userBalance = {
             displayModal: h.toggleProp(false, true)
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const balance = _.first(ctrl.userBalances()),
             balanceRequestModalC = [
                 userBalanceRequestModalContent,

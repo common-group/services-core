@@ -5,7 +5,7 @@ import models from '../models';
 import h from '../h';
 
 const projectPosts = {
-    controller (args) {
+    controller(args) {
         const listVM = postgrest.paginationVM(models.projectPostDetail),
             filterVM = postgrest.filtersVM({
                 project_id: 'eq'
@@ -22,7 +22,7 @@ const projectPosts = {
             filterVM: filterVM
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const list = ctrl.listVM,
             project = args.project() || {};
 

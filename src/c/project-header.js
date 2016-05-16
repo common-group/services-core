@@ -5,7 +5,7 @@ import projectHighlight from './project-highlight';
 import projectSidebar from './project-sidebar';
 
 const projectHeader = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         let project = args.project;
 
         if (_.isUndefined(project())){
@@ -38,6 +38,6 @@ const projectHeader = {
             ])
             ]);
     }
-}
+};
 
 export default projectHeader;

@@ -2,12 +2,12 @@ import m from 'mithril';
 import h from '../h';
 
 const projectShareBox = {
-    controller () {
+    controller() {
         return {
             displayEmbed: h.toggleProp(false, true)
-        }
+        };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('.pop-share', {
             style: 'display: block;'
         }, [

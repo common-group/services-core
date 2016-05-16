@@ -9,7 +9,7 @@ import projectComments from './project-comments';
 import projectPosts from './project-posts';
 
 const projectMain = {
-    controller (args) {
+    controller(args) {
         const project = args.project,
               displayTabContent = () => {
                   const hash = window.location.hash,
@@ -42,7 +42,7 @@ const projectMain = {
             displayTabContent: displayTabContent
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
             m('.w-container', [
                 m('.w-row', args.project() ? ctrl.displayTabContent() : '')

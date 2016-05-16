@@ -9,7 +9,7 @@ import projectContributionReportContent from '../c/project-contribution-report-c
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 
 const projectContributionReport = {
-    controller (args) {
+    controller(args) {
         const listVM = postgrest.paginationVM(models.projectContribution, 'id.desc', {'Prefer': 'count=exact'}),
               filterVM = projectsContributionReportVM,
               project = m.prop({}),
@@ -81,7 +81,7 @@ const projectContributionReport = {
 
         const mapRewardsToOptions = () => {
             let options = [];
-            if(!lReward()) {
+            if (!lReward()) {
                 options = _.map(rewards(), (r) => {
                     return {
                         value: r.id,
@@ -98,7 +98,7 @@ const projectContributionReport = {
             return options;
         };
 
-        if(!listVM.collection().length) {
+        if (!listVM.collection().length) {
             listVM.firstPage(filterVM.parameters());
         }
 
@@ -113,7 +113,7 @@ const projectContributionReport = {
             mapRewardsToOptions: mapRewardsToOptions
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const list = ctrl.listVM;
 
         return [

@@ -17,7 +17,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const slider = {
-    controller (args) {
+    controller(args) {
         let interval;
         const selectedSlideIdx = m.prop(0),
             translationSize = m.prop(1600),
@@ -66,7 +66,7 @@ const slider = {
             resetSliderTimer: resetSliderTimer
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const slideClass = args.slideClass || '',
             wrapperClass = args.wrapperClass || '',
             effect = args.effect || 'slide',

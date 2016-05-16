@@ -1,10 +1,10 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import projectCard from './project-card'
+import projectCard from './project-card';
 
 const projectRow = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const collection = args.collection,
             title = args.title || collection.title,
             ref = args.ref,
@@ -33,6 +33,6 @@ const projectRow = {
             return m('div');
         }
     }
-}
+};
 
 export default projectRow;

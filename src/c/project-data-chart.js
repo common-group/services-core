@@ -13,7 +13,7 @@ import _ from 'underscore';
 import Chart from 'chartjs';
 
 const projectDataChart = {
-    controller (args) {
+    controller(args) {
         const resource = _.first(args.collection()),
               source = (!_.isUndefined(resource) ? resource.source : []),
 
@@ -48,7 +48,7 @@ const projectDataChart = {
             renderChart: renderChart
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('.card.u-radius.medium.u-marginbottom-30', [
             m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
             m('.w-row', [

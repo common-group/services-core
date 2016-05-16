@@ -5,10 +5,10 @@ import ownerMessageContent from './owner-message-content';
 import modalBox from './modal-box';
 
 const projectUserCard = {
-    controller (args) {
+    controller(args) {
         return {displayModal: h.toggleProp(false, true)};
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const contactModalC = [ownerMessageContent, args.userDetails];
 
         return m('#user-card', _.map(args.userDetails(), (userDetail) => {

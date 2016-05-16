@@ -16,7 +16,7 @@ import h from '../h';
 import models from '../models';
 
 const contributionActivities = {
-    controller (args) {
+    controller(args) {
         let interval;
         const collection = m.prop([]),
               resource = m.prop(),
@@ -55,7 +55,7 @@ const contributionActivities = {
             collectionSize: collectionSize
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         if (!ctrl.collectionL() && !_.isUndefined(ctrl.resource()) && (ctrl.collectionSize() || 0) > 0) {
             let resource = ctrl.resource(),
                 elapsed = h.translatedTime(resource.elapsed_time),

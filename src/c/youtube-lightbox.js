@@ -15,7 +15,7 @@ import models from '../models';
 import h from '../h';
 
 const youtubeLightbox = {
-    controller (args) {
+    controller(args) {
         let player;
         const showLightbox = h.toggleProp(false, true),
             setYoutube = (el, isInitialized) => {
@@ -57,7 +57,7 @@ const youtubeLightbox = {
             closeVideo: closeVideo
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('#youtube-lightbox', [
             m('a#youtube-play.w-lightbox.w-inline-block.fa.fa-play-circle.fontcolor-negative.fa-5x[href=\'javascript:void(0);\']', {
                 onclick: ctrl.showLightbox.toggle

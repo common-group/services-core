@@ -16,7 +16,7 @@ import adminInputAction from './admin-input-action';
 import adminNotificationHistory from './admin-notification-history';
 
 const adminUserDetail = {
-    controller () {
+    controller() {
         return {
             actions: {
                 reset: {
@@ -41,7 +41,7 @@ const adminUserDetail = {
             }
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const actions = ctrl.actions,
             item = args.item,
             details = args.details,
@@ -71,6 +71,6 @@ const adminUserDetail = {
             ]),
         ]);
     }
-}
+};
 
 export default adminUserDetail;

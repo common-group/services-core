@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminTransaction = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const contribution = args.contribution;
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Detalhes do apoio'),

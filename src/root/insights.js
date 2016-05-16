@@ -15,7 +15,7 @@ import projectReminderCount from '../c/project-reminder-count';
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const insights = {
-    controller (args) {
+    controller(args) {
         let filtersVM = postgrest.filtersVM({
                 project_id: 'eq'
             }),
@@ -104,7 +104,7 @@ const insights = {
             contributionsPerRefTable: contributionsPerRefTable
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         const project = _.first(ctrl.projectDetails()) || {
             user: {
                 name: 'Realizador'
@@ -217,6 +217,6 @@ const insights = {
             ] : ''
         ] : h.loader());
     }
-}
+};
 
 export default insights;

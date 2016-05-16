@@ -6,7 +6,7 @@ import models from '../models';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project,
             progress = project.progress.toFixed(2),
             remainingTextObj = h.translatedTime(project.remaining_time),

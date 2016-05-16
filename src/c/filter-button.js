@@ -13,7 +13,7 @@
 import m from 'mithril';
 
 const filterButton = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const title = args.title,
               href = args.href;
         return m('.w-col.w-col-2.w-col-small-6.w-col-tiny-6', [

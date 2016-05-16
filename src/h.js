@@ -10,7 +10,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
 	selfOrEmpty = (obj, emptyState = '') => {
-return obj ? obj : emptyState;
+    return obj ? obj : emptyState;
 	},
     setMomentifyLocale = () => {
         moment.locale('pt', {
@@ -323,7 +323,7 @@ return obj ? obj : emptyState;
         return (el, isInitialized) => {
             if (!isInitialized) {
                 const integrationScript = document.createElement('script');
-                integrationScript.type = 'text/javascript'
+                integrationScript.type = 'text/javascript';
                 integrationScript.id = 'RDIntegration';
 
                 if (!document.getElementById(integrationScript.id)){
@@ -334,7 +334,7 @@ return obj ? obj : emptyState;
 
                 return false;
             }
-        }
+        };
     },
 
     ga = (eventObj, fn = Function.prototype) => {

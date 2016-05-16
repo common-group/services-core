@@ -13,7 +13,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const projectSuggestedContributions = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project();
         const suggestionUrl = (amount) => {
             return `/projects/${project.project_id}/contributions/new?amount=${amount}`;

@@ -4,15 +4,15 @@ import h from '../h';
 import projectContributionReportContentCard from './project-contribution-report-content-card';
 
 const projectContributionReportContent = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const list = args.list;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
-                m(".w-row.u-marginbottom-20", [
-                    m(".w-col.w-col-9.w-col-small-6.w-col-tiny-6", [
-                        m(".fontsize-base", [
-                            m("span.fontweight-semibold", (list.isLoading() ? '' : list.total())),
-                            " apoios"
+                m('.w-row.u-marginbottom-20', [
+                    m('.w-col.w-col-9.w-col-small-6.w-col-tiny-6', [
+                        m('.fontsize-base', [
+                            m('span.fontweight-semibold', (list.isLoading() ? '' : list.total())),
+                            ' apoios'
                         ]),
                         //m(".fontsize-large.fontweight-semibold", "R$ 12.000,00")
                     ]),
@@ -34,7 +34,7 @@ const projectContributionReportContent = {
                 ]),
                 _.map(list.collection(), (item) => {
                     const contribution = m.prop(item);
-                    return m.component(projectContributionReportContentCard, { contribution: contribution });
+                    return m.component(projectContributionReportContentCard, {contribution: contribution});
                 })
             ]),
             m('.w-section.section.bg-gray', [
@@ -53,6 +53,6 @@ const projectContributionReportContent = {
 
         ]);
     }
-}
+};
 
 export default projectContributionReportContent;

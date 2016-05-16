@@ -3,7 +3,7 @@ import h from '../h';
 import projectReminder from './project-reminder';
 
 const projectTabs = {
-    controller (args) {
+    controller(args) {
         const isFixed = m.prop(false),
             originalPosition = m.prop(-1);
 
@@ -39,7 +39,7 @@ const projectTabs = {
             isFixed: isFixed
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project,
             rewards = args.rewardDetails;
 

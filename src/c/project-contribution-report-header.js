@@ -1,8 +1,8 @@
 import m from 'mithril';
 import _ from 'underscore';
 
-const projectContributionReportHeader= {
-    view (ctrl, args) {
+const projectContributionReportHeader = {
+    view(ctrl, args) {
         const filterBuilder = args.filterBuilder,
               paymentStateFilter =  _.findWhere(filterBuilder, {label: 'payment_state'}),
               rewardFilter = _.findWhere(filterBuilder, {label: 'reward_filter'}),

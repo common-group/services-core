@@ -8,7 +8,7 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 const I18nScope = _.partial(h.i18nScope, 'projects.publish');
 
 const publish = {
-    controller (args) {
+    controller(args) {
         let filtersVM = postgrest.filtersVM({
                 project_id: 'eq'
             }),
@@ -51,7 +51,7 @@ const publish = {
             projectDetails: projectDetails
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = _.first(ctrl.projectDetails()),
           account = _.first(ctrl.projectAccount()),
           flexTerms = (project) => {

@@ -3,7 +3,7 @@ import h from '../h';
 import adminUser from './admin-user';
 
 const adminUserItem = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m(
             '.w-row', [
                 m('.w-col.w-col-4', [

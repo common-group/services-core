@@ -10,7 +10,7 @@ import adminTransactionHistory from './admin-transaction-history';
 import adminReward from './admin-reward';
 
 const adminContributionDetail = {
-    controller (args) {
+    controller(args) {
         let l;
         const loadReward = () => {
             const model = models.rewardDetail,
@@ -51,7 +51,7 @@ const adminContributionDetail = {
                     getModel: models.rewardDetail,
                     updateModel: models.contributionDetail,
                     selectedItem: loadReward(),
-                    validate (rewards, newRewardID) {
+                    validate(rewards, newRewardID) {
                         let reward = _.findWhere(rewards, {id: newRewardID});
                         return (args.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
                     }
@@ -78,7 +78,7 @@ const adminContributionDetail = {
             l: l
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         let actions = ctrl.actions,
             item = args.item,
             reward = ctrl.reward;

@@ -13,14 +13,14 @@ import projectVM from '../vms/project-vm';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsDashboard = {
-    controller (args) {
+    controller(args) {
         return projectVM(args.project_id, args.project_user_id);
     },
-    view (ctrl) {
+    view(ctrl) {
         const project = ctrl.projectDetails;
         return project().is_owner_or_admin ?
             m.component(projectDashboardMenu, {project: project}) : '';
     }
-}
+};
 
 export default projectsDashboard;

@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const projectComments = {
-    controller () {
+    controller() {
         const loadComments = (el, isInitialized) => {
             return (el, isInitialized) => {
                 if (isInitialized) {return;}
@@ -12,7 +12,7 @@ const projectComments = {
 
         return {loadComments: loadComments};
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project();
         return m('.fb-comments[data-href="http://www.catarse.me/' + project.permalink + '"][data-num-posts=50][data-width="610"]', {config: ctrl.loadComments()});
     }

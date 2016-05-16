@@ -2,7 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const dropdown = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m(
             `select${args.classes}[id="${args.id}"]`,
             {

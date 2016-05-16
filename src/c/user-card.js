@@ -4,7 +4,7 @@ import h from '../h';
 import models from '../models';
 
 const userCard = {
-    controller (args) {
+    controller(args) {
         const vm = h.idVM,
             userDetails = m.prop([]);
 
@@ -17,7 +17,7 @@ const userCard = {
             userDetails: userDetails
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         return m('#user-card', _.map(ctrl.userDetails(), (userDetail) => {
             return m('.card.card-user.u-radius.u-marginbottom-30[itemprop="author"]', [
                 m('.w-row', [

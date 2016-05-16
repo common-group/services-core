@@ -17,7 +17,7 @@ import m from 'mithril';
 import adminUser from './admin-user';
 
 const adminContributionUser = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const item = args.item,
               user = {
                   profile_img_thumbnail: item.user_profile_img,

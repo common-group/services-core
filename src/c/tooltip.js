@@ -22,7 +22,7 @@ import m from 'mithril';
 import h from '../h';
 
 const tooltip = {
-    controller (args) {
+    controller(args) {
         let parentHeight = m.prop(0),
             width = m.prop(args.width || 280),
             top = m.prop(0),
@@ -70,7 +70,7 @@ const tooltip = {
             setParentPosition: setParentPosition
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         let width = ctrl.width();
         return m(args.el, {
             onclick: ctrl.toggle,

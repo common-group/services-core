@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const adminRadioAction = {
-    controller (args) {
+    controller(args) {
         const builder = args.data,
             complete = m.prop(false),
             data = {},
@@ -99,7 +99,7 @@ const adminRadioAction = {
             radios: radios
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const data = args.data,
             item = args.item(),
             btnValue = (ctrl.setLoader() || ctrl.getLoader()) ? 'por favor, aguarde...' : data.callToAction;

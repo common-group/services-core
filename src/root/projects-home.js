@@ -13,7 +13,7 @@ import contributionActivities from '../c/contribution-activities';
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
-    controller () {
+    controller() {
         let sample6 = _.partial(_.sample, _, 6),
             loader = postgrest.loader,
             project = models.project,
@@ -42,7 +42,7 @@ const projectsHome = {
             slidesContent: vm.banners
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         const slides = () => {
             return _.map(ctrl.slidesContent, (slide) => {
                 const customStyle = `background-image: url(${slide.image});`;

@@ -3,7 +3,7 @@ import h from '../h';
 import adminItem from './admin-item';
 
 const adminList = {
-    controller (args) {
+    controller(args) {
         const list = args.vm.list;
 
         if (!list.collection().length && list.firstPage) {
@@ -12,7 +12,7 @@ const adminList = {
             });
         }
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const list = args.vm.list,
             error = args.vm.error,
             label = args.label || '';
@@ -56,6 +56,6 @@ const adminList = {
             )
         ]);
     }
-}
+};
 
 export default adminList;

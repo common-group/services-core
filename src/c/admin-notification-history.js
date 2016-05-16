@@ -13,7 +13,7 @@ import h from '../h';
 import models from '../models';
 
 const adminNotificationHistory = {
-    controller (args) {
+    controller(args) {
         const notifications = m.prop([]),
             getNotifications = (user) => {
                 let notification = models.notification;
@@ -36,7 +36,7 @@ const adminNotificationHistory = {
             notifications: notifications
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico de notificações'),
             ctrl.notifications().map((cEvent) => {

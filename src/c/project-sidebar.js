@@ -9,7 +9,7 @@ import projectUserCard from './project-user-card';
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
 const projectSidebar = {
-    controller (args) {
+    controller(args) {
         const project = args.project,
             animateProgress = (el, isInitialized) => {
                 if (!isInitialized) {
@@ -49,7 +49,7 @@ const projectSidebar = {
             animateProgress: animateProgress
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project,
             elapsed = project().elapsed_time,
             remaining = project().remaining_time,

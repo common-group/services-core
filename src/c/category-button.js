@@ -15,7 +15,7 @@
 import m from 'mithril';
 
 const categoryButton = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const category = args.category;
 
         return m('.w-col.w-col-2.w-col-small-6.w-col-tiny-6', [

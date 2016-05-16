@@ -27,7 +27,7 @@ import models from '../models';
 import h from '../h';
 
 const projectDataTable = {
-    controller (args) {
+    controller(args) {
         const table = m.prop(args.table),
             sortIndex = m.prop(-1);
 
@@ -70,7 +70,7 @@ const projectDataTable = {
             sortTable: sortTable
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const header = _.first(ctrl.table()),
             body = _.rest(ctrl.table());
         return m('.table-outer.u-marginbottom-60', [
@@ -100,6 +100,6 @@ const projectDataTable = {
             )
         ]);
     }
-}
+};
 
 export default projectDataTable;

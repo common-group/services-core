@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminUser = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const user = args.item;
 
         return m('.w-row.admin-user', [

@@ -18,7 +18,7 @@ import m from 'mithril';
 import h from '../h';
 
 const landingSignup = {
-    controller (args) {
+    controller(args) {
         const builder = args.builder,
             email = m.prop(''),
             error = m.prop(false),
@@ -36,7 +36,7 @@ const landingSignup = {
             error: error
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         let errorClasses = (!ctrl.error) ? '.positive.error' : '';
         return m('form.w-form[id="email-form"][method="post"][action="' + args.builder.customAction + '"]',{
             onsubmit: ctrl.submit

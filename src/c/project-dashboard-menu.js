@@ -16,7 +16,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 
 const projectDashboardMenu = {
-    controller (args) {
+    controller(args) {
         let body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
             showPublish = h.toggleProp(true, false),
@@ -37,7 +37,7 @@ const projectDashboardMenu = {
             bodyToggleForNav: bodyToggleForNav
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project(),
               projectRoute = '/projects/' + project.id,
               editRoute = projectRoute + '/edit',

@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectRewardList = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         //FIXME: MISSING ADJUSTS
         // - add draft admin modifications
         var project = args.project;

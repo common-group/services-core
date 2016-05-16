@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminReward = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const reward = args.reward(),
             available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
 

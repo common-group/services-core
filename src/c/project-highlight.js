@@ -4,12 +4,12 @@ import h from '../h';
 import projectShareBox from './project-share-box';
 
 const projectHighlight = {
-    controller () {
+    controller() {
         return {
             displayShareBox: h.toggleProp(false, true)
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project,
             address = project().address || {state_acronym: '', city: ''};
 

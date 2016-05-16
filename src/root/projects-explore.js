@@ -17,9 +17,8 @@ import search from '../c/search';
 import categoryButton from '../c/category-button';
 import projectCard from '../c/project-card';
 
-
 const projectsExplore = {
-    controller () {
+    controller() {
         const filters = postgrest.filtersVM,
               projectFiltersVM = projectFilters(),
               filtersMap = projectFiltersVM.filters,
@@ -155,7 +154,7 @@ const projectsExplore = {
             isSearch: isSearch
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection()) && !ctrl.isSearch()){
             ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
             ctrl.changeFilter(ctrl.fallbackFilter);
@@ -193,7 +192,7 @@ const projectsExplore = {
                                     const projects = ctrl.projects(),
                                         isSelected = ctrl.currentFilter() == pageFilter;
 
-                                    return m(`option[value="${pageFilter.keyName}"]`,{ selected: isSelected },pageFilter.nicename);
+                                    return m(`option[value="${pageFilter.keyName}"]`,{selected: isSelected},pageFilter.nicename);
                                 })
                             ) : ''
                         )

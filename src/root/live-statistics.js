@@ -4,7 +4,7 @@ import models from '../models';
 import h from '../h';
 
 const liveStatistics = {
-    controller (args = {}) {
+    controller(args = {}) {
         const pageStatistics = m.prop([]),
             notificationData = m.prop({});
 
@@ -24,7 +24,7 @@ const liveStatistics = {
             notificationData: notificationData
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         const data = ctrl.notificationData();
 
         return m('.w-section.bg-stats.section.min-height-100', [
@@ -77,6 +77,6 @@ const liveStatistics = {
             ]),
         ]);
     }
-}
+};
 
 export default liveStatistics;

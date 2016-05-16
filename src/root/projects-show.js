@@ -8,10 +8,10 @@ import projectMain from '../c/project-main';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsShow = {
-    controller (args) {
+    controller(args) {
         return projectVM(args.project_id, args.project_user_id);
     },
-    view (ctrl) {
+    view(ctrl) {
         const project = ctrl.projectDetails;
 
         return m('.project-show', [

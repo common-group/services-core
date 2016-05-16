@@ -3,7 +3,7 @@ import _ from 'underscore';
 import models from '../models';
 
 const teamMembers = {
-    controller () {
+    controller() {
         const vm = {
                 collection: m.prop([])
             },
@@ -22,7 +22,7 @@ const teamMembers = {
             vm: vm
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         return m('#team-members-static.w-section.section', [
             m('.w-container', [
                 _.map(ctrl.vm.collection(), (group) => {
@@ -41,6 +41,6 @@ const teamMembers = {
             ])
         ]);
     }
-}
+};
 
 export default teamMembers;

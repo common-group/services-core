@@ -12,7 +12,7 @@ import landingQA from '../c/landing-qa';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const start = {
-    controller () {
+    controller() {
         const stats = m.prop([]),
             categories = m.prop([]),
             selectedPane = m.prop(0),
@@ -104,7 +104,7 @@ const start = {
             questions: startvm.questions
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         let stats = _.first(ctrl.stats());
         const testimonials = () => {
             return _.map(ctrl.testimonials, (testimonial) => {

@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const paymentStatus = {
-    controller (args) {
+    controller(args) {
         let payment = args.item,
             card = null,
             displayPaymentMethod, paymentMethodClass, stateClass;
@@ -73,7 +73,7 @@ const paymentStatus = {
             stateClass: stateClass
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const payment = args.item;
 
         return m('.w-row.payment-status', [
@@ -88,6 +88,6 @@ const paymentStatus = {
             ])
         ]);
     }
-}
+};
 
 export default paymentStatus;

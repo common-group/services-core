@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const filterMain = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const inputWrapperClass = args.inputWrapperClass || '.w-input.text-field.positive.medium',
               btnClass = args.btnClass || '.btn.btn-large.u-marginbottom-10';
 
@@ -17,6 +17,6 @@ const filterMain = {
             ])
         ]);
     }
-}
+};
 
 export default filterMain;

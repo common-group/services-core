@@ -16,7 +16,7 @@ import h from '../h';
 import tooltip from './tooltip';
 
 const projectMode = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project(),
             mode = project.mode,
             modeImgSrc = (mode === 'aon') ? '/assets/aon-badge.png' : '/assets/flex-badge.png',

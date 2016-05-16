@@ -14,7 +14,7 @@ import userBalance from '../c/user-balance';
 import userBalanceTransactions from '../c/user-balance-transactions';
 
 const userBalanceMain = {
-    controller (args) {
+    controller(args) {
         const userIdVM = postgrest.filtersVM({user_id: 'eq'});
 
         userIdVM.user_id(args.user_id);
@@ -71,7 +71,7 @@ const userBalanceMain = {
             balanceTransactionManager: balanceTransactionManager
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
             m.component(userBalance, opts),
@@ -81,6 +81,6 @@ const userBalanceMain = {
             m('.w-section.section.card-terciary.before-footer')
         ]);
     }
-}
+};
 
 export default userBalanceMain;

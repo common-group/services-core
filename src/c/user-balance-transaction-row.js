@@ -4,7 +4,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceTrasactionRow = {
-    controller (args) {
+    controller(args) {
         const expanded = h.toggleProp(false, true);
 
         if (args.index == 0) {
@@ -15,7 +15,7 @@ const userBalanceTrasactionRow = {
             expanded: expanded
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const item = args.item,
               createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 

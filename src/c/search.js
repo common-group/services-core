@@ -9,7 +9,7 @@
 import m from 'mithril';
 
 const search = {
-    view (ctrl, args = {}) {
+    view(ctrl, args = {}) {
         const action = args.action || '/pt/explore',
             method = args.method || 'GET';
 

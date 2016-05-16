@@ -4,7 +4,7 @@ import models from '../models';
 import h from '../h';
 
 const projectContributions = {
-    controller (args) {
+    controller(args) {
         const listVM = postgrest.paginationVM(models.projectContribution),
             filterVM = postgrest.filtersVM({
                 project_id: 'eq',
@@ -29,7 +29,7 @@ const projectContributions = {
             toggleWaiting: toggleWaiting
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const list = ctrl.listVM;
         return m('#project_contributions.content.w-col.w-col-12', [
             (args.project().is_owner_or_admin ?
@@ -83,6 +83,6 @@ const projectContributions = {
             ])
         ]);
     }
-}
+};
 
 export default projectContributions;

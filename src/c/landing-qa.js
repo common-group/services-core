@@ -16,12 +16,12 @@ import m from 'mithril';
 import h from '../h';
 
 const landingQA = {
-    controller (args) {
+    controller(args) {
         return {
             showAnswer: h.toggleProp(false, true)
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('.card.qa-card.u-marginbottom-20.u-radius.btn-terciary',[
             m('.fontsize-base', {
                 onclick: ctrl.showAnswer.toggle

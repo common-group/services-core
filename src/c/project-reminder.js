@@ -14,7 +14,7 @@ import h from '../h';
 import popNotification from './pop-notification';
 
 const projectReminder = {
-    controller (args) {
+    controller(args) {
         let l = m.prop(false);
         const project = args.project,
             filterVM = postgrest.filtersVM({
@@ -56,7 +56,7 @@ const projectReminder = {
             popNotification: popNotification
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
             buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small',
             hideTextOnMobile = args.hideTextOnMobile || false,
@@ -74,6 +74,6 @@ const projectReminder = {
             }) : '')
         ]);
     }
-}
+};
 
 export default projectReminder;

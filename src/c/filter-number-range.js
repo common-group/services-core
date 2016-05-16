@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const filterNumberRange = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('.w-col.w-col-3.w-col-small-6', [
             m('label.fontsize-smaller[for="' + args.index + '"]', args.label),
             m('.w-row', [
@@ -23,6 +23,6 @@ const filterNumberRange = {
             ])
         ]);
     }
-}
+};
 
 export default filterNumberRange;

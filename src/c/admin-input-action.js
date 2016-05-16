@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminInputAction = {
-    controller (args) {
+    controller(args) {
         const builder = args.data,
             complete = m.prop(false),
             error = m.prop(false),
@@ -50,7 +50,7 @@ const adminInputAction = {
             unload: unload
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const data = args.data,
             btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
 
@@ -82,6 +82,6 @@ const adminInputAction = {
             ]) : ''
         ]);
     }
-}
+};
 
 export default adminInputAction;

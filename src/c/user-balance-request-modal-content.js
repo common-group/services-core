@@ -16,7 +16,7 @@ import models from '../models';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceRequestModelContent = {
-    controller (args) {
+    controller(args) {
         const vm = postgrest.filtersVM({user_id: 'eq'}),
               balance = args.balance,
               loaderOpts = models.balanceTransfer.postOptions({
@@ -41,7 +41,7 @@ const userBalanceRequestModelContent = {
             loadBankA: args.bankAccountManager.loader
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const balance = args.balance;
 
         return (ctrl.loadBankA() ? h.loader() : m('div', _.map(ctrl.bankAccounts(), (item) => {

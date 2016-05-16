@@ -12,7 +12,7 @@ import h from '../h';
 import moment from 'moment';
 
 const adminProjectDetailsCard = {
-    controller (args) {
+    controller(args) {
         let project = args.resource,
             generateStatusText = () => {
                 let statusTextObj = m.prop({}),
@@ -67,7 +67,7 @@ const adminProjectDetailsCard = {
             isFinalLap: isFinalLap
         };
     },
-    view (ctrl) {
+    view(ctrl) {
         let project = ctrl.project,
             progress = project.progress.toFixed(2),
             statusTextObj = ctrl.statusTextObj(),

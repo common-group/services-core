@@ -4,7 +4,7 @@ import projectRewardList from './project-reward-list';
 import projectSuggestedContributions from './project-suggested-contributions';
 
 const projectAbout = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project() || {},
             onlineDays = () => {
                 let diff = moment(project.zone_online_date).diff(moment(project.zone_expires_at)),

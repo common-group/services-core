@@ -6,7 +6,7 @@ import adminContributionUser from './admin-contribution-user';
 import paymentStatus from './payment-status';
 
 const adminContributionItem = {
-    controller () {
+    controller() {
         return {
             itemBuilder: [{
                 component: adminContributionUser,
@@ -23,7 +23,7 @@ const adminContributionItem = {
             }]
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m(
             '.w-row',
             _.map(ctrl.itemBuilder, function(panel) {

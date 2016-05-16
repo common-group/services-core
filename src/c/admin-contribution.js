@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminContribution = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const contribution = args.item;
         return m('.w-row.admin-contribution', [
             m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', 'R$' + contribution.value),
@@ -13,6 +13,6 @@ const adminContribution = {
             ])
         ]);
     }
-}
+};
 
 export default adminContribution;
