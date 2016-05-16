@@ -2,7 +2,6 @@ import m from 'mithril';
 import moment from 'moment';
 import I18n from 'i18n-js';
 
-
 const hashMatch = (str) => { return window.location.hash === str; },
     paramByName = (name) => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
@@ -336,6 +335,15 @@ return obj ? obj : emptyState;
                 return false;
             }
         }
+    },
+
+    ga = (eventObj, fn = Function.prototype) => {
+        const ga = window.ga || {};
+
+        return () => {
+            ga('send', eventObj);
+            fn();
+        };
     };
 
 setMomentifyLocale();
@@ -377,5 +385,6 @@ export default {
     i18nScope,
     RDTracker,
     selfOrEmpty,
-    scrollTo
+    scrollTo,
+    ga
 };

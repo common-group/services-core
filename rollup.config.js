@@ -15,7 +15,7 @@ export default {
       mithril: 'm',
       chartjs: 'Chart',
       replaceDiacritics: 'replaceDiacritics',
-      ['mithril-postgrest']: 'postgrest',
-      ['i18n-js']: 'I18n'
+      'mithril-postgrest': 'postgrest',
+      'i18n-js': 'I18n'
   }
 };
