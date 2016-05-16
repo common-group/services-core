@@ -1,4 +1,4 @@
-import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 
 const models = {
     contributionDetail: postgrest.model('contribution_details'),
@@ -29,7 +29,8 @@ const models = {
     teamMember: postgrest.model('team_members'),
     notification: postgrest.model('notifications'),
     statistic: postgrest.model('statistics'),
-    successfulProject: postgrest.model('successful_projects')
+    successfulProject: postgrest.model('successful_projects'),
+    finishedProject: postgrest.model('finished_projects')
 };
 
 models.teamMember.pageSize(40);
@@ -38,5 +39,6 @@ models.project.pageSize(30);
 models.category.pageSize(50);
 models.contributionActivity.pageSize(40);
 models.successfulProject.pageSize(9);
+models.finishedProject.pageSize(9);
 
 export default models;

@@ -94,18 +94,18 @@ const projectFiltersVM = () => {
         };
 
         const setContextFilters = (contextFilters) => {
-            _.map(contextFilters, (filterKey) => filters[filterKey].isContextual = true);
+                _.map(contextFilters, (filterKey) => filters[filterKey].isContextual = true);
 
-            return filters;
-        },
-        getContextFilters = () => {
-            return _.filter(filters, (filter) => filter.isContextual);
-        },
-        removeContextFilter = (filter) => {
-            filters[filter.keyName].isContextual = false;
+                return filters;
+            },
+            getContextFilters = () => {
+                return _.filter(filters, (filter) => filter.isContextual);
+            },
+            removeContextFilter = (filter) => {
+                filters[filter.keyName].isContextual = false;
 
-            return filters;
-        };
+                return filters;
+            };
 
         return {
             filters: filters,

@@ -27,6 +27,8 @@ const projectsHome = {
 
             cLoader.load().then(_.compose(collection, sample6));
 
+            project.pageSize(20);
+
             return {
                 title: f.title,
                 hash: name,
