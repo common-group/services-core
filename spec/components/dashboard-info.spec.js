@@ -1,7 +1,8 @@
+import m from 'mithril';
+import dashboardInfo from '../../src/c/dashboard-info';
+
 describe('Dashboard Info', () => {
     let $output,
-        c = window.c,
-        m = window.m,
         content = {
             icon: 'url://to.icon',
             title: 'title',
@@ -11,8 +12,7 @@ describe('Dashboard Info', () => {
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(m.component(c.DashboardInfo, {content: content}));
-            console.log(JSON.stringify($output));
+            $output = mq(m.component(dashboardInfo, {content: content}));
         });
 
         it('should render an given icon', () => {
