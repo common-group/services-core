@@ -13,9 +13,15 @@ window.c.root.ProjectsHome = (((m, models, c, moment, h, _, I18n) => {
                 friendListVM = m.postgrest.paginationVM(models.userFriend, 'user_id.desc', {
                     'Prefer':  'count=exact'
                 }),
-                vm = c.vms.home();
+                vm = c.vms.home(),
+                currentUserId = args.root.getAttribute('data-currentuserid'),
+                hasFBAuth = args.root.getAttribute('data-hasfb') === 'true';
 
-            userFriendVM.user_id(args.root.getAttribute('data-currentuserid'));
+            userFriendVM.user_id(currentUserId);
+
+            if (hasFBAuth && !friendListVM.collection().length) {
+                friendListVM.firstPage(userFriendVM.parameters());
+            }
 
             const collections = _.map(['score'], (name) => {
                 const f = filters[name],
@@ -30,19 +36,15 @@ window.c.root.ProjectsHome = (((m, models, c, moment, h, _, I18n) => {
                     collection: collection,
                     loader: cLoader
                 };
-            }),
-                  userSignedIn = !_.isNull(userFriendVM.user_id());
+            });
 
-            if (userSignedIn && !friendListVM.collection().length) {
-                friendListVM.firstPage(userFriendVM.parameters());
-            }
 
             project.pageSize(20);
 
             return {
                 collections: collections,
                 slidesContent: vm.banners,
-                userSignedIn: userSignedIn,
+                hasFBAuth: hasFBAuth,
                 friendListVM: friendListVM
             };
         },
@@ -81,7 +83,7 @@ window.c.root.ProjectsHome = (((m, models, c, moment, h, _, I18n) => {
                         ref: `home_${collection.hash}`
                     });
                 }),
-                (ctrl.userSignedIn ?
+                (ctrl.hasFBAuth ?
                  m.component(c.SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(c.UnsignedFriendFacebookConnect) )
             ];
         }
