@@ -310,13 +310,14 @@ const hashMatch = (str) => { return window.location.hash === str; },
 
                 return false;
             };
+        }
 
-            return (el, isInitialized) => {
-                if (!isInitialized) {
-                    setTrigger(el, el.hash.slice(1));
-                }
-            };
-        },
+        return (el, isInitialized) => {
+            if (!isInitialized) {
+                setTrigger(el, el.hash.slice(1));
+            }
+        };
+    },
 
         projectStateTextClass = (state) => {
             const statusText = {

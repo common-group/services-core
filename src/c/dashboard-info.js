@@ -16,7 +16,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const dashboardInfo = {
-    controller(args) => {
+    controller(args) {
         const toRedraw = args.dataToRedraw || {},
               listenToReplace = (element, isInitialized, context) => {
 

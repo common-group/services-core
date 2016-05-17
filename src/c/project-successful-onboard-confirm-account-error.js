@@ -18,7 +18,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 const projectSuccessfulOnboardConfirmAccountError = {
     controller(args) {
         return {
-            errorReasonM: m.prop('');
+            errorReasonM: m.prop('')
         }
     },
     view(ctrl, args) {

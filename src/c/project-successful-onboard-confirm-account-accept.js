@@ -16,7 +16,7 @@ import I18n from 'i18n-js';
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
 
 const projectSuccessfulOnboardConfirmAccountAccept = {
-    view(ctrl, args) => {
+    view(ctrl, args) {
         return m('.w-row.bank-transfer-answer', [
             m('.w-col.w-col-6.w-col-push-3', [
                 m('.w-form.bank-transfer-confirm.card.u-radius', [

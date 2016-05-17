@@ -32,7 +32,7 @@ const insightVM = {
             });
         });
         return contentObj;
-    };
-}
+    }
+};
 
 export default insightVM;

@@ -9,7 +9,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
-import projectSuccessfulOnboardConfirmAccountActions from './project-successful-onboard-confirm-account-actions';
 import projectSuccessfulOnboardConfirmAccountError from './project-successful-onboard-confirm-account-error';
 import projectSuccessfulOnboardConfirmAccountAccept from './project-successful-onboard-confirm-account-accept';
 
@@ -18,8 +17,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 const projectSuccessfulOnboardConfirmAccount = {
     controller(args) {
         const actionStages = {
-                  'start': projectSuccessfulOnboardConfirmAccountActions
-                  'error': projectSuccessfulOnboardConfirmAccountError
+                  'error': projectSuccessfulOnboardConfirmAccountError,
                   'accept': projectSuccessfulOnboardConfirmAccountAccept
               },
               currentStage = m.prop('start'),

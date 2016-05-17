@@ -8,7 +8,7 @@
  **/
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
-import I18n from 'i19n-js';
+import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import dashboardInfo from './dashboard-info';
