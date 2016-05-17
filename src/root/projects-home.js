@@ -1,91 +1,101 @@
-window.c.root.ProjectsHome = (((m, models, c, moment, h, _, I18n) => {
-    const I18nScope = _.partial(h.i18nScope, 'projects.home');
+import m from 'mithril';
+import _ from 'underscore';
+import I18n from 'i18n-js';
+import moment from 'moment';
+import h from '../h';
+import models from '../models';
+import projectFilters from '../vms/project-filters-vm';
+import homeVM from '../vms/home-vm';
+import slider from '../c/slider';
+import projectRow from '../c/project-row';
+import contributionActivities from '../c/contribution-activities';
 
-    return {
-        controller: (args) => {
-            let sample6 = _.partial(_.sample, _, 6),
-                loader = m.postgrest.loader,
-                project = c.models.project,
-                filters = c.vms.projectFilters().filters,
-                userFriendVM = m.postgrest.filtersVM({
-                    user_id: 'eq'
-                }),
-                friendListVM = m.postgrest.paginationVM(models.userFriend, 'user_id.desc', {
-                    'Prefer':  'count=exact'
-                }),
-                vm = c.vms.home(),
-                currentUserId = args.root.getAttribute('data-currentuserid'),
-                hasFBAuth = args.root.getAttribute('data-hasfb') === 'true';
+const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
-            userFriendVM.user_id(currentUserId);
+const projectsHome = {
+    controller() {
+        let sample6 = _.partial(_.sample, _, 6),
+            loader = postgrest.loader,
+            project = models.project,
+            filters = projectFilters().filters,
+            userFriendVM = m.postgrest.filtersVM({user_id: 'eq'}),
+            friendListVM = m.postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+                'Prefer':  'count=exact'
+            }),
+            currentUserId = args.root.getAttribute('data-currentuserid'),
+            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
+            vm = homeVM();
 
-            if (hasFBAuth && !friendListVM.collection().length) {
-                friendListVM.firstPage(userFriendVM.parameters());
-            }
+        userFriendVM.user_id(currentUserId);
 
-            const collections = _.map(['score'], (name) => {
-                const f = filters[name],
-                      cLoader = loader(project.getPageOptions(f.filter.parameters())),
-                      collection = m.prop([]);
+        if (hasFBAuth && !friendListVM.collection().length) {
+            friendListVM.firstPage(userFriendVM.parameters());
+        }
 
-                cLoader.load().then(_.compose(collection, sample6));
+        const collections = _.map(['score'], (name) => {
+            const f = filters[name],
+                  cLoader = loader(project.getPageOptions(f.filter.parameters())),
+                  collection = m.prop([]);
 
-                return {
-                    title: f.title,
-                    hash: name,
-                    collection: collection,
-                    loader: cLoader
-                };
-            });
+            cLoader.load().then(_.compose(collection, sample6));
 
 
             project.pageSize(20);
 
             return {
-                collections: collections,
-                slidesContent: vm.banners,
+                title: f.title,
+                hash: name,
+                collection: collection,
                 hasFBAuth: hasFBAuth,
-                friendListVM: friendListVM
+                friendListVM: friendListVM,
+                loader: cLoader
             };
-        },
+        });
 
-        view: (ctrl) => {
-            const slides = () => {
-                return _.map(ctrl.slidesContent, (slide) => {
-                    const customStyle = `background-image: url(${slide.image});`;
-                    const content = m('.w-container.u-text-center',[
-                        m('.w-row.u-marginbottom-40', [
-                            m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', slide.title),
-                            m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
-                        ]),
-                        m('a.btn.btn-large.u-marginbottom-10.btn-inline',{href: slide.link}, slide.cta)
-                    ]);
+        return {
+            collections: collections,
+            slidesContent: vm.banners
+        };
+    },
+    view(ctrl) {
+        const slides = () => {
+            return _.map(ctrl.slidesContent, (slide) => {
+                const customStyle = `background-image: url(${slide.image});`;
+                const content = m('.w-container.u-text-center',[
+                    m('.w-row.u-marginbottom-40', [
+                        m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', slide.title),
+                        m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
+                    ]),
+                    m('a.btn.btn-large.u-marginbottom-10.btn-inline',{href: slide.link}, slide.cta)
+                ]);
 
-                    return {
-                        content: content,
-                        customStyle: customStyle
-                    };
+                return {
+                    content: content,
+                    customStyle: customStyle
+                };
+            });
+        };
+
+        return [
+            m.component(slider, {
+                slides: slides(),
+                effect: 'fade',
+                slideClass: 'hero-slide start',
+                wrapperClass: 'hero-full hero-full-slide',
+                sliderTime: 10000
+            }),
+            _.map(ctrl.collections, (collection) => {
+                return m.component(projectRow, {
+                    collection: collection,
+                    title: I18n.t('row_title', I18nScope()),
+                    ref: `home_${collection.hash}`
                 });
-            };
+            }),
+            //m.component(contributionActivities)
+            (ctrl.hasFBAuth ?
+             m.component(c.SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(c.UnsignedFriendFacebookConnect) )
+        ];
+    }
+};
 
-            return [
-                m.component(c.Slider, {
-                    slides: slides(),
-                    effect: 'fade',
-                    slideClass: 'hero-slide start',
-                    wrapperClass: 'hero-full hero-full-slide',
-                    sliderTime: 10000
-                }),
-                _.map(ctrl.collections, (collection) => {
-                    return m.component(c.ProjectRow, {
-                        collection: collection,
-                        title: I18n.t('row_title', I18nScope()),
-                        ref: `home_${collection.hash}`
-                    });
-                }),
-                (ctrl.hasFBAuth ?
-                 m.component(c.SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(c.UnsignedFriendFacebookConnect) )
-            ];
-        }
-    };
-})(window.m, window.c.models, window.c, window.moment, window.c.h, window._, window.I18n));
+export default projectsHome;

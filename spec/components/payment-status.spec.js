@@ -1,50 +1,53 @@
-describe('PaymentStatus', function() {
-    var c = window.c,
+import m from 'mithril';
+import paymentStatus from '../../src/c/payment-status';
+
+describe('PaymentStatus', () => {
+    let c = window.c,
         ctrl,
-        setController = function(contribution) {
-            var payment = {
+        setController = (contribution) => {
+            let payment = {
                 gateway: contribution.gateway,
                 gateway_data: contribution.gateway_data,
                 installments: contribution.installments,
                 state: contribution.state,
                 payment_method: contribution.payment_method
             };
-            ctrl = m.component(c.PaymentStatus, {
+            ctrl = m.component(paymentStatus, {
                 item: payment
             }).controller();
         };
 
-    describe('stateClass function', function() {
-        it('should return a success CSS class when contribution state is paid', function() {
-            var contribution = ContributionDetailMockery(1, {
+    describe('stateClass function', () => {
+        it('should return a success CSS class when contribution state is paid', () => {
+            let contribution = ContributionDetailMockery(1, {
                 state: 'paid'
             })[0];
             setController(contribution);
             expect(ctrl.stateClass()).toEqual('.text-success');
         });
-        it('should return a success CSS class when contribution state is refunded', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return a success CSS class when contribution state is refunded', () => {
+            let contribution = ContributionDetailMockery(1, {
                 state: 'refunded'
             })[0];
             setController(contribution);
             expect(ctrl.stateClass()).toEqual('.text-refunded');
         });
-        it('should return a warning CSS class when contribution state is pending', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return a warning CSS class when contribution state is pending', () => {
+            let contribution = ContributionDetailMockery(1, {
                 state: 'pending'
             })[0];
             setController(contribution);
             expect(ctrl.stateClass()).toEqual('.text-waiting');
         });
-        it('should return an error CSS class when contribution state is refused', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return an error CSS class when contribution state is refused', () => {
+            let contribution = ContributionDetailMockery(1, {
                 state: 'refused'
             })[0];
             setController(contribution);
             expect(ctrl.stateClass()).toEqual('.text-error');
         });
-        it('should return an error CSS class when contribution state is not known', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return an error CSS class when contribution state is not known', () => {
+            let contribution = ContributionDetailMockery(1, {
                 state: 'foo'
             })[0];
             setController(contribution);
@@ -52,27 +55,27 @@ describe('PaymentStatus', function() {
         });
     });
 
-    describe('paymentMethodClass function', function() {
-        var CSSboleto = '.fa-barcode',
+    describe('paymentMethodClass function', () => {
+        let CSSboleto = '.fa-barcode',
             CSScreditcard = '.fa-credit-card',
             CSSerror = '.fa-question';
 
-        it('should return a boleto CSS class when contribution payment method is boleto', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return a boleto CSS class when contribution payment method is boleto', () => {
+            let contribution = ContributionDetailMockery(1, {
                 payment_method: 'BoletoBancario'
             })[0];
             setController(contribution);
             expect(ctrl.paymentMethodClass()).toEqual(CSSboleto);
         });
-        it('should return a credit card CSS class when contribution payment method is credit card', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return a credit card CSS class when contribution payment method is credit card', () => {
+            let contribution = ContributionDetailMockery(1, {
                 payment_method: 'CartaoDeCredito'
             })[0];
             setController(contribution);
             expect(ctrl.paymentMethodClass()).toEqual(CSScreditcard);
         });
-        it('should return an error CSS class when contribution payment method is not known', function() {
-            var contribution = ContributionDetailMockery(1, {
+        it('should return an error CSS class when contribution payment method is not known', () => {
+            let contribution = ContributionDetailMockery(1, {
                 payment_method: 'foo'
             })[0];
             setController(contribution);
@@ -80,9 +83,9 @@ describe('PaymentStatus', function() {
         });
     });
 
-    describe('view', function() {
-        var getOutput = function(payment_method) {
-            var contribution = ContributionDetailMockery(1, {
+    describe('view', () => {
+        let getOutput = (payment_method) => {
+            let contribution = ContributionDetailMockery(1, {
                     payment_method: payment_method
                 })[0],
                 payment = {
@@ -92,15 +95,15 @@ describe('PaymentStatus', function() {
                     state: contribution.state,
                     payment_method: contribution.payment_method
                 };
-            return mq(m.component(c.PaymentStatus, {
+            return mq(m.component(paymentStatus, {
                 item: payment
             }));
         };
 
-        it('should return an HTML element describing a boleto when payment_method is boleto', function() {
+        it('should return an HTML element describing a boleto when payment_method is boleto', () => {
             expect(getOutput('BoletoBancario').has('#boleto-detail')).toBeTrue();
         });
-        it('should return an HTML element describing a credit card when payment_method is credit card', function() {
+        it('should return an HTML element describing a credit card when payment_method is credit card', () => {
             expect(getOutput('CartaoDeCredito').has('#creditcard-detail')).toBeTrue();
         });
     });

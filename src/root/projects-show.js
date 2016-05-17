@@ -1,29 +1,37 @@
-window.c.root.ProjectsShow = ((m, c, _, h, vms) => {
-    return {
-        controller: (args) => {
-            return vms.project(args.project_id, args.project_user_id);
-        },
+import m from 'mithril';
+import _ from 'underscore';
+import h from '../h';
+import projectVM from '../vms/project-vm';
+import projectHeader from '../c/project-header';
+import projectTabs from '../c/project-tabs';
+import projectMain from '../c/project-main';
+import projectDashboardMenu from '../c/project-dashboard-menu';
 
-        view: (ctrl) => {
-            let project = ctrl.projectDetails;
+const projectsShow = {
+    controller(args) {
+        return projectVM(args.project_id, args.project_user_id);
+    },
+    view(ctrl) {
+        const project = ctrl.projectDetails;
 
-            return m('.project-show', [
-                    m.component(c.ProjectHeader, {
-                        project: project,
-                        userDetails: ctrl.userDetails
-                    }),
-                    m.component(c.ProjectTabs, {
-                        project: project,
-                        rewardDetails: ctrl.rewardDetails
-                    }),
-                    m.component(c.ProjectMain, {
-                        project: project,
-                        rewardDetails: ctrl.rewardDetails
-                    }),
-                    (project() && project().is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
-                        project: project
-                    }) : '')
-                ]);
-        }
-    };
-}(window.m, window.c, window._, window.c.h, window.c.vms));
+        return m('.project-show', [
+                m.component(projectHeader, {
+                    project: project,
+                    userDetails: ctrl.userDetails
+                }),
+                m.component(projectTabs, {
+                    project: project,
+                    rewardDetails: ctrl.rewardDetails
+                }),
+                m.component(projectMain, {
+                    project: project,
+                    rewardDetails: ctrl.rewardDetails
+                }),
+                (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
+                    project: project
+                }) : '')
+            ]);
+    }
+};
+
+export default projectsShow;

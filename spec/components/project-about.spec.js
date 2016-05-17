@@ -1,12 +1,14 @@
+import m from 'mithril';
+import projectAbout from '../../src/c/project-about';
+
 describe('ProjectAbout', () => {
-    let $output, projectDetail, rewardDetail,
-        ProjectAbout = window.c.ProjectAbout;
+    let $output, projectDetail, rewardDetail;
 
     describe('view', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
             rewardDetail = RewardDetailsMockery()[0];
-            let component = m.component(ProjectAbout, {
+            let component = m.component(projectAbout, {
                     project: m.prop(projectDetail),
                     rewardDetails: m.prop(RewardDetailsMockery())
                 }),

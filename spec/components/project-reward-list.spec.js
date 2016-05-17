@@ -1,13 +1,16 @@
+import m from 'mithril';
+import h from '../../src/h';
+import projectRewardList from '../../src/c/project-reward-list';
+
 describe('ProjectRewardList', () => {
-    let generateContextByNewState,
-        ProjectRewardList = window.c.ProjectRewardList;
+    let generateContextByNewState;
 
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 spyOn(m, 'component').and.callThrough();
                 let rewardDetail = RewardDetailsMockery(newState),
-                    component = m.component(ProjectRewardList, {
+                    component = m.component(projectRewardList, {
                         project: m.prop({
                             id: 1231
                         }),
@@ -70,7 +73,7 @@ describe('ProjectRewardList', () => {
             expect(output.find('.card-reward').length).toEqual(1);
             expect(output.contains('Para R$ 20 ou mais')).toEqual(true);
             expect(output.contains('Estimativa de Entrega:')).toEqual(true);
-            expect(output.contains(window.c.h.momentify(rewardDetail.deliver_at, 'MMM/YYYY'))).toEqual(true)
+            expect(output.contains(h.momentify(rewardDetail.deliver_at, 'MMM/YYYY'))).toEqual(true)
             expect(output.contains(rewardDetail.description)).toEqual(true);
         });
     });

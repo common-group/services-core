@@ -1,13 +1,15 @@
+import m from 'mithril';
+import projectDashboardMenu from '../../src/c/project-dashboard-menu';
+
 describe('ProjectDashboardMenu', () => {
-    let generateContextByNewState,
-        ProjectDashboardMenu = window.c.ProjectDashboardMenu;
+    let generateContextByNewState;
 
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 let body = jasmine.createSpyObj('body', ['className']),
                     projectDetail = m.prop(ProjectDetailsMockery(newState)[0]),
-                    component = m.component(ProjectDashboardMenu, {
+                    component = m.component(projectDashboardMenu, {
                         project: projectDetail
                     }),
                     ctrl = component.controller({

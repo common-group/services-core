@@ -1,29 +1,30 @@
-window.c.AdminItem = (function(m, _, h, c) {
-    return {
-        controller: function(args) {
-            var displayDetailBox = h.toggleProp(false, true);
+import m from 'mithril';
+import _ from 'underscore';
+import h from '../h';
 
-            return {
-                displayDetailBox: displayDetailBox
-            };
-        },
+const adminItem = {
+    controller(args) {
+        return {
+            displayDetailBox: h.toggleProp(false, true)
+        };
+    },
+    view(ctrl, args) {
+        const item = args.item;
 
-        view: function(ctrl, args) {
-            var item = args.item;
+        return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', [
+            m.component(args.listItem, {
+                item: item,
+                key: args.key
+            }),
+            m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
+                onclick: ctrl.displayDetailBox.toggle
+            }),
+            ctrl.displayDetailBox() ? m.component(args.listDetail, {
+                item: item,
+                key: args.key
+            }) : ''
+        ]);
+    }
+};
 
-            return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', [
-                m.component(args.listItem, {
-                    item: item,
-                    key: args.key
-                }),
-                m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
-                    onclick: ctrl.displayDetailBox.toggle
-                }),
-                ctrl.displayDetailBox() ? m.component(args.listDetail, {
-                    item: item,
-                    key: args.key
-                }) : ''
-            ]);
-        }
-    };
-}(window.m, window._, window.c.h, window.c));
+export default adminItem;

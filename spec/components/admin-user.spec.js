@@ -1,17 +1,17 @@
-describe('AdminUser', function() {
-    var c = window.c,
-        AdminUser = c.AdminUser,
-        item, $output;
+import adminUser from '../../src/c/admin-user';
 
-    describe('view', function() {
-        beforeAll(function() {
+describe('AdminUser', () => {
+    let item, $output;
+
+    describe('view', () => {
+        beforeAll(() => {
             item = ContributionDetailMockery(1)[0];
-            $output = mq(AdminUser.view(null, {
+            $output = mq(adminUser.view(null, {
                 item: item
             }));
         });
 
-        it('should build an item from an item describer', function() {
+        it('should build an item from an item describer', () => {
             expect($output.has('.user-avatar')).toBeTrue();
             expect($output.contains(item.email)).toBeTrue();
         });

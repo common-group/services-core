@@ -1,19 +1,18 @@
+import m from 'mithril';
+import adminTransaction from '../../src/c/admin-transaction';
+
 describe('AdminTransaction', () => {
-    let c = window.c,
-        contribution, detailedBox,
+    let contribution,
         view, $output;
 
     beforeAll(() => {
         contribution = m.prop(ContributionDetailMockery(1, {
             gateway_data: null
         }));
-        detailedBox = m.component(c.AdminTransaction, {
+
+        $output = mq(m.component(adminTransaction, {
             contribution: contribution()[0]
-        });
-        view = detailedBox.view(null, {
-            contribution: contribution
-        });
-        $output = mq(view);
+        }).view);
     });
 
     describe('view', () => {
