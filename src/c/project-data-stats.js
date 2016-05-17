@@ -11,7 +11,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectDataStats = {
-    view(ctrl,args) {
+    view(ctrl, args) {
         const project = args.project(),
               progress = project.progress.toFixed(2),
               statusTextObj = h.projectStateTextClass(project.state),

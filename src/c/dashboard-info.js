@@ -20,12 +20,12 @@ const dashboardInfo = {
         const toRedraw = args.dataToRedraw || {},
               listenToReplace = (element, isInitialized, context) => {
 
-                  if(isInitialized) return;
+                  if (isInitialized) return;
 
                   _.map(element.children, function(item) {
                       let toR = toRedraw[item.getAttribute('id')];
 
-                      if(toR) {
+                      if (toR) {
                           item[toR.action] = toR.actionSource;
                       }
 

@@ -15,7 +15,6 @@ import dashboardInfo from './dashboard-info';
 import projectSuccessfulOnboardConfirmAccount from './project-successful-onboard-confirm-account';
 import insightVM from '../vms/insight-vm';
 
-
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
 
 const projectSuccessfulOnboard = {
@@ -88,7 +87,7 @@ const projectSuccessfulOnboard = {
                       } else if (!_.isNull(pa.error_reason)) {
                           return setStage('error_account')();
                       } else if (!_.isNull(pa.transfer_state)) {
-                          if(pa.transfer_state == 'transferred') {
+                          if (pa.transfer_state == 'transferred') {
                               return setStage('finished')();
                           } else {
                               return setStage('pending_transfer')();

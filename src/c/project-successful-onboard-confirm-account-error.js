@@ -19,7 +19,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
     controller(args) {
         return {
             errorReasonM: m.prop('')
-        }
+        };
     },
     view(ctrl, args) {
         return m('.w-row.bank-transfer-answer', [
@@ -45,6 +45,6 @@ const projectSuccessfulOnboardConfirmAccountError = {
             ])
         ]);
     }
-}
+};
 
 export default projectSuccessfulOnboardConfirmAccountError;

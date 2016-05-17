@@ -310,7 +310,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
 
                 return false;
             };
-        }
+        };
 
         return (el, isInitialized) => {
             if (!isInitialized) {
@@ -373,7 +373,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
                     return false;
                 }
             };
-    },
+        },
     ga = (eventObj, fn = Function.prototype) => {
         const ga = window.ga || {};
 

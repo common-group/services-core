@@ -38,6 +38,6 @@ const projectSuccessfulOnboardConfirmAccountAccept = {
             ])
         ]);
     }
-}
+};
 
 export default projectSuccessfulOnboardConfirmAccountAccept;

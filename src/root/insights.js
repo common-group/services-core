@@ -123,9 +123,9 @@ const insights = {
                 });
             };
 
-            if(!ctrl.l()) {
-                project.user.name = project.user.name || 'Realizador';
-            }
+        if (!ctrl.l()) {
+            project.user.name = project.user.name || 'Realizador';
+        }
 
         return m('.project-insights', !ctrl.l() ? [
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
