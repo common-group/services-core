@@ -9,6 +9,8 @@ import homeVM from '../vms/home-vm';
 import slider from '../c/slider';
 import projectRow from '../c/project-row';
 import contributionActivities from '../c/contribution-activities';
+import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
+import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
@@ -93,7 +95,7 @@ const projectsHome = {
             }),
             //m.component(contributionActivities)
             (ctrl.hasFBAuth ?
-             m.component(c.SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(c.UnsignedFriendFacebookConnect) )
+             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect) )
         ];
     }
 };
