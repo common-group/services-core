@@ -1,21 +1,21 @@
 beforeAll(function(){
-  ItemDescriberMock = function(){
+  ItemDescriberMock = function(adminUser, adminProject, adminContribution, paymentStatus){
     //TO-DO: Implement opts to build custom describers
     return [
       {
-        component: 'AdminUser',
+        component: adminUser,
         wrapperClass: '.w-col.w-col-4'
       },
       {
-        component: 'AdminProject',
+        component: adminProject,
         wrapperClass: '.w-col.w-col-4'
       },
       {
-        component: 'AdminContribution',
+        component: adminContribution,
         wrapperClass: '.w-col.w-col-2'
       },
       {
-        component: 'PaymentStatus',
+        component: paymentStatus,
         wrapperClass: '.w-col.w-col-2'
       }
     ];

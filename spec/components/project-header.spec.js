@@ -1,11 +1,13 @@
+import m from 'mithril';
+import projectHeader from '../../src/c/project-header';
+
 describe('ProjectHeader', () => {
-    let $output, projectDetail,
-        ProjectHeader = window.c.ProjectHeader;
+    let $output, projectDetail;
 
     describe('view', () => {
         beforeAll(() => {
             projectDetail = m.prop(ProjectDetailsMockery()[0]);
-            let component = m.component(ProjectHeader, {
+            let component = m.component(projectHeader, {
                     project: projectDetail,
                     userDetails: m.prop([])
                 }),

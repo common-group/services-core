@@ -1,9 +1,10 @@
-describe('UsersBalance', () => {
-    let $output, component,
-        UsersBalance = window.c.root.UsersBalance;
+import usersBalanceMain from '../../../src/root/users-balance-main'
+
+export default describe('UsersBalanceMain', () => {
+    let $output, component;
 
     beforeAll(() => {
-        component = m.component(UsersBalance, {user_id: 1});
+        component = m.component(usersBalanceMain, {user_id: 1});
         $output = mq(component);
     });
 

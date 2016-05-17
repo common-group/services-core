@@ -1,13 +1,15 @@
+import m from 'mithril';
+import projectHighlight from '../../src/c/project-highlight';
+
 describe('ProjectHighlight', () => {
-    let $output, projectDetail,
-        ProjectHighlight = window.c.ProjectHighlight;
+    let $output, projectDetail;
 
     it('when project video is not filled should render image', () => {
         projectDetail = m.prop(_.extend({}, ProjectDetailsMockery()[0], {
             original_image: 'original_image',
             video_embed_url: null
         }));
-        let component = m.component(ProjectHighlight, {
+        let component = m.component(projectHighlight, {
                 project: projectDetail
             }),
             view = component.view(component.controller(), {
@@ -23,13 +25,7 @@ describe('ProjectHighlight', () => {
         beforeAll(() => {
             spyOn(m, 'component').and.callThrough();
             projectDetail = m.prop(ProjectDetailsMockery()[0]);
-            let component = m.component(ProjectHighlight, {
-                    project: projectDetail
-                }),
-                view = component.view(component.controller(), {
-                    project: projectDetail
-                });
-            $output = mq(ProjectHighlight, {
+            $output = mq(projectHighlight, {
                 project: projectDetail
             });
         });

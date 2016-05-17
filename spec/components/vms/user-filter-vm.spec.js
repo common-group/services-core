@@ -1,6 +1,7 @@
+import userFilterVM from '../../../src/vms/user-filter-vm';
+
 describe('admin.userFilterVM', function() {
-  var adminApp = window.c.admin,
-      vm = adminApp.userFilterVM;
+  var vm = userFilterVM;
 
   describe("deactivated_at.toFilter", function() {
     it("should parse string inputs to json objects to send filter", function() {
@@ -16,4 +17,3 @@ describe('admin.userFilterVM', function() {
     });
   });
 });
-

@@ -1,15 +1,14 @@
-describe('AdminReward', () => {
-    let ctrl,
-        $output,
-        c = window.c,
-        AdminReward = c.AdminReward;
+import adminReward from '../../src/c/admin-reward';
+
+describe('adminReward', () => {
+    let ctrl, $output;
 
     describe('view', () => {
         let reward, ctrl;
 
         describe("when contribution has no reward", function() {
             beforeAll(() => {
-                $output = mq(AdminReward.view(undefined, {
+                $output = mq(adminReward.view(undefined, {
                     reward: m.prop({})
                 }));
             });
@@ -24,7 +23,7 @@ describe('AdminReward', () => {
 
             beforeAll(() => {
                 reward = m.prop(RewardDetailsMockery()[0]);
-                $output = mq(AdminReward.view(undefined, {
+                $output = mq(adminReward.view(undefined, {
                     reward: reward
                 }));
             });
