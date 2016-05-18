@@ -1,3 +1,8 @@
+/**
+ * window.c.projectReport component
+ * Render project report form
+ *
+ */
 import m from 'mithril';
 import models from '../models';
 import h from '../h';
@@ -7,12 +12,16 @@ const projectReport = {
         controller(args) {
           let displayForm = h.toggleProp(false, true),
               sendSuccess = m.prop(false),
+              user = h.getUser(),
+              email = m.prop(user.email),
+              details = m.prop(''),
+              reason = m.prop(''),
               l = m.prop(false),
               sendReport = () => {
                 let loaderOpts = models.projectReport.postOptions({
-                    email: document.getElementById('report-email').value,
-                    details: document.getElementById('report-details').value,
-                    reason: document.getElementById('report-reason').value,
+                    email: email(),
+                    details: details(),
+                    reason: reason() ,
                     project_id: h.getCurrentProject()['project_id']
                 });
                 l = postgrest.loaderWithToken(loaderOpts);
@@ -24,12 +33,16 @@ const projectReport = {
           return {
             displayForm: displayForm,
             sendSuccess: sendSuccess,
-            sendReport: sendReport
+            sendReport: sendReport,
+            user: user,
+            email: email,
+            details: details,
+            reason: reason
           };
         },
 
         view(ctrl, args) {
-          const user = h.getUser();
+          const user = ctrl.user;
           return m('.card.card-terciary.u-radius',
                       [
                         m('.fontsize-small.u-marginbottom-20',
@@ -58,7 +71,7 @@ const projectReport = {
                                 m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                                   'Por que você está denunciando este projeto?'
                                 ),
-                                m('select.w-select.text-field.positive[id="report-reason"][required=\'required\']',
+                                m('select.w-select.text-field.positive[required=\'required\']', {onchange: m.withAttr('value', ctrl.reason)},
                                   [
                                     m('option[value=\'\']',
                                       'Selecione um motivo'
@@ -86,11 +99,11 @@ const projectReport = {
                                     )
                                   ]
                                 ),
-                                m('textarea.w-input.text-field.positive.u-marginbottom-30[id=\'report-details\'][placeholder=\'Por favor, dê mais detalhes que nos ajudem a identificar o problema\']'),
+                                m('textarea.w-input.text-field.positive.u-marginbottom-30', {placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema', onchange: m.withAttr('value', ctrl.details)}),
                                 m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                                   'Seu email'
                                 ),
-                                m(`input.w-input.text-field.positive.u-marginbottom-30[id=\'report-email\'][required=\'required\'][type=\'text\'][value="${user ? user.email : ''}"]`),
+                                m(`input.w-input.text-field.positive.u-marginbottom-30[required=\'required\'][type=\'text\'][value="${ctrl.email()}"]`, {onchange: m.withAttr('value', ctrl.email)}),
                                 m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']')
                               ]
                             )

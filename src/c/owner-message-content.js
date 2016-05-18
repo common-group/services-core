@@ -12,12 +12,16 @@ const ownerMessageContent = {
     controller(args) {
         let l = m.prop(false),
             sendSuccess = m.prop(false),
+            user = h.getUser(),
+            from_name = m.prop(user.name),
+            from_email = m.prop(user.email),
+            content = m.prop(''),
             sendMessage = () => {
                 let loaderOpts = models.directMessage.postOptions({
-                    from_name: document.getElementById('from_name').value,
-                    from_email: document.getElementById('from_email').value,
+                    from_name: from_name(),
+                    from_email: from_email(),
                     user_id: h.getUser().user_id,
-                    content: document.getElementById('message_content').value,
+                    content: content(),
                     project_id: h.getCurrentProject().project_id,
                     to_user_id: h.getCurrentProject().project_user_id
                 });
@@ -30,12 +34,14 @@ const ownerMessageContent = {
         return {
             sendMessage: sendMessage,
             sendSuccess: sendSuccess,
-            userDetails: args
+            userDetails: args,
+            from_name: from_name,
+            from_email: from_email,
+            content: content
         };
     },
     view(ctrl, args) {
-        const user = h.getUser(),
-            successMessage = m('.modal-dialog-content.u-text-center', [
+        const successMessage = m('.modal-dialog-content.u-text-center', [
                 m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
                 m('p.fontsize-large', `Sua mensagem foi enviada com sucesso para ${_.first(ctrl.userDetails()).name}. Você vai receber uma cópia no seu email e pode seguir a conversa por lá!`)
             ]),
@@ -46,15 +52,15 @@ const ownerMessageContent = {
                             m('.w-row', [
                                 m('.w-col.w-col-6.w-sub-col', [
                                     m('label.fontsize-smaller', 'Seu nome'),
-                                    m(`input.w-input.text-field[value='${user ? user.name : ''}'][id='from_name'][type='text'][required=\'required\']`)
+                                    m(`input.w-input.text-field[value='${ctrl.from_name()}'][type='text'][required=\'required\']`, {onchange: m.withAttr('value', ctrl.from_name)} )
                                 ]),
                                 m('.w-col.w-col-6', [
                                     m('label.fontsize-smaller', 'Seu email'),
-                                    m(`input.w-input.text-field[value='${user ? user.email : ''}'][id='from_email'][type='text'][required=\'required\']`)
+                                    m(`input.w-input.text-field[value='${ctrl.from_email()}'][type='text'][required=\'required\']`, {onchange: m.withAttr('value', ctrl.from_email)})
                                 ])
                             ]),
                             m('label', 'Mensagem'),
-                            m('textarea.w-input.text-field.height-small[id=\'message_content\'][required=\'required\']'),
+                            m('textarea.w-input.text-field.height-small[required=\'required\']', {onchange: m.withAttr('value', ctrl.content)}),
                             m('.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
