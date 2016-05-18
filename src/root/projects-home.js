@@ -1,4 +1,5 @@
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -15,13 +16,13 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
-    controller() {
+    controller(args) {
         let sample6 = _.partial(_.sample, _, 6),
             loader = postgrest.loader,
             project = models.project,
             filters = projectFilters().filters,
-            userFriendVM = m.postgrest.filtersVM({user_id: 'eq'}),
-            friendListVM = m.postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+            userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+            friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
                 'Prefer':  'count=exact'
             }),
             currentUserId = args.root.getAttribute('data-currentuserid'),
@@ -48,15 +49,15 @@ const projectsHome = {
                 title: f.title,
                 hash: name,
                 collection: collection,
-                hasFBAuth: hasFBAuth,
-                friendListVM: friendListVM,
                 loader: cLoader
             };
         });
 
         return {
             collections: collections,
-            slidesContent: vm.banners
+            slidesContent: vm.banners,
+            hasFBAuth: hasFBAuth,
+            friendListVM: friendListVM
         };
     },
     view(ctrl) {
