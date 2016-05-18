@@ -46,15 +46,15 @@ const ownerMessageContent = {
                             m('.w-row', [
                                 m('.w-col.w-col-6.w-sub-col', [
                                     m('label.fontsize-smaller', 'Seu nome'),
-                                    m(`input.w-input.text-field[value='${user ? user.name : ''}'][id='from_name'][type='text'][required]`)
+                                    m(`input.w-input.text-field[value='${user ? user.name : ''}'][id='from_name'][type='text'][required=\'required\']`)
                                 ]),
                                 m('.w-col.w-col-6', [
                                     m('label.fontsize-smaller', 'Seu email'),
-                                    m(`input.w-input.text-field[value='${user ? user.email : ''}'][id='from_email'][type='text'][required]`)
+                                    m(`input.w-input.text-field[value='${user ? user.email : ''}'][id='from_email'][type='text'][required=\'required\']`)
                                 ])
                             ]),
                             m('label', 'Mensagem'),
-                            m('textarea.w-input.text-field.height-small[id=\'message_content\'][required]'),
+                            m('textarea.w-input.text-field.height-small[id=\'message_content\'][required=\'required\']'),
                             m('.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
