@@ -16,7 +16,7 @@ var clean = require('gulp-clean');
 var Server = require('karma').Server;
 
 var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/root/**/*.js','src/c/**/*.js','src/**/*.js'];
-var tests = ['spec/components/**/*.spec.js', 'src/**/*.js'];
+var tests = ['spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'];
 
 gulp.task('bundle-tests', function(done){
     rollup({
@@ -38,7 +38,7 @@ gulp.task('bundle-tests', function(done){
           'i18n-js': 'I18n'
       }
     })
-    .pipe(source('spec/components/**/*.spec.js', 'src/**/*.js'))
+    .pipe(source('spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(rename('bundle.spec.js'))

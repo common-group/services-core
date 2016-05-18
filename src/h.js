@@ -337,13 +337,34 @@ const hashMatch = (str) => { return window.location.hash === str; },
         };
     },
 
-    ga = (eventObj, fn = Function.prototype) => {
-        const ga = window.ga || {};
+    analyticsEvent = (eventObj, fn) => {
+        //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
+        if(!eventObj)
+          return fn;
 
         return () => {
-            ga('send', eventObj);
-            fn();
+            try {
+              const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
+              if(typeof ga==='function') {
+                //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
+                ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
+                  nonInteraction: true,
+                  transport: 'beacon',
+                  hitCallback: fn && (() => {
+                    fn();
+                  })
+                });
+              } else {
+                fn && fn();
+              }
+            } catch(e) {
+              console.error('[h.analytics.event] error:',e);
+              fn && fn();
+            }
         };
+    },
+    analytics = {
+      event: analyticsEvent
     };
 
 setMomentifyLocale();
@@ -386,5 +407,5 @@ export default {
     RDTracker,
     selfOrEmpty,
     scrollTo,
-    ga
+    analytics
 };
