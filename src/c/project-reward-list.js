@@ -10,7 +10,9 @@ const projectRewardList = {
         return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
             var contributionUrlWithReward = '/projects/' + project().id + '/contributions/new?reward_id=' + reward.id;
 
-            return m('a[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project().open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"][href="' + (project().open_for_contributions && !h.rewardSouldOut(reward) ? contributionUrlWithReward : 'js:void(0);') + '"]', [
+            return m('a[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project().open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"][href="' + (project().open_for_contributions && !h.rewardSouldOut(reward) ? contributionUrlWithReward : 'js:void(0);') + '"]', {
+              onclick: h.analytics.event({cat:'contribution_create',act:'contribution_reward_click', project: project(), extraData: {reward_id: reward.id, reward_value: reward.minimum_value}})
+            }, [
                 m('.u-marginbottom-20', [
                     m('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'),
                     m('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), (reward.maximum_contributions > 0 ? [

@@ -344,15 +344,22 @@ const hashMatch = (str) => { return window.location.hash === str; },
 
         return () => {
             try {
+              var dataProject = eventObj.project ? {
+                project_id:eventObj.project.id,
+                category_id: eventObj.project.category_id,
+                state: eventObj.project.address && eventObj.project.address.state_acronym,
+                city: eventObj.project.address && eventObj.project.address.city
+              } : null;
+              var dataUser = eventObj.user ? {} : null;//TODO
+              var data = _.extend({},dataProject, dataUser,eventObj.extraData);
+
               const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
               if(typeof ga==='function') {
                 //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
                 ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
-                  nonInteraction: true,
+                  nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
                   transport: 'beacon',
-                  hitCallback: fn && (() => {
-                    fn();
-                  })
+                  hitCallback: fn && (() => { fn(); })//coloquei dentro de outra função para fn não receber params
                 });
               } else {
                 fn && fn();
