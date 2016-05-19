@@ -22,7 +22,7 @@ const projectsHome = {
 
         const collections = _.map(['score'], (name) => {
             const f = filters[name],
-                  cLoader = loader(project.getPageOptions(f.filter.parameters())),
+                  cLoader = loader(project.getPageOptions(_.extend({}, {order: 'score.desc'}, f.filter.parameters()))),
                   collection = m.prop([]);
 
             cLoader.load().then(_.compose(collection, sample6));

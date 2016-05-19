@@ -104,7 +104,7 @@ const projectDashboardMenu = {
                                       I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                   ]) : '')
                               ] : [
-                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/flexible_projects/' + project.flex_id + '/validate_publish"]', [
+                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/flexible_projects/' + project.id + '/validate_publish"]', [
                                       I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                   ]) : '')
                               ])
