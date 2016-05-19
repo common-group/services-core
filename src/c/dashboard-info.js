@@ -28,8 +28,6 @@ const dashboardInfo = {
                       if (toR) {
                           item[toR.action] = toR.actionSource;
                       }
-
-                      console.log(item);
                   });
               };
 

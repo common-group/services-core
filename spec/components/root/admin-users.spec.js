@@ -1,6 +1,6 @@
 import adminUsers from '../../../src/root/admin-users'
 
-export default describe('adminUsers', () => {
+describe('adminUsers', () => {
   let ctrl, $output;
 
   beforeAll(() => {

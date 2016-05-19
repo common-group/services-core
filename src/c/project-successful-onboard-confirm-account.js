@@ -23,6 +23,7 @@ const projectSuccessfulOnboardConfirmAccount = {
               currentStage = m.prop('start'),
               actionStage = () => actionStages[currentStage()],
               changeToAction = (stage) => {
+                  console.log('\n======\nChanging action to ', stage);
                   return () => {
                       currentStage(stage);
 
@@ -100,13 +101,13 @@ const projectSuccessfulOnboardConfirmAccount = {
                     ])
                 ])
             ]),
-            (currentStage() === 'start') ? m('.w-row.bank-transfer-answer', [
+            (currentStage() === 'start') ? m('#confirmation-dialog.w-row.bank-transfer-answer', [
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny'),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a.btn.btn-large', {href: '#confirm_account', onclick: ctrl.changeToAction('accept')}, 'Sim')
+                    m('a#confirm-account.btn.btn-large', {href: '#confirm_account', onclick: ctrl.changeToAction('accept')}, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a.btn.btn-large.btn-terciary', {href: '#error_account', onclick: ctrl.changeToAction('error')}, 'Não')
+                    m('a#refuse-account.btn.btn-large.btn-terciary', {href: '#error_account', onclick: ctrl.changeToAction('error')}, 'Não')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
             ]) : m.component(actionStage(), {

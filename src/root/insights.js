@@ -135,7 +135,7 @@ const insights = {
                 displayModal: ctrl.displayModal,
                 content: onlineSuccessModalContent
             }) : ''),
-            m('.w-container', (project().state == 'successful') ? m.component(projectSuccessfulOnboard, {project: project}) : [
+            m('.w-container', (project.state == 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project)}) : [
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2.dashboard-header.u-text-center', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),

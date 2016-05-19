@@ -1,6 +1,6 @@
 import usersBalanceMain from '../../../src/root/users-balance-main'
 
-export default describe('UsersBalanceMain', () => {
+describe('UsersBalanceMain', () => {
     let $output, component;
 
     beforeAll(() => {

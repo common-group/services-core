@@ -1,6 +1,6 @@
 import projectsShow from '../../../src/root/projects-show';
 
-export default describe('ProjectsShow', () => {
+describe('ProjectsShow', () => {
   let $output, projectDetail;
 
   beforeAll(() => {
