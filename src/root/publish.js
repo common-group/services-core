@@ -306,7 +306,7 @@ const publish = {
             m('.w-row.publish-btn-section.w-hidden', [
               m('.w-col.w-col-4'),
               m('.w-col.w-col-4', [
-                m(`a.btn.btn-large.u-marginbottom-20[href=/${project.mode == 'flex' ? 'flexible_projects' : 'projects'}/${project.mode == 'flex' ? project.flex_id : project.id}/push_to_online]`, 'Publicar agora!'),
+                m(`a.btn.btn-large.u-marginbottom-20[href=/${project.mode == 'flex' ? 'flexible_projects' : 'projects'}/${project.id}/push_to_online]`, 'Publicar agora!'),
                 m('.u-text-center.fontsize-smaller', [
                   'Ao publicar o seu projeto, você está aceitando os ',
                   m('a.alt-link[href=\'/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'),
