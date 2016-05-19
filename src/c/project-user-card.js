@@ -43,7 +43,10 @@ const projectUserCard = {
                                     m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', parsedLink.hostname)
                                 ]) : '');
                             })
-                        ]), (!_.isEmpty(userDetail) ? [m('a.w-button.btn.btn-terciary.btn-small.btn-inline[href=\'javascript:void(0);\']',{onclick: ctrl.displayModal.toggle}, 'Enviar mensagem')] : '')
+                        ]),
+                        (!_.isEmpty(userDetail) ? [m('a.w-button.btn.btn-terciary.btn-small.btn-inline[href=\'javascript:void(0);\']',{onclick: ctrl.displayModal.toggle}, 'Enviar mensagem')] : ''),
+                        args.project().is_admin_role ?
+                        m('p', userDetail.email) : ''
                     ]),
                 ]),
             ]);
