@@ -16,36 +16,14 @@ const ownerMessageContent = {
             user = h.getUser() || {name: '', email: ''},
             from_name = m.prop(user.name),
             from_email = m.prop(user.email),
-            content = m.prop(''),
-            fromNameError = m.prop(false),
-            emailError = m.prop(false),
-            messageError = m.prop(false),
-            validationError = () => emailError() || fromNameError() || messageError(),
-            errorMessages = m.prop([]);
+            content = m.prop('');
 
-        const validate = () => {
-            errorMessages([]);
-
-            if(!h.validateEmail(from_email())) {
-                emailError(true);
-                errorMessages().push('E-mail inválido.');
-            }
-
-            if(from_name().trim() === '') {
-                fromNameError(true);
-                errorMessages().push('Nome não pode ser vazio.');
-            }
-
-            if(content().trim() === '') {
-                messageError(true);
-                errorMessages().push('A mensagem não pode ser vazia.')
-            }
-
-            return !validationError();
-        };
 
         const sendMessage = () => {
-            console.log("triggerd send message");
+            if(l()) {
+                return false;
+            }
+
             let loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
                 from_email: from_email(),
@@ -55,13 +33,9 @@ const ownerMessageContent = {
                 to_user_id: h.getCurrentProject().project_user_id
             });
 
-            if(validate()) {
+            l = postgrest.loaderWithToken(loaderOpts);
 
-                l = postgrest.loaderWithToken(loaderOpts);
-
-                l.load().then(sendSuccess(true));
-
-            }
+            l.load().then(sendSuccess(true));
 
             return false;
         };
@@ -73,11 +47,7 @@ const ownerMessageContent = {
             from_name: from_name,
             from_email: from_email,
             content: content,
-            fromNameError: fromNameError,
-            emailError: emailError,
-            messageError: messageError,
-            validationError: validationError,
-            errorMessages: errorMessages
+            l: l
         };
     },
     view(ctrl, args) {
@@ -88,42 +58,60 @@ const ownerMessageContent = {
             contactForm = [
                 m('.modal-dialog-content', [
                     m('.w-form', [
-                        m('form', {onsubmit: ctrl.sendMessage}, [
+                        m('form', {onsubmit: h.validate().submit([
+                            {
+                                prop: ctrl.from_name,
+                                rule: 'text'
+                            },
+                            {
+                                prop: ctrl.from_email,
+                                rule: 'email'
+                            },
+                            {
+                                prop: ctrl.content,
+                                rule: 'text'
+                            }
+                        ], ctrl.sendMessage)}, [
                             m('.w-row', [
                                 m('.w-col.w-col-6.w-sub-col', [
                                     m('label.fontsize-smaller', 'Seu nome'),
                                     m(`input.w-input.text-field[value='${ctrl.from_name()}'][type='text'][required=\'required\']`, {
                                         onchange: m.withAttr('value', ctrl.from_name),
-                                        class: ctrl.fromNameError() ? 'error' : ''
+                                        class: h.validate().hasError(ctrl.from_name) ? 'error' : ''
                                     })
                                 ]),
                                 m('.w-col.w-col-6', [
                                     m('label.fontsize-smaller', 'Seu email'),
                                     m(`input.w-input.text-field[value='${ctrl.from_email()}'][type='text'][required=\'required\']`, {
                                         onchange: m.withAttr('value', ctrl.from_email),
-                                        class: ctrl.emailError() ? 'error' : ''
+                                        class: h.validate().hasError(ctrl.from_email) ? 'error' : ''
                                     })
                                 ])
                             ]),
                             m('label', 'Mensagem'),
-                            m('textarea.w-input.text-field.height-small[required=\'required\']', {onchange: m.withAttr('value', ctrl.content)}),
-                            m('.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
-                            (ctrl.validationError() ? m('.red-note', _.map(ctrl.errorMessages(), message => m('p', message))) : ''),
+                            m('textarea.w-input.text-field.height-small[required=\'required\']', {
+                                onchange: m.withAttr('value', ctrl.content),
+                                class: h.validate().hasError(ctrl.content) ? 'error' : ''
+                            }),
+                            m('.u-marginbottom-10.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
+                            m('.w-row', h.validationErrors().length ? _.map(h.validationErrors(), errors => m('span.fontsize-smallest.text-error', [
+                                    m('span.fa.fa-exclamation-triangle'),
+                                    ` ${errors.message}`,
+                                    m('br')
+                                ])) : ''
+                            ),
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
                                     m('.w-col.w-col-6.w-col-push-3',
-                                        m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]',{
-                                            class: ctrl.messageError() ? 'error' : ''
-                                        })
+                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]') : h.loader()
                                     )
                                 )
                             )
-
-                        ])
+                        ]),
                     ]),
-                ]),
+                ])
             ];
-        console.log('Error messages', ctrl.errorMessages());
+
         return m('div', [
             m('.modal-dialog-header',
                 m('.fontsize-large.u-text-center', 'Enviar mensagem')
