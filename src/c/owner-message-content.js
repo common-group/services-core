@@ -12,24 +12,33 @@ const ownerMessageContent = {
     controller(args) {
         let l = m.prop(false),
             sendSuccess = m.prop(false),
-            user = h.getUser(),
+            //sets default values when user is not logged in
+            user = h.getUser() || {name: '', email: ''},
             from_name = m.prop(user.name),
             from_email = m.prop(user.email),
-            content = m.prop(''),
-            sendMessage = () => {
-                let loaderOpts = models.directMessage.postOptions({
-                    from_name: from_name(),
-                    from_email: from_email(),
-                    user_id: h.getUser().user_id,
-                    content: content(),
-                    project_id: h.getCurrentProject().project_id,
-                    to_user_id: h.getCurrentProject().project_user_id
-                });
-                l = postgrest.loaderWithToken(loaderOpts);
+            content = m.prop('');
 
-                l.load().then(sendSuccess(true));
+
+        const sendMessage = () => {
+            if(l()) {
                 return false;
-            };
+            }
+
+            let loaderOpts = models.directMessage.postOptions({
+                from_name: from_name(),
+                from_email: from_email(),
+                user_id: h.getUser().user_id,
+                content: content(),
+                project_id: h.getCurrentProject().project_id,
+                to_user_id: h.getCurrentProject().project_user_id
+            });
+
+            l = postgrest.loaderWithToken(loaderOpts);
+
+            l.load().then(sendSuccess(true));
+
+            return false;
+        };
 
         return {
             sendMessage: sendMessage,
@@ -37,7 +46,8 @@ const ownerMessageContent = {
             userDetails: args,
             from_name: from_name,
             from_email: from_email,
-            content: content
+            content: content,
+            l: l
         };
     },
     view(ctrl, args) {
@@ -48,30 +58,58 @@ const ownerMessageContent = {
             contactForm = [
                 m('.modal-dialog-content', [
                     m('.w-form', [
-                        m('form', {onsubmit: ctrl.sendMessage}, [
+                        m('form', {onsubmit: h.validate().submit([
+                            {
+                                prop: ctrl.from_name,
+                                rule: 'text'
+                            },
+                            {
+                                prop: ctrl.from_email,
+                                rule: 'email'
+                            },
+                            {
+                                prop: ctrl.content,
+                                rule: 'text'
+                            }
+                        ], ctrl.sendMessage)}, [
                             m('.w-row', [
                                 m('.w-col.w-col-6.w-sub-col', [
                                     m('label.fontsize-smaller', 'Seu nome'),
-                                    m(`input.w-input.text-field[value='${ctrl.from_name()}'][type='text'][required=\'required\']`, {onchange: m.withAttr('value', ctrl.from_name)} )
+                                    m(`input.w-input.text-field[value='${ctrl.from_name()}'][type='text'][required=\'required\']`, {
+                                        onchange: m.withAttr('value', ctrl.from_name),
+                                        class: h.validate().hasError(ctrl.from_name) ? 'error' : ''
+                                    })
                                 ]),
                                 m('.w-col.w-col-6', [
                                     m('label.fontsize-smaller', 'Seu email'),
-                                    m(`input.w-input.text-field[value='${ctrl.from_email()}'][type='text'][required=\'required\']`, {onchange: m.withAttr('value', ctrl.from_email)})
+                                    m(`input.w-input.text-field[value='${ctrl.from_email()}'][type='text'][required=\'required\']`, {
+                                        onchange: m.withAttr('value', ctrl.from_email),
+                                        class: h.validate().hasError(ctrl.from_email) ? 'error' : ''
+                                    })
                                 ])
                             ]),
                             m('label', 'Mensagem'),
-                            m('textarea.w-input.text-field.height-small[required=\'required\']', {onchange: m.withAttr('value', ctrl.content)}),
-                            m('.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
+                            m('textarea.w-input.text-field.height-small[required=\'required\']', {
+                                onchange: m.withAttr('value', ctrl.content),
+                                class: h.validate().hasError(ctrl.content) ? 'error' : ''
+                            }),
+                            m('.u-marginbottom-10.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
+                            m('.w-row', h.validationErrors().length ? _.map(h.validationErrors(), errors => m('span.fontsize-smallest.text-error', [
+                                    m('span.fa.fa-exclamation-triangle'),
+                                    ` ${errors.message}`,
+                                    m('br')
+                                ])) : ''
+                            ),
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
                                     m('.w-col.w-col-6.w-col-push-3',
-                                        m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]')
+                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]') : h.loader()
                                     )
                                 )
                             )
-                        ])
+                        ]),
                     ]),
-                ]),
+                ])
             ];
 
         return m('div', [
