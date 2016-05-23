@@ -3,6 +3,7 @@
  * Modal content for show project transfer complete values data
  */
 import m from 'mithril';
+import h from '../h';
 
 const successfulProjectTaxModal = {
     view(ctrl, args) {
@@ -22,7 +23,7 @@ const successfulProjectTaxModal = {
                 m('div', [
                     m('.w-row.fontsize-small.u-marginbottom-10', [
                         m('.w-col.w-col-4', [
-                            m('.text-success', `+ R$ ${pt.pledged}`)
+                            m('.text-success', `+ R$ ${h.formatNumber(pt.pledged, 2)}`)
                         ]),
                         m('.w-col.w-col-8', [
                             m('div', `Arrecadação total (${pt.total_contributions} apoios)`)
@@ -31,7 +32,7 @@ const successfulProjectTaxModal = {
                     (pt.irrf_tax > 0 ?
                      m('.w-row.fontsize-small.u-marginbottom-10', [
                          m('.w-col.w-col-4', [
-                             m('.text-success', `+ R$ ${pt.irrf_tax}`)
+                             m('.text-success', `+ R$ ${h.formatNumber(pt.irrf_tax, 2)}`)
                          ]),
                          m('.w-col.w-col-8', [
                              m('div', 'Retenção IRF (Imposto de Renda na Fonte)')
@@ -39,16 +40,16 @@ const successfulProjectTaxModal = {
                      ]) : ''),
                     m('.w-row.fontsize-small.u-marginbottom-10', [
                         m('.w-col.w-col-4', [
-                            m('.text-error', `- R$ ${pt.catarse_fee}`)
+                            m('.text-error', `- R$ ${h.formatNumber(pt.catarse_fee, 2)}`)
                         ]),
                         m('.w-col.w-col-8', [
-                            m('div', `Taxa do Catarse e meio de pagamento (${pt.service_fee * 100}%) `)
+                            m('div', `Taxa do Catarse e meio de pagamento (${h.formatNumber((pt.service_fee * 100), 2)}%) `)
                         ])
                     ]),
                     m('.divider.u-marginbottom-10'),
                     m('.w-row.fontsize-base.fontweight-semibold', [
                         m('.w-col.w-col-4', [
-                            m('div', `R$ ${pt.total_amount}`)
+                            m('div', `R$ ${h.formatNumber(pt.total_amount, 2)}`)
                         ]),
                         m('.w-col.w-col-8', [
                             m('div', 'Total a ser transferido')

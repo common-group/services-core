@@ -7,7 +7,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
 const parseAccountData = (account, transfer) => {
     return {
         transfer_limit_date: h.momentify(account.transfer_limit_date),
-        total_amount: h.formatNumber(transfer.total_amount),
+        total_amount: h.formatNumber(transfer.total_amount, 2),
         bank_name: account.bank_name,
         agency: `${account.agency}${account.agency_digit ? '-' + account.agency_digit : ''}`,
         account: `${account.account}${account.account_digit ? '-' + account.account_digit : ''}`,

@@ -13,6 +13,8 @@ import h from '../h';
 import models from '../models';
 import dashboardInfo from './dashboard-info';
 import projectSuccessfulOnboardConfirmAccount from './project-successful-onboard-confirm-account';
+import modalBox from './modal-box';
+import successfulProjectTaxModal from './successful-project-tax-modal';
 import insightVM from '../vms/insight-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
@@ -142,9 +144,9 @@ const projectSuccessfulOnboard = {
               lpt = ctrl.lProjectTransfer;
 
         return m('.w-section.section', [
-            (ctrl.showTaxModal() ? m.component(c.ModalBox, {
+            (ctrl.showTaxModal() ? m.component(modalBox, {
                 displayModal: ctrl.showTaxModal,
-                content: ['SuccessfulProjectTaxModal', {
+                content: [successfulProjectTaxModal, {
                     projectTransfer: projectTransfer
                 }]
             }) : ''),
