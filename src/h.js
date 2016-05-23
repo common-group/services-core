@@ -370,8 +370,24 @@ const hashMatch = (str) => { return window.location.hash === str; },
             }
         };
     },
+    analyticsWindowScroll = (eventObj) => {
+        if(eventObj) {
+          var fn = analyticsEvent(eventObj);
+          window.addEventListener('scroll', function(e){
+            var scrollTop = $(document).scrollTop(),
+                height = $(window).height();
+            //console.log('scrollTop',scrollTop, height);
+            if(fn && scrollTop > height-(height/4)) {
+              //console.log('window scroll');
+              fn();
+              fn=null;
+            }
+          });
+        }
+    },
     analytics = {
-      event: analyticsEvent
+      event: analyticsEvent,
+      windowScroll: analyticsWindowScroll
     };
 
 setMomentifyLocale();
