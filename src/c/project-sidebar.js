@@ -123,7 +123,8 @@ const projectSidebar = {
                 m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())
             ]),
             m('.user-c', m.component(projectUserCard, {
-                userDetails: args.userDetails
+                userDetails: args.userDetails,
+                project: project
             }))
         ]);
     }

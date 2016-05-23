@@ -52,6 +52,46 @@ const hashMatch = (str) => { return window.location.hash === str; },
         return m('');
     },
 
+    validateEmail = (email) => {
+        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        return re.test(email);
+    },
+
+    validationErrors = m.prop([]),
+
+    resetValidations = () => validationErrors([]),
+
+    validate = () => {
+        const errorFields = m.prop([]);
+
+        return {
+            submit(fields, fn) {
+                return () => {
+                    resetValidations();
+
+                    _.map(fields, field => {
+                        if(field.rule === 'email') {
+                            if(!validateEmail(field.prop())) {
+                                validationErrors().push({field: field.prop, message: 'E-mail inválido.'});
+                            }
+                        }
+
+                        if(field.rule === 'text') {
+                            if(field.prop().trim() === '') {
+                                validationErrors().push({field: field.prop, message: 'O campo não pode ser vazio.'});
+                            }
+                        }
+                    });
+
+                    return !validationErrors().length > 0 ? fn() : false;
+                };
+            },
+            hasError(fieldProp) {
+                return _.reduce(validationErrors(), (memo, fieldError) => fieldError.field() === fieldProp() || memo, false);
+            }
+        };
+    },
+
     momentFromString = (date, format) => {
         const european = moment(date, format || 'DD/MM/YYYY');
         return european.isValid() ? european : moment(date);
@@ -212,11 +252,6 @@ const hashMatch = (str) => { return window.location.hash === str; },
                 }
             }
         };
-    },
-
-    validateEmail = (email) => {
-        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-        return re.test(email);
     },
 
     navigateToDevise = () => {
@@ -424,5 +459,7 @@ export default {
     selfOrEmpty,
     scrollTo,
     projectStateTextClass,
+    validationErrors,
+    validate,
     ga
 };

@@ -1,6 +1,7 @@
 import m from 'mithril';
 import h from '../h';
 import projectRewardList from './project-reward-list';
+import projectReport from './project-report';
 import projectSuggestedContributions from './project-suggested-contributions';
 
 const projectAbout = {
@@ -31,6 +32,7 @@ const projectAbout = {
                     m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
                     m('p.fontsize-base', m.trust(project.budget))
                 ] : '',
+                m.component(projectReport)
             ]),
             m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', !_.isEmpty(args.rewardDetails()) ? [
                 m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
