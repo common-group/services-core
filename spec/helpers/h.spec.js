@@ -92,6 +92,7 @@ describe("helper methods", () => {
       var ga;
       beforeEach(() => {
         ga = window.ga = jasmine.createSpy('ga');
+        ga.getAll=function(){};
       });
       it('should not call ga if does not pass eventObj', () => {
         expect(h.analytics.event()).toBeUndefined();

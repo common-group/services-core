@@ -343,44 +343,40 @@ const hashMatch = (str) => { return window.location.hash === str; },
           return fn;
 
         return () => {
-            try {
-              var dataProject = eventObj.project ? {
-                project_id:eventObj.project.id,
-                category_id: eventObj.project.category_id,
-                state: eventObj.project.address && eventObj.project.address.state_acronym,
-                city: eventObj.project.address && eventObj.project.address.city
-              } : null;
-              var dataUser = eventObj.user ? {} : null;//TODO
-              var data = _.extend({},dataProject, dataUser,eventObj.extraData);
+          try {
+            var dataProject = eventObj && eventObj.project ? {
+              project_id:eventObj.project.id,
+              category_id: eventObj.project.category_id,
+              state: eventObj.project.address && eventObj.project.address.state_acronym,
+              city: eventObj.project.address && eventObj.project.address.city
+            } : null;
+            var dataUser = eventObj && eventObj.user ? {} : null;//TODO
+            var data = _.extend({},dataProject, dataUser,eventObj && eventObj.extraData);
 
-              const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
-              if(typeof ga==='function') {
-                //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
-                ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
-                  nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
-                  transport: 'beacon',
-                  hitCallback: fn && (() => { fn(); })//coloquei dentro de outra função para fn não receber params
-                });
-              } else {
-                fn && fn();
-              }
-            } catch(e) {
-              console.error('[h.analytics.event] error:',e);
+            const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
+            if(eventObj && ga && ga.getAll) {
+              //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
+              ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
+                nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
+                transport: 'beacon',
+                hitCallback: fn && (() => { fn(); })//coloquei dentro de outra função para fn não receber params
+              });
+            } else {
               fn && fn();
             }
+          } catch(e) {
+            console.error('[h.analytics.event] error:',e);
+            fn && fn();
+          }
         };
     },
     analyticsWindowScroll = (eventObj) => {
         if(eventObj) {
           var fn = analyticsEvent(eventObj);
           window.addEventListener('scroll', function(e){
-            var scrollTop = $(document).scrollTop(),
-                height = $(window).height();
-            //console.log('scrollTop',scrollTop, height);
-            if(fn && scrollTop > height-(height/4)) {
-              //console.log('window scroll');
-              fn();
+            if(fn && $(document).scrollTop() > $(window).height()*(3/4)) {
               fn=null;
+              fn();
             }
           });
         }
