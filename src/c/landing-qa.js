@@ -24,7 +24,10 @@ const landingQA = {
     view(ctrl, args) {
         return m('.card.qa-card.u-marginbottom-20.u-radius.btn-terciary',[
             m('.fontsize-base', {
-                onclick: ctrl.showAnswer.toggle
+                onclick: () => {
+                  ctrl.showAnswer.toggle();
+                  args.onclick && args.onclick();
+                }
             }, args.question),
             ctrl.showAnswer() ? m('p.u-margintop-20.fontsize-small', m.trust(args.answer)) : ''
         ]);

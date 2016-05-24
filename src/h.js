@@ -343,6 +343,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
           return fn;
 
         return () => {
+          console.log('event',eventObj);
           try {
             var dataProject = eventObj && eventObj.project ? {
               project_id:eventObj.project.id,
@@ -370,11 +371,29 @@ const hashMatch = (str) => { return window.location.hash === str; },
           }
         };
     },
+    _analyticsOneTimeEventFired={},
+    analyticsOneTimeEvent = (eventObj, fn) => {
+      if(!eventObj)
+        return fn;
+
+      const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+      if(!eventKey)
+        throw new Error('Should inform cat or act');
+      const event = analyticsEvent(eventObj, fn);
+      return () => {
+        if(!_analyticsOneTimeEventFired[eventKey]) {
+          console.log('oneTimeEvent',eventKey);
+          _analyticsOneTimeEventFired[eventKey]=true;
+          return event();
+        }
+      };
+    },
     analyticsWindowScroll = (eventObj) => {
         if(eventObj) {
           var fn = analyticsEvent(eventObj);
           window.addEventListener('scroll', function(e){
-            if(fn && $(document).scrollTop() > $(window).height()*(3/4)) {
+            console.log('windowScroll');
+            if(fn && $ && $(document).scrollTop() > $(window).height()*(3/4)) {
               fn=null;
               fn();
             }
@@ -383,6 +402,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
     },
     analytics = {
       event: analyticsEvent,
+      oneTimeEvent: analyticsOneTimeEvent,
       windowScroll: analyticsWindowScroll
     };
 
