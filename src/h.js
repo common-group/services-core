@@ -372,13 +372,74 @@ const hashMatch = (str) => { return window.location.hash === str; },
         };
     },
 
-    ga = (eventObj, fn = Function.prototype) => {
-        const ga = window.ga || {};
+    analyticsEvent = (eventObj, fn=Function.prototype) => {
+        //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
+        if(!eventObj)
+          return fn;
+
+        const fireEvent=() => {
+          try {
+            var dataProject = eventObj.project ? {
+              project_id:eventObj.project.id,
+              category_id: eventObj.project.category_id,
+              state: eventObj.project.address && eventObj.project.address.state_acronym,
+              city: eventObj.project.address && eventObj.project.address.city
+            } : null;
+            var dataUser = eventObj.user ? {} : null;//TODO
+            var data = _.extend({},dataProject, dataUser,eventObj.extraData);
+
+            const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
+            if(typeof ga==='function') {
+              //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
+              ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
+                nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
+                transport: 'beacon',
+                //hitCallback: () => { fn(); }//coloquei dentro de outra função para fn não receber params
+              });
+            }
+          } catch(e) {
+            console.error('[h.analytics.event] error:',e);
+          }
+        };
 
         return () => {
-            ga('send', eventObj);
-            fn();
+          fireEvent();//vem antes, pq nunca lança excessão, e não sabemos se o fn() lançará, impedindo a execução do evento.
+          fn();
         };
+    },
+    _analyticsOneTimeEventFired={},
+    analyticsOneTimeEvent = (eventObj, fn) => {
+      if(!eventObj)
+        return fn;
+
+      const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+      if(!eventKey)
+        throw new Error('Should inform cat or act');
+      const fireEvent = analyticsEvent(eventObj, fn);
+      return () => {
+        if(!_analyticsOneTimeEventFired[eventKey]) {
+          //console.log('oneTimeEvent',eventKey);
+          _analyticsOneTimeEventFired[eventKey]=true;
+          fireEvent();
+        }
+      };
+    },
+    analyticsWindowScroll = (eventObj) => {
+        if(eventObj) {
+          let fireEvent = analyticsEvent(eventObj);
+          window.addEventListener('scroll', function(e){
+            //console.log('windowScroll');
+            if(fireEvent && $ && $(document).scrollTop() > $(window).height()*(3/4)) {
+              fireEvent=null;
+              fireEvent();
+            }
+          });
+        }
+    },
+    analytics = {
+      event: analyticsEvent,
+      oneTimeEvent: analyticsOneTimeEvent,
+      windowScroll: analyticsWindowScroll
     };
 
 setMomentifyLocale();
@@ -423,5 +484,5 @@ export default {
     scrollTo,
     validationErrors,
     validate,
-    ga
+    analytics
 };

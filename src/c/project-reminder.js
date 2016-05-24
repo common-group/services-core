@@ -64,7 +64,7 @@ const projectReminder = {
 
         return m(`#project-reminder${mainClass}`, [
             m(`button[class="${buttonClass} ${(project().in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
-                onclick: ctrl.submitReminder
+                onclick: h.analytics.event({cat:'project_view',act:'project_floatingreminder_click', project: project()}, ctrl.submitReminder)
             }, [
                 (ctrl.l() ? 'aguarde ...' : m('span.fa.fa-clock-o', [
                     m(`span${hideTextOnMobile ? '.w-hidden-medium' : ''}`, project().in_reminder ? ' Lembrete ativo' : ' Lembrar-me')
