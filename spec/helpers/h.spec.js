@@ -89,25 +89,25 @@ describe("helper methods", () => {
     });
 
     describe('h.analytics', () => {
-      var ga;
+      let ga;
       beforeEach(() => {
         ga = window.ga = jasmine.createSpy('ga');
         ga.getAll=function(){};
       });
       it('should not call ga if does not pass eventObj', () => {
-        expect(h.analytics.event()).toBeUndefined();
+        expect(h.analytics.event()).toEqual(Function.prototype);
         expect(ga).not.toHaveBeenCalled();
       });
       it('should not call ga if does not pass eventObj 2', () => {
-        var f=function() {};
-        var f2=h.analytics.event(null, f);
+        let f=function() {};
+        let f2=h.analytics.event(null, f);
         expect(f2).toBe(f);
         f2();
         expect(ga).not.toHaveBeenCalled();
       });
       it('should call ga if pass eventObj', () => {
-        var obj={cat:'link',act:'click',lbl:'http://teste.com'};
-        var f=h.analytics.event(obj);
+        let obj={cat:'link',act:'click',lbl:'http://teste.com'};
+        let f=h.analytics.event(obj);
         expect(f).toEqual(jasmine.any(Function));
         f();
         expect(ga).toHaveBeenCalledWith('send','event','link','click','http://teste.com',jasmine.any(Object));

@@ -337,38 +337,39 @@ const hashMatch = (str) => { return window.location.hash === str; },
         };
     },
 
-    analyticsEvent = (eventObj, fn) => {
+    analyticsEvent = (eventObj, fn=Function.prototype) => {
         //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
         if(!eventObj)
           return fn;
 
-        return () => {
-          console.log('event',eventObj);
+        const fireEvent=() => {
           try {
-            var dataProject = eventObj && eventObj.project ? {
+            var dataProject = eventObj.project ? {
               project_id:eventObj.project.id,
               category_id: eventObj.project.category_id,
               state: eventObj.project.address && eventObj.project.address.state_acronym,
               city: eventObj.project.address && eventObj.project.address.city
             } : null;
-            var dataUser = eventObj && eventObj.user ? {} : null;//TODO
-            var data = _.extend({},dataProject, dataUser,eventObj && eventObj.extraData);
+            var dataUser = eventObj.user ? {} : null;//TODO
+            var data = _.extend({},dataProject, dataUser,eventObj.extraData);
 
             const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
-            if(eventObj && ga && ga.getAll) {
+            if(typeof ga==='function') {
               //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
               ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
                 nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
                 transport: 'beacon',
-                hitCallback: fn && (() => { fn(); })//coloquei dentro de outra função para fn não receber params
+                //hitCallback: () => { fn(); }//coloquei dentro de outra função para fn não receber params
               });
-            } else {
-              fn && fn();
             }
           } catch(e) {
             console.error('[h.analytics.event] error:',e);
-            fn && fn();
           }
+        };
+
+        return () => {
+          fireEvent();//vem antes, pq nunca lança excessão, e não sabemos se o fn() lançará, impedindo a execução do evento.
+          fn();
         };
     },
     _analyticsOneTimeEventFired={},
@@ -379,23 +380,23 @@ const hashMatch = (str) => { return window.location.hash === str; },
       const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
       if(!eventKey)
         throw new Error('Should inform cat or act');
-      const event = analyticsEvent(eventObj, fn);
+      const fireEvent = analyticsEvent(eventObj, fn);
       return () => {
         if(!_analyticsOneTimeEventFired[eventKey]) {
-          console.log('oneTimeEvent',eventKey);
+          //console.log('oneTimeEvent',eventKey);
           _analyticsOneTimeEventFired[eventKey]=true;
-          return event();
+          fireEvent();
         }
       };
     },
     analyticsWindowScroll = (eventObj) => {
         if(eventObj) {
-          var fn = analyticsEvent(eventObj);
+          let fireEvent = analyticsEvent(eventObj);
           window.addEventListener('scroll', function(e){
-            console.log('windowScroll');
-            if(fn && $ && $(document).scrollTop() > $(window).height()*(3/4)) {
-              fn=null;
-              fn();
+            //console.log('windowScroll');
+            if(fireEvent && $ && $(document).scrollTop() > $(window).height()*(3/4)) {
+              fireEvent=null;
+              fireEvent();
             }
           });
         }
