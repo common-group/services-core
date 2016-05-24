@@ -37,7 +37,7 @@ const projectsExplore = {
               categoryCollection = m.prop([]),
               categoryId = m.prop(),
               findCategory = (id) => {
-                  return _.find(categoryCollection(), function(c){ return id === parseInt(id); });
+                  return _.find(categoryCollection(), function(c){ return c.id === parseInt(id); });
               },
               category = _.compose(findCategory, categoryId),
               loadCategories = () => {
