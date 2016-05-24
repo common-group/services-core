@@ -9,6 +9,7 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 import modalBox from '../c/modal-box';
 import adminProjectDetailsCard from '../c/admin-project-details-card';
 import onlineSuccessModalContent from '../c/online-success-modal-content';
+import projectDataStats from '../c/project-data-stats';
 import projectDataChart from '../c/project-data-chart';
 import projectDataTable from '../c/project-data-table';
 import projectReminderCount from '../c/project-reminder-count';
@@ -154,6 +155,7 @@ const insights = {
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
+                        m.component(projectDataStats, {project: m.prop(project)}),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {
