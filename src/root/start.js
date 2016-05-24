@@ -328,18 +328,16 @@ const start = {
                         m('.w-col.w-col-2'),
                         m('.w-col.w-col-8', [
                             m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
-                            m('input[name="utf8"][type="hidden"][value="✓"]', {
-                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change'})
-                            }),
+                            m('input[name="utf8"][type="hidden"][value="✓"]'),
                             m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
                             m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
                               name: 'project[name]',
-                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change'})
+                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change',lbl:'name'})
                             }),
                             m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
                             m('select.w-select.text-field.medium.u-marginbottom-40', {
                               name: 'project[category_id]',
-                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change'})
+                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change',lbl:'category'})
                             },[
                                 m('option[value=""]', I18n.t('form.select_default', I18nScope())),
                                 _.map(ctrl.categories(), (category) => {
