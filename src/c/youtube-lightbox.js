@@ -61,8 +61,8 @@ const youtubeLightbox = {
         return m('#youtube-lightbox', [
             m('a#youtube-play.w-lightbox.w-inline-block.fa.fa-play-circle.fontcolor-negative.fa-5x[href=\'javascript:void(0);\']', {
                 onclick: () => {
-                  ctrl.showLightbox.toggle();
-                  args.onclick && args.onclick();
+                    ctrl.showLightbox.toggle();
+                    args.onclick && args.onclick();
                 }
             }),
             m(`#lightbox.w-lightbox-backdrop[style="display:${ctrl.showLightbox() ? 'block' : 'none'}"]`, [

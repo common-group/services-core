@@ -70,14 +70,14 @@ const hashMatch = (str) => { return window.location.hash === str; },
                     resetValidations();
 
                     _.map(fields, field => {
-                        if(field.rule === 'email') {
-                            if(!validateEmail(field.prop())) {
+                        if (field.rule === 'email') {
+                            if (!validateEmail(field.prop())) {
                                 validationErrors().push({field: field.prop, message: 'E-mail inválido.'});
                             }
                         }
 
-                        if(field.rule === 'text') {
-                            if(field.prop().trim() === '') {
+                        if (field.rule === 'text') {
+                            if (field.prop().trim() === '') {
                                 validationErrors().push({field: field.prop, message: 'O campo não pode ser vazio.'});
                             }
                         }
@@ -374,72 +374,74 @@ const hashMatch = (str) => { return window.location.hash === str; },
 
     analyticsEvent = (eventObj, fn=Function.prototype) => {
         //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
-        if(!eventObj)
-          return fn;
+        if (!eventObj){
+            return fn;
+        }
 
-        const fireEvent=() => {
-          try {
-            var dataProject = eventObj.project ? {
-              project_id:eventObj.project.id,
-              category_id: eventObj.project.category_id,
-              state: eventObj.project.address && eventObj.project.address.state_acronym,
-              city: eventObj.project.address && eventObj.project.address.city
-            } : null;
-            var dataUser = eventObj.user ? {} : null;//TODO
-            var data = _.extend({},dataProject, dataUser,eventObj.extraData);
+        const fireEvent = () => {
+            try {
+                var dataProject = eventObj.project ? {
+                    project_id: eventObj.project.id,
+                    category_id: eventObj.project.category_id,
+                    state: eventObj.project.address && eventObj.project.address.state_acronym,
+                    city: eventObj.project.address && eventObj.project.address.city
+                } : null;
+                var dataUser = eventObj.user ? {} : null;//TODO
+                var data = _.extend({},dataProject, dataUser,eventObj.extraData);
 
-            const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
-            if(typeof ga==='function') {
-              //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
-              ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
-                nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
-                transport: 'beacon',
-                //hitCallback: () => { fn(); }//coloquei dentro de outra função para fn não receber params
-              });
+                const ga = window.ga;
+                if (typeof ga === 'function') {
+                    //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
+                    ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
+                        nonInteraction: eventObj.nonInteraction !== false,
+                        transport: 'beacon',
+                    });
+                }
+            } catch (e) {
+                console.error('[h.analytics.event] error:',e);
             }
-          } catch(e) {
-            console.error('[h.analytics.event] error:',e);
-          }
         };
 
         return () => {
-          fireEvent();//vem antes, pq nunca lança excessão, e não sabemos se o fn() lançará, impedindo a execução do evento.
-          fn();
+            fireEvent();
+            fn();
         };
     },
-    _analyticsOneTimeEventFired={},
+    _analyticsOneTimeEventFired = {},
     analyticsOneTimeEvent = (eventObj, fn) => {
-      if(!eventObj)
-        return fn;
-
-      const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
-      if(!eventKey)
-        throw new Error('Should inform cat or act');
-      const fireEvent = analyticsEvent(eventObj, fn);
-      return () => {
-        if(!_analyticsOneTimeEventFired[eventKey]) {
-          //console.log('oneTimeEvent',eventKey);
-          _analyticsOneTimeEventFired[eventKey]=true;
-          fireEvent();
+        if (!eventObj) {
+            return fn;
         }
-      };
+
+        const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+        if (!eventKey) {
+            throw new Error('Should inform cat or act');
+        }
+        const fireEvent = analyticsEvent(eventObj, fn);
+        return () => {
+            if (!_analyticsOneTimeEventFired[eventKey]) {
+                //console.log('oneTimeEvent',eventKey);
+                _analyticsOneTimeEventFired[eventKey] = true;
+                fireEvent();
+            }
+        };
     },
     analyticsWindowScroll = (eventObj) => {
-        if(eventObj) {
-          let fireEvent = analyticsEvent(eventObj);
-          window.addEventListener('scroll', function(e){
-            //console.log('windowScroll');
-            if(fireEvent && $ && $(document).scrollTop() > $(window).height()*(3/4)) {
-              fireEvent=null;
-              fireEvent();
-            }
-          });
+        if (eventObj) {
+            let fireEvent = analyticsEvent(eventObj);
+            window.addEventListener('scroll', function(e){
+                //console.log('windowScroll');
+                if (fireEvent && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                    fireEvent = null;
+                    fireEvent();
+                }
+            });
         }
     },
     analytics = {
-      event: analyticsEvent,
-      oneTimeEvent: analyticsOneTimeEvent,
-      windowScroll: analyticsWindowScroll
+        event: analyticsEvent,
+        oneTimeEvent: analyticsOneTimeEvent,
+        windowScroll: analyticsWindowScroll
     };
 
 setMomentifyLocale();

@@ -13,7 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const start = {
     controller() {
-        h.analytics.windowScroll({cat:'project_start',act:'start_page_scroll'});
+        h.analytics.windowScroll({cat: 'project_start',act: 'start_page_scroll'});
         const stats = m.prop([]),
             categories = m.prop([]),
             selectedPane = m.prop(0),
@@ -135,7 +135,7 @@ const start = {
                         m('.w-col.w-col-4.w-col-push-4', [
                             m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
                                 config: h.scrollTo(),
-                                onclick: h.analytics.event({cat:'project_start',act:'start_btnstart_click'})
+                                onclick: h.analytics.event({cat: 'project_start',act: 'start_btnstart_click'})
                             }, I18n.t('submit', I18nScope()))
                         ])
                     ]),
@@ -213,7 +213,7 @@ const start = {
                     m('.w-tabs.w-hidden-small.w-hidden-tiny', [
                         m('.w-tab-menu.w-col.w-col-4', _.map(ctrl.paneImages, (pane, idx) => {
                             return m(`btn.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
-                                onclick: h.analytics.event({cat:'project_start',act:'start_solution_click',lbl:pane.label},ctrl.selectPane(idx))
+                                onclick: h.analytics.event({cat: 'project_start',act: 'start_solution_click',lbl: pane.label},ctrl.selectPane(idx))
                             }, pane.label);
                         })),
                         m('.w-tab-content.w-col.w-col-8', _.map(ctrl.paneImages, (pane, idx) => {
@@ -233,7 +233,7 @@ const start = {
                     ]),
                     m.component(youtubeLightbox, {
                         src: I18n.t('video.src', I18nScope()),
-                        onclick: h.analytics.event({cat:'project_start',act:'start_video_play'})
+                        onclick: h.analytics.event({cat: 'project_start',act: 'start_video_play'})
                     })
                 ])
             ]),
@@ -249,7 +249,7 @@ const start = {
                     m('.w-tabs', [
                         m('.w-tab-menu.u-text-center', _.map(ctrl.categories(), (category) => {
                             return m(`a.w-tab-link.w-inline-block.btn-category.small.btn-inline${(ctrl.selectedCategoryIdx() === category.id) ? '.w--current' : ''}`, {
-                                onclick: h.analytics.event({cat:'project_start',act:'start_category_click',lbl:category.name}, ctrl.selectCategory(category))
+                                onclick: h.analytics.event({cat: 'project_start',act: 'start_category_click',lbl: category.name}, ctrl.selectCategory(category))
                             }, [
                                 m('div', category.name)
                             ]);
@@ -296,7 +296,7 @@ const start = {
                 title: I18n.t('testimonials_title', I18nScope()),
                 slideClass: 'slide-testimonials-content',
                 wrapperClass: 'slide-testimonials',
-                onchange: h.analytics.event({cat:'project_start',act:'start_testimonials_change'})
+                onchange: h.analytics.event({cat: 'project_start',act: 'start_testimonials_change'})
             }),
             m('.w-section.divider.u-margintop-30'),
             m('.w-container', [
@@ -306,14 +306,14 @@ const start = {
                         return m.component(landingQA, {
                             question: question.question,
                             answer: question.answer,
-                            onclick: h.analytics.event({cat:'project_start',act:'start_qa_click',lbl:question.question})
+                            onclick: h.analytics.event({cat: 'project_start',act: 'start_qa_click',lbl: question.question})
                         });
                     })),
                     m('.w-col.w-col-6', _.map(ctrl.questions.col_2, (question) => {
                         return m.component(landingQA, {
                             question: question.question,
                             answer: question.answer,
-                            onclick: h.analytics.event({cat:'project_start',act:'start_qa_click',lbl:question.question})
+                            onclick: h.analytics.event({cat: 'project_start',act: 'start_qa_click',lbl: question.question})
                         });
                     }))
                 ])
@@ -322,7 +322,7 @@ const start = {
                 m('.w-container', [
                     m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
                     m('form[action="/projects/fallback_create"][method="GET"].w-row.w-form', {
-                      onsubmit: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_submit'})
+                        onsubmit: h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_submit'})
                     },
                     [
                         m('.w-col.w-col-2'),
@@ -331,13 +331,13 @@ const start = {
                             m('input[name="utf8"][type="hidden"][value="✓"]'),
                             m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
                             m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
-                              name: 'project[name]',
-                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change',lbl:'name'})
+                                name: 'project[name]',
+                                onchange: h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'name'})
                             }),
                             m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
                             m('select.w-select.text-field.medium.u-marginbottom-40', {
-                              name: 'project[category_id]',
-                              onchange: h.analytics.oneTimeEvent({cat:'project_create',act:'create_form_change',lbl:'category'})
+                                name: 'project[category_id]',
+                                onchange: h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'category'})
                             },[
                                 m('option[value=""]', I18n.t('form.select_default', I18nScope())),
                                 _.map(ctrl.categories(), (category) => {

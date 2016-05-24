@@ -56,7 +56,7 @@ const projectContributions = {
                     m('.w-row.u-marginbottom-20', [
                         m('.w-col.w-col-1', [
                             m('a[href="/users/' + contribution.user_id + '"]', {
-                              onclick: h.analytics.event({cat:'project_view',act:'project_backer_link',lbl:contribution.user_id,project:args.project()})
+                                onclick: h.analytics.event({cat: 'project_view',act: 'project_backer_link',lbl: contribution.user_id,project: args.project()})
                             },[
                                 m('.thumb.u-left.u-round[style="background-image: url(' + (!_.isEmpty(contribution.profile_img_thumbnail) ? contribution.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg') + '); background-size: contain;"]')
                             ])
@@ -64,7 +64,7 @@ const projectContributions = {
                         m('.w-col.w-col-11', [
                             m('.fontsize-base.fontweight-semibold', [
                                 m('a.link-hidden-dark[href="/users/' + contribution.user_id + '"]', {
-                                  onclick: h.analytics.event({cat:'project_view',act:'project_backer_link',lbl:contribution.user_id,project:args.project()})
+                                    onclick: h.analytics.event({cat: 'project_view',act: 'project_backer_link',lbl: contribution.user_id,project: args.project()})
                                 }, contribution.user_name), (contribution.is_owner_or_admin ?
                                     m('.fontsize-smaller', [
                                         'R$ ' + h.formatNumber(contribution.value, 2, 3), (contribution.anonymous ? [m.trust('&nbsp;-&nbsp;'), m('strong', 'Apoiador anônimo')] : '')
