@@ -87,7 +87,8 @@ const projectDashboardMenu = {
                                 m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', [
                                     'Recompensas', optionalOpt
                                 ]),
-                                m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', 'Sobre você'), (project.mode === 'flex' || (project.is_published || project.state === 'approved') || project.is_admin_role ? [
+                                m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', 'Sobre você'),
+                                (project.mode === 'flex' || (project.is_published || project.state === 'draft') || project.is_admin_role ? [
                                     m('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', 'Conta'),
                                 ] : ''), (!project.is_published ? [
                                     m('a#dashboard_preview_link[class="' + editLinkClass + '"][href="' + editRoute + '#preview' + '"]', [
@@ -99,8 +100,7 @@ const projectDashboardMenu = {
                         ((!project.is_published && ctrl.showPublish()) ? [
                             m('.btn-send-draft-fixed',
                               (project.mode === 'aon' ? [
-                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/send_to_analysis"]', I18n.t('send', I18nScope())) : ''),
-                                  (project.state === 'approved' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/validate_publish"]', [
+                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/validate_publish"]', [
                                       I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                   ]) : '')
                               ] : [
