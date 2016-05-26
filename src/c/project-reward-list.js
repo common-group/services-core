@@ -28,7 +28,7 @@ const projectRewardList = {
                         ]))
                     ] : ''),
                 ]),
-                m('.fontsize-smaller.u-margintop-20', h.simpleFormat(reward.description)), (!_.isEmpty(reward.deliver_at) ?
+                m('.fontsize-smaller.u-margintop-20', m.trust(h.simpleFormat(h.strip(reward.description)))), (!_.isEmpty(reward.deliver_at) ?
                     m('.fontsize-smaller', [
                         m('b', 'Estimativa de Entrega: '),
                         h.momentify(reward.deliver_at, 'MMM/YYYY')
