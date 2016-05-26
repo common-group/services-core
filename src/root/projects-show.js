@@ -9,6 +9,7 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsShow = {
     controller(args) {
+        h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
         return projectVM(args.project_id, args.project_user_id);
     },
     view(ctrl) {

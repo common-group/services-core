@@ -73,6 +73,7 @@ const slider = {
             sliderClick = (fn, param) => {
                 fn(param);
                 ctrl.resetSliderTimer();
+                args.onchange && args.onchange();
             },
             effectStyle = (idx, translateStr) => {
                 const slideFx = `transform: ${translateStr}; -webkit-transform: ${translateStr}; -ms-transform:${translateStr}`,
