@@ -14,6 +14,7 @@ import I18n from 'i18n-js';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
+const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
 
 const projectDashboardMenu = {
     controller(args) {
@@ -42,7 +43,7 @@ const projectDashboardMenu = {
               projectRoute = '/projects/' + project.id,
               editRoute = projectRoute + '/edit',
               editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
-        let optionalOpt = (project.mode === 'flex' ? m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)') : '');
+        let optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
 
         ctrl.body.className = ctrl.bodyToggleForNav();
 
@@ -75,24 +76,24 @@ const projectDashboardMenu = {
                         ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
-                                    m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', 'Básico'),
-                                    m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', 'Financiamento'),
+                                    m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', I18n.t(`${project.mode}.basics_tab`, linksScope()) ),
+                                    m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', I18n.t(`${project.mode}.goal_tab`, linksScope())),
                                 ] : ''),
-                                m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', 'Descrição'),
+                                m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', I18n.t(`${project.mode}.description_tab`, linksScope())),
                                 m('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', [
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
                                 ]),
-                                m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', 'Orçamento'),
-                                m('a#card_link[class="' + editLinkClass + '"][href="' + editRoute + '#card' + '"]', 'Card do projeto'),
+                                m('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', I18n.t(`${project.mode}.budget_tab`, linksScope())),
+                                m('a#card_link[class="' + editLinkClass + '"][href="' + editRoute + '#card' + '"]', I18n.t(`${project.mode}.card_tab`, linksScope())),
                                 m('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', [
                                     'Recompensas', optionalOpt
                                 ]),
-                                m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', 'Sobre você'),
-                                (project.mode === 'flex' || (project.is_published || project.state === 'draft') || project.is_admin_role ? [
-                                    m('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', 'Conta'),
+                                m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', I18n.t(`${project.mode}.about_you_tab`, linksScope())),
+                                ( (project.is_published || project.state === 'draft') || project.is_admin_role ? [
+                                    m('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', I18n.t(`${project.mode}.account_tab`, linksScope())),
                                 ] : ''), (!project.is_published ? [
                                     m('a#dashboard_preview_link[class="' + editLinkClass + '"][href="' + editRoute + '#preview' + '"]', [
-                                        m('span.fa.fa-fw.fa-eye.fa-lg'), ' Preview'
+                                        m('span.fa.fa-fw.fa-eye.fa-lg'), I18n.t(`${project.mode}.preview_tab`, linksScope())
                                     ]),
                                 ] : '')
                             ])
