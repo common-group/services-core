@@ -12,6 +12,10 @@ const projectCard = {
             remainingTextObj = h.translatedTime(project.remaining_time),
             link = '/' + project.permalink + (args.ref ? '?ref=' + args.ref : ''),
             type = args.type || 'small',
+            projectRoute = () => {
+                h.setProject(project);
+                m.route(link, {project_id: project.project_id, project_user_id: project.project_user_id});
+            },
             css = (cardType) => {
                 const cssClasses = {
                     'small': {
@@ -54,7 +58,8 @@ const projectCard = {
 
         return m(css(type).wrapper, [
             m(css(type).innerWrapper, [
-                m(`a${css(type).thumb}[href="${link}"]`, {
+                m(`a${css(type).thumb}[href="javascript:void(0);"]`, {
+                    onclick: projectRoute,
                     style: {
                         'background-image': `url(${project.project_img})`,
                         'display': 'block'
@@ -63,7 +68,10 @@ const projectCard = {
                 m(css(type).descriptionWrapper, [
                     m(css(type).description, [
                         m(css(type).title, [
-                            m(`a.link-hidden[href="${link}"]`, project.project_name)
+                            m(`a.link-hidden[href="javacript:void(0);"]`,{
+                                onclick: projectRoute
+                            },
+                            project.project_name)
                         ]),
                         m(css(type).author, `${I18n.t('by', I18nScope())} ${project.owner_name}`),
                         m(css(type).headline, [
