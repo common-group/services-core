@@ -467,7 +467,11 @@ const hashMatch = (str) => { return window.location.hash === str; },
         event: analyticsEvent,
         oneTimeEvent: analyticsOneTimeEvent,
         windowScroll: analyticsWindowScroll
-    };
+    },
+    setProject = (project) => {
+        return window.ctrseProject = project;
+    },
+    getProject = () => m.prop(window.ctrseProject);
 
 setMomentifyLocale();
 closeFlash();
@@ -514,5 +518,7 @@ export default {
     strip,
     analytics,
     applyMonetaryMask,
-    monetaryToFloat
+    monetaryToFloat,
+    setProject,
+    getProject
 };
