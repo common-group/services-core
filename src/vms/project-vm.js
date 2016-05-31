@@ -1,7 +1,9 @@
 import m from 'mithril';
 import _ from 'underscore';
+import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
+
 
 const projectVM = (project_id, project_user_id) => {
     const vm = postgrest.filtersVM({
