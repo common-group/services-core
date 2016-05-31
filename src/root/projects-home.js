@@ -3,12 +3,15 @@ import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import h from '../h';
+import menu from './menu';
 import models from '../models';
 import projectFilters from '../vms/project-filters-vm';
 import homeVM from '../vms/home-vm';
 import slider from '../c/slider';
 import projectRow from '../c/project-row';
 import contributionActivities from '../c/contribution-activities';
+import blogBanner from './blog-banner';
+import footer from './footer';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
@@ -20,14 +23,14 @@ const projectsHome = {
             filters = projectFilters().filters,
             vm = homeVM();
 
+        project.pageSize(20);
+
         const collections = _.map(['score'], (name) => {
             const f = filters[name],
                   cLoader = loader(project.getPageOptions(_.extend({}, {order: 'score.desc'}, f.filter.parameters()))),
                   collection = m.prop([]);
 
             cLoader.load().then(_.compose(collection, sample6));
-
-            project.pageSize(20);
 
             return {
                 title: f.title,
@@ -62,6 +65,7 @@ const projectsHome = {
         };
 
         return [
+            m.component(menu, {transparent: true}),
             m.component(slider, {
                 slides: slides(),
                 effect: 'fade',
@@ -76,7 +80,9 @@ const projectsHome = {
                     ref: `home_${collection.hash}`
                 });
             }),
-            m.component(contributionActivities)
+            m.component(contributionActivities),
+            m.component(blogBanner),
+            m.component(footer, {expanded: true})
         ];
     }
 };
