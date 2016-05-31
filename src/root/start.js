@@ -127,7 +127,7 @@ const start = {
 
         };
 
-        return [
+        return m('#start', [
             m('.w-section.hero-full.hero-start', [
                 m('.w-container.u-text-center', [
                     m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
@@ -354,7 +354,7 @@ const start = {
                     ])
                 ])
             ])
-        ];
+        ]);
     }
 };
 

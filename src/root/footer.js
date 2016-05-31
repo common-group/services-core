@@ -153,47 +153,7 @@ const footer = {
                                             m(".footer-full-signature-text.fontsize-small",
                                                 "Change language"
                                             ),
-                                            m("[id='google_translate_element']",
-                                                m(".skiptranslate.goog-te-gadget[dir='ltr']",
-                                                    [
-                                                        m("[id=':0.targetLanguage']", {style: {"display": "inline"}},
-                                                            m("select.goog-te-combo",
-                                                                [
-                                                                    m("option[value='']",
-                                                                        "Selecione o idioma"
-                                                                    ),
-                                                                    m("option[value='de']",
-                                                                        "Alemão"
-                                                                    ),
-                                                                    m("option[value='es']",
-                                                                        "Espanhol"
-                                                                    ),
-                                                                    m("option[value='fr']",
-                                                                        "Francês"
-                                                                    ),
-                                                                    m("option[value='en']",
-                                                                        "Inglês"
-                                                                    ),
-                                                                    m("option[value='it']",
-                                                                        "Italiano"
-                                                                    )
-                                                                ]
-                                                            )
-                                                        ),
-                                                        m.trust("&nbsp;"),
-                                                        m.trust("&nbsp;"),
-                                                        "Powered by ",
-                                                        m("span", {style: {"white-space": "nowrap"}},
-                                                            m("a.goog-logo-link[href='https://translate.google.com'][target='_blank']",
-                                                                [
-                                                                    m("img[height='14px'][src='https://www.gstatic.com/images/branding/googlelogo/1x/googlelogo_color_42x16dp.png'][width='37px']", {style: {"padding-right": "3px"}}),
-                                                                    "Tradutor"
-                                                                ]
-                                                            )
-                                                        )
-                                                    ]
-                                                )
-                                            )
+                                            m("[id='google_translate_element']")
                                         ]
                                     )
                                 ]

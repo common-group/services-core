@@ -3,6 +3,7 @@ import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import userVM from '../vms/user-vm';
 import models from '../models';
+import h from '../h';
 import quickProjectList from '../c/quick-project-list';
 
 const menuProfile = {
@@ -27,7 +28,8 @@ const menuProfile = {
             latestProjects: latestProjects,
             userDetails: userDetails,
             userLoader: userLoader,
-            createdLoader: createdLoader
+            createdLoader: createdLoader,
+            toggleMenu: h.toggleProp(false, true)
         };
     },
     view(ctrl, args) {
@@ -35,10 +37,13 @@ const menuProfile = {
 
         return m(`.w-dropdown.user-profile`,
             [
-                m(`a.w-dropdown-toggle.dropdown-toggle[href='javascript:toggleMenu()'][id='user-menu']`,
+                m(`a.w-dropdown-toggle.dropdown-toggle[href='javascript:void()'][id='user-menu']`,
+                    {
+                        onclick: ctrl.toggleMenu.toggle
+                    },
                     m(`img.user-avatar[alt='Thumb avatar 942644 4735930283597 888573557 n'][height='40'][src='${user.profile_img_thumbnail}'][width='40']`)
                 ),
-                m(`nav.w-dropdown-list.dropdown-list.user-menu[id='user-menu-dropdown']`,
+                ctrl.toggleMenu() ? m(`nav.w-dropdown-list.dropdown-list.user-menu.w--open[id='user-menu-dropdown']`,
                     [
                         m(`.w-row`,
                             [
@@ -170,7 +175,7 @@ const menuProfile = {
                             ]
                         )
                     ]
-                )
+                ) : ''
             ]
         );
     }

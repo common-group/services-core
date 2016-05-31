@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
+import postgrest from 'mithril-postgrest';
 import h from '../h';
 import menu from './menu';
 import models from '../models';
@@ -64,8 +65,8 @@ const projectsHome = {
             });
         };
 
-        return [
-            m.component(menu, {transparent: true}),
+        return m('#projects-home-component', [
+            // m.component(menu, {transparent: true}),
             m.component(slider, {
                 slides: slides(),
                 effect: 'fade',
@@ -82,8 +83,8 @@ const projectsHome = {
             }),
             m.component(contributionActivities),
             m.component(blogBanner),
-            m.component(footer, {expanded: true})
-        ];
+            // m.component(footer, {expanded: true})
+        ]);
     }
 };
 

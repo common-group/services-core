@@ -13,6 +13,9 @@ import publish from './root/publish';
 import start from './root/start';
 import team from './root/team';
 import usersBalanceMain from './root/users-balance-main';
+import menu from './root/menu';
+import footer from './root/footer';
+
 
 const c = {
     root: {
@@ -30,7 +33,9 @@ const c = {
         Publish: publish,
         Start: start,
         Team: team,
-        UsersBalance: usersBalanceMain
+        UsersBalance: usersBalanceMain,
+        Menu: menu,
+        Footer: footer
     }
 };
 
