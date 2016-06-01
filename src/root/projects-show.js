@@ -14,25 +14,23 @@ const projectsShow = {
         return projectVM(args.project_id, args.project_user_id);
     },
     view(ctrl) {
-        const project = ctrl.projectDetails || m.prop();
-
-        console.log('I am rendering with ', project() ? 'project' : 'h.getProject');
+        const project = ctrl.projectDetails() ? ctrl.projectDetails : h.getProject() ? h.getProject() :  m.prop({});
 
         return m('.project-show', [
                 m.component(projectHeader, {
-                    project: project() ? project : h.getProject(),
+                    project: project,
                     userDetails: ctrl.userDetails
                 }),
                 m.component(projectTabs, {
-                    project: project() ? project : h.getProject(),
+                    project: project,
                     rewardDetails: ctrl.rewardDetails
                 }),
                 m.component(projectMain, {
-                    project: project() ? project : h.getProject(),
+                    project: project,
                     rewardDetails: ctrl.rewardDetails
                 }),
                 (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
-                    project: project() ? project : h.getProject()
+                    project: project
                 }) : '')
             ]);
     }

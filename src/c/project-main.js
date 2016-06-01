@@ -10,8 +10,7 @@ import projectPosts from './project-posts';
 
 const projectMain = {
     controller(args) {
-        const project = args.project,
-              displayTabContent = () => {
+        const displayTabContent = (project) => {
                   const hash = window.location.hash,
                         c_opts = {
                             project: project
@@ -38,6 +37,8 @@ const projectMain = {
 
         h.redrawHashChange();
 
+
+
         return {
             displayTabContent: displayTabContent
         };
@@ -45,7 +46,7 @@ const projectMain = {
     view(ctrl, args) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
             m('.w-container', [
-                m('.w-row', args.project() ? ctrl.displayTabContent() : '')
+                m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : '')
             ])
         ]);
     }

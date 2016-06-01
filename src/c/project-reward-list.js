@@ -29,12 +29,12 @@ const projectRewardList = {
     view(ctrl, args) {
         //FIXME: MISSING ADJUSTS
         // - add draft admin modifications
-        const project = args.project;
+        const project = args.project() || {open_for_contributions: false};
         return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
 
 
-            return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project().open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
-                onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_reward_click', lbl: reward.minimum_value, project: project(), extraData: {reward_id: reward.id, reward_value: reward.minimum_value}})
+            return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
+                onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_reward_click', lbl: reward.minimum_value, project: project, extraData: {reward_id: reward.id, reward_value: reward.minimum_value}})
             }, [
                 m('.u-marginbottom-20', [
                     m('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'),
@@ -59,7 +59,7 @@ const projectRewardList = {
                         h.momentify(reward.deliver_at, 'MMM/YYYY')
                     ])
                 : ''),
-                (project().open_for_contributions && !h.rewardSouldOut(reward) ? [
+                (project.open_for_contributions && !h.rewardSouldOut(reward) ? [
                     ctrl.openedReward() === reward.id ? m('.w-form',
                     	[
                     		m('form.u-margintop-30', {
