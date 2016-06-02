@@ -40,9 +40,15 @@ const publish = {
         l.load().then(projectDetails);
         accountL.load().then(projectAccount);
 
+        let expiresAt = () => {
+            const project = _.first(projectDetails());
+            return moment().add(project.online_days, 'days');
+            };
+
         return {
             l: l,
             accountL: accountL,
+            expiresAt: expiresAt,
             filtersVM: filtersVM,
             acceptTerm: acceptTerm,
             flexAcceptTerm: flexAcceptTerm,
@@ -62,7 +68,7 @@ const publish = {
                         ' ',
                       m('span.fontweight-semibold', 'Regras da modalidade FLEX')
                     ]),
-                    m('div', 'Você escolheu a campanha flexível. Dessa maneira, você irá receber os recursos arrecadados  junto aos apoiadores ao final do prazo da campanha (descontando a taxa do Catarse) e deverá cumprir com a execução do projeto e com a entrega das recompensas oferecidas independente do quanto arrecadar.')
+                    m('div', 'Você escolheu a campanha flexível. Dessa maneira, você irá receber todos os recursos arrecadados junto aos apoiadores ao final do prazo da campanha (descontando a taxa do Catarse) e deverá cumprir com a execução do projeto e com a entrega das recompensas oferecidas independente do quanto arrecadar.')
                   ]),
                   m('.w-col.w-col-11', [
                     m('div', [
@@ -106,7 +112,7 @@ const publish = {
                       m('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')
                     ]),
                   [m('div', [m('span.fontweight-semibold', 'Você não poderá:'),' alterar o tipo de financiamento, nome do projeto, a URL (link) do projeto, a categoria escolhida, a meta de arrecadação, o prazo (caso já tenha definido), as recompensas onde existirem apoios já efetuados e a conta bancária registrada.\
-                    '                          ,m('br'),m('br'),m('span.fontweight-semibold', 'Você poderá: '),'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]
+                    '                          ,m('br'),m('br'),m('span.fontweight-semibold', 'Você poderá: '),'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]
                   ]),
                   m('.w-col.w-col-11', [
                     m('div', [
@@ -176,7 +182,7 @@ const publish = {
                         ' ',
                         m('span', {style: {'font-weight': ' 600'}}, 'Prazo da campanha')
                       ]),
-                      m('div', `Seu projeto estará em arrecadação no Catarse até o dia ${h.momentify(project.zone_expires_at)} às 23h59min59s. Este prazo não poderá ser alterado após a publicação do projeto.`)
+                      m('div', `Seu projeto estará em arrecadação no Catarse até o dia ${h.momentify(ctrl.expiresAt())} às 23h59min59s. Este prazo não poderá ser alterado após a publicação do projeto.`)
                     ]),
 
                     m('.w-col.w-col-11', [
@@ -194,7 +200,7 @@ const publish = {
                         ' ',
                         m('span', {style: {'font-weight': ' 600'}}, 'O que pode e não pode alterar na página do projeto a partir da publicação?')
                       ]),
-                    [m('div', [m('span.fontweight-semibold', 'Você não poderá:'),' alterar o nome do projeto, a URL (link) do projeto, a categoria escolhida, o tipo de financiamento, a conta bancária, a meta de arrecadação, o prazo escolhido e as recompensas onde existirem apoios já efetuados.\ ',m('br'),m('br'),m('span.fontweight-semibold', 'Você poderá: '),'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]]),
+                    [m('div', [m('span.fontweight-semibold', 'Você não poderá:'),' alterar o nome do projeto, a URL (link) do projeto, a categoria escolhida, o tipo de financiamento, a conta bancária, a meta de arrecadação, o prazo escolhido e as recompensas onde existirem apoios já efetuados.\ ',m('br'),m('br'),m('span.fontweight-semibold', 'Você poderá: '),'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]]),
 
                     m('.w-col.w-col-11', [
                       m('div', [
@@ -260,7 +266,7 @@ const publish = {
                     m('div', [m('span.fontweight-semibold', 'Link: '),`www.catarse.me/${project.permalink}`]),
                     m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n.t(project.mode, I18nScope())]),
                     m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '),`R$ ${h.formatNumber(project.goal, 2, 3)}`]),
-                    (project.online_days !== null) ? m('div', [m('span.fontweight-semibold', `Prazo: ${project.online_days} dias`)]) : '',
+                    (project.online_days !== null) ? m('div', [m('span.fontweight-semibold', `Prazo: ${project.online_days} ${(project.online_days > 1) ? 'dias' : 'dia' }`)]) : '',
                     m('div', [m('span.fontweight-semibold', 'Responsável: '), account.owner_name]),
                     m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])
                   ])
