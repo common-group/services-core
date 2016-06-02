@@ -113,16 +113,19 @@ const insights = {
                 name: 'Realizador'
             }
         },
-            buildTooltip = (el) => {
-                return m.component(tooltip, {
-                    el: el,
-                    text: [
-                        'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
-                        m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
-                    ],
-                    width: 380
-                });
-            };
+
+              buildTooltip = (el) => {
+                  return m.component(tooltip, {
+                      el: el,
+                      text: [
+                          'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
+                          m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                      ],
+                      width: 380
+                  });
+              },
+
+              startOnState = project.can_request_transfer ? 'start' : 'finished';
 
         if (!ctrl.l()) {
             project.user.name = project.user.name || 'Realizador';
@@ -136,7 +139,7 @@ const insights = {
                 displayModal: ctrl.displayModal,
                 content: onlineSuccessModalContent
             }) : ''),
-            m('.w-container', (project.state == 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project)}) : [
+            m('.w-container', (project.state == 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project), startOnState: startOnState}) : [
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2.dashboard-header.u-text-center', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),

@@ -20,10 +20,10 @@ const insightVM = {
         const translations = I18n.translations[
             I18n.currentLocale()
         ].projects.successful_onboard[state],
-              translationContext = parseAccountData(
+              translationContext = (state === 'finished' ? {} : parseAccountData(
                   _.first(data.account()),
                   _.first(data.transfer())
-              );
+              ));
         let contentObj = {};
 
         _.map(translations, (translation, translationKey) => {

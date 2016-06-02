@@ -32,7 +32,7 @@ const projectSuccessfulOnboard = {
                   'pending_transfer': dashboardInfo,
                   'finished': dashboardInfo
               },
-              currentState = m.prop('start'),
+              currentState = m.prop(args.startOnState || 'start'),
               currentComponent = () => onboardComponents[currentState()],
               content = () => insightVM.content(currentState(), {
                   account: projectAccounts,
@@ -83,6 +83,10 @@ const projectSuccessfulOnboard = {
               loadCurrentStage = () => {
                   if (!lProjectAccount()) {
                       const pa = _.first(projectAccounts());
+
+                      if(_.isNull(pa)) {
+                          return setStage('finished')();
+                      }
 
                       if (_.isNull(pa.error_reason) && _.isNull(pa.transfer_state)) {
                           return setStage('start')();
