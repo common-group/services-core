@@ -5,13 +5,28 @@ import h from '../h';
 const projectRewardList = {
     controller(args) {
         const contributionValue = m.prop(),
-            openedReward = m.prop(-1),
-            chooseReward = () => {console.log('reward: ', openedReward(), ' contributionValue: ', h.monetaryToFloat(contributionValue)); return false;};
+            openedReward = m.prop({id: -1}),
+            error = m.prop(''),
+            chooseReward = () => {
+                const valueFloat = h.monetaryToFloat(contributionValue);
+
+                if(valueFloat < openedReward().minimum_value) {
+                    error(`O valor dessa recompensa deve ser de no mínimo R$${openedReward().minimum_value}`);
+                } else {
+                    h.setReward(openedReward());
+                    m.route('/contribution', {
+                        reward_id: openedReward().id,
+                        value: valueFloat
+                    });
+                }
+
+                return false;
+            };
 
         const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
         const selectReward = (reward) => () => {
-            openedReward(reward.id);
+            openedReward(reward);
             contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
         };
 
@@ -19,6 +34,7 @@ const projectRewardList = {
 
         return {
             applyMask: applyMask,
+            error: error,
             chooseReward: chooseReward,
             openedReward: openedReward,
             selectReward: selectReward,
@@ -34,7 +50,7 @@ const projectRewardList = {
 
 
             return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
-                onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_reward_click', lbl: reward.minimum_value, project: project, extraData: {reward_id: reward.id, reward_value: reward.minimum_value}})
+                onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_reward_click', lbl: reward.minimum_value, project: project, extraData: {reward_id: reward.id, reward_value: reward.minimum_value}}, ctrl.selectReward(reward))
             }, [
                 m('.u-marginbottom-20', [
                     m('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'),
@@ -60,7 +76,7 @@ const projectRewardList = {
                     ])
                 : ''),
                 (project.open_for_contributions && !h.rewardSouldOut(reward) ? [
-                    ctrl.openedReward() === reward.id ? m('.w-form',
+                    ctrl.openedReward().id === reward.id ? m('.w-form',
                     	[
                     		m('form.u-margintop-30', {
                                     onsubmit: ctrl.chooseReward
@@ -85,13 +101,19 @@ const projectRewardList = {
                     						)
                     					]
                     				),
-                    				m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]')
+                    				m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
+                                    ctrl.error().length > 0 ? m('.text-error', [
+                                        m('br'),
+                                        m('span.fa.fa-exclamation-triangle'),
+                                        ` ${ctrl.error()}`
+                                    ]) : ''
                     			]
                     		)
                     	]
-                    ) : m('.project-reward-box-hover', { onclick: ctrl.selectReward(reward) }, [
-                        m('.project-reward-box-select-text.u-text-center', 'Selecione essa recompensa')
-                    ])
+                    ) : '',
+                    // m('.project-reward-box-hover', [
+                    //     m('.project-reward-box-select-text.u-text-center', 'Selecione essa recompensa')
+                    // ])
                 ] : '')
             ]);
         }));

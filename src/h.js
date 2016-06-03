@@ -57,15 +57,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
             integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
             decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
 
-        console.log("integerpart is ", integerPart);
-
-        console.log("decimalPart is ", decimalPart);
-
         integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        console.log('OnlyNumbers is ', onlyNumbers);
-
-        console.log('I will apply a mask and resulting in ', `${integerPart},${decimalPart}`);
 
         return `${integerPart},${decimalPart}`;
     },
@@ -468,10 +460,16 @@ const hashMatch = (str) => { return window.location.hash === str; },
         oneTimeEvent: analyticsOneTimeEvent,
         windowScroll: analyticsWindowScroll
     },
+    currentProject = m.prop(),
     setProject = (project) => {
-        return window.ctrseProject = project;
+        currentProject(project);
     },
-    getProject = () => m.prop(window.ctrseProject);
+    getProject = () => currentProject,
+    currentReward = m.prop(),
+    setReward = (reward) => {
+        currentReward(reward);
+    },
+    getReward = () => currentReward;
 
 setMomentifyLocale();
 closeFlash();
@@ -520,5 +518,7 @@ export default {
     applyMonetaryMask,
     monetaryToFloat,
     setProject,
-    getProject
+    getProject,
+    setReward,
+    getReward
 };
