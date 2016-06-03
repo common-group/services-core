@@ -4,20 +4,35 @@ import h from '../h';
 
 const projectRewardList = {
     controller(args) {
-        const contributionValue = m.prop(),
+        const storeKey = 'selectedReward',
+            contributionValue = m.prop(),
             openedReward = m.prop({id: -1}),
             error = m.prop(''),
             chooseReward = () => {
                 const valueFloat = h.monetaryToFloat(contributionValue);
 
                 if(valueFloat < openedReward().minimum_value) {
+
                     error(`O valor dessa recompensa deve ser de no mínimo R$${openedReward().minimum_value}`);
+
                 } else {
-                    h.setReward(openedReward());
-                    m.route('/contribution', {
-                        reward_id: openedReward().id,
-                        value: valueFloat
-                    });
+
+                    if(!h.getUser()) {
+
+                        h.storeObject(storeKey, {value: valueFloat, reward: openedReward()});
+
+                        return h.navigateToDevise();
+
+                    } else {
+
+                        h.setReward(openedReward());
+
+                        m.route('/contribution', {
+                            reward_id: openedReward().id,
+                            value: valueFloat
+                        });
+
+                    }
                 }
 
                 return false;
@@ -31,6 +46,15 @@ const projectRewardList = {
         };
 
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : false;
+
+        if(h.getStoredObject(storeKey)) {
+            const {value, reward} = h.getStoredObject(storeKey);
+
+            h.removeStoredObject(storeKey);
+            selectReward(m.prop(reward));
+            contributionValue(h.applyMonetaryMask(`${value},00`));
+            chooseReward();
+        }
 
         return {
             applyMask: applyMask,

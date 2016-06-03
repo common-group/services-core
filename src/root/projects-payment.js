@@ -3,7 +3,17 @@ import h from '../h';
 
 const projectsPayment = {
     controller(args) {
-        console.log('The selected reward is ', h.getReward());
+        const reward = h.getReward(),
+            value = m.route.param('value');
+
+        if(!h.getUser()) {
+            return h.navigateToDevise();
+        }
+
+        return {
+            reward: reward,
+            value: value
+        }
     },
     view(ctrl, args) {
         return m(".w-section.w-clearfix.section",
@@ -17,7 +27,7 @@ const projectsPayment = {
         					m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-reward-details'][data-vivaldi-spatnav-clickable='1'][href='#']"),
         					m(".w-clearfix.u-marginbottom-20",
         						m(".fontsize-larger.text-success.u-left",
-        							"R$15"
+        							`R$${ctrl.value}`
         						)
         					),
         					m(".w-clearfix.back-payment-info-reward[data-ix='display-none-on-load']", {style: {"display": "none"}},
@@ -25,13 +35,7 @@ const projectsPayment = {
         							m(".fontsize-smaller.fontweight-semibold.u-marginbottom-10",
         								"Recompensa selecionada"
         							),
-        							m(".fontsize-smallest",
-        								[
-        									"Com esse apoio seu nome ficará",
-        									m.trust("&nbsp;"),
-        									"gravado no vídeo de agradecimento dos vídeos produzidos e dos agradecimentos dos vídeos e também no agradecimento dos vídeos isso isso isso e também no agradecimento dos vídeos"
-        								]
-        							),
+        							m(".fontsize-smallest", `${ctrl.reward().description}`),
         							m("a.fontsize-small.link-hidden.u-right.fontweight-semibold[href='#']",
         								"Editar"
         							)
@@ -496,7 +500,7 @@ const projectsPayment = {
         									m(".w-clearfix.u-marginbottom-20",
         										[
         											m(".fontsize-larger.text-success.u-left",
-        												"R$15"
+        												`R$${ctrl.value}`
         											),
         											m("a.fontsize-small.link-hidden.u-right.fontweight-semibold[href='#']",
         												"Editar"
@@ -508,13 +512,8 @@ const projectsPayment = {
         											m(".fontsize-smaller.fontweight-semibold.u-marginbottom-10",
         												"Recompensa selecionada"
         											),
-        											m(".fontsize-smallest",
-        												[
-        													"Com esse apoio seu nome ficará",
-        													m.trust("&nbsp;"),
-        													"gravado no vídeo de agradecimento dos vídeos produzidos e dos agradecimentos dos vídeos e também no agradecimento dos vídeos isso isso isso e também no agradecimento dos vídeos"
-        												]
-        											)
+        											m(".fontsize-smallest", ctrl.reward().description)
+
         										]
         									)
         								]
@@ -527,11 +526,9 @@ const projectsPayment = {
         									m("ul.w-list-unstyled",
         										[
         											m("li.fontsize-smaller.alt-link.list-question",
-        												m("div",
+        												m("span",
         													[
-        														m("span.fa.fa-angle-right",
-        															"."
-        														),
+        														m("span.faq-box-arrow"),
         														" Como eu apoio este projeto?"
         													]
         												)
@@ -540,12 +537,8 @@ const projectsPayment = {
         												m("div",
         													[
         														m("span.faq-box-arrow", {style: {"font-weight": "800"}}),
-        														m("span.fa.fa-angle-down",
-        															"."
-        														),
-        														m.trust("&nbsp;"),
-        														m.trust("&nbsp;"),
-        														"Quando o pagamento é efetivado?"
+        														m("span.fa.fa-angle-down"),
+        														" Quando o pagamento é efetivado?"
         													]
         												)
         											),
@@ -555,44 +548,31 @@ const projectsPayment = {
         												)
         											),
         											m("li.alt-link.fontsize-smaller.list-question",
-        												m("div",
+        												m("span",
         													[
-        														m("span.faq-box-arrow", {style: {"font-weight": "800"}},
-        															"+"
-        														),
-        														m.trust("&nbsp;"),
-        														m.trust("&nbsp;"),
-        														"E se o projeto não atingir a meta?"
+        														m("span.faq-box-arrow", {style: {"font-weight": "800"}}),
+        														" E se o projeto não atingir a meta?"
         													]
         												)
         											),
         											m("li.fontsize-smaller.alt-link.list-question",
-        												m("div",
+        												m("span",
         													[
-        														m("span.faq-box-arrow",
-        															"+"
-        														),
-        														" ",
-        														m.trust("&nbsp;"),
-        														"E se eu eu não quiser usar os créditos do Catarse?"
+        														m("span.faq-box-arrow"),
+        														" E se eu eu não quiser usar os créditos do Catarse?"
         													]
         												)
         											),
         											m("li.alt-link.fontsize-smaller.list-question",
-        												m("div",
+        												m("span",
         													[
-        														m("span.faq-box-arrow",
-        															"+"
-        														),
-        														" ",
-        														m.trust("&nbsp;"),
+        														m("span.faq-box-arrow"),
         														"Se o projeto for financiado, como receberei minha recompensa?"
         													]
         												)
         											)
         										]
-        									),
-        									m(".list-question")
+        									)
         								]
         							)
         						]

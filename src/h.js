@@ -32,6 +32,22 @@ const hashMatch = (str) => { return window.location.hash === str; },
         }
     },
 
+    storeObject = (sessionKey, obj) => {
+        return sessionStorage.setItem(sessionKey, JSON.stringify(obj));
+    },
+
+    getStoredObject = (sessionKey) => {
+        if(sessionStorage.getItem(sessionKey)) {
+            return JSON.parse(sessionStorage.getItem(sessionKey));
+        } else {
+            return undefined;
+        }
+    },
+
+    removeStoredObject = (sessionKey) => {
+        return sessionStorage.removeItem(sessionKey);
+    },
+
     callStoredAction = (action, func) => {
         if (sessionStorage.getItem(action)) {
             func.call();
@@ -520,5 +536,8 @@ export default {
     setProject,
     getProject,
     setReward,
-    getReward
+    getReward,
+    storeObject,
+    getStoredObject,
+    removeStoredObject
 };
