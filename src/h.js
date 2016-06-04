@@ -2,18 +2,18 @@ import m from 'mithril';
 import moment from 'moment';
 import I18n from 'i18n-js';
 
-let _apiHost;
-
-const hashMatch = (str) => { return window.location.hash === str; },
+const
+    _dataCache = {},
+    hashMatch = (str) => { return window.location.hash === str; },
     paramByName = (name) => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
             regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-	selfOrEmpty = (obj, emptyState = '') => {
-    return obj ? obj : emptyState;
-	},
+  	selfOrEmpty = (obj, emptyState = '') => {
+      return obj ? obj : emptyState;
+  	},
     setMomentifyLocale = () => {
         moment.locale('pt', {
                 monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
@@ -148,37 +148,45 @@ const hashMatch = (str) => { return window.location.hash === str; },
     }),
 
     getCurrentProject = () => {
+        if(_dataCache.currentProject)
+          return _dataCache.currentProject;
+
         const root = document.getElementById('project-show-root'),
-            data = root.getAttribute('data-parameters');
+              data = root && root.getAttribute('data-parameters');
         if (data) {
-            return JSON.parse(data);
+            return _dataCache.currentProject = JSON.parse(data);
         } else {
             return false;
         }
     },
 
     getRdToken = () => {
-        const meta = _.first(document.querySelectorAll('[name=rd-token]'));
+        if(_dataCache.rdToken)
+          return _dataCache.rdToken;
 
-        return meta ? meta.content : undefined;
+        const meta = _.first(document.querySelectorAll('[name=rd-token]'));
+        return meta ? (_dataCache.rdToken=meta.content) : undefined;
     },
 
     getUser = () => {
+        if(_dataCache.user)
+          return _dataCache.user;
+
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
         if (data) {
-            return JSON.parse(data);
+            return _dataCache.user=JSON.parse(data);
         } else {
             return false;
         }
     },
 
     getApiHost = () => {
-      if(_apiHost)
-        return _apiHost;
+      if(_dataCache.apiHost)
+        return _dataCache.apiHost;
 
       var el=document.getElementById('api-host');
-      return _apiHost = el && el.getAttribute('content');
+      return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
     locationActionMatch = (action) => {
@@ -390,11 +398,12 @@ const hashMatch = (str) => { return window.location.hash === str; },
 
         const fireEvent = () => {
           try {
-            const project = eventObj.project,
-                user = eventObj.user;
-            const dataProject = project&&project.id ? {
+            const project = eventObj.project||getCurrentProject(),
+                  user = getUser();
+            const dataProject = project&&(project.id||project.project_id) ? {
               project: {
-                id: project.id,
+                id: project.id||project.project_id,
+                user_id: project.user_id,
                 category_id: project.category_id,
                 state: project.address && project.address.state_acronym,
                 city: project.address && project.address.city
@@ -413,21 +422,40 @@ const hashMatch = (str) => { return window.location.hash === str; },
             const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
             const gaTracker = ga && ga.getAll && !_.isEmpty(ga.getAll()) ? _.first(ga.getAll()) : null;
             try {
-              const sendData = {event: _.extend({},data, {
-                category: eventObj.cat,
-                action: eventObj.act,
-                label: eventObj.lbl,
-                value: eventObj.val,
-                request: {
-                  referrer: document.referrer||undefined,
-                  protocol: location.protocol.substr(0,location.protocol.length-1),
-                  domain: domain,
-                  url: location.href.substr(domain.length)
+              const sendData = {
+                event: _.extend({},data, {
+                  category: eventObj.cat,
+                  action: eventObj.act,
+                  label: eventObj.lbl,
+                  value: eventObj.val,
+                  request: {
+                    referrer: document.referrer||undefined,
+                    url: location.href,
+                    protocol: location.protocol.substr(0,location.protocol.length-1),
+                    hostname: location.hostname,
+                    domain: domain,
+                    pathname: location.pathname || location.href.substr(domain.length).replace(/[\?\#].*$/,''),
+                    hash: location.hash.replace(/^\#/,''),
+                    query: (function parseParams() {
+                        if(location.search) {
+                          try {
+                            return location.search.replace(/^\?/,'').split('&').reduce(function (params, param) {
+                                var paramSplit = param.split('=').map(function (value) {
+                                    return decodeURIComponent(value.replace('+', ' '));
+                                });
+                                params[paramSplit[0]] = paramSplit[1];
+                                return params;
+                            }, {});
+                          } catch(e) {
+                            return location.search;
+                          }
+                        }
+                    })()
+                  }
                 },
-                ga: gaTracker ? {
-                  clientId: gaTracker.get('clientId')
-                } : null
-              })};
+                (gaTracker?{ga:{clientId: gaTracker.get('clientId')}}:null)
+                )
+              };
 
               $.ajax({
                   type: "POST",
