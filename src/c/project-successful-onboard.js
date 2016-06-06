@@ -32,7 +32,7 @@ const projectSuccessfulOnboard = {
                   'pending_transfer': dashboardInfo,
                   'finished': dashboardInfo
               },
-              currentState = m.prop(args.startOnState || 'start'),
+              currentState = m.prop('start'),
               currentComponent = () => onboardComponents[currentState()],
               content = () => insightVM.content(currentState(), {
                   account: projectAccounts,
