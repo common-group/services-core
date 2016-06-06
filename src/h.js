@@ -225,6 +225,12 @@ const
         return (count > 1 ? count + p : count + s);
     },
 
+    strip = (html) =>  {
+        var tmp = document.createElement('div');		
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    },
+
     simpleFormat = (str = '') => {
         str = str.replace(/\r\n?/, '\n');
         if (str.length > 0) {
