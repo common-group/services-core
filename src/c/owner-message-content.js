@@ -12,6 +12,7 @@ const ownerMessageContent = {
     controller(args) {
         let l = m.prop(false),
             sendSuccess = m.prop(false),
+            submitDisabled = m.prop(false),
             //sets default values when user is not logged in
             user = h.getUser() || {name: '', email: ''},
             from_name = m.prop(user.name),
@@ -22,6 +23,7 @@ const ownerMessageContent = {
             if (l()) {
                 return false;
             }
+            submitDisabled(true);
 
             let loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
@@ -36,11 +38,13 @@ const ownerMessageContent = {
 
             l.load().then(sendSuccess(true));
 
+            submitDisabled(false);
             return false;
         };
 
         return {
             sendMessage: sendMessage,
+            submitDisabled: submitDisabled,
             sendSuccess: sendSuccess,
             userDetails: args,
             from_name: from_name,
@@ -102,7 +106,7 @@ const ownerMessageContent = {
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
                                     m('.w-col.w-col-6.w-col-push-3',
-                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]') : h.loader()
+                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]', {disabled: ctrl.submitDisabled()}) : h.loader()
                                     )
                                 )
                             )

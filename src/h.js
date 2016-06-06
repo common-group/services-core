@@ -104,7 +104,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
           seconds: 'segundos'
       },
       //Object manipulation helpers
-      translatedTime = (time) => {
+      translatedTime = (time = {total: 0, unit: 'seconds'}) => {
           const translatedTime = translatedTimeUnits,
                 unit = () => {
                     const projUnit = translatedTime[time.unit || 'seconds'];
