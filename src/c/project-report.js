@@ -12,12 +12,14 @@ const projectReport = {
     controller(args) {
         let displayForm = h.toggleProp(false, true),
             sendSuccess = m.prop(false),
-            user = h.getUser(),
+            submitDisabled = m.prop(false),
+            user = h.getUser() || {name: '', email: ''},
             email = m.prop(user.email),
             details = m.prop(''),
             reason = m.prop(''),
             l = m.prop(false),
               sendReport = () => {
+                  submitDisabled(true);
                   let loaderOpts = models.projectReport.postOptions({
                     email: email(),
                     details: details(),
@@ -27,12 +29,14 @@ const projectReport = {
                   l = postgrest.loaderWithToken(loaderOpts);
 
                   l.load().then(sendSuccess(true));
+                  submitDisabled(false);
                   return false;
               };
 
         return {
             displayForm: displayForm,
             sendSuccess: sendSuccess,
+            submitDisabled: submitDisabled,
             sendReport: sendReport,
             user: user,
             email: email,
@@ -104,7 +108,7 @@ const projectReport = {
                                 'Seu email'
                               ),
                               m(`input.w-input.text-field.positive.u-marginbottom-30[required='required'][type='text'][value="${ctrl.email()}"]`, {onchange: m.withAttr('value', ctrl.email)}),
-                              m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']')
+                              m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', {disabled: ctrl.submitDisabled()})
                             ]
                           )
                         )
