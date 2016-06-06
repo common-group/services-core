@@ -10,6 +10,7 @@ const projectCard = {
         const project = args.project,
             progress = project.progress.toFixed(2),
             remainingTextObj = h.translatedTime(project.remaining_time),
+            elapsedTextObj = h.translatedTime(project.elapsed_time),
             link = '/' + project.permalink + (args.ref ? '?ref=' + args.ref : ''),
             type = args.type || 'small',
             css = (cardType) => {
@@ -97,7 +98,7 @@ const projectCard = {
                                 m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
                                 m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
                             ] : [
-                                m('.fontsize-smallest.lineheight-tight', ['Prazo em',m('br'),'aberto'])
+                                m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${elapsedTextObj.total} ${elapsedTextObj.unit}`])
                             ])
                         ])
                     ])

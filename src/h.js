@@ -572,5 +572,6 @@ export default {
     scrollTo,
     validationErrors,
     validate,
-    analytics
+    analytics,
+    strip
 };
