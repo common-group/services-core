@@ -110,7 +110,7 @@ describe("helper methods", () => {
         let f=h.analytics.event(obj);
         expect(f).toEqual(jasmine.any(Function));
         f();
-        expect(ga).toHaveBeenCalledWith('send','event','link','click','http://teste.com',jasmine.any(Object));
+        expect(ga).toHaveBeenCalledWith('send','event','link','click','http://teste.com',undefined,jasmine.any(Object));
       });
     });
 });
