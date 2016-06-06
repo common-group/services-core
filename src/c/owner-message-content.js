@@ -12,17 +12,18 @@ const ownerMessageContent = {
     controller(args) {
         let l = m.prop(false),
             sendSuccess = m.prop(false),
+            submitDisabled = m.prop(false),
             //sets default values when user is not logged in
             user = h.getUser() || {name: '', email: ''},
             from_name = m.prop(user.name),
             from_email = m.prop(user.email),
             content = m.prop('');
 
-
         const sendMessage = () => {
-            if(l()) {
+            if (l()) {
                 return false;
             }
+            submitDisabled(true);
 
             let loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
@@ -37,11 +38,13 @@ const ownerMessageContent = {
 
             l.load().then(sendSuccess(true));
 
+            submitDisabled(false);
             return false;
         };
 
         return {
             sendMessage: sendMessage,
+            submitDisabled: submitDisabled,
             sendSuccess: sendSuccess,
             userDetails: args,
             from_name: from_name,
@@ -75,14 +78,14 @@ const ownerMessageContent = {
                             m('.w-row', [
                                 m('.w-col.w-col-6.w-sub-col', [
                                     m('label.fontsize-smaller', 'Seu nome'),
-                                    m(`input.w-input.text-field[value='${ctrl.from_name()}'][type='text'][required=\'required\']`, {
+                                    m(`input.w-input.text-field[value='${ctrl.from_name()}'][type='text'][required='required']`, {
                                         onchange: m.withAttr('value', ctrl.from_name),
                                         class: h.validate().hasError(ctrl.from_name) ? 'error' : ''
                                     })
                                 ]),
                                 m('.w-col.w-col-6', [
                                     m('label.fontsize-smaller', 'Seu email'),
-                                    m(`input.w-input.text-field[value='${ctrl.from_email()}'][type='text'][required=\'required\']`, {
+                                    m(`input.w-input.text-field[value='${ctrl.from_email()}'][type='text'][required='required']`, {
                                         onchange: m.withAttr('value', ctrl.from_email),
                                         class: h.validate().hasError(ctrl.from_email) ? 'error' : ''
                                     })
@@ -103,7 +106,7 @@ const ownerMessageContent = {
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
                                     m('.w-col.w-col-6.w-col-push-3',
-                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]') : h.loader()
+                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]', {disabled: ctrl.submitDisabled()}) : h.loader()
                                     )
                                 )
                             )

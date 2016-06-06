@@ -87,4 +87,30 @@ describe("helper methods", () => {
             expect(pluralize(count, ' dia', ' dias')).toEqual('1 dia');
         });
     });
+
+    describe('h.analytics', () => {
+      let ga;
+      beforeEach(() => {
+        ga = window.ga = jasmine.createSpy('ga');
+        ga.getAll=function(){};
+      });
+      it('should not call ga if does not pass eventObj', () => {
+        expect(h.analytics.event()).toEqual(Function.prototype);
+        expect(ga).not.toHaveBeenCalled();
+      });
+      it('should not call ga if does not pass eventObj 2', () => {
+        let f=function() {};
+        let f2=h.analytics.event(null, f);
+        expect(f2).toBe(f);
+        f2();
+        expect(ga).not.toHaveBeenCalled();
+      });
+      it('should call ga if pass eventObj', () => {
+        let obj={cat:'link',act:'click',lbl:'http://teste.com'};
+        let f=h.analytics.event(obj);
+        expect(f).toEqual(jasmine.any(Function));
+        f();
+        expect(ga).toHaveBeenCalledWith('send','event','link','click','http://teste.com',undefined,jasmine.any(Object));
+      });
+    });
 });

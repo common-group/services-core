@@ -24,11 +24,15 @@ const projectHighlight = {
             m('.project-blurb', project().headline),
             m('.u-text-center-small-only.u-marginbottom-30', [
                 (!_.isNull(address) ?
-                 m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="/pt/explore?pg_search=${address.state_acronym}"]`, [
+                 m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10[href="/pt/explore?pg_search=${address.state_acronym}"]`, {
+                     onclick: h.analytics.event({cat: 'project_view',act: 'project_location_link',lbl: address.city + ' ' + address.state_acronym,project: project()})
+                 }, [
                         m('span.fa.fa-map-marker'), ` ${address.city}, ${address.state_acronym}`
                     ]) : ''
                 ),
-                m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light[href="/pt/explore#by_category_id/${project().category_id}"]`, [
+                m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light[href="/pt/explore#by_category_id/${project().category_id}"]`, {
+                    onclick: h.analytics.event({cat: 'project_view',act: 'project_category_link',lbl: project().category_name,project: project()})
+                }, [
                     m('span.fa.fa-tag'), ' ',
                     project().category_name
                 ]),

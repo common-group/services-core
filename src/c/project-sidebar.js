@@ -116,7 +116,10 @@ const projectSidebar = {
                         })
                     ])
                 ])
-                , (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project().id + '/contributions/new"]', I18n.t('submit', I18nScope())) : ''), ((project().open_for_contributions) ? m.component(projectReminder, {
+                , (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project().id + '/contributions/new"]',{
+                    onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()})
+                }, I18n.t('submit', I18nScope())) : '')
+                , ((project().open_for_contributions) ? m.component(projectReminder, {
                     project: project,
                     type: 'link'
                 }) : ''),
