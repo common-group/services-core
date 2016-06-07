@@ -10,9 +10,8 @@ const FollowFoundFriends = {
     controller(args) {
         models.userFriend.pageSize(9);
 
-        const userFriendVM = postgrest.filtersVM({
-            user_id: 'eq'
-        }),
+        const userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+              user = h.getUser(),
               friendListVM = postgrest.paginationVM(models.userFriend, "total_contributed_projects.desc", {
                   'Prefer':  'count=exact'
               }),
@@ -27,7 +26,7 @@ const FollowFoundFriends = {
                   });
               };
 
-        userFriendVM.user_id(args.root.getAttribute('data-currentuserid'));
+        userFriendVM.user_id(user.id);
 
         if(!friendListVM.collection().length) {
             friendListVM.firstPage(userFriendVM.parameters());
