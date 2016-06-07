@@ -21,7 +21,7 @@ const projectRewardList = {
 
                         h.storeObject(storeKey, {value: valueFloat, reward: openedReward()});
 
-                        return h.navigateToDevise();
+                        return h.navigateToDevise('/' + args.project().permalink);
 
                     } else {
 
@@ -41,8 +41,10 @@ const projectRewardList = {
         const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
         const selectReward = (reward) => () => {
-            openedReward(reward);
-            contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
+            if(openedReward() !== reward){
+                openedReward(reward);
+                contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
+            }
         };
 
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : false;

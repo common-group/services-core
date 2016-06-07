@@ -2,16 +2,18 @@ import m from 'mithril';
 import moment from 'moment';
 import I18n from 'i18n-js';
 
-const hashMatch = (str) => { return window.location.hash === str; },
+const
+    _dataCache = {},
+    hashMatch = (str) => { return window.location.hash === str; },
     paramByName = (name) => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
             regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-	selfOrEmpty = (obj, emptyState = '') => {
-    return obj ? obj : emptyState;
-	},
+  	selfOrEmpty = (obj, emptyState = '') => {
+      return obj ? obj : emptyState;
+  	},
     setMomentifyLocale = () => {
         moment.locale('pt', {
                 monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
@@ -44,10 +46,6 @@ const hashMatch = (str) => { return window.location.hash === str; },
         }
     },
 
-    removeStoredObject = (sessionKey) => {
-        return sessionStorage.removeItem(sessionKey);
-    },
-
     callStoredAction = (action, func) => {
         if (sessionStorage.getItem(action)) {
             func.call();
@@ -66,20 +64,6 @@ const hashMatch = (str) => { return window.location.hash === str; },
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
         return m('');
-    },
-
-    applyMonetaryMask = (number) => {
-        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ""),
-            integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
-            decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
-
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return `${integerPart},${decimalPart}`;
-    },
-
-    monetaryToFloat = (propValue) => {
-        return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
 
     validateEmail = (email) => {
@@ -176,29 +160,45 @@ const hashMatch = (str) => { return window.location.hash === str; },
     }),
 
     getCurrentProject = () => {
+        if(_dataCache.currentProject)
+          return _dataCache.currentProject;
+
         const root = document.getElementById('project-show-root'),
-            data = root.getAttribute('data-parameters');
+              data = root && root.getAttribute('data-parameters');
         if (data) {
-            return JSON.parse(data);
+            return _dataCache.currentProject = JSON.parse(data);
         } else {
             return false;
         }
     },
 
     getRdToken = () => {
-        const meta = _.first(document.querySelectorAll('[name=rd-token]'));
+        if(_dataCache.rdToken)
+          return _dataCache.rdToken;
 
-        return meta ? meta.content : undefined;
+        const meta = _.first(document.querySelectorAll('[name=rd-token]'));
+        return meta ? (_dataCache.rdToken=meta.content) : undefined;
     },
 
     getUser = () => {
+        if(_dataCache.user)
+          return _dataCache.user;
+
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
         if (data) {
-            return JSON.parse(data);
+            return _dataCache.user=JSON.parse(data);
         } else {
             return false;
         }
+    },
+
+    getApiHost = () => {
+      if(_dataCache.apiHost)
+        return _dataCache.apiHost;
+
+      var el=document.getElementById('api-host');
+      return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
     locationActionMatch = (action) => {
@@ -232,13 +232,15 @@ const hashMatch = (str) => { return window.location.hash === str; },
 
         return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
     },
+
+    pluralize = (count, s, p) => {
+        return (count > 1 ? count + p : count + s);
+    },
+
     strip = (html) =>  {
         var tmp = document.createElement('div');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
-    },
-    pluralize = (count, s, p) => {
-        return (count > 1 ? count + p : count + s);
     },
 
     simpleFormat = (str = '') => {
@@ -288,8 +290,8 @@ const hashMatch = (str) => { return window.location.hash === str; },
         };
     },
 
-    navigateToDevise = () => {
-        window.location.href = '/pt/login';
+    navigateToDevise = (fallback) => {
+        window.location.href = `/pt/login${fallback ? '?redirect_to='+ fallback : ''}`;
         return false;
     },
 
@@ -413,27 +415,94 @@ const hashMatch = (str) => { return window.location.hash === str; },
         }
 
         const fireEvent = () => {
+          try {
+            const project = eventObj.project||getCurrentProject(),
+                  user = getUser();
+            const dataProject = project&&(project.id||project.project_id) ? {
+              project: {
+                id: project.id||project.project_id,
+                user_id: project.user_id,
+                category_id: project.category_id,
+                state: project.address && project.address.state_acronym,
+                city: project.address && project.address.city
+              }
+            } : null;
+            const dataUser = user&&user.user_id ? {
+              user: {
+                id: user.user_id,
+                contributions: user.contributions,
+                published_projects: user.published_projects
+              }
+            } : null;//TODO
+            const data = _.extend({},eventObj.extraData,dataProject,dataUser);
+            const location = window.location;
+            const domain = location.origin || (location.protocol + '//' + location.hostname);
+            const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
+            const gaTracker = ga && ga.getAll && !_.isEmpty(ga.getAll()) ? _.first(ga.getAll()) : null;
             try {
-                var dataProject = eventObj.project ? {
-                    project_id: eventObj.project.id,
-                    category_id: eventObj.project.category_id,
-                    state: eventObj.project.address && eventObj.project.address.state_acronym,
-                    city: eventObj.project.address && eventObj.project.address.city
-                } : null;
-                var dataUser = eventObj.user ? {} : null;//TODO
-                var data = _.extend({},dataProject, dataUser,eventObj.extraData);
+              const sendData = {
+                event: _.extend({},data, {
+                  category: eventObj.cat,
+                  action: eventObj.act,
+                  label: eventObj.lbl,
+                  value: eventObj.val,
+                  request: {
+                    referrer: document.referrer||undefined,
+                    url: location.href,
+                    protocol: location.protocol.substr(0,location.protocol.length-1),
+                    hostname: location.hostname,
+                    domain: domain,
+                    pathname: location.pathname || location.href.substr(domain.length).replace(/[\?\#].*$/,''),
+                    hash: location.hash.replace(/^\#/,''),
+                    query: (function parseParams() {
+                        if(location.search) {
+                          try {
+                            return location.search.replace(/^\?/,'').split('&').reduce(function (params, param) {
+                                var paramSplit = param.split('=').map(function (value) {
+                                    return decodeURIComponent(value.replace('+', ' '));
+                                });
+                                params[paramSplit[0]] = paramSplit[1];
+                                return params;
+                            }, {});
+                          } catch(e) {
+                            return location.search;
+                          }
+                        }
+                    })()
+                  }
+                },
+                (gaTracker?{ga:{clientId: gaTracker.get('clientId')}}:null)
+                )
+              };
 
-                const ga = window.ga;
-                if (typeof ga === 'function') {
-                    //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
-                    ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, {
-                        nonInteraction: eventObj.nonInteraction !== false,
-                        transport: 'beacon',
-                    });
-                }
-            } catch (e) {
-                console.error('[h.analytics.event] error:',e);
+              $.ajax({
+                  type: "POST",
+                  url: getApiHost()+'/rpc/track',
+                  // The key needs to match your method's input parameter (case-sensitive).
+                  data: JSON.stringify(sendData),
+                  contentType: "application/json; charset=utf-8",
+                  dataType: "json",
+                  success: function(data){
+                    console.log('[h.analyticsEvent] /track ok', data);
+                  },
+                  failure: function(errMsg) {
+                      console.error('[h.analyticsEvent] error:', e);
+                  }
+              });
+            } catch(e) {
+              console.error('[h.analyticsEvent] error:', e);
             }
+
+            if(typeof ga==='function') {
+              //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
+              ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, eventObj.val, {
+                nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
+                transport: 'beacon'
+              });
+            }
+          } catch(e) {
+            console.error('[h.analyticsEvent] error:',e);
+          }
         };
 
         return () => {
@@ -467,6 +536,7 @@ const hashMatch = (str) => { return window.location.hash === str; },
                 //console.log('windowScroll');
                 if (fireEvent && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
                     fireEvent();
+                    fireEvent = null;
                 }
             });
         }
@@ -476,16 +546,36 @@ const hashMatch = (str) => { return window.location.hash === str; },
         oneTimeEvent: analyticsOneTimeEvent,
         windowScroll: analyticsWindowScroll
     },
-    currentProject = m.prop(),
-    setProject = (project) => {
-        currentProject(project);
+
+    applyMonetaryMask = (number) => {
+        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ""),
+            integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
+            decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
+
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return `${integerPart},${decimalPart}`;
     },
-    getProject = () => currentProject,
-    currentReward = m.prop(),
-    setReward = (reward) => {
-        currentReward(reward);
+
+    monetaryToFloat = (propValue) => {
+        return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
-    getReward = () => currentReward;
+
+
+      removeStoredObject = (sessionKey) => {
+          return sessionStorage.removeItem(sessionKey);
+      },
+
+      currentProject = m.prop(),
+        setProject = (project) => {
+            currentProject(project);
+        },
+        getProject = () => currentProject,
+        currentReward = m.prop(),
+        setReward = (reward) => {
+            currentReward(reward);
+        },
+        getReward = () => currentReward;
 
 setMomentifyLocale();
 closeFlash();
@@ -502,6 +592,7 @@ export default {
     formatNumber,
     idVM,
     getUser,
+    getApiHost,
     getCurrentProject,
     toggleProp,
     loader,
@@ -529,15 +620,15 @@ export default {
     scrollTo,
     validationErrors,
     validate,
-    strip,
     analytics,
-    applyMonetaryMask,
-    monetaryToFloat,
+    strip,
+    storeObject,
+    getStoredObject,
+    removeStoredObject,
     setProject,
     getProject,
     setReward,
     getReward,
-    storeObject,
-    getStoredObject,
-    removeStoredObject
+    applyMonetaryMask,
+    monetaryToFloat
 };
