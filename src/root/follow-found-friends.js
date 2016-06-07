@@ -26,7 +26,7 @@ const FollowFoundFriends = {
                   });
               };
 
-        userFriendVM.user_id(user.id);
+        userFriendVM.user_id(user.user_id);
 
         if(!friendListVM.collection().length) {
             friendListVM.firstPage(userFriendVM.parameters());
