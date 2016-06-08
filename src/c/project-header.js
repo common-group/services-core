@@ -16,11 +16,11 @@ const projectHeader = {
             m('.w-section.section-product.' + project().mode),
             m('.w-section.page-header.u-text-center', [
                 m('.w-container', [
-                    m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name)),
-                    m('h2.fontsize-base.lineheight-looser[itemprop="author"]', (project().user) ? [
+                    m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
+                    m('h2.fontsize-base.lineheight-looser[itemprop="author"]', [
                         'por ',
-                        project().user.name
-                    ] : '')
+                        project().user ? project().user.name : project().owner_name ? project().owner_name : ''
+                    ])
                 ])
             ]),
             m('.w-section.project-main', [
