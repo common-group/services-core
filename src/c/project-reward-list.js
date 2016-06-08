@@ -29,7 +29,9 @@ const projectRewardList = {
 
                         m.route('/contribution', {
                             reward_id: openedReward().id,
-                            value: valueFloat
+                            value: valueFloat,
+                            mode: args.project().mode,
+                            project_user_id: args.project().user_id
                         });
 
                     }

@@ -1,4 +1,6 @@
-const paymentVM = () => {
+import I18n from 'i18n-js';
+
+const paymentVM = (mode) => {
     const error = m.prop([]),
         completeName  = m.prop(''),
         email = m.prop(''),
@@ -12,7 +14,8 @@ const paymentVM = () => {
         city = m.prop(''),
         states = m.prop(''),
         ownerDocument = m.prop(''),
-        phone = m.prop('');
+        phone = m.prop(''),
+        faq = I18n.translations[I18n.currentLocale()].projects.faq[mode];
 
     return {
         error: error,
@@ -28,7 +31,8 @@ const paymentVM = () => {
         city: city,
         states: states,
         ownerDocument: ownerDocument,
-        phone: phone
+        phone: phone,
+        faq: faq
     };
 };
 
