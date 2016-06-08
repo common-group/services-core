@@ -1,9 +1,12 @@
 import m from 'mithril';
 import h from '../h';
+import paymentVM from '../vms/payment-vm';
 
 const projectsPayment = {
     controller(args) {
-        const reward = h.getReward(),
+        const vm = paymentVM(),
+            error = m.prop(false),
+            reward = h.getReward(),
             value = m.route.param('value');
 
         if(!h.getUser()) {
@@ -12,13 +15,14 @@ const projectsPayment = {
 
         return {
             reward: reward,
-            value: value
+            value: value,
+            vm: vm
         }
     },
     view(ctrl, args) {
         return m(".w-section.w-clearfix.section",
         	[
-        		m("._w-col",
+        		m(".w-col",
         			m(".w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20",
         				[
         					m(".fontsize-smaller.fontweight-semibold",
@@ -49,7 +53,7 @@ const projectsPayment = {
         				[
         					m(".w-col.w-col-8",
         						[
-        							m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']", {style: {"display": "none"}},
+        							ctrl.vm.error() ? m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']", {style: {"display": "block"}},
         								[
         									m(".u-marginbottom-10.fontweight-bold",
         										"Por favor, reveja os campos abaixo antes de prosseguir"
@@ -61,7 +65,7 @@ const projectsPayment = {
         										"This is some text inside of a div block."
         									)
         								]
-        							),
+        							) : '',
         							m(".w-form",
         								[
         									m("form.u-marginbottom-40[data-name='Email Form'][id='email-form'][name='email-form']",
@@ -78,33 +82,48 @@ const projectsPayment = {
         											),
         											m(".w-row",
         												[
-        													m(".w-col.w-col-7._w-sub-col",
+        													m(".w-col.w-col-7.w-sub-col",
         														[
-        															m("label.field-label.fontweight-semibold[for='email-59']",
+        															m("label.field-label.fontweight-semibold[for='complete-name']",
         																"Nome completo *"
         															),
-        															m("input.w-input.text-field[data-name='Email 59'][id='email-59'][name='email-59'][placeholder='thiago@catarse.me'][required='required'][type='email']")
+        															m("input.w-input.text-field[id='complete-name'][name='complete-name']", {
+                                                                        type: 'text',
+                                                                        onchange: m.withAttr('value', ctrl.vm.completeName),
+                                                                        value: ctrl.vm.completeName(),
+                                                                        required: 'required',
+                                                                        placeholder: 'Nome Completo'
+                                                                    })
         														]
         													),
         													m(".w-col.w-col-5",
         														[
-        															m("label.field-label.fontweight-semibold[for='email-57']",
+        															m("label.field-label.fontweight-semibold[for='email']",
         																"Email *"
         															),
-        															m("input.w-input.text-field[data-name='Email 57'][id='email-57'][name='email-57'][placeholder='thiago@catarse.me'][required='required'][type='email']")
+        															m("input.w-input.text-field[id='email']", {
+                                                                        type: 'email',
+                                                                        onchange: m.withAttr('value', ctrl.vm.email),
+                                                                        value: ctrl.vm.email(),
+                                                                        required: 'required',
+                                                                        placeholder: 'email@catarse.me'
+                                                                    })
         														]
         													)
         												]
         											),
         											m(".w-checkbox.w-clearfix",
         												[
-        													m("input.w-checkbox-input[data-name='Checkbox 3'][id='checkbox-3'][name='checkbox-3'][type='checkbox']"),
-        													m("label.w-form-label.fontsize-smallest[for='checkbox-3']",
+        													m("input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']", {
+                                                                onchange: m.withAttr('value', ctrl.vm.anonymous),
+                                                                checked: ctrl.vm.anonymous(),
+                                                            }),
+        													m("label.w-form-label.fontsize-smallest[for='anonymous']",
         														"Quero que meu apoio não fique público"
         													)
         												]
         											),
-        											m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-message.u-radius.zindex-10.fontsize-smallest",
+        											ctrl.vm.anonymous() ? m(".card.card-message.u-radius.zindex-10.fontsize-smallest",
         												m("div",
         													[
         														m("span.fontweight-bold",
@@ -118,164 +137,164 @@ const projectsPayment = {
         														"O valor do seu apoio não será divulgado para ninguém além do dono do projeto. Somente o proponente terá acesso a essa informação, independente se o seu investimento seja público ou anônimo."
         													]
         												)
-        											)
+        											) : ''
         										]
-        									),
-        									m(".w-form-done",
-        										m("p",
-        											"Thank you! Your submission has been received!"
-        										)
-        									),
-        									m(".w-form-fail",
-        										m("p",
-        											"Oops! Something went wrong while submitting the form :("
-        										)
         									)
         								]
         							),
         							m(".u-marginbottom-40",
         								m(".w-form",
         									[
-        										m("form[data-name='Email Form'][id='email-form'][name='email-form']",
-        											[
-        												m(".w-row",
-        													[
-        														m(".w-col.w-col-6._w-sub-col",
-        															[
-        																m("label.field-label.fontweight-semibold[for='field']",
-        																	"País *"
-        																),
-        																m("select.w-select.text-field[id='field'][name='field']",
-        																	[
-        																		m("option[value='First']",
-        																			"Brasil"
-        																		),
-        																		m("option[value='Second']",
-        																			"Second Choice"
-        																		),
-        																		m("option[value='Third']",
-        																			"Third Choice"
-        																		)
-        																	]
-        																)
-        															]
-        														),
-        														m(".w-col.w-col-6",
-        															[
-        																m("label.field-label.fontweight-semibold[for='email-18']",
-        																	"CEP"
-        																),
-        																m("input.w-input.text-field[data-name='Email 18'][id='email-18'][name='email-18'][required='required'][type='email']")
-        															]
-        														)
-        													]
-        												),
-        												m(".w-row",
-        													[
-        														m(".w-col.w-col-6._w-sub-col",
-        															[
-        																m("label.field-label.fontweight-semibold[for='email-31']",
-        																	"Rua *"
-        																),
-        																m("input.w-input.text-field[data-name='Email 31'][id='email-31'][name='email-31'][required='required'][type='email']")
-        															]
-        														),
-        														m(".w-col.w-col-6",
-        															m(".w-row",
-        																[
-        																	m(".w-col.w-col-6.w-col-small-6.w-col-tiny-6._w-sub-col-middle",
-        																		[
-        																			m("label.field-label.fontweight-semibold[for='email-13']",
-        																				"Número *"
-        																			),
-        																			m("input.w-input.text-field[data-name='Email 13'][id='email-13'][name='email-13'][required='required'][type='email']")
-        																		]
-        																	),
-        																	m(".w-col.w-col-6.w-col-small-6.w-col-tiny-6",
-        																		[
-        																			m("label.field-label.fontweight-semibold[for='email-14']",
-        																				"Complemento"
-        																			),
-        																			m("input.w-input.text-field[data-name='Email 14'][id='email-14'][name='email-14'][required='required'][type='email']")
-        																		]
-        																	)
-        																]
-        															)
-        														)
-        													]
-        												),
-        												m(".w-row",
-        													[
-        														m(".w-col.w-col-4._w-sub-col",
-        															[
-        																m("label.field-label.fontweight-semibold[for='email-15']",
-        																	"Bairro *"
-        																),
-        																m("input.w-input.text-field[data-name='Email 15'][id='email-15'][name='email-15'][required='required'][type='email']")
-        															]
-        														),
-        														m(".w-col.w-col-4._w-sub-col",
-        															[
-        																m("label.field-label.fontweight-semibold[for='email-16']",
-        																	"Cidade *"
-        																),
-        																m("input.w-input.text-field[data-name='Email 16'][id='email-16'][name='email-16'][required='required'][type='email']")
-        															]
-        														),
-        														m(".w-col.w-col-4",
-        															[
-        																m("label.field-label.fontweight-semibold[for='field']",
-        																	"Estado *"
-        																),
-        																m("select.w-select.text-field[id='field'][name='field']",
-        																	[
-        																		m("option[value='First']",
-        																			"Brasil"
-        																		),
-        																		m("option[value='Second']",
-        																			"Second Choice"
-        																		),
-        																		m("option[value='Third']",
-        																			"Third Choice"
-        																		)
-        																	]
-        																)
-        															]
-        														)
-        													]
-        												),
-        												m(".w-row",
-        													[
-        														m(".w-col.w-col-6._w-sub-col",
-        															[
-        																m("label.field-label.fontweight-semibold[for='email-15']",
-        																	"CPF *"
-        																),
-        																m("input.w-input.text-field[data-name='Email 15'][id='email-15'][name='email-15'][required='required'][type='email']")
-        															]
-        														),
-        														m(".w-col.w-col-6",
-        															[
-        																m("label.field-label.fontweight-semibold[for='email-15']",
-        																	"Telefone *"
-        																),
-        																m("input.w-input.text-field[data-name='Email 15'][id='email-15'][name='email-15'][required='required'][type='email']")
-        															]
-        														)
-        													]
-        												)
-        											]
-        										),
-        										m(".w-form-done",
-        											m("p",
-        												"Thank you! Your submission has been received!"
-        											)
-        										),
-        										m(".w-form-fail",
-        											m("p",
-        												"Oops! Something went wrong while submitting the form :("
-        											)
-        										)
+												m(".w-row",
+													[
+														m(".w-col.w-col-6.w-sub-col",
+															[
+																m("label.field-label.fontweight-semibold[for='country']",
+																	"País *"
+																),
+																m("select.w-select.text-field[id='country']",
+                                                                    _.map(ctrl.vm.countries(), (country) => m("option", {value: country.id}, country.name))
+																)
+															]
+														),
+														m(".w-col.w-col-6",
+															[
+																m("label.field-label.fontweight-semibold[for='zip-code']",
+																	"CEP"
+																),
+																m("input.w-input.text-field[id='zip-code']", {
+                                                                    type: 'tel',
+                                                                    onchange: m.withAttr('value', ctrl.vm.zipCode),
+                                                                    value: ctrl.vm.zipCode(),
+                                                                    placeholder: '42100000'
+                                                                })
+															]
+														)
+													]
+												),
+												m(".w-row",
+													[
+														m(".w-col.w-col-6.w-sub-col",
+															[
+																m("label.field-label.fontweight-semibold[for='street']",
+																	"Rua *"
+																),
+																m("input.w-input.text-field[id='street']", {
+                                                                    type: 'email',
+                                                                    onchange: m.withAttr('value', ctrl.vm.street),
+                                                                    value: ctrl.vm.street(),
+                                                                    required: 'required',
+                                                                    placeholder: 'Rua Da Minha Casa'
+                                                                })
+															]
+														),
+														m(".w-col.w-col-6",
+															m(".w-row",
+																[
+																	m(".w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle",
+																		[
+																			m("label.field-label.fontweight-semibold[for='number']",
+																				"Número *"
+																			),
+																			m("input.w-input.text-field[id='number']", {
+                                                                                type: 'text',
+                                                                                onchange: m.withAttr('value', ctrl.vm.number),
+                                                                                value: ctrl.vm.number(),
+                                                                                required: 'required',
+                                                                                placeholder: '421'
+                                                                            })
+																		]
+																	),
+																	m(".w-col.w-col-6.w-col-small-6.w-col-tiny-6",
+																		[
+																			m("label.field-label.fontweight-semibold[for='address-complement']",
+																				"Complemento"
+																			),
+																			m("input.w-input.text-field[id='address-complement']", {
+                                                                                type: 'text',
+                                                                                onchange: m.withAttr('value', ctrl.vm.addressComplement),
+                                                                                value: ctrl.vm.addressComplement(),
+                                                                                placeholder: 'Residencial X'
+                                                                            })
+																		]
+																	)
+																]
+															)
+														)
+													]
+												),
+												m(".w-row",
+													[
+														m(".w-col.w-col-4.w-sub-col",
+															[
+																m("label.field-label.fontweight-semibold[for='neighbourhood']",
+																	"Bairro *"
+																),
+																m("input.w-input.text-field[id='neighbourhood']", {
+                                                                    type: 'text',
+                                                                    onchange: m.withAttr('value', ctrl.vm.neighbourhood),
+                                                                    value: ctrl.vm.neighbourhood(),
+                                                                    required: 'required',
+                                                                    placeholder: 'São José'
+                                                                })
+															]
+														),
+														m(".w-col.w-col-4.w-sub-col",
+															[
+																m("label.field-label.fontweight-semibold[for='city']",
+																	"Cidade *"
+																),
+																m("input.w-input.text-field[id='city']", {
+                                                                    type: 'text',
+                                                                    onchange: m.withAttr('value', ctrl.vm.city),
+                                                                    value: ctrl.vm.city(),
+                                                                    required: 'required',
+                                                                    placeholder: 'Cidade'
+                                                                })
+															]
+														),
+														m(".w-col.w-col-4",
+															[
+																m("label.field-label.fontweight-semibold[for='state']",
+																	"Estado *"
+																),
+																m("select.w-select.text-field[id='state']",
+                                                                    _.map(ctrl.vm.states(), (state) => m('option', {value: state.id}, state.name))
+																)
+															]
+														)
+													]
+												),
+												m(".w-row",
+													[
+														m(".w-col.w-col-6.w-sub-col",
+															[
+																m("label.field-label.fontweight-semibold[for='document']",
+																	"CPF *"
+																),
+																m("input.w-input.text-field[id='document']", {
+                                                                    type: 'tel',
+                                                                    onchange: m.withAttr('value', ctrl.vm.ownerDocument),
+                                                                    value: ctrl.vm.ownerDocument(),
+                                                                    required: 'required'
+                                                                })
+															]
+														),
+														m(".w-col.w-col-6",
+															[
+																m("label.field-label.fontweight-semibold[for='phone']",
+																	"Telefone *"
+																),
+																m("input.w-input.text-field[id='phone']", {
+                                                                    type: 'tel',
+                                                                    onchange: m.withAttr('value', ctrl.vm.phone),
+                                                                    value: ctrl.vm.phone(),
+                                                                    required: 'required'
+                                                                })
+															]
+														)
+													]
+												)
         									]
         								)
         							),
@@ -352,7 +371,7 @@ const projectsPayment = {
         															),
         															m(".w-row",
         																[
-        																	m(".w-col.w-col-6.w-col-tiny-6._w-sub-col",
+        																	m(".w-col.w-col-6.w-col-tiny-6.w-sub-col",
         																		m("select.w-select.text-field[id='field-2'][name='field-2']",
         																			[
         																				m("option[value='']",
