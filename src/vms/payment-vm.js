@@ -14,7 +14,6 @@ const paymentVM = () => {
         ownerDocument = m.prop(''),
         phone = m.prop('');
 
-
     return {
         error: error,
         completeName: completeName,
@@ -30,7 +29,7 @@ const paymentVM = () => {
         states: states,
         ownerDocument: ownerDocument,
         phone: phone
-    }
+    };
 };
 
 export default paymentVM;

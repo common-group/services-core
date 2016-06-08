@@ -39,7 +39,7 @@ const
     },
 
     getStoredObject = (sessionKey) => {
-        if(sessionStorage.getItem(sessionKey)) {
+        if (sessionStorage.getItem(sessionKey)) {
             return JSON.parse(sessionStorage.getItem(sessionKey));
         } else {
             return undefined;
@@ -160,7 +160,7 @@ const
     }),
 
     getCurrentProject = () => {
-        if(_dataCache.currentProject)
+        if (_dataCache.currentProject)
           return _dataCache.currentProject;
 
         const root = document.getElementById('project-show-root'),
@@ -173,32 +173,32 @@ const
     },
 
     getRdToken = () => {
-        if(_dataCache.rdToken)
+        if (_dataCache.rdToken)
           return _dataCache.rdToken;
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
-        return meta ? (_dataCache.rdToken=meta.content) : undefined;
+        return meta ? (_dataCache.rdToken = meta.content) : undefined;
     },
 
     getUser = () => {
-        if(_dataCache.user)
+        if (_dataCache.user)
           return _dataCache.user;
 
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
         if (data) {
-            return _dataCache.user=JSON.parse(data);
+            return _dataCache.user = JSON.parse(data);
         } else {
             return false;
         }
     },
 
     getApiHost = () => {
-      if(_dataCache.apiHost)
-        return _dataCache.apiHost;
+        if (_dataCache.apiHost)
+          return _dataCache.apiHost;
 
-      var el=document.getElementById('api-host');
-      return _dataCache.apiHost = el && el.getAttribute('content');
+        var el = document.getElementById('api-host');
+        return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
     locationActionMatch = (action) => {
@@ -291,7 +291,7 @@ const
     },
 
     navigateToDevise = (fallback) => {
-        window.location.href = `/pt/login${fallback ? '?redirect_to='+ fallback : ''}`;
+        window.location.href = `/pt/login${fallback ? '?redirect_to=' + fallback : ''}`;
         return false;
     },
 
@@ -415,94 +415,94 @@ const
         }
 
         const fireEvent = () => {
-          try {
-            const project = eventObj.project||getCurrentProject(),
-                  user = getUser();
-            const dataProject = project&&(project.id||project.project_id) ? {
-              project: {
-                id: project.id||project.project_id,
-                user_id: project.user_id,
-                category_id: project.category_id,
-                state: project.address && project.address.state_acronym,
-                city: project.address && project.address.city
-              }
-            } : null;
-            const dataUser = user&&user.user_id ? {
-              user: {
-                id: user.user_id,
-                contributions: user.contributions,
-                published_projects: user.published_projects
-              }
-            } : null;//TODO
-            const data = _.extend({},eventObj.extraData,dataProject,dataUser);
-            const location = window.location;
-            const domain = location.origin || (location.protocol + '//' + location.hostname);
-            const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
-            const gaTracker = ga && ga.getAll && !_.isEmpty(ga.getAll()) ? _.first(ga.getAll()) : null;
             try {
-              const sendData = {
-                event: _.extend({},data, {
-                  category: eventObj.cat,
-                  action: eventObj.act,
-                  label: eventObj.lbl,
-                  value: eventObj.val,
-                  request: {
-                    referrer: document.referrer||undefined,
-                    url: location.href,
-                    protocol: location.protocol.substr(0,location.protocol.length-1),
-                    hostname: location.hostname,
-                    domain: domain,
-                    pathname: location.pathname || location.href.substr(domain.length).replace(/[\?\#].*$/,''),
-                    hash: location.hash.replace(/^\#/,''),
-                    query: (function parseParams() {
-                        if(location.search) {
-                          try {
-                            return location.search.replace(/^\?/,'').split('&').reduce(function (params, param) {
-                                var paramSplit = param.split('=').map(function (value) {
+                const project = eventObj.project || getCurrentProject(),
+                      user = getUser();
+                const dataProject = project && (project.id || project.project_id) ? {
+                    project: {
+                        id: project.id || project.project_id,
+                        user_id: project.user_id,
+                        category_id: project.category_id,
+                        state: project.address && project.address.state_acronym,
+                        city: project.address && project.address.city
+                    }
+                } : null;
+                const dataUser = user && user.user_id ? {
+                    user: {
+                        id: user.user_id,
+                        contributions: user.contributions,
+                        published_projects: user.published_projects
+                    }
+                } : null;//TODO
+                const data = _.extend({},eventObj.extraData,dataProject,dataUser);
+                const location = window.location;
+                const domain = location.origin || (location.protocol + '//' + location.hostname);
+                const ga = window.ga;//o ga tem q ser verificado aqui pq pode não existir na criaçaõ do DOM
+                const gaTracker = ga && ga.getAll && !_.isEmpty(ga.getAll()) ? _.first(ga.getAll()) : null;
+                try {
+                    const sendData = {
+                        event: _.extend({},data, {
+                            category: eventObj.cat,
+                            action: eventObj.act,
+                            label: eventObj.lbl,
+                            value: eventObj.val,
+                            request: {
+                                referrer: document.referrer || undefined,
+                                url: location.href,
+                                protocol: location.protocol.substr(0,location.protocol.length - 1),
+                                hostname: location.hostname,
+                                domain: domain,
+                                pathname: location.pathname || location.href.substr(domain.length).replace(/[\?\#].*$/,''),
+                                hash: location.hash.replace(/^\#/,''),
+                                query: (function parseParams() {
+                        if (location.search) {
+                            try {
+                                return location.search.replace(/^\?/,'').split('&').reduce(function(params, param) {
+                                var paramSplit = param.split('=').map(function(value) {
                                     return decodeURIComponent(value.replace('+', ' '));
                                 });
                                 params[paramSplit[0]] = paramSplit[1];
                                 return params;
                             }, {});
-                          } catch(e) {
-                            return location.search;
-                          }
+                            } catch (e) {
+                                return location.search;
+                            }
                         }
                     })()
-                  }
-                },
-                (gaTracker?{ga:{clientId: gaTracker.get('clientId')}}:null)
-                )
-              };
+                            }
+                        },
+                        (gaTracker ? {ga: {clientId: gaTracker.get('clientId')}} : null)
+                        )
+                    };
 
-              $.ajax({
-                  type: "POST",
-                  url: getApiHost()+'/rpc/track',
+                    $.ajax({
+                  type: 'POST',
+                  url: getApiHost() + '/rpc/track',
                   // The key needs to match your method's input parameter (case-sensitive).
                   data: JSON.stringify(sendData),
-                  contentType: "application/json; charset=utf-8",
-                  dataType: "json",
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: 'json',
                   success: function(data){
-                    console.log('[h.analyticsEvent] /track ok', data);
+                      console.log('[h.analyticsEvent] /track ok', data);
                   },
                   failure: function(errMsg) {
                       console.error('[h.analyticsEvent] error:', e);
                   }
               });
-            } catch(e) {
-              console.error('[h.analyticsEvent] error:', e);
-            }
+                } catch (e) {
+                    console.error('[h.analyticsEvent] error:', e);
+                }
 
-            if(typeof ga==='function') {
-              //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
-              ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, eventObj.val, {
-                nonInteraction: eventObj.nonInteraction!==false,//default é true,e só será false se, e somente se, esse parametro for definido como false
-                transport: 'beacon'
-              });
+                if (typeof ga === 'function') {
+                    //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
+                    ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, eventObj.val, {
+                        nonInteraction: eventObj.nonInteraction !== false,//default é true,e só será false se, e somente se, esse parametro for definido como false
+                        transport: 'beacon'
+                    });
+                }
+            } catch (e) {
+                console.error('[h.analyticsEvent] error:',e);
             }
-          } catch(e) {
-            console.error('[h.analyticsEvent] error:',e);
-          }
         };
 
         return () => {
@@ -548,7 +548,7 @@ const
     },
 
     applyMonetaryMask = (number) => {
-        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ""),
+        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
             integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
             decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
 
@@ -560,7 +560,6 @@ const
     monetaryToFloat = (propValue) => {
         return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
-
 
       removeStoredObject = (sessionKey) => {
           return sessionStorage.removeItem(sessionKey);

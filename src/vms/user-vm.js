@@ -4,7 +4,6 @@ import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
 
-
 const userVM = (user_id) => {
     const idVM = h.idVM,
           userDetails = m.prop([]),

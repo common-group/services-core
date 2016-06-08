@@ -11,7 +11,7 @@ import projectPosts from './project-posts';
 const projectMain = {
     controller(args) {
         const displayTabContent = (project) => {
-                  const hash = window.location.hash,
+            const hash = window.location.hash,
                         c_opts = {
                             project: project
                         },
@@ -28,16 +28,14 @@ const projectMain = {
                             '#posts': m.component(projectPosts, c_opts)
                         };
 
-                  if (_.isEmpty(hash) || hash === '#_=_' || hash === '#preview') {
-                      return tabs['#about'];
-                  }
+            if (_.isEmpty(hash) || hash === '#_=_' || hash === '#preview') {
+                return tabs['#about'];
+            }
 
-                  return tabs[hash];
-              };
+            return tabs[hash];
+        };
 
         h.redrawHashChange();
-
-
 
         return {
             displayTabContent: displayTabContent

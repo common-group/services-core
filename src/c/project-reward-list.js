@@ -11,13 +11,13 @@ const projectRewardList = {
             chooseReward = () => {
                 const valueFloat = h.monetaryToFloat(contributionValue);
 
-                if(valueFloat < openedReward().minimum_value) {
+                if (valueFloat < openedReward().minimum_value) {
 
                     error(`O valor dessa recompensa deve ser de no mínimo R$${openedReward().minimum_value}`);
 
                 } else {
 
-                    if(!h.getUser()) {
+                    if (!h.getUser()) {
 
                         h.storeObject(storeKey, {value: valueFloat, reward: openedReward()});
 
@@ -41,7 +41,7 @@ const projectRewardList = {
         const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
         const selectReward = (reward) => () => {
-            if(openedReward() !== reward){
+            if (openedReward() !== reward){
                 openedReward(reward);
                 contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
             }
@@ -49,7 +49,7 @@ const projectRewardList = {
 
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : false;
 
-        if(h.getStoredObject(storeKey)) {
+        if (h.getStoredObject(storeKey)) {
             const {value, reward} = h.getStoredObject(storeKey);
 
             h.removeStoredObject(storeKey);
@@ -73,7 +73,6 @@ const projectRewardList = {
         // - add draft admin modifications
         const project = args.project() || {open_for_contributions: false};
         return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
-
 
             return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
                 onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_reward_click', lbl: reward.minimum_value, project: project, extraData: {reward_id: reward.id, reward_value: reward.minimum_value}}, ctrl.selectReward(reward))
