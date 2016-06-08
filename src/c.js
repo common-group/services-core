@@ -13,6 +13,7 @@ import publish from './root/publish';
 import start from './root/start';
 import team from './root/team';
 import usersBalanceMain from './root/users-balance-main';
+import FollowFoundFriends from './root/follow-found-friends';
 
 const c = {
     root: {
@@ -30,7 +31,8 @@ const c = {
         Publish: publish,
         Start: start,
         Team: team,
-        UsersBalance: usersBalanceMain
+        UsersBalance: usersBalanceMain,
+        FollowFoundFriends: FollowFoundFriends
     }
 };
 
