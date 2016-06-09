@@ -1,5 +1,6 @@
 import m from 'mithril';
 import h from '../h';
+import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import faqBox from '../c/faq-box';
 
@@ -10,7 +11,7 @@ const projectsPayment = {
             value = m.route.param('value'),
             vm = paymentVM(mode),
             error = m.prop(false),
-            reward = h.getReward();
+            reward = rewardVM.selectedReward;
 
         if(!h.getUser()) {
             return h.navigateToDevise();

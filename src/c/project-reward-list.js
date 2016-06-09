@@ -1,6 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
+import rewardVM from '../vms/reward-vm';
 
 const projectRewardList = {
     controller(args) {
@@ -9,7 +10,8 @@ const projectRewardList = {
             openedReward = m.prop({id: -1}),
             error = m.prop(''),
             chooseReward = () => {
-                const valueFloat = h.monetaryToFloat(contributionValue);
+                const valueFloat = h.monetaryToFloat(contributionValue),
+                    openedReward = rewardVM.selectedReward;
 
                 if (valueFloat < openedReward().minimum_value) {
 
@@ -43,8 +45,9 @@ const projectRewardList = {
         const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
         const selectReward = (reward) => () => {
-            if (openedReward() !== reward){
-                openedReward(reward);
+            if (rewardVM.selectedReward() !== reward){
+                rewardVM.selectedReward(reward);
+
                 contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
             }
         };
@@ -64,7 +67,7 @@ const projectRewardList = {
             applyMask: applyMask,
             error: error,
             chooseReward: chooseReward,
-            openedReward: openedReward,
+            openedReward: rewardVM.selectedReward,
             selectReward: selectReward,
             contributionValue: contributionValue,
             setInput: setInput
