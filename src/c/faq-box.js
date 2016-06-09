@@ -9,8 +9,12 @@ const faqBox = {
     controller(args) {
         const mode = args.mode,
             questions = args.faq.questions,
+            selectedQuestion = m.prop(-1),
             scopedQuestions = m.prop(questions),
             vm = userVM(args.projectUserId);
+
+        const selectQuestion = (idx) => () => selectedQuestion(idx);
+
 
         vm.lUser.load().then((data) => {
             //Rewrites questions from translate with proper scope
@@ -26,11 +30,13 @@ const faqBox = {
         });
 
         return {
-            scopedQuestions: scopedQuestions
+            scopedQuestions: scopedQuestions,
+            selectQuestion: selectQuestion,
+            selectedQuestion: selectedQuestion
         };
     },
     view(ctrl, args) {
-        return m('.w-hidden-small.w-hidden-tiny.card.u-radius[data-ix=\'new-interaction\']',
+        return m('.w-hidden-small.w-hidden-tiny.card.u-radius',
           [
               m(".w-row.u-marginbottom-30",
                  [
@@ -50,18 +56,20 @@ const faqBox = {
                 "Dúvidas frequentes"
             ),
             m('ul.w-list-unstyled',
-                _.map(ctrl.scopedQuestions(), (question) => {
+                _.map(ctrl.scopedQuestions(), (question, idx) => {
                     return [
-                        m('li.fontsize-smaller.alt-link.list-question',
-                          m('span',
+                        m('li.fontsize-smaller.alt-link.list-question', {
+                            onclick: ctrl.selectQuestion(idx)
+                        }, m('span',
                             [
                               m('span.faq-box-arrow'),
                               ` ${question.question}`
                             ]
                           )
                         ),
-                        m('li',
-                          m('p.list-answer.fontsize-smaller', question.answer)
+                        m('li.list-answer', {
+                            class: ctrl.selectedQuestion() === idx ? 'list-answer-opened' : ''
+                        }, m('p.fontsize-smaller', m.trust(question.answer))
                         )
                     ]
                 })
