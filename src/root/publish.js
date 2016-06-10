@@ -316,9 +316,6 @@ const publish = {
                 m('.u-text-center.fontsize-smaller', [
                   'Ao publicar o seu projeto, você está aceitando os ',
                   m('a.alt-link[href=\'/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'),
-                  ', ',
-                  project.mode == 'flex' ?
-                    m('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/206574833-Regras-para-a-fase-de-testes-do-Catarse-Flex\'][target=\'_blank\']', 'Regras do Flex') : '',
                   ' e ',
                   m('a.alt-link[href=\'/privacy-policy\'][target=\'_blank\']', 'Politica de Privacidade')
                 ])
