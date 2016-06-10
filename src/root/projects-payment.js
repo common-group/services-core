@@ -2,13 +2,14 @@ import m from 'mithril';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
+import projectVM from '../vms/project-vm';
 import faqBox from '../c/faq-box';
 
 const projectsPayment = {
     controller(args) {
-        const mode = m.route.param('mode') || 'aon',
-            projectUserId = m.route.param('project_user_id'),
-            value = m.route.param('value'),
+        const mode = projectVM.currentProject().mode,
+            projectUserId = projectVM.currentProject().project_user_id,
+            value = rewardVM.getValue(),
             vm = paymentVM(mode),
             error = m.prop(false),
             reward = rewardVM.selectedReward;

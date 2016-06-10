@@ -12,7 +12,9 @@ const projectsShow = {
     controller(args) {
         h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
 
-        return projectVM(args.project_id, args.project_user_id);
+        projectVM.init(args.project_id, args.project_user_id);
+
+        return projectVM;
     },
     view(ctrl) {
         const project = ctrl.projectDetails() ? ctrl.projectDetails : h.getProject() ? h.getProject() :  m.prop({});

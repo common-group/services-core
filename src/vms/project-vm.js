@@ -4,15 +4,14 @@ import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
 import rewardVM from './reward-vm';
+import userVM from './user-vm';
 
-const projectVM = (project_id, project_user_id) => {
-    const vm = postgrest.filtersVM({
-        project_id: 'eq'
-    }),
-          idVM = h.idVM,
-          projectDetails = m.prop([]),
-          userDetails = m.prop([]);
+const idVM = h.idVM,
+      projectDetails = m.prop([]),
+      userDetails = m.prop([]),
+      vm = postgrest.filtersVM({project_id: 'eq'});
 
+const init = (project_id, project_user_id) => {
     vm.project_id(project_id);
     idVM.id(project_user_id);
 
@@ -20,17 +19,21 @@ const projectVM = (project_id, project_user_id) => {
           lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
           isLoading = () => { return (lProject() || lUser() || lReward()); };
 
-    lProject.load().then((data) => {
         lUser.load().then(userDetails);
+
+    lProject.load().then((data) => {
+
         rewardVM.fetchRewards(project_id);
         projectDetails(data);
     });
+};
 
-    return {
+const projectVM = {
         projectDetails: _.compose(_.first, projectDetails),
         userDetails: userDetails,
         rewardDetails: rewardVM.rewards,
-        isLoading: isLoading
+        isLoading: isLoading,
+        init: init
     };
 };
 

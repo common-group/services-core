@@ -14,28 +14,17 @@ const projectRewardList = {
                     openedReward = rewardVM.selectedReward;
 
                 if (valueFloat < openedReward().minimum_value) {
-
                     error(`O valor dessa recompensa deve ser de no mínimo R$${openedReward().minimum_value}`);
-
                 } else {
-
                     if (!h.getUser()) {
-
                         h.storeObject(storeKey, {value: valueFloat, reward: openedReward()});
 
                         return h.navigateToDevise('/' + args.project().permalink);
-
                     } else {
-
                         h.setReward(openedReward());
-
-                        m.route('/contribution', {
-                            reward_id: openedReward().id,
-                            value: valueFloat,
-                            mode: args.project().mode,
+                        m.route(`/projects/${args.project().id}/payment`, {
                             project_user_id: args.project().user_id
                         });
-
                     }
                 }
 
