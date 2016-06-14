@@ -88,7 +88,7 @@ describe("helper methods", () => {
         });
     });
 
-    describe('h.analytics', () => {
+    /*describe('h.analytics', () => {
       let ga;
       beforeEach(() => {
         ga = window.ga = jasmine.createSpy('ga');
@@ -112,5 +112,5 @@ describe("helper methods", () => {
         f();
         expect(ga).toHaveBeenCalledWith('send','event','link','click','http://teste.com',undefined,jasmine.any(Object));
       });
-    });
+    });*/
 });
