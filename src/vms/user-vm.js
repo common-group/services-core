@@ -7,7 +7,7 @@ import models from '../models';
 
 const idVM = h.idVM,
       userDetails = m.prop([]),
-      projectUserDetails = m.prop(),
+      currentUser = m.prop(),
       createdVM = postgrest.filtersVM({user_id: 'eq'});
 
 const getUserCreatedProjects = (user_id) => {
@@ -15,7 +15,7 @@ const getUserCreatedProjects = (user_id) => {
 
     models.projectDetail.pageSize(3);
 
-    const lUserCreated = postgrest.loaderWithToken(models.projectDetail.getPageOptions(createdVM.parameters()));
+    const lUserCreated = postgrest.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
 
     return lUserCreated.load();
 };
@@ -24,18 +24,19 @@ const getUserContributedProjects = (user_id) => {
 
 };
 
-const fetchUser = (user_id) => {
+
+const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     idVM.id(user_id);
 
     const lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
-    return lUser.load();
+    return !handlePromise ? lUser.load() : lUser.load().then(_.compose(customProp, _.first));
 };
 
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
     getUserContributedProjects: getUserContributedProjects,
-    projectUserDetails: projectUserDetails,
+    currentUser: currentUser,
     fetchUser: fetchUser
 };
 

@@ -7,8 +7,8 @@ import rewardVM from './reward-vm';
 import userVM from './user-vm';
 
 const idVM = h.idVM,
-      projectDetails = m.prop([]),
-      userDetails = m.prop([]),
+      currentProject = m.prop(),
+      userDetails = m.prop(),
       vm = postgrest.filtersVM({project_id: 'eq'});
 
 const init = (project_id, project_user_id) => {
@@ -16,25 +16,30 @@ const init = (project_id, project_user_id) => {
     idVM.id(project_user_id);
 
     const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
-          lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters())),
-          isLoading = () => { return (lProject() || lUser() || lReward()); };
+          lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
-        lUser.load().then(userDetails);
+    userVM.fetchUser(project_user_id, true, userDetails);
 
-    lProject.load().then((data) => {
+    rewardVM.fetchRewards(project_id);
 
-        rewardVM.fetchRewards(project_id);
-        projectDetails(data);
-    });
+    lProject.load().then(_.compose(currentProject, _.first));
+};
+
+const routeToProject = () => (project, ref) => {
+    currentProject(project);
+
+    m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
+
+    return false;
 };
 
 const projectVM = {
-        projectDetails: _.compose(_.first, projectDetails),
-        userDetails: userDetails,
-        rewardDetails: rewardVM.rewards,
-        isLoading: isLoading,
-        init: init
-    };
+    currentProject: currentProject,
+    userDetails: userDetails,
+    rewardDetails: rewardVM.rewards,
+    routeToProject: routeToProject,
+    init: init
 };
+
 
 export default projectVM;

@@ -2,6 +2,7 @@ import postgrest from 'mithril-postgrest';
 import models from '../models';
 
 const rewards = m.prop([]),
+    contributionValue = m.prop(0),
     selectedReward = m.prop({}),
     vm = postgrest.filtersVM({
         project_id: 'eq'
@@ -22,7 +23,9 @@ const rewardVM = {
     rewards: rewards,
     fetchRewards: fetchRewards,
     selectedReward: selectedReward,
-    rewardsLoader: rewardsLoader
+    rewardsLoader: rewardsLoader,
+    getValue: contributionValue,
+    setValue: contributionValue
 };
 
 export default rewardVM;
