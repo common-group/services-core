@@ -11,9 +11,9 @@ const projectUserCard = {
     view(ctrl, args) {
         const project = args.project;
         const contactModalC = [ownerMessageContent, args.userDetails];
+        const userDetail = args.userDetails();
 
-        return m('#user-card', _.map(args.userDetails(), (userDetail) => {
-            return m('.u-marginbottom-30.u-text-center-small-only', [
+        return m('#user-card', m('.u-marginbottom-30.u-text-center-small-only', [
                 (ctrl.displayModal() ? m.component(modalBox, {
                     displayModal: ctrl.displayModal,
                     content: contactModalC
@@ -50,8 +50,8 @@ const projectUserCard = {
                         m('p', userDetail.email) : ''
                     ]),
                 ]),
-            ]);
-        }));
+            ])
+        );
     }
 };
 

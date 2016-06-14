@@ -574,7 +574,8 @@ const
         setReward = (reward) => {
             currentReward(reward);
         },
-        getReward = () => currentReward;
+        getReward = () => currentReward,
+        buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`;
 
 setMomentifyLocale();
 closeFlash();
@@ -582,6 +583,7 @@ closeModal();
 
 export default {
     authenticityToken,
+    buildLink,
     cumulativeOffset,
     discuss,
     existy,

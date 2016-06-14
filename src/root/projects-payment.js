@@ -8,7 +8,7 @@ import faqBox from '../c/faq-box';
 const projectsPayment = {
     controller(args) {
         const mode = projectVM.currentProject().mode,
-            projectUserId = projectVM.currentProject().project_user_id,
+            projectUserId = projectVM.currentProject().user_id,
             value = rewardVM.getValue(),
             vm = paymentVM(mode),
             error = m.prop(false),
