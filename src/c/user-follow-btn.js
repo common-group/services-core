@@ -17,6 +17,7 @@ const UserFollowBtn = {
         const following = m.prop((args.following||false)),
               followVM = postgrest.filtersVM({follow_id: 'eq'}),
               loading = m.prop(false),
+              hover = m.prop(false),
               userFollowInsert = models.userFollow.postOptions({
                   follow_id: args.follow_id}),
               userFollowDelete = (() => {
@@ -48,15 +49,20 @@ const UserFollowBtn = {
             following: following,
             follow: follow,
             unfollow: unfollow,
-            loading: loading
+            loading: loading,
+            hover: hover
         };
     },
     view(ctrl, args) {
         if (ctrl.loading()) { return h.loader(); }
         if (ctrl.following()) {
             return m('a.w-button.btn.btn-medium.u-margintop-20',
-                     {onclick: ctrl.unfollow},
-                     'Deixar de seguir');
+                     {
+                         onclick: ctrl.unfollow,
+                         onmouseover: () => ctrl.hover(true),
+                         onmouseout: () => ctrl.hover(false)
+                     },
+                     (ctrl.hover() ? 'Deixar de seguir' : 'Seguindo'));
         } else {
             return m('a.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
                      {onclick: ctrl.follow},
