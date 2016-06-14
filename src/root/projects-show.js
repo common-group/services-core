@@ -17,7 +17,7 @@ const projectsShow = {
         return projectVM;
     },
     view(ctrl) {
-        const project = ctrl.projectDetails() ? ctrl.projectDetails : h.getProject() ? h.getProject() :  m.prop({});
+        const project = ctrl.currentProject() ? ctrl.currentProject : m.prop({});
 
         return m('.project-show', [
                 m.component(projectHeader, {

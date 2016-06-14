@@ -8,27 +8,19 @@ import quickProjectList from '../c/quick-project-list';
 
 const menuProfile = {
     controller(args) {
-        const contributedProjects = m.prop([]),
-            latestProjects = m.prop([]),
+        const contributedProjects = m.prop(),
+            latestProjects = m.prop(),
             userDetails = m.prop({}),
-            user_id = args.user.user_id,
-            userLoader = userVM(user_id).lUser,
-            createdLoader = userVM(user_id).lUserCreated;
+            user_id = args.user.user_id;
 
-        userLoader.load().then(details => {
-            userDetails(_.first(details));
-        });
+        userVM.fetchUser(user_id, true, userDetails);
 
-        createdLoader.load().then(projects => {
-            latestProjects(projects);
-        });
+        // userVM.getUserCreatedProjects(user_id).then(latestProjects);
 
         return {
             contributedProjects: contributedProjects,
             latestProjects: latestProjects,
             userDetails: userDetails,
-            userLoader: userLoader,
-            createdLoader: createdLoader,
             toggleMenu: h.toggleProp(false, true)
         };
     },
@@ -100,11 +92,12 @@ const menuProfile = {
                                         m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
                                             `Projetos apoiados`
                                         ),
-                                        m(`ul.w-list-unstyled.u-marginbottom-20`,
+                                        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.contributedProjects() ?
+                                            _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: ctrl.contributedProjects,
                                                 loadMore: '/pt/users/${user.id}/edit#contributions'
-                                            })
+                                            }) : 'carregando...'
                                         )
                                     ]
                                 ),
@@ -113,7 +106,8 @@ const menuProfile = {
                                         m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
                                             `Projetos criados`
                                         ),
-                                        m(`ul.w-list-unstyled.u-marginbottom-20`, !ctrl.createdLoader() ?
+                                        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.latestProjects() ?
+                                            _.isEmpty(ctrl.latestProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: ctrl.latestProjects,
                                                 loadMore: '/pt/users/${user.id}/edit#contributions'

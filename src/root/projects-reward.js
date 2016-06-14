@@ -143,8 +143,7 @@ const projectsReward = {
                                                                     m(".back-reward-reward-description",
                                                                         [
                                                                             m(".fontsize-smaller.u-marginbottom-10", 'Texto da recompensa'),
-                                                                            m(".fontsize-smallest.fontcolor-secondary",
-                                                                            )
+                                                                            m(".fontsize-smallest.fontcolor-secondary", 'what here?!')
                                                                         ]
                                                                     )
                                                                 ]

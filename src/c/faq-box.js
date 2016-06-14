@@ -10,13 +10,11 @@ const faqBox = {
         const mode = args.mode,
             questions = args.faq.questions,
             selectedQuestion = m.prop(-1),
-            scopedQuestions = m.prop(questions),
-            vm = userVM(args.projectUserId);
+            scopedQuestions = m.prop(questions);
 
         const selectQuestion = (idx) => () => selectedQuestion(idx);
 
-
-        vm.lUser.load().then((data) => {
+        const updateQuestionsData = (data) => {
             //Rewrites questions from translate with proper scope
             const user = data[0];
             const updatedQuestions = _.map(questions, (quest, idx) => {
@@ -27,7 +25,9 @@ const faqBox = {
             });
 
             scopedQuestions(updatedQuestions);
-        });
+        };
+
+        userVM.fetchUser(args.projectUserId, false).then(updateQuestionsData);
 
         return {
             scopedQuestions: scopedQuestions,

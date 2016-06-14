@@ -25,12 +25,10 @@ const init = (project_id, project_user_id) => {
     lProject.load().then(_.compose(currentProject, _.first));
 };
 
-const routeToProject = () => (project, ref) => {
+const routeToProject = (project, ref) => () => {
     currentProject(project);
 
-    m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
-
-    return false;
+    return m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
 };
 
 const projectVM = {

@@ -9,7 +9,7 @@ const projectRewardList = {
             contributionValue = m.prop(),
             openedReward = m.prop({id: -1}),
             error = m.prop(''),
-            chooseReward = () => {
+            submitContribution = () => {
                 const valueFloat = h.monetaryToFloat(contributionValue),
                     openedReward = rewardVM.selectedReward;
 
@@ -21,7 +21,7 @@ const projectRewardList = {
 
                         return h.navigateToDevise('/' + args.project().permalink);
                     } else {
-                        h.setReward(openedReward());
+                        rewardVM.setValue(valueFloat);
                         m.route(`/projects/${args.project().id}/payment`, {
                             project_user_id: args.project().user_id
                         });
@@ -47,15 +47,15 @@ const projectRewardList = {
             const {value, reward} = h.getStoredObject(storeKey);
 
             h.removeStoredObject(storeKey);
-            selectReward(m.prop(reward));
+            rewardVM.selectedReward(reward);
             contributionValue(h.applyMonetaryMask(`${value},00`));
-            chooseReward();
+            submitContribution();
         }
 
         return {
             applyMask: applyMask,
             error: error,
-            chooseReward: chooseReward,
+            submitContribution: submitContribution,
             openedReward: rewardVM.selectedReward,
             selectReward: selectReward,
             contributionValue: contributionValue,
@@ -98,7 +98,7 @@ const projectRewardList = {
                     ctrl.openedReward().id === reward.id ? m('.w-form',
                     	[
                     		m('form.u-margintop-30', {
-                                    onsubmit: ctrl.chooseReward
+                                    onsubmit: ctrl.submitContribution
                                 },[
                     				m('.divider.u-marginbottom-20'),
                     				m('.fontcolor-secondary.u-marginbottom-10',

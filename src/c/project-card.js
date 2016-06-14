@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
+import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
@@ -10,12 +11,7 @@ const projectCard = {
         const project = args.project,
             progress = project.progress.toFixed(2),
             remainingTextObj = h.translatedTime(project.remaining_time),
-            link = '/' + project.permalink + (args.ref ? '?ref=' + args.ref : ''),
             type = args.type || 'small',
-            projectRoute = () => {
-                h.setProject(project);
-                m.route(link, {project_id: project.project_id, project_user_id: project.project_user_id});
-            },
             css = (cardType) => {
                 const cssClasses = {
                     'small': {
@@ -59,7 +55,7 @@ const projectCard = {
         return m(css(type).wrapper, [
             m(css(type).innerWrapper, [
                 m(`a${css(type).thumb}[href="javascript:void(0);"]`, {
-                    onclick: projectRoute,
+                    onclick: projectVM.routeToProject(project, args.ref),
                     style: {
                         'background-image': `url(${project.project_img})`,
                         'display': 'block'
@@ -68,14 +64,16 @@ const projectCard = {
                 m(css(type).descriptionWrapper, [
                     m(css(type).description, [
                         m(css(type).title, [
-                            m(`a.link-hidden[href="javacript:void(0);"]`,{
-                                onclick: projectRoute
+                            m(`a.link-hidden[href="${h.buildLink(project.permalink, args.ref)}"]`,{
+                                onclick: projectVM.routeToProject(project, args.ref)
                             },
                             project.project_name)
                         ]),
                         m(css(type).author, `${I18n.t('by', I18nScope())} ${project.owner_name}`),
                         m(css(type).headline, [
-                            m(`a.link-hidden[href="${link}"]`, project.headline)
+                            m(`a.link-hidden[href="${h.buildLink(project.permalink, args.ref)}"]`,{
+                                onclick: projectVM.routeToProject(project, args.ref)
+                            },project.headline)
                         ])
                     ]),
                     m(css(type).city, [

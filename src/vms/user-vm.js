@@ -15,7 +15,7 @@ const getUserCreatedProjects = (user_id) => {
 
     models.projectDetail.pageSize(3);
 
-    const lUserCreated = postgrest.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
+    const lUserCreated = postgrest.loaderWithToken(models.projectDetail.getPageOptions(createdVM.parameters()));
 
     return lUserCreated.load();
 };
