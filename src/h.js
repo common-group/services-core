@@ -439,99 +439,16 @@ const
             return fn;
         }
 
-        const fireEvent = () => {
-          try {
-            const project = eventObj.project||getCurrentProject(),
-                  user = getUser();
-            const dataProject = project&&(project.id||project.project_id) ? {
-              project: {
-                id: project.id||project.project_id,
-                user_id: project.user_id,
-                category_id: project.category_id,
-                state: project.address && project.address.state_acronym,
-                city: project.address && project.address.city
-              }
-            } : null;
-            const dataUser = user&&user.user_id ? {
-              user: {
-                id: user.user_id,
-                contributions: user.contributions,
-                published_projects: user.published_projects
-              }
-            } : null;//TODO
-            const data = _.extend({},eventObj.extraData,dataProject,dataUser);
-            const location = window.location;
-            const domain = location.origin || (location.protocol + '//' + location.hostname);
-            const ga = window.ga;
-            const gaTracker = ga && ga.getAll && !_.isEmpty(ga.getAll()) ? _.first(ga.getAll()) : null;
-            try {
-              const sendData = {
-                event: _.extend({},data, {
-                  category: eventObj.cat,
-                  action: eventObj.act,
-                  label: eventObj.lbl,
-                  value: eventObj.val,
-                  request: {
-                    referrer: document.referrer||undefined,
-                    url: location.href,
-                    protocol: location.protocol.substr(0,location.protocol.length-1),
-                    hostname: location.hostname,
-                    domain: domain,
-                    pathname: location.pathname || location.href.substr(domain.length).replace(/[\?\#].*$/,''),
-                    hash: location.hash.replace(/^\#/,''),
-                    query: (function parseParams() {
-                        if(location.search) {
-                          try {
-                            return location.search.replace(/^\?/,'').split('&').reduce(function (params, param) {
-                                var paramSplit = param.split('=').map(function (value) {
-                                    return decodeURIComponent(value.replace('+', ' '));
-                                });
-                                params[paramSplit[0]] = paramSplit[1];
-                                return params;
-                            }, {});
-                          } catch(e) {
-                            return location.search;
-                          }
-                        }
-                    })()
-                  }
-                },
-                (gaTracker?{ga:{clientId: gaTracker.get('clientId')}}:null)
-                )
-              };
-
-              $.ajax({
-                  type: "POST",
-                  url: getApiHost()+'/rpc/track',
-                  // The key needs to match your method's input parameter (case-sensitive).
-                  data: JSON.stringify(sendData),
-                  contentType: "application/json; charset=utf-8",
-                  dataType: "json",
-                  success: function(data){
-                    console.log('[h.analyticsEvent] /track ok', data);
-                  },
-                  failure: function(errMsg) {
-                      console.error('[h.analyticsEvent] error:', e);
-                  }
-              });
-            } catch(e) {
-              console.error('[h.analyticsEvent] error:', e);
-            }
-
-            if(typeof ga==='function') {
-              //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
-              ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, eventObj.val, {
-                nonInteraction: eventObj.nonInteraction!==false,
-                transport: 'beacon'
-              });
-            }
-          } catch(e) {
-            console.error('[h.analyticsEvent] error:',e);
-          }
-        };
-
         return () => {
-            fireEvent();
+            try {
+              if(!eventObj.project)
+                eventObj.project = getCurrentProject();
+              if(!eventObj.user)
+                eventObj.user=getUser();
+              CatarseAnalytics.event(eventObj);
+            } catch(e) {
+              console.error('[h.analyticsEvent] error:',e);
+            }
             fn();
         };
     },
@@ -545,23 +462,24 @@ const
         if (!eventKey) {
             throw new Error('Should inform cat or act');
         }
-        const fireEvent = analyticsEvent(eventObj, fn);
         return () => {
             if (!_analyticsOneTimeEventFired[eventKey]) {
                 //console.log('oneTimeEvent',eventKey);
                 _analyticsOneTimeEventFired[eventKey] = true;
+                const fireEvent = analyticsEvent(eventObj, fn);
                 fireEvent();
             }
         };
     },
     analyticsWindowScroll = (eventObj) => {
         if (eventObj) {
-            let fireEvent = analyticsEvent(eventObj);
+            let fired=false;
             window.addEventListener('scroll', function(e){
                 //console.log('windowScroll');
-                if (fireEvent && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                    fireEvent();
-                    fireEvent = null;
+                if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                  fired=true;
+                  const fireEvent = analyticsEvent(eventObj);
+                  fireEvent();
                 }
             });
         }

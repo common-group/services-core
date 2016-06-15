@@ -34,7 +34,7 @@ const SignedFriendFacebookConnect = {
                                         return m(`img.thumb.small.u-round.u-marginbottom-10[src="${item.avatar}"]`);
                                     }),
                                 ]),
-                                m('a.w-button.btn.btn-large[href="/follow-fb-friends"]', 'Procure seus amigos')
+                                (total > 0 ? m('a.w-button.btn.btn-large[href="/follow-fb-friends"]', 'Procure seus amigos') : m('a.w-button.btn.btn-fb.btn-large.u-margintop-30.u-marginbottom-10[href="/connect-facebook"]', 'Conecte seu facebook'))
                             ])
                         ])
                     ])
