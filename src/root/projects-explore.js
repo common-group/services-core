@@ -43,6 +43,10 @@ const projectsExplore = {
               loadCategories = () => {
                   return models.category.getPageWithToken(filters({}).order({name: 'asc'}).parameters()).then(categoryCollection);
               },
+              // just small fix when have two scored projects only
+              checkForMinScoredProjects = (collection) => {
+                  return _.size(_.filter(collection, (x) => { return x.score >= 1; })) >= 3;
+              },
               // Fake projects object to be able to render page while loadding (in case of search)
               projects = m.prop({collection: m.prop([]), isLoading: () => { return true; }, isLastPage: () => { return true; }}),
               loadRoute = () => {
@@ -103,6 +107,7 @@ const projectsExplore = {
                             return pages;
                         };
 
+
                   if (_.isString(search) && search.length > 0 && route === null) {
                       isSearch(true);
                       title('Busca ' + search);
@@ -151,11 +156,14 @@ const projectsExplore = {
             currentFilter: currentFilter,
             projectFiltersVM: projectFiltersVM,
             toggleCategories: toggleCategories,
-            isSearch: isSearch
+            isSearch: isSearch,
+            checkForMinScoredProjects: checkForMinScoredProjects
         };
     },
     view(ctrl, args) {
-        if (!ctrl.projects().isLoading() && _.isEmpty(ctrl.projects().collection()) && !ctrl.isSearch()){
+        let projects_collection = ctrl.projects().collection();
+
+        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch()){
             ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
             ctrl.changeFilter(ctrl.fallbackFilter);
         }
@@ -203,18 +211,23 @@ const projectsExplore = {
             m('.w-section.section', [
                 m('.w-container', [
                     m('.w-row', [
-                        m('.w-row', _.map(ctrl.projects().collection(), (project, idx) => {
+                        m('.w-row', _.map(projects_collection, (project, idx) => {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
 
                             if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
-                                if(project.score > 1) {
+                                if(project.score >= 1) {
                                     if (idx === 0) {
                                         cardType = 'big';
                                         ref = 'ctrse_explore_featured_big';
                                     } else if (idx === 1 || idx === 2) {
-                                        cardType = 'medium';
-                                        ref = 'ctrse_explore_featured_medium';
+                                        if(ctrl.checkForMinScoredProjects(projects_collection)) {
+                                            cardType = 'medium';
+                                            ref = 'ctrse_explore_featured_medium';
+                                        } else {
+                                            cardType = 'big';
+                                            ref = 'ctrse_explore_featured_big';
+                                        }
                                     } else {
                                         ref = 'ctrse_explore_featured';
                                     }
@@ -223,7 +236,7 @@ const projectsExplore = {
 
                             return m.component(projectCard, {project: project, ref: ref, type: cardType});
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : _.isEmpty(ctrl.projects().collection()) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
+                        ctrl.projects().isLoading() ? h.loader() : _.isEmpty(projects_collection) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
                     ])
                 ])
             ]),
@@ -232,7 +245,7 @@ const projectsExplore = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-2.w-col-push-5', [
-                          (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(ctrl.projects().collection())) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
+                          (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(projects_collection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {onclick: () => { ctrl.projects().nextPage(); return false; }}, 'Carregar mais')
                         ]),
                     ])
                 ])
