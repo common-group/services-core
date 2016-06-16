@@ -41,7 +41,8 @@ const projectSuccessfulOnboardConfirmAccount = {
         const projectAccount = args.projectAccount,
               actionStage = ctrl.actionStage,
               currentStage = ctrl.currentStage,
-              personKind = (projectAccount.owner_document.length > 14 ? I18n.t('person.juridical', I18nScope()) : I18n.t('person.natural', I18nScope()));
+              personKind = (projectAccount.owner_document.length > 14 ? 'juridical' : 'natural'),
+              juridicalPerson = projectAccount.owner_document.length > 14;
 
         return m('.w-container.u-marginbottom-40', [
             m('.u-text-center', [
@@ -52,14 +53,18 @@ const projectSuccessfulOnboardConfirmAccount = {
                     m('.fontsize-base.u-marginbottom-30.card.card-terciary', [
                         m('div', [
                             m('span.fontcolor-secondary', I18n.t('person.label', I18nScope())),
-                            personKind
+                            I18n.t(`person.${personKind}.label`, I18nScope())
                         ]),
                         m('div', [
-                            m('span.fontcolor-secondary', I18n.t('person.name', I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t(`person.${personKind}.name`, I18nScope())),
                             projectAccount.owner_name
                         ]),
+                        ((projectAccount.state_inscription && juridicalPerson) ? m('div', [
+                            m('span.fontcolor-secondary', I18n.t(`person.state_inscription`, I18nScope())),
+                            projectAccount.state_inscription
+                        ]): '' ),
                         m('div', [
-                            m('span.fontcolor-secondary', I18n.t('person.document', I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t(`person.${personKind}.document`, I18nScope())),
                             projectAccount.owner_document
                         ]),
                         m('div', [
