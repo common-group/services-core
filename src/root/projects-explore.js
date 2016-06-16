@@ -16,7 +16,9 @@ import projectFilters from '../vms/project-filters-vm';
 import search from '../c/search';
 import categoryButton from '../c/category-button';
 import projectCard from '../c/project-card';
+import tooltip from '../c/tooltip';
 
+// TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
     controller() {
         const filters = postgrest.filtersVM,
@@ -32,6 +34,30 @@ const projectsExplore = {
               resetContextFilter = () => {
                   currentFilter(filtersMap[defaultFilter]);
                   projectFiltersVM.setContextFilters(['finished', 'all']);
+              },
+              buildTooltip = (tooltipText) => {
+                  return m.component(tooltip, {
+                      el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
+                      text: tooltipText,
+                      width: 380
+                  });
+              },
+              hint = () => {
+                  // TODO Add copies to i18n.
+                  let hintText = '',
+                    tooltipText = '',
+                    hasHint = false;
+                  if(currentFilter().keyName === 'all') {
+                      hasHint = true;
+                      hintText = 'Ordenados por popularidade ';
+                      tooltipText = 'O nosso fator popularidade é uma mistura da seleção do time do Catarse com um valor que é calculado pela velocidade de arrecadação do projeto';
+                  }else if(currentFilter().keyName === 'finished') {
+                      hasHint = true;
+                      hintText = 'Ordenados por R$ alcançado ';
+                      tooltipText = 'Os projetos com maior meta de arrecadação alcançada ficam no topo';
+                  }
+
+                  return hasHint ? m('.fontsize-smaller.fontcolor-secondary', [hintText, buildTooltip(tooltipText)]) : '';
               },
               isSearch = m.prop(false),
               categoryCollection = m.prop([]),
@@ -152,6 +178,7 @@ const projectsExplore = {
             projects: projects,
             category: category,
             title: title,
+            hint: hint,
             filtersMap: filtersMap,
             currentFilter: currentFilter,
             projectFiltersVM: projectFiltersVM,
@@ -191,7 +218,8 @@ const projectsExplore = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-9.w-col-small-8.w-col-tiny-8', [
-                            m('.fontsize-larger', ctrl.title())
+                            m('.fontsize-larger', ctrl.title()),
+                            ctrl.hint()
                         ]),
                         m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
                             !ctrl.isSearch() ? m('select.w-select.text-field.positive',
@@ -214,8 +242,9 @@ const projectsExplore = {
                         m('.w-row', _.map(projects_collection, (project, idx) => {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
-
-                            if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
+                            if (ctrl.isSearch()) {
+                                ref = 'ctrse_explore_pgsearch';
+                            } else if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
                                 if(project.score >= 1) {
                                     if (idx === 0) {
                                         cardType = 'big';
