@@ -22,7 +22,7 @@ const projectsExplore = {
         const filters = postgrest.filtersVM,
               projectFiltersVM = projectFilters(),
               filtersMap = projectFiltersVM.filters,
-              defaultFilter = h.paramByName('filter') || 'score',
+              defaultFilter = h.paramByName('filter') || 'all',
               fallbackFilter = 'all',
               currentFilter = m.prop(filtersMap[defaultFilter]),
               changeFilter = (newFilter) => {
@@ -31,7 +31,7 @@ const projectsExplore = {
               },
               resetContextFilter = () => {
                   currentFilter(filtersMap[defaultFilter]);
-                  projectFiltersVM.setContextFilters(['score', 'finished', 'all']);
+                  projectFiltersVM.setContextFilters(['finished', 'all']);
               },
               isSearch = m.prop(false),
               categoryCollection = m.prop([]),
@@ -207,15 +207,17 @@ const projectsExplore = {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
 
-                            if (ctrl.currentFilter().keyName === 'score' && !ctrl.isSearch()) {
-                                if (idx === 0) {
-                                    cardType = 'big';
-                                    ref = 'ctrse_explore_featured_big';
-                                } else if (idx === 1 || idx === 2) {
-                                    cardType = 'medium';
-                                    ref = 'ctrse_explore_featured_medium';
-                                } else {
-                                    ref = 'ctrse_explore_featured';
+                            if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
+                                if(project.score > 1) {
+                                    if (idx === 0) {
+                                        cardType = 'big';
+                                        ref = 'ctrse_explore_featured_big';
+                                    } else if (idx === 1 || idx === 2) {
+                                        cardType = 'medium';
+                                        ref = 'ctrse_explore_featured_medium';
+                                    } else {
+                                        ref = 'ctrse_explore_featured';
+                                    }
                                 }
                             }
 
