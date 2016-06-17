@@ -40,6 +40,11 @@ const publish = {
         l.load().then(projectDetails);
         accountL.load().then(projectAccount);
 
+        let expiresAt = () => {
+            const project = _.first(projectDetails());
+            return moment().add(project.online_days, 'days');
+        };
+
         return {
             l: l,
             accountL: accountL,

@@ -496,7 +496,7 @@ const
                 if (typeof ga === 'function') {
                     //https://developers.google.com/analytics/devguides/collection/analyticsjs/sending-hits#the_send_method
                     ga('send', 'event', eventObj.cat, eventObj.act, eventObj.lbl, eventObj.val, {
-                        nonInteraction: eventObj.nonInteraction !== false,//default é true,e só será false se, e somente se, esse parametro for definido como false
+                        nonInteraction: eventObj.nonInteraction !== false,
                         transport: 'beacon'
                     });
                 }
