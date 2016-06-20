@@ -74,9 +74,11 @@ const projectCard = {
                     m(css(type).city, [
                         m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), ` ${project.city_name ? project.city_name : ''}, ${project.state_acronym ? project.state_acronym : ''}`])
                     ]),
-                    m(`.card-project-meter.${project.state}`, [
+                    m(`.card-project-meter.${project.mode}.${project.state}.${progress < 100 ? 'incomplete' : 'complete'}`, [
                         (_.contains(['successful', 'failed', 'waiting_funds'], project.state)) ?
-                            m('div', I18n.t('display_status.' + project.state, I18nScope())) :
+                            m('div',
+                                project.state === 'successful' && progress < 100 ? I18n.t(`display_status.flex_successful`, I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
+                            ) :
                         m('.meter', [
                             m('.meter-fill', {
                                 style: {
