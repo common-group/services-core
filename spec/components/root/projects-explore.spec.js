@@ -1,6 +1,6 @@
 import projectsExplore from '../../../src/root/projects-explore'
 
-export default describe('ProjectsExplore', () => {
+describe('ProjectsExplore', () => {
     let $output, project, component;
 
     beforeAll(() => {

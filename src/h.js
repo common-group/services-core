@@ -378,24 +378,61 @@ const
         };
     },
 
-    RDTracker = (eventId) => {
-        return (el, isInitialized) => {
-            if (!isInitialized) {
-                const integrationScript = document.createElement('script');
-                integrationScript.type = 'text/javascript';
-                integrationScript.id = 'RDIntegration';
+        projectStateTextClass = (state) => {
+            const statusText = {
+                    online: {
+                        cssClass: 'text-success',
+                        text: 'NO AR'
+                    },
+                    successful: {
+                        cssClass: 'text-success',
+                        text: 'FINANCIADO'
+                    },
+                    failed: {
+                        cssClass: 'text-error',
+                        text: 'NÃO FINANCIADO'
+                    },
+                    waiting_funds: {
+                        cssClass: 'text-waiting',
+                        text: 'AGUARDANDO'
+                    },
+                    rejected: {
+                        cssClass: 'text-error',
+                        text: 'RECUSADO'
+                    },
+                    draft: {
+                        cssClass: '',
+                        text: 'RASCUNHO'
+                    },
+                    in_analysis: {
+                        cssClass: '',
+                        text: 'EM ANÁLISE'
+                    },
+                    approved: {
+                        cssClass: 'text-success',
+                        text: 'APROVADO'
+                    }
+                };
 
-                if (!document.getElementById(integrationScript.id)){
-                    document.body.appendChild(integrationScript);
-                    integrationScript.onload = () => RdIntegration.integrate(getRdToken(), eventId);
-                    integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
+            return statusText[state];
+        },
+        RDTracker = (eventId) => {
+            return (el, isInitialized) => {
+                if (!isInitialized) {
+                    const integrationScript = document.createElement('script');
+                    integrationScript.type = 'text/javascript';
+                    integrationScript.id = 'RDIntegration';
+
+                    if (!document.getElementById(integrationScript.id)){
+                        document.body.appendChild(integrationScript);
+                        integrationScript.onload = () => RdIntegration.integrate(getRdToken(), eventId);
+                        integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
+                    }
+
+                    return false;
                 }
-
-                return false;
-            }
-        };
-    },
-
+            };
+        },
     analyticsEvent = (eventObj, fn=Function.prototype) => {
         //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
         if (!eventObj){
@@ -494,6 +531,7 @@ export default {
     RDTracker,
     selfOrEmpty,
     scrollTo,
+    projectStateTextClass,
     validationErrors,
     validate,
     analytics,

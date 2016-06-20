@@ -16,24 +16,6 @@ describe('AdminProjectDetailsCard', () => {
             };
         });
 
-        describe('project status text', () => {
-            it('when project is online', () => {
-                ctrl = generateController({
-                    state: 'online'
-                });
-                expect(ctrl.statusTextObj().text).toEqual('NO AR');
-                expect(ctrl.statusTextObj().cssClass).toEqual('text-success');
-            });
-
-            it('when project is failed', () => {
-                ctrl = generateController({
-                    state: 'failed'
-                });
-                expect(ctrl.statusTextObj().text).toEqual('NÃO FINANCIADO');
-                expect(ctrl.statusTextObj().cssClass).toEqual('text-error');
-            });
-        });
-
         describe('project remaining time', () => {
             it('when remaining time is in days', () => {
                 ctrl = generateController({
@@ -84,8 +66,7 @@ describe('AdminProjectDetailsCard', () => {
         });
 
         it('should render details of the project in card', () => {
-            let remaningTimeObj = ctrl.remainingTextObj,
-                statusTextObj = ctrl.statusTextObj();
+            let remaningTimeObj = ctrl.remainingTextObj;
 
             expect($output.find('.project-details-card').length).toEqual(1);
             expect($output.contains(projectDetail.total_contributions)).toEqual(true);
