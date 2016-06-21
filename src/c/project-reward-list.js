@@ -2,63 +2,53 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 
 const projectRewardList = {
     controller(args) {
         const storeKey = 'selectedReward',
-            contributionValue = m.prop(),
-            openedReward = m.prop({id: -1}),
-            error = m.prop(''),
-            submitContribution = () => {
-                const valueFloat = h.monetaryToFloat(contributionValue),
-                    openedReward = rewardVM.selectedReward;
-
-                if (valueFloat < openedReward().minimum_value) {
-                    error(`O valor dessa recompensa deve ser de no mínimo R$${openedReward().minimum_value}`);
-                } else {
-                    if (!h.getUser()) {
-                        h.storeObject(storeKey, {value: valueFloat, reward: openedReward()});
-
-                        return h.navigateToDevise('/' + args.project().permalink);
-                    } else {
-                        rewardVM.setValue(valueFloat);
-                        m.route(`/projects/${args.project().id}/payment`, {
-                            project_user_id: args.project().user_id
-                        });
-                    }
-                }
-
-                return false;
-            };
-
-        const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
-
-        const selectReward = (reward) => () => {
-            if (rewardVM.selectedReward() !== reward){
-                rewardVM.selectedReward(reward);
-
-                contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
-            }
-        };
+            vm = rewardVM;
 
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : false;
+
+        const submitContribution = () => {
+            const valueFloat = h.monetaryToFloat(vm.contributionValue);
+
+            if (valueFloat < vm.selectedReward().minimum_value) {
+                vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value}`);
+            } else {
+                if (!h.getUser()) {
+                    h.storeObject(storeKey, {value: valueFloat, reward: vm.selectedReward()});
+
+                    return h.navigateToDevise('/' + projectVM.currentProject().permalink);
+                } else {
+                    vm.contributionValue(valueFloat);
+
+                    m.route(`/projects/${projectVM.currentProject().id}/payment`, {
+                        project_user_id: projectVM.currentProject().user_id
+                    });
+                }
+            }
+
+            return false;
+        };
 
         if (h.getStoredObject(storeKey)) {
             const {value, reward} = h.getStoredObject(storeKey);
 
             h.removeStoredObject(storeKey);
-            rewardVM.selectedReward(reward);
-            contributionValue(h.applyMonetaryMask(`${value},00`));
-            submitContribution();
+            vm.selectedReward(reward);
+            vm.contributionValue(h.applyMonetaryMask(`${value},00`));
+            vm.submitContribution();
         }
 
         return {
-            applyMask: applyMask,
-            error: error,
+            applyMask: vm.applyMask,
+            error: vm.error,
             submitContribution: submitContribution,
-            openedReward: rewardVM.selectedReward,
-            selectReward: selectReward,
-            contributionValue: contributionValue,
+            openedReward: vm.selectedReward,
+            selectReward: vm.selectReward,
+            contributionValue: vm.contributionValue,
             setInput: setInput
         };
     },
@@ -69,7 +59,16 @@ const projectRewardList = {
         return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
 
             return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
-                onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_reward_click', lbl: reward.minimum_value, project: project, extraData: {reward_id: reward.id, reward_value: reward.minimum_value}}, ctrl.selectReward(reward))
+                onclick: h.analytics.event({
+                    cat: 'contribution_create',
+                    act: 'contribution_reward_click',
+                    lbl: reward.minimum_value,
+                    project: project,
+                    extraData: {
+                        reward_id: reward.id,
+                        reward_value: reward.minimum_value
+                    }
+                }, ctrl.selectReward(reward))
             }, [
                 m('.u-marginbottom-20', [
                     m('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'),
