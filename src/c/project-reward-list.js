@@ -17,6 +17,8 @@ const projectRewardList = {
             if (valueFloat < vm.selectedReward().minimum_value) {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value}`);
             } else {
+                vm.error('');
+                
                 if (!h.getUser()) {
                     h.storeObject(storeKey, {value: valueFloat, reward: vm.selectedReward()});
 

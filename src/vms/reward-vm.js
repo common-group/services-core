@@ -27,7 +27,7 @@ const fetchRewards = (project_id) => {
     return rewardsLoader(project_id).load().then(rewards);
 };
 
-const isContributionValid = () => () => {
+const submitContribution = () => {
     const valueFloat = h.monetaryToFloat(contributionValue);
 
     if (valueFloat < selectedReward().minimum_value) {
@@ -42,7 +42,11 @@ const isContributionValid = () => () => {
         } else {
             contributionValue(valueFloat);
 
-            return true;
+            m.route(`/projects/${projectVM.currentProject().id}/payment`, {
+                project_user_id: projectVM.currentProject().user_id
+            });
+
+            return false;
         }
     }
 
@@ -67,7 +71,7 @@ const rewardVM = {
     fetchRewards: fetchRewards,
     selectReward: selectReward,
     selectedReward: selectedReward,
-    isContributionValid: isContributionValid,
+    submitContribution: submitContribution,
     contributionValue: contributionValue,
     rewardsLoader: rewardsLoader,
     getValue: contributionValue,

@@ -15,8 +15,7 @@ const projectsReward = {
             mode = projectVM.currentProject().mode,
             faq = I18n.translations[I18n.currentLocale()].projects.faq[mode];
 
-        const isSelected = reward => reward.id === selectedReward().id;
-
+        //TODO unify projectsReward and project-reward-list reward submission. fix routing issue.
         const submitContribution = () => {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
 
@@ -28,8 +27,8 @@ const projectsReward = {
 
                     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
                 } else {
+                    vm.error('');
                     vm.contributionValue(valueFloat);
-
                     m.route(`/projects/${projectVM.currentProject().id}/payment`, {
                         project_user_id: projectVM.currentProject().user_id
                     });
@@ -39,7 +38,11 @@ const projectsReward = {
             return false;
         };
 
-        rewards.unshift(vm.noReward);
+        const isSelected = reward => reward.id === selectedReward().id;
+
+        if(_.first(rewards).id !== vm.noReward.id){
+            rewards.unshift(vm.noReward);
+        }
 
         return {
             rewards: rewards,
@@ -139,7 +142,7 @@ const projectsReward = {
                                                                 m('.back-reward-reward-description',
                                                                     [
                                                                         m('.fontsize-smaller.u-marginbottom-10', reward.description),
-                                                                        reward.deliver_at ? m('.fontsize-smallest.fontcolor-secondary', 'Estimativa de entrega: ' + reward.deliver_at) : ''
+                                                                        reward.deliver_at ? m('.fontsize-smallest.fontcolor-secondary', 'Estimativa de entrega: ' + h.momentify(reward.deliver_at, 'MMM/YYYY')) : ''
                                                                     ]
                                                                 )
                                                             ]

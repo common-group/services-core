@@ -22,6 +22,7 @@ const projectsShow = {
         return m('.project-show', [
                 m.component(projectHeader, {
                     project: project,
+                    rewardDetails: ctrl.rewardDetails,
                     userDetails: ctrl.userDetails
                 }),
                 m.component(projectTabs, {

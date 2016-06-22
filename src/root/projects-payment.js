@@ -47,8 +47,9 @@ const projectsPayment = {
         								"Recompensa selecionada"
         							),
         							m(".fontsize-smallest", `${ctrl.reward().description}`),
-        							m("a.fontsize-small.link-hidden.u-right.fontweight-semibold[href='#']",
-        								"Editar"
+        							m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().id}/contribution"]`, {
+                                        config: m.route
+                                    }, "Editar"
         							)
         						]
         					)
@@ -528,8 +529,9 @@ const projectsPayment = {
         											m(".fontsize-larger.text-success.u-left",
         												`R$${ctrl.value}`
         											),
-        											m("a.fontsize-small.link-hidden.u-right.fontweight-semibold[href='#']",
-        												"Editar"
+        											m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().id}/contribution"]`, {
+                                                            config: m.route
+                                                        },"Editar"
         											)
         										]
         									),
