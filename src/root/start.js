@@ -224,6 +224,82 @@ const start = {
                     ])
                 ])
             ]),
+
+            m('.w-section.section-large.card-terciary',
+                m('.w-container',
+                    [
+                        m('.u-text-center.u-marginbottom-40',
+                            [
+                                m('div',
+                                    m('span.fontsize-largest.fontweight-semibold',
+                                        I18n.t('mode.title', I18nScope())
+                                    )
+                                ),
+                                m('.w-row',
+                                    [
+                                        m('.w-col.w-col-1'),
+                                        m('.w-col.w-col-10',
+                                            m('.fontsize-large.u-marginbottom-20',
+                                                I18n.t('mode.subtitle', I18nScope())
+                                            )
+                                        ),
+                                        m('.w-col.w-col-1')
+                                    ]
+                                )
+                            ]
+                        ),
+                        m('div',
+                            m('.flex-row.u-marginbottom-40',
+                                [
+                                    m('.flex-column.card.u-radius.u-marginbottom-30',
+                                        [
+                                            m('.u-text-center.u-marginbottom-30',
+                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')
+                                            ),
+                                            m('.fontsize-large.flex-column.u-marginbottom-20',
+                                                [
+                                                    I18n.t('mode.aon.info', I18nScope()),
+                                                    m.trust('&nbsp;')
+                                                ]
+                                            ),
+                                            m('.fontsize-base.flex-column.fontcolor-secondary',
+                                                I18n.t('mode.aon.info_2', I18nScope())
+                                            )
+                                        ]
+                                    ),
+                                    m('.flex-column.card.u-radius.u-marginbottom-30',
+                                        [
+                                            m('.u-text-center.u-marginbottom-30',
+                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')
+                                            ),
+                                            m('.fontsize-large.flex-column.u-marginbottom-20',
+                                                I18n.t('mode.flex.info', I18nScope())
+                                            ),
+                                            m('.fontsize-base.flex-column.fontcolor-secondary',
+                                                I18n.t('mode.flex.info_2', I18nScope())
+                                            )
+                                        ]
+                                    )
+                                ]
+                            )
+                        ),
+                        m('.u-text-center.u-marginbottom-30',
+                            [
+                                m('.fontsize-large.fontweight-semibold',
+                                    I18n.t('mode.tax_info', I18nScope())
+                                ),
+                                m('.fontsize-smallest.fontcolor-secondary',
+                                    [
+                                        I18n.t('mode.failed_info', I18nScope()),
+                                        m.trust(I18n.t('mode.more_link', I18nScope()))
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ),
+
             m('.w-section.section-large.bg-blue-one', [
                 m('.w-container.u-text-center', [
                     m('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [
