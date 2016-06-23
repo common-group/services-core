@@ -4,6 +4,8 @@ import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
 import faqBox from '../c/faq-box';
+import paymentForm from '../c/payment-form';
+import inlineError from '../c/inline-error';
 
 const projectsPayment = {
     controller(args) {
@@ -11,15 +13,30 @@ const projectsPayment = {
             projectUserId = projectVM.currentProject().user_id,
             value = rewardVM.getValue(),
             vm = paymentVM(mode),
-            error = m.prop(false),
+            showPaymentForm = m.prop(false),
             reward = rewardVM.selectedReward;
+
+        const validateForm = () => {
+            if(vm.validate()) {
+                showPaymentForm(true);
+            }
+        };
+
+        const fieldHasError = (fieldName) => {
+            const fieldWithError = _.findWhere(vm.fields.errors(), {field: fieldName});
+
+            return fieldWithError ? m.component(inlineError, {message: fieldWithError.message}) : '';
+        };
 
         if(!h.getUser()) {
             return h.navigateToDevise();
         }
 
         return {
+            fieldHasError: fieldHasError,
+            validateForm: validateForm,
             projectUserId: projectUserId,
+            showPaymentForm: showPaymentForm,
             reward: reward,
             value: value,
             mode: mode,
@@ -61,7 +78,7 @@ const projectsPayment = {
         				[
         					m(".w-col.w-col-8",
         						[
-        							ctrl.vm.error() ? m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']", {style: {"display": "block"}},
+        							ctrl.vm.fields.errors() ? m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']", {style: {"display": "block"}},
         								[
         									m(".u-marginbottom-10.fontweight-bold",
         										"Por favor, reveja os campos abaixo antes de prosseguir"
@@ -96,12 +113,15 @@ const projectsPayment = {
         																"Nome completo *"
         															),
         															m("input.w-input.text-field[id='complete-name'][name='complete-name']", {
+                                                                        onfocus: ctrl.vm.resetFieldError('completeName'),
+                                                                        class: ctrl.fieldHasError('completeName') ? 'error' : false,
                                                                         type: 'text',
-                                                                        onchange: m.withAttr('value', ctrl.vm.completeName),
-                                                                        value: ctrl.vm.completeName(),
+                                                                        onchange: m.withAttr('value', ctrl.vm.fields.completeName),
+                                                                        value: ctrl.vm.fields.completeName(),
                                                                         required: 'required',
                                                                         placeholder: 'Nome Completo'
-                                                                    })
+                                                                    }),
+                                                                    ctrl.fieldHasError('completeName')
         														]
         													),
         													m(".w-col.w-col-5",
@@ -110,12 +130,15 @@ const projectsPayment = {
         																"Email *"
         															),
         															m("input.w-input.text-field[id='email']", {
+                                                                        onfocus: ctrl.vm.resetFieldError('email'),
+                                                                        class: ctrl.fieldHasError('email') ? 'error' : false,
                                                                         type: 'email',
-                                                                        onchange: m.withAttr('value', ctrl.vm.email),
-                                                                        value: ctrl.vm.email(),
+                                                                        onchange: m.withAttr('value', ctrl.vm.fields.email),
+                                                                        value: ctrl.vm.fields.email(),
                                                                         required: 'required',
                                                                         placeholder: 'email@catarse.me'
-                                                                    })
+                                                                    }),
+                                                                    ctrl.fieldHasError('email')
         														]
         													)
         												]
@@ -123,15 +146,15 @@ const projectsPayment = {
         											m(".w-checkbox.w-clearfix",
         												[
         													m("input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']", {
-                                                                onchange: m.withAttr('value', ctrl.vm.anonymous),
-                                                                checked: ctrl.vm.anonymous(),
+                                                                onchange: m.withAttr('value', ctrl.vm.fields.anonymous),
+                                                                checked: ctrl.vm.fields.anonymous(),
                                                             }),
         													m("label.w-form-label.fontsize-smallest[for='anonymous']",
         														"Quero que meu apoio não fique público"
         													)
         												]
         											),
-        											ctrl.vm.anonymous() ? m(".card.card-message.u-radius.zindex-10.fontsize-smallest",
+        											ctrl.vm.fields.anonymous() ? m(".card.card-message.u-radius.zindex-10.fontsize-smallest",
         												m("div",
         													[
         														m("span.fontweight-bold",
@@ -161,22 +184,26 @@ const projectsPayment = {
 																	"País *"
 																),
 																m("select.w-select.text-field[id='country']",
-                                                                    _.map(ctrl.vm.countries(), (country) => m("option", {value: country.id}, country.name))
+                                                                    {
+                                                                        onchange: m.withAttr('value', ctrl.vm.fields.userCountryId),
+                                                                        value: ctrl.vm.fields.userCountryId()
+                                                                    },
+                                                                    _.map(ctrl.vm.fields.countries(), (country, idx) => m("option", {value: country.id, key: idx, selected: country.id === ctrl.vm.fields.userCountryId()}, country.name))
 																)
 															]
 														),
 														m(".w-col.w-col-6",
-															[
+															!ctrl.vm.isInternational() ? [
 																m("label.field-label.fontweight-semibold[for='zip-code']",
 																	"CEP"
 																),
 																m("input.w-input.text-field[id='zip-code']", {
                                                                     type: 'tel',
-                                                                    onchange: m.withAttr('value', ctrl.vm.zipCode),
-                                                                    value: ctrl.vm.zipCode(),
+                                                                    onchange: m.withAttr('value', ctrl.vm.fields.zipCode),
+                                                                    value: ctrl.vm.fields.zipCode(),
                                                                     placeholder: '42100000'
                                                                 })
-															]
+															] : ''
 														)
 													]
 												),
@@ -188,12 +215,15 @@ const projectsPayment = {
 																	"Rua *"
 																),
 																m("input.w-input.text-field[id='street']", {
-                                                                    type: 'email',
-                                                                    onchange: m.withAttr('value', ctrl.vm.street),
-                                                                    value: ctrl.vm.street(),
+                                                                    onfocus: ctrl.vm.resetFieldError('street'),
+                                                                    class: ctrl.fieldHasError('street') ? 'error' : false,
+                                                                    type: 'text',
+                                                                    onchange: m.withAttr('value', ctrl.vm.fields.street),
+                                                                    value: ctrl.vm.fields.street(),
                                                                     required: 'required',
                                                                     placeholder: 'Rua Da Minha Casa'
-                                                                })
+                                                                }),
+                                                                ctrl.fieldHasError('street')
 															]
 														),
 														m(".w-col.w-col-6",
@@ -205,12 +235,15 @@ const projectsPayment = {
 																				"Número *"
 																			),
 																			m("input.w-input.text-field[id='number']", {
+                                                                                onfocus: ctrl.vm.resetFieldError('number'),
+                                                                                class: ctrl.fieldHasError('number') ? 'error' : false,
                                                                                 type: 'text',
-                                                                                onchange: m.withAttr('value', ctrl.vm.number),
-                                                                                value: ctrl.vm.number(),
+                                                                                onchange: m.withAttr('value', ctrl.vm.fields.number),
+                                                                                value: ctrl.vm.fields.number(),
                                                                                 required: 'required',
                                                                                 placeholder: '421'
-                                                                            })
+                                                                            }),
+                                                                            ctrl.fieldHasError('number')
 																		]
 																	),
 																	m(".w-col.w-col-6.w-col-small-6.w-col-tiny-6",
@@ -219,11 +252,14 @@ const projectsPayment = {
 																				"Complemento"
 																			),
 																			m("input.w-input.text-field[id='address-complement']", {
+                                                                                onfocus: ctrl.vm.resetFieldError('addressComplement'),
+                                                                                class: ctrl.fieldHasError('addressComplement') ? 'error' : false,
                                                                                 type: 'text',
-                                                                                onchange: m.withAttr('value', ctrl.vm.addressComplement),
-                                                                                value: ctrl.vm.addressComplement(),
-                                                                                placeholder: 'Residencial X'
-                                                                            })
+                                                                                onchange: m.withAttr('value', ctrl.vm.fields.addressComplement),
+                                                                                value: ctrl.vm.fields.addressComplement(),
+                                                                                placeholder: 'Residencial 123'
+                                                                            }),
+                                                                            ctrl.fieldHasError('addressComplement')
 																		]
 																	)
 																]
@@ -239,12 +275,15 @@ const projectsPayment = {
 																	"Bairro *"
 																),
 																m("input.w-input.text-field[id='neighbourhood']", {
+                                                                    onfocus: ctrl.vm.resetFieldError('neighbourhood'),
+                                                                    class: ctrl.fieldHasError('neighbourhood') ? 'error' : false,
                                                                     type: 'text',
-                                                                    onchange: m.withAttr('value', ctrl.vm.neighbourhood),
-                                                                    value: ctrl.vm.neighbourhood(),
+                                                                    onchange: m.withAttr('value', ctrl.vm.fields.neighbourhood),
+                                                                    value: ctrl.vm.fields.neighbourhood(),
                                                                     required: 'required',
                                                                     placeholder: 'São José'
-                                                                })
+                                                                }),
+                                                                ctrl.fieldHasError('neighbourhood')
 															]
 														),
 														m(".w-col.w-col-4.w-sub-col",
@@ -253,12 +292,15 @@ const projectsPayment = {
 																	"Cidade *"
 																),
 																m("input.w-input.text-field[id='city']", {
+                                                                    onfocus: ctrl.vm.resetFieldError('city'),
+                                                                    class: ctrl.fieldHasError('city') ? 'error' : false,
                                                                     type: 'text',
-                                                                    onchange: m.withAttr('value', ctrl.vm.city),
-                                                                    value: ctrl.vm.city(),
+                                                                    onchange: m.withAttr('value', ctrl.vm.fields.city),
+                                                                    value: ctrl.vm.fields.city(),
                                                                     required: 'required',
                                                                     placeholder: 'Cidade'
-                                                                })
+                                                                }),
+                                                                ctrl.fieldHasError('city')
 															]
 														),
 														m(".w-col.w-col-4",
@@ -267,13 +309,17 @@ const projectsPayment = {
 																	"Estado *"
 																),
 																m("select.w-select.text-field[id='state']",
-                                                                    _.map(ctrl.vm.states(), (state) => m('option', {value: state.id}, state.name))
+                                                                    {
+                                                                        onchange: m.withAttr('value', ctrl.vm.fields.userState),
+                                                                        value: ctrl.vm.fields.userState()
+                                                                    },
+                                                                    _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {value: state.acronym, selected: state.acronym === ctrl.vm.fields.userState()}, state.name))
 																)
 															]
 														)
 													]
 												),
-												m(".w-row",
+												!ctrl.vm.isInternational() ? m(".w-row",
 													[
 														m(".w-col.w-col-6.w-sub-col",
 															[
@@ -281,11 +327,14 @@ const projectsPayment = {
 																	"CPF *"
 																),
 																m("input.w-input.text-field[id='document']", {
+                                                                    onfocus: ctrl.vm.resetFieldError('ownerDocument'),
+                                                                    class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
                                                                     type: 'tel',
-                                                                    onchange: m.withAttr('value', ctrl.vm.ownerDocument),
-                                                                    value: ctrl.vm.ownerDocument(),
+                                                                    onchange: m.withAttr('value', ctrl.vm.fields.ownerDocument),
+                                                                    value: ctrl.vm.fields.ownerDocument(),
                                                                     required: 'required'
-                                                                })
+                                                                }),
+                                                                ctrl.fieldHasError('ownerDocument')
 															]
 														),
 														m(".w-col.w-col-6",
@@ -294,227 +343,32 @@ const projectsPayment = {
 																	"Telefone *"
 																),
 																m("input.w-input.text-field[id='phone']", {
+                                                                    onfocus: ctrl.vm.resetFieldError('phone'),
+                                                                    class: ctrl.fieldHasError('phone') ? 'error' : false,
                                                                     type: 'tel',
-                                                                    onchange: m.withAttr('value', ctrl.vm.phone),
-                                                                    value: ctrl.vm.phone(),
+                                                                    onchange: m.withAttr('value', ctrl.vm.fields.phone),
+                                                                    value: ctrl.vm.fields.phone(),
                                                                     required: 'required'
-                                                                })
+                                                                }),
+                                                                ctrl.fieldHasError('phone')
 															]
 														)
 													]
-												)
+												) : ''
         									]
         								)
         							),
-        							m("[id='step2']",
-        								[
-        									m(".u-text-center-small-only.u-marginbottom-30",
-        										[
-        											m(".fontsize-large.fontweight-semibold",
-        												"Escolha o meio de pagamento"
-        											),
-        											m(".fontsize-smallest.fontcolor-secondary.fontweight-semibold",
-        												[
-        													m("span.fa.fa-lock",
-        														"."
-        													),
-        													" PAGAMENTO SEGURO"
-        												]
-        											)
-        										]
-        									),
-        									m(".flex-row.u-marginbottom-40",
-        										[
-        											m("a.w-inline-block.btn-select.flex-column.u-text-center.selected[href='#']",
-        												[
-        													m(".fontsize-base.fontweight-semibold.u-marginbottom-20",
-        														"Cartão de crédito"
-        													),
-        													m("img[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png']")
-        												]
-        											),
-        											m("a.w-inline-block.btn-select.flex-column.u-text-center[href='#']",
-        												[
-        													m(".fontsize-base.fontweight-semibold.u-marginbottom-20",
-        														"Boleto bancário"
-        													),
-        													m("img[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299c6ef96a6e44489a7a07_boleto.png'][width='48']")
-        												]
-        											)
-        										]
-        									),
-        									m(".w-form.u-marginbottom-40",
-        										[
-        											m("form[data-name='Email Form'][id='email-form'][name='email-form']",
-        												[
-        													m("div",
-        														[
-        															m("label.field-label.fontweight-semibold[for='email-61']",
-        																"Nome no cartão de crédito *"
-        															),
-        															m(".fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip",
-        																"Nome impresso na frente do seu cartão de crédito"
-        															),
-        															m("input.w-input.text-field[data-name='Email 61'][id='email-61'][name='email-61'][required='required'][type='email']")
-        														]
-        													),
-        													m("div",
-        														[
-        															m("label.field-label.fontweight-semibold[for='email-66']",
-        																"Número do cartão de crédito *"
-        															),
-        															m(".fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip",
-        																"O número normalmente com 16 dígitos na frente do seu cartão de crédito"
-        															),
-        															m("input.w-input.text-field[data-name='Email 66'][id='email-66'][name='email-66'][required='required'][type='email']")
-        														]
-        													),
-        													m("div",
-        														[
-        															m("label.field-label.fontweight-semibold[for='email-70']",
-        																"Expiração (mm/aaaa) *"
-        															),
-        															m(".fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip",
-        																"A data de validade, geralmente na frente do cartão"
-        															),
-        															m(".w-row",
-        																[
-        																	m(".w-col.w-col-6.w-col-tiny-6.w-sub-col",
-        																		m("select.w-select.text-field[id='field-2'][name='field-2']",
-        																			[
-        																				m("option[value='']",
-        																					"01 - Janeiro"
-        																				),
-        																				m("option[value='First']",
-        																					"02 - Fevereiro"
-        																				),
-        																				m("option[value='Second']",
-        																					"03 - Março"
-        																				),
-        																				m("option[value='Third']",
-        																					"04 - Abril"
-        																				),
-        																				m("option[value='']",
-        																					"05 - Maio"
-        																				),
-        																				m("option[value='']",
-        																					"06 - Junho"
-        																				)
-        																			]
-        																		)
-        																	),
-        																	m(".w-col.w-col-6.w-col-tiny-6",
-        																		m("select.w-select.text-field[id='field-2'][name='field-2']",
-        																			[
-        																				m("option[value='']",
-        																					"2016"
-        																				),
-        																				m("option[value='First']",
-        																					"2017"
-        																				),
-        																				m("option[value='Second']",
-        																					"2018"
-        																				),
-        																				m("option[value='Third']",
-        																					"2019"
-        																				)
-        																			]
-        																		)
-        																	)
-        																]
-        															)
-        														]
-        													),
-        													m("div",
-        														[
-        															m("label.field-label.fontweight-semibold[for='email-67']",
-        																"Código de Segurança (CVV / CVV2) *"
-        															),
-        															m(".fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip",
-        																"Os 3 dígitos (quando na frente) ou 4 dígitos (quando atrás) do seu cartão"
-        															),
-        															m(".w-row",
-        																[
-        																	m(".w-col.w-col-8.w-col-tiny-6",
-        																		m("input.w-input.text-field[data-name='Email 67'][id='email-67'][name='email-67'][required='required'][type='email']")
-        																	),
-        																	m(".w-col.w-col-4.w-col-tiny-6.u-text-center",
-        																		m("img[src='https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57298c1c7e99926e77127bdd_cvv-card.jpg'][width='176']")
-        																	)
-        																]
-        															)
-        														]
-        													),
-        													m(".w-row",
-        														[
-        															m(".w-col.w-col-6",
-        																[
-        																	m("label.field-label.fontweight-semibold[for='field']",
-        																		"Parcelas"
-        																	),
-        																	m("select.w-select.text-field[id='field'][name='field']",
-        																		[
-        																			m("option[value='']",
-        																				"1 X R$75"
-        																			),
-        																			m("option[value='First']",
-        																				"First Choice"
-        																			),
-        																			m("option[value='Second']",
-        																				"Second Choice"
-        																			),
-        																			m("option[value='Third']",
-        																				"Third Choice"
-        																			)
-        																		]
-        																	)
-        																]
-        															),
-        															m(".w-col.w-col-6")
-        														]
-        													)
-        												]
-        											),
-        											m(".w-form-done",
-        												m("p",
-        													"Thank you! Your submission has been received!"
-        												)
-        											),
-        											m(".w-form-fail",
-        												m("p",
-        													"Oops! Something went wrong while submitting the form :("
-        												)
-        											)
-        										]
-        									),
-        									m(".w-row",
-        										[
-        											m(".w-col.w-col-2"),
-        											m(".w-col.w-col-8",
-        												[
-        													m("a.btn.btn-large.u-marginbottom-20[href='#']",
-        														"Finalizar pagamento"
-        													),
-        													m(".fontsize-smallest.u-text-center",
-        														[
-        															"Ao apoiar, você concorda com os ",
-        															m("a.alt-link[href='#']",
-        																"Termos de Uso"
-        															),
-        															m.trust("&nbsp;"),
-        															"e ",
-        															m("a.alt-link[href='#']",
-        																"Política de Privacidade"
-        															)
-        														]
-        													)
-        												]
-        											),
-        											m(".w-col.w-col-2")
-        										]
-        									)
-        								]
-        							)
+                                    m(".w-row.u-marginbottom-40",
+                                        m(".w-col.w-col-push-3.w-col-6",
+                                            m("button.btn.btn-large",
+                                                {
+                                                    onclick: ctrl.validateForm
+                                                },
+                                                "Próximo passo"
+                                            )
+                                        )
+                                    ),
+                                    ctrl.showPaymentForm() ? m.component(paymentForm) : ''
         						]
         					),
         					m(".w-col.w-col-4",
