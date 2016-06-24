@@ -14,7 +14,9 @@ const projectsPayment = {
             value = rewardVM.getValue(),
             vm = paymentVM(mode),
             showPaymentForm = m.prop(false),
-            reward = rewardVM.selectedReward;
+            reward = rewardVM.selectedReward,
+            documentMask = _.partial(h.mask, '999.999.999-99'),
+            zipcodeMask = _.partial(h.mask, '99999-999');
 
         const validateForm = () => {
             if(vm.validate()) {
@@ -28,11 +30,17 @@ const projectsPayment = {
             return fieldWithError ? m.component(inlineError, {message: fieldWithError.message}) : '';
         };
 
+        const applyDocumentMask = _.compose(vm.fields.ownerDocument, documentMask);
+
+        const applyZipcodeMask = _.compose(vm.fields.zipcode, zipcodeMask);
+
         if(!h.getUser()) {
             return h.navigateToDevise();
         }
 
         return {
+            applyDocumentMask: applyDocumentMask,
+            applyZipcodeMask: applyZipcodeMask,
             fieldHasError: fieldHasError,
             validateForm: validateForm,
             projectUserId: projectUserId,
@@ -199,7 +207,7 @@ const projectsPayment = {
 																),
 																m("input.w-input.text-field[id='zip-code']", {
                                                                     type: 'tel',
-                                                                    onchange: m.withAttr('value', ctrl.vm.fields.zipCode),
+                                                                    onkeyup: m.withAttr('value', ctrl.applyZipcodeMask),
                                                                     value: ctrl.vm.fields.zipCode(),
                                                                     placeholder: '42100000'
                                                                 })
@@ -330,7 +338,7 @@ const projectsPayment = {
                                                                     onfocus: ctrl.vm.resetFieldError('ownerDocument'),
                                                                     class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
                                                                     type: 'tel',
-                                                                    onchange: m.withAttr('value', ctrl.vm.fields.ownerDocument),
+                                                                    onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
                                                                     value: ctrl.vm.fields.ownerDocument(),
                                                                     required: 'required'
                                                                 }),

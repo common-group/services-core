@@ -67,7 +67,7 @@ const paymentVM = (mode) => {
     };
 
     const checkDocument = () => {
-        const isValid = h.validateCpf(fields.ownerDocument());
+        const isValid = h.validateCpf(fields.ownerDocument().replace(/[\.|\-]*/g,''));
 
         if(!isValid){
             fields.errors().push({field: 'ownerDocument', message: 'CPF inválido.'});

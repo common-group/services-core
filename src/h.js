@@ -74,10 +74,10 @@ const
     validateCpf = (strCPF) => {
         let sum = 0, remainder;
 
-        if (strCPF == "00000000000") return false;
+        if (strCPF == '00000000000') return false;
 
-        for (let i=1; i<=9; i++) {
-            sum = sum + parseInt(strCPF.substring(i-1, i)) * (11 - i);
+        for (let i = 1; i <= 9; i++) {
+            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
         }
         remainder = (sum * 10) % 11;
 
@@ -85,14 +85,14 @@ const
             remainder = 0;
         }
 
-        if (remainder != parseInt(strCPF.substring(9, 10)) ){
+        if (remainder != parseInt(strCPF.substring(9, 10))){
             return false;
         }
 
         sum = 0;
 
         for (let i = 1; i <= 10; i++){
-            sum = sum + parseInt(strCPF.substring(i-1, i)) * (12 - i);
+            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
         }
 
         remainder = (sum * 10) % 11;
@@ -101,7 +101,7 @@ const
             remainder = 0;
         }
 
-        if (remainder != parseInt(strCPF.substring(10, 11) ) ){
+        if (remainder != parseInt(strCPF.substring(10, 11))){
             return false;
         }
 
@@ -584,6 +584,10 @@ const
         windowScroll: analyticsWindowScroll
     },
 
+    monetaryToFloat = (propValue) => {
+        return parseFloat(propValue().replace('.', '').replace(',', '.'));
+    },
+
     applyMonetaryMask = (number) => {
         let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
             integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
@@ -594,8 +598,70 @@ const
         return `${integerPart},${decimalPart}`;
     },
 
-    monetaryToFloat = (propValue) => {
-        return parseFloat(propValue().replace('.', '').replace(',', '.'));
+    addChar = (position, maskChar) => {
+        return (char) => {
+            return (string) => {
+                if (string.length === position && char !== maskChar){
+                    return (string + maskChar);
+                }
+                return string;
+            };
+        };
+    },
+
+    readMaskDefinition = (maskCharDefinitions) => {
+        return (maskDefinition) => {
+            return _.compact(_.map(maskDefinition, (letter, index) => {
+                return (letter in maskCharDefinitions ? null : [index, letter]);
+            }));
+        };
+    },
+
+    isCharAllowed = (maskCharDefinitions) => {
+        return (maskDefinition) => {
+            return (position, newChar) => {
+                if (position >= maskDefinition.length){
+                    return false;
+                }
+
+                const maskChar = maskDefinition.charAt(position);
+                if (maskChar in maskCharDefinitions){
+                    return maskCharDefinitions[maskChar].test(newChar);
+                } else {
+                    return (newChar === maskChar || isCharAllowed(maskCharDefinitions)(maskDefinition)(position + 1, newChar));
+                }
+            };
+        };
+    },
+    //
+    applyMask = (maskDefinition) => {
+        const maskFunctions = _.map(maskDefinition, (maskChar) => addChar(maskChar[0], maskChar[1]));
+        return (string, newChar) => {
+            const addNewCharFunctions = _.map(maskFunctions, (el) => el(newChar));
+            const applyMaskFunctions = _.reduce(addNewCharFunctions, (memo, f) => {
+                return (_.isFunction(memo) ? _.compose(f, memo) : f);
+            });
+            return applyMaskFunctions(string);
+        };
+    },
+
+    //Adapted from https://github.com/diogob/jquery.fixedmask
+    mask = (maskDefinition, value) => {
+        const maskCharDefinitions = {
+                '9' : /\d/,
+                'A' : /[a-zA-Z]/
+            },
+            readMask = readMaskDefinition(maskCharDefinitions),
+            isStrCharAllowed = isCharAllowed(maskCharDefinitions),
+            applyValueMask = applyMask(readMask(maskDefinition)),
+            restrictInput = isStrCharAllowed(maskDefinition);
+
+        return _.reduce(value, (memo, chr) => {
+            if(restrictInput(memo.length, chr)){
+                memo = applyValueMask(memo, chr) + chr;
+            }
+            return memo;
+        }, '');
     },
 
       removeStoredObject = (sessionKey) => {
@@ -669,5 +735,6 @@ export default {
     setReward,
     getReward,
     applyMonetaryMask,
-    monetaryToFloat
+    monetaryToFloat,
+    mask
 };
