@@ -1,4 +1,3 @@
-import projectVM from './project-vm';
 import postgrest from 'mithril-postgrest';
 import models from '../models';
 import h from '../h';
@@ -27,32 +26,6 @@ const fetchRewards = (project_id) => {
     return rewardsLoader(project_id).load().then(rewards);
 };
 
-const submitContribution = () => {
-    const valueFloat = h.monetaryToFloat(contributionValue);
-
-    if (valueFloat < selectedReward().minimum_value) {
-        error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${selectedReward().minimum_value}`);
-
-        return false;
-    } else {
-        if (!h.getUser()) {
-            h.storeObject(storeKey, {value: valueFloat, reward: selectedReward()});
-
-            return h.navigateToDevise('/' + projectVM.currentProject().permalink);
-        } else {
-            contributionValue(valueFloat);
-
-            m.route(`/projects/${projectVM.currentProject().id}/payment`, {
-                project_user_id: projectVM.currentProject().user_id
-            });
-
-            return false;
-        }
-    }
-
-
-};
-
 const selectReward = (reward) => () => {
     if (rewardVM.selectedReward() !== reward){
         rewardVM.selectedReward(reward);
@@ -71,7 +44,6 @@ const rewardVM = {
     fetchRewards: fetchRewards,
     selectReward: selectReward,
     selectedReward: selectedReward,
-    submitContribution: submitContribution,
     contributionValue: contributionValue,
     rewardsLoader: rewardsLoader,
     getValue: contributionValue,

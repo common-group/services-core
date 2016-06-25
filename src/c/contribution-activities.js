@@ -15,7 +15,6 @@ import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
 
 const contributionActivities = {
     controller(args) {

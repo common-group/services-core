@@ -18,7 +18,7 @@ describe('ProjectRewardList', () => {
                     });
 
                 return {
-                    output: mq(component.view()),
+                    output: mq(component),
                     rewardDetail: rewardDetail[0]
                 };
             };
@@ -75,6 +75,31 @@ describe('ProjectRewardList', () => {
             expect(output.contains('Estimativa de Entrega:')).toEqual(true);
             expect(output.contains(h.momentify(rewardDetail.deliver_at, 'MMM/YYYY'))).toEqual(true)
             expect(output.contains(rewardDetail.description)).toEqual(true);
+        });
+
+        it('should not render a contribution input value when reward is sold out', () => {
+            let {
+                output, rewardDetail
+            } = generateContextByNewState({
+                maximum_contributions: 4,
+                paid_count: 4
+            });
+
+            output.click('.card-gone');
+            expect(output.find('#contribution-submit').length).toEqual(0);
+
+        });
+
+        it('should render an input value when card reward is clicked', () => {
+            let {
+                output, rewardDetail
+            } = generateContextByNewState({
+                minimum_value: 20
+            });
+
+            output.click('.card-reward');
+
+            expect(output.find('#contribution-submit').length).toEqual(0);
         });
     });
 });

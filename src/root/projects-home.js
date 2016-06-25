@@ -3,7 +3,6 @@ import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
-import postgrest from 'mithril-postgrest';
 import h from '../h';
 import menu from './menu';
 import models from '../models';
@@ -100,8 +99,8 @@ const projectsHome = {
             }),
             // m.component(contributionActivities),
             (ctrl.hasFBAuth ?
-             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect) )
-            m.component(blogBanner),
+             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect) ),
+            m.component(blogBanner)
             // m.component(footer, {expanded: true})
         ]);
 
