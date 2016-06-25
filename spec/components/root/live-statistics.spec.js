@@ -1,7 +1,7 @@
 import liveStatistics from '../../../src/root/live-statistics';
 import h from '../../../src/h';
 
-export default describe('pages.LiveStatistics', () => {
+describe('pages.LiveStatistics', () => {
   let $output, statistic;
 
   describe('view', () => {

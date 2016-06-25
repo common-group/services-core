@@ -1,6 +1,6 @@
 import adminContributions from '../../../src/root/admin-contributions';
 
-export default describe('adminContributions', () => {
+describe('adminContributions', () => {
   let ctrl, $output;
 
   beforeAll(() => {

@@ -14,54 +14,12 @@ import moment from 'moment';
 const adminProjectDetailsCard = {
     controller(args) {
         let project = args.resource,
-            generateStatusText = () => {
-                let statusTextObj = m.prop({}),
-                    statusText = {
-                        online: {
-                            cssClass: 'text-success',
-                            text: 'NO AR'
-                        },
-                        successful: {
-                            cssClass: 'text-success',
-                            text: 'FINANCIADO'
-                        },
-                        failed: {
-                            cssClass: 'text-error',
-                            text: 'NÃO FINANCIADO'
-                        },
-                        waiting_funds: {
-                            cssClass: 'text-waiting',
-                            text: 'AGUARDANDO'
-                        },
-                        rejected: {
-                            cssClass: 'text-error',
-                            text: 'RECUSADO'
-                        },
-                        draft: {
-                            cssClass: '',
-                            text: 'RASCUNHO'
-                        },
-                        in_analysis: {
-                            cssClass: '',
-                            text: 'EM ANÁLISE'
-                        },
-                        approved: {
-                            cssClass: 'text-success',
-                            text: 'APROVADO'
-                        }
-                    };
-
-                statusTextObj(statusText[project.state]);
-
-                return statusTextObj;
-            },
             isFinalLap = () => {
                 // @TODO: use 8 days because timezone on js
                 return !_.isNull(project.expires_at) && moment().add(8, 'days') >= moment(project.zone_expires_at);
             };
         return {
             project: project,
-            statusTextObj: generateStatusText(),
             remainingTextObj: h.translatedTime(project.remaining_time),
             elapsedTextObj: h.translatedTime(project.elapsed_time),
             isFinalLap: isFinalLap
@@ -70,7 +28,7 @@ const adminProjectDetailsCard = {
     view(ctrl) {
         let project = ctrl.project,
             progress = project.progress.toFixed(2),
-            statusTextObj = ctrl.statusTextObj(),
+            statusTextObj = h.projectStateTextClass(project.state),
             remainingTextObj = ctrl.remainingTextObj,
             elapsedTextObj = ctrl.elapsedTextObj;
 

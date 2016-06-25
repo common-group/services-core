@@ -19,11 +19,13 @@ const models = {
     directMessage: postgrest.model('direct_messages'),
     teamTotal: postgrest.model('team_totals'),
     projectAccount: postgrest.model('project_accounts'),
+    projectAccountError: postgrest.model('project_account_errors'),
     projectContribution: postgrest.model('project_contributions'),
     projectPostDetail: postgrest.model('project_posts_details'),
     projectContributionsPerDay: postgrest.model('project_contributions_per_day'),
     projectContributionsPerLocation: postgrest.model('project_contributions_per_location'),
     projectContributionsPerRef: postgrest.model('project_contributions_per_ref'),
+    projectTransfer: postgrest.model('project_transfers'),
     project: postgrest.model('projects'),
     projectSearch: postgrest.model('rpc/project_search'),
     category: postgrest.model('categories'),
@@ -33,7 +35,10 @@ const models = {
     notification: postgrest.model('notifications'),
     statistic: postgrest.model('statistics'),
     successfulProject: postgrest.model('successful_projects'),
-    finishedProject: postgrest.model('finished_projects')
+    finishedProject: postgrest.model('finished_projects'),
+    userFriend: postgrest.model('user_friends'),
+    userFollow: postgrest.model('user_follows'),
+    followAllFriends: postgrest.model('rpc/follow_all_friends')
 };
 
 models.teamMember.pageSize(40);

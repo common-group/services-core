@@ -1,4 +1,5 @@
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -13,18 +14,32 @@ import projectRow from '../c/project-row';
 import contributionActivities from '../c/contribution-activities';
 import blogBanner from './blog-banner';
 import footer from './footer';
+import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
+import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
-    controller() {
+    controller(args) {
         let sample6 = _.partial(_.sample, _, 6),
             loader = postgrest.loader,
             project = models.project,
             filters = projectFilters().filters,
+            userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+            friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+                'Prefer':  'count=exact'
+            }),
+            currentUserId = args.root.getAttribute('data-currentuserid'),
+            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
             vm = homeVM();
 
         project.pageSize(20);
+
+        userFriendVM.user_id(currentUserId);
+
+        if (hasFBAuth && !friendListVM.collection().length) {
+            friendListVM.firstPage(userFriendVM.parameters());
+        }
 
         const collections = _.map(['score'], (name) => {
             const f = filters[name],
@@ -43,7 +58,9 @@ const projectsHome = {
 
         return {
             collections: collections,
-            slidesContent: vm.banners
+            slidesContent: vm.banners,
+            hasFBAuth: hasFBAuth,
+            friendListVM: friendListVM
         };
     },
     view(ctrl) {
@@ -81,10 +98,13 @@ const projectsHome = {
                     ref: `home_${collection.hash}`
                 });
             }),
-            m.component(contributionActivities),
+            // m.component(contributionActivities),
+            (ctrl.hasFBAuth ?
+             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect) )
             m.component(blogBanner),
             // m.component(footer, {expanded: true})
         ]);
+
     }
 };
 

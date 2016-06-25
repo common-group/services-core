@@ -11,6 +11,8 @@ const projectCard = {
         const project = args.project,
             progress = project.progress.toFixed(2),
             remainingTextObj = h.translatedTime(project.remaining_time),
+            elapsedTextObj = h.translatedTime(project.elapsed_time),
+            link = '/' + project.permalink + (args.ref ? '?ref=' + args.ref : ''),
             type = args.type || 'small',
             css = (cardType) => {
                 const cssClasses = {
@@ -82,9 +84,11 @@ const projectCard = {
                             ` ${project.city_name ? project.city_name : ''}, ${project.state_acronym ? project.state_acronym : ''}`
                         ])
                     ]),
-                    m(`.card-project-meter.${project.state}`, [
+                    m(`.card-project-meter.${project.mode}.${project.state}.${progress < 100 ? 'incomplete' : 'complete'}`, [
                         (_.contains(['successful', 'failed', 'waiting_funds'], project.state)) ?
-                            m('div', I18n.t('display_status.' + project.state, I18nScope())) :
+                            m('div',
+                                project.state === 'successful' && progress < 100 ? I18n.t(`display_status.flex_successful`, I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
+                            ) :
                         m('.meter', [
                             m('.meter-fill', {
                                 style: {
@@ -106,7 +110,7 @@ const projectCard = {
                                 m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
                                 m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
                             ] : [
-                                m('.fontsize-smallest.lineheight-tight', ['Prazo em',m('br'),'aberto'])
+                                m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${elapsedTextObj.total} ${elapsedTextObj.unit}`])
                             ])
                         ])
                     ])

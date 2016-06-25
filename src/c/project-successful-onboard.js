@@ -84,7 +84,7 @@ const projectSuccessfulOnboard = {
                   if (!lProjectAccount()) {
                       const pa = _.first(projectAccounts());
 
-                      if (_.isNull(pa)) {
+                      if(_.isNull(pa)) {
                           return setStage('finished')();
                       }
 

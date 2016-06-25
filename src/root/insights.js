@@ -8,9 +8,12 @@ import tooltip from '../c/tooltip';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import modalBox from '../c/modal-box';
 import adminProjectDetailsCard from '../c/admin-project-details-card';
+import onlineSuccessModalContent from '../c/online-success-modal-content';
+import projectDataStats from '../c/project-data-stats';
 import projectDataChart from '../c/project-data-chart';
 import projectDataTable from '../c/project-data-table';
 import projectReminderCount from '../c/project-reminder-count';
+import projectSuccessfulOnboard from '../c/project-successful-onboard';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -110,19 +113,21 @@ const insights = {
                 name: 'Realizador'
             }
         },
-            successModalC = ['OnlineSucessModalContent'],
-            buildTooltip = (el) => {
-                return m.component(tooltip, {
-                    el: el,
-                    text: [
-                        'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
-                        m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
-                    ],
-                    width: 380
-                });
-            };
 
-        project.user.name = project.user.name || 'Realizador';
+              buildTooltip = (el) => {
+                  return m.component(tooltip, {
+                      el: el,
+                      text: [
+                          'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
+                          m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                      ],
+                      width: 380
+                  });
+              };
+
+        if (!ctrl.l()) {
+            project.user.name = project.user.name || 'Realizador';
+        }
 
         return m('.project-insights', !ctrl.l() ? [
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
@@ -130,27 +135,28 @@ const insights = {
             }) : ''),
             (ctrl.displayModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayModal,
-                content: successModalC
+                content: onlineSuccessModalContent
             }) : ''),
-            m('.w-container', [
+            m('.w-container', (project.state == 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project)}) : [
                 m('.w-row.u-marginbottom-40', [
-                    m('.w-col.w-col-2'),
-                    m('.w-col.w-col-8.dashboard-header.u-text-center', [
+                    m('.w-col.w-col-8.w-col-push-2.dashboard-header.u-text-center', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
                         m.component(adminProjectDetailsCard, {
                             resource: project
                         }),
                         m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
-                            project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [I18n.t('finish_explanation', I18nScope()),
-                               m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]', I18n.t('know_more', I18nScope()))]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at)})))
+                            project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
+                                I18n.t('finish_explanation', I18nScope()),
+                                m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]',I18n.t('know_more', I18nScope()))
+                           ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at)})))
                         ])
-                    ]),
-                    m('.w-col.w-col-2')
+                    ])
                 ])
             ]), (project.is_published) ? [
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
+                        m.component(projectDataStats, {project: m.prop(project)}),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {

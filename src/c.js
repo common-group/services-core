@@ -17,6 +17,8 @@ import team from './root/team';
 import usersBalanceMain from './root/users-balance-main';
 import menu from './root/menu';
 import footer from './root/footer';
+import FollowFoundFriends from './root/follow-found-friends';
+
 
 const c = {
     root: {
@@ -38,7 +40,8 @@ const c = {
         Team: team,
         UsersBalance: usersBalanceMain,
         Menu: menu,
-        Footer: footer
+        Footer: footer,
+        FollowFoundFriends: FollowFoundFriends
     }
 };
 
