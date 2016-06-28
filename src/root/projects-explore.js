@@ -188,7 +188,9 @@ const projectsExplore = {
         };
     },
     view(ctrl, args) {
-        let projects_collection = ctrl.projects().collection();
+        let projects_collection = ctrl.projects().collection(),
+            projectsCount = projects_collection.length,
+            widowProjects = [];
 
         if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch()){
             ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
@@ -249,13 +251,16 @@ const projectsExplore = {
                                     if (idx === 0) {
                                         cardType = 'big';
                                         ref = 'ctrse_explore_featured_big';
+                                        widowProjects = [projectsCount - 1, projectsCount - 2];
                                     } else if (idx === 1 || idx === 2) {
                                         if(ctrl.checkForMinScoredProjects(projects_collection)) {
                                             cardType = 'medium';
                                             ref = 'ctrse_explore_featured_medium';
+                                            widowProjects = [];
                                         } else {
                                             cardType = 'big';
                                             ref = 'ctrse_explore_featured_big';
+                                            widowProjects = [projectsCount - 1];
                                         }
                                     } else {
                                         ref = 'ctrse_explore_featured';
@@ -263,7 +268,7 @@ const projectsExplore = {
                                 }
                             }
 
-                            return m.component(projectCard, {project: project, ref: ref, type: cardType});
+                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType});
                         })),
                         ctrl.projects().isLoading() ? h.loader() : _.isEmpty(projects_collection) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
                     ])
