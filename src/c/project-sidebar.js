@@ -68,7 +68,7 @@ const projectSidebar = {
             displayStatusText = () => {
                 const states = {
                     'approved': I18n.t('display_status.approved', I18nScope()),
-                    'online': h.existy(project().zone_expires_at) ? I18n.t('display_status.online', I18nScope({date: h.momentify(project().zone_expires_at)})) : '',
+                    'online': h.existy(project().zone_expires_at) && project().open_for_contributions ? I18n.t('display_status.online', I18nScope({date: h.momentify(project().zone_expires_at)})) : '',
                     'failed': I18n.t('display_status.failed', I18nScope({date: h.momentify(project().zone_expires_at), goal: project().goal})),
                     'rejected': I18n.t('display_status.rejected', I18nScope()),
                     'in_analysis': I18n.t('display_status.in_analysis', I18nScope()),
