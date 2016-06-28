@@ -167,7 +167,8 @@ const insights = {
                                     collection: ctrl.contributionsPerDay,
                                     label: I18n.t('amount_per_day_label', I18nScope()),
                                     dataKey: 'total_amount',
-                                    xAxis: (item) => h.momentify(item.paid_at)
+                                    xAxis: (item) => h.momentify(item.paid_at),
+                                    emptyState: I18n.t('amount_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -181,7 +182,8 @@ const insights = {
                                     collection: ctrl.contributionsPerDay,
                                     label: I18n.t('contributions_per_day_label', I18nScope()),
                                     dataKey: 'total',
-                                    xAxis: (item) => h.momentify(item.paid_at)
+                                    xAxis: (item) => h.momentify(item.paid_at),
+                                    emptyState: I18n.t('contributions_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -193,10 +195,16 @@ const insights = {
                                         h.newFeatureBadge(),
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
-                                    !ctrl.lContributionsPerRef() ? m.component(projectDataTable, {
+                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {
                                         table: ctrl.contributionsPerRefTable,
                                         defaultSortIndex: -2
-                                    }) : h.loader()
+                                    }) : m('.card.u-radius.medium.u-marginbottom-60',
+                                            m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
+                                                m('.w-col.w-col-8.w-col-push-2',
+                                                    m('p.fontsize-base', I18n.t('contributions_per_ref_empty', I18nScope()))
+                                                )
+                                            )
+                                        ) : h.loader()
                                 ])
                             ]),
                         ]),
@@ -204,10 +212,16 @@ const insights = {
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
-                                    !ctrl.lContributionsPerLocation() ? m.component(projectDataTable, {
+                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
                                         table: ctrl.contributionsPerLocationTable,
                                         defaultSortIndex: -2
-                                    }) : h.loader()
+                                    }) : m('.card.u-radius.medium.u-marginbottom-60',
+                                            m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
+                                                m('.w-col.w-col-8.w-col-push-2',
+                                                    m('p.fontsize-base', I18n.t('contributions_per_location_empty', I18nScope()))
+                                                )
+                                            )
+                                        ) : h.loader()
                                 ])
                             ]),
                         ]),
