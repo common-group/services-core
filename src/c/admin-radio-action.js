@@ -15,7 +15,7 @@ const adminRadioAction = {
             newID = m.prop(''),
             getFilter = {},
             setFilter = {},
-            radios = m.prop(),
+            radios = m.prop([]),
             getAttr = builder.radios,
             getKey = builder.getKey,
             getKeyValue = args.getKeyValue,
@@ -50,15 +50,25 @@ const adminRadioAction = {
             complete(true);
         };
 
+        const populateRadios = (data) => {
+            const emptyState = builder.addEmpty;
+
+            radios(data);
+
+            if(!_.isUndefined(emptyState)){
+                radios().unshift(emptyState);
+            }
+        };
+
         const fetch = () => {
-            getLoader.load().then(radios, error);
+            getLoader.load().then(populateRadios, error);
         };
 
         const submit = () => {
             if (newID()) {
                 let validation = validate(radios(), newID());
                 if (_.isUndefined(validation)) {
-                    data[builder.selectKey] = newID();
+                    data[builder.selectKey] = newID() === -1 ? null : newID();
                     setLoader.load().then(updateItem, error);
                 } else {
                     complete(true);
@@ -97,7 +107,7 @@ const adminRadioAction = {
             toggler: h.toggleProp(false, true),
             unload: unload,
             radios: radios
-        };
+        }
     },
     view(ctrl, args) {
         const data = args.data,
@@ -115,20 +125,16 @@ const adminRadioAction = {
                     onsubmit: ctrl.submit
                 }, (!ctrl.complete()) ? [
                     (ctrl.radios()) ?
-                    _.map(ctrl.radios(), (radio, index) => {
-                        const set = () => {
-                            ctrl.newID(radio.id);
-                            ctrl.setDescription(radio.description);
-                        };
-                        const selected = (radio.id === (item[data.selectKey] || item.id)) ? true : false;
-
-                        return m('.w-radio', [
-                            m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]' + ((selected) ? '[checked]' : ''), {
-                                onclick: set
-                            }),
-                            m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.minimum_value)
-                        ]);
-                    }) : h.loader(),
+                    _.map(ctrl.radios(), (radio, index) => m('.w-radio', [
+                        m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]', {
+                            checked: radio.id === (item[data.selectKey] || item.id),
+                            onclick: () => {
+                                ctrl.newID(radio.id);
+                                ctrl.setDescription(radio.description);
+                            }
+                        }),
+                        m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.minimum_value)
+                    ])) : h.loader(),
                     m('strong', 'Descrição'),
                     m('p', ctrl.description()),
                     m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')

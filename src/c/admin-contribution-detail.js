@@ -51,6 +51,7 @@ const adminContributionDetail = {
                     getModel: models.rewardDetail,
                     updateModel: models.contributionDetail,
                     selectedItem: loadReward(),
+                    addEmpty: {id: -1, minimum_value: 10, description: 'Sem recompensa'},
                     validate(rewards, newRewardID) {
                         let reward = _.findWhere(rewards, {id: newRewardID});
                         return (args.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
