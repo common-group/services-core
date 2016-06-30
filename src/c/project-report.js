@@ -70,7 +70,12 @@ const projectReport = {
                       ),
                       ctrl.displayForm() ? m('#report-form.u-margintop-30',
                         m('.w-form',
-                          m('form', {onsubmit: ctrl.sendReport},
+                          m('form', {onsubmit: h.validate().submit([
+                            {
+                                prop: ctrl.email,
+                                rule: 'email'
+                            }
+                          ], ctrl.sendReport)},
                             [
                               m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                                 'Por que você está denunciando este projeto?'
@@ -107,7 +112,13 @@ const projectReport = {
                               m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                                 'Seu email'
                               ),
-                              m(`input.w-input.text-field.positive.u-marginbottom-30[required='required'][type='text'][value="${ctrl.email()}"]`, {onchange: m.withAttr('value', ctrl.email)}),
+                              m(`input.w-input.text-field.positive.u-marginbottom-30[required='required'][type='text'][value="${ctrl.email()}"]`, {onchange: m.withAttr('value', ctrl.email), class: h.validate().hasError(ctrl.email) ? 'error' : ''}),
+                            m('.w-row', h.validationErrors().length ? _.map(h.validationErrors(), errors => m('span.fontsize-smallest.text-error', [
+                                    m('span.fa.fa-exclamation-triangle'),
+                                    ` ${errors.message}`,
+                                    m('br')
+                                ])) : ''
+                            ),
                               m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', {disabled: ctrl.submitDisabled()})
                             ]
                           )
