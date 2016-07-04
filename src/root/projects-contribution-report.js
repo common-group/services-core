@@ -32,7 +32,7 @@ const projectContributionReport = {
                           label: 'Recompensa',
                           name: 'reward_id',
                           vm: filterVM.reward_id,
-                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6._w-sub-col-middle',
+                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
                           options: []
                       }
                   }, {
@@ -42,16 +42,13 @@ const projectContributionReport = {
                           label: 'Status do apoio',
                           name: 'state',
                           vm: filterVM.state,
-                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6._w-sub-col-middle',
+                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
                           options: [{
                               value: '',
                               option: 'Todos'
                           }, {
                               value: 'paid',
                               option: 'Pago'
-                          }, {
-                              value: 'refused',
-                              option: 'Cancelado'
                           }, {
                               value: 'pending',
                               option: 'Pendente'
@@ -61,9 +58,6 @@ const projectContributionReport = {
                           }, {
                               value: 'refunded',
                               option: 'Reembolsado'
-                          }, {
-                              value: 'chargeback',
-                              option: 'Contestado'
                           }]
                       }
                   }
