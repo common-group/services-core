@@ -46,5 +46,6 @@ models.category.pageSize(50);
 models.contributionActivity.pageSize(40);
 models.successfulProject.pageSize(9);
 models.finishedProject.pageSize(9);
+models.projectContribution.pageSize(9);
 
 export default models;
