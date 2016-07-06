@@ -51,7 +51,11 @@ const projectContributions = {
             ['Estado', 'Apoios', 'R$ apoiados (% do total)']
         ];
         const buildPerLocationTable = (contributions) => {
-            return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
+            return (!_.isEmpty(contributions)) ? _.map(_.sortBy(_.first(contributions).source, 'total_contributed'), (contribution, idx) => {
+                if(idx > 9){
+                    return;
+                }
+
                 let column = [];
 
                 column.push(contribution.state_acronym || 'Outro/other');
