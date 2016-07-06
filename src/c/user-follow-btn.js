@@ -11,10 +11,9 @@ import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
 
-
 const UserFollowBtn = {
     controller(args) {
-        const following = m.prop((args.following||false)),
+        const following = m.prop((args.following || false)),
               followVM = postgrest.filtersVM({follow_id: 'eq'}),
               loading = m.prop(false),
               hover = m.prop(false),
@@ -70,6 +69,5 @@ const UserFollowBtn = {
         }
     }
 };
-
 
 export default UserFollowBtn;

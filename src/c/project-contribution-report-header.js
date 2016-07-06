@@ -2,7 +2,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import FilterMain from '../c/filter-main';
 
-
 const projectContributionReportHeader = {
     view(ctrl, args) {
         const filterBuilder = args.filterBuilder,

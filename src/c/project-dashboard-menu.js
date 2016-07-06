@@ -76,7 +76,7 @@ const projectDashboardMenu = {
                         ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
-                                    m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', I18n.t(`${project.mode}.basics_tab`, linksScope()) ),
+                                    m('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', I18n.t(`${project.mode}.basics_tab`, linksScope())),
                                     m('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', I18n.t(`${project.mode}.goal_tab`, linksScope())),
                                 ] : ''),
                                 m('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', I18n.t(`${project.mode}.description_tab`, linksScope())),
@@ -89,7 +89,7 @@ const projectDashboardMenu = {
                                     'Recompensas', optionalOpt
                                 ]),
                                 m('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', I18n.t(`${project.mode}.about_you_tab`, linksScope())),
-                                ( (project.is_published || project.state === 'draft') || project.is_admin_role ? [
+                                ((project.is_published || project.state === 'draft') || project.is_admin_role ? [
                                     m('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', I18n.t(`${project.mode}.account_tab`, linksScope())),
                                 ] : ''), (!project.is_published ? [
                                     m('a#dashboard_preview_link[class="' + editLinkClass + '"][href="' + editRoute + '#preview' + '"]', [

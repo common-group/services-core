@@ -43,7 +43,7 @@ const publish = {
         let expiresAt = () => {
             const project = _.first(projectDetails());
             return moment().add(project.online_days, 'days');
-            };
+        };
 
         return {
             l: l,

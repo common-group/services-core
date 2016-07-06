@@ -15,7 +15,7 @@ const SignedFriendFacebookConnect = {
         };
     },
     view(ctrl, args) {
-        if(args.friendListVM.isLoading()) {
+        if (args.friendListVM.isLoading()) {
             return h.loader();
         } else {
             let total = args.friendListVM.total();
