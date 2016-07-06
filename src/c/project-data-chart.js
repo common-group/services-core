@@ -50,7 +50,6 @@ const projectDataChart = {
         };
     },
     view(ctrl, args) {
-        console.log(ctrl.source);
         return m('.card.u-radius.medium.u-marginbottom-30', [
             m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
             m('.w-row', [

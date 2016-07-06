@@ -18,12 +18,6 @@ const projectContributions = {
                 project_id: 'eq',
                 waiting_payment: 'eq'
             }),
-            toggleWaiting = (waiting = false) => {
-                return () => {
-                    filterVM.waiting_payment(waiting);
-                    listVM.firstPage(filterVM.parameters());
-                };
-            },
             groupedCollection = (collection = []) => {
                 let grouped = [
                         []
@@ -81,7 +75,6 @@ const projectContributions = {
         return {
             listVM: listVM,
             filterVM: filterVM,
-            toggleWaiting: toggleWaiting,
             groupedCollection: groupedCollection,
             contributionsPerLocationTable: contributionsPerLocationTable,
             lContributionsPerLocation: lContributionsPerLocation,
@@ -142,25 +135,6 @@ const projectContributions = {
                 m('.divider.w-section'),
                 m('.section.w-section', m('.w-container', [
                     m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', 'Apoiadores'),
-                    (args.project().is_owner_or_admin ?
-                        m('.w-row.u-marginbottom-20', [
-                            m('.w-col.w-col-1', [
-                                m('input[checked="checked"][id="contribution_state_available_to_count"][name="waiting_payment"][type="radio"][value="available_to_count"]', {
-                                    onclick: ctrl.toggleWaiting()
-                                })
-                            ]),
-                            m('.w-col.w-col-5', [
-                                m('label[for="contribution_state_available_to_count"]', 'Confirmados')
-                            ]),
-                            m('.w-col.w-col-1', [
-                                m('input[id="contribution_state_waiting_confirmation"][type="radio"][name="waiting_payment"][value="waiting_confirmation"]', {
-                                    onclick: ctrl.toggleWaiting(true)
-                                })
-                            ]),
-                            m('.w-col.w-col-5', [
-                                m('label[for="contribution_state_waiting_confirmation"]', 'Pendentes')
-                            ])
-                        ]) : ''),
                     m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, (contribution) => {
                         return m('.project-contribution-item.w-col.w-col-4', [
                             m('.w-row.u-marginbottom-30', [
