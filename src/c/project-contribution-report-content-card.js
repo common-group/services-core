@@ -24,7 +24,7 @@ const projectContributionReportContentCard = {
         let contribution = args.contribution(),
             profile_img = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {minimum_value: 0, description: 'Nenhuma recompensa selecionada'};
-        return m('.w-clearfix.card.card-clickable', [
+        return m('.w-clearfix.card', [
             m('.w-row', [
                 m('.w-col.w-col-1.w-col-tiny-1', [
                     m(`img.user-avatar.u-marginbottom-10[src='${profile_img}']`)
