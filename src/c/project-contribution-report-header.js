@@ -36,7 +36,7 @@ const projectContributionReportHeader = {
                                         m.component(mainFilter.component, mainFilter.data)
                                     ]),
                                     m('.w-col.w-col-4.w-clearfix.w-hidden-small.w-hidden-tiny', [
-                                        m(`a.alt-link.u-right.fontsize-small.lineheight-looser[href="/projects/${project_id}/edit#reports"]`, [
+                                        m(`a.alt-link.u-right.fontsize-small.lineheight-looser[href="/projects/${project_id}/download_reports"]`, [
                                             m('span.fa.fa-download', '.'),
                                             ' Baixar relatórios'
                                         ])
