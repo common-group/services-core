@@ -76,6 +76,7 @@ const projectContributions = {
             listVM: listVM,
             filterVM: filterVM,
             groupedCollection: groupedCollection,
+            lContributionsStats: lContributionsStats,
             contributionsPerLocationTable: contributionsPerLocationTable,
             lContributionsPerLocation: lContributionsPerLocation,
             contributionsPerDay: contributionsPerDay,
@@ -91,7 +92,7 @@ const projectContributions = {
         return m('#project_contributions', m('#contributions_top', [
                 m('.section.w-section',
                     m('.w-container',
-                        m('.w-row', !_.isEmpty(stats) ? [
+                        m('.w-row', ctrl.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
                             m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', [
                                 m('.fontsize-megajumbo',
                                     stats.total
