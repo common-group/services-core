@@ -19,6 +19,7 @@ const models = {
     projectAccount: postgrest.model('project_accounts'),
     projectAccountError: postgrest.model('project_account_errors'),
     projectContribution: postgrest.model('project_contributions'),
+    projectContributiorsStat: postgrest.model('project_stat_contributors'),
     projectPostDetail: postgrest.model('project_posts_details'),
     projectContributionsPerDay: postgrest.model('project_contributions_per_day'),
     projectContributionsPerLocation: postgrest.model('project_contributions_per_location'),
@@ -46,5 +47,6 @@ models.category.pageSize(50);
 models.contributionActivity.pageSize(40);
 models.successfulProject.pageSize(9);
 models.finishedProject.pageSize(9);
+models.projectContribution.pageSize(9);
 
 export default models;

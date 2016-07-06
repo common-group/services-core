@@ -42,7 +42,6 @@ const projectsHome = {
 
             cLoader.load().then(_.compose(collection, sample6));
 
-
             project.pageSize(20);
 
             return {
@@ -96,7 +95,7 @@ const projectsHome = {
             }),
             //m.component(contributionActivities)
             (ctrl.hasFBAuth ?
-             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect) )
+             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect))
         ];
     }
 };

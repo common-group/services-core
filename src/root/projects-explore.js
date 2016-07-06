@@ -47,11 +47,11 @@ const projectsExplore = {
                   let hintText = '',
                     tooltipText = '',
                     hasHint = false;
-                  if(currentFilter().keyName === 'all') {
+                  if (currentFilter().keyName === 'all') {
                       hasHint = true;
                       hintText = 'Ordenados por popularidade ';
                       tooltipText = 'O nosso fator popularidade é uma mistura da seleção do time do Catarse com um valor que é calculado pela velocidade de arrecadação do projeto';
-                  }else if(currentFilter().keyName === 'finished') {
+                  }else if (currentFilter().keyName === 'finished') {
                       hasHint = true;
                       hintText = 'Ordenados por R$ alcançado ';
                       tooltipText = 'Os projetos com maior meta de arrecadação alcançada ficam no topo';
@@ -132,7 +132,6 @@ const projectsExplore = {
 
                             return pages;
                         };
-
 
                   if (_.isString(search) && search.length > 0 && route === null) {
                       isSearch(true);
@@ -247,13 +246,13 @@ const projectsExplore = {
                             if (ctrl.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
                             } else if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
-                                if(project.score >= 1) {
+                                if (project.score >= 1) {
                                     if (idx === 0) {
                                         cardType = 'big';
                                         ref = 'ctrse_explore_featured_big';
                                         widowProjects = [projectsCount - 1, projectsCount - 2];
                                     } else if (idx === 1 || idx === 2) {
-                                        if(ctrl.checkForMinScoredProjects(projects_collection)) {
+                                        if (ctrl.checkForMinScoredProjects(projects_collection)) {
                                             cardType = 'medium';
                                             ref = 'ctrse_explore_featured_medium';
                                             widowProjects = [];
