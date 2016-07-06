@@ -32,6 +32,7 @@ const projectContributionReportContentCard = {
                 m('.w-col.w-col-11.w-col-tiny-11', [
                     m('.w-row', [
                         m('.w-col.w-col-3', [
+                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')),
                             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.user_name),
                             m('.fontsize-smallest.lineheight-looser', [
                                 (contribution.has_another ? [
