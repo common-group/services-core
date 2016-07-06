@@ -69,7 +69,7 @@ const projectContributions = {
         const lContributionsPerLocation = postgrest.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
         lContributionsPerLocation.load().then(buildPerLocationTable);
 
-        const lContributionsStats = postgrest.loader(models.projectContributionStat.getRowOptions(filterStats.parameters()));
+        const lContributionsStats = postgrest.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
         lContributionsStats.load().then(data => contributionsStats(_.first(data)));
 
         return {
