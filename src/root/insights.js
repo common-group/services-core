@@ -141,9 +141,9 @@ const insights = {
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2.dashboard-header.u-text-center', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
-                        m.component(adminProjectDetailsCard, {
+                        (project.state == 'draft' ? m.component(adminProjectDetailsCard, {
                             resource: project
-                        }),
+                        }) : ''),
                         m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
                             project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
                                 I18n.t('finish_explanation', I18nScope()),
