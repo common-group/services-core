@@ -62,7 +62,7 @@ const projectSuccessfulOnboardConfirmAccount = {
                         ((projectAccount.state_inscription && juridicalPerson) ? m('div', [
                             m('span.fontcolor-secondary', I18n.t(`person.state_inscription`, I18nScope())),
                             projectAccount.state_inscription
-                        ]): '' ),
+                        ]) : ''),
                         m('div', [
                             m('span.fontcolor-secondary', I18n.t(`person.${personKind}.document`, I18nScope())),
                             projectAccount.owner_document

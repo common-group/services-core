@@ -148,7 +148,7 @@ const
     }),
 
     getCurrentProject = () => {
-        if(_dataCache.currentProject)
+        if (_dataCache.currentProject)
           return _dataCache.currentProject;
 
         const root = document.getElementById('project-show-root'),
@@ -161,32 +161,32 @@ const
     },
 
     getRdToken = () => {
-        if(_dataCache.rdToken)
+        if (_dataCache.rdToken)
           return _dataCache.rdToken;
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
-        return meta ? (_dataCache.rdToken=meta.content) : undefined;
+        return meta ? (_dataCache.rdToken = meta.content) : undefined;
     },
 
     getUser = () => {
-        if(_dataCache.user)
+        if (_dataCache.user)
           return _dataCache.user;
 
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
         if (data) {
-            return _dataCache.user=JSON.parse(data);
+            return _dataCache.user = JSON.parse(data);
         } else {
             return false;
         }
     },
 
     getApiHost = () => {
-      if(_dataCache.apiHost)
-        return _dataCache.apiHost;
+        if (_dataCache.apiHost)
+          return _dataCache.apiHost;
 
-      var el=document.getElementById('api-host');
-      return _dataCache.apiHost = el && el.getAttribute('content');
+        var el = document.getElementById('api-host');
+        return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
     locationActionMatch = (action) => {
@@ -441,13 +441,13 @@ const
 
         return () => {
             try {
-              if(!eventObj.project)
-                eventObj.project = getCurrentProject();
-              if(!eventObj.user)
-                eventObj.user=getUser();
-              CatarseAnalytics.event(eventObj);
-            } catch(e) {
-              console.error('[h.analyticsEvent] error:',e);
+                if (!eventObj.project)
+                  eventObj.project = getCurrentProject();
+                if (!eventObj.user)
+                  eventObj.user = getUser();
+                CatarseAnalytics.event(eventObj);
+            } catch (e) {
+                console.error('[h.analyticsEvent] error:',e);
             }
             fn();
         };
@@ -473,13 +473,13 @@ const
     },
     analyticsWindowScroll = (eventObj) => {
         if (eventObj) {
-            let fired=false;
+            let fired = false;
             window.addEventListener('scroll', function(e){
                 //console.log('windowScroll');
                 if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                  fired=true;
-                  const fireEvent = analyticsEvent(eventObj);
-                  fireEvent();
+                    fired = true;
+                    const fireEvent = analyticsEvent(eventObj);
+                    fireEvent();
                 }
             });
         }

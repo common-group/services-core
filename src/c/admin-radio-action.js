@@ -55,7 +55,7 @@ const adminRadioAction = {
 
             radios(data);
 
-            if(!_.isUndefined(emptyState)){
+            if (!_.isUndefined(emptyState)){
                 radios().unshift(emptyState);
             }
         };
@@ -107,7 +107,7 @@ const adminRadioAction = {
             toggler: h.toggleProp(false, true),
             unload: unload,
             radios: radios
-        }
+        };
     },
     view(ctrl, args) {
         const data = args.data,
