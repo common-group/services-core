@@ -63,7 +63,12 @@ const projectContributionReport = {
                   }
               ],
               submit = () => {
-                  listVM.firstPage(filterVM.parameters()).then(null);
+                  if (filterVM.reward_id() === 'null') {
+                      listVM.firstPage(filterVM.withNullParameters()).then(null);
+                  } else {
+                      listVM.firstPage(filterVM.parameters()).then(null);
+                  }
+
                   return false;
               };
 
@@ -85,6 +90,11 @@ const projectContributionReport = {
                     };
                 });
             }
+
+            options.unshift({
+              value: null,
+              option: 'Sem recompensa'
+            });
 
             options.unshift({
                 value: '',
