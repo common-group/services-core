@@ -40,7 +40,7 @@ const projectHighlight = {
                       messenger: true,
                       url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=social&tm_campaign=project-share`
                     }) : '',
-                    m('button.btn.btn-inline.btn-medium.btn-terciary', {
+                    m('button#more-share.btn.btn-inline.btn-medium.btn-terciary', {
                         style: {
                             'transition': 'all 0.5s ease 0s'
                         },
