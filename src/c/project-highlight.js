@@ -36,6 +36,10 @@ const projectHighlight = {
                     project().permalink ? m.component(facebookButton, {
                       url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=social&tm_campaign=project-share`
                     }) : '',
+                    project().permalink ? m.component(facebookButton, {
+                      messenger: true,
+                      url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=social&tm_campaign=project-share`
+                    }) : '',
                     m('button.btn.btn-inline.btn-medium.btn-terciary', {
                         style: {
                             'transition': 'all 0.5s ease 0s'
