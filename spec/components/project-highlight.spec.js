@@ -37,7 +37,7 @@ describe('ProjectHighlight', () => {
         });
 
         it('should render project share box when click on share', () => {
-            $output.click('#share-box');
+            $output.click('#more-share');
             $output.redraw();
             $output.should.have('.pop-share');
         });

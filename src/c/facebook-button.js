@@ -1,0 +1,40 @@
+import m from 'mithril';
+
+const facebookButton = {
+    controller (args) {
+        const share = () => {
+            if (FB){
+              FB.ui({
+                method: args.messenger ? 'send' : 'share',
+                link: args.url,
+                href: args.url,
+              });
+            }
+        }
+
+        return {
+            share: share
+        };
+    },
+    view (ctrl, args) {
+        const buttonCss = () => {
+            if(args.mobile) {
+                return 'w-hidden-main w-hidden-medium u-marginbottom-20 btn btn-medium btn-fb';
+            } else {
+                return 'btn btn-inline btn-medium btn-terciary u-marginright-20';
+            }
+        };
+
+        return m('button',{
+            class: buttonCss(),
+            onclick: ctrl.share
+        },[
+            m('span.fa', {
+                class: args.messenger ? 'fa-comment' : 'fa-facebook'
+            }),
+            args.messenger ? ' Messenger' : ' Facebook'
+        ]);
+    }
+};
+
+export default facebookButton;

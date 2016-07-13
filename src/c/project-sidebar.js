@@ -5,6 +5,9 @@ import h from '../h';
 import projectMode from './project-mode';
 import projectReminder from './project-reminder';
 import projectUserCard from './project-user-card';
+import projectShareBox from './project-share-box';
+import addressTag from './address-tag';
+import categoryTag from './category-tag';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
@@ -46,7 +49,8 @@ const projectSidebar = {
             };
 
         return {
-            animateProgress: animateProgress
+            animateProgress: animateProgress,
+            displayShareBox: h.toggleProp(false, true)
         };
     },
     view(ctrl, args) {
@@ -115,15 +119,26 @@ const projectSidebar = {
                             project: project
                         })
                     ])
-                ])
-                , (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project().id + '/contributions/new"]',{
+                ]),
+                (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="/projects/' + project().id + '/contributions/new"]',{
                     onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()})
-                }, I18n.t('submit', I18nScope())) : '')
-                , ((project().open_for_contributions) ? m.component(projectReminder, {
+                }, I18n.t('submit', I18nScope())) : ''),
+                ((project().open_for_contributions) ? m.component(projectReminder, {
                     project: project,
                     type: 'link'
                 }) : ''),
                 m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())
+            ]),
+            m('.project-share.w-hidden-main.w-hidden-medium', [
+                m.component(addressTag, {project: project}),
+                m.component(categoryTag, {project: project}),
+                m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-inline.btn-medium.btn-terciary', {
+                    onclick: ctrl.displayShareBox.toggle
+                }, 'Compartilhar este projeto')),
+                ctrl.displayShareBox() ? m(projectShareBox, {
+                    project: project,
+                    displayShareBox: ctrl.displayShareBox
+                }) : ''
             ]),
             m('.user-c', m.component(projectUserCard, {
                 userDetails: args.userDetails,
