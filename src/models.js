@@ -37,6 +37,7 @@ const models = {
     finishedProject: postgrest.model('finished_projects'),
     userFriend: postgrest.model('user_friends'),
     userFollow: postgrest.model('user_follows'),
+    userFollower: postgrest.model('user_followers'),
     followAllFriends: postgrest.model('rpc/follow_all_friends')
 };
 
