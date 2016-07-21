@@ -8,45 +8,46 @@
 
 import m from 'mithril';
 import h from '../h';
+import _ from 'underscore';
 import UserFollowBtn from  '../c/user-follow-btn';
 
 const UserFollowCard = {
     controller(args) {
         const friend = m.prop(args.friend);
         return {
-          friend: friend
+            friend: friend
         };
     },
     view(ctrl, args) {
-      const friend = ctrl.friend(),
-        profile_img = _.isEmpty(friend.avatar) ? '/assets/catarse_bootstrap/user.jpg' : friend.avatar;
-        return m(".w-col.w-col-4", 
-          m(".card.card-backer.u-marginbottom-20.u-radius.u-text-center",
+        const friend = ctrl.friend(),
+          profile_img = _.isEmpty(friend.avatar) ? '/assets/catarse_bootstrap/user.jpg' : friend.avatar;
+        return m('.w-col.w-col-4',
+          m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center',
             [
               m(`img.thumb.u-marginbottom-10.u-round[src='${profile_img}']`),
-              m(".fontsize-base.fontweight-semibold.lineheight-tight", friend.name),
-              m(".fontcolor-secondary.fontsize-smallest.u-marginbottom-10", 
+              m('.fontsize-base.fontweight-semibold.lineheight-tight', friend.name),
+              m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
                 (_.isNull(friend.city) ? '' :
                          m('.fontsize-smaller.fontcolor-secondary.u-marginbottom-10', `${friend.city}, ${friend.state}`))
               ),
-              m(".fontsize-smaller",
+              m('.fontsize-smaller',
                 [
-                  m("span.fontweight-semibold", friend.total_contributed_projects),
-                  " apoiados ",
-                  m.trust("&nbsp;"),
-                  "| ",
-                  m.trust("&nbsp;"),
-                  m("span.fontweight-semibold", friend.total_published_projects),
-                  " criados"
+                  m('span.fontweight-semibold', friend.total_contributed_projects),
+                  ' apoiados ',
+                  m.trust('&nbsp;'),
+                  '| ',
+                  m.trust('&nbsp;'),
+                  m('span.fontweight-semibold', friend.total_published_projects),
+                  ' criados'
                 ]
               ),
-              m(".btn-bottom-card.w-row",
+              m('.btn-bottom-card.w-row',
                 [
-                  m(".w-col.w-col-3.w-col-small-4.w-col-tiny-3"),
-                  m(".w-col.w-col-6.w-col-small-4.w-col-tiny-6", 
+                  m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
+                  m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6',
                     m.component(UserFollowBtn, {following: friend.following, follow_id: friend.friend_id})
                   ),
-                  m(".w-col.w-col-3.w-col-small-4.w-col-tiny-3")
+                  m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3')
                 ]
               )
             ]

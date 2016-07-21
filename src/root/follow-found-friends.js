@@ -11,7 +11,7 @@ const FollowFoundFriends = {
               hash = m.prop(window.location.hash),
               displayTabContent = () => {
                   const c_opts = {
-                                  user: user
+                      user: user
                   },
                   tabs = {
                             '#friends': m.component(userFriends, c_opts),
@@ -49,27 +49,27 @@ const FollowFoundFriends = {
                     ])
                 ])
             ]),
-            [ m(".divider.u-margintop-30"), 
-              m(".project-nav", 
-                m(".u-text-center.w-container",
+            [m('.divider.u-margintop-30'),
+              m('.project-nav',
+                m('.u-text-center.w-container',
                   [
-                    m('a[id="friends-link"][class="dashboard-nav-link ' + (h.hashMatch('#friends') || h.hashMatch('') ? 'selected' : '') + '"] [href="#friends"]', 
-                      "Encontre amigos"
+                    m('a[id="friends-link"][class="dashboard-nav-link ' + (h.hashMatch('#friends') || h.hashMatch('') ? 'selected' : '') + '"] [href="#friends"]',
+                      'Encontre amigos'
                     ),
-                    m('a[id="follows-link"][class="dashboard-nav-link ' + (h.hashMatch('#follows') ? 'selected' : '') + '"] [href="#follows"]', 
+                    m('a[id="follows-link"][class="dashboard-nav-link ' + (h.hashMatch('#follows') ? 'selected' : '') + '"] [href="#follows"]',
                       [
-                        "Seguindo",
-                        m.trust("&nbsp;"),
-                        m("span.w-hidden-small.w-hidden-tiny.badge", 
+                        'Seguindo',
+                        m.trust('&nbsp;'),
+                        m('span.w-hidden-small.w-hidden-tiny.badge',
                           ctrl.user.follows_count
                         )
                       ]
                     ),
-                    m('a[id="followers-link"][class="dashboard-nav-link ' + (h.hashMatch('#followers') ? 'selected' : '') + '"] [href="#followers"]', 
+                    m('a[id="followers-link"][class="dashboard-nav-link ' + (h.hashMatch('#followers') ? 'selected' : '') + '"] [href="#followers"]',
                       [
-                        "Seguidores",
-                        m.trust("&nbsp;"),
-                        m("span.w-hidden-small.w-hidden-tiny.badge", 
+                        'Seguidores',
+                        m.trust('&nbsp;'),
+                        m('span.w-hidden-small.w-hidden-tiny.badge',
                           ctrl.user.followers_count
                         )
                       ]

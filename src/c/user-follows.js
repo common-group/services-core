@@ -41,26 +41,26 @@ const userFollows = {
         const followsVM = ctrl.followsListVM;
         return m('.w-section.bg-gray.before-footer.section', [
                 m('.w-container', [
-                    m(".w-row", [
+                    m('.w-row', [
                     _.map(followsVM.collection(), (friend) => {
-                      return m.component(UserFollowCard,
-                                         {friend: _.extend({},{following: true, friend_id: friend.follow_id}, friend.source)});
-                      }),
-                    ]),
-                    m('.w-section.section.bg-gray', [
-                        m('.w-container', [
-                            m('.w-row.u-marginbottom-60', [
-                                m('.w-col.w-col-5', [
-                                    m('.u-marginright-20')
-                                ]), m.component(loadMoreBtn, {collection: followsVM }),
-                                m('.w-col.w-col-5')
-                            ])
-                        ])
-                    ])
+                        return m.component(UserFollowCard,
+                                           {friend: _.extend({},{following: true, friend_id: friend.follow_id}, friend.source)});
+                    }),
+                  ]),
+                  m('.w-section.section.bg-gray', [
+                      m('.w-container', [
+                          m('.w-row.u-marginbottom-60', [
+                              m('.w-col.w-col-5', [
+                                  m('.u-marginright-20')
+                              ]), m.component(loadMoreBtn, {collection: followsVM}),
+                              m('.w-col.w-col-5')
+                          ])
+                      ])
+                  ])
 
-                ])
-            ])
-        ;
+              ])
+          ])
+      ;
     }
 };
 

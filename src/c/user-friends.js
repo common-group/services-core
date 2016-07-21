@@ -19,10 +19,10 @@ import loadMoreBtn from  '../c/load-more-btn';
 
 const userFriends = {
     controller(args) {
-      models.userFriend.pageSize(9);
+        models.userFriend.pageSize(9);
 
-      const userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
-            user = args.user,
+        const userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+              user = args.user,
             friendListVM = postgrest.paginationVM(models.userFriend, 'total_contributed_projects.desc', {
                 'Prefer':  'count=exact'
             }),
@@ -37,13 +37,13 @@ const userFriends = {
                 });
             };
 
-      userFriendVM.user_id(user.user_id);
+        userFriendVM.user_id(user.user_id);
 
-      if (!friendListVM.collection().length) {
-          friendListVM.firstPage(userFriendVM.parameters());
-      }
+        if (!friendListVM.collection().length) {
+            friendListVM.firstPage(userFriendVM.parameters());
+        }
 
-      return {
+        return {
           friendListVM: friendListVM,
           followAll: followAll,
           allLoading: allLoading
@@ -64,26 +64,26 @@ const userFriends = {
                              },`Siga todos os seus ${listVM.total() ? listVM.total() : ''} amigos`))
                         ])
                     ]),
-                    m(".w-row", [
+                    m('.w-row', [
                     _.map(listVM.collection(), (friend) => {
-                      return m.component(UserFollowCard, {friend: friend});
-                      }),
-                    ]),
-                    m('.w-section.section.bg-gray', [
-                        m('.w-container', [
-                            m('.w-row.u-marginbottom-60', [
-                                m('.w-col.w-col-5', [
-                                    m('.u-marginright-20')
-                                ]),
-                                m.component(loadMoreBtn, {collection: listVM }),
-                                m('.w-col.w-col-5')
-                            ])
-                        ])
-                    ])
+                        return m.component(UserFollowCard, {friend: friend});
+                    }),
+                  ]),
+                  m('.w-section.section.bg-gray', [
+                      m('.w-container', [
+                          m('.w-row.u-marginbottom-60', [
+                              m('.w-col.w-col-5', [
+                                  m('.u-marginright-20')
+                              ]),
+                              m.component(loadMoreBtn, {collection: listVM}),
+                              m('.w-col.w-col-5')
+                          ])
+                      ])
+                  ])
 
-                ])
-            ])
-        ;
+              ])
+          ])
+      ;
     }
 };
 
