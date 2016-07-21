@@ -22,10 +22,15 @@ const userFollowers = {
         models.userFollower.pageSize(9);
         const followersListVM = postgrest.paginationVM(models.userFollower,
                                                        'created_at.desc', {
-                  'Prefer':  'count=exact'
-              });
+                                                           'Prefer':  'count=exact'
+                                                       }),
+              user = args.user,
+              userIdVM = postgrest.filtersVM({follow_id: 'eq'});
+
+        userIdVM.follow_id(user.user_id);
+
         if (!followersListVM.collection().length) {
-            followersListVM.firstPage();
+            followersListVM.firstPage(userIdVM.parameters());
         }
         return {
             followersListVM: followersListVM
@@ -34,27 +39,27 @@ const userFollowers = {
     view(ctrl, args) {
         const followersVM = ctrl.followersListVM;
         return m('.w-section.bg-gray.before-footer.section', [
-                m('.w-container', [
-                    m('.w-row', [
+            m('.w-container', [
+                m('.w-row', [
                     _.map(followersVM.collection(), (friend) => {
                         return m.component(UserFollowCard,
                                            {friend: _.extend({},{friend_id: friend.user_id}, friend.source)});
                     }),
-                  ]),
-                  m('.w-section.section.bg-gray', [
-                      m('.w-container', [
-                          m('.w-row.u-marginbottom-60', [
-                              m('.w-col.w-col-5', [
-                                  m('.u-marginright-20')
-                              ]), m.component(loadMoreBtn, {collection: followersVM}),
-                              m('.w-col.w-col-5')
-                          ])
-                      ])
-                  ])
+                ]),
+                m('.w-section.section.bg-gray', [
+                    m('.w-container', [
+                        m('.w-row.u-marginbottom-60', [
+                            m('.w-col.w-col-5', [
+                                m('.u-marginright-20')
+                            ]), m.component(loadMoreBtn, {collection: followersVM}),
+                            m('.w-col.w-col-5')
+                        ])
+                    ])
+                ])
 
-              ])
-          ])
-      ;
+            ])
+        ])
+        ;
     }
 };
 
