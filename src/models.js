@@ -38,7 +38,8 @@ const models = {
     userFriend: postgrest.model('user_friends'),
     userFollow: postgrest.model('user_follows'),
     followAllFriends: postgrest.model('rpc/follow_all_friends'),
-    contributor: postgrest.model('contributors')
+    contributor: postgrest.model('contributors'),
+    userFollower: postgrest.model('user_followers')
 };
 
 models.teamMember.pageSize(40);
