@@ -1,44 +1,41 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
-import models from '../models';
-import UserFollowCard from  '../c/user-follow-card';
+import userFriends from  '../c/user-friends';
+import userFollows from  '../c/user-follows';
+import userFollowers from  '../c/user-followers';
 
 const FollowFoundFriends = {
     controller(args) {
-        models.userFriend.pageSize(9);
+        const user = h.getUser(),
+              hash = m.prop(window.location.hash),
+              displayTabContent = () => {
+                  const c_opts = {
+                                  user: user
+                  },
+                  tabs = {
+                            '#friends': m.component(userFriends, c_opts),
+                            '#follows': m.component(userFollows, c_opts),
+                            '#followers': m.component(userFollowers, c_opts)
+                        };
 
-        const userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
-              user = h.getUser(),
-              friendListVM = postgrest.paginationVM(models.userFriend, 'total_contributed_projects.desc', {
-                  'Prefer':  'count=exact'
-              }),
-              allLoading = m.prop(false),
-              followAll = () => {
-                  allLoading(true);
-                  const l = postgrest.loaderWithToken(models.followAllFriends.postOptions({}));
+                  hash(window.location.hash);
 
-                  l.load().then(() => {
-                      friendListVM.firstPage(userFriendVM.parameters());
-                      allLoading(false);
-                  });
+                  if (_.isEmpty(hash()) || hash() === '#_=_') {
+                      return tabs['#friends'];
+                  }
+
+                  return tabs[hash()];
               };
 
-        userFriendVM.user_id(user.user_id);
-
-        if (!friendListVM.collection().length) {
-            friendListVM.firstPage(userFriendVM.parameters());
-        }
+        h.redrawHashChange();
 
         return {
-            friendListVM: friendListVM,
-            followAll: followAll,
-            allLoading: allLoading
+            user: user,
+            displayTabContent: displayTabContent
         };
     },
     view(ctrl, args) {
-        const listVM = ctrl.friendListVM;
         return [
             m('.w-section.dashboard-header', [
                 m('.w-container', [
@@ -52,44 +49,36 @@ const FollowFoundFriends = {
                     ])
                 ])
             ]),
-            m('.divider.u-margintop-30'),
-            m('.w-section.bg-gray.before-footer.section', [
-                m('.w-container', [
-                    m('.w-row.u-marginbottom-40.card.u-radius.card-terciary', [
-                        m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6', [
-                            m('.fontsize-small', 'Comece agora! Siga todos os seus amigos ou somente alguns deles para descobrir projetos juntos!')
-                        ]),
-                        m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                            (ctrl.allLoading() ? h.loader()
-                             : m('a.w-button.btn.btn-medium', {
-                                 onclick: ctrl.followAll
-                             },`Siga todos os seus ${listVM.total() ? listVM.total() : ''} amigos`))
-                        ])
-                    ]),
-                    m(".w-row", [
-                    _.map(listVM.collection(), (friend) => {
-                      return m.component(UserFollowCard, {friend: friend});
-                      }),
-                    ]),
-                    m('.w-section.section.bg-gray', [
-                        m('.w-container', [
-                            m('.w-row.u-marginbottom-60', [
-                                m('.w-col.w-col-5', [
-                                    m('.u-marginright-20')
-                                ]),
-                                m('.w-col.w-col-2', [
-                                    (!listVM.isLoading() ?
-                                     (listVM.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                         onclick: listVM.nextPage
-                                     }, 'Carregar mais')) : h.loader())
-                                ]),
-                                m('.w-col.w-col-5')
-                            ])
-                        ])
-                    ])
-
-                ])
-            ])
+            [ m(".divider.u-margintop-30"), 
+              m(".project-nav", 
+                m(".u-text-center.w-container",
+                  [
+                    m('a[id="friends-link"][class="dashboard-nav-link ' + (h.hashMatch('#friends') || h.hashMatch('') ? 'selected' : '') + '"] [href="#friends"]', 
+                      "Encontre amigos"
+                    ),
+                    m('a[id="follows-link"][class="dashboard-nav-link ' + (h.hashMatch('#follows') ? 'selected' : '') + '"] [href="#follows"]', 
+                      [
+                        "Seguindo",
+                        m.trust("&nbsp;"),
+                        m("span.w-hidden-small.w-hidden-tiny.badge", 
+                          ctrl.user.follows_count
+                        )
+                      ]
+                    ),
+                    m('a[id="followers-link"][class="dashboard-nav-link ' + (h.hashMatch('#followers') ? 'selected' : '') + '"] [href="#followers"]', 
+                      [
+                        "Seguidores",
+                        m.trust("&nbsp;"),
+                        m("span.w-hidden-small.w-hidden-tiny.badge", 
+                          ctrl.user.followers_count
+                        )
+                      ]
+                    )
+                  ]
+                )
+              )
+            ],
+            ctrl.displayTabContent()
         ];
     }
 };
