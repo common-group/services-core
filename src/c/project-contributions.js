@@ -9,35 +9,34 @@ import projectDataChart from './project-data-chart';
 const projectContributions = {
     controller(args) {
         const contributionsPerLocation = m.prop([]),
-            contributionsPerDay = m.prop([]),
-            listVM = postgrest.paginationVM(models.projectContribution),
-            filterStats = postgrest.filtersVM({
-                project_id: 'eq'
-            }),
-            filterVM = postgrest.filtersVM({
-                project_id: 'eq',
-                waiting_payment: 'eq'
-            }),
-            groupedCollection = (collection = []) => {
-                let grouped = [
-                        []
-                    ],
-                    group = 0;
+              contributionsPerDay = m.prop([]),
+              listVM = postgrest.paginationVM(models.contributor),
+              filterStats = postgrest.filtersVM({
+                  project_id: 'eq'
+              }),
+              filterVM = postgrest.filtersVM({
+                  project_id: 'eq'
+              }),
+              groupedCollection = (collection = []) => {
+                  let grouped = [
+                      []
+                  ],
+                      group = 0;
 
-                _.map(collection, (item, index) => {
-                    if (grouped[group].length >= 3) {
-                        group = group + 1;
-                        grouped[group] = [];
-                    }
+                  _.map(collection, (item, index) => {
+                      if (grouped[group].length >= 3) {
+                          group = group + 1;
+                          grouped[group] = [];
+                      }
 
-                    grouped[group].push(item);
-                });
+                      grouped[group].push(item);
+                  });
 
-                return grouped;
-            },
-            contributionsStats = m.prop({});
+                  return grouped;
+              },
+              contributionsStats = m.prop({});
 
-        filterVM.project_id(args.project().id).waiting_payment(false);
+        filterVM.project_id(args.project().id);
         filterStats.project_id(args.project().id);
 
         if (!listVM.collection().length) {
@@ -86,124 +85,127 @@ const projectContributions = {
     },
     view(ctrl, args) {
         const list = ctrl.listVM,
-            stats = ctrl.contributionsStats(),
-            groupedCollection = ctrl.groupedCollection(list.collection());
+              stats = ctrl.contributionsStats(),
+              groupedCollection = ctrl.groupedCollection(list.collection());
 
         return m('#project_contributions', m('#contributions_top', [
-                m('.section.w-section',
-                    m('.w-container',
-                        m('.w-row', ctrl.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
-                            m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', [
-                                m('.fontsize-megajumbo',
-                                    stats.total
-                                ),
-                                m('.fontsize-large',
-                                    'pessoas apoiam este projeto'
-                                )
+            m('.section.w-section',
+              m('.w-container',
+                m('.w-row', ctrl.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
+                    m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', [
+                        m('.fontsize-megajumbo',
+                          stats.total
+                         ),
+                        m('.fontsize-large',
+                          'pessoas apoiam este projeto'
+                         )
+                    ]),
+                    m('.w-col.w-col-6',
+                      m('.card.card-terciary.u-radius',
+                        m('.w-row', [
+                            m('.u-marginbottom-20.w-col.w-col-6.w-col-small-6', [
+                                m('.fontweight-semibold.u-marginbottom-10',
+                                  'Apoiadores novos'
+                                 ),
+                                m('.fontsize-largest.u-marginbottom-10',
+                                  `${Math.floor(stats.new_percent)}%`
+                                 ),
+                                m('.fontsize-smallest',
+                                  'apoiadores que nunca tinham apoiado um projeto no Catarse'
+                                 )
                             ]),
-                            m('.w-col.w-col-6',
-                                m('.card.card-terciary.u-radius',
-                                    m('.w-row', [
-                                        m('.u-marginbottom-20.w-col.w-col-6.w-col-small-6', [
-                                            m('.fontweight-semibold.u-marginbottom-10',
-                                                'Apoiadores novos'
-                                            ),
-                                            m('.fontsize-largest.u-marginbottom-10',
-                                                `${Math.floor(stats.new_percent)}%`
-                                            ),
-                                            m('.fontsize-smallest',
-                                                'apoiadores que nunca tinham apoiado um projeto no Catarse'
-                                            )
-                                        ]),
-                                        m('.w-col.w-col-6.w-col-small-6', [
-                                            m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
-                                            m('.fontweight-semibold.u-marginbottom-10',
-                                                'Apoiadores recorrentes'
-                                            ),
-                                            m('.fontsize-largest.u-marginbottom-10',
-                                                `${Math.ceil(stats.returning_percent)}%`
-                                            ),
-                                            m('.fontsize-smallest',
-                                                'apoiadores que já tinham apoiado um projeto no Catarse'
-                                            )
-                                        ])
-                                    ])
-                                )
-                            )
-                        ] : '')
-                    )
-                ),
-                m('.divider.w-section'),
-                m('.section.w-section', m('.w-container', [
-                    m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', 'Apoiadores'),
-                    m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, (contribution) => {
-                        return m('.project-contribution-item.w-col.w-col-4', [
-                            m('.w-row.u-marginbottom-30', [
-                                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3', [
-                                    m('a[href="/users/' + contribution.user_id + '"]', {
-                                        onclick: h.analytics.event({
-                                            cat: 'project_view',
-                                            act: 'project_backer_link',
-                                            lbl: contribution.user_id,
-                                            project: args.project()
-                                        })
-                                    }, [
-                                        m('.thumb.u-round[style="background-image: url(' + (!_.isEmpty(contribution.profile_img_thumbnail) ? contribution.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg') + '); background-size: contain;"]')
-                                    ])
-                                ]),
-                                m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', [
-                                    m('.fontsize-base.fontweight-semibold', [
-                                        m('a.fontsize-base.fontweight-semibold.link-hidden-dark[href="/users/' + contribution.user_id + '"]', {
-                                            onclick: h.analytics.event({
-                                                cat: 'project_view',
-                                                act: 'project_backer_link',
-                                                lbl: contribution.user_id,
-                                                project: args.project()
-                                            })
-                                        }, contribution.user_name), (contribution.is_owner_or_admin ?
-                                            m('.fontsize-smallest.fontweight-semibold', [
-                                                'R$ ' + h.formatNumber(contribution.value, 2, 3), (contribution.anonymous ? [m.trust('&nbsp;-&nbsp;'), m('strong', 'Apoiador anônimo')] : '')
-                                            ]) : ''),
-                                        m('.fontsize-smallest.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm') + 'h'),
-                                        m('.fontsize-smallest.fontweight-semibold', (contribution.total_contributed_projects > 1 ? 'Apoiou este e mais outros ' + contribution.total_contributed_projects + ' projetos' : 'Apoiou somente este projeto até agora'))
-                                    ])
-                                ])
+                            m('.w-col.w-col-6.w-col-small-6', [
+                                m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
+                                m('.fontweight-semibold.u-marginbottom-10',
+                                  'Apoiadores recorrentes'
+                                 ),
+                                m('.fontsize-largest.u-marginbottom-10',
+                                  `${Math.ceil(stats.returning_percent)}%`
+                                 ),
+                                m('.fontsize-smallest',
+                                  'apoiadores que já tinham apoiado um projeto no Catarse'
+                                 )
                             ])
-                        ]);
-                    })))),
-                    m('.w-row.u-marginbottom-40.u-margintop-20', [
-                        m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?
-                            list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                onclick: list.nextPage
-                            }, 'Carregar mais') : h.loader(),
                         ])
-                    ])
-                ]))
-            ]),
-            m('.before-footer.bg-gray.section.w-section', m('.w-container', [
-                m('.w-row.u-marginbottom-60', [
-                    m('.w-col.w-col-12.u-text-center', {
-                        style: {
-                            'min-height': '300px'
-                        }
-                    }, [!ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
-                        collection: ctrl.contributionsPerDay,
-                        label: 'R$ arrecadados por dia',
-                        dataKey: 'total_amount',
-                        xAxis: (item) => h.momentify(item.paid_at),
-                        emptyState: 'Apoios não contabilizados'
-                    }) : h.loader()]),
-                ]),
-                m('.w-row',
-                    m('.w-col.w-col-12.u-text-center', [
-                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os principais apoios'),
-                        (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
-                            table: ctrl.contributionsPerLocationTable,
-                            defaultSortIndex: -2
-                        }) : '' : h.loader())
-                    ])
-                )
-            ])));
+                       )
+                     )
+                ] : '')
+               )
+             ),
+            m('.divider.w-section'),
+            m('.section.w-section', m('.w-container', [
+                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', 'Apoiadores'),
+                m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, (contribution) => {
+                    return m('.project-contribution-item.w-col.w-col-4', [
+                        // here new card
+                        m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
+                            m('a[href="/users/' + contribution.user_id + '"][style="display: block;"]', {
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',
+                                    act: 'project_backer_link',
+                                    lbl: contribution.user_id,
+                                    project: args.project()
+                                })
+                            }, [
+                                m('img.thumb.u-marginbottom-10.u-round[src="' + (!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg') + '"]')
+                            ]),
+                            m('a.fontsize-base.fontweight-semibold.lineheigh-tight.link-hidden-dark[href="/users/' + contribution.user_id + '"]', {
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',
+                                    act: 'project_backer_link',
+                                    lbl: contribution.user_id,
+                                    project: args.project()
+                                })
+                            }, contribution.data.name), 
+                            m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${contribution.data.city},${contribution.data.state}`),
+                            m('.fontsize-smaller', [
+                                m('span.fontweight-semibold', contribution.data.total_contributed_projects),' apoiados  |  ',
+                                m("span.fontweight-semibold", contribution.data.total_published_projects)," criado"
+                            ]),
+                            //m('.btn-bottom-card.w-row', [
+                            //    m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
+                            //    m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
+                            //        m("a.btn.btn-medium.w-button[href='#']", "Seguindo")
+                            //    ]),
+                            //    m(".w-col.w-col-3.w-col-small-4.w-col-tiny-3")
+                            //])
+                        ])
+                        // new card
+                    ]);
+                })))),
+                m('.w-row.u-marginbottom-40.u-margintop-20', [
+                    m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?
+                                                      list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
+                                                          onclick: list.nextPage
+                                                      }, 'Carregar mais') : h.loader(),
+                                                     ])
+                ])
+            ]))
+        ]),
+                 m('.before-footer.bg-gray.section.w-section', m('.w-container', [
+                     m('.w-row.u-marginbottom-60', [
+                         m('.w-col.w-col-12.u-text-center', {
+                             style: {
+                                 'min-height': '300px'
+                             }
+                         }, [!ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                             collection: ctrl.contributionsPerDay,
+                             label: 'R$ arrecadados por dia',
+                             dataKey: 'total_amount',
+                             xAxis: (item) => h.momentify(item.paid_at),
+                             emptyState: 'Apoios não contabilizados'
+                         }) : h.loader()]),
+                     ]),
+                     m('.w-row',
+                       m('.w-col.w-col-12.u-text-center', [
+                           m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os principais apoios'),
+                           (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
+                               table: ctrl.contributionsPerLocationTable,
+                               defaultSortIndex: -2
+                           }) : '' : h.loader())
+                       ])
+                      )
+                 ])));
     }
 };
 
