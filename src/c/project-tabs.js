@@ -74,8 +74,8 @@ const projectTabs = {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({cat: 'project_view',act: 'project_contributions_view',project: project()})
                             }, [
-                                'Apoios ',
-                                m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributions : '-')
+                                'Apoiadores ',
+                                m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
                             ]),
                             m('a[id="comments-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#comments') ? 'selected' : '') + '"][href="#comments"]', {
                                 style: 'float: left;',
