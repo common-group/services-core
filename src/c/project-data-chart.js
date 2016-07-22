@@ -45,7 +45,8 @@ const projectDataChart = {
             };
 
         return {
-            renderChart: renderChart
+            renderChart: renderChart,
+            source: source
         };
     },
     view(ctrl, args) {
@@ -53,9 +54,9 @@ const projectDataChart = {
             m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
             m('.w-row', [
                 m('.w-col.w-col-12.overflow-auto', [
-                    m('canvas[id="chart"][width="860"][height="300"]', {
+                    !_.isEmpty(ctrl.source) ? m('canvas[id="chart"][width="860"][height="300"]', {
                         config: ctrl.renderChart
-                    })
+                    }) : m('.w-col.w-col-8.w-col-push-2', m('p.fontsize-base', args.emptyState))
                 ]),
             ])
         ]);

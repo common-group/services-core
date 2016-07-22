@@ -197,7 +197,7 @@ const
     }),
 
     getCurrentProject = () => {
-        if(_dataCache.currentProject)
+        if (_dataCache.currentProject)
           return _dataCache.currentProject;
 
         const root = document.getElementById('project-show-root'),
@@ -210,32 +210,32 @@ const
     },
 
     getRdToken = () => {
-        if(_dataCache.rdToken)
+        if (_dataCache.rdToken)
           return _dataCache.rdToken;
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
-        return meta ? (_dataCache.rdToken=meta.content) : undefined;
+        return meta ? (_dataCache.rdToken = meta.content) : undefined;
     },
 
     getUser = () => {
-        if(_dataCache.user)
+        if (_dataCache.user)
           return _dataCache.user;
 
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
         if (data) {
-            return _dataCache.user=JSON.parse(data);
+            return _dataCache.user = JSON.parse(data);
         } else {
             return false;
         }
     },
 
     getApiHost = () => {
-      if(_dataCache.apiHost)
-        return _dataCache.apiHost;
+        if (_dataCache.apiHost)
+          return _dataCache.apiHost;
 
-      var el=document.getElementById('api-host');
-      return _dataCache.apiHost = el && el.getAttribute('content');
+        var el = document.getElementById('api-host');
+        return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
     locationActionMatch = (action) => {
@@ -483,24 +483,25 @@ const
             };
         },
     analyticsEvent = (eventObj, fn=Function.prototype) => {
-            //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
-            if (!eventObj){
-                return fn;
-            }
+        //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
+        if (!eventObj){
+            return fn;
+        }
 
-            return () => {
-                try {
-                  if(!eventObj.project)
-                    eventObj.project = getCurrentProject();
-                  if(!eventObj.user)
-                    eventObj.user=getUser();
-                  CatarseAnalytics.event(eventObj);
-                } catch(e) {
-                  console.error('[h.analyticsEvent] error:',e);
-                }
-                fn();
-            };
-        },
+        return () => {
+            try {
+                if (!eventObj.project)
+                  eventObj.project = getCurrentProject();
+                if (!eventObj.user)
+                  eventObj.user = getUser();
+                CatarseAnalytics.event(eventObj);
+            } catch (e) {
+                console.error('[h.analyticsEvent] error:',e);
+
+            }
+            fn();
+          };
+    },
     _analyticsOneTimeEventFired = {},
     analyticsOneTimeEvent = (eventObj, fn) => {
        if (!eventObj) {
@@ -563,7 +564,6 @@ const
             };
         };
     },
-
     readMaskDefinition = (maskCharDefinitions) => {
         return (maskDefinition) => {
             return _.compact(_.map(maskDefinition, (letter, index) => {
@@ -634,6 +634,34 @@ const
         },
         getReward = () => currentReward,
         buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`;
+        analyticsWindowScroll = (eventObj) => {
+            if (eventObj) {
+                let fired = false;
+                window.addEventListener('scroll', function(e){
+                    //console.log('windowScroll');
+                    if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                        fired = true;
+                        const fireEvent = analyticsEvent(eventObj);
+                        fireEvent();
+                    }
+                });
+            }
+        },
+    analytics = {
+        event: analyticsEvent,
+        oneTimeEvent: analyticsOneTimeEvent,
+        windowScroll: analyticsWindowScroll
+    },
+    projectFullPermalink = (project) => {
+        let permalink;
+        if (typeof project === 'function') {
+            permalink = project().permalink;
+        } else {
+            permalink = project.permalink;
+        }
+
+        return `https://www.catarse.me/${permalink}`;
+    };
 
 setMomentifyLocale();
 closeFlash();
@@ -692,5 +720,6 @@ export default {
     getReward,
     applyMonetaryMask,
     monetaryToFloat,
-    mask
+    mask,
+    projectFullPermalink
 };

@@ -5,6 +5,9 @@ import h from '../h';
 import projectMode from './project-mode';
 import projectReminder from './project-reminder';
 import projectUserCard from './project-user-card';
+import projectShareBox from './project-share-box';
+import addressTag from './address-tag';
+import categoryTag from './category-tag';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
@@ -46,7 +49,8 @@ const projectSidebar = {
             };
 
         return {
-            animateProgress: animateProgress
+            animateProgress: animateProgress,
+            displayShareBox: h.toggleProp(false, true)
         };
     },
     view(ctrl, args) {
@@ -68,7 +72,7 @@ const projectSidebar = {
             displayStatusText = () => {
                 const states = {
                     'approved': I18n.t('display_status.approved', I18nScope()),
-                    'online': h.existy(project().zone_expires_at) ? I18n.t('display_status.online', I18nScope({date: h.momentify(project().zone_expires_at)})) : '',
+                    'online': h.existy(project().zone_expires_at) && project().open_for_contributions ? I18n.t('display_status.online', I18nScope({date: h.momentify(project().zone_expires_at)})) : '',
                     'failed': I18n.t('display_status.failed', I18nScope({date: h.momentify(project().zone_expires_at), goal: project().goal})),
                     'rejected': I18n.t('display_status.rejected', I18nScope()),
                     'in_analysis': I18n.t('display_status.in_analysis', I18nScope()),
@@ -124,6 +128,17 @@ const projectSidebar = {
                     type: 'link'
                 }) : ''),
                 m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())
+            ]),
+            m('.project-share.w-hidden-main.w-hidden-medium', [
+                m.component(addressTag, {project: project}),
+                m.component(categoryTag, {project: project}),
+                m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-inline.btn-medium.btn-terciary', {
+                    onclick: ctrl.displayShareBox.toggle
+                }, 'Compartilhar este projeto')),
+                ctrl.displayShareBox() ? m(projectShareBox, {
+                    project: project,
+                    displayShareBox: ctrl.displayShareBox
+                }) : ''
             ]),
             m('.user-c', m.component(projectUserCard, {
                 userDetails: args.userDetails,

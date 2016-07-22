@@ -98,12 +98,10 @@ const projectsHome = {
                 });
             }),
             // m.component(contributionActivities),
-            (ctrl.hasFBAuth ?
-             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect) ),
+            ctrl.hasFBAuth ? m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect),
             m.component(blogBanner)
             // m.component(footer, {expanded: true})
         ]);
-
     }
 };
 

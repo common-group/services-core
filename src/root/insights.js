@@ -14,6 +14,8 @@ import projectDataChart from '../c/project-data-chart';
 import projectDataTable from '../c/project-data-table';
 import projectReminderCount from '../c/project-reminder-count';
 import projectSuccessfulOnboard from '../c/project-successful-onboard';
+import facebookButton from '../c/facebook-button';
+import copyTextInput from '../c/copy-text-input';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -141,9 +143,33 @@ const insights = {
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2.dashboard-header.u-text-center', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
-                        m.component(adminProjectDetailsCard, {
+                        m('.card.card-secondary.u-marginbottom-20.u-radius',
+                            [
+                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    'Compartilhe sua campanha'
+                                ),
+                                project.permalink ? m('.w-row',
+                                    [
+                                        m('.w-sub-col.w-col.w-col-6',
+                                            m.component(facebookButton, {url: h.projectFullPermalink(project), big: true})
+                                        ),
+                                        m('.w-col.w-col-6',
+                                            m('.w-form',
+                                                [
+                                                    m('.fontsize-smallest.fontweight-semibold',
+                                                        'Link direto'
+                                                    ),
+                                                    m.component(copyTextInput, {value: h.projectFullPermalink(project)})
+                                                ]
+                                            )
+                                        )
+                                    ]
+                                ) : ''
+                            ]
+                        ),
+                        (project.state == 'draft' ? m.component(adminProjectDetailsCard, {
                             resource: project
-                        }),
+                        }) : ''),
                         m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
                             project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
                                 I18n.t('finish_explanation', I18nScope()),
@@ -167,7 +193,8 @@ const insights = {
                                     collection: ctrl.contributionsPerDay,
                                     label: I18n.t('amount_per_day_label', I18nScope()),
                                     dataKey: 'total_amount',
-                                    xAxis: (item) => h.momentify(item.paid_at)
+                                    xAxis: (item) => h.momentify(item.paid_at),
+                                    emptyState: I18n.t('amount_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -181,7 +208,8 @@ const insights = {
                                     collection: ctrl.contributionsPerDay,
                                     label: I18n.t('contributions_per_day_label', I18nScope()),
                                     dataKey: 'total',
-                                    xAxis: (item) => h.momentify(item.paid_at)
+                                    xAxis: (item) => h.momentify(item.paid_at),
+                                    emptyState: I18n.t('contributions_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -193,10 +221,16 @@ const insights = {
                                         h.newFeatureBadge(),
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
-                                    !ctrl.lContributionsPerRef() ? m.component(projectDataTable, {
+                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {
                                         table: ctrl.contributionsPerRefTable,
                                         defaultSortIndex: -2
-                                    }) : h.loader()
+                                    }) : m('.card.u-radius.medium.u-marginbottom-60',
+                                            m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
+                                                m('.w-col.w-col-8.w-col-push-2',
+                                                    m('p.fontsize-base', I18n.t('contributions_per_ref_empty', I18nScope()))
+                                                )
+                                            )
+                                        ) : h.loader()
                                 ])
                             ]),
                         ]),
@@ -204,10 +238,16 @@ const insights = {
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
-                                    !ctrl.lContributionsPerLocation() ? m.component(projectDataTable, {
+                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
                                         table: ctrl.contributionsPerLocationTable,
                                         defaultSortIndex: -2
-                                    }) : h.loader()
+                                    }) : m('.card.u-radius.medium.u-marginbottom-60',
+                                            m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
+                                                m('.w-col.w-col-8.w-col-push-2',
+                                                    m('p.fontsize-base', I18n.t('contributions_per_location_empty', I18nScope()))
+                                                )
+                                            )
+                                        ) : h.loader()
                                 ])
                             ]),
                         ]),

@@ -21,6 +21,7 @@ const models = {
     projectAccount: postgrest.model('project_accounts'),
     projectAccountError: postgrest.model('project_account_errors'),
     projectContribution: postgrest.model('project_contributions'),
+    projectContributiorsStat: postgrest.model('project_stat_contributors'),
     projectPostDetail: postgrest.model('project_posts_details'),
     projectContributionsPerDay: postgrest.model('project_contributions_per_day'),
     projectContributionsPerLocation: postgrest.model('project_contributions_per_location'),
@@ -38,7 +39,9 @@ const models = {
     finishedProject: postgrest.model('finished_projects'),
     userFriend: postgrest.model('user_friends'),
     userFollow: postgrest.model('user_follows'),
-    followAllFriends: postgrest.model('rpc/follow_all_friends')
+    followAllFriends: postgrest.model('rpc/follow_all_friends'),
+    contributor: postgrest.model('contributors'),
+    userFollower: postgrest.model('user_followers')
 };
 
 models.teamMember.pageSize(40);
@@ -50,5 +53,7 @@ models.successfulProject.pageSize(9);
 models.finishedProject.pageSize(9);
 models.country.pageSize(false);
 models.state.pageSize(false);
+models.projectContribution.pageSize(9);
+models.contributor.pageSize(9);
 
 export default models;

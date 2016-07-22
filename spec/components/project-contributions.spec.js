@@ -6,12 +6,12 @@ describe('projectContributions', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            jasmine.Ajax.stubRequest(new RegExp('(' + apiPrefix + '\/project_contributions)(.*)(waiting_payment)(.*)')).andReturn({
-                'responseText': JSON.stringify(ProjectContributionsMockery())
+            jasmine.Ajax.stubRequest(new RegExp("("+apiPrefix + '\/contributors)'+'(.*)')).andReturn({
+                'responseText' : JSON.stringify(ContributorMockery())
             });
 
             spyOn(m, 'component').and.callThrough();
-            projectContribution = ProjectContributionsMockery()[0];
+            projectContribution = ContributorMockery()[0];
             const project = m.prop({
                         id: 1231
             });
@@ -26,7 +26,7 @@ describe('projectContributions', () => {
         });
 
         it('should render project contributions list', () => {
-            expect($output.contains(projectContribution.user_name)).toEqual(true);
+            expect($output.contains(projectContribution.data.name)).toEqual(true);
         });
     });
 });

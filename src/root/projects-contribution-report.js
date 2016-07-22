@@ -7,6 +7,8 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectContributionReportHeader from '../c/project-contribution-report-header';
 import projectContributionReportContent from '../c/project-contribution-report-content';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
+import FilterMain from '../c/filter-main';
+import FilterDropdown from '../c/filter-dropdown';
 
 const projectContributionReport = {
     controller(args) {
@@ -16,7 +18,7 @@ const projectContributionReport = {
               rewards = m.prop([]),
               filterBuilder = [
                   {
-                      component: 'FilterMain',
+                      component: FilterMain,
                       data: {
                           inputWrapperClass: '.w-input.text-field',
                           btnClass: '.btn.btn-medium',
@@ -25,31 +27,28 @@ const projectContributionReport = {
                       }
                   }, {
                       label: 'reward_filter',
-                      component: 'FilterDropdown',
+                      component: FilterDropdown,
                       data: {
                           label: 'Recompensa',
                           name: 'reward_id',
                           vm: filterVM.reward_id,
-                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6._w-sub-col-middle',
+                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
                           options: []
                       }
                   }, {
                       label: 'payment_state',
-                      component: 'FilterDropdown',
+                      component: FilterDropdown,
                       data: {
                           label: 'Status do apoio',
                           name: 'state',
                           vm: filterVM.state,
-                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6._w-sub-col-middle',
+                          wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
                           options: [{
                               value: '',
                               option: 'Todos'
                           }, {
                               value: 'paid',
                               option: 'Pago'
-                          }, {
-                              value: 'refused',
-                              option: 'Cancelado'
                           }, {
                               value: 'pending',
                               option: 'Pendente'
@@ -59,15 +58,17 @@ const projectContributionReport = {
                           }, {
                               value: 'refunded',
                               option: 'Reembolsado'
-                          }, {
-                              value: 'chargeback',
-                              option: 'Contestado'
                           }]
                       }
                   }
               ],
               submit = () => {
-                  listVM.firstPage(filterVM.parameters()).then(null);
+                  if (filterVM.reward_id() === 'null') {
+                      listVM.firstPage(filterVM.withNullParameters()).then(null);
+                  } else {
+                      listVM.firstPage(filterVM.parameters()).then(null);
+                  }
+
                   return false;
               };
 
@@ -91,6 +92,11 @@ const projectContributionReport = {
             }
 
             options.unshift({
+                value: null,
+                option: 'Sem recompensa'
+            });
+
+            options.unshift({
                 value: '',
                 option: 'Todas'
             });
@@ -108,6 +114,7 @@ const projectContributionReport = {
             filterBuilder: filterBuilder,
             submit: submit,
             lReward: lReward,
+            lProject: lProject,
             rewards: rewards,
             project: project,
             mapRewardsToOptions: mapRewardsToOptions
@@ -116,20 +123,24 @@ const projectContributionReport = {
     view(ctrl, args) {
         const list = ctrl.listVM;
 
-        return [
-            m.component(projectDashboardMenu, {project: m.prop(_.first(ctrl.project()))}),
-            m.component(projectContributionReportHeader, {
-                submit: ctrl.submit,
-                filterBuilder: ctrl.filterBuilder,
-                form: ctrl.filterVM.formDescriber,
-                mapRewardsToOptions: ctrl.mapRewardsToOptions,
-                filterVM: ctrl.filterVM
-            }),
-            m('.divider.u-margintop-30'),
-            m.component(projectContributionReportContent, {
-                list: list
-            })
-        ];
+        if (!ctrl.lProject()) {
+            return [
+                m.component(projectDashboardMenu, {project: m.prop(_.first(ctrl.project()))}),
+                m.component(projectContributionReportHeader, {
+                    submit: ctrl.submit,
+                    filterBuilder: ctrl.filterBuilder,
+                    form: ctrl.filterVM.formDescriber,
+                    mapRewardsToOptions: ctrl.mapRewardsToOptions,
+                    filterVM: ctrl.filterVM
+                }),
+                m('.divider.u-margintop-30'),
+                m.component(projectContributionReportContent, {
+                    list: list
+                })
+            ];
+        } else {
+            return h.loader();
+        }
     }
 };
 

@@ -13,27 +13,35 @@ const projectReport = {
         let displayForm = h.toggleProp(false, true),
             sendSuccess = m.prop(false),
             submitDisabled = m.prop(false),
-            user = h.getUser() || {name: '', email: ''},
+            user = h.getUser(),
             email = m.prop(user.email),
             details = m.prop(''),
             reason = m.prop(''),
             l = m.prop(false),
-              sendReport = () => {
-                  submitDisabled(true);
-                  let loaderOpts = models.projectReport.postOptions({
+            checkLogin = () => {
+                if (user) {
+                    displayForm.toggle();
+                } else {
+                    window.location.href = '/login';
+                }
+            },
+            sendReport = () => {
+                submitDisabled(true);
+                let loaderOpts = models.projectReport.postOptions({
                     email: email(),
                     details: details(),
                     reason: reason() ,
                     project_id: h.getCurrentProject().project_id
                 });
-                  l = postgrest.loaderWithToken(loaderOpts);
+                l = postgrest.loaderWithToken(loaderOpts);
 
-                  l.load().then(sendSuccess(true));
-                  submitDisabled(false);
-                  return false;
-              };
+                l.load().then(sendSuccess(true));
+                submitDisabled(false);
+                return false;
+            };
 
         return {
+            checkLogin: checkLogin,
             displayForm: displayForm,
             sendSuccess: sendSuccess,
             submitDisabled: submitDisabled,
@@ -65,7 +73,7 @@ const projectReport = {
                         )
                       ) :
                       [
-                        m('.a.w-button.btn.btn-medium.btn-terciary.btn-inline[href=\'javascript:void(0);\']',{onclick: ctrl.displayForm.toggle},
+                        m('.a.w-button.btn.btn-medium.btn-terciary.btn-inline[href=\'javascript:void(0);\']',{onclick: ctrl.checkLogin},
                         'Denunciar este projeto'
                       ),
                       ctrl.displayForm() ? m('#report-form.u-margintop-30',
@@ -104,10 +112,6 @@ const projectReport = {
                                 ]
                               ),
                               m('textarea.w-input.text-field.positive.u-marginbottom-30', {placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema', onchange: m.withAttr('value', ctrl.details)}),
-                              m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
-                                'Seu email'
-                              ),
-                              m(`input.w-input.text-field.positive.u-marginbottom-30[required='required'][type='text'][value="${ctrl.email()}"]`, {onchange: m.withAttr('value', ctrl.email)}),
                               m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', {disabled: ctrl.submitDisabled()})
                             ]
                           )

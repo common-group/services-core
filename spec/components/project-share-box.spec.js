@@ -20,7 +20,6 @@ describe('ProjectShareBox', () => {
 
         it('should render project project share pop', () => {
             $output.should.have('.pop-share');
-            $output.should.have('.w-widget-facebook');
             $output.should.have('.w-widget-twitter');
             $output.should.have('.widget-embed');
         });

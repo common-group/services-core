@@ -24,7 +24,7 @@ const projectContributionReportContentCard = {
         let contribution = args.contribution(),
             profile_img = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {minimum_value: 0, description: 'Nenhuma recompensa selecionada'};
-        return m('.w-clearfix.card.card-clickable', [
+        return m('.w-clearfix.card', [
             m('.w-row', [
                 m('.w-col.w-col-1.w-col-tiny-1', [
                     m(`img.user-avatar.u-marginbottom-10[src='${profile_img}']`)
@@ -32,18 +32,19 @@ const projectContributionReportContentCard = {
                 m('.w-col.w-col-11.w-col-tiny-11', [
                     m('.w-row', [
                         m('.w-col.w-col-3', [
+                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')),
                             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.user_name),
                             m('.fontsize-smallest.lineheight-looser', [
                                 (contribution.has_another ? [
-                                    m('a.link-hidden-light.badge.badge-light', '+1 apoio'),
-                                    m.trust('&nbsp;')
+                                    m('a.link-hidden-light.badge.badge-light', '+1 apoio '),
                                 ] : ''),
-                                (contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary') : '')
-                            ])
+                                (contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary', m('span.fontcolor-secondary[style="font-size:11px;"]', ' Apoio não-público')) : '')
+                            ]),
+                            m('.fontsize-smallest.lineheight-looser', (contribution.email))
                         ]),
                         m('.w-col.w-col-3', [
                             m('.lineheight-tighter', [
-                                m(`span.fa.fa-circle.fontsize-smallest.${ctrl.stateClass(contribution.state)}`, '.'),
+                                m(`span.fa.fa-circle.fontsize-smallest.${ctrl.stateClass(contribution.state)}`),
                                 '   ',
                                 m('span.fontsize-large', `R$ ${h.formatNumber(contribution.value, 2, 3)}`)
                             ])

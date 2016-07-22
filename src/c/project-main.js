@@ -10,9 +10,11 @@ import projectPosts from './project-posts';
 
 const projectMain = {
     controller(args) {
-        const displayTabContent = (project) => {
-            const hash = window.location.hash,
-                        c_opts = {
+
+        const project = args.project,
+              hash = m.prop(window.location.hash),
+              displayTabContent = () => {
+                  const c_opts = {
                             project: project
                         },
                         tabs = {
@@ -28,23 +30,26 @@ const projectMain = {
                             '#posts': m.component(projectPosts, c_opts)
                         };
 
-            if (_.isEmpty(hash) || hash === '#_=_' || hash === '#preview') {
-                return tabs['#about'];
-            }
+                  hash(window.location.hash);
 
-            return tabs[hash];
-        };
+                  if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
+                      return tabs['#about'];
+                  }
+
+                  return tabs[hash()];
+              };
 
         h.redrawHashChange();
 
         return {
-            displayTabContent: displayTabContent
+            displayTabContent: displayTabContent,
+            hash: hash
         };
     },
     view(ctrl, args) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
-            m('.w-container', [
-                m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : '')
+            m(`${ctrl.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
+                m('.w-row', args.project() ? ctrl.displayTabContent() : '')
             ])
         ]);
     }

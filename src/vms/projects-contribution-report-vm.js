@@ -22,4 +22,21 @@ vm.full_text_index.toFilter = () => {
     return filter && replaceDiacritics(filter) || undefined;
 };
 
+vm.withNullParameters = () => {
+    const withNullVm = postgrest.filtersVM({
+        full_text_index: '@@',
+        state: 'eq',
+        reward_id: 'is',
+        project_id: 'eq'
+    });
+
+    withNullVm.full_text_index(vm.full_text_index());
+    withNullVm.order(vm.order());
+    withNullVm.state(vm.state());
+    withNullVm.reward_id(vm.reward_id());
+    withNullVm.project_id(vm.project_id());
+
+    return withNullVm.parameters();
+};
+
 export default vm;
