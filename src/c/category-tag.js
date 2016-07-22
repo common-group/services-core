@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const categoryTag = {
-    view (ctrl, args) {
+    view(ctrl, args) {
         const project = args.project;
 
         return project ? m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light[href="/pt/explore#by_category_id/${project().category_id}"]`, {
@@ -17,6 +17,6 @@ const categoryTag = {
           project().category_name
       ]) : '';
     }
-}
+};
 
 export default categoryTag;

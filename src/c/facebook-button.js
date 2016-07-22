@@ -1,24 +1,24 @@
 import m from 'mithril';
 
 const facebookButton = {
-    controller (args) {
+    controller(args) {
         const share = () => {
             if (FB){
-              FB.ui({
-                method: args.messenger ? 'send' : 'share',
-                link: args.url,
-                href: args.url,
-              });
+                FB.ui({
+                    method: args.messenger ? 'send' : 'share',
+                    link: args.url,
+                    href: args.url,
+                });
             }
-        }
+        };
 
         return {
             share: share
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         const buttonCss = () => {
-            if(args.mobile) {
+            if (args.mobile) {
                 return 'w-hidden-main w-hidden-medium u-marginbottom-20 btn btn-medium btn-fb';
             } else if (args.big) {
                 return 'btn btn-fb btn-large u-marginbottom-20 w-button';

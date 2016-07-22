@@ -491,7 +491,7 @@ const
     },
     projectFullPermalink = (project) => {
         let permalink;
-        if(typeof project === 'function') {
+        if (typeof project === 'function') {
             permalink = project().permalink;
         } else {
             permalink = project.permalink;
