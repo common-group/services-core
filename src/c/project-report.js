@@ -19,27 +19,26 @@ const projectReport = {
             reason = m.prop(''),
             l = m.prop(false),
             checkLogin = () => {
-              if (user) {
-                displayForm.toggle();
-              }
-              else {
-                window.location.href = '/login';
-              }
+                if (user) {
+                    displayForm.toggle();
+                } else {
+                    window.location.href = '/login';
+                }
             },
             sendReport = () => {
-                  submitDisabled(true);
-                  let loaderOpts = models.projectReport.postOptions({
+                submitDisabled(true);
+                let loaderOpts = models.projectReport.postOptions({
                     email: email(),
                     details: details(),
                     reason: reason() ,
                     project_id: h.getCurrentProject().project_id
-                  });
-                  l = postgrest.loaderWithToken(loaderOpts);
+                });
+                l = postgrest.loaderWithToken(loaderOpts);
 
-                  l.load().then(sendSuccess(true));
-                  submitDisabled(false);
-                  return false;
-              };
+                l.load().then(sendSuccess(true));
+                submitDisabled(false);
+                return false;
+            };
 
         return {
             checkLogin: checkLogin,

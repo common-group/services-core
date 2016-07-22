@@ -488,6 +488,16 @@ const
         event: analyticsEvent,
         oneTimeEvent: analyticsOneTimeEvent,
         windowScroll: analyticsWindowScroll
+    },
+    projectFullPermalink = (project) => {
+        let permalink;
+        if (typeof project === 'function') {
+            permalink = project().permalink;
+        } else {
+            permalink = project.permalink;
+        }
+
+        return `https://www.catarse.me/${permalink}`;
     };
 
 setMomentifyLocale();
@@ -535,5 +545,6 @@ export default {
     validationErrors,
     validate,
     analytics,
-    strip
+    strip,
+    projectFullPermalink
 };

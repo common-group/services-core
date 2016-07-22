@@ -92,8 +92,8 @@ const projectContributionReport = {
             }
 
             options.unshift({
-              value: null,
-              option: 'Sem recompensa'
+                value: null,
+                option: 'Sem recompensa'
             });
 
             options.unshift({

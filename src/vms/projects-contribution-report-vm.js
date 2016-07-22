@@ -37,6 +37,6 @@ vm.withNullParameters = () => {
     withNullVm.project_id(vm.project_id());
 
     return withNullVm.parameters();
-}
+};
 
 export default vm;
