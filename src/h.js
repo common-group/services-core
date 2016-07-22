@@ -521,25 +521,6 @@ const
            }
        };
    },
-   analyticsWindowScroll = (eventObj) => {
-       if (eventObj) {
-           let fired=false;
-           window.addEventListener('scroll', function(e){
-               //console.log('windowScroll');
-               if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                 fired=true;
-                 const fireEvent = analyticsEvent(eventObj);
-                 fireEvent();
-               }
-           });
-       }
-   },
-   analytics = {
-        event: analyticsEvent,
-        oneTimeEvent: analyticsOneTimeEvent,
-        windowScroll: analyticsWindowScroll
-    },
-
     monetaryToFloat = (propValue) => {
         return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
@@ -633,7 +614,7 @@ const
             currentReward(reward);
         },
         getReward = () => currentReward,
-        buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`;
+        buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`,
         analyticsWindowScroll = (eventObj) => {
             if (eventObj) {
                 let fired = false;
