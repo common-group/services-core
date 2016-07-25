@@ -23,7 +23,7 @@ const userFriends = {
 
         const userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
               user = args.user,
-            friendListVM = postgrest.paginationVM(models.userFriend, 'total_contributed_projects.desc', {
+            friendListVM = postgrest.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
                 'Prefer':  'count=exact'
             }),
             allLoading = m.prop(false),
