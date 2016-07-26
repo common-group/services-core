@@ -35,14 +35,15 @@ const copyTextInput = {
         const setClickHandler = (el, isInitialized) => {
             let copy;
             if (!isInitialized) {
+                let textarea = document.getElementById('copy-textarea');
                 el.onclick = () => {
-                    select(el);
+                    select(textarea);
                     copy = document.execCommand('copy');
                     if (copy) {
                         showSuccess(true);
                         m.redraw();
                     } else {
-                        el.blur();
+                        textarea.blur();
                     }
 
                 };
@@ -52,19 +53,18 @@ const copyTextInput = {
         return {
             setClickHandler: setClickHandler,
             showSuccess: showSuccess
-        };
+        }
     },
     view(ctrl, args) {
-        return m('#clipboard', [
-            m(`textarea.positive.text-field.w-input`, {
-                readOnly: true,
-                config: ctrl.setClickHandler,
+        return m('#clipboard.w-row', [
+            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m(`textarea#copy-textarea.positive.text-field.w-input`, {
                 style: 'margin-bottom:0;'
-            }, args.value
-          ),
-          m('span.fontweight-light.fontsize-mini.fontcolor-secondary', '(clique para copiar)'),
-          ctrl.showSuccess() ? m.component(popNotification, {message: 'Link copiado'}) : ''
-      ]);
+            }, args.value)),
+            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
+                config: ctrl.setClickHandler                                                
+            })),
+            ctrl.showSuccess() ? m.component(popNotification, {message: 'Link copiado'}) : ''
+        ]);
     }
 };
 
