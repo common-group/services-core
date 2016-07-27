@@ -28,3 +28,4 @@ spec/bundle.spec.js
 .lock-wscript
 
 .tern-port
+*.swp

@@ -21,7 +21,7 @@ const userFollowers = {
     controller(args) {
         models.userFollower.pageSize(9);
         const followersListVM = postgrest.paginationVM(models.userFollower,
-                                                       'created_at.desc', {
+                                                       'following.asc,created_at.desc', {
                                                            'Prefer':  'count=exact'
                                                        }),
               user = args.user,
