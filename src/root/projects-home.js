@@ -28,13 +28,13 @@ const projectsHome = {
             friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
                 'Prefer':  'count=exact'
             }),
-            currentUserId = args.root.getAttribute('data-currentuserid'),
-            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
+            currentUser = h.getUser(),
+            hasFBAuth = currentUser ? currentUser.has_fb_auth : false,       
             vm = homeVM();
 
         project.pageSize(20);
 
-        userFriendVM.user_id(currentUserId);
+        userFriendVM.user_id(currentUser.user_id);
 
         if (hasFBAuth && !friendListVM.collection().length) {
             friendListVM.firstPage(userFriendVM.parameters());
