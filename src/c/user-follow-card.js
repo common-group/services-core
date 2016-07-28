@@ -25,7 +25,9 @@ const UserFollowCard = {
           m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center',
             [
               m(`img.thumb.u-marginbottom-10.u-round[src='${profile_img}']`),
-              m('.fontsize-base.fontweight-semibold.lineheight-tight', friend.name),
+              m('.fontsize-base.fontweight-semibold.lineheight-tight', 
+                m('a.link-hidden', {href: `/users/${friend.friend_id}`}, friend.name)
+              ),
               m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
                 (_.isNull(friend.city) ? '' :
                          m('.fontsize-smaller.fontcolor-secondary.u-marginbottom-10', `${friend.city}, ${friend.state}`))
