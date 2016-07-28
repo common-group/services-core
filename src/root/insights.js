@@ -151,7 +151,7 @@ const insights = {
                                 project.permalink ? m('.w-row',
                                     [
                                         m('.w-sub-col.w-col.w-col-6',
-                                            m.component(facebookButton, {url: h.projectFullPermalink(project)+'?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project-share-insights', big: true})
+                                            m.component(facebookButton, {url: h.projectFullPermalink(project)+'?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights', big: true})
                                         ),
                                         m('.w-col.w-col-6',
                                             m('.w-form',
@@ -159,7 +159,7 @@ const insights = {
                                                     m('.fontsize-smallest.fontweight-semibold',
                                                         'Link direto'
                                                     ),
-                                                    m.component(copyTextInput, {value: h.projectFullPermalink(project)+'?ref=project-link'})
+                                                    m.component(copyTextInput, {value: h.projectFullPermalink(project)+'?ref=project_link'})
                                                 ]
                                             )
                                         )
