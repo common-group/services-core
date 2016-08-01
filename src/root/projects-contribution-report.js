@@ -9,6 +9,7 @@ import projectContributionReportContent from '../c/project-contribution-report-c
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 import FilterMain from '../c/filter-main';
 import FilterDropdown from '../c/filter-dropdown';
+import InfoProjectContributionStateLegend from '../c/info-project-contribution-state-legend';
 
 const projectContributionReport = {
     controller(args) {
@@ -39,7 +40,10 @@ const projectContributionReport = {
                       label: 'payment_state',
                       component: FilterDropdown,
                       data: {
-                          label: 'Status do apoio',
+                          custom_label: [InfoProjectContributionStateLegend, {
+                              text: 'Status do apoio',
+                              project: project
+                          }],
                           name: 'state',
                           vm: filterVM.state,
                           wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
