@@ -15,8 +15,39 @@ const projectContributionReport = {
     controller(args) {
         const listVM = postgrest.paginationVM(models.projectContribution, 'id.desc', {'Prefer': 'count=exact'}),
               filterVM = projectsContributionReportVM,
-              project = m.prop({}),
+              project = m.prop([{}]),
               rewards = m.prop([]),
+              contributionStateOptions = m.prop([]),
+              reloadSelectOptions = (project_state) => {
+                  let opts = [{value: '', option: 'Todos'}];
+
+                  const options_map = {
+                      'online': [
+                          { value: 'paid', option: 'Confirmado' },
+                          { value: 'pending', option: 'Iniciado' },
+                          { value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado' },
+                      ],
+                      'waiting_funds': [
+                          { value: 'paid', option: 'Confirmado' },
+                          { value: 'pending', option: 'Iniciado' },
+                          { value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado' },
+                      ],
+                      'failed': [
+                          { value: 'pending_refund', option: 'Reembolso em andamento' },
+                          { value: 'refunded', option: 'Reembolsado' },
+                          { value: 'paid', option: 'Reembolso não iniciado' },
+                      ],
+                      'successful': [
+                          { value: 'paid', option: 'Confirmado' },
+                          { value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado' },
+                      ]
+                  };
+
+
+                  opts = opts.concat(options_map[project_state]||[]);
+
+                  contributionStateOptions(opts);
+              },
               filterBuilder = [
                   {
                       component: FilterMain,
@@ -47,22 +78,7 @@ const projectContributionReport = {
                           name: 'state',
                           vm: filterVM.state,
                           wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
-                          options: [{
-                              value: '',
-                              option: 'Todos'
-                          }, {
-                              value: 'paid',
-                              option: 'Pago'
-                          }, {
-                              value: 'pending',
-                              option: 'Pendente'
-                          }, {
-                              value: 'pending_refund',
-                              option: 'Reembolso pendente'
-                          }, {
-                              value: 'refunded',
-                              option: 'Reembolsado'
-                          }]
+                          options: contributionStateOptions
                       }
                   }
               ],
@@ -82,7 +98,10 @@ const projectContributionReport = {
         const lProject = postgrest.loaderWithToken(models.projectDetail.getPageOptions({project_id: `eq.${filterVM.project_id()}`}));
 
         lReward.load().then(rewards);
-        lProject.load().then(project);
+        lProject.load().then((data) => {
+            project(data);
+            reloadSelectOptions(_.first(data).state);
+        });
 
         const mapRewardsToOptions = () => {
             let options = [];
