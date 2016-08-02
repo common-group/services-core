@@ -4,17 +4,41 @@ import h from '../h';
 
 const projectContributionReportContentCard = {
     controller(args) {
-        const stateClass = (state) => {
-            const classes = {
-                'paid': 'text-success',
-                'refunded': 'text-refunded',
-                'pending_refund': 'text-refunded',
-                'pending': 'text-waiting',
-                'refused': 'text-error'
-            };
+        const project = args.project(),
+              stateClass = (state) => {
+                  const classes = {
+                      online: {
+                          'paid': 'text-success.fa-circle',
+                          'refunded': 'text-error.fa-circle',
+                          'pending_refund': 'text-error.fa-circle',
+                          'pending': 'text-waiting.fa-circle',
+                          'refused': 'text-error.fa-circle'
+                      },
+                      failed: {
+                          'paid': 'text-error.fa-circle-o',
+                          'refunded': 'text-refunded.fa-circle',
+                          'pending_refund': 'text-refunded.fa-circle-o',
+                          'pending': 'text-refunded',
+                          'refused': 'text-refunded'
+                      },
+                      waiting_funds: {
+                          'paid': 'text-success.fa-circle',
+                          'refunded': 'text-error.fa-circle',
+                          'pending_refund': 'text-error.fa-circle',
+                          'pending': 'text-waiting.fa-circle',
+                          'refused': 'text-error.fa-circle'
+                      },
+                      successful: {
+                          'paid': 'text-success.fa-circle',
+                          'refunded': 'text-error.fa-circle',
+                          'pending_refund': 'text-error.fa-circle',
+                          'pending': 'text-waiting.fa-circle',
+                          'refused': 'text-error.fa-circle'
+                      }
+                  };
 
-            return classes[state];
-        };
+                  return classes[project.state][state];
+              };
 
         return {
             stateClass: stateClass
@@ -44,7 +68,7 @@ const projectContributionReportContentCard = {
                         ]),
                         m('.w-col.w-col-3', [
                             m('.lineheight-tighter', [
-                                m(`span.fa.fa-circle.fontsize-smallest.${ctrl.stateClass(contribution.state)}`),
+                                m(`span.fa.fontsize-smallest.${ctrl.stateClass(contribution.state)}`),
                                 '   ',
                                 m('span.fontsize-large', `R$ ${h.formatNumber(contribution.value, 2, 3)}`)
                             ])
