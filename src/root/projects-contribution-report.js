@@ -158,7 +158,8 @@ const projectContributionReport = {
                 }),
                 m('.divider.u-margintop-30'),
                 m.component(projectContributionReportContent, {
-                    list: list
+                    list: list,
+                    project: m.prop(_.first(ctrl.project()))
                 })
             ];
         } else {

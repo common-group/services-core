@@ -71,7 +71,6 @@ const ProjectContributionStateLegendModal = {
                   'Status do apoio')
             ]),
             m('.modal-dialog-content', _.map(ctrl.stages[project_stage], (item, i) => {
-                console.log(item);
                 return m('.u-marginbottom-20', [
                     m('.fontsize-small.fontweight-semibold', [
                         m(`span${item.i_class}`),
