@@ -1,52 +1,59 @@
 import m from 'mithril';
+import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions_report.legend_labels');
+
 const ProjectContributionStateLegendModal = {
     controller(args) {
+        const translate = (path) => {
+            return I18n.t(path, I18nScope());
+        };
+
         return {
             stages: {
                 online: [
                     {
-                        label: 'Confirmado',
-                        text: 'Apoios de cartão de crédito ou de boleto, que foram pagos e confirmados pelo sistema.',
+                        label: translate('online.paid.label'),
+                        text: translate('online.paid.text'),
                         i_class: '.fa.fa-circle.text-success'
                     }, {
-                        label: 'Iniciado',
-                        text: 'Apoios de boleto que ainda não foram pagos ou que ainda não foram contabilizados no sistema.<br/> Obs. Depois de pago, o boleto pode demorar até 2 dias úteis para ser confirmado no sistema.',
+                        label: translate('online.pending.label'),
+                        text: translate('online.pending.text'),
                         i_class: '.fa.fa-circle.text-waiting'
                     }, {
-                        label: 'Contestado',
-                        text: 'Apoios que foram cancelados pelo apoiador após o pagamento.',
+                        label: translate('online.refunded.label'),
+                        text: translate('online.refunded.text'),
                         i_class: '.fa.fa-circle.text-error'
                     }
                 ],
                 failed: [
                     {
-                        label: 'Reembolso em andamento',
-                        text: 'Apoiador já forneceu os dados bancários e reembolso está em andamento.',
+                        label: translate('failed.pending_refund.label'),
+                        text: translate('failed.pending_refund.text'),
                         i_class: '.fa.fa-circle-o.text-refunded'
                     },
                     {
-                        label: 'Reembolsado',
-                        text: 'O valor foi reembolsado para o apoiador.',
+                        label: translate('failed.refunded.label'),
+                        text: translate('failed.refunded.text'),
                         i_class: '.fa.fa-circle.text-refunded'
                     },
                     {
-                        label: 'Reembolso não iniciado',
-                        text: 'Apoiador ainda não forneceu dados bancários para o Catarse efetuar o reembolso ou os dados fornecidos estão incorretos.',
+                        label: translate('failed.paid.label'),
+                        text: translate('failed.paid.text'),
                         i_class: '.fa.fa-circle-o.text-error'
                     }
                 ],
                 successful: [
                     {
-                        label: 'Confirmado',
-                        text: 'Apoios confirmados no sistema.',
+                        label: translate('successful.paid.label'),
+                        text: translate('successful.paid.text'),
                         i_class: '.fa.fa-circle.text-success'
                     },
                     {
-                        label: 'Contestado',
-                        text: 'Apoios que foram cancelados pelo apoiador após o pagamento. ',
+                        label: translate('successful.refunded.label'),
+                        text: translate('successful.refunded.text'),
                         i_class: '.fa.fa-circle.text-error'
                     },
                 ],
