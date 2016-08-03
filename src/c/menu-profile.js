@@ -17,6 +17,8 @@ const menuProfile = {
 
         userVM.getUserCreatedProjects(user_id).then(latestProjects);
 
+        userVM.getUserContributedProjects(user_id).then(contributedProjects);
+
         return {
             contributedProjects: contributedProjects,
             latestProjects: latestProjects,

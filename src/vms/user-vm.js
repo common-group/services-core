@@ -21,7 +21,13 @@ const getUserCreatedProjects = (user_id) => {
 };
 
 const getUserContributedProjects = (user_id) => {
+    createdVM.user_id(user_id).order({created_at: 'desc'});
 
+    models.contributionDetail.pageSize(3);
+
+    const lUserContributed = postgrest.loaderWithToken(models.contributionDetail.getPageOptions(createdVM.parameters()));
+
+    return lUserContributed.load();
 };
 
 
