@@ -1,5 +1,3 @@
-import m from 'mithril';
-import moment from 'moment';
 import I18n from 'i18n-js';
 
 const
@@ -642,7 +640,15 @@ const
         }
 
         return `https://www.catarse.me/${permalink}`;
-    };
+    },
+    isProjectPage = () => {
+        const path = window.location.pathname,
+              isOnInsights = path.indexOf('/insights') > -1,
+              isOnEdit = path.indexOf('/edit') > -1,
+              isOnContribution = path.indexOf('/contribution') > -1;
+
+        return !isOnEdit && !isOnInsights && !isOnContribution;
+     };
 
 setMomentifyLocale();
 closeFlash();
@@ -702,5 +708,7 @@ export default {
     applyMonetaryMask,
     monetaryToFloat,
     mask,
-    projectFullPermalink
+    projectFullPermalink,
+    isProjectPage
 };
+

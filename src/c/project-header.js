@@ -10,17 +10,9 @@ const projectHeader = {
     controller(args) {
         const project = args.project,
             currentUser = h.getUser(),
-            projectContributions = m.prop([]),
-            isProjectPage = () => {
-                const path = window.location.pathname,
-                    isOnInsights = path.indexOf('/insights') > -1,
-                    isOnEdit = path.indexOf('/edit') > -1,
-                    isOnContribution = path.indexOf('/contribution') > -1;
+            projectContributions = m.prop([]);
 
-                return !isOnEdit && !isOnInsights && !isOnContribution;
-            };
-
-        if(isProjectPage() && currentUser && !_.isUndefined(project())){
+        if(h.isProjectPage() && currentUser && !_.isUndefined(project())){
             contributionVM
                 .getUserProjectContributions(currentUser.user_id, project().project_id)
                 .then(projectContributions);
