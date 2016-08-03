@@ -4,7 +4,7 @@ import h from '../h';
 
 const vm = postgrest.filtersVM({
     full_text_index: '@@',
-    state: 'eq',
+    state: 'in',
     reward_id: 'eq',
     project_id: 'eq'
 }),
@@ -25,7 +25,7 @@ vm.full_text_index.toFilter = () => {
 vm.withNullParameters = () => {
     const withNullVm = postgrest.filtersVM({
         full_text_index: '@@',
-        state: 'eq',
+        state: 'in',
         reward_id: 'is',
         project_id: 'eq'
     });

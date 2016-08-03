@@ -24,7 +24,7 @@ const SignedFriendFacebookConnect = {
                     m('.card.card-big', [
                         m('.w-row', [
                             m('.w-col.w-col-8', [
-                                m('.fontsize-largest.u-marginbottom-20', 'Descubra o que seus amigos estão apoiando'),
+                                m('.fontsize-largest.u-marginbottom-20', 'Encontre projetos incríveis junto com seus amigos'),
                                 m('.fontsize-small', 'O universo do Catarse junto com a sua rede do Facebook te farão descobrir projetos incríveis!')
                             ]),
                             m('.w-col.w-col-4.u-text-center', [
@@ -45,4 +45,3 @@ const SignedFriendFacebookConnect = {
 };
 
 export default SignedFriendFacebookConnect;
-
