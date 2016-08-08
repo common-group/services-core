@@ -12,7 +12,7 @@ const projectsShow = {
         h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
         return projectVM(args.project_id, args.project_user_id);
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const project = ctrl.projectDetails;
 
         return m('.project-show', [
@@ -26,6 +26,7 @@ const projectsShow = {
                 }),
                 m.component(projectMain, {
                     project: project,
+                    post_id: args.post_id,
                     rewardDetails: ctrl.rewardDetails
                 }),
                 (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
