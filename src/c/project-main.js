@@ -14,8 +14,9 @@ const projectMain = {
               hash = m.prop(window.location.hash),
               displayTabContent = () => {
                   const c_opts = {
-                            project: project
-                        },
+                      project: project,
+                      post_id: args.post_id
+                  },
                         tabs = {
                             '#rewards': m('.w-col.w-col-12', m.component(projectRewardList, _.extend({}, {
                                 rewardDetails: args.rewardDetails
@@ -28,6 +29,10 @@ const projectMain = {
                             '#comments': m.component(projectComments, c_opts),
                             '#posts': m.component(projectPosts, c_opts)
                         };
+
+                  if (_.isNumber(args.post_id)) {
+                      window.location.hash = 'posts';
+                  }
 
                   hash(window.location.hash);
 
