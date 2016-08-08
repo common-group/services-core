@@ -198,7 +198,8 @@ window.c.root.Start = ((m, c, h, models, I18n) => {
                             m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_2', I18nScope())),
                             m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_3', I18nScope())),
                             m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_4', I18nScope())),
-                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_5', I18nScope()))
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_5', I18nScope())),
+                            m('.fontsize-large.u-marginbottom-30', I18n.t('features.feature_6', I18nScope()))
                         ])
                     ]),
                     m('.w-container', [
