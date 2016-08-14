@@ -198,7 +198,7 @@ const projectContributions = {
                      ]),
                      m('.w-row',
                        m('.w-col.w-col-12.u-text-center', [
-                           m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os principais apoios'),
+                           m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os apoios'),
                            (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
                                table: ctrl.contributionsPerLocationTable,
                                defaultSortIndex: -2
