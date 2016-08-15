@@ -3,7 +3,7 @@ import _ from 'underscore';
 
 const dropdown = {
     view(ctrl, args) {
-        let opts = (_.isFunction(args.options) ? args.options() : args.options );
+        let opts = (_.isFunction(args.options) ? args.options() : args.options);
 
         return m(
             `select${args.classes}[id="${args.id}"]`,

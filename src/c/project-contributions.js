@@ -156,11 +156,11 @@ const projectContributions = {
                                     lbl: contribution.user_id,
                                     project: args.project()
                                 })
-                            }, contribution.data.name), 
+                            }, contribution.data.name),
                             m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${contribution.data.city},${contribution.data.state}`),
                             m('.fontsize-smaller', [
                                 m('span.fontweight-semibold', contribution.data.total_contributed_projects),' apoiados  |  ',
-                                m("span.fontweight-semibold", contribution.data.total_published_projects)," criado"
+                                m('span.fontweight-semibold', contribution.data.total_published_projects),' criado'
                             ]),
                             //m('.btn-bottom-card.w-row', [
                             //    m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
