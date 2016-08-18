@@ -23,28 +23,27 @@ const projectContributionReport = {
 
                   const options_map = {
                       'online': [
-                          { value: 'paid', option: 'Confirmado' },
-                          { value: 'pending', option: 'Iniciado' },
-                          { value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado' },
+                          {value: 'paid', option: 'Confirmado'},
+                          {value: 'pending', option: 'Iniciado'},
+                          {value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado'},
                       ],
                       'waiting_funds': [
-                          { value: 'paid', option: 'Confirmado' },
-                          { value: 'pending', option: 'Iniciado' },
-                          { value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado' },
+                          {value: 'paid', option: 'Confirmado'},
+                          {value: 'pending', option: 'Iniciado'},
+                          {value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado'},
                       ],
                       'failed': [
-                          { value: 'pending_refund', option: 'Reembolso em andamento' },
-                          { value: 'refunded', option: 'Reembolsado' },
-                          { value: 'paid', option: 'Reembolso não iniciado' },
+                          {value: 'pending_refund', option: 'Reembolso em andamento'},
+                          {value: 'refunded', option: 'Reembolsado'},
+                          {value: 'paid', option: 'Reembolso não iniciado'},
                       ],
                       'successful': [
-                          { value: 'paid', option: 'Confirmado' },
-                          { value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado' },
+                          {value: 'paid', option: 'Confirmado'},
+                          {value: 'refunded,chargeback,deleted,pending_refund', option: 'Contestado'},
                       ]
                   };
 
-
-                  opts = opts.concat(options_map[project_state]||[]);
+                  opts = opts.concat(options_map[project_state] || []);
 
                   contributionStateOptions(opts);
               },

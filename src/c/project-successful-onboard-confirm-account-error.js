@@ -17,8 +17,21 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 
 const projectSuccessfulOnboardConfirmAccountError = {
     controller(args) {
+        const errorReasonM = m.prop(''),
+        error = m.prop(false);
+
+        const addErrorReason = () => {
+            if (errorReasonM().trim() === '')	{
+                return error(true);
+            } else {
+                return args.addErrorReason(errorReasonM).call();
+            }
+        };
+
         return {
-            errorReasonM: m.prop('')
+            addErrorReason: addErrorReason,
+            errorReasonM: errorReasonM,
+            error: error
         };
     },
     view(ctrl, args) {
@@ -30,13 +43,20 @@ const projectSuccessfulOnboardConfirmAccountError = {
                         m('label.field-label.fontweight-semibold.u-marginbottom-20', I18n.t('title', I18nScope())),
                         m('textarea.w-input.text-field', {
                             placeholder: I18n.t('placeholder', I18nScope()),
+                            class: ctrl.error() ? 'error' : '',
+                            onfocus: () => ctrl.error(false),
                             onchange: m.withAttr('value', ctrl.errorReasonM)
                         }),
+                        ctrl.error() ? m('.w-row', [
+                            m('.w-col.w-col-6.w-col-push-3.u-text-center', [
+                                m('span.fontsize-smallest.text-error', 'Campo Obrigatório')
+                            ])
+                        ]) : '',
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-push-4', [
                                 m('a.w-button.btn.btn-medium', {
                                     href: '#confirm_account_refuse',
-                                    onclick: args.addErrorReason(ctrl.errorReasonM)
+                                    onclick: ctrl.addErrorReason
                                 }, I18n.t('cta', I18nScope()))
                             ])
                         ])
