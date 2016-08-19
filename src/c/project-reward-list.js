@@ -25,10 +25,10 @@ const projectRewardList = {
                     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
                 } else {
                     vm.contributionValue(valueFloat);
-
-                    m.route(`/projects/${projectVM.currentProject().id}/payment`, {
-                        project_user_id: projectVM.currentProject().user_id
-                    });
+                    h.navigateTo(`/projects/${projectVM.currentProject().id}/contributions/new`);
+                    // m.route(`/projects/${projectVM.currentProject().id}/payment`, {
+                    //    project_user_id: projectVM.currentProject().user_id
+                    // });
                 }
             }
 
@@ -41,7 +41,7 @@ const projectRewardList = {
             h.removeStoredObject(storeKey);
             vm.selectedReward(reward);
             vm.contributionValue(h.applyMonetaryMask(`${value},00`));
-            vm.submitContribution();
+            submitContribution();
         }
 
         return {

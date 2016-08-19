@@ -330,6 +330,11 @@ const
         return false;
     },
 
+    navigateTo = (path) => {
+        window.location.href = path;
+        return false;
+    },
+
     cumulativeOffset = (element) => {
         let top = 0, left = 0;
         do {
@@ -684,6 +689,7 @@ export default {
     useAvatarOrDefault,
     locationActionMatch,
     navigateToDevise,
+    navigateTo,
     storeAction,
     callStoredAction,
     UIHelper,

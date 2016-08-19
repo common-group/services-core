@@ -121,7 +121,9 @@ const projectSidebar = {
                     ])
                 ])
                 , (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]',{
-                    onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()}, () => m.route(`/projects/${project().project_id}/contribution`))
+                    // onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()}, () => m.route(`/projects/${project().project_id}/contribution`))
+                    onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()}, () => h.navigateTo(`/projects/${project().project_id}/contributions/new`))
+
                 }, I18n.t('submit', I18nScope())) : '')
                 , ((project().open_for_contributions) ? m.component(projectReminder, {
                     project: project,
