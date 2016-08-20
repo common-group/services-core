@@ -8,6 +8,7 @@ const projectRow = {
         const collection = args.collection,
             title = args.title || collection.title,
             ref = args.ref,
+            showFriends = args.showFriends,
             wrapper = args.wrapper || '.w-section.section.u-marginbottom-40';
 
         if (collection.loader() || collection.collection().length > 0) {
@@ -24,7 +25,8 @@ const projectRow = {
                     collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), (project) => {
                         return m.component(projectCard, {
                             project: project,
-                            ref: ref
+                            ref: ref,
+                            showFriends: showFriends
                         });
                     }))
                 ])
