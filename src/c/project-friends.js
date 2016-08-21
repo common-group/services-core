@@ -41,7 +41,7 @@ const projectFriends = {
                       [
                         m('span.fontweight-semibold',
                           _.map(ctrl.friendsSample(), (user) => {
-                              return user.data.name;
+                              return user.data.name.split(' ')[0];
                           }).join(friendsCount > 2 ? ', ' : ' e ')
                          ),
                         (friendsCount > 2 ? [
