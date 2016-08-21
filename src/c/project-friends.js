@@ -1,11 +1,9 @@
 import m from 'mithril';
 import I18n from 'i18n-js';
 import _ from 'underscore';
-import h from '../h';
 import models from '../models';
 import postgrest from 'mithril-postgrest';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectFriends = {
     controller(args) {
         const project = args.project,
@@ -18,37 +16,37 @@ const projectFriends = {
 
         if (!listVM.collection().length) {
             listVM.firstPage(filterVM.parameters()).then(()=>{
-              friendsSample(_.sample(listVM.collection(), 2));
+                friendsSample(_.sample(listVM.collection(), 2));
             });
         }
         return {
-          project: project,
-          listVM: listVM,
-          friendsSample: friendsSample
+            project: project,
+            listVM: listVM,
+            friendsSample: friendsSample
         };
     },
     view(ctrl, args) {
-      const project = ctrl.project,
-            friendsCount = ctrl.listVM.collection().length;
-      return m(".friend-backed-card",
-                  [
-                    m(".friend-facepile",
-                      [
+        const project = ctrl.project,
+              friendsCount = ctrl.listVM.collection().length;
+        return m('.friend-backed-card',
+                    [
+                      m('.friend-facepile',
+                        [
                         _.map(ctrl.friendsSample(), (user) => {
-                          return m(`img.user-avatar[src='${user.data.profile_img_thumbnail}']`);
+                            return m(`img.user-avatar[src='${user.data.profile_img_thumbnail}']`);
                         })
                       ]
                     ),
-                    m("p.fontsize-smallest.friend-namepile.lineheight-tighter",
+                    m('p.fontsize-smallest.friend-namepile.lineheight-tighter',
                       [
-                        m("span.fontweight-semibold", 
+                        m('span.fontweight-semibold',
                           _.map(ctrl.friendsSample(), (user) => {
                               return user.data.name;
                           }).join(friendsCount > 2 ? ', ' : ' e ')
                          ),
                         (friendsCount > 2 ? [
-                          " e ",
-                          m("span.fontweight-semibold", 
+                          ' e ',
+                          m('span.fontweight-semibold',
                             `mais ${friendsCount - ctrl.friendsSample().length}`
                         )] : ''),
                         (friendsCount > 1 ?
