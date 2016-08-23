@@ -22,7 +22,8 @@ const init = (project_id, project_user_id) => {
 
     rewardVM.fetchRewards(project_id);
 
-    lProject.load().then(_.compose(currentProject, _.first));
+    lProject.load().then((data) => currentProject(_.first(data)));
+
 };
 
 const routeToProject = (project, ref) => () => {
