@@ -8,7 +8,9 @@ const projectFriends = {
     controller(args) {
         const project = args.project,
               friendsSample = m.prop([]),
-              listVM = postgrest.paginationVM(models.contributor),
+              listVM = postgrest.paginationVM(models.contributor, 'user_id.desc', {
+                  'Prefer':  'count=exact'
+              }),
               filterVM = postgrest.filtersVM({
                   project_id: 'eq',
                   is_follow: 'eq'
