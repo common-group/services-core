@@ -173,7 +173,7 @@ const insights = {
                         m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
                             project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
                                 I18n.t('finish_explanation', I18nScope()),
-                                m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/206507863-Catarse-flex-Principais-perguntas-e-respostas-"][target="_blank"]',I18n.t('know_more', I18nScope()))
+                                m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/208141033-Como-definir-o-prazo-no-Catarse-flex-"][target="_blank"]',I18n.t('know_more', I18nScope()))
                            ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at)})))
                         ])
                     ])
