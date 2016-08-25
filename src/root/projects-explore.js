@@ -261,8 +261,8 @@ const projectsExplore = {
             ]),
 
             ((ctrl.currentFilter().keyName === 'contributed_by_friends' && ctrl.loadFriends() && _.isEmpty(projects_collection) ) ? 
-              (ctrl.hasFBAuth ?
-             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect)) : ''),
+             (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
+             : ''),
             m('.w-section.section', [
                 m('.w-container', [
                     m('.w-row', [
