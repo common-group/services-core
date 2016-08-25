@@ -260,21 +260,22 @@ const projectsExplore = {
 
                             if (ctrl.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
-                            } else if (filterKeyName === 'all' || isContributedByFriendsFilter) {
-                                let ref_prefix = (isContributedByFriendsFilter ? 'friends' : 'featured');
+                            } else if (isContributedByFriendsFilter) {
+                                ref = 'ctrse_explore_friends';
+                            } else if (filterKeyName === 'all') {
                                 if (project.score >= 1) {
                                     if (idx === 0) {
                                         cardType = 'big';
-                                        ref = `ctrse_explore_${ref_prefix}_big`;
+                                        ref = 'ctrse_explore_featured_big';
                                         widowProjects = [projectsCount - 1, projectsCount - 2];
                                     } else if (idx === 1 || idx === 2) {
                                         if (ctrl.checkForMinScoredProjects(projects_collection)) {
                                             cardType = 'medium';
-                                            ref = `ctrse_explore_${ref_prefix}_medium`;
+                                            ref = 'ctrse_explore_featured_medium';
                                             widowProjects = [];
                                         } else {
                                             cardType = 'big';
-                                            ref = `ctrse_explore_${ref_prefix}_big`;
+                                            ref = 'ctrse_explore_featured_big';
                                             widowProjects = [projectsCount - 1];
                                         }
                                     } else {

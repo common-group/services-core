@@ -25,7 +25,7 @@ const projectsHome = {
             vm = homeVM();
 
 
-        const collections = _.map(['all','contributed_by_friends'], (name) => {
+        const collections = _.map(['score','contributed_by_friends'], (name) => {
             const f = filters[name],
                   cLoader = loader(project.getPageOptions(_.extend({}, {order: 'score.desc'}, f.filter.parameters()))),
                   collection = m.prop([]);
@@ -36,7 +36,7 @@ const projectsHome = {
 
             return {
                 title: f.nicename,
-                hash: name,
+                hash: (name === 'score' ? 'all' : name),
                 collection: collection,
                 loader: cLoader,
                 showFriends: (name === 'contributed_by_friends')
@@ -80,7 +80,7 @@ const projectsHome = {
                 return m.component(projectRow, {
                     collection: collection,
                     title: collection.title,
-                    ref: `home_${collection.hash}`,
+                    ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
                     showFriends: collection.showFriends
                 });
             }),
