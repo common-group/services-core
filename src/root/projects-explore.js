@@ -289,7 +289,7 @@ const projectsExplore = {
 
                             return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType, showFriends: isContributedByFriendsFilter});
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : _.isEmpty(projects_collection) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
+                        ctrl.projects().isLoading() ? h.loader() : (_.isEmpty(projects_collection) && ctrl.hasFBAuth ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : '')
                     ])
                 ])
             ]),
