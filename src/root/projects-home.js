@@ -96,7 +96,7 @@ const projectsHome = {
                 });
             }),
             //m.component(contributionActivities)
-            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
+            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, {largeBg: true}) : '')
         ];
     }
 };
