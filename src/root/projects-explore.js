@@ -279,7 +279,7 @@ const projectsExplore = {
                                             widowProjects = [projectsCount - 1];
                                         }
                                     } else {
-                                        ref = `ctrse_explore_${ref_prefix}`;
+                                        ref = 'ctrse_explore_featured';
                                     }
                                 }
                             }
