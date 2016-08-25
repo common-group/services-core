@@ -13,17 +13,35 @@ const idVM = h.idVM,
 
 const init = (project_id, project_user_id) => {
     vm.project_id(project_id);
-    idVM.id(project_user_id);
+    
+    const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
+    
+    fetchParallelData(project_id, project_user_id);
 
-    const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters())),
-          lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+    return lProject.load().then((data) => currentProject(_.first(data)));
+};
 
+const fetchParallelData = (project_id, project_user_id) => {
     userVM.fetchUser(project_user_id, true, userDetails);
 
     rewardVM.fetchRewards(project_id);
+};
 
-    lProject.load().then((data) => currentProject(_.first(data)));
+const getCurrentProject = () => {
+    const root = document.getElementById('project-show-root'),
+          data = root && root.getAttribute('data-parameters');
+    
+    if (data) {
+        const {project_id, project_user_id} = currentProject(JSON.parse(data));
 
+        m.redraw(true);
+
+        fetchParallelData(project_id, project_user_id);
+        
+        return currentProject();
+    } else {
+        return false;
+    }
 };
 
 const routeToProject = (project, ref) => () => {
@@ -33,8 +51,9 @@ const routeToProject = (project, ref) => () => {
 };
 
 const projectVM = {
-    currentProject: currentProject,
     userDetails: userDetails,
+    getCurrentProject: getCurrentProject,
+    currentProject: currentProject,
     rewardDetails: rewardVM.rewards,
     routeToProject: routeToProject,
     init: init
