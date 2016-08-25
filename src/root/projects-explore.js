@@ -211,10 +211,11 @@ const projectsExplore = {
     view(ctrl, args) {
         let projects_collection = ctrl.projects().collection(),
             projectsCount = projects_collection.length,
-            widowProjects = [];
+            widowProjects = [],
+            filterKeyName = ctrl.currentFilter().keyName,
+            isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
 
-        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch() 
-            && ctrl.currentFilter().keyName !== 'contributed_by_friends'){
+        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch() && isContributedByFriendsFilter){
             ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
             ctrl.changeFilter(ctrl.fallbackFilter);
         }
@@ -260,7 +261,7 @@ const projectsExplore = {
                 ])
             ]),
 
-            ((ctrl.currentFilter().keyName === 'contributed_by_friends' && ctrl.loadFriends() && _.isEmpty(projects_collection) ) ? 
+            ((isContributedByFriendsFilter && ctrl.loadFriends() && _.isEmpty(projects_collection) ) ? 
              (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
              : ''),
             m('.w-section.section', [
@@ -269,31 +270,33 @@ const projectsExplore = {
                         m('.w-row', _.map(projects_collection, (project, idx) => {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
+
                             if (ctrl.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
-                            } else if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
+                            } else if (filterKeyName === 'all' || isContributedByFriendsFilter) {
+                                let ref_prefix = (isContributedByFriendsFilter ? 'friends' : 'featured');
                                 if (project.score >= 1) {
                                     if (idx === 0) {
                                         cardType = 'big';
-                                        ref = 'ctrse_explore_featured_big';
+                                        ref = `ctrse_explore_${ref_prefix}_big`;
                                         widowProjects = [projectsCount - 1, projectsCount - 2];
                                     } else if (idx === 1 || idx === 2) {
                                         if (ctrl.checkForMinScoredProjects(projects_collection)) {
                                             cardType = 'medium';
-                                            ref = 'ctrse_explore_featured_medium';
+                                            ref = `ctrse_explore_${ref_prefix}_medium`;
                                             widowProjects = [];
                                         } else {
                                             cardType = 'big';
-                                            ref = 'ctrse_explore_featured_big';
+                                            ref = `ctrse_explore_${ref_prefix}_big`;
                                             widowProjects = [projectsCount - 1];
                                         }
                                     } else {
-                                        ref = 'ctrse_explore_featured';
+                                        ref = `ctrse_explore_${ref_prefix}`;
                                     }
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType, showFriends: ctrl.currentFilter().keyName === 'contributed_by_friends'});
+                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType, showFriends: isContributedByFriendsFilter});
                         })),
                         ctrl.projects().isLoading() ? h.loader() : _.isEmpty(projects_collection) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
                     ])

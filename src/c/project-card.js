@@ -125,12 +125,14 @@ const projectCard = {
                                 m('.fontsize-smallest.lineheight-tightest', (ctrl.remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
                             ] : [
                                 m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${ctrl.elapsedTextObj.total} ${ctrl.elapsedTextObj.unit}`])
-                            ])
+                            ]),
                         ])
-                    ])
-                ])
+                    ]),
+                ]),
+                (args.showFriends && ctrl.type === 'big' ?
+                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, {project: project})]) : '')
             ]),
-            (args.showFriends ?
+            (args.showFriends && ctrl.type !== 'big' ?
               m.component(projectFriends, {project: project}) : '')
         ]);
     }
