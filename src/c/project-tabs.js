@@ -52,34 +52,40 @@ const projectTabs = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-8', [!_.isEmpty(rewards()) ?
-                            m('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ' + (h.hashMatch('#rewards') ? 'selected' : '') + '"][href="#rewards"]', {
+                            m(`a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf  ${(h.hashMatch('#rewards') ? 'selected' : '')}"][href="/${project().permalink}#rewards"]`, {
                                 style: 'float: left;',
-                                onclick: h.analytics.event({cat: 'project_view',act: 'project_rewards_view',project: project()})
-                            }, 'Recompensas') : m('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ' + (h.hashMatch('#contribution_suggestions') ? 'selected' : '') + '"][href="#contribution_suggestions"]', {
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',act: 'project_rewards_view',project: project()})
+                            }, 'Recompensas') : m(`a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ${(h.hashMatch('#contribution_suggestions') ? 'selected' : '')}"][href="/${project().permalink}#contribution_suggestions"]`, {
                                 style: 'float: left;',
-                                onclick: h.analytics.event({cat: 'project_view',act: 'project_contribsuggestions_view',project: project()})
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',act: 'project_contribsuggestions_view',project: project()})
                             }, 'Valores Sugeridos'),
-                            m('a[id="about-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#about') || h.hashMatch('') ? 'selected' : '') + ' "][href="#about"]', {
+                            m(`a[id="about-link"][class="dashboard-nav-link mf ${(h.hashMatch('#about') || h.hashMatch('') ? 'selected' : '')}"][href="/${project().permalink}#about"]`, {
                                 style: 'float: left;',
-                                onclick: h.analytics.event({cat: 'project_view',act: 'project_about_view',project: project()})
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',act: 'project_about_view',project: project()})
                             }, 'Sobre'),
-                            m('a[id="posts-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#posts') ? 'selected' : '') + '"][href="#posts"]', {
+                            m(`a[id="posts-link"][class="dashboard-nav-link mf ${(h.hashMatch('#posts') ? 'selected' : '')}"][href="/${project().permalink}#posts"]`, {
                                 style: 'float: left;',
-                                onclick: h.analytics.event({cat: 'project_view',act: 'project_posts_view',project: project()})
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',act: 'project_posts_view',project: project()})
                             }, [
                                 'Novidades ',
                                 m('span.badge', project() ? project().posts_count : '')
                             ]),
-                            m('a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ' + (h.hashMatch('#contributions') ? 'selected' : '') + '"][href="#contributions"]', {
+                            m(`a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ${(h.hashMatch('#contributions') ? 'selected' : '')}"][href="/${project().permalink}#contributions"]`, {
                                 style: 'float: left;',
-                                onclick: h.analytics.event({cat: 'project_view',act: 'project_contributions_view',project: project()})
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',act: 'project_contributions_view',project: project()})
                             }, [
                                 'Apoiadores ',
                                 m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
                             ]),
-                            m('a[id="comments-link"][class="dashboard-nav-link mf ' + (h.hashMatch('#comments') ? 'selected' : '') + '"][href="#comments"]', {
+                            m(`a[id="comments-link"][class="dashboard-nav-link mf ${(h.hashMatch('#comments') ? 'selected' : '')}"][href="/${project().permalink}#comments"]`, {
                                 style: 'float: left;',
-                                onclick: h.analytics.event({cat: 'project_view',act: 'project_comments_view',project: project()})
+                                onclick: h.analytics.event({
+                                    cat: 'project_view',act: 'project_comments_view',project: project()})
                             }, [
                                 'Comentários ',
                                 project() ? m('fb:comments-count[href="http://www.catarse.me/' + project().permalink + '"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]', m.trust('&nbsp;')) : '-'

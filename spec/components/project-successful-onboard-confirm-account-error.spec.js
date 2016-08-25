@@ -22,8 +22,15 @@ describe('Project Successful Onboard Account Error', () => {
         });
 
         it('should call the error reason action on form submit', () => {
+            $output.setValue('textarea', 'huhu');
             $output.click('.w-button.btn.btn-medium');
             expect(addErrorReasonFn).toHaveBeenCalled();
+        });
+
+        it('should not allow error reason submit with empty description', () => {
+            $output.setValue('textarea', '');
+            $output.click('.w-button.btn.btn-medium');
+            expect($output.find('.text-error').length).toEqual(1);
         });
 
         it('should get back to action start when close is clicked', () => {

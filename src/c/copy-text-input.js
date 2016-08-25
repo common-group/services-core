@@ -53,7 +53,7 @@ const copyTextInput = {
         return {
             setClickHandler: setClickHandler,
             showSuccess: showSuccess
-        }
+        };
     },
     view(ctrl, args) {
         return m('#clipboard.w-row', [
@@ -61,7 +61,7 @@ const copyTextInput = {
                 style: 'margin-bottom:0;'
             }, args.value)),
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
-                config: ctrl.setClickHandler                                                
+                config: ctrl.setClickHandler
             })),
             ctrl.showSuccess() ? m.component(popNotification, {message: 'Link copiado'}) : ''
         ]);

@@ -39,6 +39,7 @@ const projectsShow = {
                 }),
                 m.component(projectMain, {
                     project: project,
+                    post_id: args.post_id,
                     rewardDetails: ctrl.rewardDetails
                 }),
                 (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {

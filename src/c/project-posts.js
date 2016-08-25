@@ -8,10 +8,15 @@ const projectPosts = {
     controller(args) {
         const listVM = postgrest.paginationVM(models.projectPostDetail),
             filterVM = postgrest.filtersVM({
-                project_id: 'eq'
+                project_id: 'eq',
+                id: 'eq'
             });
 
         filterVM.project_id(args.project().id);
+
+        if (_.isNumber(args.post_id)) {
+            filterVM.id(args.post_id);
+        }
 
         if (!listVM.collection().length) {
             listVM.firstPage(filterVM.parameters());
@@ -47,7 +52,10 @@ const projectPosts = {
                             m('.post', [
                                 m('.u-marginbottom-60 .w-clearfix', [
                                     m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
-                                    m('.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', post.title), (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores.'))
+                                    m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
+                                        m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
+                                    ]),
+                                    (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores.'))
                                 ]),
                                 m('.divider.u-marginbottom-60')
                             ])
@@ -57,11 +65,12 @@ const projectPosts = {
                 })),
                 m('.w-row', [
                     m('.w-col.w-col-2.w-col-push-5', [
-                        (!list.isLoading() ?
-                            (list.isLastPage() ? 'Nenhuma novidade.' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                onclick: list.nextPage
-                            }, 'Carregar mais')) :
-                            h.loader()),
+                        (!_.isUndefined(args.post_id) ? '' :
+                         (!list.isLoading() ?
+                          (list.isLastPage() ? 'Nenhuma novidade.' : m('button#load-more.btn.btn-medium.btn-terciary', {
+                              onclick: list.nextPage
+                          }, 'Carregar mais')) :
+                          h.loader())),
                     ])
                 ])
             ]),

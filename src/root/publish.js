@@ -103,7 +103,7 @@ const publish = {
                         ' ',
                       m('span.fontweight-semibold', 'Prazo para repasse')
                     ]),
-                    m('div', 'Após encerrar a sua campanha e confirmar seus dados bancários, o Catarse realizará o repasse diretamente na sua conta corrente em até 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.')
+                      m('div', 'Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Após essa confirmação, o Catarse depositará na sua conta corrente em até 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.')
                   ]),
                   m('.w-col.w-col-11', [
                     m('div', [
@@ -191,7 +191,7 @@ const publish = {
                         ' ',
                         m('span', {style: {'font-weight': ' 600'}}, 'Regras do repasse e reembolso')
                       ]),
-                      m('div', ['Após encerrar o seu projeto e confirmar seus dados bancários, o Catarse depositará o valor arrecadado, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. ',m('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202365507\'][target=\'_blank\']', 'Saiba mais sobre o processo de reembolso'),'.'])
+                        m('div', ['Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Após essa confirmação, o Catarse depositará o valor arrecadado, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. ',m('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202365507\'][target=\'_blank\']', 'Saiba mais sobre o processo de reembolso'),'.'])
                     ]),
 
                     m('.w-col.w-col-11', [
