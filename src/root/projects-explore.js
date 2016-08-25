@@ -26,12 +26,6 @@ const projectsExplore = {
         const filters = postgrest.filtersVM,
               projectFiltersVM = projectFilters(),
               filtersMap = projectFiltersVM.filters,
-              loadFriends = () => {
-                if (hasFBAuth && !friendListVM.collection().length) {
-                    friendListVM.firstPage(userFriendVM.parameters());
-                }
-                return friendListVM;
-              },
               defaultFilter = h.paramByName('filter') || 'all',
               fallbackFilter = 'all',
               currentFilter = m.prop(filtersMap[defaultFilter]),
@@ -43,10 +37,6 @@ const projectsExplore = {
                   currentFilter(filtersMap[defaultFilter]);
                   projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends']);
               },
-              userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
-              friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
-                  'Prefer':  'count=exact'
-              }),
               currentUserId = args.root.getAttribute('data-currentuserid'),
               hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
               buildTooltip = (tooltipText) => {
@@ -188,7 +178,6 @@ const projectsExplore = {
             currentFilter(filtersMap[defaultFilter]);
         }
 
-        userFriendVM.user_id(currentUserId);
         return {
             categories: categoryCollection,
             changeFilter: changeFilter,
@@ -203,8 +192,6 @@ const projectsExplore = {
             toggleCategories: toggleCategories,
             isSearch: isSearch,
             hasFBAuth: hasFBAuth,
-            loadFriends: loadFriends,
-            friendListVM: friendListVM,
             checkForMinScoredProjects: checkForMinScoredProjects
         };
     },
@@ -261,7 +248,7 @@ const projectsExplore = {
                 ])
             ]),
 
-            ((isContributedByFriendsFilter && ctrl.loadFriends() && _.isEmpty(projects_collection) ) ? 
+            ((isContributedByFriendsFilter && _.isEmpty(projects_collection) ) ? 
              (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
              : ''),
             m('.w-section.section', [

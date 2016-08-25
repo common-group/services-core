@@ -21,21 +21,11 @@ const projectsHome = {
             loader = postgrest.loaderWithToken,
             project = models.project,
             filters = projectFilters().filters,
-            userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
-            friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
-                'Prefer':  'count=exact'
-            }),
-            currentUserId = args.root.getAttribute('data-currentuserid'),
             hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
             vm = homeVM();
 
-        userFriendVM.user_id(currentUserId);
 
-        if (hasFBAuth && !friendListVM.collection().length) {
-            friendListVM.firstPage(userFriendVM.parameters());
-        }
-
-        const collections = _.map(['score','contributed_by_friends'], (name) => {
+        const collections = _.map(['all','contributed_by_friends'], (name) => {
             const f = filters[name],
                   cLoader = loader(project.getPageOptions(_.extend({}, {order: 'score.desc'}, f.filter.parameters()))),
                   collection = m.prop([]);
@@ -56,8 +46,7 @@ const projectsHome = {
         return {
             collections: collections,
             slidesContent: vm.banners,
-            hasFBAuth: hasFBAuth,
-            friendListVM: friendListVM
+            hasFBAuth: hasFBAuth
         };
     },
     view(ctrl) {
