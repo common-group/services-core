@@ -32,6 +32,11 @@ const projectFiltersVM = () => {
             open_for_contributions: 'eq'
         }).open_for_contributions('true'),
 
+        contributed_by_friends = filtersVM({
+            open_for_contributions: 'eq',
+            contributed_by_friends: 'eq'
+        }).open_for_contributions('true').contributed_by_friends(true),
+
         successful = filtersVM({
             state: 'eq'
         }).state('successful'),
@@ -52,6 +57,13 @@ const projectFiltersVM = () => {
               nicename: 'Populares',
               isContextual: false,
               keyName: 'score'
+          },
+            contributed_by_friends: {
+              title: 'Amigos',
+              filter: contributed_by_friends,
+              nicename: 'Amigos',
+              isContextual: false,
+              keyName: 'contributed_by_friends'
           },
             online: {
               title: 'No ar',

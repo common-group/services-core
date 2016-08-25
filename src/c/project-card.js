@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
+import projectFriends from './project-friends';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
@@ -128,7 +129,9 @@ const projectCard = {
                         ])
                     ])
                 ])
-            ])
+            ]),
+            (args.showFriends ?
+              m.component(projectFriends, {project: project}) : '')
         ]);
     }
 };

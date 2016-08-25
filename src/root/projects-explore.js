@@ -17,13 +17,21 @@ import search from '../c/search';
 import categoryButton from '../c/category-button';
 import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
+import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
+import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
-    controller() {
+    controller(args) {
         const filters = postgrest.filtersVM,
               projectFiltersVM = projectFilters(),
               filtersMap = projectFiltersVM.filters,
+              loadFriends = () => {
+                if (hasFBAuth && !friendListVM.collection().length) {
+                    friendListVM.firstPage(userFriendVM.parameters());
+                }
+                return friendListVM;
+              },
               defaultFilter = h.paramByName('filter') || 'all',
               fallbackFilter = 'all',
               currentFilter = m.prop(filtersMap[defaultFilter]),
@@ -33,8 +41,14 @@ const projectsExplore = {
               },
               resetContextFilter = () => {
                   currentFilter(filtersMap[defaultFilter]);
-                  projectFiltersVM.setContextFilters(['finished', 'all']);
+                  projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends']);
               },
+              userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+              friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+                  'Prefer':  'count=exact'
+              }),
+              currentUserId = args.root.getAttribute('data-currentuserid'),
+              hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
               buildTooltip = (tooltipText) => {
                   return m.component(tooltip, {
                       el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
@@ -55,6 +69,10 @@ const projectsExplore = {
                       hasHint = true;
                       hintText = 'Ordenados por R$ alcançado ';
                       tooltipText = 'Os projetos com maior meta de arrecadação alcançada ficam no topo';
+                  }else if (currentFilter().keyName === 'contributed_by_friends') {
+                      hasHint = true;
+                      hintText = 'Projetos apoiados por amigos ';
+                      tooltipText = 'Projetos apoiados por amigos';
                   }
 
                   return hasHint ? m('.fontsize-smaller.fontcolor-secondary', [hintText, buildTooltip(tooltipText)]) : '';
@@ -170,6 +188,7 @@ const projectsExplore = {
             currentFilter(filtersMap[defaultFilter]);
         }
 
+        userFriendVM.user_id(currentUserId);
         return {
             categories: categoryCollection,
             changeFilter: changeFilter,
@@ -183,6 +202,9 @@ const projectsExplore = {
             projectFiltersVM: projectFiltersVM,
             toggleCategories: toggleCategories,
             isSearch: isSearch,
+            hasFBAuth: hasFBAuth,
+            loadFriends: loadFriends,
+            friendListVM: friendListVM,
             checkForMinScoredProjects: checkForMinScoredProjects
         };
     },
@@ -191,7 +213,8 @@ const projectsExplore = {
             projectsCount = projects_collection.length,
             widowProjects = [];
 
-        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch()){
+        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch() 
+            && ctrl.currentFilter().keyName !== 'contributed_by_friends'){
             ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
             ctrl.changeFilter(ctrl.fallbackFilter);
         }
@@ -237,6 +260,9 @@ const projectsExplore = {
                 ])
             ]),
 
+            ((ctrl.currentFilter().keyName === 'contributed_by_friends' && ctrl.loadFriends() && _.isEmpty(projects_collection) ) ? 
+              (ctrl.hasFBAuth ?
+             m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect)) : ''),
             m('.w-section.section', [
                 m('.w-container', [
                     m('.w-row', [
@@ -267,7 +293,7 @@ const projectsExplore = {
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType});
+                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType, showFriends: ctrl.currentFilter().keyName === 'contributed_by_friends'});
                         })),
                         ctrl.projects().isLoading() ? h.loader() : _.isEmpty(projects_collection) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
                     ])
