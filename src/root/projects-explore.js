@@ -202,9 +202,12 @@ const projectsExplore = {
             filterKeyName = ctrl.currentFilter().keyName,
             isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
 
-        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch() && isContributedByFriendsFilter){
-            ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
-            ctrl.changeFilter(ctrl.fallbackFilter);
+        if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch()){
+            if (isContributedByFriendsFilter && !ctrl.hasFBAuth) {
+            } else {
+                ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
+                ctrl.changeFilter(ctrl.fallbackFilter);
+            }
         }
 
         return [
