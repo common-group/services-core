@@ -14,17 +14,19 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsShow = {
     controller(args) {
+        const {project_id, project_user_id} = args;
+
         h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
         
-        if (!projectVM.getCurrentProject()) {
-            const {project_id, project_user_id} = args;
+        console.log('get current project: ', projectVM.getCurrentProject());
 
+        if (project_id) {
             projectVM.init(project_id, project_user_id);
         }
 
         return projectVM;
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const project = ctrl.currentProject() ? ctrl.currentProject : m.prop({});
 
         return m('.project-show', [

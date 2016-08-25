@@ -79,7 +79,8 @@ const projectCard = {
             
         return m(ctrl.css().wrapper, [
             m(ctrl.css().innerWrapper, [
-                m(`a${ctrl.css().thumb}[href="${ctrl.link}"]`, {
+                m(`a${ctrl.css().thumb}[href="javascript:void(0);"]`, {
+                    onclick: projectVM.routeToProject(project, args.ref),
                     style: {
                         'background-image': `url(${project.project_img})`,
                         'display': 'block'

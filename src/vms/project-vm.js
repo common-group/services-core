@@ -45,6 +45,7 @@ const getCurrentProject = () => {
 };
 
 const routeToProject = (project, ref) => () => {
+    console.log('Routing to project: ', project);
     currentProject(project);
 
     return m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
