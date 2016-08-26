@@ -37,7 +37,7 @@ const menuProfile = {
                     },
                     m(`img.user-avatar[alt='Thumb avatar 942644 4735930283597 888573557 n'][height='40'][src='${user.profile_img_thumbnail}'][width='40']`)
                 ),
-                ctrl.toggleMenu() ? m(`nav.w-dropdown-list.dropdown-list.user-menu.w--open[id='user-menu-dropdown']`,
+                ctrl.toggleMenu() ? m(`nav.w-dropdown-list.dropdown-list.user-menu.w--open[id='user-menu-dropdown']`, {style: 'display:block;'},
                     [
                         m(`.w-row`,
                             [
