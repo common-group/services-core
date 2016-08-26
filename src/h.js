@@ -305,7 +305,7 @@ const
 
     UIHelper = () => {
         return (el, isInitialized) => {
-            if (!isInitialized && $) {
+            if (!isInitialized && window.$) {
                 window.UIHelper.setupResponsiveIframes($(el));
             }
         };
@@ -623,7 +623,7 @@ const
                 let fired = false;
                 window.addEventListener('scroll', function(e){
                     //console.log('windowScroll');
-                    if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                    if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
                         fired = true;
                         const fireEvent = analyticsEvent(eventObj);
                         fireEvent();
