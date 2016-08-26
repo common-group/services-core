@@ -19,17 +19,18 @@ const projectRewardList = {
             } else {
                 vm.error('');
                 
-                if (!h.getUser()) {
-                    h.storeObject(storeKey, {value: valueFloat, reward: vm.selectedReward()});
+                // THIS CHECK IS ONLY NECESSARY IF WHEN WE START ROUTING DIRECTLY TO THE /contributions/edit page
+                // if (!h.getUser()) {
+                //     h.storeObject(storeKey, {value: valueFloat, reward: vm.selectedReward()});
 
-                    return h.navigateToDevise('/' + projectVM.currentProject().permalink);
-                } else {
+                //     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
+                // } else {
                     vm.contributionValue(valueFloat);
-                    h.navigateTo(`/projects/${projectVM.currentProject().id}/contributions/new`);
+                    h.navigateTo(`/projects/${projectVM.currentProject().id}/contributions/new?reward_id=${vm.selectedReward().id}`);
                     // m.route(`/projects/${projectVM.currentProject().id}/payment`, {
                     //    project_user_id: projectVM.currentProject().user_id
                     // });
-                }
+                // }
             }
 
             return false;
