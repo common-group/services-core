@@ -4,6 +4,7 @@ import h from '../h';
 import userFriends from  '../c/user-friends';
 import userFollows from  '../c/user-follows';
 import userFollowers from  '../c/user-followers';
+import userCreators from  '../c/user-creators';
 
 const FollowFoundFriends = {
     controller(args) {
@@ -14,6 +15,7 @@ const FollowFoundFriends = {
                       user: user
                   },
                   tabs = {
+                            '#creators': m.component(userCreators, c_opts),
                             '#friends': m.component(userFriends, c_opts),
                             '#follows': m.component(userFollows, c_opts),
                             '#followers': m.component(userFollowers, c_opts)
@@ -53,6 +55,9 @@ const FollowFoundFriends = {
               m('.project-nav',
                 m('.u-text-center.w-container',
                   [
+                    m('a[id="creators-link"][class="dashboard-nav-link ' + (h.hashMatch('#creators') ? 'selected' : '') + '"] [href="#creators"]',
+                      'Encontre realizadores'
+                     ),
                     m('a[id="friends-link"][class="dashboard-nav-link ' + (h.hashMatch('#friends') || h.hashMatch('') ? 'selected' : '') + '"] [href="#friends"]',
                       'Encontre amigos'
                     ),
