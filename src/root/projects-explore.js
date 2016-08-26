@@ -17,10 +17,12 @@ import search from '../c/search';
 import categoryButton from '../c/category-button';
 import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
+import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
+import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
-    controller() {
+    controller(args) {
         const filters = postgrest.filtersVM,
               projectFiltersVM = projectFilters(),
               filtersMap = projectFiltersVM.filters,
@@ -33,8 +35,10 @@ const projectsExplore = {
               },
               resetContextFilter = () => {
                   currentFilter(filtersMap[defaultFilter]);
-                  projectFiltersVM.setContextFilters(['finished', 'all']);
+                  projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends']);
               },
+              currentUserId = args.root.getAttribute('data-currentuserid'),
+              hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
               buildTooltip = (tooltipText) => {
                   return m.component(tooltip, {
                       el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
@@ -55,6 +59,10 @@ const projectsExplore = {
                       hasHint = true;
                       hintText = 'Ordenados por R$ alcançado ';
                       tooltipText = 'Os projetos com maior meta de arrecadação alcançada ficam no topo';
+                  }else if (currentFilter().keyName === 'contributed_by_friends') {
+                      hasHint = true;
+                      hintText = 'Projetos apoiados por amigos ';
+                      tooltipText = 'Projetos apoiados por amigos';
                   }
 
                   return hasHint ? m('.fontsize-smaller.fontcolor-secondary', [hintText, buildTooltip(tooltipText)]) : '';
@@ -183,17 +191,23 @@ const projectsExplore = {
             projectFiltersVM: projectFiltersVM,
             toggleCategories: toggleCategories,
             isSearch: isSearch,
+            hasFBAuth: hasFBAuth,
             checkForMinScoredProjects: checkForMinScoredProjects
         };
     },
     view(ctrl, args) {
         let projects_collection = ctrl.projects().collection(),
             projectsCount = projects_collection.length,
-            widowProjects = [];
+            widowProjects = [],
+            filterKeyName = ctrl.currentFilter().keyName,
+            isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
 
         if (!ctrl.projects().isLoading() && _.isEmpty(projects_collection) && !ctrl.isSearch()){
-            ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
-            ctrl.changeFilter(ctrl.fallbackFilter);
+            if (isContributedByFriendsFilter && !ctrl.hasFBAuth) {
+            } else {
+                ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
+                ctrl.changeFilter(ctrl.fallbackFilter);
+            }
         }
 
         return m('#explore', [
@@ -237,15 +251,21 @@ const projectsExplore = {
                 ])
             ]),
 
+            ((isContributedByFriendsFilter && _.isEmpty(projects_collection) ) ? 
+             (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
+             : ''),
             m('.w-section.section', [
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-row', _.map(projects_collection, (project, idx) => {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
+
                             if (ctrl.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
-                            } else if (ctrl.currentFilter().keyName === 'all' && !ctrl.isSearch()) {
+                            } else if (isContributedByFriendsFilter) {
+                                ref = 'ctrse_explore_friends';
+                            } else if (filterKeyName === 'all') {
                                 if (project.score >= 1) {
                                     if (idx === 0) {
                                         cardType = 'big';
@@ -267,9 +287,9 @@ const projectsExplore = {
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType});
+                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {project: project, ref: ref, type: cardType, showFriends: isContributedByFriendsFilter});
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : _.isEmpty(projects_collection) ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : ''
+                        ctrl.projects().isLoading() ? h.loader() : (_.isEmpty(projects_collection) && ctrl.hasFBAuth ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : '')
                     ])
                 ])
             ]),

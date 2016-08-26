@@ -21,7 +21,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.home');
 const projectsHome = {
     controller(args) {
         let sample6 = _.partial(_.sample, _, 6),
-            loader = postgrest.loader,
+            loader = postgrest.loaderWithToken,
             project = models.project,
             filters = projectFilters().filters,
             userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
@@ -29,7 +29,7 @@ const projectsHome = {
                 'Prefer':  'count=exact'
             }),
             currentUser = h.getUser(),
-            hasFBAuth = currentUser ? currentUser.has_fb_auth : false,       
+            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',       
             vm = homeVM();
 
         project.pageSize(20);
@@ -40,7 +40,7 @@ const projectsHome = {
             friendListVM.firstPage(userFriendVM.parameters());
         }
 
-        const collections = _.map(['score'], (name) => {
+        const collections = _.map(['score','contributed_by_friends'], (name) => {
             const f = filters[name],
                   cLoader = loader(project.getPageOptions(_.extend({}, {order: 'score.desc'}, f.filter.parameters()))),
                   collection = m.prop([]);
@@ -48,18 +48,18 @@ const projectsHome = {
             cLoader.load().then(_.compose(collection, sample6));
 
             return {
-                title: f.title,
-                hash: name,
+                title: f.nicename,
+                hash: (name === 'score' ? 'all' : name),
                 collection: collection,
-                loader: cLoader
+                loader: cLoader,
+                showFriends: (name === 'contributed_by_friends')
             };
         });
 
         return {
             collections: collections,
             slidesContent: vm.banners,
-            hasFBAuth: hasFBAuth,
-            friendListVM: friendListVM
+            hasFBAuth: hasFBAuth
         };
     },
     view(ctrl) {
@@ -93,15 +93,18 @@ const projectsHome = {
             _.map(ctrl.collections, (collection) => {
                 return m.component(projectRow, {
                     collection: collection,
-                    title: I18n.t('row_title', I18nScope()),
-                    ref: `home_${collection.hash}`
+                    title: collection.title,
+                    ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
+                    showFriends: collection.showFriends
                 });
             }),
             // m.component(contributionActivities),
-            ctrl.hasFBAuth ? m.component(SignedFriendFacebookConnect, {friendListVM: ctrl.friendListVM}) : m.component(UnsignedFriendFacebookConnect),
+            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, {largeBg: true}) : ''),
             m.component(blogBanner)
-            // m.component(footer, {expanded: true})
+            // m.component(footer, {expanded: true}),
+            // m.component(contributionActivities)
         ]);
+            
     }
 };
 

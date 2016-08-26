@@ -4,6 +4,7 @@ import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 import projectVM from '../vms/project-vm';
+import projectFriends from './project-friends';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
@@ -134,11 +135,15 @@ const projectCard = {
                                 m('.fontsize-smallest.lineheight-tightest', (ctrl.remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
                             ] : [
                                 m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${ctrl.elapsedTextObj.total} ${ctrl.elapsedTextObj.unit}`])
-                            ])
+                            ]),
                         ])
-                    ])
-                ])
-            ])
+                    ]),
+                ]),
+                (args.showFriends && ctrl.type === 'big' ?
+                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, {project: project})]) : '')
+            ]),
+            (args.showFriends && ctrl.type !== 'big' ?
+              m.component(projectFriends, {project: project}) : '')
         ]);
     }
 };

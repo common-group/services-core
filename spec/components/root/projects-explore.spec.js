@@ -1,4 +1,4 @@
-import projectsExplore from '../../../src/root/projects-explore'
+import projectsExplore from '../../../src/root/projects-explore';
 
 describe('ProjectsExplore', () => {
     let $output, project, component;
@@ -6,7 +6,7 @@ describe('ProjectsExplore', () => {
     beforeAll(() => {
         window.location.hash = '#by_category_id/1';
 
-        component = m.component(projectsExplore);
+        component = m.component(projectsExplore, { root: { getAttribute: (x) => { return null; }} });
         $output = mq(component);
     });
 
