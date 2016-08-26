@@ -18,10 +18,11 @@ const projectsShow = {
 
         h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
         
-        console.log('get current project: ', projectVM.getCurrentProject());
 
         if (project_id) {
             projectVM.init(project_id, project_user_id);
+        } else {
+            projectVM.getCurrentProject();
         }
 
         return projectVM;
