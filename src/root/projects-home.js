@@ -29,7 +29,7 @@ const projectsHome = {
                 'Prefer':  'count=exact'
             }),
             currentUser = h.getUser(),
-            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',       
+            hasFBAuth = currentUser.has_fb_auth,
             vm = homeVM();
 
         project.pageSize(20);

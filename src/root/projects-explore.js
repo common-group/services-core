@@ -37,8 +37,9 @@ const projectsExplore = {
                   currentFilter(filtersMap[defaultFilter]);
                   projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends']);
               },
-              currentUserId = args.root.getAttribute('data-currentuserid'),
-              hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
+              currentUser = h.getUser(),
+              currentUserId = currentUser.id,
+              hasFBAuth = currentUser.has_fb_auth,
               buildTooltip = (tooltipText) => {
                   return m.component(tooltip, {
                       el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
