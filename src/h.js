@@ -1,5 +1,3 @@
-import m from 'mithril';
-import moment from 'moment';
 import I18n from 'i18n-js';
 
 const
@@ -34,6 +32,18 @@ const
         }
     },
 
+    storeObject = (sessionKey, obj) => {
+        return sessionStorage.setItem(sessionKey, JSON.stringify(obj));
+    },
+
+    getStoredObject = (sessionKey) => {
+        if (sessionStorage.getItem(sessionKey)) {
+            return JSON.parse(sessionStorage.getItem(sessionKey));
+        } else {
+            return undefined;
+        }
+    },
+
     callStoredAction = (action, func) => {
         if (sessionStorage.getItem(action)) {
             func.call();
@@ -57,6 +67,43 @@ const
     validateEmail = (email) => {
         const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         return re.test(email);
+    },
+
+    validateCpf = (strCPF) => {
+        let sum = 0, remainder;
+
+        if (strCPF == '00000000000') return false;
+
+        for (let i = 1; i <= 9; i++) {
+            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+        }
+        remainder = (sum * 10) % 11;
+
+        if ((remainder == 10) || (remainder == 11)){
+            remainder = 0;
+        }
+
+        if (remainder != parseInt(strCPF.substring(9, 10))){
+            return false;
+        }
+
+        sum = 0;
+
+        for (let i = 1; i <= 10; i++){
+            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+        }
+
+        remainder = (sum * 10) % 11;
+
+        if ((remainder == 10) || (remainder == 11)){
+            remainder = 0;
+        }
+
+        if (remainder != parseInt(strCPF.substring(10, 11))){
+            return false;
+        }
+
+        return true;
     },
 
     validationErrors = m.prop([]),
@@ -283,6 +330,11 @@ const
         return false;
     },
 
+    navigateTo = (path) => {
+        window.location.href = path;
+        return false;
+    },
+
     cumulativeOffset = (element) => {
         let top = 0, left = 0;
         do {
@@ -448,42 +500,137 @@ const
                 CatarseAnalytics.event(eventObj);
             } catch (e) {
                 console.error('[h.analyticsEvent] error:',e);
+
             }
             fn();
-        };
+          };
     },
     _analyticsOneTimeEventFired = {},
     analyticsOneTimeEvent = (eventObj, fn) => {
-        if (!eventObj) {
-            return fn;
-        }
+       if (!eventObj) {
+           return fn;
+       }
 
-        const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
-        if (!eventKey) {
-            throw new Error('Should inform cat or act');
-        }
-        return () => {
-            if (!_analyticsOneTimeEventFired[eventKey]) {
-                //console.log('oneTimeEvent',eventKey);
-                _analyticsOneTimeEventFired[eventKey] = true;
-                const fireEvent = analyticsEvent(eventObj, fn);
-                fireEvent();
-            }
+       const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+       if (!eventKey) {
+           throw new Error('Should inform cat or act');
+       }
+       return () => {
+           if (!_analyticsOneTimeEventFired[eventKey]) {
+               //console.log('oneTimeEvent',eventKey);
+               _analyticsOneTimeEventFired[eventKey] = true;
+               const fireEvent = analyticsEvent(eventObj, fn);
+               fireEvent();
+           }
+       };
+   },
+    monetaryToFloat = (propValue) => {
+        return parseFloat(propValue().replace('.', '').replace(',', '.'));
+    },
+
+    applyMonetaryMask = (number) => {
+        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
+            integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
+            decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
+
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return `${integerPart},${decimalPart}`;
+    },
+
+    addChar = (position, maskChar) => {
+        return (char) => {
+            return (string) => {
+                if (string.length === position && char !== maskChar){
+                    return (string + maskChar);
+                }
+                return string;
+            };
         };
     },
-    analyticsWindowScroll = (eventObj) => {
-        if (eventObj) {
-            let fired = false;
-            window.addEventListener('scroll', function(e){
-                //console.log('windowScroll');
-                if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                    fired = true;
-                    const fireEvent = analyticsEvent(eventObj);
-                    fireEvent();
-                }
-            });
-        }
+    readMaskDefinition = (maskCharDefinitions) => {
+        return (maskDefinition) => {
+            return _.compact(_.map(maskDefinition, (letter, index) => {
+                return (letter in maskCharDefinitions ? null : [index, letter]);
+            }));
+        };
     },
+
+    isCharAllowed = (maskCharDefinitions) => {
+        return (maskDefinition) => {
+            return (position, newChar) => {
+                if (position >= maskDefinition.length){
+                    return false;
+                }
+
+                const maskChar = maskDefinition.charAt(position);
+                if (maskChar in maskCharDefinitions){
+                    return maskCharDefinitions[maskChar].test(newChar);
+                } else {
+                    return (newChar === maskChar || isCharAllowed(maskCharDefinitions)(maskDefinition)(position + 1, newChar));
+                }
+            };
+        };
+    },
+    //
+    applyMask = (maskDefinition) => {
+        const maskFunctions = _.map(maskDefinition, (maskChar) => addChar(maskChar[0], maskChar[1]));
+        return (string, newChar) => {
+            const addNewCharFunctions = _.map(maskFunctions, (el) => el(newChar));
+            const applyMaskFunctions = _.reduce(addNewCharFunctions, (memo, f) => {
+                return (_.isFunction(memo) ? _.compose(f, memo) : f);
+            });
+            return applyMaskFunctions(string);
+        };
+    },
+
+    //Adapted from https://github.com/diogob/jquery.fixedmask
+    mask = (maskDefinition, value) => {
+        const maskCharDefinitions = {
+                '9' : /\d/,
+                'A' : /[a-zA-Z]/
+            },
+            readMask = readMaskDefinition(maskCharDefinitions),
+            isStrCharAllowed = isCharAllowed(maskCharDefinitions),
+            applyValueMask = applyMask(readMask(maskDefinition)),
+            restrictInput = isStrCharAllowed(maskDefinition);
+
+        return _.reduce(value, (memo, chr) => {
+            if(restrictInput(memo.length, chr)){
+                memo = applyValueMask(memo, chr) + chr;
+            }
+            return memo;
+        }, '');
+    },
+
+      removeStoredObject = (sessionKey) => {
+          return sessionStorage.removeItem(sessionKey);
+      },
+
+      currentProject = m.prop(),
+        setProject = (project) => {
+            currentProject(project);
+        },
+        getProject = () => currentProject,
+        currentReward = m.prop(),
+        setReward = (reward) => {
+            currentReward(reward);
+        },
+        getReward = () => currentReward,
+        buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`,
+        analyticsWindowScroll = (eventObj) => {
+            if (eventObj) {
+                let fired = false;
+                window.addEventListener('scroll', function(e){
+                    //console.log('windowScroll');
+                    if (!fired && $ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                        fired = true;
+                        const fireEvent = analyticsEvent(eventObj);
+                        fireEvent();
+                    }
+                });
+            }
+        },
     analytics = {
         event: analyticsEvent,
         oneTimeEvent: analyticsOneTimeEvent,
@@ -498,7 +645,15 @@ const
         }
 
         return `https://www.catarse.me/${permalink}`;
-    };
+    },
+    isProjectPage = () => {
+        const path = window.location.pathname,
+              isOnInsights = path.indexOf('/insights') > -1,
+              isOnEdit = path.indexOf('/edit') > -1,
+              isOnContribution = path.indexOf('/contribution') > -1;
+
+        return !isOnEdit && !isOnInsights && !isOnContribution;
+     };
 
 setMomentifyLocale();
 closeFlash();
@@ -506,10 +661,12 @@ closeModal();
 
 export default {
     authenticityToken,
+    buildLink,
     cumulativeOffset,
     discuss,
     existy,
     validateEmail,
+    validateCpf,
     momentify,
     momentFromString,
     formatNumber,
@@ -532,6 +689,7 @@ export default {
     useAvatarOrDefault,
     locationActionMatch,
     navigateToDevise,
+    navigateTo,
     storeAction,
     callStoredAction,
     UIHelper,
@@ -546,5 +704,17 @@ export default {
     validate,
     analytics,
     strip,
-    projectFullPermalink
+    storeObject,
+    getStoredObject,
+    removeStoredObject,
+    setProject,
+    getProject,
+    setReward,
+    getReward,
+    applyMonetaryMask,
+    monetaryToFloat,
+    mask,
+    projectFullPermalink,
+    isProjectPage
 };
+

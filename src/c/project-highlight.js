@@ -21,7 +21,7 @@ const projectHighlight = {
             }, [
                 m('iframe.embedly-embed[itemprop="video"][src="' + project().video_embed_url + '"][frameborder="0"][allowFullScreen]')
             ]) : m('.project-image', {
-                style: 'background-image:url(' + project().original_image + ');'
+                style: `background-image:url('${project().original_image || project().project_img}');`
             })),
             m('.w-hidden-small.w-hidden-tiny', [
                 m.component(addressTag, {project: project}),

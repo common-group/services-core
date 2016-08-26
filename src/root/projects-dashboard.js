@@ -14,10 +14,13 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsDashboard = {
     controller(args) {
-        return projectVM(args.project_id, args.project_user_id);
+        projectVM.init(args.project_id, args.project_user_id);
+
+        return projectVM;
     },
     view(ctrl) {
-        const project = ctrl.projectDetails;
+        const project = ctrl.currentProject;
+
         return project().is_owner_or_admin ?
             m.component(projectDashboardMenu, {project: project}) : '';
     }

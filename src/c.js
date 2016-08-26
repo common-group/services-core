@@ -9,11 +9,16 @@ import projectsDashboard from './root/projects-dashboard';
 import projectsExplore from './root/projects-explore';
 import projectsHome from './root/projects-home';
 import projectsShow from './root/projects-show';
+import projectsPayment from './root/projects-payment';
+import projectsReward from './root/projects-reward';
 import publish from './root/publish';
 import start from './root/start';
 import team from './root/team';
 import usersBalanceMain from './root/users-balance-main';
+import menu from './root/menu';
+import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
+
 
 const c = {
     root: {
@@ -28,10 +33,14 @@ const c = {
         ProjectsExplore: projectsExplore,
         ProjectsHome: projectsHome,
         ProjectsShow: projectsShow,
+        ProjectsPayment: projectsPayment,
+        ProjectsReward: projectsReward,
         Publish: publish,
         Start: start,
         Team: team,
         UsersBalance: usersBalanceMain,
+        Menu: menu,
+        Footer: footer,
         FollowFoundFriends: FollowFoundFriends
     }
 };

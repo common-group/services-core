@@ -10,9 +10,8 @@ import projectPosts from './project-posts';
 
 const projectMain = {
     controller(args) {
-        const project = args.project,
-              hash = m.prop(window.location.hash),
-              displayTabContent = () => {
+        const hash = m.prop(window.location.hash),
+              displayTabContent = (project) => {
                   const c_opts = {
                       project: project,
                       post_id: args.post_id
@@ -39,7 +38,7 @@ const projectMain = {
                   if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
                       return tabs['#about'];
                   }
-
+                  
                   return tabs[hash()];
               };
 
@@ -53,7 +52,7 @@ const projectMain = {
     view(ctrl, args) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
             m(`${ctrl.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
-                m('.w-row', args.project() ? ctrl.displayTabContent() : '')
+                m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : h.loader())
             ])
         ]);
     }

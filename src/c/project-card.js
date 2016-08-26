@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
+import projectVM from '../vms/project-vm';
 import projectFriends from './project-friends';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
@@ -79,7 +80,8 @@ const projectCard = {
             
         return m(ctrl.css().wrapper, [
             m(ctrl.css().innerWrapper, [
-                m(`a${ctrl.css().thumb}[href="${ctrl.link}"]`, {
+                m(`a${ctrl.css().thumb}[href="javascript:void(0);"]`, {
+                    onclick: projectVM.routeToProject(project, args.ref),
                     style: {
                         'background-image': `url(${project.project_img})`,
                         'display': 'block'
@@ -88,15 +90,23 @@ const projectCard = {
                 m(ctrl.css().descriptionWrapper, [
                     m(ctrl.css().description, [
                         m(ctrl.css().title, [
-                            m(`a.link-hidden[href="${ctrl.link}"]`, project.project_name)
+                            m(`a.link-hidden[href="javascript:void(0);"]`,{
+                                onclick: projectVM.routeToProject(project, args.ref)
+                            },
+                            project.project_name)
                         ]),
                         m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${project.owner_name}`),
                         m(ctrl.css().headline, [
-                            m(`a.link-hidden[href="${ctrl.link}"]`, project.headline)
+                            m(`a.link-hidden[href="javascript:void(0);"]`,{
+                                onclick: projectVM.routeToProject(project, args.ref)
+                            },project.headline)
                         ])
                     ]),
                     m(ctrl.css().city, [
-                        m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), ` ${project.city_name ? project.city_name : ''}, ${project.state_acronym ? project.state_acronym : ''}`])
+                        m('.fontsize-smallest.fontcolor-secondary', [
+                            m('span.fa.fa-map-marker.fa-1', ' '),
+                            ` ${project.city_name ? project.city_name : ''}, ${project.state_acronym ? project.state_acronym : ''}`
+                        ])
                     ]),
                     m(ctrl.cardMeter(), [
                         (_.contains(['successful', 'failed', 'waiting_funds'], project.state)) ?

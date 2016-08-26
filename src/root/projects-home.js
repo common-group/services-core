@@ -4,12 +4,15 @@ import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import h from '../h';
+import menu from './menu';
 import models from '../models';
 import projectFilters from '../vms/project-filters-vm';
 import homeVM from '../vms/home-vm';
 import slider from '../c/slider';
 import projectRow from '../c/project-row';
 import contributionActivities from '../c/contribution-activities';
+import blogBanner from './blog-banner';
+import footer from './footer';
 import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
@@ -21,9 +24,21 @@ const projectsHome = {
             loader = postgrest.loaderWithToken,
             project = models.project,
             filters = projectFilters().filters,
-            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',
+            userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+            friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+                'Prefer':  'count=exact'
+            }),
+            currentUser = h.getUser(),
+            hasFBAuth = args.root.getAttribute('data-hasfb') === 'true',       
             vm = homeVM();
 
+        project.pageSize(20);
+
+        userFriendVM.user_id(currentUser.user_id);
+
+        if (hasFBAuth && !friendListVM.collection().length) {
+            friendListVM.firstPage(userFriendVM.parameters());
+        }
 
         const collections = _.map(['score','contributed_by_friends'], (name) => {
             const f = filters[name],
@@ -31,8 +46,6 @@ const projectsHome = {
                   collection = m.prop([]);
 
             cLoader.load().then(_.compose(collection, sample6));
-
-            project.pageSize(20);
 
             return {
                 title: f.nicename,
@@ -68,7 +81,8 @@ const projectsHome = {
             });
         };
 
-        return [
+        return m('#projects-home-component', [
+            // m.component(menu, {transparent: true}),
             m.component(slider, {
                 slides: slides(),
                 effect: 'fade',
@@ -84,9 +98,13 @@ const projectsHome = {
                     showFriends: collection.showFriends
                 });
             }),
-            //m.component(contributionActivities)
-            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, {largeBg: true}) : '')
-        ];
+            // m.component(contributionActivities),
+            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, {largeBg: true}) : ''),
+            m.component(blogBanner)
+            // m.component(footer, {expanded: true}),
+            // m.component(contributionActivities)
+        ]);
+            
     }
 };
 

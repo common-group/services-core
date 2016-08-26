@@ -1,6 +1,8 @@
 import postgrest from 'mithril-postgrest';
 
 const models = {
+    country: postgrest.model('countries'),
+    state: postgrest.model('states'),
     contributionDetail: postgrest.model('contribution_details'),
     contributionActivity: postgrest.model('contribution_activities'),
     projectDetail: postgrest.model('project_details'),
@@ -50,6 +52,8 @@ models.category.pageSize(50);
 models.contributionActivity.pageSize(40);
 models.successfulProject.pageSize(9);
 models.finishedProject.pageSize(9);
+models.country.pageSize(false);
+models.state.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
 

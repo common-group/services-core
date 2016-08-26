@@ -12,20 +12,6 @@ describe('ProjectRow', () => {
             loader: m.prop(false)
         };
 
-        describe('when we have a ref parameter', () => {
-            it('should not render row', () => {
-                let [project] = ProjectMockery();
-                collection.collection([project]);
-                let component = m.component(projectRow),
-                    view = component.view(null, {
-                        collection: collection,
-                        ref: 'ref_test'
-                    });
-                $output = mq(view);
-                expect($output.find('.card-project a[href="/' + project.permalink + '?ref=ref_test"]').length).toEqual(3);
-            });
-        });
-
         describe('when collection is empty and loader true', () => {
             beforeAll(() => {
                 collection.collection([]);

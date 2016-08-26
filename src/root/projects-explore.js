@@ -210,7 +210,7 @@ const projectsExplore = {
             }
         }
 
-        return [
+        return m('#explore', [
             m('.w-section.hero-search', [
                 m.component(search),
                 m('.w-container.u-marginbottom-10', [
@@ -315,7 +315,7 @@ const projectsExplore = {
                     ])
                 ])
             ])
-        ];
+        ]);
     }
 };
 
