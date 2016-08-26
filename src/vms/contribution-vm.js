@@ -8,7 +8,7 @@ const getUserProjectContributions = (user_id, project_id) => {
     vm.user_id(user_id);
     vm.project_id(project_id);
 
-    const lProjectContributions = postgrest.loaderWithToken(models.contributionDetail.getPageOptions(vm.parameters()));
+    const lProjectContributions = postgrest.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
 
     return lProjectContributions.load();
 }
