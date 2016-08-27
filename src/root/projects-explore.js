@@ -175,6 +175,10 @@ const projectsExplore = {
         models.project.pageSize(9);
         loadCategories().then(loadRoute);
 
+        if (args.filter) {
+            currentFilter(filtersMap[args.filter]);
+        }
+
         if (!currentFilter()) {
             currentFilter(filtersMap[defaultFilter]);
         }
