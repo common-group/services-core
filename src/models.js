@@ -43,7 +43,8 @@ const models = {
     contributor: postgrest.model('contributors'),
     userFollower: postgrest.model('user_followers'),
     creatorSuggestion: postgrest.model('creator_suggestions'),
-    userContribution: postgrest.model('user_contributions')
+    userContribution: postgrest.model('user_contributions'),
+    inviteProjectEmail: postgrest.model('rpc/invite_project_email')
 };
 
 models.teamMember.pageSize(40);
