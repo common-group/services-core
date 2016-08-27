@@ -21,7 +21,7 @@ const projectHeader = {
         return {
             projectContributions: projectContributions,
             showContributions: h.toggleProp(false, true)
-        }
+        };
     },
     view(ctrl, args) {
         let project = args.project,
