@@ -97,7 +97,14 @@ const menuProfile = {
                                         m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.contributedProjects() ?
                                             _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
-                                                projects: ctrl.contributedProjects,
+                                                projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
+                                                    return {
+                                                        thumb_image: contribution.project_img,
+                                                        video_cover_image: contribution.project_img,
+                                                        permalink: contribution.permalink,
+                                                        name: contribution.project_name
+                                                    };
+                                                })),
                                                 loadMore: '/pt/users/${user.id}/edit#contributions'
                                             }) : 'carregando...'
                                         )
