@@ -28,7 +28,7 @@ const fetchParallelData = (project_id, project_user_id) => {
 };
 
 const getCurrentProject = () => {
-    const root = document.getElementById('project-show-root'),
+    const root = document.getElementById('application'),
           data = root && root.getAttribute('data-parameters');
     
     if (data) {
