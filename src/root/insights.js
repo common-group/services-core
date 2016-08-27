@@ -16,6 +16,7 @@ import projectReminderCount from '../c/project-reminder-count';
 import projectSuccessfulOnboard from '../c/project-successful-onboard';
 import facebookButton from '../c/facebook-button';
 import copyTextInput from '../c/copy-text-input';
+import projectInviteCard from '../c/project-invite-card';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -141,32 +142,9 @@ const insights = {
             }) : ''),
             m('.w-container', (project.state === 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project)}) : [
                 m('.w-row.u-marginbottom-40', [
-                    m('.w-col.w-col-8.w-col-push-2.dashboard-header.u-text-center', [
-                        m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
-                        project.state === 'online' ? m('.card.card-secondary.u-marginbottom-20.u-radius',
-                            [
-                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                    'Compartilhe sua campanha'
-                                ),
-                                project.permalink ? m('.w-row',
-                                    [
-                                        m('.w-sub-col.w-col.w-col-6',
-                                            m.component(facebookButton, {url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights', big: true})
-                                        ),
-                                        m('.w-col.w-col-6',
-                                            m('.w-form',
-                                                [
-                                                    m('.fontsize-smallest.fontweight-semibold',
-                                                        'Link direto'
-                                                    ),
-                                                    m.component(copyTextInput, {value: h.projectFullPermalink(project) + '?ref=project_link'})
-                                                ]
-                                            )
-                                        )
-                                    ]
-                                ) : ''
-                            ]
-                        ) : '',
+                    m('.w-col.w-col-10.w-col-push-1', [
+                        m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center', I18n.t('campaign_title', I18nScope())),
+                        (project.state === 'online' ? m.component(projectInviteCard, {project: project}) : ''),
                         (project.state === 'draft' ? m.component(adminProjectDetailsCard, {
                             resource: project
                         }) : ''),
