@@ -22,13 +22,15 @@ const facebookButton = {
                 return 'w-hidden-main w-hidden-medium u-marginbottom-20 btn btn-medium btn-fb';
             } else if (args.big) {
                 return 'btn btn-fb btn-large u-marginbottom-20 w-button';
+            } else if (args.medium) {
+                return 'btn btn-fb btn-medium u-marginbottom-20 w-button';
             } else {
                 return 'btn btn-inline btn-medium btn-terciary u-marginright-20';
             }
         };
 
         return m('button',{
-            class: buttonCss(),
+            class: `${buttonCss()} ${args.messenger ? 'btn-messenger' : ''}`,
             onclick: ctrl.share
         },[
             m('span.fa', {
