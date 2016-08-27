@@ -21,11 +21,19 @@ const getUserCreatedProjects = (user_id) => {
 };
 
 const getUserContributedProjects = (user_id) => {
-    createdVM.user_id(user_id).order({created_at: 'desc'});
+    const contextVM = postgrest.filtersVM({
+        user_id: 'eq',
+        state: 'in'
+    });
 
-    models.contributionDetail.pageSize(3);
+    contextVM.user_id(user_id).order({
+        created_at: 'desc'
+    }).state(['refunded', 'pending_refund', 'paid']);
 
-    const lUserContributed = postgrest.loaderWithToken(models.contributionDetail.getPageOptions(createdVM.parameters()));
+    models.userContribution.pageSize(3);
+
+    const lUserContributed = postgrest.loaderWithToken(
+        models.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
