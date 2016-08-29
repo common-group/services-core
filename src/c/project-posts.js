@@ -12,7 +12,7 @@ const projectPosts = {
                 id: 'eq'
             });
 
-        filterVM.project_id(args.project().id);
+        filterVM.project_id(args.project().project_id);
 
         if (_.isNumber(args.post_id)) {
             filterVM.id(args.post_id);
