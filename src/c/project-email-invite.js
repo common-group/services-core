@@ -4,6 +4,7 @@ import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import models from '../models';
 import popNotification from './pop-notification';
+import projectGoogleContactImport from './project-google-contact-import';
 
 const projectEmailInvite = {
     controller(args) {
@@ -59,24 +60,24 @@ const projectEmailInvite = {
              : [
                  m('.w-form', [
                      m('form', [
-                         //m(".u-marginbottom-10.u-text-center", [
-                         //    m("a.btn.btn-inline.btn-no-border.btn-terciary.w-inline-block[href='#']", [
-                         //        m("img[src='http://uploads.webflow.com/57ba58b4846cc19e60acdd5b/57bc339f77f314e23b94d44d_gmail-icon.png'][width='25']"),
-                         //        m("._w-inline-block.fontsize-smallest", "Contatos do gmail")
-                         //    ]),
+                         m(".u-marginbottom-10", [
+                             m.component(projectGoogleContactImport, {
+                                 project: project,
+                                 showSuccess: ctrl.showSuccess
+                             })
                          //    m("a.btn.btn-inline.btn-no-border.btn-terciary.w-inline-block[href='#']", [
                          //        m("._w-inline-block.fontsize-smallest", "Upload CSV")
                          //    ])
-                         //]),
+                         ]),
                          m('textarea.positive.text-field.w-input[maxlength="5000"][placeholder="Adicione um ou mais emails, separados por linha."]', {
-                             onchange: m.withAttr('value', ctrl.emailText)
+                             onchange: m.withAttr('value', ctrl.emailText),
+                             value: ctrl.emailText()
                          })
                      ])
                  ]),
                  m('.u-text-center', [
                      m('a.btn.btn-inline.btn-medium.w-button[href="javascript:void(0)"]', {
-                         onclick: ctrl.submitInvite,
-                         value: ctrl.emailText()
+                         onclick: ctrl.submitInvite
                      }, 'Enviar convites')
                  ])
              ])
