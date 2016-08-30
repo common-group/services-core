@@ -98,14 +98,18 @@ const menuProfile = {
                                             _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
+                                                    console.log(contribution);
                                                     return {
+                                                        project_id: contribution.project_id,
+                                                        project_user_id: contribution.project_user_id,
                                                         thumb_image: contribution.project_img,
                                                         video_cover_image: contribution.project_img,
                                                         permalink: contribution.permalink,
                                                         name: contribution.project_name
                                                     };
                                                 })),
-                                                loadMore: '/pt/users/${user.id}/edit#contributions'
+                                                loadMore: '/pt/users/${user.id}/edit#contributions',
+                                                ref: 'user_menu_my_contributions'
                                             }) : 'carregando...'
                                         )
                                     ]
@@ -119,7 +123,8 @@ const menuProfile = {
                                             _.isEmpty(ctrl.latestProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: ctrl.latestProjects,
-                                                loadMore: '/pt/users/${user.id}/edit#contributions'
+                                                loadMore: '/pt/users/${user.id}/edit#contributions',
+                                                ref: 'user_menu_my_projects'
                                             }) : 'carregando...'
                                         )
                                     ]

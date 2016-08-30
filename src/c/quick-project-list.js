@@ -1,4 +1,5 @@
 import m from 'mithril';
+import projectVM from '../vms/project-vm';
 
 const quickProjectList = {
     view(ctrl, args) {
@@ -11,7 +12,9 @@ const quickProjectList = {
                                 m(`img.thumb.small.u-radius[alt='Project thumb 01'][src='${project.thumb_image || project.video_cover_image}']`)
                             ),
                             m(`.w-col.w-col-9`,
-                                m(`a.alt-link.fontsize-smaller[href='/pt/${project.permalink}?ref=user_menu_my_contributions']`,
+                                m(`a.alt-link.fontsize-smaller[href='javascript:void(0);']`,{
+                                    onclick: projectVM.routeToProject(project, args.ref)
+                                },
                                     `${project.name}`
                                 )
                             )
