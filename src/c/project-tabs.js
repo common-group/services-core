@@ -61,12 +61,12 @@ const projectTabs = {
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_contribsuggestions_view',project: project()})
                             }, 'Valores Sugeridos'),
-                            m(`a[id="about-link"][class="dashboard-nav-link mf ${(h.hashMatch('#about') || h.hashMatch('') ? 'selected' : '')}"][href="/${project().permalink}#about"]`, {
+                            m(`a[id="about-link"][class="dashboard-nav-link mf ${(h.hashMatch('#about') || h.hashMatch('') ? 'selected' : '')}"][href="#about"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_about_view',project: project()})
                             }, 'Sobre'),
-                            m(`a[id="posts-link"][class="dashboard-nav-link mf ${(h.hashMatch('#posts') ? 'selected' : '')}"][href="/${project().permalink}#posts"]`, {
+                            m(`a[id="posts-link"][class="dashboard-nav-link mf ${(h.hashMatch('#posts') ? 'selected' : '')}"][href="#posts"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_posts_view',project: project()})
@@ -74,7 +74,7 @@ const projectTabs = {
                                 'Novidades ',
                                 m('span.badge', project() ? project().posts_count : '')
                             ]),
-                            m(`a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ${(h.hashMatch('#contributions') ? 'selected' : '')}"][href="/${project().permalink}#contributions"]`, {
+                            m(`a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ${(h.hashMatch('#contributions') ? 'selected' : '')}"][href="#contributions"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_contributions_view',project: project()})
@@ -82,7 +82,7 @@ const projectTabs = {
                                 'Apoiadores ',
                                 m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
                             ]),
-                            m(`a[id="comments-link"][class="dashboard-nav-link mf ${(h.hashMatch('#comments') ? 'selected' : '')}"][href="/${project().permalink}#comments"]`, {
+                            m(`a[id="comments-link"][class="dashboard-nav-link mf ${(h.hashMatch('#comments') ? 'selected' : '')}"][href="#comments"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_comments_view',project: project()})
