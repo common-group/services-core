@@ -29,7 +29,7 @@ const menuProfile = {
     view(ctrl, args) {
         const user = ctrl.userDetails();
 
-        return m(`.w-dropdown.user-profile`,
+        return (!_.isUndefined(user.profile_img_thumbnail) ? m(`.w-dropdown.user-profile`,
             [
                 m(`a.w-dropdown-toggle.dropdown-toggle[href='javascript:void()'][id='user-menu']`,
                     {
@@ -180,7 +180,7 @@ const menuProfile = {
                     ]
                 ) : ''
             ]
-        );
+        ) : m(''));
     }
 };
 
