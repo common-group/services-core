@@ -12,7 +12,7 @@ const projectInviteCard = {
         return m(".card.card-secondary.u-marginbottom-20.u-radius.w-clearfix", [
             m(".fontsize-base.fontweight-semibold.u-marginbottom-30.u-text-center", "Convide seus amigos para apoiar sua campanha"),
             m('.w-row', [
-                m(".w-sub-col.w-col.w-col-6", [
+                m(".invite-friends-back-col-1", [
                     m.component(facebookButton, {url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights', medium: true}),
                     m.component(facebookButton, {messenger: true, url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share_insights', medium: true}),
                     m(".w-form", [
@@ -22,7 +22,7 @@ const projectInviteCard = {
                         ])
                     ])
                 ]),
-                m(".w-col.w-col-6", m.component(projectEmailInvite, {project: project}))
+                m(".invite-friends-back-col-2", m.component(projectEmailInvite, {project: project}))
             ])
         ]);
     }

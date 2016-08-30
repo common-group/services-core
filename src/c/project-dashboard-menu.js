@@ -119,7 +119,7 @@ const projectDashboardMenu = {
                     ]),
                 ]),
             ]),
-            m('a.btn-dashboard href="js:void(0);"', {
+            m('a.btn-dashboard href="javascript:void(0);"', {
                 onclick: ctrl.bodyToggleForNav.toggle
             }, [
                 m('span.fa.fa-bars.fa-lg')

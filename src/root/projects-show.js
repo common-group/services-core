@@ -17,7 +17,6 @@ const projectsShow = {
         const {project_id, project_user_id} = args;
 
         h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
-        
 
         if (project_id) {
             projectVM.init(project_id, project_user_id);
