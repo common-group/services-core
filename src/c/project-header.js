@@ -12,9 +12,10 @@ const projectHeader = {
             currentUser = h.getUser(),
             projectContributions = m.prop([]);
 
-        if(h.isProjectPage() && currentUser && !_.isUndefined(project())){
+        if(h.isProjectPage() && currentUser && !_.isUndefined(project().project_id)){
+            console.log(project());
             contributionVM
-                .getUserProjectContributions(currentUser.user_id, project().project_id)
+                .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
                 .then(projectContributions);
         }
 
@@ -26,10 +27,6 @@ const projectHeader = {
     view(ctrl, args) {
         let project = args.project,
             rewardDetails = args.rewardDetails;
-
-        if (_.isUndefined(project())){
-            project = m.prop({});
-        }
 
         return m('#project-header', [
             m('.w-section.section-product.' + project().mode),
