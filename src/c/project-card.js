@@ -62,12 +62,9 @@ const projectCard = {
         
         };
 
-        const link = '/' + project.permalink + (args.ref ? '?ref=' + args.ref : '');
-
 
         return {
             css: css,
-            link: link,
             type: type,
             progress: progress,
             remainingTextObj: remainingTextObj,

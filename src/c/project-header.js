@@ -28,7 +28,7 @@ const projectHeader = {
         let project = args.project,
             rewardDetails = args.rewardDetails;
 
-        return m('#project-header', [
+        return ( !_.isUndefined(project()) ? m('#project-header', [
             m('.w-section.section-product.' + project().mode),
             m('.w-section.page-header.u-text-center', [
                 m('.w-container', [
@@ -68,7 +68,7 @@ const projectHeader = {
                     ])
                 ])
             ])
-            ]);
+            ]) : m(''));
     }
 };
 
