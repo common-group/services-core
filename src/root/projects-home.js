@@ -81,7 +81,7 @@ const projectsHome = {
             });
         };
 
-        return m('#projects-home-component', [
+        return m('#projects-home-component',{config: h.setPageTitle(I18n.t('header_html', I18nScope()))},[
             // m.component(menu, {transparent: true}),
             m.component(slider, {
                 slides: slides(),

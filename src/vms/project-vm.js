@@ -45,10 +45,15 @@ const getCurrentProject = () => {
 };
 
 const routeToProject = (project, ref) => () => {
-    console.log('Routing to project: ', project);
     currentProject(project);
 
     return m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
+};
+
+const setProjectPageTitle = () => {
+    const projectName = currentProject().name || currentProject().project_name;
+
+    return projectName ? h.setPageTitle(projectName) : Function.prototype;
 };
 
 const projectVM = {
@@ -57,6 +62,7 @@ const projectVM = {
     currentProject: currentProject,
     rewardDetails: rewardVM.rewards,
     routeToProject: routeToProject,
+    setProjectPageTitle: setProjectPageTitle,
     init: init
 };
 

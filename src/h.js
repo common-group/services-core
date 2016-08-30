@@ -656,8 +656,11 @@ const
     },
     setPageTitle = (title) => {
         return (el, isInitialized) => {
-            if (!isInitialized) {
-                return document.getElementsByTagName('title')[0].innerText = title;
+            const titleEl = document.getElementsByTagName('title')[0],
+                currentTitle = titleEl.innerText;
+
+            if (currentTitle !== title) {
+                return titleEl.innerText = title;
             }
         }
     };

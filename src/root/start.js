@@ -127,7 +127,7 @@ const start = {
 
         };
 
-        return m('#start', [
+        return m('#start',{config: h.setPageTitle(I18n.t('header_html', I18nScope()))},[
             m('.w-section.hero-full.hero-start', [
                 m('.w-container.u-text-center', [
                     m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
