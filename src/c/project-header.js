@@ -12,7 +12,7 @@ const projectHeader = {
             currentUser = h.getUser(),
             projectContributions = m.prop([]);
 
-        if(h.isProjectPage() && currentUser && !_.isUndefined(project().project_id)){
+        if(h.isProjectPage() && currentUser && !_.isUndefined(project())){
             console.log(project());
             contributionVM
                 .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
