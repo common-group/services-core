@@ -653,7 +653,14 @@ const
               isOnContribution = path.indexOf('/contribution') > -1;
 
         return !isOnEdit && !isOnInsights && !isOnContribution;
-     };
+    },
+    setPageTitle = (title) => {
+        return (el, isInitialized) => {
+            if (!isInitialized) {
+                return document.getElementsByTagName('title')[0].innerText = title;
+            }
+        }
+    };
 
 setMomentifyLocale();
 closeFlash();
@@ -715,6 +722,7 @@ export default {
     monetaryToFloat,
     mask,
     projectFullPermalink,
-    isProjectPage
+    isProjectPage,
+    setPageTitle
 };
 
