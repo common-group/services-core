@@ -32,7 +32,7 @@ const inviteEmailsFromImport = {
                       postgrest.loaderWithToken(
                           models.inviteProjectEmail.postOptions({
                               data: {
-                                  project_id: args.project.id,
+                                  project_id: args.project.project_id,
                                   emails: _.map(checkedList(), (x) => { return x.email; })
                               }
                           })).load().then((data) => {

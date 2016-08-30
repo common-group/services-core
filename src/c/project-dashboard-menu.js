@@ -40,7 +40,7 @@ const projectDashboardMenu = {
     },
     view(ctrl, args) {
         const project = args.project(),
-              projectRoute = '/projects/' + project.id,
+              projectRoute = '/projects/' + project.project_id,
               editRoute = projectRoute + '/edit',
               editLinkClass = 'dashboard-nav-link-left ' + (project.is_published ? 'indent' : '');
         let optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
@@ -101,11 +101,11 @@ const projectDashboardMenu = {
                         ((!project.is_published && ctrl.showPublish()) ? [
                             m('.btn-send-draft-fixed',
                               (project.mode === 'aon' ? [
-                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.id + '/validate_publish"]', [
+                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/projects/' + project.project_id + '/validate_publish"]', [
                                       I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                   ]) : '')
                               ] : [
-                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/flexible_projects/' + project.id + '/validate_publish"]', [
+                                  (project.state === 'draft' ? m('a.btn.btn-medium[href="/flexible_projects/' + project.project_id + '/validate_publish"]', [
                                       I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                   ]) : '')
                               ])
@@ -113,7 +113,7 @@ const projectDashboardMenu = {
                         ] : [
                             ((project.mode === 'flex' && project.is_published) ? [
                                 m('.btn-send-draft-fixed',
-                                  (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/' + project.id + '/edit#announce_expiration"]', I18n.t('announce_expiration', I18nScope())) : ''))
+                                  (_.isNull(project.expires_at) ? m('a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/' + project.project_id + '/edit#announce_expiration"]', I18n.t('announce_expiration', I18nScope())) : ''))
                             ] : '')
                         ])
                     ]),
