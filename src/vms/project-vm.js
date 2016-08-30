@@ -11,6 +11,16 @@ const idVM = h.idVM,
       userDetails = m.prop(),
       vm = postgrest.filtersVM({project_id: 'eq'});
 
+const setProject = (project_user_id) => (data) => {
+    currentProject(_.first(data));
+
+    if (!project_user_id) {
+        userVM.fetchUser(currentProject().user_id, true, userDetails);
+    }
+
+    return currentProject;
+};
+
 const init = (project_id, project_user_id) => {
     vm.project_id(project_id);
     
@@ -18,11 +28,13 @@ const init = (project_id, project_user_id) => {
     
     fetchParallelData(project_id, project_user_id);
 
-    return lProject.load().then((data) => currentProject(_.first(data)));
+    return lProject.load().then(setProject(project_user_id));
 };
 
 const fetchParallelData = (project_id, project_user_id) => {
-    userVM.fetchUser(project_user_id, true, userDetails);
+    if(project_user_id) {
+        userVM.fetchUser(project_user_id, true, userDetails);
+    }
 
     rewardVM.fetchRewards(project_id);
 };
@@ -51,9 +63,11 @@ const routeToProject = (project, ref) => () => {
 };
 
 const setProjectPageTitle = () => {
-    const projectName = currentProject().name || currentProject().project_name;
+    if (currentProject()) {
+        const projectName = currentProject().project_name || currentProject().name;
 
-    return projectName ? h.setPageTitle(projectName) : Function.prototype;
+        return projectName ? h.setPageTitle(projectName) : Function.prototype;    
+    }
 };
 
 const projectVM = {
