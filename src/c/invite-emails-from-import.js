@@ -44,7 +44,6 @@ const inviteEmailsFromImport = {
               },
               search = () => {
                   if(!filtering()) {
-                      console.log(filterTerm());
                       filtering(true);
                       let searchFilter;
                       const matchSearch = (item) => {
