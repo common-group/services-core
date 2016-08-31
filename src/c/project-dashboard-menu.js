@@ -23,6 +23,18 @@ const projectDashboardMenu = {
             showPublish = h.toggleProp(true, false),
             bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
 
+        const projectThumb = (project) => {
+            if (_.isEmpty(project.large_image)) {
+                if(_.isEmpty(project.thumb_image)) {
+                    return '/assets/thumb-project.png';
+                } else {
+                    return project.thumb_image;
+                }
+            } else {
+                return project.large_image;
+            }
+        };
+
         if (args.project().is_published) {
             editLinksToggle.toggle(false);
         }
@@ -35,7 +47,8 @@ const projectDashboardMenu = {
             body: body,
             editLinksToggle: editLinksToggle,
             showPublish: showPublish,
-            bodyToggleForNav: bodyToggleForNav
+            bodyToggleForNav: bodyToggleForNav,
+            projectThumb: projectThumb
         };
     },
     view(ctrl, args) {
@@ -51,7 +64,7 @@ const projectDashboardMenu = {
             m('.project-nav-wrapper', [
                 m('nav.w-section.dashboard-nav.side', [
                     m('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [
-                        m('img.thumb-project-dashboard[src="' + (_.isNull(project.large_image) ? '/assets/thumb-project.png' : project.large_image) + '"][width="114"]'),
+                        m(`img.thumb-project-dashboard[src="${project ? ctrl.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
                         m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"][width=80]`)
 
