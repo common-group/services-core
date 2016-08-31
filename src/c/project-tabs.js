@@ -94,7 +94,7 @@ const projectTabs = {
                         project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions ? [
                             m('.w-row.project-nav-back-button', [
                                 m('.w-col.w-col-6.w-col-medium-8', [
-                                    m('a.w-button.btn[href="/projects/' + project().id + '/contributions/new"]', {
+                                    m('a.w-button.btn[href="/projects/' + project().project_id + '/contributions/new"]', {
                                         onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_floatingbtn_click', project: project()})
                                     }, 'Apoiar ‍este projeto')
                                 ]),

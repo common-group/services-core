@@ -45,17 +45,17 @@ const projectSuccessfulOnboard = {
 
                   return postgrest.loaderWithToken(
                       models.projectAccountError.postOptions({
-                          project_id: args.project().id,
+                          project_id: args.project().project_id,
                           reason: errorMsg
                       }));
               },
               acceptAccountLoader = postgrest.loaderWithToken(
                   models.projectAccount.postOptions({
-                      project_id: args.project().id
+                      project_id: args.project().project_id
                   })
               );
 
-        projectIdVM.project_id(args.project().id);
+        projectIdVM.project_id(args.project().project_id);
 
         const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
         lProjectAccount.load().then((data) => {
