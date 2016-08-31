@@ -131,10 +131,10 @@ const menuProfile = {
                             ]
                         ),
                         m(`.divider.u-marginbottom-20`),
-                        m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
+                        args.user.is_admin_role ? m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
                             `Admin`
-                        ),
-                        m(`ul.w-list-unstyled.u-marginbottom-20`,
+                        ) : '',
+                        args.user.is_admin_role ? m(`ul.w-list-unstyled.u-marginbottom-20`,
                             [
                                 m(`li.lineheight-looser`,
                                     m(`a.alt-link.fontsize-smaller[href='/pt/new-admin#/users']`,
@@ -162,16 +162,15 @@ const menuProfile = {
                                     )
                                 )
                             ]
-                        ),
+                        ) : '',
                         m(`.divider.u-marginbottom-20`),
                         m(`.fontsize-smallest`,
                             [
-                                `Você está logado como`,
+                                `Você está logado como `,
                                 m(`span`,
                                     [
-                                        m.trust(`&nbsp;`),
                                         m(`span.fontweight-semibold`,
-                                            `Vinícius Chaves de Andrade`
+                                            user.name
                                         ),
                                         m.trust(`&nbsp;`),
                                         m(`a.alt-link[href='/pt/logout']`,
