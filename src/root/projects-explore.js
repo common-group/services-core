@@ -8,6 +8,7 @@
  */
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
+import I18n from 'i18n-js';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
@@ -19,6 +20,8 @@ import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
 import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
+
+const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
@@ -215,7 +218,7 @@ const projectsExplore = {
             }
         }
 
-        return m('#explore', [
+        return m('#explore',{config: h.setPageTitle(I18n.t('header_html', I18nScope()))},[
             m('.w-section.hero-search', [
                 m.component(search),
                 m('.w-container.u-marginbottom-10', [

@@ -29,7 +29,9 @@ const projectsShow = {
     view(ctrl, args) {
         const project = ctrl.currentProject;
 
-        return m('.project-show', [
+        return m('.project-show',{
+                config: ctrl.setProjectPageTitle()
+            },[
                 m.component(projectHeader, {
                     project: project,
                     rewardDetails: ctrl.rewardDetails,

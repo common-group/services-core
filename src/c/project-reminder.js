@@ -9,6 +9,7 @@
  *  }
  */
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import models from '../models';
 import h from '../h';
 import popNotification from './pop-notification';

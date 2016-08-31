@@ -29,13 +29,13 @@ const menuProfile = {
     view(ctrl, args) {
         const user = ctrl.userDetails();
 
-        return (!_.isUndefined(user.profile_img_thumbnail) ? m(`.w-dropdown.user-profile`,
+        return m(`.w-dropdown.user-profile`,
             [
                 m(`a.w-dropdown-toggle.dropdown-toggle[href='javascript:void()'][id='user-menu']`,
                     {
                         onclick: ctrl.toggleMenu.toggle
                     },
-                    m(`img.user-avatar[alt='Thumb avatar 942644 4735930283597 888573557 n'][height='40'][src='${user.profile_img_thumbnail}'][width='40']`)
+                    m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
                 ),
                 ctrl.toggleMenu() ? m(`nav.w-dropdown-list.dropdown-list.user-menu.w--open[id='user-menu-dropdown']`, {style: 'display:block;'},
                     [
@@ -99,13 +99,16 @@ const menuProfile = {
                                             m.component(quickProjectList, {
                                                 projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
                                                     return {
+                                                        project_id: contribution.project_id,
+                                                        project_user_id: contribution.project_user_id,
                                                         thumb_image: contribution.project_img,
                                                         video_cover_image: contribution.project_img,
                                                         permalink: contribution.permalink,
                                                         name: contribution.project_name
                                                     };
                                                 })),
-                                                loadMore: '/pt/users/${user.id}/edit#contributions'
+                                                loadMore: '/pt/users/${user.id}/edit#contributions',
+                                                ref: 'user_menu_my_contributions'
                                             }) : 'carregando...'
                                         )
                                     ]
@@ -119,7 +122,8 @@ const menuProfile = {
                                             _.isEmpty(ctrl.latestProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: ctrl.latestProjects,
-                                                loadMore: '/pt/users/${user.id}/edit#contributions'
+                                                loadMore: '/pt/users/${user.id}/edit#contributions',
+                                                ref: 'user_menu_my_projects'
                                             }) : 'carregando...'
                                         )
                                     ]
@@ -127,10 +131,10 @@ const menuProfile = {
                             ]
                         ),
                         m(`.divider.u-marginbottom-20`),
-                        m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
+                        args.user.is_admin_role ? m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
                             `Admin`
-                        ),
-                        m(`ul.w-list-unstyled.u-marginbottom-20`,
+                        ) : '',
+                        args.user.is_admin_role ? m(`ul.w-list-unstyled.u-marginbottom-20`,
                             [
                                 m(`li.lineheight-looser`,
                                     m(`a.alt-link.fontsize-smaller[href='/pt/new-admin#/users']`,
@@ -158,16 +162,15 @@ const menuProfile = {
                                     )
                                 )
                             ]
-                        ),
+                        ) : '',
                         m(`.divider.u-marginbottom-20`),
                         m(`.fontsize-smallest`,
                             [
-                                `Você está logado como`,
+                                `Você está logado como `,
                                 m(`span`,
                                     [
-                                        m.trust(`&nbsp;`),
                                         m(`span.fontweight-semibold`,
-                                            `Vinícius Chaves de Andrade`
+                                            user.name
                                         ),
                                         m.trust(`&nbsp;`),
                                         m(`a.alt-link[href='/pt/logout']`,
@@ -180,7 +183,7 @@ const menuProfile = {
                     ]
                 ) : ''
             ]
-        ) : m(''));
+        );
     }
 };
 
