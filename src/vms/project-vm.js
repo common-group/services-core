@@ -31,6 +31,11 @@ const init = (project_id, project_user_id) => {
     return lProject.load().then(setProject(project_user_id));
 };
 
+const resetData = () => {
+    userDetails({});
+    rewardVM.rewards([]);
+};
+
 const fetchParallelData = (project_id, project_user_id) => {
     if(project_user_id) {
         userVM.fetchUser(project_user_id, true, userDetails);
@@ -58,6 +63,8 @@ const getCurrentProject = () => {
 
 const routeToProject = (project, ref) => () => {
     currentProject(project);
+
+    resetData();
 
     return m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
 };
