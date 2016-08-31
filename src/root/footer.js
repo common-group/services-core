@@ -138,11 +138,7 @@ const footer = {
                                     ),
                                     m('.w-widget.w-widget-facebook.u-marginbottom-20',
                                         m('.facebook',
-                                            m('.fb-like.fb_iframe_widget[data-colorscheme=\'dark\'][data-href=\'http://facebook.com/catarse.me\'][data-layout=\'button_count\'][data-send=\'false\'][data-show-faces=\'false\'][data-title=\'\'][data-width=\'260\'][fb-iframe-plugin-query=\'app_id=173747042661491&amp;color_scheme=dark&amp;container_width=225&amp;href=http%3A%2F%2Ffacebook.com%2Fcatarse.me&amp;layout=button_count&amp;locale=pt_BR&amp;sdk=joey&amp;send=false&amp;show_faces=false&amp;width=260\'][fb-xfbml-state=\'rendered\']',
-                                                m('span', {style: {'vertical-align': 'bottom', 'width': '107px', 'height': '20px'}},
-                                                    m('iframe[allowfullscreen=\'true\'][allowtransparency=\'true\'][class=\'\'][frameborder=\'0\'][height=\'1000px\'][name=\'f34424f8d7e9eec\'][scrolling=\'no\'][src=\'https://www.facebook.com/v2.0/plugins/like.php?app_id=173747042661491&amp;channel=https%3A%2F%2Fstaticxx.facebook.com%2Fconnect%2Fxd_arbiter.php%3Fversion%3D42%23cb%3Df25cdb18199e59c%26domain%3Dwww.catarse.me%26origin%3Dhttps%253A%252F%252Fwww.catarse.me%252Ff20f6c0dd78772c%26relation%3Dparent.parent&amp;color_scheme=dark&amp;container_width=225&amp;href=http%3A%2F%2Ffacebook.com%2Fcatarse.me&amp;layout=button_count&amp;locale=pt_BR&amp;sdk=joey&amp;send=false&amp;show_faces=false&amp;width=260\'][title=\'fb:like Facebook Social Plugin\'][width=\'260px\']', {style: {'border': 'none', 'visibility': 'visible', 'width': '107px', 'height': '20px'}})
-                                                )
-                                            )
+                                            m('.fb-like[data-colorscheme=\'dark\'][data-href=\'http://facebook.com/catarse.me\'][data-layout=\'button_count\'][data-send=\'false\'][data-show-faces=\'false\'][data-title=\'\'][data-width=\'260\']')
                                         )
                                     ),
                                     m('.w-widget.w-widget-twitter',

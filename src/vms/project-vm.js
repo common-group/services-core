@@ -66,7 +66,9 @@ const routeToProject = (project, ref) => () => {
 
     resetData();
 
-    return m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
+    m.route(h.buildLink(project.permalink, ref), {project_id: project.project_id, project_user_id: project.project_user_id});
+
+    return false;
 };
 
 const setProjectPageTitle = () => {
