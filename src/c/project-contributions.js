@@ -36,8 +36,8 @@ const projectContributions = {
               },
               contributionsStats = m.prop({});
 
-        filterVM.project_id(args.project().id);
-        filterStats.project_id(args.project().id);
+        filterVM.project_id(args.project().project_id);
+        filterStats.project_id(args.project().project_id);
 
         if (!listVM.collection().length) {
             listVM.firstPage(filterVM.parameters());

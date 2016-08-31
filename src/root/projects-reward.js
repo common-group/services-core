@@ -29,7 +29,7 @@ const projectsReward = {
                 } else {
                     vm.error('');
                     vm.contributionValue(valueFloat);
-                    m.route(`/projects/${projectVM.currentProject().id}/payment`, {
+                    m.route(`/projects/${projectVM.currentproject().project_id}/payment`, {
                         project_user_id: projectVM.currentProject().user_id
                     });
                 }

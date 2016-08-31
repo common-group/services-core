@@ -26,9 +26,9 @@ const projectRewardList = {
                 //     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
                 // } else {
                     // vm.contributionValue(valueFloat);
-                    //h.navigateTo(`/projects/${projectVM.currentProject().id}/contributions/new?reward_id=${vm.selectedReward().id}`);
+                    //h.navigateTo(`/projects/${projectVM.currentproject().project_id}/contributions/new?reward_id=${vm.selectedReward().id}`);
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}`);
-                    // m.route(`/projects/${projectVM.currentProject().id}/payment`, {
+                    // m.route(`/projects/${projectVM.currentproject().project_id}/payment`, {
                     //    project_user_id: projectVM.currentProject().user_id
                     // });
                 // }
