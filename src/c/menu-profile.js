@@ -29,13 +29,13 @@ const menuProfile = {
     view(ctrl, args) {
         const user = ctrl.userDetails();
 
-        return (!_.isUndefined(user.profile_img_thumbnail) ? m(`.w-dropdown.user-profile`,
+        return m(`.w-dropdown.user-profile`,
             [
                 m(`a.w-dropdown-toggle.dropdown-toggle[href='javascript:void()'][id='user-menu']`,
                     {
                         onclick: ctrl.toggleMenu.toggle
                     },
-                    m(`img.user-avatar[alt='Thumb avatar 942644 4735930283597 888573557 n'][height='40'][src='${user.profile_img_thumbnail}'][width='40']`)
+                    m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
                 ),
                 ctrl.toggleMenu() ? m(`nav.w-dropdown-list.dropdown-list.user-menu.w--open[id='user-menu-dropdown']`, {style: 'display:block;'},
                     [
@@ -98,7 +98,6 @@ const menuProfile = {
                                             _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
-                                                    console.log(contribution);
                                                     return {
                                                         project_id: contribution.project_id,
                                                         project_user_id: contribution.project_user_id,
@@ -185,7 +184,7 @@ const menuProfile = {
                     ]
                 ) : ''
             ]
-        ) : m(''));
+        );
     }
 };
 
