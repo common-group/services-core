@@ -9,15 +9,13 @@ import quickProjectList from '../c/quick-project-list';
 const menuProfile = {
     controller(args) {
         const contributedProjects = m.prop(),
-            latestProjects = m.prop(),
+            latestProjects = m.prop([]),
             userDetails = m.prop({}),
             user_id = args.user.user_id;
 
         userVM.fetchUser(user_id, true, userDetails);
-
-        userVM.getUserCreatedProjects(user_id).then(latestProjects);
-
-        userVM.getUserContributedProjects(user_id).then(contributedProjects);
+        //userVM.getUserCreatedProjects(user_id).then(latestProjects);
+        //userVM.getUserContributedProjects(user_id).then(contributedProjects);
 
         return {
             contributedProjects: contributedProjects,
@@ -41,7 +39,7 @@ const menuProfile = {
                     [
                         m(`.w-row`,
                             [
-                                m(`.w-col.w-col-4`,
+                                m(`.w-col.w-col-12`,
                                     [
                                         m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
                                             `Meu histórico`
@@ -53,6 +51,11 @@ const menuProfile = {
                                                         `Histórico de apoio`
                                                     )
                                                 ),
+                                                m(`li.lineheight-looser`,
+                                                  m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#contributions']`,
+                                                    `Projetos criados`
+                                                   )
+                                                 ),
                                                 m(`li.w-hidden-main.w-hidden-medium.lineheight-looser`,
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#projects']`,
                                                         `Projetos criados`
@@ -89,45 +92,45 @@ const menuProfile = {
                                         )
                                     ]
                                 ),
-                                m(`.w-col.w-col-4.w-hidden-small.w-hidden-tiny`,
-                                    [
-                                        m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
-                                            `Projetos apoiados`
-                                        ),
-                                        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.contributedProjects() ?
-                                            _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
-                                            m.component(quickProjectList, {
-                                                projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
-                                                    return {
-                                                        project_id: contribution.project_id,
-                                                        project_user_id: contribution.project_user_id,
-                                                        thumb_image: contribution.project_img,
-                                                        video_cover_image: contribution.project_img,
-                                                        permalink: contribution.permalink,
-                                                        name: contribution.project_name
-                                                    };
-                                                })),
-                                                loadMoreHref: '/pt/users/${user.id}/edit#contributions',
-                                                ref: 'user_menu_my_contributions'
-                                            }) : 'carregando...'
-                                        )
-                                    ]
-                                ),
-                                m(`.w-col.w-col-4.w-hidden-small.w-hidden-tiny`,
-                                    [
-                                        m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
-                                            `Projetos criados`
-                                        ),
-                                        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.latestProjects() ?
-                                            _.isEmpty(ctrl.latestProjects) ? 'Nenhum projeto.' :
-                                            m.component(quickProjectList, {
-                                                projects: ctrl.latestProjects,
-                                                loadMoreHref: '/pt/users/${user.id}/edit#contributions',
-                                                ref: 'user_menu_my_projects'
-                                            }) : 'carregando...'
-                                        )
-                                    ]
-                                )
+                                //m(`.w-col.w-col-4.w-hidden-small.w-hidden-tiny`,
+                                //    [
+                                //        m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
+                                //            `Projetos apoiados`
+                                //        ),
+                                //        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.contributedProjects() ?
+                                //            _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
+                                //            m.component(quickProjectList, {
+                                //                projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
+                                //                    return {
+                                //                        project_id: contribution.project_id,
+                                //                        project_user_id: contribution.project_user_id,
+                                //                        thumb_image: contribution.project_img,
+                                //                        video_cover_image: contribution.project_img,
+                                //                        permalink: contribution.permalink,
+                                //                        name: contribution.project_name
+                                //                    };
+                                //                })),
+                                //                loadMoreHref: '/pt/users/${user.id}/edit#contributions',
+                                //                ref: 'user_menu_my_contributions'
+                                //            }) : 'carregando...'
+                                //        )
+                                //    ]
+                                //),
+                                //m(`.w-col.w-col-4.w-hidden-small.w-hidden-tiny`,
+                                //    [
+                                //        m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
+                                //            `Projetos criados`
+                                //        ),
+                                //        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.latestProjects() ?
+                                //            _.isEmpty(ctrl.latestProjects) ? 'Nenhum projeto.' :
+                                //            m.component(quickProjectList, {
+                                //                projects: ctrl.latestProjects,
+                                //                loadMoreHref: '/pt/users/${user.id}/edit#contributions',
+                                //                ref: 'user_menu_my_projects'
+                                //            }) : 'carregando...'
+                                //        )
+                                //    ]
+                                //)
                             ]
                         ),
                         m(`.divider.u-marginbottom-20`),
