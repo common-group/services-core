@@ -12,7 +12,7 @@ const quickProjectList = {
                                 m(`img.thumb.small.u-radius[alt='Project thumb 01'][src='${project.thumb_image || project.video_cover_image}']`)
                             ),
                             m(`.w-col.w-col-9`,
-                                m(`a.alt-link.fontsize-smaller[href='javascript:void(0);']`,{
+                                m(`a.alt-link.fontsize-smaller[href='/${project.permalink}']`,{
                                     onclick: projectVM.routeToProject(project, args.ref)
                                 },
                                     `${project.name}`
