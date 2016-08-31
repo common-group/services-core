@@ -6,15 +6,21 @@ import menuProfile from '../c/menu-profile';
 
 const menu = {
     controller(args) {
-        const user = h.getUser();
+        const user = h.getUser(),
+            menuCss = () => {
+                let dynamicClasses;
+
+                return `${args.menuTransparency ? 'overlayer' : ''} ${args.withAlert ? 'with-global-alert' : ''}`
+            };
 
         return {
-            user: user
+            user: user,
+            menuCss: menuCss
         };
     },
     view(ctrl, args) {
         return m('header.main-header.w-section',{
-            class: args.menuTransparency ? 'overlayer' : ''
+            class: ctrl.menuCss()
         },
             [
                 m('.w-clearfix',
