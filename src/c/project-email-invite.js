@@ -30,7 +30,7 @@ const projectEmailInvite = {
                           postgrest.loaderWithToken(
                               models.inviteProjectEmail.postOptions({
                                   data: {
-                                      project_id: project.id,
+                                      project_id: project.project_id,
                                       emails: emailList
                                   }
                               })).load().then((data) => {
