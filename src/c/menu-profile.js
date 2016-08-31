@@ -107,7 +107,7 @@ const menuProfile = {
                                                         name: contribution.project_name
                                                     };
                                                 })),
-                                                loadMore: '/pt/users/${user.id}/edit#contributions',
+                                                loadMoreHref: '/pt/users/${user.id}/edit#contributions',
                                                 ref: 'user_menu_my_contributions'
                                             }) : 'carregando...'
                                         )
@@ -122,7 +122,7 @@ const menuProfile = {
                                             _.isEmpty(ctrl.latestProjects) ? 'Nenhum projeto.' :
                                             m.component(quickProjectList, {
                                                 projects: ctrl.latestProjects,
-                                                loadMore: '/pt/users/${user.id}/edit#contributions',
+                                                loadMoreHref: '/pt/users/${user.id}/edit#contributions',
                                                 ref: 'user_menu_my_projects'
                                             }) : 'carregando...'
                                         )
