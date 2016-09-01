@@ -1,4 +1,5 @@
 import m from 'mithril';
+import h from '../h';
 
 const footer = {
     view() {
@@ -116,18 +117,12 @@ const footer = {
                                         'Assine nossa news'
                                     ),
                                     m('.w-form',
-                                        m('form[accept-charset=\'UTF-8\'][action=\'https://catarse.us5.list-manage.com/subscribe/post?u=ebfcd0d16dbb0001a0bea3639&amp;amp;id=149c39709e\'][id=\'mailee-form\'][method=\'post\']',
+                                        m(`form[accept-charset=\'UTF-8\'][action=\'${h.getMailchimpUrl()}\'][id=\'mailee-form\'][method=\'post\']`,
                                             [
-                                                m('div', {style: {'display': 'none'}},
-                                                    [
-                                                        m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
-                                                        m('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'3R1ctYgwSe+6YyxzrRjacayI8+uEBOc/y6eMPL9x6Ns=\']')
-                                                    ]
-                                                ),
                                                 m('.w-form.footer-newsletter',
                                                     m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')
                                                 ),
-                                                m('a.w-inline-block.btn.btn-edit.postfix.btn-attached[href=\'#\']',
+                                                m('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]',
                                                     m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter-aa77cede92b4d0a314170a10b1c41754.png\']')
                                                 )
                                             ]
@@ -141,9 +136,9 @@ const footer = {
                                             m('.fb-like[data-colorscheme=\'dark\'][data-href=\'http://facebook.com/catarse.me\'][data-layout=\'button_count\'][data-send=\'false\'][data-show-faces=\'false\'][data-title=\'\'][data-width=\'260\']')
                                         )
                                     ),
-                                    m('.w-widget.w-widget-twitter',
-                                        m('iframe.twitter-follow-button.twitter-follow-button-rendered[allowtransparency=\'true\'][data-screen-name=\'catarse\'][frameborder=\'0\'][id=\'twitter-widget-0\'][scrolling=\'no\'][src=\'https://platform.twitter.com/widgets/follow_button.40d5e616f4e685dadc7fb77970f64490.en.html#dnt=false&amp;id=twitter-widget-0&amp;lang=en&amp;screen_name=catarse&amp;show_count=true&amp;show_screen_name=true&amp;size=m&amp;time=1464361714462\'][title=\'Twitter Follow Button\']', {style: {'position': 'static', 'visibility': 'visible', 'width': '206px', 'height': '20px'}})
-                                    ),
+                                    m('.w-widget.w-widget-twitter', [
+                                        m(`a.twitter-follow-button[href="httṕ://twitter.com/catarse"][data-button="blue"][data-text-color="#FFFFFF][data-link-color="#FFFFFF"][data-width="224px"]`)
+                                    ]),
                                     m('.u-margintop-30',
                                         [
                                             m('.footer-full-signature-text.fontsize-small',

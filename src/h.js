@@ -215,6 +215,14 @@ const
         return meta ? (_dataCache.rdToken = meta.content) : undefined;
     },
 
+    getMailchimpUrl = () => {
+        if (_dataCache.mailchumUrl)
+          return _dataCache.mailchumUrl;
+
+        const meta = _.first(document.querySelectorAll('[name=mailchimp-url]'));
+        return meta ? (_dataCache.mailchumUrl = meta.content) : undefined;
+    },
+
     getUser = () => {
         if (_dataCache.user)
           return _dataCache.user;
@@ -696,6 +704,7 @@ export default {
     idVM,
     getUser,
     getApiHost,
+    getMailchimpUrl,
     getCurrentProject,
     toggleProp,
     loader,
