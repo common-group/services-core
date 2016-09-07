@@ -16,14 +16,17 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Bem-vindo'
                                                 ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/flex\']',
+                                                m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
                                                     [
-                                                        'Catarse flex',
+                                                        'Como funciona',
                                                         m.trust('&nbsp;'),
                                                         m('span.badge.badge-success',
                                                             'Novidade‍'
                                                         )
                                                     ]
+                                                ),
+                                                m('a.link-footer[href=\'https://www.catarse.me/pt/flex\']',
+                                                    ' Catarse flex'
                                                 ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/team\']',
                                                     [
@@ -60,6 +63,15 @@ const footer = {
                                                 m('a.zendesk_widget.link-footer[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\']',
                                                     ' Contato'
                                                 ),
+                                                m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
+                                                    [
+                                                        'Nossa Taxa',
+                                                        m.trust('&nbsp;'),
+                                                        m('span.badge.badge-success',
+                                                            'Novidade‍'
+                                                        )
+                                                    ]
+                                                ),                                            
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press\']',
                                                     ' Imprensa'
                                                 ),
