@@ -15,6 +15,7 @@ const models = {
     rewardDetail: postgrest.model('reward_details'),
     projectReminder: postgrest.model('project_reminders'),
     projectReport: postgrest.model('project_reports'),
+    projectTransition: postgrest.model('project_transitions'),
     contributions: postgrest.model('contributions'),
     directMessage: postgrest.model('direct_messages'),
     teamTotal: postgrest.model('team_totals'),

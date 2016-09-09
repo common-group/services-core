@@ -10,6 +10,7 @@ import modalBox from '../c/modal-box';
 import adminProjectDetailsCard from '../c/admin-project-details-card';
 import onlineSuccessModalContent from '../c/online-success-modal-content';
 import projectDataStats from '../c/project-data-stats';
+import projectDeleteButton from '../c/project-delete-button';
 import projectDataChart from '../c/project-data-chart';
 import projectDataTable from '../c/project-data-table';
 import projectReminderCount from '../c/project-reminder-count';
@@ -26,6 +27,7 @@ const insights = {
                 project_id: 'eq'
             }),
             displayModal = h.toggleProp(false, true),
+            displayDeleteModal = h.toggleProp(false, true),
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
             contributionsPerLocation = m.prop([]),
@@ -103,6 +105,7 @@ const insights = {
             lContributionsPerLocation: lContributionsPerLocation,
             lContributionsPerDay: lContributionsPerDay,
             displayModal: displayModal,
+            displayDeleteModal: displayDeleteModal,
             filtersVM: filtersVM,
             projectDetails: projectDetails,
             contributionsPerDay: contributionsPerDay,
@@ -138,8 +141,9 @@ const insights = {
             }) : ''),
             (ctrl.displayModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayModal,
-                content: onlineSuccessModalContent
+                content: [onlineSuccessModalContent]
             }) : ''),
+
             m('.w-container', (project.state === 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project)}) : [
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2', [
@@ -155,8 +159,12 @@ const insights = {
                            ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at)})))
                         ])
                     ])
-                ])
-            ]), (project.is_published) ? [
+                ]),
+            ]),
+            (project.state === 'draft' ?
+               m.component(projectDeleteButton, {displayDeleteModal: ctrl.displayDeleteModal, project: project})
+            : ''),
+            (project.is_published) ? [
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
