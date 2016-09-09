@@ -26,13 +26,29 @@ const fetchRewards = (project_id) => {
     return rewardsLoader(project_id).load().then(rewards);
 };
 
+const getSelectedReward = () => {
+    const root = document.getElementById('application'),
+          data = root && root.getAttribute('data-contribution');
+    
+    if (data) {
+        const contribution = JSON.parse(data);
+        const reward = selectedReward(contribution.reward);
+
+        m.redraw(true);
+        
+        return selectedReward;
+    } else {
+        return false;
+    }
+};
+
 const selectReward = (reward) => () => {
     if (rewardVM.selectedReward() !== reward){
         rewardVM.selectedReward(reward);
 
         contributionValue(h.applyMonetaryMask(reward.minimum_value + ',00'));
     }
-}
+};
 
 const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
@@ -43,6 +59,7 @@ const rewardVM = {
     noReward: noReward,
     fetchRewards: fetchRewards,
     selectReward: selectReward,
+    getSelectedReward: getSelectedReward,
     selectedReward: selectedReward,
     contributionValue: contributionValue,
     rewardsLoader: rewardsLoader,

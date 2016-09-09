@@ -15,13 +15,16 @@ const faqBox = {
         const selectQuestion = (idx) => () => selectedQuestion(idx);
 
         const updateQuestionsData = (data) => {
-            //Rewrites questions from translate with proper scope
+            //This function rewrites questions from translate with proper scope for links
             const user = data[0];
-            const updatedQuestions = _.map(questions, (quest, idx) => {
-                return {
-                    question: quest.question,
-                    answer: I18n.t(`${mode}.questions.${idx}.answer`, I18nScope({userLink: `/users/${user.id}`, userName: user.name}))
-                };
+            let updatedQuestions = {};
+            _.each(questions, (quest, idx) => {
+                _.extend(updatedQuestions, {
+                    [idx + 1] : {
+                        question: quest.question,
+                        answer: I18n.t(`${mode}.questions.${idx}.answer`, I18nScope({userLink: `/users/${user.id}`, userName: user.name}))
+                    }
+                });
             });
 
             scopedQuestions(updatedQuestions);

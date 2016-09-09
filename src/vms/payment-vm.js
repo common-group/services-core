@@ -4,7 +4,7 @@ import h from '../h';
 import usersVM from './user-vm';
 import models from '../models';
 
-const paymentVM = (mode) => {
+const paymentVM = (mode = 'aon') => {
     const fields = {
             completeName  : m.prop(''),
             email : m.prop(''),
@@ -89,6 +89,17 @@ const paymentVM = (mode) => {
         return _.isEmpty(fields.errors());
     };
 
+    const getSlipPaymentDate = (contribution_id) => {
+        const paymentDate = m.prop();
+
+        m.request({
+            method: 'GET',
+            url: `/payment/pagarme/${contribution_id}/slip_data`
+        }).then(paymentDate);
+
+        return paymentDate;
+    };
+
     const resetFieldError = (fieldName) => () => {
         const errors = fields.errors(),
             errorField = _.findWhere(fields.errors(), {field: fieldName}),
@@ -106,6 +117,7 @@ const paymentVM = (mode) => {
         validate: validate,
         isInternational: isInternational,
         resetFieldError: resetFieldError,
+        getSlipPaymentDate: getSlipPaymentDate,
         faq: faq
     };
 };

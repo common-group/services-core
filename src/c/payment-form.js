@@ -1,6 +1,7 @@
 import m from 'mithril';
 import h from '../h';
 import tooltip from './tooltip';
+import paymentSlip from './payment-slip';
 
 const paymentForm = {
     controller() {
@@ -18,15 +19,13 @@ const paymentForm = {
         };
     },
     view(ctrl, args) {
-        return m('[id=\'step2\']', [
+        return m('#catarse_pagarme_form', [
             m('.u-text-center-small-only.u-marginbottom-30', [
                 m('.fontsize-large.fontweight-semibold',
                     'Escolha o meio de pagamento'
                 ),
                 m('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [
-                    m('span.fa.fa-lock',
-                        '.'
-                    ),
+                    m('span.fa.fa-lock'),
                     ' PAGAMENTO SEGURO'
                 ])
             ]),
@@ -204,38 +203,7 @@ const paymentForm = {
                         ])
                     )
                 ),
-                m('.w-row',
-                    m('.w-col.w-col-12',
-                        m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [
-                            m('.fontsize-small.u-marginbottom-20',
-                                'Esse boleto bancário vence no dia 29/06/2016.'
-                            ),
-                            m('.fontsize-small.u-marginbottom-40',
-                                'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'
-                            ),
-                            m('.w-row', [
-                                m('.w-col.w-col-2'),
-                                m('.w-col.w-col-8', [
-                                    m('.loader.u-text-center.w-col.w-col-12.u-marginbottom-30[id=\'card-loading\']',
-                                        m('img[alt=\'Loader\'][src=\'/assets/catarse_bootstrap/loader-b642f2f0212454026a5c7c40620427c1.gif\']')
-                                    ),
-                                    m('input.btn.btn-large.u-marginbottom-20[id=\'build_boleto\'][name=\'commit\'][type=\'submit\'][value=\'Imprimir boleto\']'),
-                                    m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
-                                        'Ao apoiar, você concorda com os ',
-                                        m('a.alt-link[href=\'/pt/terms-of-use\']',
-                                            'Termos de Uso '
-                                        ),
-                                        'e ',
-                                        m('a.alt-link[href=\'/pt/privacy-policy\']',
-                                            'Política de Privacidade'
-                                        )
-                                    ])
-                                ]),
-                                m('.w-col.w-col-2')
-                            ])
-                        ])
-                    )
-                )
+                m.component(paymentSlip, {contribution_id: args.contribution_id})
             ])])
 
         ]);

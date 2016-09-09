@@ -1,5 +1,6 @@
 import m from 'mithril';
 import h from '../h';
+import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
@@ -9,12 +10,14 @@ import inlineError from '../c/inline-error';
 
 const projectsPayment = {
     controller(args) {
-        const mode = projectVM.currentProject().mode,
-            projectUserId = projectVM.currentProject().user_id,
-            value = rewardVM.getValue(),
+        const project = projectVM.getCurrentProject(),
+            mode = project.mode,
+            projectUserId = project.user.id,
             vm = paymentVM(mode),
             showPaymentForm = m.prop(false),
-            reward = rewardVM.selectedReward,
+            contribution = contributionVM.getCurrentContribution(),
+            reward = m.prop(contribution().reward),
+            value = contribution().value,
             documentMask = _.partial(h.mask, '999.999.999-99'),
             zipcodeMask = _.partial(h.mask, '99999-999');
 
@@ -45,6 +48,7 @@ const projectsPayment = {
             validateForm: validateForm,
             projectUserId: projectUserId,
             showPaymentForm: showPaymentForm,
+            contribution: contribution,
             reward: reward,
             value: value,
             mode: mode,
@@ -52,6 +56,7 @@ const projectsPayment = {
         }
     },
     view(ctrl, args) {
+        // return m('h1', 'FORM');
         return m(".w-section.w-clearfix.section",
         	[
         		m(".w-col",
@@ -63,7 +68,7 @@ const projectsPayment = {
         					m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-reward-details'][data-vivaldi-spatnav-clickable='1'][href='#']"),
         					m(".w-clearfix.u-marginbottom-20",
         						m(".fontsize-larger.text-success.u-left",
-        							`R$${ctrl.value}`
+        							`R$ ${Number(ctrl.value).toFixed()}`
         						)
         					),
         					m(".w-clearfix.back-payment-info-reward[data-ix='display-none-on-load']", {style: {"display": "none"}},
@@ -72,9 +77,7 @@ const projectsPayment = {
         								"Recompensa selecionada"
         							),
         							m(".fontsize-smallest", `${ctrl.reward().description}`),
-        							m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentproject().project_id}/contribution"]`, {
-                                        config: m.route
-                                    }, "Editar"
+        							m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new"]`, "Editar"
         							)
         						]
         					)
@@ -376,7 +379,7 @@ const projectsPayment = {
                                             )
                                         )
                                     ),
-                                    ctrl.showPaymentForm() ? m.component(paymentForm) : ''
+                                    ctrl.showPaymentForm() ? m.component(paymentForm, {contribution_id: ctrl.contribution().id}) : ''
         						]
         					),
         					m(".w-col.w-col-4",
@@ -389,11 +392,9 @@ const projectsPayment = {
         									m(".w-clearfix.u-marginbottom-20",
         										[
         											m(".fontsize-larger.text-success.u-left",
-        												`R$${ctrl.value}`
+        												`R$ ${Number(ctrl.value).toFixed()}`
         											),
-        											m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentproject().project_id}/contribution"]`, {
-                                                            config: m.route
-                                                        },"Editar"
+        											m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new?reward_id=${ctrl.reward().id}"]`,"Editar"
         											)
         										]
         									),

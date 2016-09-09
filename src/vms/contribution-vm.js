@@ -1,6 +1,7 @@
 import postgrest from 'mithril-postgrest';
 import models from '../models';
 
+const currentContribution = m.prop({});
 
 const getUserProjectContributions = (user_id, project_id, states) => {
     const vm = postgrest.filtersVM({
@@ -18,7 +19,23 @@ const getUserProjectContributions = (user_id, project_id, states) => {
     return lProjectContributions.load();
 };
 
+const getCurrentContribution = () => {
+    const root = document.getElementById('application'),
+          data = root && root.getAttribute('data-contribution');
+    
+    if (data) {
+        currentContribution(JSON.parse(data));
+
+        m.redraw(true);
+        
+        return currentContribution;
+    } else {
+        return false;
+    }
+};
+
 const contributionVM =  {
+    getCurrentContribution: getCurrentContribution,
     getUserProjectContributions: getUserProjectContributions
 };
 
