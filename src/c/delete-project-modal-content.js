@@ -15,9 +15,8 @@ const deleteProjectModalContent = {
 
         const deleteProject = () => {
             if (check() === 'deletar-rascunho'){
-                let loaderOpts = models.projectTransition.postOptions({
-                    state: 'deleted',
-                    project_id: args.project.project_id
+                let loaderOpts = models.deleteProject.postOptions({
+                    _project_id: args.project.project_id
                 });
                 l = postgrest.loaderWithToken(loaderOpts);
                 l.load().then(deleteSuccess(true));
@@ -52,7 +51,7 @@ const deleteProjectModalContent = {
                   [
                     m('.fontsize-base.u-marginbottom-60',
                       [
-                        'O projeto  será deletado permanentemente e todos os dados que você preencheu na edição do rascunho não poderão ser recuperados.'
+                        'O projeto será deletado permanentemente e todos os dados que você preencheu na edição do rascunho não poderão ser recuperados.'
                       ]
                     ),
                     m('.fontsize-base.u-marginbottom-10',

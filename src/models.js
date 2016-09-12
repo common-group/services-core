@@ -15,7 +15,6 @@ const models = {
     rewardDetail: postgrest.model('reward_details'),
     projectReminder: postgrest.model('project_reminders'),
     projectReport: postgrest.model('project_reports'),
-    projectTransition: postgrest.model('project_transitions'),
     contributions: postgrest.model('contributions'),
     directMessage: postgrest.model('direct_messages'),
     teamTotal: postgrest.model('team_totals'),
@@ -45,7 +44,8 @@ const models = {
     userFollower: postgrest.model('user_followers'),
     creatorSuggestion: postgrest.model('creator_suggestions'),
     userContribution: postgrest.model('user_contributions'),
-    inviteProjectEmail: postgrest.model('rpc/invite_project_email')
+    inviteProjectEmail: postgrest.model('rpc/invite_project_email'),
+    deleteProject: postgrest.model('rpc/delete_project')
 };
 
 models.teamMember.pageSize(40);
