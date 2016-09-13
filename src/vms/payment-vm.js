@@ -108,6 +108,15 @@ const paymentVM = (mode = 'aon') => {
         return newErrors(fields.errors(), errorField);
     };
 
+    const installments = m.prop([{value: 10, number: 1}]);
+
+    const getInstallments = (contribution_id) => {
+        return m.request({
+            method: 'GET',
+            url: `/payment/pagarme/${contribution_id}/get_installment`
+        }).then(installments);        
+    }
+
     countriesLoader.load().then(fields.countries);
     statesLoader.load().then(fields.states);
     usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
@@ -118,6 +127,8 @@ const paymentVM = (mode = 'aon') => {
         isInternational: isInternational,
         resetFieldError: resetFieldError,
         getSlipPaymentDate: getSlipPaymentDate,
+        installments: installments,
+        getInstallments: getInstallments,
         faq: faq
     };
 };

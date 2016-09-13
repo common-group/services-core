@@ -1,6 +1,7 @@
 import m from 'mithril';
 import h from '../h';
 import paymentVM from '../vms/payment-vm';
+import inlineError from './inline-error';
 
 const paymentSlip = {
 	controller(args) {
@@ -20,9 +21,10 @@ const paymentSlip = {
                 if(data.payment_status == 'failed'){
                     error(true);
                 } else if(data.boleto_url) {
-                    console.log('Boleto: ', data.boleto_url)
+                    window.location.href = `https://www.catarse.me/pt/projects/${args.project_id}/contributions/${args.contribution_id}`;
                 }
                 loading(false);
+                
                 m.redraw();
             }).catch(err => {
                 console.log(err);
@@ -58,6 +60,7 @@ const paymentSlip = {
                                 value: 'Imprimir Boleto',
                                 type: 'submit'
                             }),
+                            ctrl.error() ? m.component(inlineError, {message: 'Ocorreu um erro ao tentar gerar o boleto. Por favor, tente novamente em alguns instantes.'}) : '',
                             m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                                 'Ao apoiar, você concorda com os ',
                                 m('a.alt-link[href=\'/pt/terms-of-use\']',
