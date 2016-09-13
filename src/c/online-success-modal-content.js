@@ -1,11 +1,11 @@
 /**
- * window.c.OnlineSucessModalContent component
+ * window.c.OnlineSuccessModalContent component
  * Render online success message
  *
  */
 import m from 'mithril';
 
-const onlineSucessModalContent = {
+const onlineSuccessModalContent = {
     view(ctrl, args) {
         return m('.modal-dialog-content.u-text-center', [
             m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
@@ -14,4 +14,4 @@ const onlineSucessModalContent = {
     }
 };
 
-export default onlineSucessModalContent;
+export default onlineSuccessModalContent;
