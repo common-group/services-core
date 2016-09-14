@@ -100,6 +100,27 @@ const paymentVM = (mode = 'aon') => {
         return paymentDate;
     };
 
+    const savedCreditCards = m.prop([]);
+
+    const getSavedCreditCards = (contribution_id) => {
+        const otherSample = {
+            id: -1
+        };
+
+        return m.request({
+            method: 'GET',
+            url: `/payment/pagarme/${contribution_id}/credit_cards`
+        }).then((creditCards) => {
+            if (_.isArray(creditCards)){
+                creditCards.push(otherSample);
+            } else {
+                creditCards = [];
+            }
+
+            return savedCreditCards(creditCards);
+        });
+    };
+
     const resetFieldError = (fieldName) => () => {
         const errors = fields.errors(),
             errorField = _.findWhere(fields.errors(), {field: fieldName}),
@@ -129,6 +150,8 @@ const paymentVM = (mode = 'aon') => {
         getSlipPaymentDate: getSlipPaymentDate,
         installments: installments,
         getInstallments: getInstallments,
+        savedCreditCards: savedCreditCards,
+        getSavedCreditCards: getSavedCreditCards,
         faq: faq
     };
 };
