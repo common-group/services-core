@@ -5,7 +5,7 @@ const menuSearch = {
         return m('span#menu-search', [
             m('.w-form.w-hidden-small.w-hidden-tiny.header-search[id=\'discover-form-wrapper\']',
                   [
-                      m('form.discover-form[accept-charset=\'UTF-8\'][action=\'/pt/explore\'][id=\'search-form\'][method=\'get\']',
+                      m('form.discover-form[accept-charset=\'UTF-8\'][action=\'/pt/explore?ref=ctrse_header\'][id=\'search-form\'][method=\'get\']',
                           [
                               m('div', {style: {'display': 'none'}},
                                   m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']')

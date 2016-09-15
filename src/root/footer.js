@@ -25,10 +25,10 @@ const footer = {
                                                         )
                                                     ]
                                                 ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/flex\']',
+                                                m('a.link-footer[href=\'https://www.catarse.me/pt/flex?ref=ctrse_footer\']',
                                                     ' Catarse flex'
                                                 ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/team\']',
+                                                m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']',
                                                     [
                                                         ' Nosso time ',
                                                         m.trust('&lt;'),
@@ -72,13 +72,13 @@ const footer = {
                                                         )
                                                     ]
                                                 ),                                            
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/press\']',
+                                                m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
                                                 ),
-                                                m('a.link-footer[href=\'http://suporte.catarse.me/\']',
+                                                m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']',
                                                     ' Central de Suporte'
                                                 ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/guides\']',
+                                                m('a.link-footer[href=\'https://www.catarse.me/pt/guides?ref=ctrse_footer\']',
                                                     ' Guia dos Realizadores'
                                                 ),
                                                 m('a.link-footer[href=\'http://pesquisa.catarse.me/\']',
@@ -97,25 +97,25 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Navegue'
                                                 ),
-                                                m('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start\']',
+                                                m('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start?ref=ctrse_footer\']',
                                                     ' Comece seu projeto'
                                                 ),
-                                                m('a.link-footer[href=\'/pt/explore\']',
+                                                m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']',
                                                     ' Explore projetos'
                                                 ),
-                                                m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me\']',
+                                                m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me?ref=ctrse_footer\']',
                                                     ' Blog'
                                                 ),
                                                 m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\']',
                                                     ' Contato'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score\']',
+                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score&ref=ctrse_footer\']',
                                                     ' Populares'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online\']',
+                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online&ref=ctrse_footer\']',
                                                     ' No ar'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished\']',
+                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']',
                                                     ' Finalizados'
                                                 )
                                             ]
