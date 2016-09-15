@@ -6,6 +6,7 @@ import projectMode from './project-mode';
 import projectReminder from './project-reminder';
 import projectUserCard from './project-user-card';
 import projectShareBox from './project-share-box';
+import projectFriends from './project-friends';
 import addressTag from './address-tag';
 import categoryTag from './category-tag';
 
@@ -119,16 +120,26 @@ const projectSidebar = {
                             project: project
                         })
                     ])
-                ])
-                , (project().open_for_contributions ? m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]',{
-                    // onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()}, () => m.route(`/projects/${project().project_id}/contribution`))
-                    onclick: h.analytics.event({cat: 'contribution_create',act: 'contribution_button_click', project: project()}, () => h.navigateTo(`/projects/${project().project_id}/contributions/new`))
+                ]),
+                (project().open_for_contributions ? m('.back-project-btn-div', [
+                    m('.back-project--btn-row', [
+                        m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]',{
+                            onclick: h.analytics.event({
+                                cat: 'contribution_create',
+                                act: 'contribution_button_click',
+                                project: project()
+                            }, () => h.navigateTo(`/projects/${project().project_id}/contributions/new`))
 
-                }, I18n.t('submit', I18nScope())) : '')
-                , ((project().open_for_contributions) ? m.component(projectReminder, {
-                    project: project,
-                    type: 'link'
-                }) : ''),
+                        }, I18n.t('submit', I18nScope()))
+                    ]),
+                    m('.back-project-btn-row-right', m.component(projectReminder, {
+                        project: project,
+                        type: 'link'
+                    }))
+                ]) : ''),
+                m('.friend-backed-card.project-page', [
+                    (!_.isUndefined(project()) && project().contributed_by_friends ? m.component(projectFriends, {project: project()}) : '')
+                ]),
                 m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())
             ]),
             m('.project-share.w-hidden-main.w-hidden-medium', [
