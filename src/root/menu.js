@@ -25,15 +25,15 @@ const menu = {
             [
                 m('.w-clearfix',
                     [
-                        m('a.header-logo.w-nav-brand[href=\'/\'][title=\'Catarse\']',
+                        m('a.header-logo.w-nav-brand[href=\'/?ref=ctrse_header\'][title=\'Catarse\']',
                             {config: m.route},
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big-8726f3436ac23c97959d3f7bf10365b7.png\']')
                         ),
-                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start\']',{config: m.route}, 'Comece seu projeto'),
-                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore\']',{config: m.route},'Explore'),
+                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
+                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']',{config: m.route},'Explore'),
                         m.component(menuSearch),
-                        ctrl.user ? m.component(menuProfile, {user: ctrl.user}) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login\']', 'Login'),
-                        m('a.w-nav-link.w-hidden-small.w-hidden-tiny.header-link.w-nav-link.u-right[href=\'http://blog.catarse.me\'][target=\'_blank\']',
+                        ctrl.user ? m.component(menuProfile, {user: ctrl.user}) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
+                        m('a.w-nav-link.w-hidden-small.w-hidden-tiny.header-link.w-nav-link.u-right[href=\'http://blog.catarse.me?ref=ctrse_header\'][target=\'_blank\']',
                             {style: 'float: right;'},
                             'Blog'
                         )
@@ -41,11 +41,11 @@ const menu = {
                 ),
                 m('.w-hidden-main.w-hidden-medium.header-controls-mobile',
                     [
-                        m('a.header-link.w-nav-link[href=\'/pt/start\']',
+                        m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
                             {onclick: () => m.route('/start')},
                             'Comece seu projeto'
                         ),
-                        m('a.header-link.w-nav-link[href=\'/pt/explore\']',
+                        m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
                             {onclick: () => m.route('/explore')},
                             'Explore'
                         )

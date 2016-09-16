@@ -10,7 +10,7 @@ import m from 'mithril';
 
 const search = {
     view(ctrl, args = {}) {
-        const action = args.action || '/pt/explore',
+        const action = args.action || '/pt/explore?ref=ctrse_explore_pgsearch',
             method = args.method || 'GET';
 
         return m('#search.w-container.w-hidden-main.w-hidden-medium', [
