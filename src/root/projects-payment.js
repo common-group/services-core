@@ -379,7 +379,7 @@ const projectsPayment = {
                                             )
                                         )
                                     ),
-                                    ctrl.showPaymentForm() ? m.component(paymentForm, {vm: ctrl.vm, contribution_id: ctrl.contribution().id, project_id: projectVM.currentProject().project_id}) : ''
+                                    ctrl.showPaymentForm() ? m.component(paymentForm, {vm: ctrl.vm, contribution_id: ctrl.contribution().id, project_id: projectVM.currentProject().project_id, user_id: h.getUser().user_id}) : ''
         						]
         					),
         					m(".w-col.w-col-4",

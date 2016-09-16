@@ -102,14 +102,14 @@ const paymentVM = (mode = 'aon') => {
 
     const savedCreditCards = m.prop([]);
 
-    const getSavedCreditCards = (contribution_id) => {
+    const getSavedCreditCards = (user_id) => {
         const otherSample = {
             id: -1
         };
 
         return m.request({
             method: 'GET',
-            url: `/payment/pagarme/${contribution_id}/credit_cards`
+            url: `/users/${user_id}/credit_cards`
         }).then((creditCards) => {
             if (_.isArray(creditCards)){
                 creditCards.push(otherSample);

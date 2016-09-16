@@ -40,7 +40,7 @@ const paymentCreditCard = {
         vm.getInstallments(args.contribution_id)
             .then(() => loadingInstallments(false));
 
-        vm.getSavedCreditCards(args.contribution_id)
+        vm.getSavedCreditCards(args.user_id)
             .then(() => loadingSavedCreditCards(false));
 
         return {
