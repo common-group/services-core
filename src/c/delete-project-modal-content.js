@@ -11,6 +11,7 @@ const deleteProjectModalContent = {
     controller(args) {
         let l = m.prop(false),
             deleteSuccess = m.prop(false),
+            confirmed = m.prop(true),
             check = m.prop('');
 
         const deleteProject = () => {
@@ -22,11 +23,15 @@ const deleteProjectModalContent = {
                 l.load().then(deleteSuccess(true));
 
             }
+            else{
+              confirmed(false);
+            }
             return false;
         };
 
         return {
             deleteProject: deleteProject,
+            confirmed: confirmed,
             deleteSuccess: deleteSuccess,
             check: check
         };
@@ -66,7 +71,7 @@ const deleteProjectModalContent = {
                     m('.w-form',
                       [
                         m('div',
-                          m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', {placeholder: 'deletar-rascunho', onchange: m.withAttr('value', ctrl.check)})
+                          m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', {class: ctrl.confirmed() ? false : 'error', placeholder: 'deletar-rascunho', onchange: m.withAttr('value', ctrl.check)})
                         )
                       ]
                     ),
