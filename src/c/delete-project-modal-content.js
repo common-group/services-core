@@ -4,6 +4,7 @@
  *
  */
 import m from 'mithril';
+import h from '../h';
 import models from '../models';
 import postgrest from 'mithril-postgrest';
 
@@ -51,7 +52,7 @@ const deleteProjectModalContent = {
                 )),
                 m('form.modal-dialog-content',{onsubmit: ctrl.deleteProject},
                   (ctrl.deleteSuccess() ? [m('.fontsize-base.u-margintop-30', 'Projeto deletado com sucesso. Clique no link abaixo para voltar a página inicial.'),
-                      m('a.btn.btn-inactive.btn-large.u-margintop-30[href=\'/pt/explore\']', {onclick: () => m.route('/explore')}, 'Voltar')
+                      m(`a.btn.btn-inactive.btn-large.u-margintop-30[href=\'/pt/users/${h.getUser().user_id}/edit#projects\']`, 'Voltar')
                   ] :
                   [
                     m('.fontsize-base.u-marginbottom-60',
