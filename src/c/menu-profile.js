@@ -52,7 +52,7 @@ const menuProfile = {
                                                     )
                                                 ),
                                                 m(`li.lineheight-looser`,
-                                                  m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#contributions']`,
+                                                  m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#projects']`,
                                                     `Projetos criados`
                                                    )
                                                  ),
