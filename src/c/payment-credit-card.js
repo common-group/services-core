@@ -1,6 +1,8 @@
 import m from 'mithril';
 import _ from 'underscore';
 import tooltip from './tooltip';
+import creditCardVM from '../vms/credit-card-vm';
+import creditCardInput from './credit-card-input';
 
 const paymentCreditCard = {
     controller (args) {
@@ -8,11 +10,33 @@ const paymentCreditCard = {
             loadingInstallments = m.prop(true),
             loadingSavedCreditCards = m.prop(true),
             selectedCreditCard = m.prop({}),
-            showForm = m.prop(false);
+            showForm = m.prop(false),
+            creditCardType = m.prop('unkown');
 
         const onSubmit = () => {
-            console.log('Sending credit-card info!');
+            const isValid = checkcvv() && checkExpiry() && checkCreditCard() && checkCreditCardName();
+
+            if (isValid) {
+                vm.sendPayment().then().catch();
+            }
+
             return false;
+        };
+
+        const checkcvv = () => {
+            return creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType());
+        };
+
+        const checkExpiry = () => {
+            return creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear());
+        };
+
+        const checkCreditCard = () => {
+            return creditCardVM.validateCardNumber(vm.creditCardFields.number());
+        };
+
+        const checkCreditCardName = () => {
+            return !_.isEmpty(vm.creditCardFields.name().trim());
         };
 
         const buildTooltip = (tooltipText) => {
@@ -35,8 +59,14 @@ const paymentCreditCard = {
             } else {
                 showForm(false);
             }
-        }
-        
+        };
+
+        const fieldHasError = (fieldName) => {
+            const fieldWithError = _.findWhere(vm.fields.errors(), {field: fieldName});
+
+            return fieldWithError ? m.component(inlineError, {message: fieldWithError.message}) : '';
+        };
+
         vm.getInstallments(args.contribution_id)
             .then(() => loadingInstallments(false));
 
@@ -45,13 +75,19 @@ const paymentCreditCard = {
 
         return {
             onSubmit: onSubmit,
+            fieldHasError: fieldHasError,
             buildTooltip: buildTooltip,
             loadingInstallments: loadingInstallments,
             loadingSavedCreditCards: loadingSavedCreditCards,
             installments: vm.installments,
             savedCreditCards: vm.savedCreditCards,
+            creditCard: vm.creditCardFields,
+            creditCardType: creditCardType,
+            applyCreditCardMask: vm.applyCreditCardMask,
             selectCreditCard: selectCreditCard,
             isCreditCardSelected: isCreditCardSelected,
+            expMonths: vm.expMonthOptions(),
+            expYears: vm.expYearOptions(),
             showForm: showForm
         };
     },
@@ -64,17 +100,17 @@ const paymentCreditCard = {
                     _.map(ctrl.savedCreditCards(), (card, idx) => {
                         return m(`div.w-row.creditcard-records`, [
                             m('.w-col.w-col-1.w-sub-col',
-                                m('.w-radio.w-clearfix.back-payment-credit-card-radio-field', 
+                                m('.w-radio.w-clearfix.back-payment-credit-card-radio-field',
                                     m('input', {
                                         checked: ctrl.isCreditCardSelected(card, idx),
                                         name: 'payment_subscription_card',
                                         type: 'radio',
                                         value: card.card_key,
                                         onclick: () => ctrl.selectCreditCard(card)
-                                    })  
+                                    })
                                 )
                             ),
-                            card.id === -1 ? m('.w-col.w-col-11', 
+                            card.id === -1 ? m('.w-col.w-col-11',
                                     m('.fontsize-small.fontweight-semibold.fontcolor-secondary', 'Usar outro cartão de crédito.')
                                 ) : [
                                     m('.w-col.w-col-2.w-sub-col.w-sub-col-middle',
@@ -84,7 +120,7 @@ const paymentCreditCard = {
                                         m('.fontsize-small.fontweight-semibold.u-marginbottom-20', `XXXX.XXXX.XXXX.${card.last_digits}`)
                                     ),
                                     m('.w-col.w-col-4',
-                                        (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' : 
+                                        (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' :
                                             m('select.w-select.text-field.text-field-creditcard',
                                                 _.map(ctrl.installments(), (installment) => {
                                                     return m(`option[value="${installment.number}"]`,
@@ -102,66 +138,43 @@ const paymentCreditCard = {
                         m('label.field-label.fontweight-semibold[for="credit-card-name"]',
                             'Nome no cartão de crédito *'
                         ),
-                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip',
+                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'Nome impresso na frente do seu cartão de crédito'
                         ),
-                        m('input.w-input.text-field[name="credit-card-name"][required="required"][type="text"]')
+                        m('input.w-input.text-field[name="credit-card-name"][required="required"][type="text"]', {
+                            onchange: m.withAttr('value', ctrl.creditCard.name),
+                            value: ctrl.creditCard.name()
+                        })
                     ]),
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="credit-card-number"]',
                             'Número do cartão de crédito *'
                         ),
-                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip',
+                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'O número normalmente com 16 dígitos na frente do seu cartão de crédito'
                         ),
-                        m('input.w-input.text-field[name="credit-card-number"][required="required"][type="phone"]')
+                        m.component(creditCardInput, {value: ctrl.creditCard.number, name: 'credit-card-number', type: ctrl.creditCardType})
                     ]),
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="expiration-date"]',[
                             'Expiração (mm/aaaa)* ',
                             ctrl.buildTooltip('Copy tooltip de validade')
                         ]),
-                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip',
+                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'A data de validade, geralmente na frente do cartão'
                         ),
                         m('.w-row', [
                             m('.w-col.w-col-6.w-col-tiny-6.w-sub-col',
-                                m('select.w-select.text-field[name="expiration-date_month"]', [
-                                    m('option[value="]',
-                                        '01 - Janeiro'
-                                    ),
-                                    m('option[value="First"]',
-                                        '02 - Fevereiro'
-                                    ),
-                                    m('option[value="Second"]',
-                                        '03 - Março'
-                                    ),
-                                    m('option[value="Third"]',
-                                        '04 - Abril'
-                                    ),
-                                    m('option[value="]',
-                                        '05 - Maio'
-                                    ),
-                                    m('option[value="]',
-                                        '06 - Junho'
-                                    )
-                                ])
+                                m('select.w-select.text-field[name="expiration-date_month"]', {
+                                    onchange: m.withAttr('value', ctrl.creditCard.expMonth),
+                                    value: ctrl.creditCard.expMonth()
+                                }, _.map(ctrl.expMonths, month => m('option', {value: month[0]}, month[1])))
                             ),
                             m('.w-col.w-col-6.w-col-tiny-6',
-                                m('select.w-select.text-field[name="expiration-date_year"]', [
-                                    m('option[value="]',
-                                        '2016'
-                                    ),
-                                    m('option[value="First"]',
-                                        '2017'
-                                    ),
-                                    m('option[value="Second"]',
-                                        '2018'
-                                    ),
-                                    m('option[value="Third"]',
-                                        '2019'
-                                    )
-                                ])
+                                m('select.w-select.text-field[name="expiration-date_year"]', {
+                                    onchange: m.withAttr('value', ctrl.creditCard.expYear),
+                                    value: ctrl.creditCard.expYear()
+                                }, _.map(ctrl.expYears, year => m('option', {value: year}, year)))
                             )
                         ])
                     ]),
@@ -170,15 +183,19 @@ const paymentCreditCard = {
                             'Código de Segurança (CVV / CVV2)* ',
                             ctrl.buildTooltip('Copy tooltip código de segurança')
                         ]),
-                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip',
+                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'Os 3 dígitos (quando na frente) ou 4 dígitos (quando atrás) do seu cartão'
                         ),
                         m('.w-row', [
                             m('.w-col.w-col-8.w-col-tiny-6',
-                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="phone"]')
+                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="phone"]', {
+                                    onchange: m.withAttr('value', ctrl.creditCard.cvv),
+                                    onblur: ctrl.checkcvv,
+                                    value: ctrl.creditCard.cvv()
+                                })
                             ),
                             m('.w-col.w-col-4.w-col-tiny-6.u-text-center',
-                                m('img[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57298c1c7e99926e77127bdd_cvv-card.jpg"][width="176"]')
+                                m('img[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png"][width="176"]')
                             )
                         ])
                     ]),
@@ -194,7 +211,7 @@ const paymentCreditCard = {
                             }))
                         ]),
                         m('.w-col.w-col-6')
-                    ]) 
+                    ])
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
