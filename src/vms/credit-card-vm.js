@@ -332,10 +332,9 @@ const setEvents = (el, cardType) => {
     }
     el.onkeydown = formatBackCardNumber;
     el.onkeyup = (event) => {
-        console.log(cardType());
         setCardType(event, cardType)
     };
-    el.onpaste = reFormatCardNumber;
+    // el.onpaste = reFormatCardNumber;
     el.onchange = reFormatCardNumber;
 };
 

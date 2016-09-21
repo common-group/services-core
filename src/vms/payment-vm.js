@@ -6,14 +6,21 @@ import usersVM from './user-vm';
 import models from '../models';
 
 const paymentVM = (mode = 'aon') => {
-    let pagarme;
-    const submissionError = m.prop(false),
+    const pagarme = m.prop({}),
+        submissionError = m.prop(false),
         isLoading = m.prop(false);
+
+    const setCsrfToken = (xhr) => {
+        if (h.authenticityToken()) {
+            xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+        }
+        return;
+    };
 
     const fields = {
         completeName  : m.prop(''),
         email : m.prop(''),
-        anonymous : m.prop(''),
+        anonymous : m.prop(),
         countries : m.prop(),
         userCountryId : m.prop(),
         zipCode : m.prop(''),
@@ -137,6 +144,7 @@ const paymentVM = (mode = 'aon') => {
 
         m.request({
             method: 'GET',
+            config: setCsrfToken,
             url: `/payment/pagarme/${contribution_id}/slip_data`
         }).then(paymentDate);
 
@@ -152,6 +160,7 @@ const paymentVM = (mode = 'aon') => {
 
         return m.request({
             method: 'GET',
+            config: setCsrfToken,
             url: `/users/${user_id}/credit_cards`
         }).then((creditCards) => {
             if (_.isArray(creditCards)){
@@ -164,54 +173,138 @@ const paymentVM = (mode = 'aon') => {
         });
     };
 
+    const requestPayment = (data, contribution_id) => {
+        return m.request({
+            method: 'POST',
+            url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
+            data: data,
+            config: setCsrfToken
+        });
+    };
+
     const payWithSavedCard = (creditCard, installment, contribution_id) => {
         const data = {
             card_id: creditCard.card_key,
             payment_card_installments: installment
         };
-
-        return m.request({
-            method: 'POST',
-            url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
-            data: data
-        }).then(installments);
+        return requestPayment(data, contribution_id);
     };
 
-    const payWithNewCard = () => {
-
+    const setNewCreditCard = () => {
+        let creditCard = new window.PagarMe.creditCard();
+        creditCard.cardHolderName = creditCardFields.name();
+        creditCard.cardExpirationMonth = creditCardFields.expMonth();
+        creditCard.cardExpirationYear = creditCardFields.expYear();
+        creditCard.cardNumber = creditCardFields.number();
+        creditCard.cardCVV = creditCardFields.cvv();
+        return creditCard;
     };
 
-    const updateContributionData = () => {
+    const payWithNewCard = (contribution_id, installment) => {
         const deferred = m.deferred();
+        m.request({
+            method: 'GET',
+            url: `/payment/pagarme/${contribution_id}/get_encryption_key`,
+            config: setCsrfToken
+        }).then((data) => {
+            window.PagarMe.encryption_key = data.key;
+            const card = setNewCreditCard();
+            const errors = card.fieldErrors();
+                if(_.keys(errors).length > 0) {
+                deferred.reject({message: 'Os dados do cartão de crédito são inválidos. Por favor, verifique novamente.'});
+            } else {
+                card.generateHash((cardHash) => {
+                    const data = {
+                        card_hash: cardHash,
+                        save_card: creditCardFields.save(),
+                        payment_card_installments: installment
+                    };
+                    requestPayment(data, contribution_id).then(deferred.resolve()).catch(error => deferred.reject(error));
+                });
 
-        setTimeout(() => deferred.resolve(), 100);
+            }
+        });
 
         return deferred.promise;
+    };
+
+    const updateContributionData = (contribution_id, project_id) => {
+        const contributionData = {
+            anonymous: fields.anonymous(),
+            country_id: fields.userCountryId(),
+            payer_name: fields.completeName(),
+            payer_email: fields.email(),
+            payer_document: fields.ownerDocument(),
+            address_street: fields.street(),
+            address_number: fields.number(),
+            address_complement: fields.addressComplement(),
+            address_neighbourhood: fields.neighbourhood(),
+            address_zip_code: fields.zipCode(),
+            address_city: fields.city(),
+            address_state: fields.userState(),
+            address_phone_number: fields.phone()
+        };
+
+        return m.request({
+            method: 'PUT',
+            url: `/projects/${project_id}/contributions/${contribution_id}.json`,
+            data: {contribution: contributionData},
+            config: setCsrfToken
+        });
     }
 
-    const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id) => {
+    const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
         const deferred = m.deferred();
         if (validate()) {
             isLoading(true);
-            updateContributionData()
+            submissionError('');
+            m.redraw();
+            updateContributionData(contribution_id, project_id)
                 .then(() => {
                     if (selectedCreditCard().id !== -1) {
                         return payWithSavedCard(selectedCreditCard(), selectedInstallment(), contribution_id)
-                            .then(deferred.resolve)
-                            .catch(deferred.reject);
+                            .then((data) => {
+                                if (data.payment_status === 'failed') {
+                                    deferred.reject(data.message);
+                                    isLoading(false)
+                                    submissionError(`Erro ao processar o pagamento: ${data.message}`);
+                                    m.redraw();
+                                } else {
+                                    window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
+                                }
+                            })
+                            .catch(() => {
+                                deferred.reject();
+                                isLoading(false);
+                                submissionError(`Erro ao processar o pagamento: ${data.message}`);
+                                m.redraw();
+                            });
                     } else {
-                        return payWithNewCard()
-                            .then(deferred.resolve)
-                            .catch(deferred.reject);
+                        return payWithNewCard(contribution_id, selectedInstallment)
+                            .then(() => {
+                                deferred.resolve();
+                                isLoading(false);
+                                m.redraw();
+                            })
+                            .catch((data) => {
+                                deferred.reject();
+                                isLoading(false);
+                                submissionError(`Erro ao processar o pagamento: ${data.message}`);
+                                m.redraw();
+                            });
                     }
                 })
-                .catch(deferred.reject);
+                .catch(() => {
+                    deferred.reject();
+                    isLoading(false);
+                });
 
         } else {
             deferred.reject();
+            isLoading(false);
         }
         return deferred.promise;
-    }
+    };
 
     const resetFieldError = (fieldName) => () => {
         const errors = fields.errors(),
@@ -234,7 +327,8 @@ const paymentVM = (mode = 'aon') => {
     const getInstallments = (contribution_id) => {
         return m.request({
             method: 'GET',
-            url: `/payment/pagarme/${contribution_id}/get_installment`
+            url: `/payment/pagarme/${contribution_id}/get_installment`,
+            config: h.setCsrfToken
         }).then(installments);
     };
 

@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import h from '../h';
 import tooltip from './tooltip';
 import creditCardVM from '../vms/credit-card-vm';
 import creditCardInput from './credit-card-input';
@@ -27,7 +28,7 @@ const paymentCreditCard = {
             }
 
             if (vm.creditCardFields.errors().length === 0) {
-                vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id)
+                vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id)
                     .then()
                     .catch();
             }
@@ -102,7 +103,7 @@ const paymentCreditCard = {
                 script.src = '//assets.pagar.me/js/pagarme.min.js';
                 document.body.appendChild(script);
                 script.onload = () => {
-                    vm.pagarme = window.PagarMe;
+                    vm.pagarme(window.PagarMe);
                 }
             }
         }
@@ -118,13 +119,16 @@ const paymentCreditCard = {
         };
 
         vm.getInstallments(args.contribution_id)
-            .then(() => loadingInstallments(false));
+            .then(() => {
+                loadingInstallments(false);
+                m.redraw();
+            });
 
         vm.getSavedCreditCards(args.user_id)
             .then((savedCards) => {
-                console.log('saved cards: ', savedCards);
                 loadingSavedCreditCards(false);
                 selectCreditCard(savedCards[0]);
+                m.redraw();
             });
 
         return {
@@ -193,7 +197,7 @@ const paymentCreditCard = {
                                 ]
                         ]);
                     })
-                ) : ctrl.loadingSavedCreditCards() ? 'Carregando informações de cartão...' : '',
+                ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-base', 'Carregando informações de cartão...') : '',
                 !ctrl.showForm() ? '' : m('#credit-card-payment-form.w-marginbottom-20', [
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="credit-card-name"]',
@@ -301,7 +305,7 @@ const paymentCreditCard = {
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        ctrl.vm.isLoading() ? h.loader() : ctrl.vm.submissionError() ? m('div', 'error') : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
+                        ctrl.vm.isLoading() ? h.loader() : !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', ctrl.vm.submissionError()) : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                             'Ao apoiar, você concorda com os ',
                             m('a.alt-link[href=\'/pt/terms-of-use\']',

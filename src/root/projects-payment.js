@@ -56,7 +56,6 @@ const projectsPayment = {
         }
     },
     view(ctrl, args) {
-        // return m('h1', 'FORM');
         return m(".w-section.w-clearfix.section",
         	[
         		m(".w-col",
@@ -89,18 +88,10 @@ const projectsPayment = {
         				[
         					m(".w-col.w-col-8",
         						[
-        							ctrl.vm.fields.errors() ? m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']", {style: {"display": "block"}},
-        								[
+        							!_.isEmpty(ctrl.vm.fields.errors()) ? m(".card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']",
         									m(".u-marginbottom-10.fontweight-bold",
         										"Por favor, reveja os campos abaixo antes de prosseguir"
-        									),
-        									m("div",
-        										"This is some text inside of a div block."
-        									),
-        									m("div",
-        										"This is some text inside of a div block."
         									)
-        								]
         							) : '',
         							m(".w-form",
         								[
