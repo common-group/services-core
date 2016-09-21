@@ -10,19 +10,26 @@ const paymentCreditCard = {
         const vm = args.vm,
             loadingInstallments = m.prop(true),
             loadingSavedCreditCards = m.prop(true),
-            selectedCreditCard = m.prop({}),
+            selectedCreditCard = m.prop({id: -1}),
+            selectedInstallment = m.prop('1'),
             showForm = m.prop(false),
             creditCardType = m.prop('unkown'),
             errors = m.prop([]);
 
         const onSubmit = () => {
-            checkcvv();
-            checkExpiry();
-            checkCreditCard();
-            checkCreditCardName();
+            if (selectedCreditCard().id === -1) {
+                checkcvv();
+                checkExpiry();
+                checkCreditCard();
+                checkCreditCardName();
+            } else {
+                vm.creditCardFields.errors([]);
+            }
 
             if (vm.creditCardFields.errors().length === 0) {
-                vm.sendPayment().then().catch();
+                vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id)
+                    .then()
+                    .catch();
             }
 
             return false;
@@ -86,8 +93,19 @@ const paymentCreditCard = {
         };
 
         const isCreditCardSelected = (card, idx) => {
-            return _.isEmpty(selectedCreditCard()) ? idx === 0 : selectedCreditCard() === card;
+            return selectedCreditCard().id === -1 ? true : selectedCreditCard() === card;
         };
+
+        const loadPagarme = (el, isInit) => {
+            if (!isInit) {
+                const script = document.createElement('script');
+                script.src = '//assets.pagar.me/js/pagarme.min.js';
+                document.body.appendChild(script);
+                script.onload = () => {
+                    vm.pagarme = window.PagarMe;
+                }
+            }
+        }
 
         const selectCreditCard = (card) => {
             selectedCreditCard(card);
@@ -103,7 +121,11 @@ const paymentCreditCard = {
             .then(() => loadingInstallments(false));
 
         vm.getSavedCreditCards(args.user_id)
-            .then(() => loadingSavedCreditCards(false));
+            .then((savedCards) => {
+                console.log('saved cards: ', savedCards);
+                loadingSavedCreditCards(false);
+                selectCreditCard(savedCards[0]);
+            });
 
         return {
             vm: vm,
@@ -113,6 +135,7 @@ const paymentCreditCard = {
             loadingInstallments: loadingInstallments,
             loadingSavedCreditCards: loadingSavedCreditCards,
             installments: vm.installments,
+            selectedInstallment: selectedInstallment,
             savedCreditCards: vm.savedCreditCards,
             creditCard: vm.creditCardFields,
             creditCardType: creditCardType,
@@ -121,11 +144,14 @@ const paymentCreditCard = {
             isCreditCardSelected: isCreditCardSelected,
             expMonths: vm.expMonthOptions(),
             expYears: vm.expYearOptions(),
+            loadPagarme: loadPagarme,
             showForm: showForm
         };
     },
     view (ctrl, args) {
-        return m('.w-form.u-marginbottom-40', [
+        return m('.w-form.u-marginbottom-40', {
+            config: ctrl.loadPagarme
+        } , [
             m('form[name="email-form"]',{
                 onsubmit: ctrl.onSubmit
             }, [
@@ -154,8 +180,10 @@ const paymentCreditCard = {
                                     ),
                                     m('.w-col.w-col-4',
                                         (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' :
-                                            m('select.w-select.text-field.text-field-creditcard',
-                                                _.map(ctrl.installments(), (installment) => {
+                                            m('select.w-select.text-field.text-field-creditcard',{
+                                                onchange: m.withAttr('value', ctrl.selectedInstallment),
+                                                value: ctrl.selectedInstallment()
+                                            } ,_.map(ctrl.installments(), (installment) => {
                                                     return m(`option[value="${installment.number}"]`,
                                                         `${installment.number} X R$ ${installment.amount}`
                                                     );
@@ -273,7 +301,7 @@ const paymentCreditCard = {
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        ctrl.vm.isLoading() ? h.loader() : ('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
+                        ctrl.vm.isLoading() ? h.loader() : ctrl.vm.submissionError() ? m('div', 'error') : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                             'Ao apoiar, você concorda com os ',
                             m('a.alt-link[href=\'/pt/terms-of-use\']',

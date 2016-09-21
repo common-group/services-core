@@ -6,6 +6,10 @@ import usersVM from './user-vm';
 import models from '../models';
 
 const paymentVM = (mode = 'aon') => {
+    let pagarme;
+    const submissionError = m.prop(false),
+        isLoading = m.prop(false);
+
     const fields = {
         completeName  : m.prop(''),
         email : m.prop(''),
@@ -160,8 +164,53 @@ const paymentVM = (mode = 'aon') => {
         });
     };
 
-    const sendPayment = () => {
-        console.log('Sending payment!');
+    const payWithSavedCard = (creditCard, installment, contribution_id) => {
+        const data = {
+            card_id: creditCard.card_key,
+            payment_card_installments: installment
+        };
+
+        return m.request({
+            method: 'POST',
+            url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
+            data: data
+        }).then(installments);
+    };
+
+    const payWithNewCard = () => {
+
+    };
+
+    const updateContributionData = () => {
+        const deferred = m.deferred();
+
+        setTimeout(() => deferred.resolve(), 100);
+
+        return deferred.promise;
+    }
+
+    const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id) => {
+        const deferred = m.deferred();
+        if (validate()) {
+            isLoading(true);
+            updateContributionData()
+                .then(() => {
+                    if (selectedCreditCard().id !== -1) {
+                        return payWithSavedCard(selectedCreditCard(), selectedInstallment(), contribution_id)
+                            .then(deferred.resolve)
+                            .catch(deferred.reject);
+                    } else {
+                        return payWithNewCard()
+                            .then(deferred.resolve)
+                            .catch(deferred.reject);
+                    }
+                })
+                .catch(deferred.reject);
+
+        } else {
+            deferred.reject();
+        }
+        return deferred.promise;
     }
 
     const resetFieldError = (fieldName) => () => {
@@ -213,6 +262,9 @@ const paymentVM = (mode = 'aon') => {
         expMonthOptions: expMonthOptions,
         expYearOptions: expYearOptions,
         sendPayment: sendPayment,
+        submissionError: submissionError,
+        isLoading: isLoading,
+        pagarme: pagarme,
         faq: faq
     };
 };
