@@ -219,7 +219,7 @@ const paymentVM = (mode = 'aon') => {
                         save_card: creditCardFields.save(),
                         payment_card_installments: installment
                     };
-                    requestPayment(data, contribution_id).then(deferred.resolve()).catch(error => deferred.reject(error));
+                    requestPayment(data, contribution_id).then(deferred.resolve).catch(deferred.reject);
                 });
 
             }
@@ -281,10 +281,15 @@ const paymentVM = (mode = 'aon') => {
                             });
                     } else {
                         return payWithNewCard(contribution_id, selectedInstallment)
-                            .then(() => {
-                                deferred.resolve();
-                                isLoading(false);
-                                m.redraw();
+                            .then((data) => {
+                                if (data.payment_status === 'failed') {
+                                    deferred.reject(data.message);
+                                    isLoading(false)
+                                    submissionError(`Erro ao processar o pagamento: ${data.message}`);
+                                    m.redraw();
+                                } else {
+                                    window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
+                                }
                             })
                             .catch((data) => {
                                 deferred.reject();
