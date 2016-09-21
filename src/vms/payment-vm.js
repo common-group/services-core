@@ -30,7 +30,9 @@ const paymentVM = (mode = 'aon') => {
         number: m.prop(''),
         expMonth: m.prop(''),
         expYear: m.prop(''),
-        cvv: m.prop('')
+        save: m.prop(false),
+        cvv: m.prop(''),
+        errors: m.prop([])
     };
 
     const faq = I18n.translations[I18n.currentLocale()].projects.faq[mode],
@@ -158,12 +160,24 @@ const paymentVM = (mode = 'aon') => {
         });
     };
 
+    const sendPayment = () => {
+        console.log('Sending payment!');
+    }
+
     const resetFieldError = (fieldName) => () => {
         const errors = fields.errors(),
             errorField = _.findWhere(fields.errors(), {field: fieldName}),
             newErrors = _.compose(fields.errors, _.without);
 
         return newErrors(fields.errors(), errorField);
+    };
+
+    const resetCreditCardFieldError = (fieldName) => () => {
+        const errors = fields.errors(),
+            errorField = _.findWhere(creditCardFields.errors(), {field: fieldName}),
+            newErrors = _.compose(creditCardFields.errors, _.without);
+
+        return newErrors(creditCardFields.errors(), errorField);
     };
 
     const installments = m.prop([{value: 10, number: 1}]);
@@ -195,9 +209,11 @@ const paymentVM = (mode = 'aon') => {
         getSavedCreditCards: getSavedCreditCards,
         applyCreditCardMask: applyCreditCardMask,
         creditCardFields: creditCardFields,
-        faq: faq,
+        resetCreditCardFieldError: resetCreditCardFieldError,
         expMonthOptions: expMonthOptions,
-        expYearOptions: expYearOptions
+        expYearOptions: expYearOptions,
+        sendPayment: sendPayment,
+        faq: faq
     };
 };
 

@@ -3,6 +3,7 @@ import _ from 'underscore';
 import tooltip from './tooltip';
 import creditCardVM from '../vms/credit-card-vm';
 import creditCardInput from './credit-card-input';
+import inlineError from './inline-error';
 
 const paymentCreditCard = {
     controller (args) {
@@ -11,12 +12,16 @@ const paymentCreditCard = {
             loadingSavedCreditCards = m.prop(true),
             selectedCreditCard = m.prop({}),
             showForm = m.prop(false),
-            creditCardType = m.prop('unkown');
+            creditCardType = m.prop('unkown'),
+            errors = m.prop([]);
 
         const onSubmit = () => {
-            const isValid = checkcvv() && checkExpiry() && checkCreditCard() && checkCreditCardName();
+            checkcvv();
+            checkExpiry();
+            checkCreditCard();
+            checkCreditCardName();
 
-            if (isValid) {
+            if (vm.creditCardFields.errors().length === 0) {
                 vm.sendPayment().then().catch();
             }
 
@@ -24,20 +29,53 @@ const paymentCreditCard = {
         };
 
         const checkcvv = () => {
-            return creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType());
+            const isValid = creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType());
+
+            if (!isValid) {
+                vm.creditCardFields.errors().push({field: 'cvv', message: 'Código de Segurança inválido.'});
+            }
+
+            return isValid;
         };
 
         const checkExpiry = () => {
-            return creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear());
+            const isValid = creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear());
+
+            if (!isValid) {
+                vm.creditCardFields.errors().push({field: 'expiry', message: 'Data de vencimento inválida.'});
+            }
+
+            return isValid;
         };
 
         const checkCreditCard = () => {
-            return creditCardVM.validateCardNumber(vm.creditCardFields.number());
+            const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number());
+            if (!isValid) {
+                vm.creditCardFields.errors().push({field: 'number', message: 'Número de cartão de crédito inválido.'});
+                console.log('Was the error added? ', vm.creditCardFields.errors());
+            }
+
+            return isValid;
         };
 
         const checkCreditCardName = () => {
-            return !_.isEmpty(vm.creditCardFields.name().trim());
+            const trimmedString = vm.creditCardFields.name().replace(/ /g,'');
+            const charsOnly = /^[a-zA-Z]*$/;
+
+            if (_.isEmpty(trimmedString) || !charsOnly.test(trimmedString)) {
+                vm.creditCardFields.errors().push({field: 'name', message: 'Nome inválido.'});
+                return false;
+            }
+
+            return true;
         };
+
+        const fieldHasError = (fieldName) => {
+            const fieldWithError = _.findWhere(vm.creditCardFields.errors(), {field: fieldName});
+
+            return fieldWithError ? m.component(inlineError, {message: fieldWithError.message}) : '';
+        };
+
 
         const buildTooltip = (tooltipText) => {
             return m.component(tooltip, {
@@ -61,12 +99,6 @@ const paymentCreditCard = {
             }
         };
 
-        const fieldHasError = (fieldName) => {
-            const fieldWithError = _.findWhere(vm.fields.errors(), {field: fieldName});
-
-            return fieldWithError ? m.component(inlineError, {message: fieldWithError.message}) : '';
-        };
-
         vm.getInstallments(args.contribution_id)
             .then(() => loadingInstallments(false));
 
@@ -74,6 +106,7 @@ const paymentCreditCard = {
             .then(() => loadingSavedCreditCards(false));
 
         return {
+            vm: vm,
             onSubmit: onSubmit,
             fieldHasError: fieldHasError,
             buildTooltip: buildTooltip,
@@ -133,7 +166,7 @@ const paymentCreditCard = {
                         ]);
                     })
                 ) : ctrl.loadingSavedCreditCards() ? 'Carregando informações de cartão...' : '',
-                !ctrl.showForm() ? '' : m('#credit-card-payment-form', [
+                !ctrl.showForm() ? '' : m('#credit-card-payment-form.w-marginbottom-20', [
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="credit-card-name"]',
                             'Nome no cartão de crédito *'
@@ -142,9 +175,12 @@ const paymentCreditCard = {
                             'Nome impresso na frente do seu cartão de crédito'
                         ),
                         m('input.w-input.text-field[name="credit-card-name"][required="required"][type="text"]', {
+                            onfocus: ctrl.vm.resetCreditCardFieldError('name'),
+                            class: ctrl.fieldHasError('name') ? 'error' : '',
                             onchange: m.withAttr('value', ctrl.creditCard.name),
                             value: ctrl.creditCard.name()
-                        })
+                        }),
+                        ctrl.fieldHasError('name')
                     ]),
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="credit-card-number"]',
@@ -153,7 +189,14 @@ const paymentCreditCard = {
                         m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'O número normalmente com 16 dígitos na frente do seu cartão de crédito'
                         ),
-                        m.component(creditCardInput, {value: ctrl.creditCard.number, name: 'credit-card-number', type: ctrl.creditCardType})
+                        m.component(creditCardInput, {
+                            onfocus: ctrl.vm.resetCreditCardFieldError('number'),
+                            class: ctrl.fieldHasError('number') ? 'error' : '',
+                            value: ctrl.creditCard.number,
+                            name: 'credit-card-number',
+                            type: ctrl.creditCardType
+                        }),
+                        ctrl.fieldHasError('number')
                     ]),
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="expiration-date"]',[
@@ -166,16 +209,21 @@ const paymentCreditCard = {
                         m('.w-row', [
                             m('.w-col.w-col-6.w-col-tiny-6.w-sub-col',
                                 m('select.w-select.text-field[name="expiration-date_month"]', {
+                                    onfocus: ctrl.vm.resetCreditCardFieldError('expiry'),
+                                    class: ctrl.fieldHasError('expiry') ? 'error' : '',
                                     onchange: m.withAttr('value', ctrl.creditCard.expMonth),
                                     value: ctrl.creditCard.expMonth()
                                 }, _.map(ctrl.expMonths, month => m('option', {value: month[0]}, month[1])))
                             ),
                             m('.w-col.w-col-6.w-col-tiny-6',
                                 m('select.w-select.text-field[name="expiration-date_year"]', {
+                                    onfocus: ctrl.vm.resetCreditCardFieldError('expiry'),
+                                    class: ctrl.fieldHasError('expiry') ? 'error' : '',
                                     onchange: m.withAttr('value', ctrl.creditCard.expYear),
                                     value: ctrl.creditCard.expYear()
                                 }, _.map(ctrl.expYears, year => m('option', {value: year}, year)))
-                            )
+                            ),
+                            m('.w-col.w-col-12', ctrl.fieldHasError('expiry'))
                         ])
                     ]),
                     m('div', [
@@ -189,13 +237,16 @@ const paymentCreditCard = {
                         m('.w-row', [
                             m('.w-col.w-col-8.w-col-tiny-6',
                                 m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="phone"]', {
+                                    onfocus: ctrl.vm.resetCreditCardFieldError('cvv'),
+                                    class: ctrl.fieldHasError('cvv') ? 'error' : '',
                                     onchange: m.withAttr('value', ctrl.creditCard.cvv),
                                     onblur: ctrl.checkcvv,
                                     value: ctrl.creditCard.cvv()
-                                })
+                                }),
+                                ctrl.fieldHasError('cvv')
                             ),
                             m('.w-col.w-col-4.w-col-tiny-6.u-text-center',
-                                m('img[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png"][width="176"]')
+                                m('img[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57298c1c7e99926e77127bdd_cvv-card.jpg"][width="176"]')
                             )
                         ])
                     ]),
@@ -211,11 +262,18 @@ const paymentCreditCard = {
                             }))
                         ]),
                         m('.w-col.w-col-6')
+                    ]),
+                    m('.w-checkbox.w-clearfix', [
+                        m('input.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
+                            onchange: m.withAttr('checked', ctrl.creditCard.save),
+                            checked: ctrl.creditCard.save()
+                        }),
+                        m('label.w-form-label[for="payment_save_card"]', 'Quero salvar meu cartão de crédito para facilitar apoios futuros.')
                     ])
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
+                        ctrl.vm.isLoading() ? h.loader() : ('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                             'Ao apoiar, você concorda com os ',
                             m('a.alt-link[href=\'/pt/terms-of-use\']',

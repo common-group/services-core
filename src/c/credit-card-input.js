@@ -22,6 +22,8 @@ const creditCardInput = {
   },
   view (ctrl, args) {
       return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="phone"]`, {
+          onfocus: args.onfocus,
+          class: args.class,
           config: ctrl.setCreditCardHandlers,
           onchange: m.withAttr('value', args.value),
           onblur: ctrl.validate,
