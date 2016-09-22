@@ -216,7 +216,7 @@ const paymentVM = (mode = 'aon') => {
                 card.generateHash((cardHash) => {
                     const data = {
                         card_hash: cardHash,
-                        save_card: creditCardFields.save(),
+                        save_card: creditCardFields.save().toString(),
                         payment_card_installments: installment
                     };
                     requestPayment(data, contribution_id).then(deferred.resolve).catch(deferred.reject);
