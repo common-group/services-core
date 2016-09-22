@@ -167,7 +167,7 @@ const footer = {
                 m('.w-container',
                     m('.footer-full-copyleft',
                         [
-                            m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer-b5edd43e0ec420a39310ea965341f3ea.png\']'),
+                            m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'),
                             m('.lineheight-loose',
                                 m('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']',
                                     'Feito com amor | 2016 | Open source'
