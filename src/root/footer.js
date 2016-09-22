@@ -135,7 +135,7 @@ const footer = {
                                                     m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')
                                                 ),
                                                 m('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]',
-                                                    m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter-aa77cede92b4d0a314170a10b1c41754.png\']')
+                                                    m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter.png\']')
                                                 )
                                             ]
                                         )
