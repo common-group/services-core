@@ -10,7 +10,7 @@ const menu = {
             menuCss = () => {
                 let dynamicClasses;
 
-                return `${args.menuTransparency ? 'overlayer' : ''} ${args.withAlert ? 'with-global-alert' : ''}`
+                return `${args.menuTransparency ? 'overlayer' : ''} ${args.withAlert ? 'with-global-alert' : ''}`;
             };
 
         return {
@@ -27,7 +27,7 @@ const menu = {
                     [
                         m('a.header-logo.w-nav-brand[href=\'/?ref=ctrse_header\'][title=\'Catarse\']',
                             {config: m.route},
-                            m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big-8726f3436ac23c97959d3f7bf10365b7.png\']')
+                            m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
                         m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
                         m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']',{config: m.route},'Explore'),

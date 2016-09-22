@@ -17,7 +17,7 @@ const menuSearch = {
                           [
                               m('.result',
                                   m('.u-text-center',
-                                      m('img[alt=\'Loader\'][src=\'/assets/catarse_bootstrap/loader-b642f2f0212454026a5c7c40620427c1.gif\']')
+                                      m('img[alt=\'Loader\'][src=\'/assets/catarse_bootstrap/loader.gif\']')
                                   )
                               ),
                               m('a.btn.btn-small.btn-terciary.see-more-projects[href=\'javascript:void(0);\']',
@@ -28,7 +28,7 @@ const menuSearch = {
                   ]
               ),
               m('a.w-inline-block.w-hidden-small.w-hidden-tiny.btn.btn-dark.btn-attached.postfix[href=\'#\'][id=\'pg_search_submit\']',
-                  m('img.header-lupa[alt=\'Lupa\'][data-pin-nopin=\'true\'][src=\'/assets/catarse_bootstrap/lupa-a2e6f4b98c43604325ed4c786d4be5a4.png\']')
+                  m('img.header-lupa[alt=\'Lupa\'][data-pin-nopin=\'true\'][src=\'/assets/catarse_bootstrap/lupa.png\']')
               )
         ]);
     }
