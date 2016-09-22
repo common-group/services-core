@@ -256,12 +256,13 @@ const paymentVM = (mode = 'aon') => {
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
         const deferred = m.deferred();
         if (validate()) {
+            console.log('Shit is valid!');
             isLoading(true);
             submissionError('');
             m.redraw();
             updateContributionData(contribution_id, project_id)
                 .then(() => {
-                    if (selectedCreditCard().id !== -1) {
+                    if (selectedCreditCard().id && selectedCreditCard().id !== -1) {
                         return payWithSavedCard(selectedCreditCard(), selectedInstallment(), contribution_id)
                             .then((data) => {
                                 if (data.payment_status === 'failed') {
@@ -280,23 +281,29 @@ const paymentVM = (mode = 'aon') => {
                                 m.redraw();
                             });
                     } else {
-                        return payWithNewCard(contribution_id, selectedInstallment)
-                            .then((data) => {
-                                if (data.payment_status === 'failed') {
-                                    deferred.reject(data.message);
-                                    isLoading(false)
+                        if (selectedCreditCard().id === -1) {
+                            return payWithNewCard(contribution_id, selectedInstallment)
+                                .then((data) => {
+                                    if (data.payment_status === 'failed') {
+                                        deferred.reject(data.message);
+                                        isLoading(false)
+                                        submissionError(`Erro ao processar o pagamento: ${data.message}`);
+                                        m.redraw();
+                                    } else {
+                                        window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
+                                    }
+                                })
+                                .catch((data) => {
+                                    deferred.reject();
+                                    isLoading(false);
                                     submissionError(`Erro ao processar o pagamento: ${data.message}`);
                                     m.redraw();
-                                } else {
-                                    window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
-                                }
-                            })
-                            .catch((data) => {
-                                deferred.reject();
-                                isLoading(false);
-                                submissionError(`Erro ao processar o pagamento: ${data.message}`);
-                                m.redraw();
-                            });
+                                });
+                        } else {
+                            submissionError(`Nenhum cartão escolhido.`);
+                            m.redraw();
+                        }
+
                     }
                 })
                 .catch(() => {
@@ -305,6 +312,7 @@ const paymentVM = (mode = 'aon') => {
                 });
 
         } else {
+            console.log('Shit is not valid!');
             deferred.reject();
             isLoading(false);
         }

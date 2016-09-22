@@ -64,13 +64,13 @@ const projectsPayment = {
         					m(".fontsize-smaller.fontweight-semibold",
         						"Valor do apoio"
         					),
-        					m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-reward-details'][data-vivaldi-spatnav-clickable='1'][href='#']"),
+        					m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href='#']"),
         					m(".w-clearfix.u-marginbottom-20",
         						m(".fontsize-larger.text-success.u-left",
         							`R$ ${Number(ctrl.value).toFixed()}`
         						)
         					),
-        					m(".w-clearfix.back-payment-info-reward[data-ix='display-none-on-load']", {style: {"display": "none"}},
+        					m(".w-clearfix.back-payment-info-reward", {style: {"display": "none"}},
         						[
         							m(".fontsize-smaller.fontweight-semibold.u-marginbottom-10",
         								"Recompensa selecionada"
@@ -90,7 +90,10 @@ const projectsPayment = {
         						[
         							!_.isEmpty(ctrl.vm.fields.errors()) ? m(".card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']",
         									m(".u-marginbottom-10.fontweight-bold",
-        										"Por favor, reveja os campos abaixo antes de prosseguir"
+        										[
+                                                    "Por favor, reveja os campos abaixo antes de prosseguir",
+                                                    m('.errors', _.map(ctrl.vm.fields.errors(), (error) => m('p', error.message)))
+                                                ]
         									)
         							) : '',
         							m(".w-form",

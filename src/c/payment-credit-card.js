@@ -94,7 +94,7 @@ const paymentCreditCard = {
         };
 
         const isCreditCardSelected = (card, idx) => {
-            return selectedCreditCard().id === -1 ? true : selectedCreditCard() === card;
+            return selectedCreditCard() === card;
         };
 
         const loadPagarme = (el, isInit) => {
@@ -159,7 +159,7 @@ const paymentCreditCard = {
             m('form[name="email-form"]',{
                 onsubmit: ctrl.onSubmit
             }, [
-                (!ctrl.loadingSavedCreditCards() || (ctrl.savedCreditCards().length > 0)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice',
+                (!ctrl.loadingSavedCreditCards() || (ctrl.savedCreditCards().length > 0)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
                     _.map(ctrl.savedCreditCards(), (card, idx) => {
                         return m(`div.w-row.creditcard-records`, [
                             m('.w-col.w-col-1.w-sub-col',
@@ -197,8 +197,8 @@ const paymentCreditCard = {
                                 ]
                         ]);
                     })
-                ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-base', 'Carregando informações de cartão...') : '',
-                !ctrl.showForm() ? '' : m('#credit-card-payment-form.w-marginbottom-20', [
+                ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-small.u-marginbottom-40', 'Carregando informações de cartão...') : '',
+                !ctrl.showForm() ? '' : m('#credit-card-payment-form.u-marginbottom-40', [
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="credit-card-name"]',
                             'Nome no cartão de crédito *'
@@ -305,7 +305,8 @@ const paymentCreditCard = {
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        ctrl.vm.isLoading() ? h.loader() : !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', ctrl.vm.submissionError()) : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
+                        ctrl.vm.isLoading() ? h.loader() : !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
+                            m(".u-marginbottom-10.fontweight-bold", ctrl.vm.submissionError())) : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                             'Ao apoiar, você concorda com os ',
                             m('a.alt-link[href=\'/pt/terms-of-use\']',
