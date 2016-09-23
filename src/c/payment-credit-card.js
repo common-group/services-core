@@ -161,15 +161,17 @@ const paymentCreditCard = {
             }, [
                 (!ctrl.loadingSavedCreditCards() || (ctrl.savedCreditCards().length > 0)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
                     _.map(ctrl.savedCreditCards(), (card, idx) => {
-                        return m(`div.w-row.creditcard-records`, [
+                        return m(`div.w-row.creditcard-records`, {
+                                style: 'cursor:pointer;',
+                                onclick: () => ctrl.selectCreditCard(card)
+                            },[
                             m('.w-col.w-col-1.w-sub-col',
                                 m('.w-radio.w-clearfix.back-payment-credit-card-radio-field',
                                     m('input', {
                                         checked: ctrl.isCreditCardSelected(card, idx),
                                         name: 'payment_subscription_card',
                                         type: 'radio',
-                                        value: card.card_key,
-                                        onclick: () => ctrl.selectCreditCard(card)
+                                        value: card.card_key
                                     })
                                 )
                             ),
@@ -261,7 +263,7 @@ const paymentCreditCard = {
                     m('div', [
                         m('label.field-label.fontweight-semibold[for="credit-card-cvv"]',[
                             'Código de Segurança (CVV / CVV2)* ',
-                            ctrl.buildTooltip('Copy tooltip código de segurança')
+                            ctrl.buildTooltip('Os 3 ou 4 dígitos que estão nas costas dos cartões VISA, MASTER, DINERS, ELO e na frente do cartão AMEX.')
                         ]),
                         m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'Os 3 dígitos (quando na frente) ou 4 dígitos (quando atrás) do seu cartão'
@@ -296,7 +298,7 @@ const paymentCreditCard = {
                         m('.w-col.w-col-6')
                     ]),
                     m('.w-checkbox.w-clearfix', [
-                        m('input.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
+                        m('input#payment_save_card.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
                             onchange: m.withAttr('checked', ctrl.creditCard.save),
                             checked: ctrl.creditCard.save()
                         }),

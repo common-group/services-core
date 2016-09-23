@@ -17,22 +17,18 @@ const paymentSlip = {
                 url: `/payment/pagarme/${args.contribution_id}/pay_slip.json`,
                 dataType: 'json'
             }).then(data => {
-                console.log(data);
                 if(data.payment_status == 'failed'){
                     error(true);
                 } else if(data.boleto_url) {
                     window.location.href = `https://www.catarse.me/pt/projects/${args.project_id}/contributions/${args.contribution_id}`;
                 }
                 loading(false);
-                
                 m.redraw();
             }).catch(err => {
-                console.log(err);
                 error(true);
                 loading(false);
                 m.redraw();
             });
-            
 			return false;
 		};
 
@@ -53,7 +49,7 @@ const paymentSlip = {
                     m('.fontsize-small.u-marginbottom-40',
                         'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'
                     ),
-                    m('.w-row', 
+                    m('.w-row',
                         m('.w-col.w-col-8.w-col-push-2', [
                             ctrl.loading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20',{
                             	onclick: ctrl.buildSlip,
