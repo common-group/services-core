@@ -23,7 +23,6 @@ const projectSuccessfulOnboardConfirmAccount = {
               currentStage = m.prop('start'),
               actionStage = () => actionStages[currentStage()],
               changeToAction = (stage) => {
-                  console.log('\n======\nChanging action to ', stage);
                   return () => {
                       currentStage(stage);
 

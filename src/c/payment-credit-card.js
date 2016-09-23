@@ -60,7 +60,6 @@ const paymentCreditCard = {
             const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number());
             if (!isValid) {
                 vm.creditCardFields.errors().push({field: 'number', message: 'Número de cartão de crédito inválido.'});
-                console.log('Was the error added? ', vm.creditCardFields.errors());
             }
 
             return isValid;

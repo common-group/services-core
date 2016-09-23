@@ -256,7 +256,6 @@ const paymentVM = (mode = 'aon') => {
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
         const deferred = m.deferred();
         if (validate()) {
-            console.log('Shit is valid!');
             isLoading(true);
             submissionError('');
             m.redraw();
@@ -312,7 +311,6 @@ const paymentVM = (mode = 'aon') => {
                 });
 
         } else {
-            console.log('Shit is not valid!');
             deferred.reject();
             isLoading(false);
         }
