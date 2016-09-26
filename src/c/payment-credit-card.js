@@ -28,9 +28,7 @@ const paymentCreditCard = {
             }
 
             if (vm.creditCardFields.errors().length === 0) {
-                vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id)
-                    .then()
-                    .catch();
+                vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
             }
 
             return false;
