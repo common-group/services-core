@@ -18,7 +18,6 @@ const paymentCreditCard = {
             errors = m.prop([]);
 
         const onSubmit = () => {
-            console.log('Submit was triggered');
             if (selectedCreditCard().id === -1) {
                 checkcvv();
                 checkExpiry();
@@ -37,31 +36,38 @@ const paymentCreditCard = {
             return false;
         };
 
-        const checkcvv = () => {
-            const isValid = creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType());
-
+        const handleValidity = (isValid, errorObj) => {
             if (!isValid) {
-                vm.creditCardFields.errors().push({field: 'cvv', message: 'Código de Segurança inválido.'});
+                vm.creditCardFields.errors().push(errorObj);
+            } else {
+                const errorsWithout = _.reject(vm.creditCardFields.errors(), (err) => _.isEqual(err, errorObj));
+                vm.creditCardFields.errors(errorsWithout);
             }
+        };
+
+        const checkcvv = () => {
+            const isValid = creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType()),
+                errorObj = {field: 'cvv', message: 'Código de Segurança inválido.'};
+
+            handleValidity(isValid, errorObj);
 
             return isValid;
         };
 
         const checkExpiry = () => {
-            const isValid = creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear());
+            const isValid = creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear()),
+                errorObj = {field: 'expiry', message: 'Data de vencimento inválida.'};
 
-            if (!isValid) {
-                vm.creditCardFields.errors().push({field: 'expiry', message: 'Data de vencimento inválida.'});
-            }
+            handleValidity(isValid, errorObj);
 
             return isValid;
         };
 
         const checkCreditCard = () => {
-            const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number());
-            if (!isValid) {
-                vm.creditCardFields.errors().push({field: 'number', message: 'Número de cartão de crédito inválido.'});
-            }
+            const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number()),
+                errorObj = {field: 'number', message: 'Número de cartão de crédito inválido.'};
+
+            handleValidity(isValid, errorObj)
 
             return isValid;
         };
@@ -69,13 +75,12 @@ const paymentCreditCard = {
         const checkCreditCardName = () => {
             const trimmedString = vm.creditCardFields.name().replace(/ /g,'');
             const charsOnly = /^[a-zA-Z]*$/;
+            const errorObj = {field: 'name', message: 'Nome inválido.'};
+            const isValid = !(_.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
-            if (_.isEmpty(trimmedString) || !charsOnly.test(trimmedString)) {
-                vm.creditCardFields.errors().push({field: 'name', message: 'Nome inválido.'});
-                return false;
-            }
+            handleValidity(isValid, errorObj);
 
-            return true;
+            return isValid;
         };
 
         const fieldHasError = (fieldName) => {
