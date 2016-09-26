@@ -18,6 +18,7 @@ const paymentCreditCard = {
             errors = m.prop([]);
 
         const onSubmit = () => {
+            console.log('Submit was triggered');
             if (selectedCreditCard().id === -1) {
                 checkcvv();
                 checkExpiry();
@@ -154,53 +155,53 @@ const paymentCreditCard = {
     view (ctrl, args) {
         return m('.w-form.u-marginbottom-40', {
             config: ctrl.loadPagarme
-        } , [
-            m('form[name="email-form"]',{
+        },[
+            m('form[name="email-form"]', {
                 onsubmit: ctrl.onSubmit
-            }, [
+            },[
                 (!ctrl.loadingSavedCreditCards() || (ctrl.savedCreditCards().length > 0)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
                     _.map(ctrl.savedCreditCards(), (card, idx) => {
-                        return m(`div.w-row.creditcard-records`, {
+                        return m(`div#credit-card-record-${idx}.w-row.creditcard-records`, {
                                 style: 'cursor:pointer;',
                                 onclick: () => ctrl.selectCreditCard(card)
                             },[
-                            m('.w-col.w-col-1.w-sub-col',
-                                m('.w-radio.w-clearfix.back-payment-credit-card-radio-field',
-                                    m('input', {
-                                        checked: ctrl.isCreditCardSelected(card, idx),
-                                        name: 'payment_subscription_card',
-                                        type: 'radio',
-                                        value: card.card_key
-                                    })
-                                )
-                            ),
-                            card.id === -1 ? m('.w-col.w-col-11',
-                                    m('.fontsize-small.fontweight-semibold.fontcolor-secondary', 'Usar outro cartão de crédito.')
-                                ) : [
-                                    m('.w-col.w-col-2.w-sub-col.w-sub-col-middle',
-                                        m('.fontsize-small.fontweight-semibold.text-success', card.card_brand.toUpperCase())
-                                    ),
-                                    m('.w-col.w-col-5.w-sub-col.w-sub-col-middle',
-                                        m('.fontsize-small.fontweight-semibold.u-marginbottom-20', `XXXX.XXXX.XXXX.${card.last_digits}`)
-                                    ),
-                                    m('.w-col.w-col-4',
-                                        (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' :
-                                            m('select.w-select.text-field.text-field-creditcard',{
-                                                onchange: m.withAttr('value', ctrl.selectedInstallment),
-                                                value: ctrl.selectedInstallment()
-                                            } ,_.map(ctrl.installments(), (installment) => {
-                                                    return m(`option[value="${installment.number}"]`,
-                                                        `${installment.number} X R$ ${installment.amount}`
-                                                    );
-                                                })
-                                            )
+                                m('.w-col.w-col-1.w-sub-col',
+                                    m('.w-radio.w-clearfix.back-payment-credit-card-radio-field',
+                                        m('input', {
+                                            checked: ctrl.isCreditCardSelected(card, idx),
+                                            name: 'payment_subscription_card',
+                                            type: 'radio',
+                                            value: card.card_key
+                                        })
                                     )
-                                ]
-                        ]);
+                                ),
+                                card.id === -1 ? m('.w-col.w-col-11',
+                                        m('.fontsize-small.fontweight-semibold.fontcolor-secondary', 'Usar outro cartão de crédito.')
+                                    ) : [
+                                        m('.w-col.w-col-2.w-sub-col.w-sub-col-middle',
+                                            m('.fontsize-small.fontweight-semibold.text-success', card.card_brand.toUpperCase())
+                                        ),
+                                        m('.w-col.w-col-5.w-sub-col.w-sub-col-middle',
+                                            m('.fontsize-small.fontweight-semibold.u-marginbottom-20', `XXXX.XXXX.XXXX.${card.last_digits}`)
+                                        ),
+                                        m('.w-col.w-col-4',
+                                            (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' :
+                                                m('select.w-select.text-field.text-field-creditcard',{
+                                                    onchange: m.withAttr('value', ctrl.selectedInstallment),
+                                                    value: ctrl.selectedInstallment()
+                                                } ,_.map(ctrl.installments(), (installment) => {
+                                                        return m(`option[value="${installment.number}"]`,
+                                                            `${installment.number} X R$ ${installment.amount}`
+                                                        );
+                                                    })
+                                                )
+                                        )
+                                    ]
+                            ]);
                     })
                 ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-small.u-marginbottom-40', 'Carregando informações de cartão...') : '',
                 !ctrl.showForm() ? '' : m('#credit-card-payment-form.u-marginbottom-40', [
-                    m('div', [
+                    m('div#credit-card-name', [
                         m('label.field-label.fontweight-semibold[for="credit-card-name"]',
                             'Nome no cartão de crédito *'
                         ),
@@ -215,7 +216,7 @@ const paymentCreditCard = {
                         }),
                         ctrl.fieldHasError('name')
                     ]),
-                    m('div', [
+                    m('div#credit-card-number', [
                         m('label.field-label.fontweight-semibold[for="credit-card-number"]',
                             'Número do cartão de crédito *'
                         ),
@@ -231,7 +232,7 @@ const paymentCreditCard = {
                         }),
                         ctrl.fieldHasError('number')
                     ]),
-                    m('div', [
+                    m('div#credit-card-date', [
                         m('label.field-label.fontweight-semibold[for="expiration-date"]',[
                             'Expiração (mm/aaaa)* ',
                             ctrl.buildTooltip('Copy tooltip de validade')
@@ -259,7 +260,7 @@ const paymentCreditCard = {
                             m('.w-col.w-col-12', ctrl.fieldHasError('expiry'))
                         ])
                     ]),
-                    m('div', [
+                    m('div#credit-card-cvv', [
                         m('label.field-label.fontweight-semibold[for="credit-card-cvv"]',[
                             'Código de Segurança (CVV / CVV2)* ',
                             ctrl.buildTooltip('Os 3 ou 4 dígitos que estão nas costas dos cartões VISA, MASTER, DINERS, ELO e na frente do cartão AMEX.')

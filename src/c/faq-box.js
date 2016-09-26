@@ -39,7 +39,7 @@ const faqBox = {
         };
     },
     view(ctrl, args) {
-        return m('.w-hidden-small.w-hidden-tiny.card.u-radius',
+        return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius',
           [
               m(".w-row.u-marginbottom-30",
                  [
@@ -61,7 +61,7 @@ const faqBox = {
             m('ul.w-list-unstyled',
                 _.map(ctrl.scopedQuestions(), (question, idx) => {
                     return [
-                        m('li.fontsize-smaller.alt-link.list-question', {
+                        m(`li#faq_question_${idx}.fontsize-smaller.alt-link.list-question`, {
                             onclick: ctrl.selectQuestion(idx)
                         }, m('span',
                             [
@@ -72,7 +72,7 @@ const faqBox = {
                         ),
                         m('li.list-answer', {
                             class: ctrl.selectedQuestion() === idx ? 'list-answer-opened' : ''
-                        }, m('p.fontsize-smaller', m.trust(question.answer))
+                        }, m(`p#faq_answer_${idx}.fontsize-smaller`, m.trust(question.answer))
                         )
                     ]
                 })
