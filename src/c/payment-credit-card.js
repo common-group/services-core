@@ -6,6 +6,8 @@ import creditCardVM from '../vms/credit-card-vm';
 import creditCardInput from './credit-card-input';
 import inlineError from './inline-error';
 
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+
 const paymentCreditCard = {
     controller (args) {
         const vm = args.vm,
@@ -45,7 +47,7 @@ const paymentCreditCard = {
 
         const checkcvv = () => {
             const isValid = creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType()),
-                errorObj = {field: 'cvv', message: 'Código de Segurança inválido.'};
+                errorObj = {field: 'cvv', message: I18n.t('inline.creditcard_cvv', I18nScope())};
 
             handleValidity(isValid, errorObj);
 
@@ -54,7 +56,7 @@ const paymentCreditCard = {
 
         const checkExpiry = () => {
             const isValid = creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear()),
-                errorObj = {field: 'expiry', message: 'Data de vencimento inválida.'};
+                errorObj = {field: 'expiry', message: I18n.t('inline.creditcard_expiry', I18nScope())};
 
             handleValidity(isValid, errorObj);
 
@@ -63,7 +65,7 @@ const paymentCreditCard = {
 
         const checkCreditCard = () => {
             const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number()),
-                errorObj = {field: 'number', message: 'Número de cartão de crédito inválido.'};
+                errorObj = {field: 'number', message: I18n.t('inline.creditcard_number', I18nScope())};
 
             handleValidity(isValid, errorObj)
 
@@ -73,7 +75,7 @@ const paymentCreditCard = {
         const checkCreditCardName = () => {
             const trimmedString = vm.creditCardFields.name().replace(/ /g,'');
             const charsOnly = /^[a-zA-Z]*$/;
-            const errorObj = {field: 'name', message: 'Nome inválido.'};
+            const errorObj = {field: 'name', message: I18n.t('inline.creditcard_name', I18nScope())};
             const isValid = !(_.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
             handleValidity(isValid, errorObj);
@@ -236,9 +238,8 @@ const paymentCreditCard = {
                         ctrl.fieldHasError('number')
                     ]),
                     m('div#credit-card-date', [
-                        m('label.field-label.fontweight-semibold[for="expiration-date"]',[
-                            'Expiração (mm/aaaa)* ',
-                            ctrl.buildTooltip('Copy tooltip de validade')
+                        m('label.field-label.fontweight-semibold[for="expiration-date"]', [
+                            'Expiração (mm/aaaa)* '
                         ]),
                         m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             'A data de validade, geralmente na frente do cartão'
@@ -310,8 +311,9 @@ const paymentCreditCard = {
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        ctrl.vm.isLoading() ? h.loader() : !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
-                            m(".u-marginbottom-10.fontweight-bold", ctrl.vm.submissionError())) : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
+                        !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
+                            m(".u-marginbottom-10.fontweight-bold", m.trust(ctrl.vm.submissionError()))) : '',
+                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                             'Ao apoiar, você concorda com os ',
                             m('a.alt-link[href=\'/pt/terms-of-use\']',

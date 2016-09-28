@@ -4,6 +4,7 @@ import I18n from 'i18n-js';
 import h from '../h';
 import usersVM from './user-vm';
 import models from '../models';
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 
 const paymentVM = (mode = 'aon') => {
     const pagarme = m.prop({}),
@@ -211,7 +212,7 @@ const paymentVM = (mode = 'aon') => {
             const card = setNewCreditCard();
             const errors = card.fieldErrors();
                 if(_.keys(errors).length > 0) {
-                deferred.reject({message: 'Os dados do cartão de crédito são inválidos. Por favor, verifique novamente.'});
+                deferred.reject({message: I18n.t('submission.card_invalid', I18nScope())});
             } else {
                 card.generateHash((cardHash) => {
                     const data = {
@@ -251,68 +252,60 @@ const paymentVM = (mode = 'aon') => {
             data: {contribution: contributionData},
             config: setCsrfToken
         });
+    };
+
+    const creditCardPaymentSuccess = (deferred, project_id, contribution_id) => (data) => {
+        if (data.payment_status === 'failed') {
+            isLoading(false)
+            submissionError(I18n.t('submission.error', I18nScope({message: data.message})));
+            m.redraw();
+            deferred.reject();
+        } else {
+            window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
+        }
+    };
+
+    const creditCardPaymentFail = (deferred) => (data) => {
+        isLoading(false);
+        submissionError(I18n.t('submission.error', I18nScope({message: data.message})));
+        m.redraw();
+        deferred.reject();
+    };
+
+    const checkAndPayCreditCard = (deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment) => () => {
+        if (selectedCreditCard().id && selectedCreditCard().id !== -1) {
+            return payWithSavedCard(selectedCreditCard(), selectedInstallment(), contribution_id)
+                .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
+                .catch(creditCardPaymentFail(deferred));
+        } else {
+            if (selectedCreditCard().id === -1) {
+                return payWithNewCard(contribution_id, selectedInstallment)
+                    .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
+                    .catch(creditCardPaymentFail(deferred));
+            } else {
+                submissionError(I18n.t('submission.error', {message: `Nenhum cartão escolhido.`}));
+                m.redraw();
+            }
+
+        }
     }
 
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
         const deferred = m.deferred();
         if (validate()) {
             isLoading(true);
-            submissionError('');
+            submissionError(false);
             m.redraw();
             updateContributionData(contribution_id, project_id)
-                .then(() => {
-                    if (selectedCreditCard().id && selectedCreditCard().id !== -1) {
-                        return payWithSavedCard(selectedCreditCard(), selectedInstallment(), contribution_id)
-                            .then((data) => {
-                                if (data.payment_status === 'failed') {
-                                    deferred.reject(data.message);
-                                    isLoading(false)
-                                    submissionError(`Erro ao processar o pagamento: ${data.message}`);
-                                    m.redraw();
-                                } else {
-                                    window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
-                                }
-                            })
-                            .catch(() => {
-                                deferred.reject();
-                                isLoading(false);
-                                submissionError(`Erro ao processar o pagamento: ${data.message}`);
-                                m.redraw();
-                            });
-                    } else {
-                        if (selectedCreditCard().id === -1) {
-                            return payWithNewCard(contribution_id, selectedInstallment)
-                                .then((data) => {
-                                    if (data.payment_status === 'failed') {
-                                        deferred.reject(data.message);
-                                        isLoading(false)
-                                        submissionError(`Erro ao processar o pagamento: ${data.message}`);
-                                        m.redraw();
-                                    } else {
-                                        window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
-                                    }
-                                })
-                                .catch((data) => {
-                                    deferred.reject();
-                                    isLoading(false);
-                                    submissionError(`Erro ao processar o pagamento: ${data.message}`);
-                                    m.redraw();
-                                });
-                        } else {
-                            submissionError(`Nenhum cartão escolhido.`);
-                            m.redraw();
-                        }
-
-                    }
-                })
+                .then(checkAndPayCreditCard(deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment))
                 .catch(() => {
-                    deferred.reject();
                     isLoading(false);
+                    deferred.reject();
                 });
 
         } else {
-            deferred.reject();
             isLoading(false);
+            deferred.reject();
         }
         return deferred.promise;
     };
