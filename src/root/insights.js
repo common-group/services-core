@@ -11,6 +11,7 @@ import adminProjectDetailsCard from '../c/admin-project-details-card';
 import onlineSuccessModalContent from '../c/online-success-modal-content';
 import projectDataStats from '../c/project-data-stats';
 import projectDeleteButton from '../c/project-delete-button';
+import projectCancelButton from '../c/project-cancel-button';
 import projectDataChart from '../c/project-data-chart';
 import projectDataTable from '../c/project-data-table';
 import projectReminderCount from '../c/project-reminder-count';
@@ -27,7 +28,6 @@ const insights = {
                 project_id: 'eq'
             }),
             displayModal = h.toggleProp(false, true),
-            displayDeleteModal = h.toggleProp(false, true),
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
             contributionsPerLocation = m.prop([]),
@@ -105,7 +105,6 @@ const insights = {
             lContributionsPerLocation: lContributionsPerLocation,
             lContributionsPerDay: lContributionsPerDay,
             displayModal: displayModal,
-            displayDeleteModal: displayDeleteModal,
             filtersVM: filtersVM,
             projectDetails: projectDetails,
             contributionsPerDay: contributionsPerDay,
@@ -162,7 +161,7 @@ const insights = {
                 ]),
             ]),
             (project.state === 'draft' ?
-               m.component(projectDeleteButton, {displayDeleteModal: ctrl.displayDeleteModal, project: project})
+               m.component(projectDeleteButton, {project: project})
             : ''),
             (project.is_published) ? [
                 m('.divider'),
@@ -243,9 +242,13 @@ const insights = {
                                     resource: project
                                 })
                             ]),
-                        ])
+                        ]),
                     ])
-                ])
+                ]),
+            (project.state === 'online' ?
+                m.component(projectCancelButton, {project: project})
+            : '')
+
             ] : ''
         ] : h.loader());
     }

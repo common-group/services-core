@@ -198,7 +198,7 @@ const
         if (_dataCache.currentProject)
           return _dataCache.currentProject;
 
-        const root = document.getElementById('project-show-root'),
+        const root = document.getElementById('application'),
               data = root && root.getAttribute('data-parameters');
         if (data) {
             return _dataCache.currentProject = JSON.parse(data);
