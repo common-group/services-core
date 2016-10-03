@@ -10,7 +10,6 @@ import postgrest from 'mithril-postgrest';
 const cancelProjectModalContent = {
     controller(args) {
         let l = m.prop(false),
-            deleteSuccess = m.prop(false),
             checkError = m.prop(false),
             check = m.prop('');
 
@@ -27,7 +26,6 @@ const cancelProjectModalContent = {
         return {
             showNextModal: showNextModal,
             checkError: checkError,
-            deleteSuccess: deleteSuccess,
             check: check
         };
     },

@@ -371,6 +371,15 @@ const
     },
 
     closeModal = () => {
+      //temp for rails unstyled close links
+        let elById = document.getElementById('modal-close');
+        if (_.isElement(elById)){
+            elById.onclick = (event) => {
+                event.preventDefault();
+                document.getElementsByClassName('modal-backdrop')[0].style.display = 'none';
+            };
+        }
+
         let el = document.getElementsByClassName('modal-close')[0];
         if (_.isElement(el)){
             el.onclick = (event) => {
