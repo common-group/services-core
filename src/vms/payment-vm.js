@@ -128,12 +128,12 @@ const paymentVM = (mode = 'aon') => {
     const validate = () => {
         fields.errors([]);
 
-        checkEmptyFields(['completeName', 'street', 'number', 'neighbourhood', 'city']);
+        checkEmptyFields(['completeName', 'street', 'number', 'city']);
 
         checkEmail();
 
         if(!isInternational()){
-            checkEmptyFields(['phone']);
+            checkEmptyFields(['phone', 'neighbourhood']);
             checkDocument();
         }
 
