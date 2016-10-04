@@ -18,11 +18,11 @@ const projectCancelButton = {
         return m('div', [
             (ctrl.displayCancelModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayCancelModal,
-                content: [cancelProjectModalContent, {displayModal: ctrl.displayCancelModal, project: args.project}]
+                content: [cancelProjectModalContent, {displayModal: ctrl.displayCancelModal}]
             }) : ''),
             m('.before-footer',
                 m('.w-container',
-                    m('a.btn.btn-inline.btn-no-border.btn-small.btn-terciary.u-marginbottom-20.u-right.w-button', {onclick: ctrl.displayCancelModal.toggle, style: {'transition': 'all 0.5s ease 0s'}},
+                    m('a.btn.btn-cancel.btn-inline.btn-no-border.btn-small.btn-terciary.u-marginbottom-20.u-right.w-button', {onclick: ctrl.displayCancelModal.toggle, style: {'transition': 'all 0.5s ease 0s'}},
                         [
                             m('span.fa.fa-times-circle', ''),
                             m.trust('&nbsp;'),

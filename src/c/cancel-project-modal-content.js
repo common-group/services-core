@@ -31,8 +31,7 @@ const cancelProjectModalContent = {
     },
 
     view(ctrl, args) {
-        const project = args.project;
-        return  m('form.modal-dialog-content',{onsubmit: ctrl.showNextModal},
+        return  m('form.cancel-project-modal.modal-dialog-content', {onsubmit: ctrl.showNextModal},
                 [
                     m('.fontsize-small.u-marginbottom-20',
                         [
