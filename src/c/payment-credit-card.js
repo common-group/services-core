@@ -164,7 +164,7 @@ const paymentCreditCard = {
             m('form[name="email-form"]', {
                 onsubmit: ctrl.onSubmit
             },[
-                (!ctrl.loadingSavedCreditCards() || (ctrl.savedCreditCards().length > 0)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
+                (!ctrl.loadingSavedCreditCards() && (ctrl.savedCreditCards().length > 1)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
                     _.map(ctrl.savedCreditCards(), (card, idx) => {
                         return m(`div#credit-card-record-${idx}.w-row.creditcard-records`, {
                                 style: 'cursor:pointer;',
