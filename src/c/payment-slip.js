@@ -20,7 +20,7 @@ const paymentSlip = {
                 if(data.payment_status == 'failed'){
                     error(true);
                 } else if(data.boleto_url) {
-                    window.location.href = `https://www.catarse.me/pt/projects/${args.project_id}/contributions/${args.contribution_id}`;
+                    window.location.href = `/projects/${args.project_id}/contributions/${args.contribution_id}`;
                 }
                 loading(false);
                 m.redraw();
