@@ -19,6 +19,7 @@ import usersBalanceMain from './root/users-balance-main';
 import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
+import thankYou from './root/thank-you';
 
 const c = {
     root: {
@@ -36,6 +37,7 @@ const c = {
         UsersShow: usersShow,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,
+        ThankYou: thankYou,
         Publish: publish,
         Start: start,
         Team: team,
