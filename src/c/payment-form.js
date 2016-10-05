@@ -30,7 +30,7 @@ const paymentForm = {
                     ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png\']')
                 ]),
-                m('a.w-inline-block.btn-select.flex-column.u-text-center[href=\'javascript:void(0);\']', {
+                !args.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-text-center[href=\'javascript:void(0);\']', {
                     onclick: ctrl.toggleBoleto.toggle,
                     class: ctrl.toggleBoleto() ? 'selected' : ''
                 }, [
@@ -38,12 +38,12 @@ const paymentForm = {
                         'Boleto bancário'
                     ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299c6ef96a6e44489a7a07_boleto.png\'][width=\'48\']')
-                ])
+                ]) : m('.flex-column')
             ]), !ctrl.toggleBoleto() ? m('#credit-card-section', [
                 m.component(paymentCreditCard, {vm: args.vm, contribution_id: args.contribution_id, project_id: args.project_id, user_id: args.user_id})
-            ]) : m('#boleto-section', [
-                m.component(paymentSlip, {contribution_id: args.contribution_id, project_id: args.project_id})           
-            ])
+            ]) : !args.vm.isInternational() ? m('#boleto-section', [
+                m.component(paymentSlip, {contribution_id: args.contribution_id, project_id: args.project_id})
+            ]) : ''
         ]);
     }
 };
