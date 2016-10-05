@@ -1,5 +1,6 @@
 import m from 'mithril';
 import h from '../h';
+import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
@@ -9,12 +10,14 @@ import inlineError from '../c/inline-error';
 
 const projectsPayment = {
     controller(args) {
-        const mode = projectVM.currentProject().mode,
-            projectUserId = projectVM.currentProject().user_id,
-            value = rewardVM.getValue(),
+        const project = projectVM.getCurrentProject(),
+            mode = project.mode,
+            projectUserId = project.user.id,
             vm = paymentVM(mode),
             showPaymentForm = m.prop(false),
-            reward = rewardVM.selectedReward,
+            contribution = contributionVM.getCurrentContribution(),
+            reward = m.prop(contribution().reward),
+            value = contribution().value,
             documentMask = _.partial(h.mask, '999.999.999-99'),
             zipcodeMask = _.partial(h.mask, '99999-999');
 
@@ -45,6 +48,7 @@ const projectsPayment = {
             validateForm: validateForm,
             projectUserId: projectUserId,
             showPaymentForm: showPaymentForm,
+            contribution: contribution,
             reward: reward,
             value: value,
             mode: mode,
@@ -60,21 +64,19 @@ const projectsPayment = {
         					m(".fontsize-smaller.fontweight-semibold",
         						"Valor do apoio"
         					),
-        					m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[data-ix='show-reward-details'][data-vivaldi-spatnav-clickable='1'][href='#']"),
+        					m("a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href='#']"),
         					m(".w-clearfix.u-marginbottom-20",
         						m(".fontsize-larger.text-success.u-left",
-        							`R$${ctrl.value}`
+        							`R$ ${Number(ctrl.value).toFixed()}`
         						)
         					),
-        					m(".w-clearfix.back-payment-info-reward[data-ix='display-none-on-load']", {style: {"display": "none"}},
+        					m(".w-clearfix.back-payment-info-reward", {style: {"display": "none"}},
         						[
         							m(".fontsize-smaller.fontweight-semibold.u-marginbottom-10",
         								"Recompensa selecionada"
         							),
         							m(".fontsize-smallest", `${ctrl.reward().description}`),
-        							m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentproject().project_id}/contribution"]`, {
-                                        config: m.route
-                                    }, "Editar"
+        							m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new"]`, "Editar"
         							)
         						]
         					)
@@ -86,18 +88,13 @@ const projectsPayment = {
         				[
         					m(".w-col.w-col-8",
         						[
-        							ctrl.vm.fields.errors() ? m(".w-hidden-main.w-hidden-medium.w-hidden-small.w-hidden-tiny.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']", {style: {"display": "block"}},
-        								[
+        							!_.isEmpty(ctrl.vm.fields.errors()) ? m(".card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix='display-none-on-load']",
         									m(".u-marginbottom-10.fontweight-bold",
-        										"Por favor, reveja os campos abaixo antes de prosseguir"
-        									),
-        									m("div",
-        										"This is some text inside of a div block."
-        									),
-        									m("div",
-        										"This is some text inside of a div block."
+        										[
+                                                    "Por favor, reveja os campos abaixo antes de prosseguir",
+                                                    m('.errors', _.map(ctrl.vm.fields.errors(), (error) => m('p', error.message)))
+                                                ]
         									)
-        								]
         							) : '',
         							m(".w-form",
         								[
@@ -376,7 +373,7 @@ const projectsPayment = {
                                             )
                                         )
                                     ),
-                                    ctrl.showPaymentForm() ? m.component(paymentForm) : ''
+                                    ctrl.showPaymentForm() ? m.component(paymentForm, {vm: ctrl.vm, contribution_id: ctrl.contribution().id, project_id: projectVM.currentProject().project_id, user_id: h.getUser().user_id}) : ''
         						]
         					),
         					m(".w-col.w-col-4",
@@ -389,11 +386,9 @@ const projectsPayment = {
         									m(".w-clearfix.u-marginbottom-20",
         										[
         											m(".fontsize-larger.text-success.u-left",
-        												`R$${ctrl.value}`
+        												`R$ ${Number(ctrl.value).toFixed()}`
         											),
-        											m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentproject().project_id}/contribution"]`, {
-                                                            config: m.route
-                                                        },"Editar"
+        											m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new?reward_id=${ctrl.reward().id}"]`,"Editar"
         											)
         										]
         									),
