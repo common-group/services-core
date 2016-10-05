@@ -44,7 +44,7 @@ const paymentSlip = {
             m('.w-col.w-col-12',
                 m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [
                     m('.fontsize-small.u-marginbottom-20',
-                        `Esse boleto bancário vence no dia ${ctrl.slipPaymentDate() ? h.momentify(ctrl.slipPaymentDate().slip_expiration_date) : 'carregando...'}.`
+                        ctrl.slipPaymentDate() ? `Esse boleto bancário vence no dia ${h.momentify(ctrl.slipPaymentDate().slip_expiration_date)}.` : 'carregando...'
                     ),
                     m('.fontsize-small.u-marginbottom-40',
                         'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'
