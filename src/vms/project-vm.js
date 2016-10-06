@@ -53,7 +53,7 @@ const getCurrentProject = () => {
 
         m.redraw(true);
 
-        fetchParallelData(project_id, project_user_id);
+        init(project_id, project_user_id);
 
         return currentProject();
     } else {
