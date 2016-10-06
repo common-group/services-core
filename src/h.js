@@ -572,6 +572,10 @@ const
         return value.replace(/[0-9]/g, '');
     },
 
+    numbersOnlyMask = (value) => {
+        return value.replace(/[^0-9]/g, '')
+    },
+
     addChar = (position, maskChar) => {
         return (char) => {
             return (string) => {
@@ -758,6 +762,7 @@ export default {
     getReward,
     applyMonetaryMask,
     noNumbersMask,
+    numbersOnlyMask,
     monetaryToFloat,
     mask,
     projectFullPermalink,

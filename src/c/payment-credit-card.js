@@ -85,6 +85,12 @@ const paymentCreditCard = {
 
         const applyCreditCardNameMask = _.compose(vm.creditCardFields.name, h.noNumbersMask);
 
+        const applyCvvMask = (value) => {
+            const setValue = h.numbersOnlyMask(value.substr(0, 4));
+
+            return vm.creditCardFields.cvv(setValue)
+        };
+
         const fieldHasError = (fieldName) => {
             const fieldWithError = _.findWhere(vm.creditCardFields.errors(), {field: fieldName});
 
@@ -153,6 +159,8 @@ const paymentCreditCard = {
             checkCreditCardName: checkCreditCardName,
             applyCreditCardNameMask: applyCreditCardNameMask,
             applyCreditCardMask: vm.applyCreditCardMask,
+            applyCvvMask: applyCvvMask,
+            checkcvv: checkcvv,
             selectCreditCard: selectCreditCard,
             isCreditCardSelected: isCreditCardSelected,
             expMonths: vm.expMonthOptions(),
@@ -283,7 +291,7 @@ const paymentCreditCard = {
                                 m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="tel"]', {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('cvv'),
                                     class: ctrl.fieldHasError('cvv') ? 'error' : '',
-                                    onchange: m.withAttr('value', ctrl.creditCard.cvv),
+                                    onkeyup: m.withAttr('value', ctrl.applyCvvMask),
                                     onblur: ctrl.checkcvv,
                                     value: ctrl.creditCard.cvv()
                                 }),
