@@ -25,8 +25,11 @@ const paymentForm = {
                     onclick: ctrl.toggleBoleto.toggle,
                     class: !ctrl.toggleBoleto() ? 'selected' : ''
                 }, [
-                    m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                    m('.fontsize-base.fontweight-semibold',
                         'Cartão de crédito'
+                    ),
+                    m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-20',
+                        '(não aceitamos cartão de débito)'
                     ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png\']')
                 ]),

@@ -240,7 +240,7 @@ const projectsPayment = {
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'neighbourhood\']',
-                                            'Bairro *'
+                                            `Bairro ${ctrl.vm.isInternational() ? '' : '*'}`
                                         ),
                                         m('input.w-input.text-field[id=\'neighbourhood\']', {
                                             onfocus: ctrl.vm.resetFieldError('neighbourhood'),
@@ -248,7 +248,7 @@ const projectsPayment = {
                                             type: 'text',
                                             onchange: m.withAttr('value', ctrl.vm.fields.neighbourhood),
                                             value: ctrl.vm.fields.neighbourhood(),
-                                            required: 'required',
+                                            required: !ctrl.vm.isInternational(),
                                             placeholder: 'São José'
                                         }),
                                         ctrl.fieldHasError('neighbourhood')
@@ -342,13 +342,13 @@ const projectsPayment = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${Number(ctrl.value).toFixed()}`
                                 ),
-                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new?reward_id=${ctrl.reward().id}"]`, 'Editar')
+                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? '?reward_id=' + ctrl.reward().id : '' }"]`, 'Editar')
                             ]),
                             m('.back-payment-info-reward', [
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
                                     'Recompensa selecionada'
                                 ),
-                                m('.fontsize-smallest', ctrl.reward().description)
+                                m('.fontsize-smallest', ctrl.reward().description ? ctrl.reward().description : `Você irá apoiar com R$ ${Number(ctrl.value).toFixed()} e não quer nenhuma recompensa por seu apoio.`)
 
                             ])
                         ]),
