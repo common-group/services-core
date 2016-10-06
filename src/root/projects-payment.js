@@ -175,17 +175,17 @@ const projectsPayment = {
                                             }, country.name))
                                         )
                                     ]),
-                                    m('.w-col.w-col-6', !ctrl.vm.isInternational() ? [
+                                    m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
-                                            'CEP'
+                                            !ctrl.vm.isInternational() ? 'CEP' : 'ZIP'
                                         ),
                                         m('input.w-input.text-field[id=\'zip-code\']', {
                                             type: 'tel',
-                                            onkeyup: m.withAttr('value', ctrl.applyZipcodeMask),
+                                            onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
                                             placeholder: '42100000'
                                         })
-                                    ] : '')
+                                    ])
                                 ]),
                                 m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
