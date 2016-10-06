@@ -147,6 +147,7 @@ const paymentCreditCard = {
             savedCreditCards: vm.savedCreditCards,
             creditCard: vm.creditCardFields,
             creditCardType: creditCardType,
+            checkCreditCard: checkCreditCard,
             applyCreditCardMask: vm.applyCreditCardMask,
             selectCreditCard: selectCreditCard,
             isCreditCardSelected: isCreditCardSelected,
@@ -229,6 +230,7 @@ const paymentCreditCard = {
                         ),
                         m.component(creditCardInput, {
                             onfocus: ctrl.vm.resetCreditCardFieldError('number'),
+                            onblur: ctrl.checkCreditCard,
                             class: ctrl.fieldHasError('number') ? 'error' : '',
                             value: ctrl.creditCard.number,
                             name: 'credit-card-number',
