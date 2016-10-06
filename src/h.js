@@ -568,6 +568,10 @@ const
         return `${integerPart},${decimalPart}`;
     },
 
+    noNumbersMask = (value) => {
+        return value.replace(/[0-9]/g, '');
+    },
+
     addChar = (position, maskChar) => {
         return (char) => {
             return (string) => {
@@ -753,6 +757,7 @@ export default {
     setReward,
     getReward,
     applyMonetaryMask,
+    noNumbersMask,
     monetaryToFloat,
     mask,
     projectFullPermalink,
@@ -760,4 +765,3 @@ export default {
     setPageTitle,
     getBlogPosts
 };
-

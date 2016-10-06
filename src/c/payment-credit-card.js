@@ -83,6 +83,8 @@ const paymentCreditCard = {
             return isValid;
         };
 
+        const applyCreditCardNameMask = _.compose(vm.creditCardFields.name, h.noNumbersMask);
+
         const fieldHasError = (fieldName) => {
             const fieldWithError = _.findWhere(vm.creditCardFields.errors(), {field: fieldName});
 
@@ -148,6 +150,8 @@ const paymentCreditCard = {
             creditCard: vm.creditCardFields,
             creditCardType: creditCardType,
             checkCreditCard: checkCreditCard,
+            checkCreditCardName: checkCreditCardName,
+            applyCreditCardNameMask: applyCreditCardNameMask,
             applyCreditCardMask: vm.applyCreditCardMask,
             selectCreditCard: selectCreditCard,
             isCreditCardSelected: isCreditCardSelected,
@@ -216,7 +220,8 @@ const paymentCreditCard = {
                         m('input.w-input.text-field[name="credit-card-name"][required="required"][type="text"]', {
                             onfocus: ctrl.vm.resetCreditCardFieldError('name'),
                             class: ctrl.fieldHasError('name') ? 'error' : '',
-                            onchange: m.withAttr('value', ctrl.creditCard.name),
+                            onblur: ctrl.checkCreditCardName,
+                            onkeyup: m.withAttr('value', ctrl.applyCreditCardNameMask),
                             value: ctrl.creditCard.name()
                         }),
                         ctrl.fieldHasError('name')
