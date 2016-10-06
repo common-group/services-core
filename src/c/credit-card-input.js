@@ -21,7 +21,7 @@ const creditCardInput = {
       };
   },
     view(ctrl, args) {
-      return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="phone"]`, {
+      return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="tel"]`, {
           onfocus: args.onfocus,
           class: args.class,
           config: ctrl.setCreditCardHandlers,

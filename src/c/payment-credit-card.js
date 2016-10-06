@@ -273,7 +273,7 @@ const paymentCreditCard = {
                         ),
                         m('.w-row', [
                             m('.w-col.w-col-8.w-col-tiny-6',
-                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="phone"]', {
+                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="tel"]', {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('cvv'),
                                     class: ctrl.fieldHasError('cvv') ? 'error' : '',
                                     onchange: m.withAttr('value', ctrl.creditCard.cvv),
