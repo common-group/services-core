@@ -2,7 +2,7 @@ import m from 'mithril';
 import creditCardVM from '../vms/credit-card-vm';
 
 const creditCardInput = {
-  controller (args) {
+    controller(args) {
       const cardType = args.type || m.prop('unknown');
       const setCreditCardHandlers = (el, isInitialized) => {
           if (!isInitialized) {
@@ -18,9 +18,9 @@ const creditCardInput = {
           setCreditCardHandlers: setCreditCardHandlers,
           validate: validate,
           cardType: cardType
-      }
+      };
   },
-  view (ctrl, args) {
+    view(ctrl, args) {
       return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="phone"]`, {
           onfocus: args.onfocus,
           class: args.class,
@@ -28,7 +28,7 @@ const creditCardInput = {
           onchange: m.withAttr('value', args.value),
           onblur: ctrl.validate,
           value: args.value()
-      })
+      });
   }
 };
 

@@ -23,9 +23,8 @@ const deleteProjectModalContent = {
                 l = postgrest.loaderWithToken(loaderOpts);
                 l.load().then(deleteSuccess(true));
 
-            }
-            else{
-              confirmed(false);
+            } else {
+                confirmed(false);
             }
             return false;
         };
@@ -52,7 +51,7 @@ const deleteProjectModalContent = {
                 )),
                 m('form.modal-dialog-content',{onsubmit: ctrl.deleteProject},
                   (ctrl.deleteSuccess() ? [m('.fontsize-base.u-margintop-30', 'Projeto deletado com sucesso. Clique no link abaixo para voltar a página inicial.'),
-                      m(`a.btn.btn-inactive.btn-large.u-margintop-30[href=\'/pt/users/${h.getUser().user_id}/edit#projects\']`, 'Voltar')
+                      m(`a.btn.btn-inactive.btn-large.u-margintop-30[href='/pt/users/${h.getUser().user_id}/edit#projects']`, 'Voltar')
                   ] :
                   [
                     m('.fontsize-base.u-marginbottom-60',

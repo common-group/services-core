@@ -15,8 +15,8 @@ const cancelProjectModalContent = {
 
         const showNextModal = () => {
             if (check() === 'cancelar-projeto'){
-              args.displayModal.toggle();
-              document.getElementById('send-message').style.display = 'block';
+                args.displayModal.toggle();
+                document.getElementById('send-message').style.display = 'block';
             } else {
                 checkError(true);
             }
@@ -31,7 +31,7 @@ const cancelProjectModalContent = {
     },
 
     view(ctrl, args) {
-        return  m('form.cancel-project-modal.modal-dialog-content', {onsubmit: ctrl.showNextModal},
+        return m('form.cancel-project-modal.modal-dialog-content', {onsubmit: ctrl.showNextModal},
                 [
                     m('.fontsize-small.u-marginbottom-20',
                         [

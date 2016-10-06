@@ -6,7 +6,7 @@ const UnsignedFriendFacebookConnect = {
     controller(args) {
         return {
             largeBg: (() => {
-                if(_.isUndefined(args)) {
+                if (_.isUndefined(args)) {
                     return false;
                 } else {
                     return (_.isUndefined(args.largeBg) ? false : args.largeBg);

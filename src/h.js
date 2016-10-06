@@ -238,7 +238,7 @@ const
 
     getBlogPosts = () => {
         if (_dataCache.blogPosts)
-            return _dataCache.blogPosts
+            return _dataCache.blogPosts;
 
         var posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
 
@@ -371,7 +371,7 @@ const
     },
 
     closeModal = () => {
-      //temp for rails unstyled close links
+        //temp for rails unstyled close links
         let elById = document.getElementById('modal-close');
         if (_.isElement(elById)){
             elById.onclick = (event) => {
@@ -533,27 +533,27 @@ const
 
             }
             fn();
-          };
+        };
     },
     _analyticsOneTimeEventFired = {},
     analyticsOneTimeEvent = (eventObj, fn) => {
-       if (!eventObj) {
-           return fn;
-       }
+        if (!eventObj) {
+            return fn;
+        }
 
-       const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
-       if (!eventKey) {
-           throw new Error('Should inform cat or act');
-       }
-       return () => {
-           if (!_analyticsOneTimeEventFired[eventKey]) {
-               //console.log('oneTimeEvent',eventKey);
-               _analyticsOneTimeEventFired[eventKey] = true;
-               const fireEvent = analyticsEvent(eventObj, fn);
-               fireEvent();
-           }
-       };
-   },
+        const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+        if (!eventKey) {
+            throw new Error('Should inform cat or act');
+        }
+        return () => {
+            if (!_analyticsOneTimeEventFired[eventKey]) {
+                //console.log('oneTimeEvent',eventKey);
+                _analyticsOneTimeEventFired[eventKey] = true;
+                const fireEvent = analyticsEvent(eventObj, fn);
+                fireEvent();
+            }
+        };
+    },
     monetaryToFloat = (propValue) => {
         return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
@@ -617,8 +617,8 @@ const
     //Adapted from https://github.com/diogob/jquery.fixedmask
     mask = (maskDefinition, value) => {
         const maskCharDefinitions = {
-                '9' : /\d/,
-                'A' : /[a-zA-Z]/
+                '9': /\d/,
+                'A': /[a-zA-Z]/
             },
             readMask = readMaskDefinition(maskCharDefinitions),
             isStrCharAllowed = isCharAllowed(maskCharDefinitions),
@@ -626,7 +626,7 @@ const
             restrictInput = isStrCharAllowed(maskDefinition);
 
         return _.reduce(value, (memo, chr) => {
-            if(restrictInput(memo.length, chr)){
+            if (restrictInput(memo.length, chr)){
                 memo = applyValueMask(memo, chr) + chr;
             }
             return memo;
@@ -692,7 +692,7 @@ const
             if (currentTitle !== title) {
                 return titleEl.innerText = title;
             }
-        }
+        };
     };
 
 setMomentifyLocale();

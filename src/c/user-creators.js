@@ -23,7 +23,7 @@ const userCreators = {
 
         const creatorsListVM = postgrest.paginationVM(
             models.creatorSuggestion,
-            "following.asc, total_published_projects.desc, total_contributed_projects.desc", {
+            'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
                 'Prefer':  'count=exact'
             });
 

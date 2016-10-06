@@ -18,19 +18,19 @@ const projectRewardList = {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value}`);
             } else {
                 vm.error('');
-                
+
                 // THIS CHECK IS ONLY NECESSARY IF WHEN WE START ROUTING DIRECTLY TO THE /contributions/edit page
                 // if (!h.getUser()) {
                 //     h.storeObject(storeKey, {value: valueFloat, reward: vm.selectedReward()});
 
                 //     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
                 // } else {
-                    // vm.contributionValue(valueFloat);
-                    //h.navigateTo(`/projects/${projectVM.currentproject().project_id}/contributions/new?reward_id=${vm.selectedReward().id}`);
+                // vm.contributionValue(valueFloat);
+                //h.navigateTo(`/projects/${projectVM.currentproject().project_id}/contributions/new?reward_id=${vm.selectedReward().id}`);
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}`);
-                    // m.route(`/projects/${projectVM.currentproject().project_id}/payment`, {
-                    //    project_user_id: projectVM.currentProject().user_id
-                    // });
+                // m.route(`/projects/${projectVM.currentproject().project_id}/payment`, {
+                //    project_user_id: projectVM.currentProject().user_id
+                // });
                 // }
             }
 
@@ -38,7 +38,10 @@ const projectRewardList = {
         };
 
         if (h.getStoredObject(storeKey)) {
-            const {value, reward} = h.getStoredObject(storeKey);
+            const {
+                value,
+                reward
+            } = h.getStoredObject(storeKey);
 
             h.removeStoredObject(storeKey);
             vm.selectedReward(reward);
@@ -59,7 +62,9 @@ const projectRewardList = {
     view(ctrl, args) {
         //FIXME: MISSING ADJUSTS
         // - add draft admin modifications
-        const project = args.project() || {open_for_contributions: false};
+        const project = args.project() || {
+            open_for_contributions: false
+        };
         return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
 
             return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
@@ -95,44 +100,39 @@ const projectRewardList = {
                     m('.fontsize-smaller', [
                         m('b', 'Estimativa de Entrega: '),
                         h.momentify(reward.deliver_at, 'MMM/YYYY')
-                    ])
-                : ''),
+                    ]) :
+                    ''),
                 (project.open_for_contributions && !h.rewardSouldOut(reward) ? [
-                    ctrl.openedReward().id === reward.id ? m('.w-form',
-                    	[
-                    		m('form.u-margintop-30', {
-                                    onsubmit: ctrl.submitContribution
-                                },[
-                    				m('.divider.u-marginbottom-20'),
-                    				m('.fontcolor-secondary.u-marginbottom-10',
-                    					'Valor do apoio'
-                    				),
-                    				m('.w-row.u-marginbottom-20',
-                    					[
-                    						m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                    							m('.back-reward-input-reward.placeholder',
-                    								'R$'
-                    							)
-                    						),
-                    						m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                    							m('input.w-input.back-reward-input-reward[type="tel"]', {
-                                                    config: ctrl.setInput,
-                                                    onkeyup: m.withAttr('value', ctrl.applyMask),
-                                                    value: ctrl.contributionValue()
-                                                })
-                    						)
-                    					]
-                    				),
-                    				m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
-                                    ctrl.error().length > 0 ? m('.text-error', [
-                                        m('br'),
-                                        m('span.fa.fa-exclamation-triangle'),
-                                        ` ${ctrl.error()}`
-                                    ]) : ''
-                    			]
-                    		)
-                    	]
-                    ) : '',
+                    ctrl.openedReward().id === reward.id ? m('.w-form', [
+                        m('form.u-margintop-30', {
+                            onsubmit: ctrl.submitContribution
+                        }, [
+                            m('.divider.u-marginbottom-20'),
+                            m('.fontcolor-secondary.u-marginbottom-10',
+                                'Valor do apoio'
+                            ),
+                            m('.w-row.u-marginbottom-20', [
+                                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
+                                    m('.back-reward-input-reward.placeholder',
+                                        'R$'
+                                    )
+                                ),
+                                m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
+                                    m('input.w-input.back-reward-input-reward[type="tel"]', {
+                                        config: ctrl.setInput,
+                                        onkeyup: m.withAttr('value', ctrl.applyMask),
+                                        value: ctrl.contributionValue()
+                                    })
+                                )
+                            ]),
+                            m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
+                            ctrl.error().length > 0 ? m('.text-error', [
+                                m('br'),
+                                m('span.fa.fa-exclamation-triangle'),
+                                ` ${ctrl.error()}`
+                            ]) : ''
+                        ])
+                    ]) : '',
                     // m('.project-reward-box-hover', [
                     //     m('.project-reward-box-select-text.u-text-center', 'Selecione essa recompensa')
                     // ])

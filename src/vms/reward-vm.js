@@ -15,7 +15,6 @@ const error = m.prop(''),
         project_id: 'eq'
     });
 
-
 const rewardsLoader = (project_id) => {
     vm.project_id(project_id);
 
@@ -29,13 +28,13 @@ const fetchRewards = (project_id) => {
 const getSelectedReward = () => {
     const root = document.getElementById('application'),
           data = root && root.getAttribute('data-contribution');
-    
+
     if (data) {
         const contribution = JSON.parse(data);
         const reward = selectedReward(contribution.reward);
 
         m.redraw(true);
-        
+
         return selectedReward;
     } else {
         return false;

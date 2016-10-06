@@ -17,7 +17,7 @@ const projectCard = {
 
         const css = () => {
             const cssClasses = {
-                  'small': {
+                'small': {
                       wrapper: '.w-col.w-col-4',
                       innerWrapper: '.card-project.card.u-radius',
                       thumb: '.card-project-thumb',
@@ -28,7 +28,7 @@ const projectCard = {
                       headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
                       city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
                   },
-                  'medium': {
+                'medium': {
                       wrapper: '.w-col.w-col-6',
                       innerWrapper: '.card-project.card.u-radius',
                       thumb: '.card-project-thumb.medium',
@@ -39,7 +39,7 @@ const projectCard = {
                       headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
                       city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
                   },
-                  'big': {
+                'big': {
                       wrapper: '.card.u-radius.card-project',
                       innerWrapper: '.w-row',
                       thumb: '.w-col.w-col-8.w-col-medium-6.card-project-thumb.big',
@@ -57,11 +57,10 @@ const projectCard = {
 
         const cardMeter = () => {
             const failed = () => ((project.state === 'failed') || (project.state === 'waiting_funds')) ? 'card-secondary' : '';
-            
-            return `.card-project-meter.${project.mode}.${project.state}.${progress}.${failed()}`;
-        
-        };
 
+            return `.card-project-meter.${project.mode}.${project.state}.${progress}.${failed()}`;
+
+        };
 
         return {
             css: css,
@@ -74,7 +73,7 @@ const projectCard = {
     },
     view(ctrl, args) {
         const project = args.project;
-            
+
         return m(ctrl.css().wrapper, [
             m(ctrl.css().innerWrapper, [
                 m(`a${ctrl.css().thumb}[href="/${project.permalink}"]`, {

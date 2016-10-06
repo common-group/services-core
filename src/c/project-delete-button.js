@@ -11,7 +11,7 @@ const projectDeleteButton = {
     controller(args) {
         const displayDeleteModal = h.toggleProp(false, true);
         return {
-          displayDeleteModal: displayDeleteModal
+            displayDeleteModal: displayDeleteModal
         };
     },
     view(ctrl, args) {

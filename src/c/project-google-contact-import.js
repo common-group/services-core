@@ -15,7 +15,7 @@ const projectGoogleContactImport = {
               dataEmails = m.prop([]),
               loadingContacts = m.prop(false),
               fetch = (token, pageUrl) => {
-                  if(!modalToggle()) {
+                  if (!modalToggle()) {
                       modalToggle.toggle();
                       loadingContacts(true);
                       m.redraw();
@@ -29,7 +29,7 @@ const projectGoogleContactImport = {
                       const nextLink = _.find(data.feed.link, (l) => { return l.rel === 'next';}),
 
                             reducedList = _.reduce(data.feed.entry, (memo, entry) => {
-                                if (("gd$email" in entry) && entry.gd$email.length > 0) {
+                                if (('gd$email' in entry) && entry.gd$email.length > 0) {
                                     const gemails = entry.gd$email,
                                           name = entry.title.$t;
 
@@ -46,7 +46,7 @@ const projectGoogleContactImport = {
 
                       dataEmails(dataEmails().concat(reducedList));
 
-                      if(_.isUndefined(nextLink)) {
+                      if (_.isUndefined(nextLink)) {
                           loadingContacts(false);
                           m.redraw();
                       } else {
@@ -85,11 +85,11 @@ const projectGoogleContactImport = {
                     showSuccess: args.showSuccess
                 }]
             }) : ''),
-            m("a.btn.btn-inline.btn-no-border.btn-terciary.w-inline-block[href='javascript:void(0);']", {
+            m('a.btn.btn-inline.btn-no-border.btn-terciary.w-inline-block[href=\'javascript:void(0);\']', {
                 onclick: ctrl.auth
             },[
-                m("img[src='http://uploads.webflow.com/57ba58b4846cc19e60acdd5b/57bc339f77f314e23b94d44d_gmail-icon.png'][width='25']"),
-                m("._w-inline-block.fontsize-smallest", "Contatos do gmail")
+                m('img[src=\'http://uploads.webflow.com/57ba58b4846cc19e60acdd5b/57bc339f77f314e23b94d44d_gmail-icon.png\'][width=\'25\']'),
+                m('._w-inline-block.fontsize-smallest', 'Contatos do gmail')
             ])
         ]);
     }

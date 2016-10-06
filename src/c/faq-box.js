@@ -20,7 +20,7 @@ const faqBox = {
             let updatedQuestions = {};
             _.each(questions, (quest, idx) => {
                 _.extend(updatedQuestions, {
-                    [idx + 1] : {
+                    [idx + 1]: {
                         question: quest.question,
                         answer: I18n.t(`${mode}.questions.${idx}.answer`, I18nScope({userLink: `/users/${user.id}`, userName: user.name}))
                     }
@@ -41,22 +41,22 @@ const faqBox = {
     view(ctrl, args) {
         return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius',
           [
-              m(".w-row.u-marginbottom-30",
+              m('.w-row.u-marginbottom-30',
                  [
-                     m(".w-col.w-col-2.w-col-small-2.w-col-tiny-2",
-                         m("img[width='30']", {
+                     m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
+                         m('img[width=\'30\']', {
                              src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
                          })
                      ),
-                     m(".w-col.w-col-10.w-col-small-10.w-col-tiny-10",
-                         m(".w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary",
+                     m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
+                         m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
                              args.faq.description
                          )
                      )
                  ]
              ),
-             m(".u-marginbottom-20.fontsize-small.fontweight-semibold",
-                "Dúvidas frequentes"
+             m('.u-marginbottom-20.fontsize-small.fontweight-semibold',
+                'Dúvidas frequentes'
             ),
             m('ul.w-list-unstyled',
                 _.map(ctrl.scopedQuestions(), (question, idx) => {
@@ -74,7 +74,7 @@ const faqBox = {
                             class: ctrl.selectedQuestion() === idx ? 'list-answer-opened' : ''
                         }, m(`p#faq_answer_${idx}.fontsize-smaller`, m.trust(question.answer))
                         )
-                    ]
+                    ];
                 })
             )
           ]

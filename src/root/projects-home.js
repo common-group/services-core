@@ -104,7 +104,7 @@ const projectsHome = {
             // m.component(footer, {expanded: true}),
             // m.component(contributionActivities)
         ]);
-            
+
     }
 };
 

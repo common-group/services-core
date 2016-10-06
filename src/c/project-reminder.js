@@ -65,7 +65,7 @@ const projectReminder = {
               onclickFunc = h.analytics.event({cat: 'project_view',act: 'project_floatingreminder_click', project: project()}, ctrl.submitReminder);
 
         return m(`#project-reminder${mainClass}`, [
-            m("a.btn.btn-small.btn-terciary.w-hidden-main.w-hidden-medium[data-ix='popshare'][href='#']", {
+            m('a.btn.btn-small.btn-terciary.w-hidden-main.w-hidden-medium[data-ix=\'popshare\'][href=\'#\']', {
                 onclick: onclickFunc
             },
 
@@ -81,7 +81,7 @@ const projectReminder = {
             m(`button[class="w-hidden-small w-hidden-tiny ${buttonClass} ${(project().in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
                 onclick: onclickFunc
             }, [
-                (ctrl.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o') ) )
+                (ctrl.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o')))
             ]), (ctrl.popNotification() ? m.component(popNotification, {
                 message: 'Ok! Vamos te mandar um lembrete por e-mail 48 horas antes do fim da campanha'
             }) : '')

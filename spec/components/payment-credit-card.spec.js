@@ -2,7 +2,7 @@ import m from 'mithril';
 import paymentCreditCard from '../../src/c/payment-credit-card';
 import paymentVM from '../../src/vms/payment-vm';
 
-fdescribe('paymentCreditCard', () => {
+describe('paymentCreditCard', () => {
     let $output, $output2, vm;
     describe('view', () => {
         beforeAll(() => {

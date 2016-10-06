@@ -259,7 +259,7 @@ const projectsExplore = {
                 ])
             ]),
 
-            ((isContributedByFriendsFilter && _.isEmpty(projects_collection) ) ? 
+            ((isContributedByFriendsFilter && _.isEmpty(projects_collection)) ?
              (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
              : ''),
             m('.w-section.section', [

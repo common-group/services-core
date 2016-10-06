@@ -38,7 +38,7 @@ const projectMain = {
                   if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
                       return tabs['#about'];
                   }
-                  
+
                   return tabs[hash()];
               };
 

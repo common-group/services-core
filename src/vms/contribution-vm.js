@@ -22,12 +22,12 @@ const getUserProjectContributions = (user_id, project_id, states) => {
 const getCurrentContribution = () => {
     const root = document.getElementById('application'),
           data = root && root.getAttribute('data-contribution');
-    
+
     if (data) {
         currentContribution(JSON.parse(data));
 
         m.redraw(true);
-        
+
         return currentContribution;
     } else {
         return false;

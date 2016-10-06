@@ -9,7 +9,7 @@ import inlineError from './inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 
 const paymentCreditCard = {
-    controller (args) {
+    controller(args) {
         const vm = args.vm,
             loadingInstallments = m.prop(true),
             loadingSavedCreditCards = m.prop(true),
@@ -67,7 +67,7 @@ const paymentCreditCard = {
             const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number()),
                 errorObj = {field: 'number', message: I18n.t('inline.creditcard_number', I18nScope())};
 
-            handleValidity(isValid, errorObj)
+            handleValidity(isValid, errorObj);
 
             return isValid;
         };
@@ -89,7 +89,6 @@ const paymentCreditCard = {
             return fieldWithError ? m.component(inlineError, {message: fieldWithError.message}) : '';
         };
 
-
         const buildTooltip = (tooltipText) => {
             return m.component(tooltip, {
                 el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
@@ -109,9 +108,9 @@ const paymentCreditCard = {
                 document.body.appendChild(script);
                 script.onload = () => {
                     vm.pagarme(window.PagarMe);
-                }
+                };
             }
-        }
+        };
 
         const selectCreditCard = (card) => {
             selectedCreditCard(card);
@@ -157,7 +156,7 @@ const paymentCreditCard = {
             showForm: showForm
         };
     },
-    view (ctrl, args) {
+    view(ctrl, args) {
         return m('.w-form.u-marginbottom-40', {
             config: ctrl.loadPagarme
         },[
@@ -195,14 +194,14 @@ const paymentCreditCard = {
                                                     onchange: m.withAttr('value', ctrl.selectedInstallment),
                                                     value: ctrl.selectedInstallment()
                                                 } ,_.map(ctrl.installments(), (installment) => {
-                                                        return m(`option[value="${installment.number}"]`,
-                                                            `${installment.number} X R$ ${installment.amount}`
-                                                        );
-                                                    })
-                                                )
-                                        )
-                                    ]
-                            ]);
+                                                    return m(`option[value="${installment.number}"]`,
+                                                        `${installment.number} X R$ ${installment.amount}`
+                                                    );
+                                                })
+                                            )
+                                    )
+                                ]
+                        ]);
                     })
                 ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-small.u-marginbottom-40', 'Carregando informações de cartão...') : '',
                 !ctrl.showForm() ? '' : m('#credit-card-payment-form.u-marginbottom-40', [
@@ -294,14 +293,14 @@ const paymentCreditCard = {
                                 'Parcelas'
                             ),
                              m('select.w-select.text-field[name="split"]', _.map(ctrl.installments(), (installment) => {
-                                return m(`option[value="${installment.number}"]`,
-                                    `${installment.number} X R$ ${installment.amount}`
-                                );
-                            }))
-                        ]),
-                        m('.w-col.w-col-6')
-                    ]),
-                    m('.w-checkbox.w-clearfix', [
+                                 return m(`option[value="${installment.number}"]`,
+                                     `${installment.number} X R$ ${installment.amount}`
+                                 );
+                             }))
+                         ]),
+                         m('.w-col.w-col-6')
+                     ]),
+                     m('.w-checkbox.w-clearfix', [
                         m('input#payment_save_card.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
                             onchange: m.withAttr('checked', ctrl.creditCard.save),
                             checked: ctrl.creditCard.save()
@@ -312,8 +311,8 @@ const paymentCreditCard = {
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
                         !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
-                            m(".u-marginbottom-10.fontweight-bold", m.trust(ctrl.vm.submissionError()))) : '',
-                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{ value: 'Finalizar pagamento' }, ''),
+                            m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
+                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]',{value: 'Finalizar pagamento'}, ''),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                             'Ao apoiar, você concorda com os ',
                             m('a.alt-link[href=\'/pt/terms-of-use\']',

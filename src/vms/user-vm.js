@@ -4,7 +4,6 @@ import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
 
-
 const idVM = h.idVM,
       userDetails = m.prop([]),
       currentUser = m.prop(),
@@ -37,7 +36,6 @@ const getUserContributedProjects = (user_id) => {
 
     return lUserContributed.load();
 };
-
 
 const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     idVM.id(user_id);

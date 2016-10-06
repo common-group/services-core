@@ -5,7 +5,6 @@ import h from '../h';
 import models from '../models';
 import postgrest from 'mithril-postgrest';
 
-
 const inviteEmailsFromImport = {
     controller(args) {
         const checkedList = m.prop([]),
@@ -18,7 +17,7 @@ const inviteEmailsFromImport = {
                       const matchEmail = (resource) => {
                           return resource.email === item.email;
                       };
-                      if(_.find(checkedList(), matchEmail)) {
+                      if (_.find(checkedList(), matchEmail)) {
                           checkedList(_.reject(checkedList(), matchEmail));
                       } else {
                           checkedList().push(item);
@@ -28,7 +27,7 @@ const inviteEmailsFromImport = {
               submitInvites = () => {
                   loading(true);
 
-                  if(!_.isEmpty(checkedList)) {
+                  if (!_.isEmpty(checkedList)) {
                       postgrest.loaderWithToken(
                           models.inviteProjectEmail.postOptions({
                               data: {
@@ -43,17 +42,17 @@ const inviteEmailsFromImport = {
                   }
               },
               search = () => {
-                  if(!filtering()) {
+                  if (!filtering()) {
                       filtering(true);
                       let searchFilter;
                       const matchSearch = (item) => {
-                          const pattern = `\\b${_.escape(filterTerm())}`,
+                          const pattern = `\b${_.escape(filterTerm())}`,
                                 regex = new RegExp(pattern,'gim');
 
                           return !_.isNull(item.email.match(regex)) || !_.isNull(item.name.match(regex));
                       };
 
-                      if(!_.isEmpty(filterTerm()) || !_.isUndefined(filterTerm())) {
+                      if (!_.isEmpty(filterTerm()) || !_.isUndefined(filterTerm())) {
                           searchFilter = _.filter(args.dataEmails(), matchSearch);
                       }
 
@@ -109,7 +108,7 @@ const inviteEmailsFromImport = {
                       ]);
                   }))
                 )
-            ] : h.loader()) ),
+            ] : h.loader())),
             m('.modal-dialog-nav-bottom.u-text-center', [
                 (!args.loadingContacts() && !ctrl.loading() && !ctrl.filtering() ?
                  m('.u-text-center.u-margintop-20', [

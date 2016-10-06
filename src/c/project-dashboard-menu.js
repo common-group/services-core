@@ -25,7 +25,7 @@ const projectDashboardMenu = {
 
         const projectThumb = (project) => {
             if (_.isEmpty(project.large_image)) {
-                if(_.isEmpty(project.thumb_image)) {
+                if (_.isEmpty(project.thumb_image)) {
                     return '/assets/thumb-project.png';
                 } else {
                     return project.thumb_image;

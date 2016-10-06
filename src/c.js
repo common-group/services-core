@@ -19,7 +19,6 @@ import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
 
-
 const c = {
     root: {
         AdminUsers: adminUsers,

@@ -173,7 +173,7 @@ const safeVal = (value, $target) => {
             prevPair = last.slice(cursor - 1, +cursor + 1 || 9e9);
             currPair = value.slice(cursor - 1, +cursor + 1 || 9e9);
             digit = value[cursor];
-            if (/\d/.test(digit) && prevPair === (digit + " ") && currPair === (" " + digit)) {
+            if (/\d/.test(digit) && prevPair === (digit + ' ') && currPair === (' ' + digit)) {
                 cursor = cursor + 1;
             }
         }
@@ -276,7 +276,7 @@ const hasTextSelected = ($target) => {
     if (($target.selectionStart != null) && $target.selectionStart !== $target.selectionEnd) {
         return true;
     }
-    if ((typeof document !== "undefined" && document !== null ? (ref = document.selection) != null ? ref.createRange : void 0 : void 0) != null) {
+    if ((typeof document !== 'undefined' && document !== null ? (ref = document.selection) != null ? ref.createRange : void 0 : void 0) != null) {
         if (document.selection.createRange().text) {
             return true;
         }
@@ -329,10 +329,10 @@ const setEvents = (el, cardType) => {
     el.oninput = (event) => {
         reFormatCardNumber(event);
         setCardType(event, cardType);
-    }
+    };
     el.onkeydown = formatBackCardNumber;
     el.onkeyup = (event) => {
-        setCardType(event, cardType)
+        setCardType(event, cardType);
     };
     // el.onpaste = reFormatCardNumber;
     el.onchange = reFormatCardNumber;
@@ -391,9 +391,9 @@ const validateCardExpiry = function(month, year) {
     }
     if (year.length === 2) {
         if (year < 70) {
-            year = "20" + year;
+            year = '20' + year;
         } else {
-            year = "19" + year;
+            year = '19' + year;
         }
     }
     if (year.length !== 4) {

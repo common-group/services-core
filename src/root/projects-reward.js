@@ -40,7 +40,7 @@ const projectsReward = {
 
         const isSelected = reward => reward.id === selectedReward().id;
 
-        if(_.first(rewards).id !== vm.noReward.id){
+        if (_.first(rewards).id !== vm.noReward.id){
             rewards.unshift(vm.noReward);
         }
 

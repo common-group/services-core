@@ -14,18 +14,17 @@ const projectEmailInvite = {
               showSuccess = m.prop(false),
 
               submitInvite = () => {
-                  if(_.isEmpty(emailText()) || loading() === true) {
+                  if (_.isEmpty(emailText()) || loading() === true) {
                   } else {
                       loading(true);
                       const emailList = _.reduce(emailText().split('\n'), (memo, text) => {
-                          if(h.validateEmail(text)) {
+                          if (h.validateEmail(text)) {
                               memo.push(text);
                           }
                           return memo;
                       }, []);
 
-
-                      if(!_.isEmpty(emailList)) {
+                      if (!_.isEmpty(emailList)) {
                           showSuccess(false);
                           postgrest.loaderWithToken(
                               models.inviteProjectEmail.postOptions({
@@ -60,7 +59,7 @@ const projectEmailInvite = {
              : [
                  m('.w-form', [
                      m('form', [
-                         m(".u-marginbottom-10", [
+                         m('.u-marginbottom-10', [
                              m.component(projectGoogleContactImport, {
                                  project: project,
                                  showSuccess: ctrl.showSuccess

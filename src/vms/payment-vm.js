@@ -19,21 +19,21 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const fields = {
-        completeName  : m.prop(''),
-        email : m.prop(''),
-        anonymous : m.prop(),
-        countries : m.prop(),
-        userCountryId : m.prop(),
-        zipCode : m.prop(''),
-        street : m.prop(''),
-        number : m.prop(''),
-        addressComplement : m.prop(''),
-        neighbourhood : m.prop(''),
-        city : m.prop(''),
-        states : m.prop([]),
-        userState : m.prop(),
-        ownerDocument : m.prop(''),
-        phone : m.prop(''),
+        completeName: m.prop(''),
+        email: m.prop(''),
+        anonymous: m.prop(),
+        countries: m.prop(),
+        userCountryId: m.prop(),
+        zipCode: m.prop(''),
+        street: m.prop(''),
+        number: m.prop(''),
+        addressComplement: m.prop(''),
+        neighbourhood: m.prop(''),
+        city: m.prop(''),
+        states: m.prop([]),
+        userState: m.prop(),
+        ownerDocument: m.prop(''),
+        phone: m.prop(''),
         errors: m.prop([])
     };
 
@@ -51,7 +51,6 @@ const paymentVM = (mode = 'aon') => {
         currentUser = h.getUser(),
         countriesLoader = postgrest.loader(models.country.getPageOptions()),
         statesLoader = postgrest.loader(models.state.getPageOptions());
-
 
     const populateForm = (fetchedData) => {
         const data = _.first(fetchedData);
@@ -102,7 +101,7 @@ const paymentVM = (mode = 'aon') => {
 
     const checkEmptyFields = (checkedFields) => {
         return _.map(checkedFields, (field) => {
-            if(_.isEmpty(String(fields[field]()).trim())) {
+            if (_.isEmpty(String(fields[field]()).trim())) {
                 fields.errors().push({field: field, message: 'O campo não pode ser vazio.'});
             }
         });
@@ -111,7 +110,7 @@ const paymentVM = (mode = 'aon') => {
     const checkEmail = () => {
         const isValid = h.validateEmail(fields.email());
 
-        if(!isValid){
+        if (!isValid){
             fields.errors().push({field: 'email', message: 'E-mail inválido.'});
         }
     };
@@ -120,10 +119,10 @@ const paymentVM = (mode = 'aon') => {
         //TODO: also validate Cnpj
         const isValid = h.validateCpf(fields.ownerDocument().replace(/[\.|\-]*/g,''));
 
-        if(!isValid){
+        if (!isValid){
             fields.errors().push({field: 'ownerDocument', message: 'CPF inválido.'});
         }
-    }
+    };
 
     const validate = () => {
         fields.errors([]);
@@ -132,7 +131,7 @@ const paymentVM = (mode = 'aon') => {
 
         checkEmail();
 
-        if(!isInternational()){
+        if (!isInternational()){
             checkEmptyFields(['phone', 'neighbourhood']);
             checkDocument();
         }
@@ -211,7 +210,7 @@ const paymentVM = (mode = 'aon') => {
             window.PagarMe.encryption_key = data.key;
             const card = setNewCreditCard();
             const errors = card.fieldErrors();
-                if(_.keys(errors).length > 0) {
+            if (_.keys(errors).length > 0) {
                 deferred.reject({message: I18n.t('submission.card_invalid', I18nScope())});
             } else {
                 card.generateHash((cardHash) => {
@@ -256,7 +255,7 @@ const paymentVM = (mode = 'aon') => {
 
     const creditCardPaymentSuccess = (deferred, project_id, contribution_id) => (data) => {
         if (data.payment_status === 'failed') {
-            isLoading(false)
+            isLoading(false);
             submissionError(I18n.t('submission.error', I18nScope({message: data.message})));
             m.redraw();
             deferred.reject();
@@ -288,7 +287,7 @@ const paymentVM = (mode = 'aon') => {
             }
 
         }
-    }
+    };
 
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
         const deferred = m.deferred();

@@ -12,7 +12,7 @@ const projectHeader = {
             currentUser = h.getUser(),
             projectContributions = m.prop([]);
 
-        if(h.isProjectPage() && currentUser && !_.isUndefined(project())){
+        if (h.isProjectPage() && currentUser && !_.isUndefined(project())){
             contributionVM
                 .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
                 .then(projectContributions);
@@ -27,7 +27,7 @@ const projectHeader = {
         let project = args.project,
             rewardDetails = args.rewardDetails;
 
-        return ( !_.isUndefined(project()) ? m('#project-header', [
+        return (!_.isUndefined(project()) ? m('#project-header', [
             m('.w-section.section-product.' + project().mode),
             m('.w-section.page-header.u-text-center', [
                 m('.w-container', [
@@ -36,17 +36,17 @@ const projectHeader = {
                         'por ',
                         project().user ? project().user.name : project().owner_name ? project().owner_name : ''
                     ]),
-                    !_.isEmpty(ctrl.projectContributions()) ? m(".card.card-terciary.u-radius.u-margintop-20",
+                    !_.isEmpty(ctrl.projectContributions()) ? m('.card.card-terciary.u-radius.u-margintop-20',
                         [
-                            m(".fontsize-small.u-text-center",
+                            m('.fontsize-small.u-text-center',
                                 [
-                                    m("span.fa.fa-thumbs-up"),
-                                    " Você é apoiador deste projeto! ",
-                                    m("a.alt-link[href='javascript:void(0);']", {onclick: ctrl.showContributions.toggle}, "Detalhes")
+                                    m('span.fa.fa-thumbs-up'),
+                                    ' Você é apoiador deste projeto! ',
+                                    m('a.alt-link[href=\'javascript:void(0);\']', {onclick: ctrl.showContributions.toggle}, 'Detalhes')
                                 ]
                             ),
-                            ctrl.showContributions() ? m(".card.u-margintop-20",
-                                m(".w-row",
+                            ctrl.showContributions() ? m('.card.u-margintop-20',
+                                m('.w-row',
                                     _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, {contribution: contribution, rewardDetails: rewardDetails}))
                                 )
                             ) : ''
