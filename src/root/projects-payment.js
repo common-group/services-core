@@ -276,10 +276,13 @@ const projectsPayment = {
                                                 onchange: m.withAttr('value', ctrl.vm.fields.userState),
                                                 value: ctrl.vm.fields.userState()
                                             },
-                                            _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
-                                                value: state.acronym,
-                                                selected: state.acronym === ctrl.vm.fields.userState()
-                                            }, state.name))
+                                            ctrl.vm.isInternational() ? m('option', {
+                                                    value: '',
+                                                    selected: true
+                                                }, 'Outro/Other') : _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
+                                                    value: state.acronym,
+                                                    selected: state.acronym === ctrl.vm.fields.userState()
+                                                }, state.name))
                                         )
                                     ])
                                 ]), !ctrl.vm.isInternational() ? m('.w-row', [
