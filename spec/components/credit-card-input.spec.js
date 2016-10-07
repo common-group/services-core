@@ -23,19 +23,14 @@ describe('CreditCardInput', () => {
         });
 
         it('should build a credit card input', () => {
-            expect($output.has('input[type="phone"]')).toBeTrue();
+            expect($output.has('input[type="tel"]')).toBeTrue();
         });
         it('should set the given input name', () => {
             expect($output.has(`input[name="${test.name}"]`)).toBeTrue();
         });
-        it('should set the given value on change', () => {
-            const str = 'testing';
-            $output.setValue('input', str);
-            expect(test.value() === str).toBeTrue();
-        })
         it('should call the given focus function on focus', () => {
             $output.focus('input');
             expect(test.focusFn).toHaveBeenCalled();
-        })
+        });
     });
 });

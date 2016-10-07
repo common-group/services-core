@@ -1,4 +1,5 @@
 import m from 'mithril';
+import I18n from 'i18n-js';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
@@ -7,6 +8,8 @@ import projectVM from '../vms/project-vm';
 import faqBox from '../c/faq-box';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsPayment = {
     controller(args) {
@@ -147,12 +150,11 @@ const projectsPayment = {
                                 ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
                                     m('div', [
                                         m('span.fontweight-bold', [
-                                            'Você tem certeza que quer que seu apoio seja anônimo?',
-                                            m.trust('&nbsp;'),
+                                            I18n.t('edit.anonymous_confirmation_title', I18nScope()),
                                             m('br')
                                         ]),
                                         m('br'),
-                                        'O valor do seu apoio não será divulgado para ninguém além do dono do projeto. Somente o proponente terá acesso a essa informação, independente se o seu investimento seja público ou anônimo.'
+                                        I18n.t('edit.anonymous_confirmation', I18nScope())
                                     ])
                                 ) : ''
                             ])
@@ -175,17 +177,17 @@ const projectsPayment = {
                                             }, country.name))
                                         )
                                     ]),
-                                    m('.w-col.w-col-6', !ctrl.vm.isInternational() ? [
+                                    m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
-                                            'CEP'
+                                            !ctrl.vm.isInternational() ? 'CEP' : 'ZIP'
                                         ),
                                         m('input.w-input.text-field[id=\'zip-code\']', {
                                             type: 'tel',
-                                            onkeyup: m.withAttr('value', ctrl.applyZipcodeMask),
+                                            onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
                                             placeholder: '42100000'
                                         })
-                                    ] : '')
+                                    ])
                                 ]),
                                 m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [

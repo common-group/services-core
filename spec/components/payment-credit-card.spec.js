@@ -39,7 +39,7 @@ describe('paymentCreditCard', () => {
                 $output.setValue('select[name="expiration-date_year"]', '2016');
                 $output.setValue('input[name="credit-card-number"]', '1234567812345678');
                 $output.setValue('input[name="credit-card-name"]', '123');
-                $output.setValue('input[name="credit-card-cvv"]', '123456');
+                $output.setValue('input[name="credit-card-cvv"]', 'abc');
                 $output.trigger('form', 'submit');
             });
 
@@ -60,7 +60,7 @@ describe('paymentCreditCard', () => {
             beforeAll(() => {
                 $output.setValue('select[name="expiration-date_month"]', '10');
                 $output.setValue('select[name="expiration-date_year"]', '2026');
-                $output.setValue('input[name="credit-card-number"]', '4012 8888 8888 1881');
+                vm.creditCardFields.number('4012 8888 8888 1881');
                 $output.setValue('input[name="credit-card-name"]', 'Tester');
                 $output.setValue('input[name="credit-card-cvv"]', '123');
             });

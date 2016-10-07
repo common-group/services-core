@@ -83,6 +83,14 @@ const paymentCreditCard = {
             return isValid;
         };
 
+        const applyCreditCardNameMask = _.compose(vm.creditCardFields.name, h.noNumbersMask);
+
+        const applyCvvMask = (value) => {
+            const setValue = h.numbersOnlyMask(value.substr(0, 4));
+
+            return vm.creditCardFields.cvv(setValue)
+        };
+
         const fieldHasError = (fieldName) => {
             const fieldWithError = _.findWhere(vm.creditCardFields.errors(), {field: fieldName});
 
@@ -147,7 +155,12 @@ const paymentCreditCard = {
             savedCreditCards: vm.savedCreditCards,
             creditCard: vm.creditCardFields,
             creditCardType: creditCardType,
+            checkCreditCard: checkCreditCard,
+            checkCreditCardName: checkCreditCardName,
+            applyCreditCardNameMask: applyCreditCardNameMask,
             applyCreditCardMask: vm.applyCreditCardMask,
+            applyCvvMask: applyCvvMask,
+            checkcvv: checkcvv,
             selectCreditCard: selectCreditCard,
             isCreditCardSelected: isCreditCardSelected,
             expMonths: vm.expMonthOptions(),
@@ -215,7 +228,8 @@ const paymentCreditCard = {
                         m('input.w-input.text-field[name="credit-card-name"][required="required"][type="text"]', {
                             onfocus: ctrl.vm.resetCreditCardFieldError('name'),
                             class: ctrl.fieldHasError('name') ? 'error' : '',
-                            onchange: m.withAttr('value', ctrl.creditCard.name),
+                            onblur: ctrl.checkCreditCardName,
+                            onkeyup: m.withAttr('value', ctrl.applyCreditCardNameMask),
                             value: ctrl.creditCard.name()
                         }),
                         ctrl.fieldHasError('name')
@@ -229,6 +243,7 @@ const paymentCreditCard = {
                         ),
                         m.component(creditCardInput, {
                             onfocus: ctrl.vm.resetCreditCardFieldError('number'),
+                            onblur: ctrl.checkCreditCard,
                             class: ctrl.fieldHasError('number') ? 'error' : '',
                             value: ctrl.creditCard.number,
                             name: 'credit-card-number',
@@ -273,10 +288,10 @@ const paymentCreditCard = {
                         ),
                         m('.w-row', [
                             m('.w-col.w-col-8.w-col-tiny-6',
-                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="phone"]', {
+                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="tel"]', {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('cvv'),
                                     class: ctrl.fieldHasError('cvv') ? 'error' : '',
-                                    onchange: m.withAttr('value', ctrl.creditCard.cvv),
+                                    onkeyup: m.withAttr('value', ctrl.applyCvvMask),
                                     onblur: ctrl.checkcvv,
                                     value: ctrl.creditCard.cvv()
                                 }),

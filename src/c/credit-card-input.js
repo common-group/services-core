@@ -6,28 +6,21 @@ const creditCardInput = {
       const cardType = args.type || m.prop('unknown');
       const setCreditCardHandlers = (el, isInitialized) => {
           if (!isInitialized) {
-              creditCardVM.setEvents(el, cardType);
+              creditCardVM.setEvents(el, cardType, args.value);
           }
-      };
-
-      const validate = () => {
-          return creditCardVM.validateCardNumber(args.value());
       };
 
       return {
           setCreditCardHandlers: setCreditCardHandlers,
-          validate: validate,
           cardType: cardType
       };
   },
     view(ctrl, args) {
-      return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="phone"]`, {
+      return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="tel"]`, {
           onfocus: args.onfocus,
           class: args.class,
           config: ctrl.setCreditCardHandlers,
-          onchange: m.withAttr('value', args.value),
-          onblur: ctrl.validate,
-          value: args.value()
+          onblur: args.onblur
       });
   }
 };
