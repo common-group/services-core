@@ -42,7 +42,7 @@ const projectsPayment = {
 
         const applyDocumentMask = _.compose(vm.fields.ownerDocument, documentMask);
 
-        const applyZipcodeMask = _.compose(vm.fields.zipcode, zipcodeMask);
+        const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
 
         if (!h.getUser()) {
             return h.navigateToDevise();

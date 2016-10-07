@@ -16,7 +16,7 @@ const paymentCreditCard = {
             selectedCreditCard = m.prop({id: -1}),
             selectedInstallment = m.prop('1'),
             showForm = m.prop(false),
-            creditCardType = m.prop('unkown'),
+            creditCardType = m.prop('unknown'),
             errors = m.prop([]);
 
         const onSubmit = () => {
