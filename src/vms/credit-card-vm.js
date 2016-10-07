@@ -112,7 +112,7 @@ const setCardType = (e, type) => {
     return type(cardType);
 };
 
-const formatBackCardNumber = (e) => {
+const formatBackCardNumber = (e, prop) => {
     var $target, value;
     $target = e.currentTarget;
     value = $target.value;
@@ -125,12 +125,12 @@ const formatBackCardNumber = (e) => {
     if (/\d\s$/.test(value)) {
         e.preventDefault();
         return setTimeout(function() {
-            return $target.value = value.replace(/\d\s$/, '');
+            return $target.value = prop(value.replace(/\d\s$/, ''));
         });
     } else if (/\s\d?$/.test(value)) {
         e.preventDefault();
         return setTimeout(function() {
-            return $target.value = value.replace(/\d$/, '');
+            return $target.value = prop(value.replace(/\d$/, ''));
         });
     }
 };
@@ -155,7 +155,7 @@ const replaceFullWidthChars = (str) => {
     return value;
 };
 
-const safeVal = (value, $target) => {
+const safeVal = (value, $target, prop) => {
     var currPair, cursor, digit, error, error1, last, prevPair;
     try {
         cursor = $target.selectionStart;
@@ -164,7 +164,7 @@ const safeVal = (value, $target) => {
         cursor = null;
     }
     last = $target.value;
-    $target.value = value;
+    $target.value = prop(value);
     if (cursor !== null && ($target === document.activeElement)) {
         if (cursor === last.length) {
             cursor = value.length;
@@ -182,14 +182,14 @@ const safeVal = (value, $target) => {
     }
 };
 
-const reFormatCardNumber = (e) => {
+const reFormatCardNumber = (e, prop) => {
     const $target = e.currentTarget;
     return setTimeout(() => {
         var value;
         value = $target.value;
         value = replaceFullWidthChars(value);
         value = formatCardNumber(value);
-        return safeVal(value, $target);
+        return safeVal(value, $target, prop);
     });
 };
 
@@ -217,7 +217,7 @@ const formatCardNumber = function(num) {
     }
 };
 
-const formatCardInputNumber = (e) => {
+const formatCardInputNumber = (e, prop) => {
     let $target, card, digit, length, re, upperLength, value;
     digit = String.fromCharCode(e.which);
     if (!/^\d+$/.test(digit)) {
@@ -245,12 +245,12 @@ const formatCardInputNumber = (e) => {
     if (re.test(value)) {
         e.preventDefault();
         return setTimeout(function() {
-            return $target.value = value + ' ' + digit;
+            return $target.value = prop(value + ' ' + digit);
         });
     } else if (re.test(value + digit)) {
         e.preventDefault();
         return setTimeout(function() {
-            return $target.value = value + digit + ' ';
+            return $target.value = prop(value + digit + ' ');
         });
     }
 };
@@ -320,22 +320,22 @@ const restrictCardNumber = (e) => {
         return value.length <= 16;
     }
 };
-const setEvents = (el, cardType) => {
+const setEvents = (el, cardType, prop) => {
     el.onkeypress = (event) => {
         restrictNumeric(event);
         restrictCardNumber(event);
-        formatCardInputNumber(event);
+        formatCardInputNumber(event, prop);
     };
     el.oninput = (event) => {
-        reFormatCardNumber(event);
+        reFormatCardNumber(event, prop);
         setCardType(event, cardType);
     };
-    el.onkeydown = formatBackCardNumber;
+    el.onkeydown = (event) => formatBackCardNumber(event, prop);
     el.onkeyup = (event) => {
         setCardType(event, cardType);
     };
-    // el.onpaste = reFormatCardNumber;
-    el.onchange = reFormatCardNumber;
+    el.onpaste = (event) => reFormatCardNumber(event, prop);
+    el.onchange = (event) => reFormatCardNumber(event, prop);
 };
 
 const luhnCheck = (num) => {
