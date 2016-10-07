@@ -40,6 +40,12 @@ const projectsPayment = {
             }) : '';
         };
 
+        const setStateOther = (el, isInit) => {
+            if (!isInit) {
+                vm.fields.userState('');
+            }
+        };
+
         const applyDocumentMask = _.compose(vm.fields.ownerDocument, documentMask);
 
         const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
@@ -52,6 +58,7 @@ const projectsPayment = {
             applyDocumentMask: applyDocumentMask,
             applyZipcodeMask: applyZipcodeMask,
             fieldHasError: fieldHasError,
+            setStateOther: setStateOther,
             validateForm: validateForm,
             projectUserId: projectUserId,
             showPaymentForm: showPaymentForm,
@@ -278,8 +285,9 @@ const projectsPayment = {
                                                 onchange: m.withAttr('value', ctrl.vm.fields.userState),
                                                 value: ctrl.vm.fields.userState()
                                             },
-                                            ctrl.vm.isInternational() ? m('option', {
+                                            ctrl.vm.isInternational() ? m('option',{
                                                     value: '',
+                                                    config: ctrl.setStateOther,
                                                     selected: true
                                                 }, 'Outro/Other') : _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
                                                     value: state.acronym,
