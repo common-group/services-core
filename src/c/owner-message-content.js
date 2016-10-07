@@ -24,6 +24,7 @@ const ownerMessageContent = {
                 return false;
             }
             submitDisabled(true);
+            content(content().split('\n').join('<br />'));
 
             let loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
