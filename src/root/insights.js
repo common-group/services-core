@@ -31,18 +31,22 @@ const insights = {
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
             contributionsPerLocation = m.prop([]),
-            loader = postgrest.loaderWithToken;
+            loader = postgrest.loaderWithToken,
+            setProjectId = () => {
+                try {
+                    const project_id = m.route.param('project_id');
+
+                    filtersVM.project_id(project_id);
+                } catch (e) {
+                    filtersVM.project_id(args.root.getAttribute('data-id'));
+                }
+            };
 
         if (h.paramByName('online_success') === 'true') {
             displayModal.toggle();
         }
 
-        console.log(args);
-        if(m.route.param('project_id')) {
-            filtersVM.project_id(m.route.param('project_id'));
-        } else {
-            filtersVM.project_id(args.root.getAttribute('data-id'));
-        }
+        setProjectId();
 
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
         l.load().then(projectDetails);
