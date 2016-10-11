@@ -37,7 +37,12 @@ const insights = {
             displayModal.toggle();
         }
 
-        filtersVM.project_id(args.root.getAttribute('data-id'));
+        console.log(args);
+        if(m.route.param('project_id')) {
+            filtersVM.project_id(m.route.param('project_id'));
+        } else {
+            filtersVM.project_id(args.root.getAttribute('data-id'));
+        }
 
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
         l.load().then(projectDetails);
