@@ -285,15 +285,9 @@ const paymentVM = (mode = 'aon') => {
                 .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
                 .catch(creditCardPaymentFail(deferred));
         } else {
-            if (selectedCreditCard().id === -1) {
-                return payWithNewCard(contribution_id, selectedInstallment)
-                    .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
-                    .catch(creditCardPaymentFail(deferred));
-            } else {
-                submissionError(I18n.t('submission.error', I18nScope({message: `Nenhum cartão escolhido.`})));
-                m.redraw();
-            }
-
+            return payWithNewCard(contribution_id, selectedInstallment)
+                .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
+                .catch(creditCardPaymentFail(deferred));
         }
     };
 
