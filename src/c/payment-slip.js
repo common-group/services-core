@@ -7,7 +7,8 @@ const paymentSlip = {
     controller(args) {
         const slipPaymentDate = paymentVM().getSlipPaymentDate(args.contribution_id),
                     loading = m.prop(false),
-                    error = m.prop(false);
+                    error = m.prop(false),
+                    completed = m.prop(false);
 
         const buildSlip = () => {
             loading(true);
@@ -20,6 +21,7 @@ const paymentSlip = {
                 if (data.payment_status == 'failed'){
                     error(true);
                 } else if (data.boleto_url) {
+                    completed(true);
                     window.location.href = `/projects/${args.project_id}/contributions/${args.contribution_id}`;
                 }
                 loading(false);
@@ -36,6 +38,7 @@ const paymentSlip = {
             buildSlip: buildSlip,
             slipPaymentDate: slipPaymentDate,
             loading: loading,
+            completed: completed,
             error: error
         };
     },
@@ -51,7 +54,7 @@ const paymentSlip = {
                             ),
                             m('.w-row',
                                 m('.w-col.w-col-8.w-col-push-2', [
-                            ctrl.loading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20',{
+                            ctrl.loading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20',{
                                 onclick: ctrl.buildSlip,
                                 value: 'Imprimir Boleto',
                                 type: 'submit'

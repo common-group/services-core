@@ -223,6 +223,12 @@ const paymentVM = (mode = 'aon') => {
                 });
 
             }
+        }).catch((error) => {
+            if(!_.isEmpty(error.message)){
+                deferred.reject(error);
+            } else {
+                deferred.reject({message: I18n.t('submission.encryption_error', I18nScope())});
+            }
         });
 
         return deferred.promise;
@@ -255,8 +261,10 @@ const paymentVM = (mode = 'aon') => {
 
     const creditCardPaymentSuccess = (deferred, project_id, contribution_id) => (data) => {
         if (data.payment_status === 'failed') {
+            const errorMsg = data.message || I18n.t('submission.payment_failed', I18nScope());
+
             isLoading(false);
-            submissionError(I18n.t('submission.error', I18nScope({message: data.message})));
+            submissionError(I18n.t('submission.error', I18nScope({message: errorMsg})));
             m.redraw();
             deferred.reject();
         } else {
@@ -277,15 +285,9 @@ const paymentVM = (mode = 'aon') => {
                 .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
                 .catch(creditCardPaymentFail(deferred));
         } else {
-            if (selectedCreditCard().id === -1) {
-                return payWithNewCard(contribution_id, selectedInstallment)
-                    .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
-                    .catch(creditCardPaymentFail(deferred));
-            } else {
-                submissionError(I18n.t('submission.error', {message: `Nenhum cartão escolhido.`}));
-                m.redraw();
-            }
-
+            return payWithNewCard(contribution_id, selectedInstallment)
+                .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
+                .catch(creditCardPaymentFail(deferred));
         }
     };
 

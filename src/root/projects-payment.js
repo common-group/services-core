@@ -21,6 +21,7 @@ const projectsPayment = {
             contribution = contributionVM.getCurrentContribution(),
             reward = m.prop(contribution().reward),
             value = contribution().value,
+            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             zipcodeMask = _.partial(h.mask, '99999-999');
 
@@ -50,6 +51,8 @@ const projectsPayment = {
 
         const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
 
+        const applyPhoneMask = _.compose(vm.fields.phone, phoneMask)
+
         if (!h.getUser()) {
             return h.navigateToDevise();
         }
@@ -57,6 +60,7 @@ const projectsPayment = {
         return {
             applyDocumentMask: applyDocumentMask,
             applyZipcodeMask: applyZipcodeMask,
+            applyPhoneMask: applyPhoneMask,
             fieldHasError: fieldHasError,
             setStateOther: setStateOther,
             validateForm: validateForm,
@@ -318,7 +322,7 @@ const projectsPayment = {
                                             onfocus: ctrl.vm.resetFieldError('phone'),
                                             class: ctrl.fieldHasError('phone') ? 'error' : false,
                                             type: 'tel',
-                                            onchange: m.withAttr('value', ctrl.vm.fields.phone),
+                                            onkeyup: m.withAttr('value', ctrl.applyPhoneMask),
                                             value: ctrl.vm.fields.phone(),
                                             required: 'required'
                                         }),
