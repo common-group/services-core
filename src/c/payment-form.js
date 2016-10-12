@@ -21,7 +21,7 @@ const paymentForm = {
                 ])
             ]),
             m('.flex-row.u-marginbottom-40', [
-                m('a.w-inline-block.btn-select.flex-column.u-text-center[href=\'javascript:void(0);\']', {
+                m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
                     onclick: ctrl.toggleBoleto.toggle,
                     class: !ctrl.toggleBoleto() ? 'selected' : ''
                 }, [
@@ -33,7 +33,7 @@ const paymentForm = {
                     ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png\']')
                 ]),
-                !args.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-text-center[href=\'javascript:void(0);\']', {
+                !args.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
                     onclick: ctrl.toggleBoleto.toggle,
                     class: ctrl.toggleBoleto() ? 'selected' : ''
                 }, [
