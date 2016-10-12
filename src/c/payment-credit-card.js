@@ -259,7 +259,7 @@ const paymentCreditCard = {
                             'A data de validade, geralmente na frente do cartão'
                         ),
                         m('.w-row', [
-                            m('.w-col.w-col-6.w-col-tiny-6.w-sub-col',
+                            m('.w-col.w-col-6.w-col-tiny-6.w-sub-col-middle',
                                 m('select.w-select.text-field[name="expiration-date_month"]', {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('expiry'),
                                     class: ctrl.fieldHasError('expiry') ? 'error' : '',
@@ -287,7 +287,7 @@ const paymentCreditCard = {
                             'Os 3 dígitos (quando na frente) ou 4 dígitos (quando atrás) do seu cartão'
                         ),
                         m('.w-row', [
-                            m('.w-col.w-col-8.w-col-tiny-6',
+                            m('.w-col.w-col-8.w-col-tiny-6.w-sub-col-middle',
                                 m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="tel"]', {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('cvv'),
                                     class: ctrl.fieldHasError('cvv') ? 'error' : '',
