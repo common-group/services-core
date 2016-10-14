@@ -5,13 +5,17 @@ import h from '../h';
 import facebookButton from '../c/facebook-button';
 import projectShareBox from '../c/project-share-box';
 import projectRow from '../c/project-row';
+import userVM from '../vms/user-vm'
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const thankYou = {
 controller (args) {
+    const recommendedProjects = userVM.getUserRecommendedProjects();
+
     return {
-        displayShareBox: h.toggleProp(false, true)
+        displayShareBox: h.toggleProp(false, true),
+        recommendedProjects: recommendedProjects
     };
 },
 view (ctrl, args) {
@@ -28,7 +32,7 @@ return m('#thank-you', [
   						m(".u-text-center", !args.contribution.slip_url ?
   							[
   								m(".fontsize-larger.text-success.u-marginbottom-20",
-  									I18n.t('thank_you', I18nScope())
+  									I18n.t('thank_you.thank_you', I18nScope())
   								),
   								m(".fontsize-base.u-marginbottom-40",
   									m.trust(
@@ -44,9 +48,12 @@ return m('#thank-you', [
   								m(".fontsize-base.fontweight-semibold.u-marginbottom-20",
   									"Compartilhe com seus amigos e ajude esse projeto a bater a meta!"
   								)
-  							] : ''
+  							] : [
+                                m('.fontsize-largest.text-success.u-marginbottom-20', I18n.t('thank_you_slip.thank_you', I18nScope())),
+                                m('.fontsize-base.u-marginbottom-40', I18n.t('thank_you_slip.thank_you_text_html', I18nScope({email: args.contribution.contribution_email})))
+                            ]
   						),
-  						m(".w-row",
+  						args.contribution.slip_url ? '' : m(".w-row",
                             [
                                 m(".w-hidden-small.w-hidden-tiny",
           							[
@@ -87,12 +94,22 @@ return m('#thank-you', [
     ),
     m(".section.u-marginbottom-40",
         m(".w-container",
-            args.contribution.slip_url ? m('iframe', {src: args.contribution.slip_url}) : [
+            args.contribution.slip_url ? m('.w-row',
+                    m('.w-col.w-col-8.w-col-offset-2',
+                        m('iframe', {
+                            src: args.contribution.slip_url,
+                            width: '100%',
+                            height: '905px',
+                            frameborder: '0',
+                            style: 'overflow: hidden;'
+                        })
+                    )
+                ) : [
                 m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
-                    I18n.t('project_recommendations', I18nScope())
+                    I18n.t('thank_you.project_recommendations', I18nScope())
                 ),
                 m.component(projectRow, {
-                    collection: args.contribution.recommended_projects.projectContributions,
+                    collection: ctrl.recommendedProjects,
                     ref: `ctrse_thankyou_r`
                 })
             ]
