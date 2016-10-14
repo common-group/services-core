@@ -6,8 +6,6 @@ import userHeader from '../c/user-header';
 import userCreated from '../c/user-created';
 import userContributed from '../c/user-contributed';
 import userAbout from '../c/user-about';
-import projectTabs from '../c/project-tabs';
-import projectMain from '../c/project-main';
 
 const usersShow = {
     controller(args) {
