@@ -12,9 +12,7 @@ const idVM = h.idVM,
 const getUserCreatedProjects = (user_id, pageSize = 3) => {
     createdVM.project_user_id(user_id).order({project_id: 'desc'});
 
-    if(pageSize !== null){
-      models.projectDetail.pageSize(pageSize);
-    }
+    models.project.pageSize(pageSize);
 
     const lUserCreated = postgrest.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
 
@@ -31,9 +29,7 @@ const getUserContributedProjects = (user_id, pageSize = 3) => {
         created_at: 'desc'
     }).state(['refunded', 'pending_refund', 'paid']);
 
-    if(pageSize !== null){
-      models.userContribution.pageSize(pageSize);
-    }
+    models.userContribution.pageSize(pageSize);
 
     const lUserContributed = postgrest.loaderWithToken(
         models.userContribution.getPageOptions(contextVM.parameters()));

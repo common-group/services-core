@@ -6,17 +6,21 @@ import userVM from '../vms/user-vm';
 const userAbout = {
     controller(args) {
         const userDetails = m.prop({}),
-            user_id = args.userId;
+              loader = m.prop(true),
+              user_id = args.userId;
 
-        userVM.fetchUser(user_id, true, userDetails);
+        userVM.fetchUser(user_id, true, userDetails).then(()=>{
+          loader(false);
+        });
 
         return {
-            userDetails: userDetails
+            userDetails: userDetails,
+            loader: loader
         };
     },
     view(ctrl, args) {
         const user = ctrl.userDetails();
-        return m('.content[id=\'about-tab\']',
+        return ( ctrl.loader() ? h.loader() :  m('.content[id=\'about-tab\']',
             m('.w-container[id=\'about-content\']',
                 m('.w-row',
                     [
@@ -29,7 +33,7 @@ const userAbout = {
                     ]
                 )
             )
-        );
+        ));
 
     }
 };
