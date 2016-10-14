@@ -307,7 +307,10 @@ const paymentCreditCard = {
                             m('label.field-label.fontweight-semibold[for="split"]',
                                 'Parcelas'
                             ),
-                             m('select.w-select.text-field[name="split"]', _.map(ctrl.installments(), (installment) => {
+                            m('select.w-select.text-field[name="split"]', {
+                                onchange: m.withAttr('value', ctrl.selectedInstallment),
+                                value: ctrl.selectedInstallment()
+                            }, _.map(ctrl.installments(), (installment) => {
                                  return m(`option[value="${installment.number}"]`,
                                      `${installment.number} X R$ ${installment.amount}`
                                  );
