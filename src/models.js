@@ -18,6 +18,7 @@ const models = {
     contributions: postgrest.model('contributions'),
     directMessage: postgrest.model('direct_messages'),
     teamTotal: postgrest.model('team_totals'),
+    recommendedProjects: postgrest.model('recommended_projects'),
     projectAccount: postgrest.model('project_accounts'),
     projectAccountError: postgrest.model('project_account_errors'),
     projectContribution: postgrest.model('project_contributions'),
@@ -60,5 +61,6 @@ models.country.pageSize(false);
 models.state.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
+models.recommendedProjects.pageSize(3);
 
 export default models;
