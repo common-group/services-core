@@ -18,7 +18,7 @@ const userContributed = {
 
         userVM.getUserContributedProjects(user_id, null).then((data) => {
             contributedProjects(data);
-            contextVM.project_id(_.map(contributedProjects(), (project) => {return project.project_id;})).order({
+            contextVM.project_id(_.pluck(contributedProjects(), 'project_id')).order({
               online_date: 'desc'
           });
 
