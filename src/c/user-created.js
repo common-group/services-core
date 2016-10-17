@@ -4,12 +4,14 @@ import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
+import inlineError from './inline-error';
 import projectCard from './project-card';
 
 const userCreated = {
     controller(args) {
         const createdProjects = m.prop(),
               user_id = args.userId,
+              error = m.prop(false),
               pages = postgrest.paginationVM(models.project),
               loader = m.prop(true),
               contextVM = postgrest.filtersVM({
@@ -25,18 +27,23 @@ const userCreated = {
         models.project.pageSize(9);
         pages.firstPage(contextVM.parameters()).then(()=>{
             loader(false);
+        }).catch(err => {
+          error(true);
+          loader(false);
+          m.redraw();
         });
 
         return {
             projects: pages,
-            loader: loader
+            loader: loader,
+            error: error
         };
     },
     view(ctrl, args) {
         let projects_collection = ctrl.projects.collection();
 
         return m('.content[id=\'created-tab\']',
-                  (!ctrl.loader() ?
+                  (ctrl.error() ? m.component(inlineError, {message: 'Erro ao carregar os projetos.'}) : !ctrl.loader() ?
                   [
                   (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
                       return m.component(projectCard, {

@@ -5,12 +5,14 @@ import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import projectCard from './project-card';
+import inlineError from './inline-error';
 
 const userContributed = {
     controller(args) {
         const contributedProjects = m.prop(),
               user_id = args.userId,
               pages = postgrest.paginationVM(models.project),
+              error = m.prop(false),
               loader = m.prop(true),
               contextVM = postgrest.filtersVM({
                   project_id: 'in'
@@ -26,16 +28,21 @@ const userContributed = {
             pages.firstPage(contextVM.parameters()).then(() => {
                 loader(false);
             });
-        });
+        }).catch(err => {
+                error(true);
+                loader(false);
+                m.redraw();
+            });
 
         return {
             projects: pages,
+            error: error,
             loader: loader
         };
     },
     view(ctrl, args) {
         let projects_collection = ctrl.projects.collection();
-        return (ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
+        return (ctrl.error() ? m.component(inlineError, {message: 'Erro ao carregar os projetos.'}) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
                   [
                   (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
                       return m.component(projectCard, {
