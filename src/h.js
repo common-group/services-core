@@ -14,6 +14,7 @@ const
   	},
     setMomentifyLocale = () => {
         moment.locale('pt', {
+                months : 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
                 monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
             });
     },

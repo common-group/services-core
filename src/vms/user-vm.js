@@ -7,19 +7,19 @@ import models from '../models';
 const idVM = h.idVM,
       userDetails = m.prop([]),
       currentUser = m.prop(),
-      createdVM = postgrest.filtersVM({user_id: 'eq'});
+      createdVM = postgrest.filtersVM({project_user_id: 'eq'});
 
-const getUserCreatedProjects = (user_id) => {
-    createdVM.user_id(user_id).order({project_id: 'desc'});
+const getUserCreatedProjects = (user_id, pageSize = 3) => {
+    createdVM.project_user_id(user_id).order({project_id: 'desc'});
 
-    models.projectDetail.pageSize(3);
+    models.project.pageSize(pageSize);
 
     const lUserCreated = postgrest.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
 
     return lUserCreated.load();
 };
 
-const getUserContributedProjects = (user_id) => {
+const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = postgrest.filtersVM({
         user_id: 'eq',
         state: 'in'
@@ -29,7 +29,7 @@ const getUserContributedProjects = (user_id) => {
         created_at: 'desc'
     }).state(['refunded', 'pending_refund', 'paid']);
 
-    models.userContribution.pageSize(3);
+    models.userContribution.pageSize(pageSize);
 
     const lUserContributed = postgrest.loaderWithToken(
         models.userContribution.getPageOptions(contextVM.parameters()));
@@ -45,10 +45,20 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     return !handlePromise ? lUser.load() : lUser.load().then(_.compose(customProp, _.first));
 };
 
+const displayImage = (user) => {
+  return user.profile_img_thumbnail || "https://catarse.me/assets/catarse_bootstrap/user.jpg";
+};
+
+const displayCover = (user) => {
+  return user.profile_cover_image || displayImage(user);
+};
+
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
     getUserContributedProjects: getUserContributedProjects,
     currentUser: currentUser,
+    displayImage: displayImage,
+    displayCover: displayCover,
     fetchUser: fetchUser
 };
 
