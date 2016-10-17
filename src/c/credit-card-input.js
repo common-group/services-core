@@ -4,6 +4,8 @@ import creditCardVM from '../vms/credit-card-vm';
 const creditCardInput = {
     controller(args) {
       const cardType = args.type || m.prop('unknown');
+      // TODO: move all input logic to vdom paradigm
+      // CreditCard Input still handle events on a dom-based model.
       const setCreditCardHandlers = (el, isInitialized) => {
           if (!isInitialized) {
               creditCardVM.setEvents(el, cardType, args.value);

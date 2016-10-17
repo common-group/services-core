@@ -335,7 +335,10 @@ const setEvents = (el, cardType, prop) => {
         setCardType(event, cardType);
     };
     el.onpaste = (event) => reFormatCardNumber(event, prop);
-    el.onchange = (event) => reFormatCardNumber(event, prop);
+    el.onchange = (event) => {
+        CatarseAnalytics.oneTimeEvent({cat:'contribution_finish',act:'contribution_cc_edit'});
+        reFormatCardNumber(event, prop);        
+    };
 };
 
 const luhnCheck = (num) => {
