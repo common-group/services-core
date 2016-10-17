@@ -32,7 +32,7 @@ const userAbout = {
                 m('.w-row',
                     [
                         m('.w-col.w-col-8',
-                            m('.fontsize-base', m.trust(user.about_html))
+                            m('.fontsize-base', user.about_html ? m.trust(user.about_html) : '')
                         ),
                         m('.w-col.w-col-4',
                             (user.id ? m.component(userCard, {userId: user.id}) : h.loader)
