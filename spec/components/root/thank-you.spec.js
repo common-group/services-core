@@ -1,6 +1,6 @@
 import thankYou from '../../../src/root/thank-you'
 
-fdescribe('ThankYou', () => {
+describe('ThankYou', () => {
     let $slip, $cc;
     let test = (payment) => {
         return {
