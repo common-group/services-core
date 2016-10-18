@@ -18,7 +18,7 @@ const userContributed = {
                   project_id: 'in'
               });
 
-        userVM.getUserContributedProjects(user_id, null).then((data) => {
+        userVM.getPublicUserContributedProjects(user_id, null).then((data) => {
             contributedProjects(data);
             contextVM.project_id(_.pluck(contributedProjects(), 'project_id')).order({
               online_date: 'desc'

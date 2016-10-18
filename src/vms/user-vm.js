@@ -19,6 +19,21 @@ const getUserCreatedProjects = (user_id, pageSize = 3) => {
     return lUserCreated.load();
 };
 
+const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
+    const contextVM = postgrest.filtersVM({
+        user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    models.contributor.pageSize(pageSize);
+
+    const lUserContributed = postgrest.loaderWithToken(
+        models.contributor.getPageOptions(contextVM.parameters()));
+
+    return lUserContributed.load();
+};
+
 const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = postgrest.filtersVM({
         user_id: 'eq',
@@ -56,6 +71,7 @@ const displayCover = (user) => {
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
     getUserContributedProjects: getUserContributedProjects,
+    getPublicUserContributedProjects: getPublicUserContributedProjects,
     currentUser: currentUser,
     displayImage: displayImage,
     displayCover: displayCover,
