@@ -9,17 +9,16 @@ import contributionVM from '../vms/contribution-vm';
 const projectHeader = {
     controller(args) {
         const project = args.project,
-            currentUser = h.getUser(),
-            projectContributions = m.prop([]);
+            currentUser = h.getUser();
 
         if (h.isProjectPage() && currentUser && !_.isUndefined(project())){
             contributionVM
                 .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
-                .then(projectContributions);
+                .then(args.projectContributions);
         }
 
         return {
-            projectContributions: projectContributions,
+            projectContributions: args.projectContributions,
             showContributions: h.toggleProp(false, true)
         };
     },

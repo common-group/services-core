@@ -35,7 +35,8 @@ const projectsShow = {
                 m.component(projectHeader, {
                     project: project,
                     rewardDetails: ctrl.rewardDetails,
-                    userDetails: ctrl.userDetails
+                    userDetails: ctrl.userDetails,
+                    projectContributions: ctrl.projectContributions
                 }),
                 m.component(projectTabs, {
                     project: project,
@@ -44,7 +45,9 @@ const projectsShow = {
                 m.component(projectMain, {
                     project: project,
                     post_id: args.post_id,
-                    rewardDetails: ctrl.rewardDetails
+                    rewardDetails: ctrl.rewardDetails,
+                    userDetails: ctrl.userDetails,
+                    projectContributions: ctrl.projectContributions
                 }),
                 (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
                     project: project
