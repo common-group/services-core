@@ -1,15 +1,15 @@
 beforeAll(function(){
-  FilterDescriberMock = function(){
+  FilterDescriberMock = function(filterMain, filterDropdown, filterNumberRange, filterDateRange){
     var describer = [
       { //full_text_index
-        component: 'FilterMain',
+        component: filterMain,
         data: {
           vm: m.prop(),
           placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
         }
       },
       { //state
-        component: 'FilterDropdown',
+        component: filterDropdown,
         data: {
           label: 'Com o estado',
           name: 'state',
@@ -27,7 +27,7 @@ beforeAll(function(){
         }
       },
       { //gateway
-        component: 'FilterDropdown',
+        component: filterDropdown,
         data: {
           label: 'gateway',
           name: 'gateway',
@@ -42,7 +42,7 @@ beforeAll(function(){
         }
       },
       { //value
-        component: 'FilterNumberRange',
+        component: filterNumberRange,
         data: {
           label: 'Valores entre',
           first: m.prop(),
@@ -50,7 +50,7 @@ beforeAll(function(){
         }
       },
       { //created_at
-        component: 'FilterDateRange',
+        component: filterDateRange,
         data: {
           label: 'Período do apoio',
           first: m.prop(),

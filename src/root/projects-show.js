@@ -1,29 +1,56 @@
-window.c.root.ProjectsShow = ((m, c, _, h, vms) => {
-    return {
-        controller: (args) => {
-            return vms.project(args.project_id, args.project_user_id);
-        },
+// TODO: Make work when directly loaded
+// TODO: Make it choose the right reward when sending to contributions/new
+// TODO: Make sure inter routing works
+// TODO: Add Thank You Page
+import m from 'mithril';
+import _ from 'underscore';
+import h from '../h';
+import projectVM from '../vms/project-vm';
+import rewardVM from '../vms/reward-vm';
+import projectHeader from '../c/project-header';
+import projectTabs from '../c/project-tabs';
+import projectMain from '../c/project-main';
+import projectDashboardMenu from '../c/project-dashboard-menu';
 
-        view: (ctrl) => {
-            let project = ctrl.projectDetails;
+const projectsShow = {
+    controller(args) {
+        const {project_id, project_user_id} = args;
 
-            return m('.project-show', [
-                    m.component(c.ProjectHeader, {
-                        project: project,
-                        userDetails: ctrl.userDetails
-                    }),
-                    m.component(c.ProjectTabs, {
-                        project: project,
-                        rewardDetails: ctrl.rewardDetails
-                    }),
-                    m.component(c.ProjectMain, {
-                        project: project,
-                        rewardDetails: ctrl.rewardDetails
-                    }),
-                    (project() && project().is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
-                        project: project
-                    }) : '')
-                ]);
+        h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
+
+        if (project_id) {
+            projectVM.init(project_id, project_user_id);
+        } else {
+            projectVM.getCurrentProject();
         }
-    };
-}(window.m, window.c, window._, window.c.h, window.c.vms));
+
+        return projectVM;
+    },
+    view(ctrl, args) {
+        const project = ctrl.currentProject;
+
+        return m('.project-show',{
+                config: ctrl.setProjectPageTitle()
+            },[
+                m.component(projectHeader, {
+                    project: project,
+                    rewardDetails: ctrl.rewardDetails,
+                    userDetails: ctrl.userDetails
+                }),
+                m.component(projectTabs, {
+                    project: project,
+                    rewardDetails: ctrl.rewardDetails
+                }),
+                m.component(projectMain, {
+                    project: project,
+                    post_id: args.post_id,
+                    rewardDetails: ctrl.rewardDetails
+                }),
+                (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
+                    project: project
+                }) : '')
+            ]);
+    }
+};
+
+export default projectsShow;

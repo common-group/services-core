@@ -1,45 +1,61 @@
-window.c.ProjectMain = ((m, c, _, h) => {
-    return {
-        controller: (args) => {
-            const project = args.project,
-                  displayTabContent = () => {
-                      const hash = window.location.hash,
-                            c_opts = {
-                                project: project
-                            },
-                            tabs = {
-                                '#rewards': m('.w-col.w-col-12', m.component(c.ProjectRewardList, _.extend({}, {
-                                    rewardDetails: args.rewardDetails
-                                }, c_opts))),
-                                '#contribution_suggestions': m.component(c.ProjectSuggestedContributions, c_opts),
-                                '#contributions': m.component(c.ProjectContributions, c_opts),
-                                '#about': m.component(c.ProjectAbout, _.extend({}, {
-                                    rewardDetails: args.rewardDetails
-                                }, c_opts)),
-                                '#comments': m.component(c.ProjectComments, c_opts),
-                                '#posts': m.component(c.ProjectPosts, c_opts)
-                            };
+import m from 'mithril';
+import _ from 'underscore';
+import h from '../h';
+import projectRewardList from './project-reward-list';
+import projectSuggestedContributions from './project-suggested-contributions';
+import projectContributions from './project-contributions';
+import projectAbout from './project-about';
+import projectComments from './project-comments';
+import projectPosts from './project-posts';
 
-                      if (_.isEmpty(hash) || hash === '#_=_' || hash === '#preview') {
-                          return tabs['#about'];
-                      }
+const projectMain = {
+    controller(args) {
+        const hash = m.prop(window.location.hash),
+              displayTabContent = (project) => {
+                  const c_opts = {
+                      project: project,
+                      post_id: args.post_id
+                  },
+                        tabs = {
+                            '#rewards': m('.w-col.w-col-12', m.component(projectRewardList, _.extend({}, {
+                                rewardDetails: args.rewardDetails
+                            }, c_opts))),
+                            '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
+                            '#contributions': m.component(projectContributions, c_opts),
+                            '#about': m.component(projectAbout, _.extend({}, {
+                                rewardDetails: args.rewardDetails
+                            }, c_opts)),
+                            '#comments': m.component(projectComments, c_opts),
+                            '#posts': m.component(projectPosts, c_opts)
+                        };
 
-                      return tabs[hash];
-                  };
+                  if (_.isNumber(args.post_id)) {
+                      window.location.hash = 'posts';
+                  }
 
-            h.redrawHashChange();
+                  hash(window.location.hash);
 
-            return {
-                displayTabContent: displayTabContent
-            };
-        },
+                  if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
+                      return tabs['#about'];
+                  }
 
-        view: (ctrl) => {
-            return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
-                m('.w-container', [
-                    m('.w-row', ctrl.displayTabContent())
-                ])
-            ]);
-        }
-    };
-}(window.m, window.c, window._, window.c.h));
+                  return tabs[hash()];
+              };
+
+        h.redrawHashChange();
+
+        return {
+            displayTabContent: displayTabContent,
+            hash: hash
+        };
+    },
+    view(ctrl, args) {
+        return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
+            m(`${ctrl.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
+                m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : h.loader())
+            ])
+        ]);
+    }
+};
+
+export default projectMain;

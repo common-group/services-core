@@ -1,6 +1,8 @@
+import m from 'mithril';
+import projectMode from '../../src/c/project-mode';
+
 describe('ProjectMode', () => {
-    let ProjectCard = window.c.ProjectMode,
-        project, component, view, $output;
+    let project, component, view, $output;
 
     describe('view', () => {
         beforeAll(() => {
@@ -8,7 +10,7 @@ describe('ProjectMode', () => {
         });
 
         it('should render the project mode', () => {
-            component = m.component(ProjectCard, {
+            component = m.component(projectMode, {
                 project: project
             });
             $output = mq(component);
@@ -16,7 +18,7 @@ describe('ProjectMode', () => {
         });
 
         it('should render the project mode when goal is null', () => {
-            component = m.component(ProjectCard, {
+            component = m.component(projectMode, {
                 project: m.prop(_.extend({}, project, {goal: null}))
             });
             $output = mq(component);

@@ -1,198 +1,266 @@
-window.c.root.Insights = ((m, c, h, models, _, I18n) => {
-    const I18nScope = _.partial(h.i18nScope, 'projects.insights');
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import _ from 'underscore';
+import I18n from 'i18n-js';
+import h from '../h';
+import models from '../models';
+import tooltip from '../c/tooltip';
+import projectDashboardMenu from '../c/project-dashboard-menu';
+import modalBox from '../c/modal-box';
+import adminProjectDetailsCard from '../c/admin-project-details-card';
+import onlineSuccessModalContent from '../c/online-success-modal-content';
+import projectDataStats from '../c/project-data-stats';
+import projectDeleteButton from '../c/project-delete-button';
+import projectCancelButton from '../c/project-cancel-button';
+import projectDataChart from '../c/project-data-chart';
+import projectDataTable from '../c/project-data-table';
+import projectReminderCount from '../c/project-reminder-count';
+import projectSuccessfulOnboard from '../c/project-successful-onboard';
+import facebookButton from '../c/facebook-button';
+import copyTextInput from '../c/copy-text-input';
+import projectInviteCard from '../c/project-invite-card';
 
-    return {
-        controller: (args) => {
-            let filtersVM = m.postgrest.filtersVM({
-                    project_id: 'eq'
-                }),
-                insightsVM = c.InsightsVM,
-                projectDetails = m.prop([]),
-                contributionsPerDay = m.prop([]),
-                contributionsPerLocation = m.prop([]),
-                loader = m.postgrest.loaderWithToken;
+const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
-            filtersVM.project_id(args.root.getAttribute('data-id'));
+const insights = {
+    controller(args) {
+        let filtersVM = postgrest.filtersVM({
+                project_id: 'eq'
+            }),
+            displayModal = h.toggleProp(false, true),
+            projectDetails = m.prop([]),
+            contributionsPerDay = m.prop([]),
+            contributionsPerLocation = m.prop([]),
+            loader = postgrest.loaderWithToken,
+            setProjectId = () => {
+                try {
+                    const project_id = m.route.param('project_id');
 
-            const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
-            l.load().then(projectDetails);
-
-            const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
-            lContributionsPerDay.load().then(contributionsPerDay);
-
-            let contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
-            const buildPerLocationTable = (contributions) => {
-                return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
-                    let column = [];
-
-                    column.push(contribution.state_acronym || 'Outro/other');
-                    column.push(contribution.total_contributions);
-                    column.push([contribution.total_contributed,[//Adding row with custom comparator => read project-data-table description
-                        m(`input[type="hidden"][value="${contribution.total_contributed}"`),
-                        'R$ ',
-                        h.formatNumber(contribution.total_contributed, 2, 3),
-                        m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
-                    ]]);
-                    return contributionsPerLocationTable.push(column);
-                }) : [];
+                    filtersVM.project_id(project_id);
+                } catch (e) {
+                    filtersVM.project_id(args.root.getAttribute('data-id'));
+                }
             };
 
-            const lContributionsPerLocation = loader(models.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
-            lContributionsPerLocation.load().then(buildPerLocationTable);
+        if (h.paramByName('online_success') === 'true') {
+            displayModal.toggle();
+        }
 
-            let contributionsPerRefTable = [[
-                I18n.t('ref_table.header.origin', I18nScope()),
-                I18n.t('ref_table.header.contributions', I18nScope()),
-                I18n.t('ref_table.header.amount', I18nScope())
-            ]];
-            const buildPerRefTable = (contributions) => {
-                return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
-                    const re = /(ctrse_[a-z]*)/,
-                        test = re.exec(contribution.referral_link);
+        setProjectId();
 
-                    let column = [];
+        const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
+        l.load().then(projectDetails);
 
-                    if (test){
-                        contribution.referral_link = test[0];
-                    }
+        const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
+        lContributionsPerDay.load().then(contributionsPerDay);
 
-                    column.push(contribution.referral_link ? I18n.t('referral.' + contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : I18n.t('referral.others', I18nScope()));
-                    column.push(contribution.total);
-                    column.push([contribution.total_amount,[
-                        m(`input[type="hidden"][value="${contribution.total_contributed}"`),
-                        'R$ ',
-                        h.formatNumber(contribution.total_amount, 2, 3),
-                        m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
-                    ]]);
-                    return contributionsPerRefTable.push(column);
-                }) : [];
-            };
+        let contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
+        const buildPerLocationTable = (contributions) => {
+            return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
+                let column = [];
 
-            const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
-            lContributionsPerRef.load().then(buildPerRefTable);
+                column.push(contribution.state_acronym || 'Outro/other');
+                column.push(contribution.total_contributions);
+                column.push([contribution.total_contributed,[//Adding row with custom comparator => read project-data-table description
+                    m(`input[type="hidden"][value="${contribution.total_contributed}"`),
+                    'R$ ',
+                    h.formatNumber(contribution.total_contributed, 2, 3),
+                    m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
+                ]]);
+                return contributionsPerLocationTable.push(column);
+            }) : [];
+        };
 
-            const explanationModeComponent = (projectMode) => {
-                const modes = {
-                    'aon': c.AonAdminProjectDetailsExplanation,
-                    'flex': c.FlexAdminProjectDetailsExplanation
-                };
+        const lContributionsPerLocation = loader(models.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
+        lContributionsPerLocation.load().then(buildPerLocationTable);
 
-                return modes[projectMode];
-            };
+        let contributionsPerRefTable = [[
+            I18n.t('ref_table.header.origin', I18nScope()),
+            I18n.t('ref_table.header.contributions', I18nScope()),
+            I18n.t('ref_table.header.amount', I18nScope())
+        ]];
+        const buildPerRefTable = (contributions) => {
+            return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
+                //Test if the string matches a word starting with ctrse_ and followed by any non-digit group of characters
+                //This allows to remove any versioned referral (i.e.: ctrse_newsletter_123) while still getting ctrse_test_ref
+                const re = /(ctrse_[\D]*)/,
+                    test = re.exec(contribution.referral_link);
 
-            return {
-                l: l,
-                lContributionsPerRef: lContributionsPerRef,
-                lContributionsPerLocation: lContributionsPerLocation,
-                lContributionsPerDay: lContributionsPerDay,
-                filtersVM: filtersVM,
-                projectDetails: projectDetails,
-                contributionsPerDay: contributionsPerDay,
-                contributionsPerLocationTable: contributionsPerLocationTable,
-                contributionsPerRefTable: contributionsPerRefTable,
-                explanationModeComponent: explanationModeComponent
-            };
+                let column = [];
+
+                if (test){
+                    //Removes last underscore if it exists
+                    contribution.referral_link = test[0].substr(-1) === '_' ? test[0].substr(0, test[0].length - 1) : test[0];
+                }
+
+                column.push(contribution.referral_link ? I18n.t('referral.' + contribution.referral_link, I18nScope({defaultValue: contribution.referral_link})) : I18n.t('referral.others', I18nScope()));
+                column.push(contribution.total);
+                column.push([contribution.total_amount,[
+                    m(`input[type="hidden"][value="${contribution.total_contributed}"`),
+                    'R$ ',
+                    h.formatNumber(contribution.total_amount, 2, 3),
+                    m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
+                ]]);
+                return contributionsPerRefTable.push(column);
+            }) : [];
+        };
+
+        const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
+        lContributionsPerRef.load().then(buildPerRefTable);
+
+        return {
+            l: l,
+            lContributionsPerRef: lContributionsPerRef,
+            lContributionsPerLocation: lContributionsPerLocation,
+            lContributionsPerDay: lContributionsPerDay,
+            displayModal: displayModal,
+            filtersVM: filtersVM,
+            projectDetails: projectDetails,
+            contributionsPerDay: contributionsPerDay,
+            contributionsPerLocationTable: contributionsPerLocationTable,
+            contributionsPerRefTable: contributionsPerRefTable
+        };
+    },
+    view(ctrl) {
+        const project = _.first(ctrl.projectDetails()) || {
+            user: {
+                name: 'Realizador'
+            }
         },
-        view: (ctrl) => {
-            const project = _.first(ctrl.projectDetails()),
-                tooltip = (el) => {
-                    return m.component(c.Tooltip, {
-                        el: el,
-                        text: [
-                            'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
-                            m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
-                        ],
-                        width: 380
-                    });
-                };
 
-            return m('.project-insights', !ctrl.l() ? [
-                (project.is_owner_or_admin ? m.component(c.ProjectDashboardMenu, {
-                    project: m.prop(project)
-                }) : ''),
-                m('.w-container', [
-                    m('.w-row.u-marginbottom-40', [
-                        m('.w-col.w-col-2'),
-                        m('.w-col.w-col-8.dashboard-header.u-text-center', [
-                            m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10', I18n.t('campaign_title', I18nScope())),
-                            m.component(c.AdminProjectDetailsCard, {
-                                resource: project
-                            }),
-                            m.component(ctrl.explanationModeComponent(project.mode), {
-                                resource: project
-                            })
-                        ]),
-                        m('.w-col.w-col-2')
-                    ])
-                ]), (project.is_published) ? [
-                    m('.divider'),
-                    m('.w-section.section-one-column.section.bg-gray.before-footer', [
-                        m('.w-container', [
-                            m('.w-row', [
-                                m('.w-col.w-col-12.u-text-center', {
-                                    style: {
-                                        'min-height': '300px'
-                                    }
-                                }, [
-                                    !ctrl.lContributionsPerDay() ? m.component(c.ProjectDataChart, {
-                                        collection: ctrl.contributionsPerDay,
-                                        label: I18n.t('amount_per_day_label', I18nScope()),
-                                        dataKey: 'total_amount',
-                                        xAxis: (item) => h.momentify(item.paid_at)
-                                    }) : h.loader()
-                                ]),
-                            ]),
-                            m('.w-row', [
-                                m('.w-col.w-col-12.u-text-center', {
-                                    style: {
-                                        'min-height': '300px'
-                                    }
-                                }, [
-                                    !ctrl.lContributionsPerDay() ? m.component(c.ProjectDataChart, {
-                                        collection: ctrl.contributionsPerDay,
-                                        label: I18n.t('contributions_per_day_label', I18nScope()),
-                                        dataKey: 'total',
-                                        xAxis: (item) => h.momentify(item.paid_at)
-                                    }) : h.loader()
-                                ]),
-                            ]),
-                            m('.w-row', [
-                                m('.w-col.w-col-12.u-text-center', [
-                                    m('.project-contributions-per-ref', [
-                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
-                                            I18n.t('ref_origin_title', I18nScope()),
-                                            h.newFeatureBadge(),
-                                            tooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
-                                        ]),
-                                        !ctrl.lContributionsPerRef() ? m.component(c.ProjectDataTable, {
-                                            table: ctrl.contributionsPerRefTable,
-                                            defaultSortIndex: -2
-                                        }) : h.loader()
-                                    ])
-                                ]),
-                            ]),
-                            m('.w-row', [
-                                m('.w-col.w-col-12.u-text-center', [
-                                    m('.project-contributions-per-ref', [
-                                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
-                                        !ctrl.lContributionsPerLocation() ? m.component(c.ProjectDataTable, {
-                                            table: ctrl.contributionsPerLocationTable,
-                                            defaultSortIndex: -2
-                                        }) : h.loader()
-                                    ])
-                                ]),
-                            ]),
-                            m('.w-row', [
-                                m('.w-col.w-col-12.u-text-center', [
-                                    m.component(c.ProjectReminderCount, {
-                                        resource: project
-                                    })
-                                ]),
-                            ])
+              buildTooltip = (el) => {
+                  return m.component(tooltip, {
+                      el: el,
+                      text: [
+                          'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
+                          m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                      ],
+                      width: 380
+                  });
+              };
+
+        if (!ctrl.l()) {
+            project.user.name = project.user.name || 'Realizador';
+        }
+
+        return m('.project-insights', !ctrl.l() ? [
+            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
+                project: m.prop(project)
+            }) : ''),
+            (ctrl.displayModal() ? m.component(modalBox, {
+                displayModal: ctrl.displayModal,
+                content: [onlineSuccessModalContent]
+            }) : ''),
+
+            m('.w-container', (project.state === 'successful') ? m.component(projectSuccessfulOnboard, {project: m.prop(project)}) : [
+                m('.w-row.u-marginbottom-40', [
+                    m('.w-col.w-col-8.w-col-push-2', [
+                        m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', I18n.t('campaign_title', I18nScope())),
+                        (project.state === 'online' ? m.component(projectInviteCard, {project: project}) : ''),
+                        (project.state === 'draft' ? m.component(adminProjectDetailsCard, {
+                            resource: project
+                        }) : ''),
+                        m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
+                            project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
+                                I18n.t('finish_explanation', I18nScope()),
+                                m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/208141033-Como-definir-o-prazo-no-Catarse-flex-"][target="_blank"]',I18n.t('know_more', I18nScope()))
+                           ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at)})))
                         ])
                     ])
-                ] : ''
-            ] : h.loader());
-        }
-    };
-}(window.m, window.c, window.c.h, window.c.models, window._, window.I18n));
+                ]),
+            ]),
+            (project.state === 'draft' ?
+               m.component(projectDeleteButton, {project: project})
+            : ''),
+            (project.is_published) ? [
+                m('.divider'),
+                m('.w-section.section-one-column.section.bg-gray.before-footer', [
+                    m('.w-container', [
+                        m.component(projectDataStats, {project: m.prop(project)}),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', {
+                                style: {
+                                    'min-height': '300px'
+                                }
+                            }, [
+                                !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                                    collection: ctrl.contributionsPerDay,
+                                    label: I18n.t('amount_per_day_label', I18nScope()),
+                                    dataKey: 'total_amount',
+                                    xAxis: (item) => h.momentify(item.paid_at),
+                                    emptyState: I18n.t('amount_per_day_empty', I18nScope())
+                                }) : h.loader()
+                            ]),
+                        ]),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', {
+                                style: {
+                                    'min-height': '300px'
+                                }
+                            }, [
+                                !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                                    collection: ctrl.contributionsPerDay,
+                                    label: I18n.t('contributions_per_day_label', I18nScope()),
+                                    dataKey: 'total',
+                                    xAxis: (item) => h.momentify(item.paid_at),
+                                    emptyState: I18n.t('contributions_per_day_empty', I18nScope())
+                                }) : h.loader()
+                            ]),
+                        ]),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', [
+                                m('.project-contributions-per-ref', [
+                                    m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
+                                        I18n.t('ref_origin_title', I18nScope()),
+                                        h.newFeatureBadge(),
+                                        buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
+                                    ]),
+                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {
+                                        table: ctrl.contributionsPerRefTable,
+                                        defaultSortIndex: -2
+                                    }) : m('.card.u-radius.medium.u-marginbottom-60',
+                                            m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
+                                                m('.w-col.w-col-8.w-col-push-2',
+                                                    m('p.fontsize-base', I18n.t('contributions_per_ref_empty', I18nScope()))
+                                                )
+                                            )
+                                        ) : h.loader()
+                                ])
+                            ]),
+                        ]),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', [
+                                m('.project-contributions-per-ref', [
+                                    m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
+                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
+                                        table: ctrl.contributionsPerLocationTable,
+                                        defaultSortIndex: -2
+                                    }) : m('.card.u-radius.medium.u-marginbottom-60',
+                                            m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
+                                                m('.w-col.w-col-8.w-col-push-2',
+                                                    m('p.fontsize-base', I18n.t('contributions_per_location_empty', I18nScope()))
+                                                )
+                                            )
+                                        ) : h.loader()
+                                ])
+                            ]),
+                        ]),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', [
+                                m.component(projectReminderCount, {
+                                    resource: project
+                                })
+                            ]),
+                        ]),
+                    ])
+                ]),
+            (project.state === 'online' ?
+                m.component(projectCancelButton, {project: project})
+            : '')
+
+            ] : ''
+        ] : h.loader());
+    }
+};
+
+export default insights;

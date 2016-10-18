@@ -1,10 +1,11 @@
+import teamTotal from '../../src/c/team-total';
+
 describe('TeamTotal', () => {
-    let $output,
-        TeamTotal = window.c.TeamTotal;
+    let $output;
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(TeamTotal);
+            $output = mq(teamTotal);
         });
 
         it('should render fetched team total info', () => {

@@ -1,13 +1,15 @@
+import m from 'mithril';
+import projectSidebar from '../../src/c/project-sidebar';
+
 describe('ProjectSidebar', () => {
-    let generateContextByNewState,
-        ProjectSidebar = window.c.ProjectSidebar;
+    let generateContextByNewState;
 
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 spyOn(m, 'component').and.callThrough();
                 let projectDetail = m.prop(_.extend({}, ProjectDetailsMockery()[0], newState)),
-                    component = m.component(ProjectSidebar, {
+                    component = m.component(projectSidebar, {
                         project: projectDetail,
                         userDetails: m.prop([])
                     }),
@@ -19,9 +21,6 @@ describe('ProjectSidebar', () => {
                         project: projectDetail,
                         userDetails: m.prop([])
                     });
-
-                spyOn(ctrl, 'displayCardClass').and.callThrough();
-                spyOn(ctrl, 'displayStatusText').and.callThrough();
 
                 return {
                     output: mq(view),

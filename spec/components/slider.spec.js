@@ -1,8 +1,7 @@
+import slider from '../../src/c/slider';
+
 describe('Slider', () => {
-    let $output,
-        c = window.c,
-        m = window.m,
-        title = 'TitleSample',
+    let $output, title = 'TitleSample',
         defaultDocumentWidth = 1600,
         slides = [
             m('h1', 'teste'),
@@ -13,7 +12,7 @@ describe('Slider', () => {
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(c.Slider, {title: title, slides: slides});
+            $output = mq(slider, {title: title, slides: slides});
         });
 
         it('should render all the slides', () => {

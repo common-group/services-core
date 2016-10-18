@@ -1,11 +1,13 @@
+import m from 'mithril';
+import userBalanceRequestModalContent from '../../src/c/user-balance-request-modal-content';
+import usersBalanceMain from '../../src/root/users-balance-main';
+
 describe('UserBalanceRequestModalContent', () => {
-    let $output, component, parentComponent,
-        UsersBalance = window.c.root.UsersBalance,
-        UserBalanceModal = window.c.UserBalanceRequestModalContent;
+    let $output, component, parentComponent;
 
     beforeAll(() => {
-        parentComponent = m.component(UsersBalance, {user_id: 1});
-        component = m.component(UserBalanceModal, _.extend(
+        parentComponent = m.component(usersBalanceMain, {user_id: 1});
+        component = m.component(userBalanceRequestModalContent, _.extend(
             {},
             parentComponent.controller(),
             {

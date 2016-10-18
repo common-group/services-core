@@ -1,48 +1,111 @@
-window.c.root.ProjectsHome = (((m, c, moment, h, _) => {
-    const I18nScope = _.partial(h.i18nScope, 'projects.home');
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import _ from 'underscore';
+import I18n from 'i18n-js';
+import moment from 'moment';
+import h from '../h';
+import menu from './menu';
+import models from '../models';
+import projectFilters from '../vms/project-filters-vm';
+import homeVM from '../vms/home-vm';
+import slider from '../c/slider';
+import projectRow from '../c/project-row';
+import contributionActivities from '../c/contribution-activities';
+import blogBanner from './blog-banner';
+import footer from './footer';
+import SignedFriendFacebookConnect from '../c/signed-friend-facebook-connect';
+import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
-    return {
-        controller: () => {
-            let sample6 = _.partial(_.sample, _, 6),
-                loader = m.postgrest.loader,
-                project = c.models.project,
-                filters = c.vms.projectFilters();
+const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
-            const collections = _.map(['recommended'], (name) => {
-                const f = filters[name],
-                      cLoader = loader(project.getPageOptions(f.filter.parameters())),
-                      collection = m.prop([]);
+const projectsHome = {
+    controller(args) {
+        let sample6 = _.partial(_.sample, _, 6),
+            loader = postgrest.loaderWithToken,
+            project = models.project,
+            filters = projectFilters().filters,
+            userFriendVM = postgrest.filtersVM({user_id: 'eq'}),
+            friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+                'Prefer':  'count=exact'
+            }),
+            currentUser = h.getUser(),
+            hasFBAuth = currentUser.has_fb_auth,
+            vm = homeVM();
 
-                cLoader.load().then(_.compose(collection, sample6));
+        project.pageSize(20);
 
-                return {
-                    title: f.title,
-                    hash: name,
-                    collection: collection,
-                    loader: cLoader
-                };
-            });
+        userFriendVM.user_id(currentUser.user_id);
+
+        if (hasFBAuth && !friendListVM.collection().length) {
+            friendListVM.firstPage(userFriendVM.parameters());
+        }
+
+        const collections = _.map(['score','contributed_by_friends'], (name) => {
+            const f = filters[name],
+                  cLoader = loader(project.getPageOptions(_.extend({}, {order: 'score.desc'}, f.filter.parameters()))),
+                  collection = m.prop([]);
+
+            cLoader.load().then(_.compose(collection, sample6));
 
             return {
-                collections: collections
+                title: f.nicename,
+                hash: (name === 'score' ? 'all' : name),
+                collection: collection,
+                loader: cLoader,
+                showFriends: (name === 'contributed_by_friends')
             };
-        },
+        });
 
-        view: (ctrl) => {
-            return [
-                m('.w-section.hero-full.hero-2016', [
-                    m('.w-container.u-text-center', [
-                        m('.fontsize-megajumbo.u-marginbottom-60.fontweight-semibold.fontcolor-negative', I18n.t('title', I18nScope())),
-                        m('a[href="http://2015.catarse.me/"].btn.btn-large.u-marginbottom-10.btn-inline', I18n.t('cta', I18nScope()))
-                    ])
-                ]),
-                _.map(ctrl.collections, (collection) => {
-                    return m.component(c.ProjectRow, {
-                        collection: collection,
-                        ref: `home_${collection.hash}`
-                    });
-                })
-            ];
-        }
-    };
-})(window.m, window.c, window.moment, window.c.h, window._));
+        return {
+            collections: collections,
+            slidesContent: vm.banners,
+            hasFBAuth: hasFBAuth
+        };
+    },
+    view(ctrl) {
+        const slides = () => {
+            return _.map(ctrl.slidesContent, (slide) => {
+                const customStyle = `background-image: url(${slide.image});`;
+                const content = m('.w-container.u-text-center',[
+                    m('.w-row.u-marginbottom-40', [
+                        m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', slide.title),
+                        m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
+                    ]),
+                    m('a.btn.btn-large.u-marginbottom-10.btn-inline',{href: slide.link}, slide.cta)
+                ]);
+
+                return {
+                    content: content,
+                    customStyle: customStyle
+                };
+            });
+        };
+
+        return m('#projects-home-component',{config: h.setPageTitle(I18n.t('header_html', I18nScope()))},[
+            // m.component(menu, {transparent: true}),
+            m.component(slider, {
+                slides: slides(),
+                effect: 'fade',
+                slideClass: 'hero-slide start',
+                wrapperClass: 'hero-full hero-full-slide',
+                sliderTime: 10000
+            }),
+            _.map(ctrl.collections, (collection) => {
+                return m.component(projectRow, {
+                    collection: collection,
+                    title: collection.title,
+                    ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
+                    showFriends: collection.showFriends
+                });
+            }),
+            // m.component(contributionActivities),
+            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, {largeBg: true}) : ''),
+            m.component(blogBanner)
+            // m.component(footer, {expanded: true}),
+            // m.component(contributionActivities)
+        ]);
+
+    }
+};
+
+export default projectsHome;

@@ -1,13 +1,13 @@
+import youtubeLightbox from '../../src/c/youtube-lightbox';
+
 describe('YoutubeLightbox', () => {
     let $output,
-        c = window.c,
-        m = window.m,
         visibleStyl = 'display:block',
         invisibleStyl = 'display:none';
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(c.YoutubeLightbox, {src: 'FlFTcDSKnLM'});
+            $output = mq(youtubeLightbox, {src: 'FlFTcDSKnLM'});
         });
 
         it('should not render the lightbox at first', () => {

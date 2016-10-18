@@ -1,25 +1,35 @@
+import m from 'mithril';
+import h from '../../src/h';
+import projectCard from '../../src/c/project-card';
+
 describe('ProjectCard', () => {
-    let ProjectCard = window.c.ProjectCard,
-        project, component, view, $output;
+    let project, component, view, $output, $customOutput, remainingTimeObj;
 
     describe('view', () => {
         beforeAll(() => {
             project = ProjectMockery()[0];
-            component = m.component(ProjectCard, {
-                project: project
-            });
-            view = component.view({
-                project: project
-            });
-            $output = mq(view);
+            remainingTimeObj = h.translatedTime(project.remaining_time);
+            $output = (type) => mq(m.component(projectCard, {
+                project: project, type: type
+            }));
         });
 
         it('should render the project card', () => {
-            let remainingTimeObj = window.c.h.translatedTime(project.remaining_time);
+            expect($output().find('.card-project').length).toEqual(1);
+            expect($output().contains(project.owner_name)).toEqual(true);
+            expect($output().contains(remainingTimeObj.unit)).toEqual(true);
+        });
 
-            expect($output.find('.card-project').length).toEqual(1);
-            expect($output.contains(project.owner_name)).toEqual(true);
-            expect($output.contains(remainingTimeObj.unit)).toEqual(true);
+        it('should render a big project card when type is big', () => {
+            expect($output('big').find('.card-project-thumb.big').length).toEqual(1);
+            expect($output('big').contains(project.owner_name)).toEqual(true);
+            expect($output('big').contains(remainingTimeObj.unit)).toEqual(true);
+        });
+
+        it('should render a medium project card when type is medium', () => {
+            expect($output('medium').find('.card-project-thumb.medium').length).toEqual(1);
+            expect($output('medium').contains(project.owner_name)).toEqual(true);
+            expect($output('medium').contains(remainingTimeObj.unit)).toEqual(true);
         });
     });
 });

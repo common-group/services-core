@@ -8,67 +8,85 @@
  *      return m.component(c.ProjectReminder, {project: project, type: 'button'})
  *  }
  */
-window.c.ProjectReminder = ((m, models, h, c) => {
-    return {
-        controller: (args) => {
-            let project = args.project,
-                filterVM = m.postgrest.filtersVM({
-                    project_id: 'eq'
-                }),
-                storeReminderName = 'remind_' + project().id,
-                l = m.prop(false),
-                popNotification = m.prop(false),
-                submitReminder = () => {
-                    if (!h.getUser()) {
-                        h.storeAction(storeReminderName, submitReminder);
-                        return h.navigateToDevise();
-                    }
-                    let loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
-                        project_id: project().id
-                    });
-                    l = m.postgrest.loaderWithToken(loaderOpts);
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import models from '../models';
+import h from '../h';
+import popNotification from './pop-notification';
 
-                    l.load().then(() => {
-                        project().in_reminder = !project().in_reminder;
+const projectReminder = {
+    controller(args) {
+        let l = m.prop(false);
+        const project = args.project,
+              filterVM = postgrest.filtersVM({
+                  project_id: 'eq'
+              }),
+              storeReminderName = 'remind_' + project().project_id,
+              popNotification = m.prop(false),
+              submitReminder = () => {
+                  if (!h.getUser()) {
+                      h.storeAction(storeReminderName, submitReminder);
+                      return h.navigateToDevise();
+                  }
+                  let loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
+                      project_id: project().project_id
+                  });
+                  l = postgrest.loaderWithToken(loaderOpts);
 
-                        if (project().in_reminder) {
-                            popNotification(true);
-                            setTimeout(() => {
-                                popNotification(false);
-                                m.redraw();
-                            }, 5000);
-                        } else {
-                            popNotification(false);
-                        }
-                    });
-                };
+                  l.load().then(() => {
+                      project().in_reminder = !project().in_reminder;
 
-            h.callStoredAction(storeReminderName, submitReminder);
-            filterVM.project_id(project().id);
+                      if (project().in_reminder) {
+                          popNotification(true);
+                          setTimeout(() => {
+                              popNotification(false);
+                              m.redraw();
+                          }, 5000);
+                      } else {
+                          popNotification(false);
+                      }
+                  });
+              };
 
-            return {
-                l: l,
-                submitReminder: submitReminder,
-                popNotification: popNotification
-            };
-        },
-        view: (ctrl, args) => {
-            const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
-                buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small',
-                hideTextOnMobile = args.hideTextOnMobile || false,
-                project = args.project;
+        h.callStoredAction(storeReminderName, submitReminder);
+        filterVM.project_id(project().project_id);
 
-            return m(`#project-reminder${mainClass}`, [
-                m(`button[class="${buttonClass} ${(project().in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
-                    onclick: ctrl.submitReminder
-                }, [
-                    (ctrl.l() ? 'aguarde ...' : m('span.fa.fa-clock-o', [
-                        m(`span${hideTextOnMobile ? '.w-hidden-medium' : ''}`, project().in_reminder ? ' Lembrete ativo' : ' Lembrar-me')
-                    ]))
-                ]), (ctrl.popNotification() ? m.component(c.PopNotification, {
-                    message: 'Ok! Vamos te mandar um lembrete por e-mail 48 horas antes do fim da campanha'
-                }) : '')
-            ]);
-        }
-    };
-}(window.m, window.c.models, window.c.h, window.c));
+        return {
+            l: l,
+            submitReminder: submitReminder,
+            popNotification: popNotification
+        };
+    },
+    view(ctrl, args) {
+        const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
+              buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small',
+              hideTextOnMobile = args.hideTextOnMobile || false,
+              project = args.project,
+              onclickFunc = h.analytics.event({cat: 'project_view',act: 'project_floatingreminder_click', project: project()}, ctrl.submitReminder);
+
+        return m(`#project-reminder${mainClass}`, [
+            m('a.btn.btn-small.btn-terciary.w-hidden-main.w-hidden-medium[data-ix=\'popshare\'][href=\'#\']', {
+                onclick: onclickFunc
+            },
+
+              (project().in_reminder ? [
+                  m('span.fa.fa-heart'),
+                  ' Lembrete ativo'
+              ] : [
+                  m('span.fa.fa-heart-o'),
+                  ' Lembrar-me'
+              ])
+            ),
+
+            m(`button[class="w-hidden-small w-hidden-tiny ${buttonClass} ${(project().in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
+                onclick: onclickFunc
+            }, [
+                (ctrl.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o')))
+            ]), (ctrl.popNotification() ? m.component(popNotification, {
+                message: 'Ok! Vamos te mandar um lembrete por e-mail 48 horas antes do fim da campanha'
+            }) : '')
+        ]);
+    }
+};
+
+export default projectReminder;

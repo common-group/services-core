@@ -1,11 +1,13 @@
+import m from 'mithril';
+import projectReminderCount from '../../src/c/project-reminder-count';
+
 describe('ProjectReminderCount', () => {
-    let $output, projectDetail,
-        ProjectReminderCount = window.c.ProjectReminderCount;
+    let $output, projectDetail;
 
     describe('view', () => {
         beforeAll(() => {
             projectDetail = m.prop(ProjectDetailsMockery()[0]);
-            let component = m.component(ProjectReminderCount, {
+            let component = m.component(projectReminderCount, {
                     resource: projectDetail
                 }),
                 view = component.view(null, {

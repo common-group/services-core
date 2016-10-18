@@ -1,34 +1,19 @@
+import m from 'mithril';
+import h from '../../src/h';
+import adminProjectDetailsCard from '../../src/c/admin-project-details-card';
+
 describe('AdminProjectDetailsCard', () => {
-    let AdminProjectDetailsCard = window.c.AdminProjectDetailsCard,
-        generateController, ctrl, projectDetail, component, view, $output;
+    let generateController, ctrl, projectDetail, component, view, $output;
 
     describe('controller', () => {
         beforeAll(() => {
             generateController = (attrs) => {
                 projectDetail = ProjectDetailsMockery(attrs)[0];
-                component = m.component(AdminProjectDetailsCard, {
+                component = m.component(adminProjectDetailsCard, {
                     resource: projectDetail
                 });
                 return component.controller();
             };
-        });
-
-        describe('project status text', () => {
-            it('when project is online', () => {
-                ctrl = generateController({
-                    state: 'online'
-                });
-                expect(ctrl.statusTextObj().text).toEqual('NO AR');
-                expect(ctrl.statusTextObj().cssClass).toEqual('text-success');
-            });
-
-            it('when project is failed', () => {
-                ctrl = generateController({
-                    state: 'failed'
-                });
-                expect(ctrl.statusTextObj().text).toEqual('NÃO FINANCIADO');
-                expect(ctrl.statusTextObj().cssClass).toEqual('text-error');
-            });
         });
 
         describe('project remaining time', () => {
@@ -70,7 +55,7 @@ describe('AdminProjectDetailsCard', () => {
     describe('view', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
-            component = m.component(AdminProjectDetailsCard, {
+            component = m.component(adminProjectDetailsCard, {
                 resource: projectDetail
             });
             ctrl = component.controller();
@@ -81,12 +66,11 @@ describe('AdminProjectDetailsCard', () => {
         });
 
         it('should render details of the project in card', () => {
-            let remaningTimeObj = ctrl.remainingTextObj,
-                statusTextObj = ctrl.statusTextObj();
+            let remaningTimeObj = ctrl.remainingTextObj;
 
             expect($output.find('.project-details-card').length).toEqual(1);
             expect($output.contains(projectDetail.total_contributions)).toEqual(true);
-            expect($output.contains('R$ ' + window.c.h.formatNumber(projectDetail.pledged, 2))).toEqual(true);
+            expect($output.contains('R$ ' + h.formatNumber(projectDetail.pledged, 2))).toEqual(true);
         });
     });
 });

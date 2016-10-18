@@ -1,10 +1,13 @@
+import m from 'mithril';
+import categoryButton from '../../src/c/category-button';
+
 describe('CategoryButton', () => {
     let $output,
         c = window.c;
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(m.component(c.CategoryButton, {
+            $output = mq(m.component(categoryButton, {
                 category: {
                     id: 1,
                     name: 'cat',

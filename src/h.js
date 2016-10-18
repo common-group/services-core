@@ -1,332 +1,773 @@
-window.c.h = ((m, moment, I18n) => {
-    //Date Helpers
+import I18n from 'i18n-js';
 
-    const hashMatch = (str) => { return window.location.hash === str; },
-        paramByName = (name) => {
-            const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
-                regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
-                results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        },
-		selfOrEmpty = (obj, emptyState = '') => {
-    return obj ? obj : emptyState;
-		},
-        setMomentifyLocale = () => {
-            moment.locale('pt', {
-                    monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
-                });
-        },
-        existy = (x) => {
-            return x != null;
-        },
+const
+    _dataCache = {},
+    hashMatch = (str) => { return window.location.hash === str; },
+    paramByName = (name) => {
+        const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
+            regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
+            results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    },
+  	selfOrEmpty = (obj, emptyState = '') => {
+      return obj ? obj : emptyState;
+  	},
+    setMomentifyLocale = () => {
+        moment.locale('pt', {
+                months : 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
+                monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+            });
+    },
+    existy = (x) => {
+        return x != null;
+    },
 
-        momentify = (date, format) => {
-            format = format || 'DD/MM/YYYY';
-            return date ? moment(date).locale('pt').format(format) : 'no date';
-        },
+    momentify = (date, format) => {
+        format = format || 'DD/MM/YYYY';
+        return date ? moment(date).locale('pt').format(format) : 'no date';
+    },
 
-        storeAction = (action) => {
-            if (!sessionStorage.getItem(action)) {
-                return sessionStorage.setItem(action, action);
-            }
-        },
+    storeAction = (action) => {
+        if (!sessionStorage.getItem(action)) {
+            return sessionStorage.setItem(action, action);
+        }
+    },
 
-        callStoredAction = (action, func) => {
-            if (sessionStorage.getItem(action)) {
-                func.call();
-                return sessionStorage.removeItem(action);
-            }
-        },
+    storeObject = (sessionKey, obj) => {
+        return sessionStorage.setItem(sessionKey, JSON.stringify(obj));
+    },
 
-        discuss = (page, identifier) => {
-            const d = document,
-                s = d.createElement('script');
-            window.disqus_config = function() {
-                this.page.url = page;
-                this.page.identifier = identifier;
-            };
-            s.src = '//catarseflex.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-            return m('');
-        },
+    getStoredObject = (sessionKey) => {
+        if (sessionStorage.getItem(sessionKey)) {
+            return JSON.parse(sessionStorage.getItem(sessionKey));
+        } else {
+            return undefined;
+        }
+    },
 
-        momentFromString = (date, format) => {
-            const european = moment(date, format || 'DD/MM/YYYY');
-            return european.isValid() ? european : moment(date);
-        },
+    callStoredAction = (action, func) => {
+        if (sessionStorage.getItem(action)) {
+            func.call();
+            return sessionStorage.removeItem(action);
+        }
+    },
 
-        translatedTimeUnits = {
-            days: 'dias',
-            minutes: 'minutos',
-            hours: 'horas',
-            seconds: 'segundos'
-        },
-        //Object manipulation helpers
-        translatedTime = (time) => {
-            const translatedTime = translatedTimeUnits,
-                unit = () => {
-                    const projUnit = translatedTime[time.unit || 'seconds'];
+    discuss = (page, identifier) => {
+        const d = document,
+            s = d.createElement('script');
+        window.disqus_config = function() {
+            this.page.url = page;
+            this.page.identifier = identifier;
+        };
+        s.src = '//catarseflex.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        return m('');
+    },
 
-                    return (time.total <= 1) ? projUnit.slice(0, -1) : projUnit;
-                };
+    validateEmail = (email) => {
+        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        return re.test(email);
+    },
 
-            return {
-                unit: unit(),
-                total: time.total
-            };
-        },
+    validateCpf = (strCPF) => {
+        let sum = 0, remainder;
 
-        //Number formatting helpers
-        generateFormatNumber = (s, c) => {
-            return (number, n, x) => {
-                if (!_.isNumber(number)) {
-                    return null;
-                }
+        if (strCPF == '00000000000') return false;
 
-                const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-                    num = number.toFixed(Math.max(0, ~~n));
-                return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-            };
-        },
-        formatNumber = generateFormatNumber('.', ','),
+        for (let i = 1; i <= 9; i++) {
+            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+        }
+        remainder = (sum * 10) % 11;
 
-        toggleProp = (defaultState, alternateState) => {
-            const p = m.prop(defaultState);
-            p.toggle = () => {
-                return p(((p() === alternateState) ? defaultState : alternateState));
-            };
+        if ((remainder == 10) || (remainder == 11)){
+            remainder = 0;
+        }
 
-            return p;
-        },
-
-        idVM = m.postgrest.filtersVM({
-            id: 'eq'
-        }),
-
-        getUser = () => {
-            const body = document.getElementsByTagName('body'),
-                data = _.first(body).getAttribute('data-user');
-            if (data) {
-                return JSON.parse(data);
-            } else {
-                return false;
-            }
-        },
-
-        locationActionMatch = (action) => {
-            const act = window.location.pathname.split('/').slice(-1)[0];
-            return action === act;
-        },
-
-        useAvatarOrDefault = (avatarPath) => {
-            return avatarPath || '/assets/catarse_bootstrap/user.jpg';
-        },
-
-        //Templates
-        loader = () => {
-            return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
-                m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
-            ]);
-        },
-
-        newFeatureBadge = () => {
-            return m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge'));
-        },
-
-        fbParse = () => {
-            const tryParse = () => {
-                try {
-                    window.FB.XFBML.parse();
-                } catch (e) {
-                    console.log(e);
-                }
-            };
-
-            return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
-        },
-
-        pluralize = (count, s, p) => {
-            return (count > 1 ? count + p : count + s);
-        },
-
-        simpleFormat = (str = '') => {
-            str = str.replace(/\r\n?/, '\n');
-            if (str.length > 0) {
-                str = str.replace(/\n\n+/g, '</p><p>');
-                str = str.replace(/\n/g, '<br />');
-                str = '<p>' + str + '</p>';
-            }
-            return str;
-        },
-
-        rewardSouldOut = (reward) => {
-            return (reward.maximum_contributions > 0 ?
-                (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
-        },
-
-        rewardRemaning = (reward) => {
-            return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
-        },
-
-        parseUrl = (href) => {
-            const l = document.createElement('a');
-            l.href = href;
-            return l;
-        },
-
-        UIHelper = () => {
-            return (el, isInitialized) => {
-                if (!isInitialized && $) {
-                    window.UIHelper.setupResponsiveIframes($(el));
-                }
-            };
-        },
-
-        toAnchor = () => {
-            return (el, isInitialized) => {
-                if (!isInitialized){
-                    const hash = window.location.hash.substr(1);
-                    if (hash === el.id) {
-                        window.location.hash = '';
-                        setTimeout(function(){
-                            window.location.hash = el.id;
-                        });
-                    }
-                }
-            };
-        },
-
-        validateEmail = (email) => {
-            const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-            return re.test(email);
-        },
-
-        navigateToDevise = () => {
-            window.location.href = '/pt/login';
+        if (remainder != parseInt(strCPF.substring(9, 10))){
             return false;
-        },
+        }
 
-        cumulativeOffset = (element) => {
-            let top = 0, left = 0;
-            do {
-                top += element.offsetTop  || 0;
-                left += element.offsetLeft || 0;
-                element = element.offsetParent;
-            } while (element);
+        sum = 0;
 
-            return {
-                top: top,
-                left: left
-            };
-        },
+        for (let i = 1; i <= 10; i++){
+            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+        }
 
-        closeFlash = () => {
-            let el = document.getElementsByClassName('icon-close')[0];
-            if (_.isElement(el)){
-                el.onclick = (event) => {
-                    event.preventDefault();
+        remainder = (sum * 10) % 11;
 
-                    el.parentElement.remove();
+        if ((remainder == 10) || (remainder == 11)){
+            remainder = 0;
+        }
+
+        if (remainder != parseInt(strCPF.substring(10, 11))){
+            return false;
+        }
+
+        return true;
+    },
+
+    validationErrors = m.prop([]),
+
+    resetValidations = () => validationErrors([]),
+
+    validate = () => {
+        const errorFields = m.prop([]);
+
+        return {
+            submit(fields, fn) {
+                return () => {
+                    resetValidations();
+
+                    _.map(fields, field => {
+                        if (field.rule === 'email') {
+                            if (!validateEmail(field.prop())) {
+                                validationErrors().push({field: field.prop, message: 'E-mail inválido.'});
+                            }
+                        }
+
+                        if (field.rule === 'text') {
+                            if (field.prop().trim() === '') {
+                                validationErrors().push({field: field.prop, message: 'O campo não pode ser vazio.'});
+                            }
+                        }
+                    });
+
+                    return !validationErrors().length > 0 ? fn() : false;
                 };
-            };
-        },
+            },
+            hasError(fieldProp) {
+                return _.reduce(validationErrors(), (memo, fieldError) => fieldError.field() === fieldProp() || memo, false);
+            }
+        };
+    },
 
-        i18nScope = (scope, obj) => {
-            obj = obj || {};
-            return _.extend({}, obj, {scope: scope});
-        },
+    momentFromString = (date, format) => {
+        const european = moment(date, format || 'DD/MM/YYYY');
+        return european.isValid() ? european : moment(date);
+    },
 
-        redrawHashChange = (before) => {
-            const callback = _.isFunction(before) ?
-                      () => {
-                          before();
-                          m.redraw();
-                      } : m.redraw;
+    translatedTimeUnits = {
+        days: 'dias',
+        minutes: 'minutos',
+        hours: 'horas',
+        seconds: 'segundos'
+    },
+    //Object manipulation helpers
+    translatedTime = (time) => {
+        const translatedTime = translatedTimeUnits,
+            unit = () => {
+                const projUnit = translatedTime[time.unit || 'seconds'];
 
-            window.addEventListener('hashchange', callback, false);
-        },
-
-        authenticityToken = () => {
-            const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
-            return meta ? meta.content : undefined;
-        },
-        animateScrollTo = (el) => {
-            let scrolled = window.scrollY;
-
-            const offset = cumulativeOffset(el).top,
-                duration = 300,
-                dFrame = (offset - scrolled) / duration,
-                //EaseInOutCubic easing function. We'll abstract all animation funs later.
-                eased = (t) => t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
-                animation = setInterval(() => {
-                    let pos = eased(scrolled / offset) * scrolled;
-
-                    window.scrollTo(0, pos);
-
-                    if (scrolled >= offset) {
-                        clearInterval(animation);
-                    }
-
-                    scrolled = scrolled + dFrame;
-                }, 1);
-        },
-        scrollTo = () => {
-            const setTrigger = (el, anchorId) => {
-                el.onclick = () => {
-                    const anchorEl = document.getElementById(anchorId);
-
-                    if (_.isElement(anchorEl)) {
-                        animateScrollTo(anchorEl);
-                    }
-
-                    return false;
-                };
+                return (time.total <= 1) ? projUnit.slice(0, -1) : projUnit;
             };
 
-            return (el, isInitialized) => {
-                if (!isInitialized) {
-                    setTrigger(el, el.hash.slice(1));
+        return {
+            unit: unit(),
+            total: time.total
+        };
+    },
+
+    //Number formatting helpers
+    generateFormatNumber = (s, c) => {
+        return (number, n, x) => {
+            if (!_.isNumber(number)) {
+                return null;
+            }
+
+            const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
+                num = number.toFixed(Math.max(0, ~~n));
+            return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+        };
+    },
+    formatNumber = generateFormatNumber('.', ','),
+
+    toggleProp = (defaultState, alternateState) => {
+        const p = m.prop(defaultState);
+        p.toggle = () => {
+            return p(((p() === alternateState) ? defaultState : alternateState));
+        };
+
+        return p;
+    },
+
+    idVM = postgrest.filtersVM({
+        id: 'eq'
+    }),
+
+    getCurrentProject = () => {
+        if (_dataCache.currentProject)
+          return _dataCache.currentProject;
+
+        const root = document.getElementById('application'),
+              data = root && root.getAttribute('data-parameters');
+        if (data) {
+            return _dataCache.currentProject = JSON.parse(data);
+        } else {
+            return false;
+        }
+    },
+
+    getRdToken = () => {
+        if (_dataCache.rdToken)
+          return _dataCache.rdToken;
+
+        const meta = _.first(document.querySelectorAll('[name=rd-token]'));
+        return meta ? (_dataCache.rdToken = meta.content) : undefined;
+    },
+
+    getMailchimpUrl = () => {
+        if (_dataCache.mailchumUrl)
+          return _dataCache.mailchumUrl;
+
+        const meta = _.first(document.querySelectorAll('[name=mailchimp-url]'));
+        return meta ? (_dataCache.mailchumUrl = meta.content) : undefined;
+    },
+
+    getUser = () => {
+        if (_dataCache.user)
+          return _dataCache.user;
+
+        const body = document.getElementsByTagName('body'),
+            data = _.first(body).getAttribute('data-user');
+        if (data) {
+            return _dataCache.user = JSON.parse(data);
+        } else {
+            return false;
+        }
+    },
+
+    getBlogPosts = () => {
+        if (_dataCache.blogPosts)
+            return _dataCache.blogPosts;
+
+        var posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
+
+        if (posts) {
+            return _dataCache.blogPosts = JSON.parse(posts);
+        } else {
+            return false;
+        }
+    },
+
+    getApiHost = () => {
+        if (_dataCache.apiHost)
+          return _dataCache.apiHost;
+
+        var el = document.getElementById('api-host');
+        return _dataCache.apiHost = el && el.getAttribute('content');
+    },
+
+    locationActionMatch = (action) => {
+        const act = window.location.pathname.split('/').slice(-1)[0];
+        return action === act;
+    },
+
+    useAvatarOrDefault = (avatarPath) => {
+        return avatarPath || '/assets/catarse_bootstrap/user.jpg';
+    },
+
+    //Templates
+    loader = () => {
+        return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
+            m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
+        ]);
+    },
+
+    newFeatureBadge = () => {
+        return m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge'));
+    },
+
+    fbParse = () => {
+        const tryParse = () => {
+            try {
+                window.FB.XFBML.parse();
+            } catch (e) {
+                console.log(e);
+            }
+        };
+
+        return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
+    },
+
+    pluralize = (count, s, p) => {
+        return (count > 1 ? count + p : count + s);
+    },
+
+    strip = (html) =>  {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    },
+
+    simpleFormat = (str = '') => {
+        str = str.replace(/\r\n?/, '\n');
+        if (str.length > 0) {
+            str = str.replace(/\n\n+/g, '</p><p>');
+            str = str.replace(/\n/g, '<br />');
+            str = '<p>' + str + '</p>';
+        }
+        return str;
+    },
+
+    rewardSouldOut = (reward) => {
+        return (reward.maximum_contributions > 0 ?
+            (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
+    },
+
+    rewardRemaning = (reward) => {
+        return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
+    },
+
+    parseUrl = (href) => {
+        const l = document.createElement('a');
+        l.href = href;
+        return l;
+    },
+
+    UIHelper = () => {
+        return (el, isInitialized) => {
+            if (!isInitialized && window.$) {
+                window.UIHelper.setupResponsiveIframes($(el));
+            }
+        };
+    },
+
+    toAnchor = () => {
+        return (el, isInitialized) => {
+            if (!isInitialized){
+                const hash = window.location.hash.substr(1);
+                if (hash === el.id) {
+                    window.location.hash = '';
+                    setTimeout(function(){
+                        window.location.hash = el.id;
+                    });
                 }
+            }
+        };
+    },
+
+    navigateToDevise = () => {
+        window.location.href = '/pt/login';
+        return false;
+    },
+
+    navigateTo = (path) => {
+        window.location.href = path;
+        return false;
+    },
+
+    cumulativeOffset = (element) => {
+        let top = 0, left = 0;
+        do {
+            top += element.offsetTop  || 0;
+            left += element.offsetLeft || 0;
+            element = element.offsetParent;
+        } while (element);
+
+        return {
+            top: top,
+            left: left
+        };
+    },
+
+    closeModal = () => {
+        //temp for rails unstyled close links
+        let elById = document.getElementById('modal-close');
+        if (_.isElement(elById)){
+            elById.onclick = (event) => {
+                event.preventDefault();
+                document.getElementsByClassName('modal-backdrop')[0].style.display = 'none';
+            };
+        }
+
+        let el = document.getElementsByClassName('modal-close')[0];
+        if (_.isElement(el)){
+            el.onclick = (event) => {
+                event.preventDefault();
+
+                document.getElementsByClassName('modal-backdrop')[0].style.display = 'none';
+            };
+        };
+    },
+
+    closeFlash = () => {
+        let el = document.getElementsByClassName('icon-close')[0];
+        if (_.isElement(el)){
+            el.onclick = (event) => {
+                event.preventDefault();
+
+                el.parentElement.remove();
+            };
+        };
+    },
+
+    i18nScope = (scope, obj) => {
+        obj = obj || {};
+        return _.extend({}, obj, {scope: scope});
+    },
+
+    redrawHashChange = (before) => {
+        const callback = _.isFunction(before) ?
+                  () => {
+                      before();
+                      m.redraw();
+                  } : m.redraw;
+
+        window.addEventListener('hashchange', callback, false);
+    },
+
+    authenticityToken = () => {
+        const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
+        return meta ? meta.content : undefined;
+    },
+    animateScrollTo = (el) => {
+        let scrolled = window.scrollY;
+
+        const offset = cumulativeOffset(el).top,
+            duration = 300,
+            dFrame = (offset - scrolled) / duration,
+            //EaseInOutCubic easing function. We'll abstract all animation funs later.
+            eased = (t) => t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+            animation = setInterval(() => {
+                let pos = eased(scrolled / offset) * scrolled;
+
+                window.scrollTo(0, pos);
+
+                if (scrolled >= offset) {
+                    clearInterval(animation);
+                }
+
+                scrolled = scrolled + dFrame;
+            }, 1);
+    },
+    scrollTo = () => {
+        const setTrigger = (el, anchorId) => {
+            el.onclick = () => {
+                const anchorEl = document.getElementById(anchorId);
+
+                if (_.isElement(anchorEl)) {
+                    animateScrollTo(anchorEl);
+                }
+
+                return false;
             };
         };
 
-    setMomentifyLocale();
-    closeFlash();
+        return (el, isInitialized) => {
+            if (!isInitialized) {
+                setTrigger(el, el.hash.slice(1));
+            }
+        };
+    },
 
-    return {
-        authenticityToken: authenticityToken,
-        cumulativeOffset: cumulativeOffset,
-        discuss: discuss,
-        existy: existy,
-        validateEmail: validateEmail,
-        momentify: momentify,
-        momentFromString: momentFromString,
-        formatNumber: formatNumber,
-        idVM: idVM,
-        getUser: getUser,
-        toggleProp: toggleProp,
-        loader: loader,
-        newFeatureBadge: newFeatureBadge,
-        fbParse: fbParse,
-        pluralize: pluralize,
-        simpleFormat: simpleFormat,
-        translatedTime: translatedTime,
-        rewardSouldOut: rewardSouldOut,
-        rewardRemaning: rewardRemaning,
-        parseUrl: parseUrl,
-        hashMatch: hashMatch,
-        redrawHashChange: redrawHashChange,
-        useAvatarOrDefault: useAvatarOrDefault,
-        locationActionMatch: locationActionMatch,
-        navigateToDevise: navigateToDevise,
-        storeAction: storeAction,
-        callStoredAction: callStoredAction,
-        UIHelper: UIHelper,
-        toAnchor: toAnchor,
-        paramByName: paramByName,
-        i18nScope: i18nScope,
-        selfOrEmpty: selfOrEmpty,
-        scrollTo: scrollTo
+        projectStateTextClass = (state) => {
+            const statusText = {
+                    online: {
+                        cssClass: 'text-success',
+                        text: 'NO AR'
+                    },
+                    successful: {
+                        cssClass: 'text-success',
+                        text: 'FINANCIADO'
+                    },
+                    failed: {
+                        cssClass: 'text-error',
+                        text: 'NÃO FINANCIADO'
+                    },
+                    waiting_funds: {
+                        cssClass: 'text-waiting',
+                        text: 'AGUARDANDO'
+                    },
+                    rejected: {
+                        cssClass: 'text-error',
+                        text: 'RECUSADO'
+                    },
+                    draft: {
+                        cssClass: '',
+                        text: 'RASCUNHO'
+                    },
+                    in_analysis: {
+                        cssClass: '',
+                        text: 'EM ANÁLISE'
+                    },
+                    approved: {
+                        cssClass: 'text-success',
+                        text: 'APROVADO'
+                    }
+                };
+
+            return statusText[state];
+        },
+        RDTracker = (eventId) => {
+            return (el, isInitialized) => {
+                if (!isInitialized) {
+                    const integrationScript = document.createElement('script');
+                    integrationScript.type = 'text/javascript';
+                    integrationScript.id = 'RDIntegration';
+
+                    if (!document.getElementById(integrationScript.id)){
+                        document.body.appendChild(integrationScript);
+                        integrationScript.onload = () => RdIntegration.integrate(getRdToken(), eventId);
+                        integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
+                    }
+
+                    return false;
+                }
+            };
+        },
+    analyticsEvent = (eventObj, fn=Function.prototype) => {
+        //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
+        if (!eventObj){
+            return fn;
+        }
+
+        return () => {
+            try {
+                if (!eventObj.project)
+                  eventObj.project = getCurrentProject();
+                if (!eventObj.user)
+                  eventObj.user = getUser();
+                CatarseAnalytics.event(eventObj);
+            } catch (e) {
+                console.error('[h.analyticsEvent] error:',e);
+
+            }
+            fn();
+        };
+    },
+    _analyticsOneTimeEventFired = {},
+    analyticsOneTimeEvent = (eventObj, fn) => {
+        if (!eventObj) {
+            return fn;
+        }
+
+        const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+        if (!eventKey) {
+            throw new Error('Should inform cat or act');
+        }
+        return () => {
+            if (!_analyticsOneTimeEventFired[eventKey]) {
+                //console.log('oneTimeEvent',eventKey);
+                _analyticsOneTimeEventFired[eventKey] = true;
+                const fireEvent = analyticsEvent(eventObj, fn);
+                fireEvent();
+            }
+        };
+    },
+    monetaryToFloat = (propValue) => {
+        return parseFloat(propValue().replace('.', '').replace(',', '.'));
+    },
+
+    applyMonetaryMask = (number) => {
+        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
+            integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
+            decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
+
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return `${integerPart},${decimalPart}`;
+    },
+
+    noNumbersMask = (value) => {
+        return value.replace(/[0-9]/g, '');
+    },
+
+    numbersOnlyMask = (value) => {
+        return value.replace(/[^0-9]/g, '')
+    },
+
+    addChar = (position, maskChar) => {
+        return (char) => {
+            return (string) => {
+                if (string.length === position && char !== maskChar){
+                    return (string + maskChar);
+                }
+                return string;
+            };
+        };
+    },
+    readMaskDefinition = (maskCharDefinitions) => {
+        return (maskDefinition) => {
+            return _.compact(_.map(maskDefinition, (letter, index) => {
+                return (letter in maskCharDefinitions ? null : [index, letter]);
+            }));
+        };
+    },
+
+    isCharAllowed = (maskCharDefinitions) => {
+        return (maskDefinition) => {
+            return (position, newChar) => {
+                if (position >= maskDefinition.length){
+                    return false;
+                }
+
+                const maskChar = maskDefinition.charAt(position);
+                if (maskChar in maskCharDefinitions){
+                    return maskCharDefinitions[maskChar].test(newChar);
+                } else {
+                    return (newChar === maskChar || isCharAllowed(maskCharDefinitions)(maskDefinition)(position + 1, newChar));
+                }
+            };
+        };
+    },
+    //
+    applyMask = (maskDefinition) => {
+        const maskFunctions = _.map(maskDefinition, (maskChar) => addChar(maskChar[0], maskChar[1]));
+        return (string, newChar) => {
+            const addNewCharFunctions = _.map(maskFunctions, (el) => el(newChar));
+            const applyMaskFunctions = _.reduce(addNewCharFunctions, (memo, f) => {
+                return (_.isFunction(memo) ? _.compose(f, memo) : f);
+            });
+            return applyMaskFunctions(string);
+        };
+    },
+
+    //Adapted from https://github.com/diogob/jquery.fixedmask
+    mask = (maskDefinition, value) => {
+        const maskCharDefinitions = {
+                '9': /\d/,
+                'A': /[a-zA-Z]/
+            },
+            readMask = readMaskDefinition(maskCharDefinitions),
+            isStrCharAllowed = isCharAllowed(maskCharDefinitions),
+            applyValueMask = applyMask(readMask(maskDefinition)),
+            restrictInput = isStrCharAllowed(maskDefinition);
+
+        return _.reduce(value, (memo, chr) => {
+            if (restrictInput(memo.length, chr)){
+                memo = applyValueMask(memo, chr) + chr;
+            }
+            return memo;
+        }, '');
+    },
+
+      removeStoredObject = (sessionKey) => {
+          return sessionStorage.removeItem(sessionKey);
+      },
+
+      currentProject = m.prop(),
+        setProject = (project) => {
+            currentProject(project);
+        },
+        getProject = () => currentProject,
+        currentReward = m.prop(),
+        setReward = (reward) => {
+            currentReward(reward);
+        },
+        getReward = () => currentReward,
+        buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`,
+        analyticsWindowScroll = (eventObj) => {
+            if (eventObj) {
+                let fired = false;
+                window.addEventListener('scroll', function(e){
+                    //console.log('windowScroll');
+                    if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                        fired = true;
+                        const fireEvent = analyticsEvent(eventObj);
+                        fireEvent();
+                    }
+                });
+            }
+        },
+    analytics = {
+        event: analyticsEvent,
+        oneTimeEvent: analyticsOneTimeEvent,
+        windowScroll: analyticsWindowScroll
+    },
+    projectFullPermalink = (project) => {
+        let permalink;
+        if (typeof project === 'function') {
+            permalink = project().permalink;
+        } else {
+            permalink = project.permalink;
+        }
+
+        return `https://www.catarse.me/${permalink}`;
+    },
+    isProjectPage = () => {
+        const path = window.location.pathname,
+              isOnInsights = path.indexOf('/insights') > -1,
+              isOnEdit = path.indexOf('/edit') > -1,
+              isOnContribution = path.indexOf('/contribution') > -1;
+
+        return !isOnEdit && !isOnInsights && !isOnContribution;
+    },
+    setPageTitle = (title) => {
+        return (el, isInitialized) => {
+            const titleEl = document.getElementsByTagName('title')[0],
+                currentTitle = titleEl.innerText;
+
+            if (currentTitle !== title) {
+                return titleEl.innerText = title;
+            }
+        };
     };
-}(window.m, window.moment, window.I18n));
+
+setMomentifyLocale();
+closeFlash();
+closeModal();
+
+export default {
+    authenticityToken,
+    buildLink,
+    cumulativeOffset,
+    discuss,
+    existy,
+    validateEmail,
+    validateCpf,
+    momentify,
+    momentFromString,
+    formatNumber,
+    idVM,
+    getUser,
+    getApiHost,
+    getMailchimpUrl,
+    getCurrentProject,
+    toggleProp,
+    loader,
+    newFeatureBadge,
+    fbParse,
+    pluralize,
+    simpleFormat,
+    translatedTime,
+    rewardSouldOut,
+    rewardRemaning,
+    parseUrl,
+    hashMatch,
+    redrawHashChange,
+    useAvatarOrDefault,
+    locationActionMatch,
+    navigateToDevise,
+    navigateTo,
+    storeAction,
+    callStoredAction,
+    UIHelper,
+    toAnchor,
+    paramByName,
+    i18nScope,
+    RDTracker,
+    selfOrEmpty,
+    scrollTo,
+    projectStateTextClass,
+    validationErrors,
+    validate,
+    analytics,
+    strip,
+    storeObject,
+    getStoredObject,
+    removeStoredObject,
+    setProject,
+    getProject,
+    setReward,
+    getReward,
+    applyMonetaryMask,
+    noNumbersMask,
+    numbersOnlyMask,
+    monetaryToFloat,
+    mask,
+    projectFullPermalink,
+    isProjectPage,
+    setPageTitle,
+    getBlogPosts
+};

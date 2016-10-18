@@ -1,60 +1,64 @@
-window.c.models = (function(m) {
-    var contributionDetail = m.postgrest.model('contribution_details'),
-        projectDetail = m.postgrest.model('project_details'),
-        userDetail = m.postgrest.model('user_details'),
-        balance = m.postgrest.model('balances'),
-        balanceTransaction = m.postgrest.model('balance_transactions'),
-        balanceTransfer = m.postgrest.model('balance_transfers'),
-        user = m.postgrest.model('users'),
-        bankAccount = m.postgrest.model('bank_accounts'),
-        rewardDetail = m.postgrest.model('reward_details'),
-        projectReminder = m.postgrest.model('project_reminders'),
-        contributions = m.postgrest.model('contributions'),
-        teamTotal = m.postgrest.model('team_totals'),
-        projectContribution = m.postgrest.model('project_contributions'),
-        projectPostDetail = m.postgrest.model('project_posts_details'),
-        projectContributionsPerDay = m.postgrest.model('project_contributions_per_day'),
-        projectContributionsPerLocation = m.postgrest.model('project_contributions_per_location'),
-        projectContributionsPerRef = m.postgrest.model('project_contributions_per_ref'),
-        project = m.postgrest.model('projects'),
-        projectSearch = m.postgrest.model('rpc/project_search'),
-        category = m.postgrest.model('categories'),
-        categoryTotals = m.postgrest.model('category_totals'),
-        categoryFollower = m.postgrest.model('category_followers'),
-        teamMember = m.postgrest.model('team_members'),
-        notification = m.postgrest.model('notifications'),
-        statistic = m.postgrest.model('statistics');
+import postgrest from 'mithril-postgrest';
 
-    teamMember.pageSize(40);
-    rewardDetail.pageSize(false);
-    project.pageSize(30);
-    category.pageSize(50);
+const models = {
+    country: postgrest.model('countries'),
+    state: postgrest.model('states'),
+    contributionDetail: postgrest.model('contribution_details'),
+    contributionActivity: postgrest.model('contribution_activities'),
+    projectDetail: postgrest.model('project_details'),
+    userDetail: postgrest.model('user_details'),
+    balance: postgrest.model('balances'),
+    balanceTransaction: postgrest.model('balance_transactions'),
+    balanceTransfer: postgrest.model('balance_transfers'),
+    user: postgrest.model('users'),
+    bankAccount: postgrest.model('bank_accounts'),
+    rewardDetail: postgrest.model('reward_details'),
+    projectReminder: postgrest.model('project_reminders'),
+    projectReport: postgrest.model('project_reports'),
+    contributions: postgrest.model('contributions'),
+    directMessage: postgrest.model('direct_messages'),
+    teamTotal: postgrest.model('team_totals'),
+    projectAccount: postgrest.model('project_accounts'),
+    projectAccountError: postgrest.model('project_account_errors'),
+    projectContribution: postgrest.model('project_contributions'),
+    projectContributiorsStat: postgrest.model('project_stat_contributors'),
+    projectPostDetail: postgrest.model('project_posts_details'),
+    projectContributionsPerDay: postgrest.model('project_contributions_per_day'),
+    projectContributionsPerLocation: postgrest.model('project_contributions_per_location'),
+    projectContributionsPerRef: postgrest.model('project_contributions_per_ref'),
+    projectTransfer: postgrest.model('project_transfers'),
+    project: postgrest.model('projects'),
+    projectSearch: postgrest.model('rpc/project_search'),
+    category: postgrest.model('categories'),
+    categoryTotals: postgrest.model('category_totals'),
+    categoryFollower: postgrest.model('category_followers'),
+    teamMember: postgrest.model('team_members'),
+    notification: postgrest.model('notifications'),
+    statistic: postgrest.model('statistics'),
+    successfulProject: postgrest.model('successful_projects'),
+    finishedProject: postgrest.model('finished_projects'),
+    userFriend: postgrest.model('user_friends'),
+    userFollow: postgrest.model('user_follows'),
+    followAllFriends: postgrest.model('rpc/follow_all_friends'),
+    contributor: postgrest.model('contributors'),
+    userFollower: postgrest.model('user_followers'),
+    creatorSuggestion: postgrest.model('creator_suggestions'),
+    userContribution: postgrest.model('user_contributions'),
+    inviteProjectEmail: postgrest.model('rpc/invite_project_email'),
+    deleteProject: postgrest.model('rpc/delete_project'),
+    cancelProject: postgrest.model('rpc/cancel_project')
+};
 
-    return {
-        contributionDetail: contributionDetail,
-        projectDetail: projectDetail,
-        userDetail: userDetail,
-        balance: balance,
-        balanceTransaction: balanceTransaction,
-        balanceTransfer: balanceTransfer,
-        bankAccount: bankAccount,
-        user: user,
-        rewardDetail: rewardDetail,
-        contributions: contributions,
-        teamTotal: teamTotal,
-        teamMember: teamMember,
-        project: project,
-        projectSearch: projectSearch,
-        category: category,
-        categoryTotals: categoryTotals,
-        categoryFollower: categoryFollower,
-        projectContributionsPerDay: projectContributionsPerDay,
-        projectContributionsPerLocation: projectContributionsPerLocation,
-        projectContributionsPerRef: projectContributionsPerRef,
-        projectContribution: projectContribution,
-        projectPostDetail: projectPostDetail,
-        projectReminder: projectReminder,
-        notification: notification,
-        statistic: statistic
-    };
-}(window.m));
+models.teamMember.pageSize(40);
+models.rewardDetail.pageSize(false);
+models.project.pageSize(30);
+models.category.pageSize(50);
+models.contributionActivity.pageSize(40);
+models.successfulProject.pageSize(9);
+models.finishedProject.pageSize(9);
+models.country.pageSize(false);
+models.state.pageSize(false);
+models.projectContribution.pageSize(9);
+models.contributor.pageSize(9);
+
+export default models;
