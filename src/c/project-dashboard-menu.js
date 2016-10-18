@@ -70,9 +70,7 @@ const projectDashboardMenu = {
 
                     ]),
                     m('#info-links', [
-                        m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', {
-                            config: m.route
-                        },[
+                        m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [
                             m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
                         ]), (project.is_published ? [
                             m(`a#dashboard_reports_link.dashboard-nav-link-left[href="${projectRoute}/contributions_report"]`, [
