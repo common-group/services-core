@@ -1,7 +1,3 @@
-// TODO: Make work when directly loaded
-// TODO: Make it choose the right reward when sending to contributions/new
-// TODO: Make sure inter routing works
-// TODO: Add Thank You Page
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
@@ -18,7 +14,7 @@ const projectsShow = {
 
         h.analytics.windowScroll({cat: 'project_view',act: 'project_page_scroll'});
 
-        if (project_id) {
+        if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
         } else {
             projectVM.getCurrentProject();
