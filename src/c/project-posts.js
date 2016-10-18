@@ -83,7 +83,9 @@ const projectPosts = {
                                 )
                             ) :
                             m('.w-col.w-col-2.w-col-push-5',
-                                (list.isLastPage() ? 'Nenhuma novidade.' : m('button#load-more.btn.btn-medium.btn-terciary', {
+                                (list.isLastPage() ?
+                                    list.collection().length === 0 ? 'Nenhuma novidade.' : ''
+                                 : m('button#load-more.btn.btn-medium.btn-terciary', {
                                     onclick: list.nextPage
                                 }, 'Carregar mais'))
                             ) :
