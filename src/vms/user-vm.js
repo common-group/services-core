@@ -53,18 +53,19 @@ const displayImage = (user) => {
 
 const displayCover = (user) => user.profile_cover_image || displayImage(user);
 
-const getUserRecommendedProjects = () => {
+const getUserRecommendedProjects = (contribution) => {
     const sample3 = _.partial(_.sample, _, 3),
         loaders = m.prop([]),
         collection = m.prop([]),
         {user_id} = h.getUser();
 
     const loader = () => {
-        console.log('Loaders is: ', loaders());
-        console.log("Will check for loaders: ", _.map(loaders(), loader => loader()))
         return _.reduce(loaders(), (memo, curr) => {
-            return memo() && curr();
-        }, m.prop(true));
+            const _memo = _.isFunction(memo) ? memo() : memo,
+                _curr = _.isFunction(curr) ? curr() : curr;
+
+            return _memo && _curr;
+        }, true);
     };
 
     const loadPopular = () => {
@@ -81,32 +82,35 @@ const getUserRecommendedProjects = () => {
     };
 
     const pushProject = ({project_id}) => {
-        const projectFilter = h.idVM;
-
-        projectFilter.id(project_id);
-
         const project = postgrest.loaderWithToken(
-            models.project.getRowOptions(projectFilter.parameters())
+            models.project.getPageOptions(
+                postgrest.filtersVM({project_id: 'eq'})
+                    .project_id(project_id)
+                    .parameters()
+            )
         );
 
         loaders().push(project)
-        project.load()
-        // project.load().then(collection().push);
+        project.load().then((data) => {
+            collection().push(_.first(data));
+        });
     };
 
     const projects = postgrest.loaderWithToken(
         models.recommendedProjects.getPageOptions(
-            postgrest.filtersVM({user_id: 'eq'}).user_id(user_id).parameters()
+            postgrest.filtersVM({user_id: 'eq'})
+                .user_id(user_id)
+                .parameters()
         )
     );
 
 
 
     projects.load().then(recommended => {
+        console.log('Recommended response is: ', recommended)
         if(recommended.length > 0) {
             _.map(recommended, pushProject)
         } else {
-            console.log('No recommendations, loading popular instead');
             loadPopular();
         }
     });
