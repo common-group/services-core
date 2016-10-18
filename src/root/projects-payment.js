@@ -51,13 +51,25 @@ const projectsPayment = {
 
         const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
 
-        const applyPhoneMask = _.compose(vm.fields.phone, phoneMask)
+        const applyPhoneMask = _.compose(vm.fields.phone, phoneMask);
+
+        const addressChange = (fn) => (e) => {
+            CatarseAnalytics.oneTimeEvent({
+                cat: 'contribution_finish',
+                act: vm.isInternational ? 'contribution_address_br' : 'contribution_address_int'
+            });
+
+            if(_.isFunction(fn)){
+                fn(e);
+            }
+        };
 
         if (!h.getUser()) {
             return h.navigateToDevise();
         }
 
         return {
+            addressChange: addressChange,
             applyDocumentMask: applyDocumentMask,
             applyZipcodeMask: applyZipcodeMask,
             applyPhoneMask: applyPhoneMask,
@@ -151,6 +163,7 @@ const projectsPayment = {
                                 ]),
                                 m('.w-checkbox.w-clearfix', [
                                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
+                                        onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_anonymous_change'}),
                                         onchange: m.withAttr('value', ctrl.vm.fields.anonymous),
                                         checked: ctrl.vm.fields.anonymous(),
                                     }),
@@ -194,6 +207,7 @@ const projectsPayment = {
                                         ),
                                         m('input.w-input.text-field[id=\'zip-code\']', {
                                             type: 'tel',
+                                            onchange: ctrl.addressChange(),
                                             onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
                                             placeholder: '42100000'
@@ -209,7 +223,7 @@ const projectsPayment = {
                                             onfocus: ctrl.vm.resetFieldError('street'),
                                             class: ctrl.fieldHasError('street') ? 'error' : false,
                                             type: 'text',
-                                            onchange: m.withAttr('value', ctrl.vm.fields.street),
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.street)),
                                             value: ctrl.vm.fields.street(),
                                             required: 'required',
                                             placeholder: 'Rua Da Minha Casa'
@@ -226,7 +240,7 @@ const projectsPayment = {
                                                     onfocus: ctrl.vm.resetFieldError('number'),
                                                     class: ctrl.fieldHasError('number') ? 'error' : false,
                                                     type: 'text',
-                                                    onchange: m.withAttr('value', ctrl.vm.fields.number),
+                                                    onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.number)),
                                                     value: ctrl.vm.fields.number(),
                                                     required: 'required',
                                                     placeholder: '421'
@@ -241,7 +255,7 @@ const projectsPayment = {
                                                     onfocus: ctrl.vm.resetFieldError('addressComplement'),
                                                     class: ctrl.fieldHasError('addressComplement') ? 'error' : false,
                                                     type: 'text',
-                                                    onchange: m.withAttr('value', ctrl.vm.fields.addressComplement),
+                                                    onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.addressComplement)),
                                                     value: ctrl.vm.fields.addressComplement(),
                                                     placeholder: 'Residencial 123'
                                                 }),
@@ -259,7 +273,7 @@ const projectsPayment = {
                                             onfocus: ctrl.vm.resetFieldError('neighbourhood'),
                                             class: ctrl.fieldHasError('neighbourhood') ? 'error' : false,
                                             type: 'text',
-                                            onchange: m.withAttr('value', ctrl.vm.fields.neighbourhood),
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.neighbourhood)),
                                             value: ctrl.vm.fields.neighbourhood(),
                                             required: !ctrl.vm.isInternational(),
                                             placeholder: 'São José'
@@ -274,7 +288,7 @@ const projectsPayment = {
                                             onfocus: ctrl.vm.resetFieldError('city'),
                                             class: ctrl.fieldHasError('city') ? 'error' : false,
                                             type: 'text',
-                                            onchange: m.withAttr('value', ctrl.vm.fields.city),
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.city)),
                                             value: ctrl.vm.fields.city(),
                                             required: 'required',
                                             placeholder: 'Cidade'
@@ -286,7 +300,7 @@ const projectsPayment = {
                                             'Estado *'
                                         ),
                                         m('select.w-select.text-field[id=\'state\']', {
-                                                onchange: m.withAttr('value', ctrl.vm.fields.userState),
+                                                onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
                                                 value: ctrl.vm.fields.userState()
                                             },
                                             ctrl.vm.isInternational() ? m('option',{
@@ -334,7 +348,7 @@ const projectsPayment = {
                         m('.w-row.u-marginbottom-40',
                             m('.w-col.w-col-push-3.w-col-6',
                                 m('button.btn.btn-large', {
-                                        onclick: ctrl.validateForm
+                                        onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_next_click'}, ctrl.validateForm)
                                     },
                                     'Próximo passo'
                                 )
