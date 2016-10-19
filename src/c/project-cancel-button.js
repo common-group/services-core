@@ -20,7 +20,8 @@ const projectCancelButton = {
                 displayModal: ctrl.displayCancelModal,
                 content: [cancelProjectModalContent, {displayModal: ctrl.displayCancelModal}]
             }) : ''),
-            m('.before-footer',
+            m('.w-row.before-footer',
+              m('.w-col.w-col-12',
                 m('.w-container',
                     m('a.btn.btn-cancel.btn-inline.btn-no-border.btn-small.btn-terciary.u-marginbottom-20.u-right.w-button', {onclick: ctrl.displayCancelModal.toggle, style: {'transition': 'all 0.5s ease 0s'}},
                         [
@@ -29,7 +30,7 @@ const projectCancelButton = {
                             'Cancelar projeto'
                         ]
                     )
-                )
+                ))
             )
         ]);
     }
