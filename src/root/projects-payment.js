@@ -86,7 +86,7 @@ const projectsPayment = {
         };
     },
     view(ctrl, args) {
-        return m('.w-section.w-clearfix.section', [
+        return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
                 m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
                     m('.fontsize-smaller.fontweight-semibold',
