@@ -273,8 +273,10 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const creditCardPaymentFail = (deferred) => (data) => {
+        const errorMsg = data.message || I18n.t('submission.payment_failed', I18nScope());
+
         isLoading(false);
-        submissionError(I18n.t('submission.error', I18nScope({message: data.message})));
+        submissionError(I18n.t('submission.error', I18nScope({message: errorMsg})));
         m.redraw();
         deferred.reject();
     };
