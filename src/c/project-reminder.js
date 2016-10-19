@@ -21,11 +21,11 @@ const projectReminder = {
               filterVM = postgrest.filtersVM({
                   project_id: 'eq'
               }),
-              storeReminderName = 'remind_' + project().project_id,
+              storeReminderName = 'reminder',
               popNotification = m.prop(false),
               submitReminder = () => {
                   if (!h.getUser()) {
-                      h.storeAction(storeReminderName, submitReminder);
+                      h.storeAction(storeReminderName, project().project_id);
                       return h.navigateToDevise();
                   }
                   let loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
@@ -48,7 +48,10 @@ const projectReminder = {
                   });
               };
 
-        h.callStoredAction(storeReminderName, submitReminder);
+        if (h.callStoredAction(storeReminderName) == project().project_id) {
+            submitReminder();
+        }
+
         filterVM.project_id(project().project_id);
 
         return {

@@ -27,9 +27,9 @@ const
         return date ? moment(date).locale('pt').format(format) : 'no date';
     },
 
-    storeAction = (action) => {
+    storeAction = (action, value) => {
         if (!sessionStorage.getItem(action)) {
-            return sessionStorage.setItem(action, action);
+            return sessionStorage.setItem(action, String(value));
         }
     },
 
@@ -45,10 +45,14 @@ const
         }
     },
 
-    callStoredAction = (action, func) => {
-        if (sessionStorage.getItem(action)) {
-            func.call();
-            return sessionStorage.removeItem(action);
+    callStoredAction = (action) => {
+        const item = sessionStorage.getItem(action);
+
+        if (item) {
+            sessionStorage.removeItem(action);
+            return item;
+        } else {
+            return false;
         }
     },
 
@@ -685,6 +689,11 @@ const
 
         return `https://www.catarse.me/${permalink}`;
     },
+    isHome = () => {
+        const path = window.location.pathname;
+
+        return path == '/pt' || path == '/';
+    },
     isProjectPage = () => {
         const path = window.location.pathname,
               isOnInsights = path.indexOf('/insights') > -1,
@@ -702,11 +711,20 @@ const
                 return titleEl.innerText = title;
             }
         };
+    },
+    checkReminder = () => {
+        let reminder = sessionStorage.getItem('reminder');
+
+        if (reminder && isHome()) {
+            window.location.href = `/projects/${reminder}`;
+        }
     };
+
 
 setMomentifyLocale();
 closeFlash();
 closeModal();
+checkReminder();
 
 export default {
     authenticityToken,
