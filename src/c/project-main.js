@@ -26,7 +26,10 @@ const projectMain = {
                                 rewardDetails: args.rewardDetails
                             }, c_opts)),
                             '#comments': m.component(projectComments, c_opts),
-                            '#posts': m.component(projectPosts, c_opts)
+                            '#posts': m.component(projectPosts, _.extend({},{
+                                projectContributions: args.projectContributions,
+                                userDetails: args.userDetails,
+                            },c_opts))
                         };
 
                   if (_.isNumber(args.post_id)) {

@@ -9,6 +9,7 @@ import userVM from './user-vm';
 const idVM = h.idVM,
       currentProject = m.prop(),
       userDetails = m.prop(),
+      projectContributions = m.prop([]),
       vm = postgrest.filtersVM({project_id: 'eq'});
 
 const setProject = (project_user_id) => (data) => {
@@ -82,6 +83,7 @@ const setProjectPageTitle = () => {
 const projectVM = {
     userDetails: userDetails,
     getCurrentProject: getCurrentProject,
+    projectContributions: projectContributions,
     currentProject: currentProject,
     rewardDetails: rewardVM.rewards,
     routeToProject: routeToProject,
