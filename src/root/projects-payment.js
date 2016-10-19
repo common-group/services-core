@@ -299,18 +299,16 @@ const projectsPayment = {
                                         m('label.field-label.fontweight-semibold[for=\'state\']',
                                             'Estado *'
                                         ),
-                                        m('select.w-select.text-field[id=\'state\']', {
+                                        ctrl.vm.isInternational() ? m('input.w-input.text-field[id=\'address-state\']', {
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
+                                            value: ctrl.vm.fields.userState()
+                                        }) : m('select.w-select.text-field[id=\'address-state\']', {
                                                 onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
                                                 value: ctrl.vm.fields.userState()
-                                            },
-                                            ctrl.vm.isInternational() ? m('option',{
-                                                    value: '',
-                                                    config: ctrl.setStateOther,
-                                                    selected: true
-                                                }, 'Outro/Other') : _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
+                                            }, _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
                                                     value: state.acronym,
                                                     selected: state.acronym === ctrl.vm.fields.userState()
-                                                }, state.name))
+                                            }, state.name))
                                         )
                                     ])
                                 ]), !ctrl.vm.isInternational() ? m('.w-row', [
