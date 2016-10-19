@@ -132,7 +132,7 @@ const paymentVM = (mode = 'aon') => {
         checkEmail();
 
         if (!isInternational()){
-            checkEmptyFields(['phone', 'neighbourhood']);
+            checkEmptyFields(['phone', 'neighbourhood', 'zipCode']);
             checkDocument();
         }
 
