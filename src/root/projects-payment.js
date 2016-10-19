@@ -203,15 +203,17 @@ const projectsPayment = {
                                     ]),
                                     m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
-                                            !ctrl.vm.isInternational() ? 'CEP' : 'ZIP'
+                                            !ctrl.vm.isInternational() ? 'CEP *' : 'ZIP'
                                         ),
                                         m('input.w-input.text-field[id=\'zip-code\']', {
                                             type: 'tel',
+                                            class: ctrl.fieldHasError('zipCode') ? 'error' : false,
                                             onchange: ctrl.addressChange(),
                                             onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
                                             placeholder: '42100000'
-                                        })
+                                        }),
+                                        ctrl.fieldHasError('zipCode')
                                     ])
                                 ]),
                                 m('.w-row', [
