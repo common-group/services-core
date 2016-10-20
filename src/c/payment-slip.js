@@ -1,36 +1,23 @@
 import m from 'mithril';
+import I18n from 'i18n-js';
 import h from '../h';
-import paymentVM from '../vms/payment-vm';
 import inlineError from './inline-error';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 
 const paymentSlip = {
     controller(args) {
-        const slipPaymentDate = paymentVM().getSlipPaymentDate(args.contribution_id),
-                    loading = m.prop(false),
-                    error = m.prop(false),
-                    completed = m.prop(false);
+        const vm = args.vm,
+            slipPaymentDate = vm.getSlipPaymentDate(args.contribution_id),
+            loading = m.prop(false),
+            error = m.prop(false),
+            completed = m.prop(false);
 
         const buildSlip = () => {
             loading(true);
             m.redraw();
-            const req = m.request({
-                method: 'post',
-                url: `/payment/pagarme/${args.contribution_id}/pay_slip.json`,
-                dataType: 'json'
-            }).then(data => {
-                if (data.payment_status == 'failed'){
-                    error(true);
-                } else if (data.boleto_url) {
-                    completed(true);
-                    window.location.href = `/projects/${args.project_id}/contributions/${args.contribution_id}`;
-                }
-                loading(false);
-                m.redraw();
-            }).catch(err => {
-                error(true);
-                loading(false);
-                m.redraw();
-            });
+            vm.paySlip(args.contribution_id, args.project_id, error, loading, completed);
+
             return false;
         };
 
@@ -59,7 +46,7 @@ const paymentSlip = {
                                 value: 'Imprimir Boleto',
                                 type: 'submit'
                             }),
-                            ctrl.error() ? m.component(inlineError, {message: 'Ocorreu um erro ao tentar gerar o boleto. Por favor, tente novamente em alguns instantes.'}) : '',
+                            ctrl.error() ? m.component(inlineError, {message: ctrl.error()}) : '',
                             m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                                 'Ao apoiar, você concorda com os ',
                                 m('a.alt-link[href=\'/pt/terms-of-use\']',

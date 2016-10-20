@@ -101,7 +101,9 @@ const paymentVM = (mode = 'aon') => {
 
     const checkEmptyFields = (checkedFields) => {
         return _.map(checkedFields, (field) => {
-            if (_.isEmpty(String(fields[field]()).trim())) {
+            const val = fields[field]();
+
+            if (!h.existy(val) || _.isEmpty(String(val).trim())) {
                 fields.errors().push({field: field, message: 'O campo não pode ser vazio.'});
             }
         });
@@ -127,12 +129,12 @@ const paymentVM = (mode = 'aon') => {
     const validate = () => {
         fields.errors([]);
 
-        checkEmptyFields(['completeName', 'street', 'number', 'city']);
+        checkEmptyFields(['completeName', 'street', 'number', 'city', 'userCountryId']);
 
         checkEmail();
 
         if (!isInternational()){
-            checkEmptyFields(['phone', 'neighbourhood', 'zipCode']);
+            checkEmptyFields(['phone', 'neighbourhood', 'zipCode', 'ownerDocument', 'userState']);
             checkDocument();
         }
 
@@ -149,6 +151,49 @@ const paymentVM = (mode = 'aon') => {
         }).then(paymentDate);
 
         return paymentDate;
+    };
+
+    const sendSlipPayment = (contribution_id, project_id, error, loading, completed) => {
+        m.request({
+            method: 'post',
+            url: `/payment/pagarme/${contribution_id}/pay_slip.json`,
+            dataType: 'json'
+        }).then(data => {
+            if (data.payment_status == 'failed'){
+                error(I18n.t('submission.slip_submission', I18nScope()));
+            } else if (data.boleto_url) {
+                completed(true);
+                window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
+            }
+            loading(false);
+            m.redraw();
+        }).catch(err => {
+            error(I18n.t('submission.slip_submission', I18nScope()));
+            loading(false);
+            completed(false);
+            m.redraw();
+        });
+    };
+    // TODO: Unify credit card and slip errors logic
+    const paySlip = (contribution_id, project_id, error, loading, completed) => {
+        error(false);
+        m.redraw();
+        if (validate()) {
+            updateContributionData(contribution_id, project_id)
+                .then(() => {
+                    sendSlipPayment(contribution_id, project_id, error, loading, completed);
+                })
+                .catch(() => {
+                    loading(false);
+                    error(I18n.t('submission.slip_validation', I18nScope()));
+                    m.redraw();
+                })
+
+        } else {
+            loading(false);
+            error(I18n.t('submission.slip_validation', I18nScope()));
+            m.redraw();
+        }
     };
 
     const savedCreditCards = m.prop([]);
@@ -353,6 +398,7 @@ const paymentVM = (mode = 'aon') => {
         isInternational: isInternational,
         resetFieldError: resetFieldError,
         getSlipPaymentDate: getSlipPaymentDate,
+        paySlip: paySlip,
         installments: installments,
         getInstallments: getInstallments,
         savedCreditCards: savedCreditCards,
