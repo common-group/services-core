@@ -20,14 +20,19 @@ const userContributed = {
 
         userVM.getPublicUserContributedProjects(user_id, null).then((data) => {
             contributedProjects(data);
-            contextVM.project_id(_.pluck(contributedProjects(), 'project_id')).order({
-              online_date: 'desc'
-          });
+            if(!_.isEmpty(contributedProjects())){
+                contextVM.project_id(_.pluck(contributedProjects(), 'project_id')).order({
+                  online_date: 'desc'
+                });
 
-            models.project.pageSize(9);
-            pages.firstPage(contextVM.parameters()).then(() => {
+                models.project.pageSize(9);
+                pages.firstPage(contextVM.parameters()).then(() => {
+                    loader(false);
+                });
+            }
+            else{
                 loader(false);
-            });
+            }
         }).catch(err => {
                 error(true);
                 loader(false);
