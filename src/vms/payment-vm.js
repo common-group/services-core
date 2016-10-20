@@ -53,7 +53,8 @@ const paymentVM = (mode = 'aon') => {
         statesLoader = postgrest.loader(models.state.getPageOptions());
 
     const populateForm = (fetchedData) => {
-        const data = _.first(fetchedData);
+        const data = _.first(fetchedData),
+            countryId = data.address.country_id || _.findWhere(fields.countries(), {name: 'Brasil'}).id;
 
         fields.completeName(data.name);
         fields.email(data.email);
@@ -63,7 +64,7 @@ const paymentVM = (mode = 'aon') => {
         fields.number(data.address.number);
         fields.addressComplement(data.address.complement);
         fields.userState(data.address.state);
-        fields.userCountryId(data.address.country_id);
+        fields.userCountryId(countryId);
         fields.ownerDocument(data.owner_document);
         fields.phone(data.address.phonenumber);
         fields.neighbourhood(data.address.neighbourhood);
@@ -174,7 +175,7 @@ const paymentVM = (mode = 'aon') => {
             m.redraw();
         });
     };
-    // TODO: Unify credit card and slip errors logic
+
     const paySlip = (contribution_id, project_id, error, loading, completed) => {
         error(false);
         m.redraw();
