@@ -10,7 +10,7 @@ import userAbout from '../c/user-about';
 const usersShow = {
     controller(args) {
         const userDetails = m.prop({}),
-            user_id = args.user_id,
+            user_id = args.user_id.split('-')[0],
             hash = m.prop(window.location.hash),
             displayTabContent = (user) => {
                   const tabs = {
@@ -22,7 +22,18 @@ const usersShow = {
                   hash(window.location.hash);
 
                   if (_.isEmpty(hash()) || hash() === '#_=_') {
+                    if(user.total_published_projects > 0){
+                      hash('#created');
+                      return tabs['#created'];
+                    }
+                    else if(user.total_contributed_projects > 0){
+                      hash('#contributed');
+                      return tabs['#contributed'];
+                    }
+                    else{
+                      hash('#about');
                       return tabs['#about'];
+                    }
                   }
 
                   return tabs[hash()];
@@ -45,7 +56,7 @@ const usersShow = {
           m.component(userHeader, {user: user}),
 
           m('nav.project-nav.u-text-center.u-marginbottom-30.profile', {style: {'z-index': '10', 'position': 'relative'}},
-              m('.w-container[data-anchor=\'created\'][id=\'default-tab\']',
+              m('.w-container[data-anchor=\'created\']',
                   [
                     (!_.isEmpty(user) ? 
                      (user.is_owner_or_admin ?
@@ -56,7 +67,7 @@ const usersShow = {
                               ' Editar perfil'
                           ]
                       ) :'') : h.loader()),
-                      m(`a[data-target=\'#contributed-tab\'][href=\'#contributed\'][id=\'contributed_link\'][class=\'dashboard-nav-link ${(h.hashMatch('#contributed') ? 'selected' : '')}\']`,
+                      m(`a[data-target=\'#contributed-tab\'][href=\'#contributed\'][id=\'contributed_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#contributed' ? 'selected' : '')}\']`,
                           [
                               'Apoiados ',
                               m.trust('&nbsp;'),
@@ -65,7 +76,7 @@ const usersShow = {
                               )
                           ]
                       ),
-                      m(`a[data-target=\'#created-tab\'][href=\'#created\'][id=\'created_link\'][class=\'dashboard-nav-link ${(h.hashMatch('#created') ? 'selected' : '')}\']`,
+                      m(`a[data-target=\'#created-tab\'][href=\'#created\'][id=\'created_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#created' ? 'selected' : '')}\']`,
                           [
                               'Criados ',
                               m.trust('&nbsp;'),
@@ -74,7 +85,7 @@ const usersShow = {
                               )
                           ]
                       ),
-                      m(`a[data-target=\'#about-tab\'][href=\'#about\'][id=\'about_link\'][class=\'dashboard-nav-link ${(h.hashMatch('#about') ? 'selected' : '')}\']`,
+                      m(`a[data-target=\'#about-tab\'][href=\'#about\'][id=\'about_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#about' ? 'selected' : '')}\']`,
                           'Sobre'
                       )
                   ]
