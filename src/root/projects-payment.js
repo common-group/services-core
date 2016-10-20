@@ -191,6 +191,8 @@ const projectsPayment = {
                                             'País *'
                                         ),
                                         m('select.w-select.text-field[id=\'country\']', {
+                                                onfocus: ctrl.vm.resetFieldError('userCountryId'),
+                                                class: ctrl.fieldHasError('userCountryId') ? 'error' : false,
                                                 onchange: m.withAttr('value', ctrl.vm.fields.userCountryId),
                                                 value: ctrl.vm.fields.userCountryId()
                                             },
@@ -199,7 +201,8 @@ const projectsPayment = {
                                                 key: idx,
                                                 selected: country.id === ctrl.vm.fields.userCountryId()
                                             }, country.name))
-                                        )
+                                        ),
+                                        ctrl.fieldHasError('userCountryId')
                                     ]),
                                     m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
@@ -207,6 +210,7 @@ const projectsPayment = {
                                         ),
                                         m('input.w-input.text-field[id=\'zip-code\']', {
                                             type: 'tel',
+                                            onfocus: ctrl.vm.resetFieldError('zipCode'),
                                             class: ctrl.fieldHasError('zipCode') ? 'error' : false,
                                             onchange: ctrl.addressChange(),
                                             onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
@@ -305,13 +309,16 @@ const projectsPayment = {
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
                                             value: ctrl.vm.fields.userState()
                                         }) : m('select.w-select.text-field[id=\'address-state\']', {
+                                                onfocus: ctrl.vm.resetFieldError('userState'),
+                                                class: ctrl.fieldHasError('userState') ? 'error' : false,
                                                 onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
                                                 value: ctrl.vm.fields.userState()
                                             }, _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
                                                     value: state.acronym,
                                                     selected: state.acronym === ctrl.vm.fields.userState()
                                             }, state.name))
-                                        )
+                                        ),
+                                        ctrl.fieldHasError('userState')
                                     ])
                                 ]), !ctrl.vm.isInternational() ? m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
