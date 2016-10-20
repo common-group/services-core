@@ -45,7 +45,7 @@ const paymentForm = {
             ]), !ctrl.toggleBoleto() ? m('#credit-card-section', [
                 m.component(paymentCreditCard, {vm: args.vm, contribution_id: args.contribution_id, project_id: args.project_id, user_id: args.user_id})
             ]) : !args.vm.isInternational() ? m('#boleto-section', [
-                m.component(paymentSlip, {contribution_id: args.contribution_id, project_id: args.project_id})
+                m.component(paymentSlip, {vm: args.vm, contribution_id: args.contribution_id, project_id: args.project_id})
             ]) : ''
         ]);
     }
