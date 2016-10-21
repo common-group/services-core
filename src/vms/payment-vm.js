@@ -72,6 +72,7 @@ const paymentVM = (mode = 'aon') => {
 
     const expMonthOptions = () => {
         return [
+            [null, 'Mês'],
             [1, '01 - Janeiro'],
             [2, '02 - Fevereiro'],
             [3, '03 - Março'],
@@ -89,7 +90,7 @@ const paymentVM = (mode = 'aon') => {
 
     const expYearOptions = () => {
         const currentYear = moment().year();
-        let yearsOptions = [];
+        let yearsOptions = ['Ano'];
         for (let i = currentYear; i <= currentYear + 25; i++) {
             yearsOptions.push(i);
         }
