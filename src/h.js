@@ -718,6 +718,13 @@ const
         if (reminder && isHome()) {
             window.location.href = `/projects/${reminder}`;
         }
+    },
+    rootUrl = () => {
+        if (_dataCache.rootUrl)
+          return _dataCache.rootUrl;
+
+        const meta = _.first(document.querySelectorAll('[name=root-url]'));
+        return meta ? (_dataCache.rootUrl = meta.content) : undefined;
     };
 
 
@@ -787,5 +794,6 @@ export default {
     projectFullPermalink,
     isProjectPage,
     setPageTitle,
-    getBlogPosts
+    getBlogPosts,
+    rootUrl
 };

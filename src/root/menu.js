@@ -11,11 +11,23 @@ const menu = {
                 let dynamicClasses;
 
                 return `${args.menuTransparency ? 'overlayer' : ''} ${args.withAlert ? 'with-global-alert' : ''}`;
+            },
+            homeAttrs = () => {
+                if (args.absoluteHome) {
+                    return {
+                        href: h.rootUrl()
+                    };
+                } else {
+                    return {
+                        config: m.route
+                    };
+                }
             };
 
         return {
             user: user,
-            menuCss: menuCss
+            menuCss: menuCss,
+            homeAttrs: homeAttrs
         };
     },
     view(ctrl, args) {
@@ -26,7 +38,7 @@ const menu = {
                 m('.w-clearfix',
                     [
                         m('a.header-logo.w-nav-brand[href=\'/?ref=ctrse_header\'][title=\'Catarse\']',
-                            {config: m.route},
+                            ctrl.homeAttrs(),
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
                         m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
