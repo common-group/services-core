@@ -123,10 +123,16 @@ const paymentVM = (mode = 'aon') => {
         //TODO: also validate Cnpj
         const isValid = h.validateCpf(fields.ownerDocument().replace(/[\.|\-]*/g,''));
 
-        if (!isValid){
+        if (!isValid) {
             fields.errors().push({field: 'ownerDocument', message: 'CPF inválido.'});
         }
     };
+
+    const checkUserState = () => {
+        if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
+            fields.errors().push({field: 'userState', message: 'Estado é obrigatório.'});
+        }
+    }
 
     const validate = () => {
         fields.errors([]);
@@ -137,6 +143,7 @@ const paymentVM = (mode = 'aon') => {
 
         if (!isInternational()){
             checkEmptyFields(['phone', 'neighbourhood', 'zipCode', 'ownerDocument', 'userState']);
+            checkUserState();
             checkDocument();
         }
 
@@ -391,7 +398,10 @@ const paymentVM = (mode = 'aon') => {
     const applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
     countriesLoader.load().then(fields.countries);
-    statesLoader.load().then(fields.states);
+    statesLoader.load().then((data) => {
+        fields.states().push({acronym: null, name: 'Estado'});
+        _.map(data, state => fields.states().push(state));
+    });
     usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
 
     return {
