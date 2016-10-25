@@ -24,8 +24,11 @@ const deleteProjectModalContent = {
                 l = postgrest.loaderWithToken(loaderOpts);
                 l.load().then(() => {
                   deleteSuccess(true);
-                  document.getElementById('modal-header').classList.remove('modal-close', 'fa-close');
-                });
+                }).catch(err => {
+                  confirmed(false);
+                  error('Erro ao deletar projeto. Por favor tente novamente.');
+                  m.redraw();
+            });;
 
             } else {
                 confirmed(false);

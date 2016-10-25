@@ -18,6 +18,7 @@ const projectDeleteButton = {
         return m('div', [
             (ctrl.displayDeleteModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayDeleteModal,
+                hideCloseButton: true,
                 content: [deleteProjectModalContent, {displayDeleteModal: ctrl.displayDeleteModal, project: args.project}]
             }) : ''),
         m('.before-footer',
