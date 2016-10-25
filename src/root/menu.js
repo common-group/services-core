@@ -33,7 +33,7 @@ const menu = {
     view(ctrl, args) {
         return m('header.main-header',{
             class: ctrl.menuCss()
-        },
+        }, [
             m('.w-row', [
                 m('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8',
                     [
@@ -48,21 +48,22 @@ const menu = {
                 ),
                 m('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
                     ctrl.user ? m.component(menuProfile, {user: ctrl.user}) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
-                ]),
-                m('.w-hidden-main.w-hidden-medium.header-controls-mobile',
-                    [
-                        m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
-                            {onclick: () => m.route('/start')},
-                            'Comece seu projeto'
-                        ),
-                        m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
-                            {onclick: () => m.route('/explore')},
-                            'Explore'
-                        )
-                    ]
-                )
-            ])
-        );
+                ])
+
+            ]),
+            m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
+                [
+                    m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
+                        {onclick: () => m.route('/start')},
+                        'Comece seu projeto'
+                    ),
+                    m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
+                        {onclick: () => m.route('/explore')},
+                        'Explore'
+                    )
+                ]
+            )
+        ]);
     }
 };
 
