@@ -33,7 +33,10 @@ const menuProfile = {
                     {
                         onclick: ctrl.toggleMenu.toggle
                     },
-                    m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
+                    [
+                        m('.user-name-menu', user.name),
+                        m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
+                    ]
                 ),
                 ctrl.toggleMenu() ? m(`nav.w-dropdown-list.dropdown-list.user-menu.w--open[id='user-menu-dropdown']`, {style: 'display:block;'},
                     [
