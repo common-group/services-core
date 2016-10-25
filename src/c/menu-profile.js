@@ -89,6 +89,48 @@ const menuProfile = {
                                                     )
                                                 )
                                             ]
+                                        ),
+                                        m('.divider.u-marginbottom-20'),
+                                        args.user.is_admin_role ? m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
+                                            `Admin`
+                                        ) : '',
+                                        args.user.is_admin_role ? m(`ul.w-list-unstyled.u-marginbottom-20`,
+                                            [
+                                                m(`li.lineheight-looser`,
+                                                    m(`a.alt-link.fontsize-smaller[href='/pt/new-admin#/users']`,
+                                                        `Usuários`
+                                                    )
+                                                ),
+                                                m(`li.lineheight-looser`,
+                                                    m(`a.alt-link.fontsize-smaller[href='/pt/new-admin']`,
+                                                        `Apoios`
+                                                    )
+                                                ),
+                                                m(`li.lineheight-looser`,
+                                                    m(`a.alt-link.fontsize-smaller[href='/pt/admin/financials']`,
+                                                        `Rel. Financeiros`
+                                                    )
+                                                ),
+                                                m(`li.lineheight-looser`,
+                                                    m(`a.alt-link.fontsize-smaller[href='/pt/admin/projects']`,
+                                                        `Admin projetos`
+                                                    )
+                                                ),
+                                                m(`li.lineheight-looser`,
+                                                    m(`a.alt-link.fontsize-smaller[href='/pt/dbhero']`,
+                                                        `Dataclips`
+                                                    )
+                                                )
+                                            ]
+                                        ) : '',
+                                        m('.fontsize-mini', 'Seu e-mail de cadastro é: '),
+                                        m('.fontsize-smallest.u-marginbottom-20', [
+                                            m('span.fontweight-semibold',`${user.email} `),
+                                            m(`a.alt-link[href='/pt/users/${user.id}/edit#settings']`, 'alterar e-mail')
+                                        ]),
+                                        m('.divider.u-marginbottom-20'),
+                                        m(`a.alt-link[href='/pt/logout']`,
+                                            `Sair`
                                         )
                                     ]
                                 ),
@@ -131,56 +173,6 @@ const menuProfile = {
                                 //        )
                                 //    ]
                                 //)
-                            ]
-                        ),
-                        m(`.divider.u-marginbottom-20`),
-                        args.user.is_admin_role ? m(`.fontweight-semibold.fontsize-smaller.u-marginbottom-10`,
-                            `Admin`
-                        ) : '',
-                        args.user.is_admin_role ? m(`ul.w-list-unstyled.u-marginbottom-20`,
-                            [
-                                m(`li.lineheight-looser`,
-                                    m(`a.alt-link.fontsize-smaller[href='/pt/new-admin#/users']`,
-                                        `Usuários`
-                                    )
-                                ),
-                                m(`li.lineheight-looser`,
-                                    m(`a.alt-link.fontsize-smaller[href='/pt/new-admin']`,
-                                        `Apoios`
-                                    )
-                                ),
-                                m(`li.lineheight-looser`,
-                                    m(`a.alt-link.fontsize-smaller[href='/pt/admin/financials']`,
-                                        `Rel. Financeiros`
-                                    )
-                                ),
-                                m(`li.lineheight-looser`,
-                                    m(`a.alt-link.fontsize-smaller[href='/pt/admin/projects']`,
-                                        `Admin projetos`
-                                    )
-                                ),
-                                m(`li.lineheight-looser`,
-                                    m(`a.alt-link.fontsize-smaller[href='/pt/dbhero']`,
-                                        `Dataclips`
-                                    )
-                                )
-                            ]
-                        ) : '',
-                        m(`.divider.u-marginbottom-20`),
-                        m(`.fontsize-smallest`,
-                            [
-                                `Você está logado como `,
-                                m(`span`,
-                                    [
-                                        m(`span.fontweight-semibold`,
-                                            user.name
-                                        ),
-                                        m.trust(`&nbsp;`),
-                                        m(`a.alt-link[href='/pt/logout']`,
-                                            `Sair`
-                                        )
-                                    ]
-                                )
                             ]
                         )
                     ]

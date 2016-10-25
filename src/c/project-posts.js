@@ -70,19 +70,19 @@ const projectPosts = {
                     (!_.isUndefined(args.post_id) ? '' :
                         (!list.isLoading() ?
                             (list.collection().length === 0 && args.projectContributions().length === 0) ?
-                            m('.w-col.w-col-10.w-col-push-1',
-                                m('p.fontsize-base',
-                                    m.trust(
-                                        I18n.t('empty',
-                                            I18nScope({
-                                                project_user_name: args.userDetails().name,
-                                                project_id: project.project_id
-                                            })
+                                !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
+                                    m('p.fontsize-base',
+                                        m.trust(
+                                            I18n.t('empty',
+                                                I18nScope({
+                                                    project_user_name: args.userDetails().name,
+                                                    project_id: project.project_id
+                                                })
+                                            )
                                         )
                                     )
-                                )
-                            ) :
-                            m('.w-col.w-col-2.w-col-push-5',
+                                ) : ''
+                            : m('.w-col.w-col-2.w-col-push-5',
                                 (list.isLastPage() ?
                                     list.collection().length === 0 ? 'Nenhuma novidade.' : ''
                                  : m('button#load-more.btn.btn-medium.btn-terciary', {
