@@ -79,6 +79,10 @@ const projectRewardList = {
                     }
                 }, ctrl.selectReward(reward))
             }, [
+                reward.minimum_value >= 100 ? m('.tag-circle-installment', [
+                    m('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'),
+                    m('.fontsize-mini.lineheight-tightest', 's/ juros')
+                ]) : '',
                 m('.u-marginbottom-20', [
                     m('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'),
                     m('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), (reward.maximum_contributions > 0 ? [
