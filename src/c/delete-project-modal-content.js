@@ -13,6 +13,7 @@ const deleteProjectModalContent = {
         let l = m.prop(false),
             deleteSuccess = m.prop(false),
             confirmed = m.prop(true),
+            error = m.prop(''),
             check = m.prop('');
 
         const deleteProject = () => {
@@ -21,10 +22,17 @@ const deleteProjectModalContent = {
                     _project_id: args.project.project_id
                 });
                 l = postgrest.loaderWithToken(loaderOpts);
-                l.load().then(deleteSuccess(true));
+                l.load().then(() => {
+                  deleteSuccess(true);
+                }).catch(err => {
+                  confirmed(false);
+                  error('Erro ao deletar projeto. Por favor tente novamente.');
+                  m.redraw();
+            });;
 
             } else {
                 confirmed(false);
+                error('Por favor, corrija os seguintes erros: para deletar definitivamente o projeto você deverá preencher "deletar-rascunho".');
             }
             return false;
         };
@@ -33,6 +41,7 @@ const deleteProjectModalContent = {
             deleteProject: deleteProject,
             confirmed: confirmed,
             deleteSuccess: deleteSuccess,
+            error: error,
             check: check
         };
     },
@@ -69,6 +78,7 @@ const deleteProjectModalContent = {
                       ]
                     ),
                     m('.w-form',
+                      m('.text-error.u-marginbottom-10', ctrl.error()),
                       [
                         m('div',
                           m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', {class: ctrl.confirmed() ? false : 'error', placeholder: 'deletar-rascunho', onchange: m.withAttr('value', ctrl.check)})

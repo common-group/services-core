@@ -20,7 +20,7 @@ const modalBox = {
         return m('.modal-backdrop', [
             m('.modal-dialog-outer', [
                 m('.modal-dialog-inner.modal-dialog-small', [
-                    m('a.w-inline-block.modal-close.fa.fa-close.fa-lg[href="javascript:void(0);"]', {
+                    m(`a.w-inline-block.fa.fa-lg.modal-close${args.hideCloseButton ? '' : '.fa-close'}[href="javascript:void(0);"]`, {
                         onclick: args.displayModal.toggle
                     }),
                     m.component(args.content[0], args.content[1])
