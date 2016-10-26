@@ -397,7 +397,11 @@ const paymentVM = (mode = 'aon') => {
 
     const applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
-    countriesLoader.load().then(fields.countries);
+    countriesLoader.load().then((data) => {
+        const countryId = fields.userCountryId() || _.findWhere(data, {name: 'Brasil'}).id;
+        fields.countries(data);
+        fields.userCountryId(countryId);
+    });
     statesLoader.load().then((data) => {
         fields.states().push({acronym: null, name: 'Estado'});
         _.map(data, state => fields.states().push(state));
