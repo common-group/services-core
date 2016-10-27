@@ -71,7 +71,7 @@ gulp.task('typeTest', function(done){
     return gulp.src('./src/**/*.js')
     .pipe(flow({
         all: false,
-        weak: true,
+        weak: false,
         declarations: './declarations',
         killFlow: false,
         abort: true
