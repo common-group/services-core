@@ -13,12 +13,22 @@ const menuProfile = {
             userDetails = m.prop({}),
             user_id = args.user.user_id;
 
+        const userName = () => {
+            const name = userDetails().name;
+            if (name && !_.isEmpty(name)) {
+                return _.first(name.split(' '));
+            }
+
+            return '';
+        };
+
         userVM.fetchUser(user_id, true, userDetails);
 
         return {
             contributedProjects: contributedProjects,
             latestProjects: latestProjects,
             userDetails: userDetails,
+            userName: userName,
             toggleMenu: h.toggleProp(false, true)
         };
     },
@@ -32,7 +42,7 @@ const menuProfile = {
                         onclick: ctrl.toggleMenu.toggle
                     },
                     [
-                        m('.user-name-menu', user.name),
+                        m('.user-name-menu', ctrl.userName()),
                         m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
                     ]
                 ),
