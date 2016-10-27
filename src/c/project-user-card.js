@@ -13,7 +13,7 @@ const projectUserCard = {
         const contactModalC = [ownerMessageContent, args.userDetails];
         const userDetail = args.userDetails();
 
-        return m('#user-card', !userDetail ? 'carregando...' : m('.u-marginbottom-30.u-text-center-small-only', [
+        return m('#user-card', _.isEmpty(userDetail) ? 'carregando...' : m('.u-marginbottom-30.u-text-center-small-only', [
                 (ctrl.displayModal() ? m.component(modalBox, {
                     displayModal: ctrl.displayModal,
                     content: contactModalC
@@ -24,7 +24,10 @@ const projectUserCard = {
                     ]),
                     m('.w-col.w-col-8', [
                         m('.fontsize-small.link-hidden.fontweight-semibold.u-marginbottom-10.lineheight-tight[itemprop="name"]', [
-                            m('a.link-hidden[href="/users/' + userDetail.id + '"]',{onclick: h.analytics.event({cat: 'project_view',act: 'project_creator_link',lbl: userDetail.id,project: project()})}, userDetail.name)
+                            m('a.link-hidden[href="/users/' + userDetail.id + '"]',{config: m.route, onclick: () => {
+                              m.route("/users/" + userDetail.id, {user_id: userDetail.id} );
+                              h.analytics.event({cat: 'project_view',act: 'project_creator_link',lbl: userDetail.id,project: project()})
+                            }}, userDetail.name)
                         ]),
                         m('.fontsize-smallest', [
                             h.pluralize(userDetail.total_published_projects, ' criado', ' criados'),
