@@ -23,6 +23,7 @@ const projectsPayment = {
             value = contribution().value,
             phoneMask = _.partial(h.mask, '(99) 9999-99999'),
             documentMask = _.partial(h.mask, '999.999.999-99'),
+            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             zipcodeMask = _.partial(h.mask, '99999-999');
 
         //Teste para verificarmos se o chat nessa página irá trazer maior num. contribuições.
@@ -65,7 +66,15 @@ const projectsPayment = {
             }
         };
 
-        const applyDocumentMask = _.compose(vm.fields.ownerDocument, documentMask);
+        const applyDocumentMask = (value) => {
+            if(value.length > 14) {
+                vm.fields.ownerDocument(documentCompanyMask(value));
+            } else  {
+                vm.fields.ownerDocument(documentMask(value));
+            }
+
+            return void(0);
+        };
 
         const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
 
