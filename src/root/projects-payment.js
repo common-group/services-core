@@ -36,10 +36,11 @@ const projectsPayment = {
                         c.setEmail(u.email);
                         c.setName(u.name);
                     }
+                    window.zE && window.zE.hide();
                 } else {
-                    setTimeout(t, 30*1000);
+                    setTimeout(t, 1000);
                 }
-            }, 30*1000);
+            }, 1000);
         }
 
         const validateForm = () => {
