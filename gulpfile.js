@@ -20,25 +20,32 @@ var rollupFlow = require('rollup-plugin-flow');
 var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/root/**/*.js','src/c/**/*.js','src/**/*.js'];
 var tests = ['spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'];
 
+var rollupGlobals = {
+    underscore: '_',
+    moment: 'moment',
+    mithril: 'm',
+    jquery: '$',
+    'chartjs': 'Chart',
+    'replaceDiacritics': 'replaceDiacritics',
+    'mithril-postgrest': 'postgrest',
+    'i18n-js': 'I18n',
+    'CatarseAnalytics': 'CatarseAnalytics'
+};
+
 gulp.task('bundle-tests', function(done){
     rollup({
       entry: tests,
       sourceMap: true,
       format: 'iife',
       moduleName: 'catarseSpecs',
-      plugins: [babel({
-          exclude: 'node_modules/**',
-          "presets": [ "es2015-rollup" ]
-      }), multiEntry()],
-      globals: {
-          underscore: '_',
-          moment: 'moment',
-          mithril: 'm',
-          'chartjs': 'Chart',
-          'replaceDiacritics': 'replaceDiacritics',
-          'mithril-postgrest': 'postgrest',
-          'i18n-js': 'I18n'
-      }
+      plugins: [
+          babel({
+              exclude: 'node_modules/**',
+              "presets": [ "es2015-rollup" ]
+          }),
+          multiEntry()
+      ],
+      globals: rollupGlobals
     })
     .pipe(source('spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'))
     .pipe(buffer())
@@ -92,17 +99,7 @@ gulp.task('dist', function(done){
             }),
             rollupFlow()
         ],
-        globals: {
-            underscore: '_',
-            moment: 'moment',
-            mithril: 'm',
-            jquery: '$',
-            'chartjs': 'Chart',
-            'replaceDiacritics': 'replaceDiacritics',
-            'mithril-postgrest': 'postgrest',
-            'i18n-js': 'I18n',
-            'CatarseAnalytics': 'CatarseAnalytics'
-        }
+        globals: rollupGlobals
     })
     .pipe(source('src/**/*.js'))
     .pipe(buffer())
