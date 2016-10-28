@@ -353,7 +353,7 @@ const projectsPayment = {
                                 ]), !ctrl.vm.isInternational() ? m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'document\']',
-                                            ctrl.isCnpj() ? 'CNPJ *' : 'CPF *'
+                                            'CPF/CNPJ *'
                                         ),
                                         m('input.w-input.text-field[id=\'document\']', {
                                             onfocus: ctrl.vm.resetFieldError('ownerDocument'),
