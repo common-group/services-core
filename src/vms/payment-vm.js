@@ -120,11 +120,20 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const checkDocument = () => {
-        //TODO: also validate Cnpj
-        const isValid = h.validateCpf(fields.ownerDocument().replace(/[\.|\-]*/g,''));
+        const document = fields.ownerDocument(),
+            striped = String(document).replace(/[\.|\-|\/]*/g,'');
+        let isValid = false, errorMessage = '';
+
+        if (document.length > 14) {
+            isValid = h.validateCnpj(document);
+            errorMessage = 'CNPJ inválido.';
+        } else {
+            isValid = h.validateCpf(striped);
+            errorMessage = 'CPF inválido.';
+        }
 
         if (!isValid) {
-            fields.errors().push({field: 'ownerDocument', message: 'CPF inválido.'});
+            fields.errors().push({field: 'ownerDocument', message: errorMessage});
         }
     };
 
