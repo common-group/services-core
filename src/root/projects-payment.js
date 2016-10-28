@@ -24,9 +24,9 @@ const projectsPayment = {
             phoneMask = _.partial(h.mask, '(99) 9999-99999'),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            zipcodeMask = _.partial(h.mask, '99999-999');
+            zipcodeMask = _.partial(h.mask, '99999-999'),
+            isCnpj = m.prop(false);
 
-        //Teste para verificarmos se o chat nessa página irá trazer maior num. contribuições.
         if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655], project.project_id)) {
             (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
             setTimeout(function t(){
@@ -68,12 +68,14 @@ const projectsPayment = {
 
         const applyDocumentMask = (value) => {
             if(value.length > 14) {
+                isCnpj(true)
                 vm.fields.ownerDocument(documentCompanyMask(value));
             } else  {
+                isCnpj(false)
                 vm.fields.ownerDocument(documentMask(value));
             }
 
-            return void(0);
+            return;
         };
 
         const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
@@ -109,6 +111,7 @@ const projectsPayment = {
             reward: reward,
             value: value,
             mode: mode,
+            isCnpj: isCnpj,
             vm: vm
         };
     },
@@ -350,7 +353,7 @@ const projectsPayment = {
                                 ]), !ctrl.vm.isInternational() ? m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'document\']',
-                                            'CPF *'
+                                            ctrl.isCnpj() ? 'CNPJ *' : 'CPF *'
                                         ),
                                         m('input.w-input.text-field[id=\'document\']', {
                                             onfocus: ctrl.vm.resetFieldError('ownerDocument'),
