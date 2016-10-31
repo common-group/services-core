@@ -1,4 +1,11 @@
+// @flow weak
 import I18n from 'i18n-js';
+import _ from 'underscore';
+import moment from 'moment';
+import $ from 'jquery';
+import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import CatarseAnalytics from 'CatarseAnalytics';
 
 const
     _dataCache = {},
@@ -39,7 +46,7 @@ const
 
     getStoredObject = (sessionKey) => {
         if (sessionStorage.getItem(sessionKey)) {
-            return JSON.parse(sessionStorage.getItem(sessionKey));
+            return JSON.parse(String(sessionStorage.getItem(sessionKey)));
         } else {
             return undefined;
         }
@@ -64,7 +71,7 @@ const
             this.page.identifier = identifier;
         };
         s.src = '//catarseflex.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
+        s.setAttribute('data-timestamp', String(+new Date()));
         (d.head || d.body).appendChild(s);
         return m('');
     },
@@ -278,7 +285,7 @@ const
           return _dataCache.rdToken;
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
-        return meta ? (_dataCache.rdToken = meta.content) : undefined;
+        return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : undefined;
     },
 
     getMailchimpUrl = () => {
@@ -286,7 +293,7 @@ const
           return _dataCache.mailchumUrl;
 
         const meta = _.first(document.querySelectorAll('[name=mailchimp-url]'));
-        return meta ? (_dataCache.mailchumUrl = meta.content) : undefined;
+        return meta ? (_dataCache.mailchumUrl = meta.getAttribute('content')) : undefined;
     },
 
     getUser = () => {
@@ -484,7 +491,7 @@ const
 
     authenticityToken = () => {
         const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
-        return meta ? meta.content : undefined;
+        return meta ? meta.getAttribute('content') : undefined;
     },
     animateScrollTo = (el) => {
         let scrolled = window.scrollY;
@@ -573,7 +580,7 @@ const
 
                     if (!document.getElementById(integrationScript.id)){
                         document.body.appendChild(integrationScript);
-                        integrationScript.onload = () => RdIntegration.integrate(getRdToken(), eventId);
+                        integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
                         integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
                     }
 
@@ -785,7 +792,7 @@ const
           return _dataCache.rootUrl;
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
-        return meta ? (_dataCache.rootUrl = meta.content) : undefined;
+        return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : undefined;
     };
 
 setMomentifyLocale();
