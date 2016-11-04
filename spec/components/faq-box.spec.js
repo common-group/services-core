@@ -4,7 +4,7 @@ import faqBox from '../../src/c/faq-box';
 describe('FaqBox', () => {
     let $output,
         test = {
-            description: 'test_description',
+            description: 'faqBox description',
             questions: [
                 {
                     question: 'question_1',
@@ -21,15 +21,36 @@ describe('FaqBox', () => {
             ]
         };
 
+
+
     describe('view', () => {
         beforeAll(() => {
+            window.I18n.translations = {
+                pt: {
+                    projects: {
+                        faq: {
+                            title: 'faqBox title',
+                            aon: {
+                                description: test.description,
+                                questions: test.questions
+                            }
+                        }
+                    }
+                }
+            };
             $output = (mode = 'aon') => mq(
                 m(faqBox, {
                     mode: mode,
+                    vm: {
+                        locale: () => {
+                            return {locale: 'pt'}
+                        }
+                    },
                     faq: {
                         description: test.description,
                         questions: test.questions
-                    }
+                    },
+                    projectUserId: 1
                 })
             );
         });
@@ -51,7 +72,6 @@ describe('FaqBox', () => {
 
         it('should display the answer when clicking a question', () => {
             const $contextOutput = $output();
-            console.log(JSON.stringify($contextOutput));
             $contextOutput.click('#faq_question_1');
             expect($contextOutput.has('.list-answer-opened > #faq_answer_1')).toBeTrue();
         });
