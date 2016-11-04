@@ -47,11 +47,6 @@ const paymentVM = (mode = 'aon') => {
         errors: m.prop([])
     };
 
-    const faq = I18n.translations[I18n.currentLocale()].projects.faq[mode],
-        currentUser = h.getUser(),
-        countriesLoader = postgrest.loader(models.country.getPageOptions()),
-        statesLoader = postgrest.loader(models.state.getPageOptions());
-
     const populateForm = (fetchedData) => {
         const data = _.first(fetchedData),
             countryId = data.address.country_id || _.findWhere(fields.countries(), {name: 'Brasil'}).id;
@@ -100,6 +95,17 @@ const paymentVM = (mode = 'aon') => {
     const isInternational = () => {
         return !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), {name: 'Brasil'}).id : false;
     };
+
+    const getLocale = () => {
+        return isInternational()
+            ? {locale: 'en'}
+            : {locale: 'pt'};
+    };
+
+    const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
+        currentUser = h.getUser(),
+        countriesLoader = postgrest.loader(models.country.getPageOptions()),
+        statesLoader = postgrest.loader(models.state.getPageOptions());
 
     const checkEmptyFields = (checkedFields) => {
         return _.map(checkedFields, (field) => {
@@ -437,6 +443,7 @@ const paymentVM = (mode = 'aon') => {
         submissionError: submissionError,
         isLoading: isLoading,
         pagarme: pagarme,
+        locale: getLocale,
         faq: faq
     };
 };
