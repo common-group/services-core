@@ -42,9 +42,7 @@ describe('FaqBox', () => {
                 m(faqBox, {
                     mode: mode,
                     vm: {
-                        locale: () => {
-                            return {locale: 'pt'}
-                        }
+                        isInternational: () => false
                     },
                     faq: {
                         description: test.description,

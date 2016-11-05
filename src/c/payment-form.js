@@ -5,13 +5,20 @@ import paymentSlip from './payment-slip';
 import paymentCreditCard from './payment-credit-card';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
+const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const paymentForm = {
     controller(args) {
-        const isSlip = m.prop(false);
+        const isSlip = m.prop(false),
+            scope = () => {
+                return args.vm.isInternational()
+                       ? I18nIntScope()
+                       : I18nScope();
+            };
 
         return {
             isSlip: isSlip,
+            scope: scope,
             vm: args.vm
         };
     },
@@ -19,11 +26,11 @@ const paymentForm = {
         return m('#catarse_pagarme_form', [
             m('.u-text-center-small-only.u-marginbottom-30', [
                 m('.fontsize-large.fontweight-semibold',
-                    I18n.t('payment_info', I18nScope(ctrl.vm.locale()))
+                    I18n.t('payment_info', ctrl.scope())
                 ),
                 m('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [
                     m('span.fa.fa-lock'),
-                    I18n.t('safe_payment', I18nScope(ctrl.vm.locale()))
+                    I18n.t('safe_payment', ctrl.scope())
                 ])
             ]),
             m('.flex-row.u-marginbottom-40', [
@@ -32,10 +39,10 @@ const paymentForm = {
                     class: !ctrl.isSlip() ? 'selected' : ''
                 }, [
                     m('.fontsize-base.fontweight-semibold',
-                        I18n.t('credit_card_select', I18nScope(ctrl.vm.locale()))
+                        I18n.t('credit_card_select', ctrl.scope())
                     ),
                     m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-20',
-                        I18n.t('debit_card_info', I18nScope(ctrl.vm.locale()))
+                        I18n.t('debit_card_info', ctrl.scope())
                     ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png\']')
                 ]),

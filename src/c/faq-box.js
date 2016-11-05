@@ -10,7 +10,12 @@ const faqBox = {
         const mode = args.mode,
             questions = args.faq.questions,
             selectedQuestion = m.prop(-1),
-            user = m.prop({name: '...'});
+            user = m.prop({name: '...'}),
+            tKey = () => {
+                return !args.vm.isInternational()
+                       ? `${mode}`
+                       : `international.${mode}`
+            };
 
         const selectQuestion = (idx) => () => idx === selectedQuestion()
                                               ? selectedQuestion(-1)
@@ -22,12 +27,11 @@ const faqBox = {
             _.each(questions, (quest, idx) => {
                 _.extend(updatedQuestions, {
                     [idx + 1]: {
-                        question: I18n.t(`${mode}.questions.${idx}.question`, I18nScope(args.vm.locale())),
-                        answer: I18n.t(`${mode}.questions.${idx}.answer`,
+                        question: I18n.t(`${tKey()}.questions.${idx}.question`, I18nScope()),
+                        answer: I18n.t(`${tKey()}.questions.${idx}.answer`,
                                     I18nScope(
-                                        { userLink: `/users/${user().id}`,
-                                          userName: user().name,
-                                          locale: args.vm.locale().locale
+                                        { userLink: `/users/${user().id}`
+                                        , userName: user().name
                                         }
                                     )
                                 )
@@ -42,7 +46,8 @@ const faqBox = {
         return {
             scopedQuestions: scopedQuestions,
             selectQuestion: selectQuestion,
-            selectedQuestion: selectedQuestion
+            selectedQuestion: selectedQuestion,
+            tKey: tKey
         };
     },
     view(ctrl, args) {
@@ -57,13 +62,13 @@ const faqBox = {
                      ),
                      m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                          m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
-                             I18n.t(`${args.mode}.description`, I18nScope(args.vm.locale()))
+                             I18n.t(`${ctrl.tKey()}.description`, I18nScope())
                          )
                      )
                  ]
              ),
              m('.u-marginbottom-20.fontsize-small.fontweight-semibold',
-                I18n.t(`title`, I18nScope(args.vm.locale()))
+                I18n.t(`${args.vm.isInternational() ? 'international_title' : 'title'}`, I18nScope())
             ),
             m('ul.w-list-unstyled',
                 _.map(ctrl.scopedQuestions(), (question, idx) => {
