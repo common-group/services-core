@@ -5,6 +5,7 @@ import h from '../h';
 import usersVM from './user-vm';
 import models from '../models';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 const paymentVM = (mode = 'aon') => {
     const pagarme = m.prop({}),
@@ -46,11 +47,6 @@ const paymentVM = (mode = 'aon') => {
         cvv: m.prop(''),
         errors: m.prop([])
     };
-
-    const faq = I18n.translations[I18n.currentLocale()].projects.faq[mode],
-        currentUser = h.getUser(),
-        countriesLoader = postgrest.loader(models.country.getPageOptions()),
-        statesLoader = postgrest.loader(models.state.getPageOptions());
 
     const populateForm = (fetchedData) => {
         const data = _.first(fetchedData),
@@ -100,6 +96,21 @@ const paymentVM = (mode = 'aon') => {
     const isInternational = () => {
         return !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), {name: 'Brasil'}).id : false;
     };
+
+    const scope = () => {
+        return isInternational() ? I18nIntScope() : I18nScope();
+    };
+
+    const getLocale = () => {
+        return isInternational()
+            ? {locale: 'en'}
+            : {locale: 'pt'};
+    };
+
+    const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
+        currentUser = h.getUser(),
+        countriesLoader = postgrest.loader(models.country.getPageOptions()),
+        statesLoader = postgrest.loader(models.state.getPageOptions());
 
     const checkEmptyFields = (checkedFields) => {
         return _.map(checkedFields, (field) => {
@@ -178,7 +189,7 @@ const paymentVM = (mode = 'aon') => {
             dataType: 'json'
         }).then(data => {
             if (data.payment_status == 'failed'){
-                error(I18n.t('submission.slip_submission', I18nScope()));
+                error(I18n.t('submission.slip_submission', scope()));
             } else if (data.boleto_url) {
                 completed(true);
                 window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
@@ -186,7 +197,7 @@ const paymentVM = (mode = 'aon') => {
             loading(false);
             m.redraw();
         }).catch(err => {
-            error(I18n.t('submission.slip_submission', I18nScope()));
+            error(I18n.t('submission.slip_submission', scope()));
             loading(false);
             completed(false);
             m.redraw();
@@ -203,13 +214,13 @@ const paymentVM = (mode = 'aon') => {
                 })
                 .catch(() => {
                     loading(false);
-                    error(I18n.t('submission.slip_validation', I18nScope()));
+                    error(I18n.t('submission.slip_validation', scope()));
                     m.redraw();
                 })
 
         } else {
             loading(false);
-            error(I18n.t('submission.slip_validation', I18nScope()));
+            error(I18n.t('submission.slip_validation', scope()));
             m.redraw();
         }
     };
@@ -274,7 +285,7 @@ const paymentVM = (mode = 'aon') => {
             const card = setNewCreditCard();
             const errors = card.fieldErrors();
             if (_.keys(errors).length > 0) {
-                deferred.reject({message: I18n.t('submission.card_invalid', I18nScope())});
+                deferred.reject({message: I18n.t('submission.card_invalid', scope())});
             } else {
                 card.generateHash((cardHash) => {
                     const data = {
@@ -290,7 +301,7 @@ const paymentVM = (mode = 'aon') => {
             if(!_.isEmpty(error.message)){
                 deferred.reject(error);
             } else {
-                deferred.reject({message: I18n.t('submission.encryption_error', I18nScope())});
+                deferred.reject({message: I18n.t('submission.encryption_error', scope())});
             }
         });
 
@@ -324,7 +335,7 @@ const paymentVM = (mode = 'aon') => {
 
     const creditCardPaymentSuccess = (deferred, project_id, contribution_id) => (data) => {
         if (data.payment_status === 'failed') {
-            const errorMsg = data.message || I18n.t('submission.payment_failed', I18nScope());
+            const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
 
             isLoading(false);
             submissionError(I18n.t('submission.error', I18nScope({message: errorMsg})));
@@ -336,7 +347,7 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const creditCardPaymentFail = (deferred) => (data) => {
-        const errorMsg = data.message || I18n.t('submission.payment_failed', I18nScope());
+        const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
 
         isLoading(false);
         submissionError(I18n.t('submission.error', I18nScope({message: errorMsg})));
@@ -437,6 +448,7 @@ const paymentVM = (mode = 'aon') => {
         submissionError: submissionError,
         isLoading: isLoading,
         pagarme: pagarme,
+        locale: getLocale,
         faq: faq
     };
 };

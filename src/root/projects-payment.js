@@ -9,7 +9,8 @@ import faqBox from '../c/faq-box';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
+const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsPayment = {
     controller(args) {
@@ -93,6 +94,12 @@ const projectsPayment = {
             }
         };
 
+        const scope = (attr) => {
+            return vm.isInternational()
+                   ? I18nIntScope(attr)
+                   : I18nScope(attr);
+        };
+
         if (!h.getUser()) {
             return h.navigateToDevise();
         }
@@ -111,6 +118,7 @@ const projectsPayment = {
             reward: reward,
             value: value,
             mode: mode,
+            scope: scope,
             isCnpj: isCnpj,
             vm: vm
         };
@@ -120,7 +128,7 @@ const projectsPayment = {
             m('.w-col',
                 m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
                     m('.fontsize-smaller.fontweight-semibold',
-                        'Valor do apoio'
+                        I18n.t(`selected_reward.value`, ctrl.scope())
                     ),
                     m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href=\'#\']'),
                     m('.w-clearfix.u-marginbottom-20',
@@ -134,35 +142,65 @@ const projectsPayment = {
                         }
                     }, [
                         m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                            'Recompensa selecionada'
+                            I18n.t(`selected_reward.reward`, ctrl.scope())
                         ),
-                        m('.fontsize-smallest', `${ctrl.reward().description}`),
-                        m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new"]`, 'Editar')
+                        m('.fontsize-smallest',
+                            ctrl.reward().description
+                            ? ctrl.reward().description
+                            : m.trust(I18n.t(`selected_reward.review_without_reward_html`,
+                                ctrl.scope(_.extend({value: Number(ctrl.value).toFixed()}))
+                            ))
+                        ),
+                        m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new"]`,
+                            I18n.t(`selected_reward.edit`, ctrl.scope()))
                     ])
                 ])
             ),
             m('.w-container',
                 m('.w-row', [
-                    m('.w-col.w-col-8', [!_.isEmpty(ctrl.vm.fields.errors()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller[data-ix=\'display-none-on-load\']',
+                    m('.w-col.w-col-8', [!_.isEmpty(ctrl.vm.fields.errors()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
                             m('.u-marginbottom-10.fontweight-bold', [
-                                'Por favor, reveja os campos abaixo antes de prosseguir',
+                                I18n.t('errors.global', ctrl.scope()),
                                 m('.errors', _.map(ctrl.vm.fields.errors(), (error) => m('p', error.message)))
                             ])
                         ) : '',
                         m('.w-form', [
-                            m('form.u-marginbottom-40[data-name=\'Email Form\'][id=\'email-form\'][name=\'email-form\']', [
+                            m('form.u-marginbottom-40', [
                                 m('.u-marginbottom-40.u-text-center-small-only', [
                                     m('.fontweight-semibold.lineheight-tight.fontsize-large',
-                                        'Dados de contato e endereço'
+                                        I18n.t('title', ctrl.scope())
                                     ),
                                     m('.fontsize-smaller',
-                                        '* Preenchimento obrigatório'
+                                        I18n.t('required', ctrl.scope())
                                     )
+                                ]),
+                                m('.w-row.u-marginbottom-30',[
+                                    m('.w-col.w-col-7.w-sub-col', [
+                                        m('label.field-label.fontweight-semibold[for=\'country\']',[
+                                            'País / ',
+                                            m('em', 'Country'),
+                                            ' *'
+                                        ]),
+                                        m('select.w-select.text-field[id=\'country\']', {
+                                                onfocus: ctrl.vm.resetFieldError('userCountryId'),
+                                                class: ctrl.fieldHasError('userCountryId') ? 'error' : false,
+                                                onchange: m.withAttr('value', ctrl.vm.fields.userCountryId),
+                                                value: ctrl.vm.fields.userCountryId()
+                                            },
+                                            _.map(ctrl.vm.fields.countries(), (country, idx) => m('option', {
+                                                value: country.id,
+                                                key: idx,
+                                                selected: country.id === ctrl.vm.fields.userCountryId()
+                                            }, country.name))
+                                        ),
+                                        ctrl.fieldHasError('userCountryId')
+                                    ]),
+                                    m('.w-col.w-col-5')
                                 ]),
                                 m('.w-row', [
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'complete-name\']',
-                                            'Nome completo *'
+                                            I18n.t('fields.complete_name', ctrl.scope())
                                         ),
                                         m('input.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
                                             onfocus: ctrl.vm.resetFieldError('completeName'),
@@ -177,7 +215,7 @@ const projectsPayment = {
                                     ]),
                                     m('.w-col.w-col-5', [
                                         m('label.field-label.fontweight-semibold[for=\'email\']',
-                                            'Email *'
+                                            I18n.t('fields.email', ctrl.scope())
                                         ),
                                         m('input.w-input.text-field[id=\'email\']', {
                                             onfocus: ctrl.vm.resetFieldError('email'),
@@ -198,112 +236,70 @@ const projectsPayment = {
                                         checked: ctrl.vm.fields.anonymous(),
                                     }),
                                     m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
-                                        'Quero que meu apoio não fique público'
+                                        I18n.t('fields.anonymous', ctrl.scope())
                                     )
                                 ]),
                                 ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
                                     m('div', [
                                         m('span.fontweight-bold', [
-                                            I18n.t('edit.anonymous_confirmation_title', I18nScope()),
+                                            I18n.t('anonymous_confirmation_title', ctrl.scope()),
                                             m('br')
                                         ]),
                                         m('br'),
-                                        I18n.t('edit.anonymous_confirmation', I18nScope())
+                                        I18n.t('anonymous_confirmation', ctrl.scope())
                                     ])
                                 ) : ''
                             ])
                         ]),
                         m('.u-marginbottom-40',
                             m('.w-form', [
-                                m('.w-row', [
-                                    m('.w-col.w-col-6.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold[for=\'country\']',
-                                            'País *'
-                                        ),
-                                        m('select.w-select.text-field[id=\'country\']', {
-                                                onfocus: ctrl.vm.resetFieldError('userCountryId'),
-                                                class: ctrl.fieldHasError('userCountryId') ? 'error' : false,
-                                                onchange: m.withAttr('value', ctrl.vm.fields.userCountryId),
-                                                value: ctrl.vm.fields.userCountryId()
-                                            },
-                                            _.map(ctrl.vm.fields.countries(), (country, idx) => m('option', {
-                                                value: country.id,
-                                                key: idx,
-                                                selected: country.id === ctrl.vm.fields.userCountryId()
-                                            }, country.name))
-                                        ),
-                                        ctrl.fieldHasError('userCountryId')
-                                    ]),
-                                    m('.w-col.w-col-6', [
-                                        m('label.field-label.fontweight-semibold[for=\'zip-code\']',
-                                            !ctrl.vm.isInternational() ? 'CEP *' : 'ZIP'
-                                        ),
-                                        m('input.w-input.text-field[id=\'zip-code\']', {
-                                            type: 'tel',
-                                            onfocus: ctrl.vm.resetFieldError('zipCode'),
-                                            class: ctrl.fieldHasError('zipCode') ? 'error' : false,
-                                            onchange: ctrl.addressChange(),
-                                            onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
-                                            value: ctrl.vm.fields.zipCode(),
-                                            placeholder: '42100000'
-                                        }),
-                                        ctrl.fieldHasError('zipCode')
-                                    ])
-                                ]),
-                                m('.w-row', [
-                                    m('.w-col.w-col-6.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold[for=\'street\']',
-                                            'Rua *'
-                                        ),
-                                        m('input.w-input.text-field[id=\'street\']', {
-                                            onfocus: ctrl.vm.resetFieldError('street'),
-                                            class: ctrl.fieldHasError('street') ? 'error' : false,
-                                            type: 'text',
-                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.street)),
-                                            value: ctrl.vm.fields.street(),
-                                            required: 'required',
-                                            placeholder: 'Rua Da Minha Casa'
-                                        }),
-                                        ctrl.fieldHasError('street')
-                                    ]),
-                                    m('.w-col.w-col-6',
-                                        m('.w-row', [
-                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
-                                                m('label.field-label.fontweight-semibold[for=\'number\']',
-                                                    'Número *'
-                                                ),
-                                                m('input.w-input.text-field[id=\'number\']', {
-                                                    onfocus: ctrl.vm.resetFieldError('number'),
-                                                    class: ctrl.fieldHasError('number') ? 'error' : false,
-                                                    type: 'text',
-                                                    onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.number)),
-                                                    value: ctrl.vm.fields.number(),
-                                                    required: 'required',
-                                                    placeholder: '421'
-                                                }),
-                                                ctrl.fieldHasError('number')
-                                            ]),
-                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
-                                                m('label.field-label.fontweight-semibold[for=\'address-complement\']',
-                                                    'Complemento'
-                                                ),
-                                                m('input.w-input.text-field[id=\'address-complement\']', {
-                                                    onfocus: ctrl.vm.resetFieldError('addressComplement'),
-                                                    class: ctrl.fieldHasError('addressComplement') ? 'error' : false,
-                                                    type: 'text',
-                                                    onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.addressComplement)),
-                                                    value: ctrl.vm.fields.addressComplement(),
-                                                    placeholder: 'Residencial 123'
-                                                }),
-                                                ctrl.fieldHasError('addressComplement')
-                                            ])
-                                        ])
-                                    )
-                                ]),
+                                m('label.field-label.fontweight-semibold[for=\'street\']',
+                                    I18n.t('fields.street', ctrl.scope())
+                                ),
+                                m('input.w-input.text-field[id=\'street\']', {
+                                    onfocus: ctrl.vm.resetFieldError('street'),
+                                    class: ctrl.fieldHasError('street') ? 'error' : false,
+                                    type: 'text',
+                                    onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.street)),
+                                    value: ctrl.vm.fields.street(),
+                                    required: 'required',
+                                    placeholder: 'Rua Da Minha Casa'
+                                }),
+                                ctrl.fieldHasError('street'),
+
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-sub-col', [
+                                        m('label.field-label.fontweight-semibold[for=\'number\']',
+                                            I18n.t('fields.street_number', ctrl.scope())
+                                        ),
+                                        m('input.w-input.text-field[id=\'number\']', {
+                                            onfocus: ctrl.vm.resetFieldError('number'),
+                                            class: ctrl.fieldHasError('number') ? 'error' : false,
+                                            type: 'text',
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.number)),
+                                            value: ctrl.vm.fields.number(),
+                                            required: 'required',
+                                            placeholder: '421'
+                                        }),
+                                        ctrl.fieldHasError('number')
+                                    ]),
+                                    m('.w-col.w-col-4.w-sub-col', [
+                                        m('label.field-label.fontweight-semibold[for=\'address-complement\']',
+                                            I18n.t('fields.street_complement', ctrl.scope())
+                                        ),
+                                        m('input.w-input.text-field[id=\'address-complement\']', {
+                                            onfocus: ctrl.vm.resetFieldError('addressComplement'),
+                                            class: ctrl.fieldHasError('addressComplement') ? 'error' : false,
+                                            type: 'text',
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.addressComplement)),
+                                            value: ctrl.vm.fields.addressComplement(),
+                                            placeholder: 'Residencial 123'
+                                        }),
+                                        ctrl.fieldHasError('addressComplement')
+                                    ]),
+                                    m('.w-col.w-col-4', [
                                         m('label.field-label.fontweight-semibold[for=\'neighbourhood\']',
-                                            `Bairro ${ctrl.vm.isInternational() ? '' : '*'}`
+                                            I18n.t('fields.neighbourhood', ctrl.scope())
                                         ),
                                         m('input.w-input.text-field[id=\'neighbourhood\']', {
                                             onfocus: ctrl.vm.resetFieldError('neighbourhood'),
@@ -315,10 +311,27 @@ const projectsPayment = {
                                             placeholder: 'São José'
                                         }),
                                         ctrl.fieldHasError('neighbourhood')
+                                    ])
+                                ]),
+                                m('.w-row', [
+                                    m('.w-col.w-col-4.w-sub-col', [
+                                        m('label.field-label.fontweight-semibold[for=\'zip-code\']',
+                                            I18n.t('fields.zipcode', ctrl.scope())
+                                        ),
+                                        m('input.w-input.text-field[id=\'zip-code\']', {
+                                            type: 'tel',
+                                            onfocus: ctrl.vm.resetFieldError('zipCode'),
+                                            class: ctrl.fieldHasError('zipCode') ? 'error' : false,
+                                            onchange: ctrl.addressChange(),
+                                            onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
+                                            value: ctrl.vm.fields.zipCode(),
+                                            placeholder: '42100000'
+                                        }),
+                                        ctrl.fieldHasError('zipCode')
                                     ]),
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'city\']',
-                                            'Cidade *'
+                                            I18n.t('fields.city', ctrl.scope())
                                         ),
                                         m('input.w-input.text-field[id=\'city\']', {
                                             onfocus: ctrl.vm.resetFieldError('city'),
@@ -333,7 +346,7 @@ const projectsPayment = {
                                     ]),
                                     m('.w-col.w-col-4', [
                                         m('label.field-label.fontweight-semibold[for=\'state\']',
-                                            'Estado *'
+                                            I18n.t('fields.state', ctrl.scope())
                                         ),
                                         ctrl.vm.isInternational() ? m('input.w-input.text-field[id=\'address-state\']', {
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
@@ -350,10 +363,11 @@ const projectsPayment = {
                                         ),
                                         ctrl.fieldHasError('userState')
                                     ])
-                                ]), !ctrl.vm.isInternational() ? m('.w-row', [
+                                ]),
+                                !ctrl.vm.isInternational() ? m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'document\']',
-                                            'CPF/CNPJ *'
+                                            I18n.t('fields.owner_document', ctrl.scope())
                                         ),
                                         m('input.w-input.text-field[id=\'document\']', {
                                             onfocus: ctrl.vm.resetFieldError('ownerDocument'),
@@ -367,7 +381,7 @@ const projectsPayment = {
                                     ]),
                                     m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'phone\']',
-                                            'Telefone *'
+                                            I18n.t('fields.phone', ctrl.scope())
                                         ),
                                         m('input.w-input.text-field[id=\'phone\']', {
                                             onfocus: ctrl.vm.resetFieldError('phone'),
@@ -387,7 +401,7 @@ const projectsPayment = {
                                 m('button.btn.btn-large', {
                                         onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_next_click'}, ctrl.validateForm)
                                     },
-                                    'Próximo passo'
+                                    I18n.t('next_step', ctrl.scope())
                                 )
                             )
                         ),
@@ -401,25 +415,35 @@ const projectsPayment = {
                     m('.w-col.w-col-4', [
                         m('.w-hidden-small.w-hidden-tiny.card.u-radius.u-marginbottom-20', [
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                                'Valor do apoio'
+                                I18n.t(`selected_reward.value`, ctrl.scope())
                             ),
                             m('.w-clearfix.u-marginbottom-20', [
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${Number(ctrl.value).toFixed()}`
                                 ),
-                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? '?reward_id=' + ctrl.reward().id : '' }"]`, 'Editar')
+                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? '?reward_id=' + ctrl.reward().id : '' }"]`,
+                                    I18n.t(`selected_reward.edit`, ctrl.scope()))
                             ]),
                             m('.back-payment-info-reward', [
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                    'Recompensa selecionada'
+                                    I18n.t(`selected_reward.reward`, ctrl.scope())
                                 ),
-                                m('.fontsize-smallest', ctrl.reward().description ? ctrl.reward().description : `Você irá apoiar com R$ ${Number(ctrl.value).toFixed()} e não quer nenhuma recompensa por seu apoio.`)
+                                m('.fontsize-smallest',
+                                    ctrl.reward().description
+                                    ? ctrl.reward().description
+                                    : m.trust(I18n.t(`selected_reward.review_without_reward_html`,
+                                        ctrl.scope(
+                                            _.extend({value: Number(ctrl.value).toFixed()})
+                                        )
+                                    ))
+                                )
 
                             ])
                         ]),
                         m.component(faqBox, {
                             mode: ctrl.mode,
-                            faq: ctrl.vm.faq,
+                            vm: ctrl.vm,
+                            faq: ctrl.vm.faq(),
                             projectUserId: ctrl.projectUserId
                         })
                     ])
