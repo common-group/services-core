@@ -117,7 +117,7 @@ const paymentVM = (mode = 'aon') => {
             const val = fields[field]();
 
             if (!h.existy(val) || _.isEmpty(String(val).trim())) {
-                fields.errors().push({field: field, message: 'O campo não pode ser vazio.'});
+                fields.errors().push({field: field, message: I18n.t('validation.empty_field', scope())});
             }
         });
     };
@@ -126,7 +126,7 @@ const paymentVM = (mode = 'aon') => {
         const isValid = h.validateEmail(fields.email());
 
         if (!isValid){
-            fields.errors().push({field: 'email', message: 'E-mail inválido.'});
+            fields.errors().push({field: 'email', message: I18n.t('validation.email', scope())});
         }
     };
 
@@ -150,7 +150,7 @@ const paymentVM = (mode = 'aon') => {
 
     const checkUserState = () => {
         if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
-            fields.errors().push({field: 'userState', message: 'Estado é obrigatório.'});
+            fields.errors().push({field: 'userState', message: I18n.t('validation.state', scope())});
         }
     };
 
@@ -338,7 +338,7 @@ const paymentVM = (mode = 'aon') => {
             const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
 
             isLoading(false);
-            submissionError(I18n.t('submission.error', I18nScope({message: errorMsg})));
+            submissionError(I18n.t('submission.error', scope({message: errorMsg})));
             m.redraw();
             deferred.reject();
         } else {
@@ -350,7 +350,7 @@ const paymentVM = (mode = 'aon') => {
         const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
 
         isLoading(false);
-        submissionError(I18n.t('submission.error', I18nScope({message: errorMsg})));
+        submissionError(I18n.t('submission.error', scope({message: errorMsg})));
         m.redraw();
         deferred.reject();
     };
