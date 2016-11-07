@@ -267,7 +267,7 @@ const projectsPayment = {
                                 }),
                                 ctrl.fieldHasError('street'),
 
-                                m('.w-row', [
+                                m('.w-row', (ctrl.vm.isInternational() ? '' : [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'number\']',
                                             I18n.t('fields.street_number', ctrl.scope())
@@ -297,7 +297,7 @@ const projectsPayment = {
                                         }),
                                         ctrl.fieldHasError('addressComplement')
                                     ]),
-                                    m('.w-col.w-col-4', [
+                                    m('.w-col.w-col-4', (ctrl.vm.isInternational() ? '' : [
                                         m('label.field-label.fontweight-semibold[for=\'neighbourhood\']',
                                             I18n.t('fields.neighbourhood', ctrl.scope())
                                         ),
@@ -311,8 +311,8 @@ const projectsPayment = {
                                             placeholder: 'São José'
                                         }),
                                         ctrl.fieldHasError('neighbourhood')
-                                    ])
-                                ]),
+                                    ]))
+                                ])),
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
@@ -325,6 +325,7 @@ const projectsPayment = {
                                             onchange: ctrl.addressChange(),
                                             onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
+                                            required: 'required',
                                             placeholder: '42100000'
                                         }),
                                         ctrl.fieldHasError('zipCode')
@@ -350,7 +351,9 @@ const projectsPayment = {
                                         ),
                                         ctrl.vm.isInternational() ? m('input.w-input.text-field[id=\'address-state\']', {
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
-                                            value: ctrl.vm.fields.userState()
+                                            class: ctrl.fieldHasError('userState') ? 'error' : false,
+                                            value: ctrl.vm.fields.userState(),
+                                            required: 'required'
                                         }) : m('select.w-select.text-field[id=\'address-state\']', {
                                                 onfocus: ctrl.vm.resetFieldError('userState'),
                                                 class: ctrl.fieldHasError('userState') ? 'error' : false,

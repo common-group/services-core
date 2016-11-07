@@ -152,17 +152,17 @@ const paymentVM = (mode = 'aon') => {
         if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
             fields.errors().push({field: 'userState', message: 'Estado é obrigatório.'});
         }
-    }
+    };
 
     const validate = () => {
         fields.errors([]);
 
-        checkEmptyFields(['completeName', 'street', 'number', 'city', 'userCountryId']);
+        checkEmptyFields(['completeName', 'zipCode', 'street', 'userState', 'city', 'userCountryId']);
 
         checkEmail();
 
         if (!isInternational()){
-            checkEmptyFields(['phone', 'neighbourhood', 'zipCode', 'ownerDocument', 'userState']);
+            checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
             checkUserState();
             checkDocument();
         }
