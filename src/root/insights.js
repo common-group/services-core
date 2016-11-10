@@ -254,7 +254,7 @@ const insights = {
                         ]),
                     ])
                 ]),
-            (project.state === 'online' ?
+            (project.state === 'online' && (project.is_admin_role || project.pledged == 0) ?
                 m.component(projectCancelButton, {project: project})
             : '')
 
