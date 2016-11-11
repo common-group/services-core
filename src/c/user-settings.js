@@ -11,7 +11,10 @@ const userSettings = {
     controller(args) {
         const user = args.user,
               fields = {
-                  email: m.prop(user.email),
+                  email: m.prop(''),
+                  email_confirmation: m.prop(''),
+                  password: m.prop(''),
+                  current_password: m.prop(''),
                   owner_document: m.prop(user.owner_document),
                   country_id: m.prop(user.address.country_id),
                   street: m.prop(user.address.street),
@@ -25,15 +28,21 @@ const userSettings = {
                   name: m.prop(user.name)
               },
               user_id = args.userId,
-              error = m.prop(false),
+              error = m.prop(''),
+              showEmailForm = h.toggleProp(false, true),
               countries = m.prop(),
               states = m.prop(),
               countriesLoader = postgrest.loader(models.country.getPageOptions()),
               statesLoader = postgrest.loader(models.state.getPageOptions()),
               loader = m.prop(true),
               onSubmit = () => {
+                if (fields.email() !== fields.email_confirmation()){
+                  error('Confirmação de email está incorreta.');
+                }
+                else{
                   updateUserData(user_id);
                   m.redraw();
+                }
 
                   return false;
               },
@@ -56,6 +65,8 @@ const userSettings = {
                       address_neighbourhood: fields.neighbourhood(),
                       phone_number: fields.phonenumber(),
                       owner_document: fields.owner_document(),
+                      current_password: fields.current_password(),
+                      password: fields.password(),
                       name: fields.name()
                   };
 
@@ -79,6 +90,7 @@ const userSettings = {
             states: states,
             fields: fields,
             loader: loader,
+            showEmailForm: showEmailForm,
             user: user,
             onSubmit: onSubmit,
             error: error
@@ -93,6 +105,7 @@ const userSettings = {
               onsubmit: ctrl.onSubmit
           }, [
             m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'settings\']'),
+            ctrl.error(),
             m('div',
                 [
                     m('.w-container',
@@ -108,21 +121,24 @@ const userSettings = {
                                     m('.fontsize-base.u-marginbottom-40',
                                         [
                                             m('span.fontweight-semibold.card.u-radius',
-                                                fields.email()
+                                                user.email
                                             ),
-                                            m('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']',
+                                            m('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', {onclick: () => {ctrl.showEmailForm.toggle()}},
                                                 'Alterar email'
                                             )
                                         ]
                                     ),
-                                    m('.w-hidden.u-marginbottom-20.w-row[id=\'email_update_form\']',
+                                    m(`${ctrl.showEmailForm() ? '' : '.w-hidden'}.u-marginbottom-20.w-row[id=\'email_update_form\']`,
                                         [
                                             m('.w-col.w-col-6.w-sub-col',
                                                 [
                                                     m('label.field-label.fontweight-semibold',
                                                         'Novo email'
                                                     ),
-                                                    m('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\'][value=\'\']')
+                                                    m('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
+                                                      value: fields.email(),
+                                                      onchange: m.withAttr('value', fields.email)
+                                                    })
                                                 ]
                                             ),
                                             m('.w-col.w-col-6',
@@ -130,7 +146,10 @@ const userSettings = {
                                                     m('label.field-label.fontweight-semibold',
                                                         'Confirmar novo email'
                                                     ),
-                                                    m('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\'][value=\'\']')
+                                                    m('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
+                                                      value: fields.email_confirmation(),
+                                                      onchange: m.withAttr('value', fields.email_confirmation)
+                                                    })
                                                 ]
                                             )
                                         ]
@@ -177,14 +196,15 @@ const userSettings = {
                                                     m('label.field-label',
                                                         'País'
                                                     ),
-                                                    m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']',
+                                                    m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
+                                                        onchange: m.withAttr('value', fields.country_id)
+                                                        },
                                                         [
                                                           m('option[value=\'\']'),
                                                           (!_.isEmpty(ctrl.countries()) ?
                                                             _.map(ctrl.countries(), (country) => {
                                                                 return m(`option${country.id == fields.country_id() ? '[selected="selected"]' : ''}`, {
-                                                                    value: country.id,
-                                                                    onchange: m.withAttr('value', fields.country_id)
+                                                                    value: country.id
                                                                 },
                                                                 country.name
                                                               );
@@ -283,15 +303,17 @@ const userSettings = {
                                                     m('label.field-label',
                                                         'Estado'
                                                     ),
-                                                    m('select.select.optional.w-input.text-field.w-select.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_state\'][name=\'user[address_state]\']',
+                                                    m('select.select.optional.w-input.text-field.w-select.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_state\'][name=\'user[address_state]\']', {
+
+                                                        onchange: m.withAttr('value', fields.state)
+                                                        },
                                                         [
                                                           m('option[value=\'\']'),
                                                           (!_.isEmpty(ctrl.states()) ?
                                                             _.map(ctrl.states(), (state) => {
                                                               return m(`option[value='${state.acronym}']${state.acronym == fields.state() ? '[selected="selected"]' : ''}`,
                                                                 {
-                                                                  value: fields.state(),
-                                                                  onchange: m.withAttr('value', fields.state)
+                                                                  value: state.acronym
                                                                 },
                                                                 state.name
                                                               );
@@ -352,18 +374,24 @@ const userSettings = {
                                         [
                                             m('.w-col.w-col-6.w-sub-col',
                                                 [
-                                                    m('label.field-label.fontweight-semibold[for=\'email-20\']',
+                                                    m('label.field-label.fontweight-semibold',
                                                         ' Senha atual'
                                                     ),
-                                                    m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_current_password\'][name=\'user[current_password]\'][type=\'password\']')
+                                                    m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_current_password\'][name=\'user[current_password]\'][type=\'password\']', {
+                                                      value: fields.current_password(),
+                                                      onchange: m.withAttr('value', fields.current_password)
+                                                    })
                                                 ]
                                             ),
                                             m('.w-col.w-col-6',
                                                 [
-                                                    m('label.field-label.fontweight-semibold[for=\'email-21\']',
+                                                    m('label.field-label.fontweight-semibold',
                                                         ' Nova senha'
                                                     ),
-                                                    m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']')
+                                                    m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
+                                                      value: fields.password(),
+                                                      onchange: m.withAttr('value', fields.password)
+                                                    })
                                                 ]
                                             )
                                         ]
