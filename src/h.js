@@ -1,4 +1,4 @@
-// @flow weak
+// @flow
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import moment from 'moment';
@@ -8,62 +8,62 @@ import postgrest from 'mithril-postgrest';
 import CatarseAnalytics from 'CatarseAnalytics';
 
 const
-    _dataCache = {},
-    hashMatch = (str) => { return window.location.hash === str; },
-    paramByName = (name) => {
+    _dataCache : Object = {},
+    hashMatch = (str: string): boolean => { return window.location.hash === str; },
+    paramByName = (name: string): string => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
             regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-  	selfOrEmpty = (obj, emptyState = '') => {
+  	selfOrEmpty = (obj: any, emptyState: string = ''): any => {
       return obj ? obj : emptyState;
   	},
-    setMomentifyLocale = () => {
+    setMomentifyLocale = (): void => {
         moment.locale('pt', {
                 months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
                 monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
             });
     },
-    existy = (x) => {
+    existy = (x: any): boolean => {
         return x != null;
     },
 
-    momentify = (date, format) => {
+    momentify = (date: string, format: string): string => {
         format = format || 'DD/MM/YYYY';
         return date ? moment(date).locale('pt').format(format) : 'no date';
     },
 
-    storeAction = (action, value) => {
+    storeAction = (action: string, value: string) => {
         if (!sessionStorage.getItem(action)) {
             return sessionStorage.setItem(action, String(value));
         }
     },
 
-    storeObject = (sessionKey, obj) => {
+    storeObject = (sessionKey: string, obj: Object) => {
         return sessionStorage.setItem(sessionKey, JSON.stringify(obj));
     },
 
-    getStoredObject = (sessionKey) => {
+    getStoredObject = (sessionKey: string): ?Object => {
         if (sessionStorage.getItem(sessionKey)) {
             return JSON.parse(String(sessionStorage.getItem(sessionKey)));
         } else {
-            return undefined;
+            return null;
         }
     },
 
-    callStoredAction = (action) => {
+    callStoredAction = (action: string): ?string => {
         const item = sessionStorage.getItem(action);
 
         if (item) {
             sessionStorage.removeItem(action);
             return item;
         } else {
-            return false;
+            return null;
         }
     },
 
-    discuss = (page, identifier) => {
+    discuss = (page: Object, identifier: string) => {
         const d = document,
             s = d.createElement('script');
         window.disqus_config = function() {
@@ -76,12 +76,12 @@ const
         return m('');
     },
 
-    validateEmail = (email) => {
+    validateEmail = (email: string): boolean => {
         const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         return re.test(email);
     },
 
-    validateCnpj = (cnpjStr) => {
+    validateCnpj = (cnpjStr: string): boolean => {
         let tamanho, numeros, digitos, soma, pos, resultado;
         let cnpj = cnpjStr.replace(/[^\d]+/g,'');
 
@@ -115,13 +115,13 @@ const
         pos = tamanho - 7;
 
         for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
+            soma += Number(numeros.charAt(tamanho - i)) * pos--;
             if (pos < 2) {
                 pos = 9;
             }
         }
         resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado != digitos.charAt(0))
+        if (String(resultado) != digitos.charAt(0))
             return false;
 
         tamanho = tamanho + 1;
@@ -129,20 +129,20 @@ const
         soma = 0;
         pos = tamanho - 7;
         for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
+            soma += Number(numeros.charAt(tamanho - i)) * pos--;
             if (pos < 2) {
                 pos = 9;
             }
         }
         resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado != digitos.charAt(1)) {
+        if (String(resultado) != digitos.charAt(1)) {
             return false;
         }
 
         return true;
     },
 
-    validateCpf = (strCPF) => {
+    validateCpf = (strCPF: string): boolean => {
         let sum = 0, remainder;
 
         if (strCPF == '00000000000') return false;
@@ -179,15 +179,15 @@ const
         return true;
     },
 
-    validationErrors = m.prop([]),
+    validationErrors: Function = m.prop([]),
 
-    resetValidations = () => validationErrors([]),
+    resetValidations = (): Array<Object> => validationErrors([]),
 
-    validate = () => {
+    validate = (): {submit: Function, hasError: Function} => {
         const errorFields = m.prop([]);
 
         return {
-            submit(fields, fn) {
+            submit(fields: Object, fn: Function) {
                 return () => {
                     resetValidations();
 
@@ -208,30 +208,30 @@ const
                     return !validationErrors().length > 0 ? fn() : false;
                 };
             },
-            hasError(fieldProp) {
+            hasError(fieldProp: Function): boolean {
                 return _.reduce(validationErrors(), (memo, fieldError) => fieldError.field() === fieldProp() || memo, false);
             }
         };
     },
 
-    momentFromString = (date, format) => {
+    momentFromString = (date: string, format: string): string => {
         const european = moment(date, format || 'DD/MM/YYYY');
         return european.isValid() ? european : moment(date);
     },
 
-    translatedTimeUnits = {
+    translatedTimeUnits: {days: string, minutes: string, hours: string, seconds: string} = {
         days: 'dias',
         minutes: 'minutos',
         hours: 'horas',
         seconds: 'segundos'
     },
     //Object manipulation helpers
-    translatedTime = (time) => {
+    translatedTime = (time: {unit: ?string, total: ?number}): {unit: string, total: ?number} => {
         const translatedTime = translatedTimeUnits,
             unit = () => {
                 const projUnit = translatedTime[time.unit || 'seconds'];
 
-                return (time.total <= 1) ? projUnit.slice(0, -1) : projUnit;
+                return (Number(time.total) <= 1) ? projUnit.slice(0, -1) : projUnit;
             };
 
         return {
@@ -241,8 +241,8 @@ const
     },
 
     //Number formatting helpers
-    generateFormatNumber = (s, c) => {
-        return (number, n, x) => {
+    generateFormatNumber = (s: string, c: string): Function => {
+        return (number, n, x): ?string => {
             if (!_.isNumber(number)) {
                 return null;
             }
@@ -254,7 +254,7 @@ const
     },
     formatNumber = generateFormatNumber('.', ','),
 
-    toggleProp = (defaultState, alternateState) => {
+    toggleProp = (defaultState: any, alternateState: any): Function => {
         const p = m.prop(defaultState);
         p.toggle = () => {
             return p(((p() === alternateState) ? defaultState : alternateState));
@@ -263,11 +263,11 @@ const
         return p;
     },
 
-    idVM = postgrest.filtersVM({
+    idVM: Function = postgrest.filtersVM({
         id: 'eq'
     }),
 
-    getCurrentProject = () => {
+    getCurrentProject = (): ?Object => {
         if (_dataCache.currentProject)
           return _dataCache.currentProject;
 
@@ -276,35 +276,35 @@ const
         if (data) {
             return _dataCache.currentProject = JSON.parse(data);
         } else {
-            return false;
+            return null;
         }
     },
 
-    getRdToken = () => {
+    getRdToken = (): ?string => {
         if (_dataCache.rdToken)
           return _dataCache.rdToken;
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
-        return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : undefined;
+        return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : null;
     },
 
-    getSimilityCustomer = () => {
+    getSimilityCustomer = (): ?string => {
         if (_dataCache.similityCustomer)
             return _dataCache.similityCustomer;
 
         const meta = _.first(document.querySelectorAll('[name=simility-customer]'));
-        return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : undefined;
+        return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : null;
     },
 
-    getMailchimpUrl = () => {
+    getMailchimpUrl = (): ?string => {
         if (_dataCache.mailchumUrl)
           return _dataCache.mailchumUrl;
 
         const meta = _.first(document.querySelectorAll('[name=mailchimp-url]'));
-        return meta ? (_dataCache.mailchumUrl = meta.getAttribute('content')) : undefined;
+        return meta ? (_dataCache.mailchumUrl = meta.getAttribute('content')) : null;
     },
 
-    getUser = () => {
+    getUser = (): ?Object => {
         if (_dataCache.user)
           return _dataCache.user;
 
@@ -313,11 +313,24 @@ const
         if (data) {
             return _dataCache.user = JSON.parse(data);
         } else {
-            return false;
+            return null;
         }
     },
 
-    getApiHost = () => {
+    getBlogPosts = (): ?Object => {
+        if (_dataCache.blogPosts)
+            return _dataCache.blogPosts;
+
+        var posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
+
+        if (posts) {
+            return _dataCache.blogPosts = JSON.parse(posts);
+        } else {
+            return null;
+        }
+    },
+
+    getApiHost = (): ?string => {
         if (_dataCache.apiHost)
           return _dataCache.apiHost;
 
@@ -325,23 +338,23 @@ const
         return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
-    locationActionMatch = (action) => {
+    locationActionMatch = (action: string): boolean => {
         const act = window.location.pathname.split('/').slice(-1)[0];
         return action === act;
     },
 
-    useAvatarOrDefault = (avatarPath) => {
+    useAvatarOrDefault = (avatarPath: string): string => {
         return avatarPath || '/assets/catarse_bootstrap/user.jpg';
     },
 
     //Templates
-    loader = () => {
+    loader = (): mNode => {
         return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
             m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
         ]);
     },
 
-    newFeatureBadge = () => {
+    newFeatureBadge = (): mNode => {
         return m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge'));
     },
 
@@ -357,17 +370,17 @@ const
         return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
     },
 
-    pluralize = (count, s, p) => {
+    pluralize = (count: number, s: string, p: string): string => {
         return (count > 1 ? count + p : count + s);
     },
 
-    strip = (html) =>  {
+    strip = (html: string): string =>  {
         var tmp = document.createElement('div');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
     },
 
-    simpleFormat = (str = '') => {
+    simpleFormat = (str: string = ''): string => {
         str = str.replace(/\r\n?/, '\n');
         if (str.length > 0) {
             str = str.replace(/\n\n+/g, '</p><p>');
@@ -377,30 +390,30 @@ const
         return str;
     },
 
-    rewardSouldOut = (reward) => {
+    rewardSouldOut = (reward: Object): boolean => {
         return (reward.maximum_contributions > 0 ?
             (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
     },
 
-    rewardRemaning = (reward) => {
+    rewardRemaning = (reward: Object): number => {
         return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
     },
 
-    parseUrl = (href) => {
+    parseUrl = (href: string): Node => {
         const l = document.createElement('a');
         l.href = href;
         return l;
     },
 
-    UIHelper = () => {
-        return (el, isInitialized) => {
+    UIHelper = (): Function => {
+        return (el, isInitialized): void => {
             if (!isInitialized && window.$) {
                 window.UIHelper.setupResponsiveIframes($(el));
             }
         };
     },
 
-    toAnchor = () => {
+    toAnchor = (): mConfig => {
         return (el, isInitialized) => {
             if (!isInitialized){
                 const hash = window.location.hash.substr(1);
@@ -419,12 +432,12 @@ const
         return false;
     },
 
-    navigateTo = (path) => {
+    navigateTo = (path: string) => {
         window.location.href = path;
         return false;
     },
 
-    cumulativeOffset = (element) => {
+    cumulativeOffset = (element: HTMLElement): {top: number, left: number} => {
         let top = 0, left = 0;
         do {
             top += element.offsetTop  || 0;
@@ -438,8 +451,8 @@ const
         };
     },
 
-    closeModal = () => {
-        //temp for rails unstyled close links
+    closeModal = (): void => {
+        // Temp for rails unstyled close links
         let elById = document.getElementById('modal-close');
         if (_.isElement(elById)){
             elById.onclick = (event) => {
@@ -458,23 +471,24 @@ const
         };
     },
 
-    closeFlash = () => {
+    closeFlash = (): void => {
         let el = document.getElementsByClassName('icon-close')[0];
         if (_.isElement(el)){
             el.onclick = (event) => {
                 event.preventDefault();
-
-                el.parentElement.remove();
+                if (el.parentElement) {
+                    el.parentElement.remove();
+                }
             };
         };
     },
 
-    i18nScope = (scope, obj) => {
+    i18nScope = (scope: Object, obj: Object) => {
         obj = obj || {};
         return _.extend({}, obj, {scope: scope});
     },
 
-    redrawHashChange = (before) => {
+    redrawHashChange = (before: any) => {
         const callback = _.isFunction(before) ?
                   () => {
                       before();
@@ -488,7 +502,7 @@ const
         const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
         return meta ? meta.getAttribute('content') : undefined;
     },
-    animateScrollTo = (el) => {
+    animateScrollTo = (el: HTMLElement) => {
         let scrolled = window.scrollY;
 
         const offset = cumulativeOffset(el).top,
@@ -508,9 +522,9 @@ const
                 scrolled = scrolled + dFrame;
             }, 1);
     },
-    scrollTo = () => {
-        const setTrigger = (el, anchorId) => {
-            el.onclick = () => {
+    scrollTo = (): mConfig => {
+        const setTrigger = (el: HTMLElement, anchorId: string): void => {
+            el.onclick = (): boolean => {
                 const anchorEl = document.getElementById(anchorId);
 
                 if (_.isElement(anchorEl)) {
@@ -528,63 +542,65 @@ const
         };
     },
 
-        projectStateTextClass = (state) => {
-            const statusText = {
-                    online: {
-                        cssClass: 'text-success',
-                        text: 'NO AR'
-                    },
-                    successful: {
-                        cssClass: 'text-success',
-                        text: 'FINANCIADO'
-                    },
-                    failed: {
-                        cssClass: 'text-error',
-                        text: 'NÃO FINANCIADO'
-                    },
-                    waiting_funds: {
-                        cssClass: 'text-waiting',
-                        text: 'AGUARDANDO'
-                    },
-                    rejected: {
-                        cssClass: 'text-error',
-                        text: 'RECUSADO'
-                    },
-                    draft: {
-                        cssClass: '',
-                        text: 'RASCUNHO'
-                    },
-                    in_analysis: {
-                        cssClass: '',
-                        text: 'EM ANÁLISE'
-                    },
-                    approved: {
-                        cssClass: 'text-success',
-                        text: 'APROVADO'
-                    }
-                };
-
-            return statusText[state];
-        },
-        RDTracker = (eventId) => {
-            return (el, isInitialized) => {
-                if (!isInitialized) {
-                    const integrationScript = document.createElement('script');
-                    integrationScript.type = 'text/javascript';
-                    integrationScript.id = 'RDIntegration';
-
-                    if (!document.getElementById(integrationScript.id)){
-                        document.body.appendChild(integrationScript);
-                        integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
-                        integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
-                    }
-
-                    return false;
+    projectStateTextClass = (state: string): {cssClass: string, text: string} => {
+        const statusText = {
+                online: {
+                    cssClass: 'text-success',
+                    text: 'NO AR'
+                },
+                successful: {
+                    cssClass: 'text-success',
+                    text: 'FINANCIADO'
+                },
+                failed: {
+                    cssClass: 'text-error',
+                    text: 'NÃO FINANCIADO'
+                },
+                waiting_funds: {
+                    cssClass: 'text-waiting',
+                    text: 'AGUARDANDO'
+                },
+                rejected: {
+                    cssClass: 'text-error',
+                    text: 'RECUSADO'
+                },
+                draft: {
+                    cssClass: '',
+                    text: 'RASCUNHO'
+                },
+                in_analysis: {
+                    cssClass: '',
+                    text: 'EM ANÁLISE'
+                },
+                approved: {
+                    cssClass: 'text-success',
+                    text: 'APROVADO'
                 }
             };
-        },
-    analyticsEvent = (eventObj, fn=Function.prototype) => {
-        //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
+
+        return statusText[state];
+    },
+
+    RDTracker = (eventId: string): mConfig => {
+        return (el, isInitialized) => {
+            if (!isInitialized) {
+                const integrationScript = document.createElement('script');
+                integrationScript.type = 'text/javascript';
+                integrationScript.id = 'RDIntegration';
+
+                if (!document.getElementById(integrationScript.id)){
+                    document.body.appendChild(integrationScript);
+                    integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
+                    integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
+                }
+
+                return false;
+            }
+        };
+    },
+
+    analyticsEvent = (eventObj: Object, fn: Function = Function.prototype): Function => {
+        // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
         if (!eventObj){
             return fn;
         }
@@ -604,7 +620,7 @@ const
         };
     },
     _analyticsOneTimeEventFired = {},
-    analyticsOneTimeEvent = (eventObj, fn) => {
+    analyticsOneTimeEvent = (eventObj: Object, fn: Function): Function => {
         if (!eventObj) {
             return fn;
         }
@@ -622,11 +638,11 @@ const
             }
         };
     },
-    monetaryToFloat = (propValue) => {
+    monetaryToFloat = (propValue: Function): number => {
         return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
 
-    applyMonetaryMask = (number) => {
+    applyMonetaryMask = (number: number): string => {
         let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
             integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
             decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
@@ -636,17 +652,17 @@ const
         return `${integerPart},${decimalPart}`;
     },
 
-    noNumbersMask = (value) => {
+    noNumbersMask = (value: string): string => {
         return value.replace(/[0-9]/g, '');
     },
 
-    numbersOnlyMask = (value) => {
+    numbersOnlyMask = (value: string): string => {
         return value.replace(/[^0-9]/g, '');
     },
 
-    addChar = (position, maskChar) => {
-        return (char) => {
-            return (string) => {
+    addChar = (position: number, maskChar: string): Function => {
+        return (char: string): Function => {
+            return (string: string): string => {
                 if (string.length === position && char !== maskChar){
                     return (string + maskChar);
                 }
@@ -654,17 +670,18 @@ const
             };
         };
     },
-    readMaskDefinition = (maskCharDefinitions) => {
-        return (maskDefinition) => {
+
+    readMaskDefinition = (maskCharDefinitions: Object): Function => {
+        return (maskDefinition: string): Array<any> => {
             return _.compact(_.map(maskDefinition, (letter, index) => {
                 return (letter in maskCharDefinitions ? null : [index, letter]);
             }));
         };
     },
 
-    isCharAllowed = (maskCharDefinitions) => {
-        return (maskDefinition) => {
-            return (position, newChar) => {
+    isCharAllowed = (maskCharDefinitions: Object): Function => {
+        return (maskDefinition: string): Function => {
+            return (position: number, newChar: string): boolean=> {
                 if (position >= maskDefinition.length){
                     return false;
                 }
@@ -678,8 +695,8 @@ const
             };
         };
     },
-    //
-    applyMask = (maskDefinition) => {
+
+    applyMask = (maskDefinition): Function => {
         const maskFunctions = _.map(maskDefinition, (maskChar) => addChar(maskChar[0], maskChar[1]));
         return (string, newChar) => {
             const addNewCharFunctions = _.map(maskFunctions, (el) => el(newChar));
@@ -691,7 +708,7 @@ const
     },
 
     //Adapted from https://github.com/diogob/jquery.fixedmask
-    mask = (maskDefinition, value) => {
+    mask = (maskDefinition: RegExp, value: string): string => {
         const maskCharDefinitions = {
                 '9': /\d/,
                 'A': /[a-zA-Z]/
@@ -709,22 +726,22 @@ const
         }, '');
     },
 
-      removeStoredObject = (sessionKey) => {
+      removeStoredObject = (sessionKey: string) => {
           return sessionStorage.removeItem(sessionKey);
       },
 
       currentProject = m.prop(),
-        setProject = (project) => {
-            currentProject(project);
-        },
-        getProject = () => currentProject,
+      setProject = (project: Object): void => {
+          currentProject(project);
+      },
+      getProject = (): Object => currentProject,
         currentReward = m.prop(),
-        setReward = (reward) => {
+        setReward = (reward: Object): void => {
             currentReward(reward);
         },
         getReward = () => currentReward,
-        buildLink = (link, refStr) =>  `/${link}${refStr ? '?ref=' + refStr : ''}`,
-        analyticsWindowScroll = (eventObj) => {
+        buildLink = (link: string, refStr: string): string =>  `/${link}${refStr ? '?ref=' + refStr : ''}`,
+        analyticsWindowScroll = (eventObj: Object): void => {
             if (eventObj) {
                 let fired = false;
                 window.addEventListener('scroll', function(e){
@@ -737,12 +754,14 @@ const
                 });
             }
         },
+
     analytics = {
         event: analyticsEvent,
         oneTimeEvent: analyticsOneTimeEvent,
         windowScroll: analyticsWindowScroll
     },
-    projectFullPermalink = (project) => {
+
+    projectFullPermalink = (project: Object): string => {
         let permalink;
         if (typeof project === 'function') {
             permalink = project().permalink;
@@ -752,12 +771,12 @@ const
 
         return `https://www.catarse.me/${permalink}`;
     },
-    isHome = () => {
+    isHome = (): boolean => {
         const path = window.location.pathname;
 
         return path == '/pt' || path == '/';
     },
-    isProjectPage = () => {
+    isProjectPage = (): boolean => {
         const path = window.location.pathname,
               isOnInsights = path.indexOf('/insights') > -1,
               isOnEdit = path.indexOf('/edit') > -1,
@@ -765,7 +784,7 @@ const
 
         return !isOnEdit && !isOnInsights && !isOnContribution;
     },
-    setPageTitle = (title) => {
+    setPageTitle = (title: string): mConfig => {
         return (el, isInitialized) => {
             const titleEl = document.getElementsByTagName('title')[0],
                 currentTitle = titleEl.innerText;
@@ -775,19 +794,19 @@ const
             }
         };
     },
-    checkReminder = () => {
+    checkReminder = (): void => {
         let reminder = sessionStorage.getItem('reminder');
 
         if (reminder && isHome()) {
             window.location.href = `/projects/${reminder}`;
         }
     },
-    rootUrl = () => {
+    rootUrl = (): ?string => {
         if (_dataCache.rootUrl)
           return _dataCache.rootUrl;
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
-        return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : undefined;
+        return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : null;
     };
 
 setMomentifyLocale();
