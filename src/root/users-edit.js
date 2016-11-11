@@ -4,6 +4,7 @@ import h from '../h';
 import userVM from '../vms/user-vm';
 import userHeader from '../c/user-header';
 import userCreated from '../c/user-created';
+import userSettings from '../c/user-settings';
 import menu from '../root/menu';
 
 const usersEdit = {
@@ -14,6 +15,7 @@ const usersEdit = {
         //@TODO remove this after migrating all tabs to API
         const moveTabContent = () => {
           $('#created-tab').appendTo('#dashboard_projects');
+          $('#settings-tab').appendTo('#dashboard_settings');
         };
 
         userVM.fetchUser(user_id, true, userDetails);
@@ -30,7 +32,10 @@ const usersEdit = {
           m.component(menu, {menuTransparency: true}),
           m.component(userHeader, {user: user, hideDetails: true}),
           (!_.isEmpty(user) ? 
-              m.component(userCreated, {userId: user.id})
+          [
+              m.component(userCreated, {userId: user.id}),
+              m.component(userSettings, {userId: user.id, user: user})
+          ]
            : '')
       ]);
 
