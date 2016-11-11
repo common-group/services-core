@@ -10,32 +10,44 @@ const faqBox = {
         const mode = args.mode,
             questions = args.faq.questions,
             selectedQuestion = m.prop(-1),
-            scopedQuestions = m.prop(questions);
+            user = m.prop({name: '...'}),
+            tKey = () => {
+                return !args.vm.isInternational()
+                       ? `${mode}`
+                       : `international.${mode}`
+            };
 
-        const selectQuestion = (idx) => () => selectedQuestion(idx);
+        const selectQuestion = (idx) => () => idx === selectedQuestion()
+                                              ? selectedQuestion(-1)
+                                              : selectedQuestion(idx);
 
-        const updateQuestionsData = (data) => {
-            //This function rewrites questions from translate with proper scope for links
-            const user = data[0];
+        //This function rewrites questions from translate with proper scope for links
+        const scopedQuestions = () => {
             let updatedQuestions = {};
             _.each(questions, (quest, idx) => {
                 _.extend(updatedQuestions, {
                     [idx + 1]: {
-                        question: quest.question,
-                        answer: I18n.t(`${mode}.questions.${idx}.answer`, I18nScope({userLink: `/users/${user.id}`, userName: user.name}))
+                        question: I18n.t(`${tKey()}.questions.${idx}.question`, I18nScope()),
+                        answer: I18n.t(`${tKey()}.questions.${idx}.answer`,
+                                    I18nScope(
+                                        { userLink: `/users/${user().id}`
+                                        , userName: user().name
+                                        }
+                                    )
+                                )
                     }
                 });
             });
-
-            scopedQuestions(updatedQuestions);
+            return updatedQuestions;
         };
 
-        userVM.fetchUser(args.projectUserId, false).then(updateQuestionsData);
+        userVM.fetchUser(args.projectUserId, false).then(data => user(_.first(data)));
 
         return {
             scopedQuestions: scopedQuestions,
             selectQuestion: selectQuestion,
-            selectedQuestion: selectedQuestion
+            selectedQuestion: selectedQuestion,
+            tKey: tKey
         };
     },
     view(ctrl, args) {
@@ -50,13 +62,13 @@ const faqBox = {
                      ),
                      m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                          m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
-                             args.faq.description
+                             I18n.t(`${ctrl.tKey()}.description`, I18nScope())
                          )
                      )
                  ]
              ),
              m('.u-marginbottom-20.fontsize-small.fontweight-semibold',
-                'Dúvidas frequentes'
+                I18n.t(`${args.vm.isInternational() ? 'international_title' : 'title'}`, I18nScope())
             ),
             m('ul.w-list-unstyled',
                 _.map(ctrl.scopedQuestions(), (question, idx) => {
