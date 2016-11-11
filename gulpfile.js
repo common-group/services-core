@@ -93,11 +93,11 @@ gulp.task('dist', function(done){
         moduleName: 'c',
         sourceMap: true,
         plugins: [
+            rollupFlow(),
             babel({
               exclude: 'node_modules/**',
               "presets": [ "es2015-rollup" ]
-            }),
-            rollupFlow()
+            })
         ],
         globals: rollupGlobals
     })
