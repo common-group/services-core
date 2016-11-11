@@ -8,6 +8,7 @@ import startVM from '../vms/start-vm';
 import youtubeLightbox from '../c/youtube-lightbox';
 import slider from '../c/slider';
 import landingQA from '../c/landing-qa';
+import inlineError from '../c/inline-error';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
@@ -86,6 +87,16 @@ const start = {
                         }
                     });
                 }
+            },
+            projectCategory = m.prop('-1'),
+            projectName = m.prop(''),
+            projectNameError = m.prop(false),
+            projectCategoryError = m.prop(false),
+            validateProjectForm = () => {
+                projectCategoryError(projectCategory() == -1);
+                projectNameError(projectName().trim() === '');
+
+                return (!projectCategoryError() && !projectNameError());
             };
 
         statsLoader.load().then(stats);
@@ -102,7 +113,12 @@ const start = {
             selectedPane: selectedPane,
             featuredProjects: featuredProjects,
             testimonials: startvm.testimonials,
-            questions: startvm.questions
+            questions: startvm.questions,
+            projectCategory: projectCategory,
+            projectName: projectName,
+            projectNameError: projectNameError,
+            projectCategoryError: projectCategoryError,
+            validateProjectForm: validateProjectForm
         };
     },
     view(ctrl, args) {
@@ -399,7 +415,10 @@ const start = {
                 m('.w-container', [
                     m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
                     m('form[action="/projects/fallback_create"][method="GET"].w-row.w-form', {
-                        onsubmit: h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_submit'})
+                        onsubmit: (e) => {
+                            h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_submit'})(e);
+                            return ctrl.validateProjectForm();
+                        }
                     },
                     [
                         m('.w-col.w-col-2'),
@@ -409,25 +428,36 @@ const start = {
                             m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
                             m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
                                 name: 'project[name]',
-                                onchange: h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'name'})
+                                class: ctrl.projectNameError() ? 'error' : '',
+                                onfocus: () => ctrl.projectNameError(false),
+                                onchange: (e) => {
+                                    h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'name'})(e);
+                                    m.withAttr('value', ctrl.projectName)(e);
+                                }
                             }),
                             m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
                             m('select.w-select.text-field.medium.u-marginbottom-40', {
                                 name: 'project[category_id]',
-                                onchange: h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'category'})
+                                class: ctrl.projectCategoryError() ? 'error' : '',
+                                onfocus: () => ctrl.projectCategoryError(false),
+                                onchange: (e) => {
+                                    h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'category'})(e);
+                                    m.withAttr('value', ctrl.projectCategory)(e);
+                                }
                             },[
-                                m('option[value=""]', I18n.t('form.select_default', I18nScope())),
+                                m('option[value="-1"]', I18n.t('form.select_default', I18nScope())),
                                 _.map(ctrl.categories(), (category) => {
-                                    return m(`option[value="${category.id}"]`, category.name);
+                                    return m(`option[value="${category.id}"]`,{selected: ctrl.projectCategory() === category.id},category.name);
                                 })
                             ])
                         ]),
                         m('.w-col.w-col-2'),
-                        m('.w-row.u-marginbottom-80', [
+                        m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [
                                 m(`input[type="submit"][value="${I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
-                            ])
-                        ])
+                            ]),
+                        ]),
+                        m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m.component(inlineError, {message: 'Por favor, verifique novamente os campos acima!'}) : '')
                     ])
                 ])
             ])
