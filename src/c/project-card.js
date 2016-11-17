@@ -120,7 +120,7 @@ const projectCard = {
                     m('.card-project-stats', [
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
-                                m('.fontsize-base.fontweight-semibold', `${Math.ceil(project.progress)}%`)
+                                m('.fontsize-base.fontweight-semibold', `${Math.floor(project.progress)}%`)
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
                                 m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
