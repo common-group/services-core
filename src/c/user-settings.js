@@ -86,12 +86,8 @@ const userSettings = {
                   );
               };
 
-        countriesLoader.load().then((data) => {
-            countries(data);
-        });
-        statesLoader.load().then((data) => {
-            states(data);
-        });
+        countriesLoader.load().then(countries);
+        statesLoader.load().then(states);
 
         return {
             countries: countries,
@@ -424,8 +420,7 @@ const userSettings = {
                         m('.w-container',
                             m('.w-row',
                                 [
-                                    m('.w-col.w-col-4'),
-                                    m('.w-col.w-col-4',
+                                    m('.w-col.w-col-4.w-col-push-4',
                                         m('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')
                                     ),
                                     m('.w-col.w-col-4')
