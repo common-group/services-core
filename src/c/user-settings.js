@@ -5,6 +5,7 @@ import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import inlineError from './inline-error';
+import popNotification from './pop-notification';
 import projectCard from './project-card';
 
 const userSettings = {
@@ -32,16 +33,16 @@ const userSettings = {
               showEmailForm = h.toggleProp(false, true),
               countries = m.prop(),
               states = m.prop(),
+              loader = m.prop(true),
+              showAlert = m.prop(false),
               countriesLoader = postgrest.loader(models.country.getPageOptions()),
               statesLoader = postgrest.loader(models.state.getPageOptions()),
-              loader = m.prop(true),
               onSubmit = () => {
                 if (fields.email() !== fields.email_confirmation()){
                   error('Confirmação de email está incorreta.');
                 }
                 else{
                   updateUserData(user_id);
-                  m.redraw();
                 }
 
                   return false;
@@ -75,7 +76,14 @@ const userSettings = {
                       url: `/users/${user_id}.json`,
                       data: {user: userData},
                       config: setCsrfToken
-                  });
+                  }).then(() =>  {
+                    showAlert(true);
+                    m.redraw();
+                  }).catch((err) => {
+                    showAlert(true);
+                    m.redraw();
+                  }
+                  );
               };
 
         countriesLoader.load().then((data) => {
@@ -90,6 +98,7 @@ const userSettings = {
             states: states,
             fields: fields,
             loader: loader,
+            showAlert: showAlert,
             showEmailForm: showEmailForm,
             user: user,
             onSubmit: onSubmit,
@@ -100,11 +109,12 @@ const userSettings = {
         let user = ctrl.user,
             fields = ctrl.fields;
 
-        return m('.content.w-hidden[id=\'settings-tab\']', {style: {'display': 'block'}},
-          m('form.simple_form.user-settings-form.w-form[name=\'user-settings-form\']', {
+        return m('[id=\'settings-tab\']', [
+
+          (ctrl.showAlert() ? m.component(popNotification, {message: 'As suas informações foram atualizadas'}) : ''),
+          m('form.w-form', {
               onsubmit: ctrl.onSubmit
           }, [
-            m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'settings\']'),
             ctrl.error(),
             m('div',
                 [
@@ -427,6 +437,7 @@ const userSettings = {
             )
         ]
     )
+        ]
 )
               ;
     }
