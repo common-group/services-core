@@ -309,19 +309,6 @@ const
         }
     },
 
-    getBlogPosts = () => {
-        if (_dataCache.blogPosts)
-            return _dataCache.blogPosts;
-
-        var posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
-
-        if (posts) {
-            return _dataCache.blogPosts = JSON.parse(posts);
-        } else {
-            return false;
-        }
-    },
-
     getApiHost = () => {
         if (_dataCache.apiHost)
           return _dataCache.apiHost;
@@ -862,6 +849,5 @@ export default {
     projectFullPermalink,
     isProjectPage,
     setPageTitle,
-    getBlogPosts,
     rootUrl
 };
