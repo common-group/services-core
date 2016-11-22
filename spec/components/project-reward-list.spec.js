@@ -12,7 +12,8 @@ describe('ProjectRewardList', () => {
                 let rewardDetail = RewardDetailsMockery(newState),
                     component = m.component(projectRewardList, {
                         project: m.prop({
-                            id: 1231
+                            id: 1231,
+                            open_for_contributions: true
                         }),
                         rewardDetails: m.prop(rewardDetail)
                     });
@@ -47,7 +48,7 @@ describe('ProjectRewardList', () => {
             expect(output.contains('Esgotada')).toEqual(false);
         });
 
-        it('should render card-reward stats when reward is limited', () => {
+        it('should render card-reward stats when reward is limited and project is opened for contributions', () => {
             let {
                 output, rewardDetail
             } = generateContextByNewState({
