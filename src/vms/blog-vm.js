@@ -5,7 +5,7 @@ import m from 'mithril';
 let blogPosts : Array<string> = [];
 
 const blogVM : { getBlogPosts : Function } = {
-    getBlogPosts () {
+    getBlogPosts () : Promise<any> {
         const deferred = m.deferred();
 
         if (blogPosts) {
