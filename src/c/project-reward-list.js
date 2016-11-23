@@ -93,7 +93,7 @@ const projectRewardList = {
                         ]) : m('.u-margintop-10', [
                             m('span.badge.badge-attention.fontsize-smaller', [
                                 m('span.fontweight-bold', 'Limitada'),
-                                ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)'
+                                project.open_for_contributions ? ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)' : ''
                             ])
                         ]))
                     ] : ''),
