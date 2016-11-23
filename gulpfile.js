@@ -39,6 +39,7 @@ gulp.task('bundle-tests', function(done){
       format: 'iife',
       moduleName: 'catarseSpecs',
       plugins: [
+          rollupFlow(),
           babel({
               exclude: 'node_modules/**',
               "presets": [ "es2015-rollup" ]
