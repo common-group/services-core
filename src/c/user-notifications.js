@@ -1,0 +1,188 @@
+import m from 'mithril';
+import models from '../models';
+import postgrest from 'mithril-postgrest';
+import _ from 'underscore';
+import h from '../h';
+import userVM from '../vms/user-vm';
+import inlineError from './inline-error';
+import popNotification from './pop-notification';
+import projectCard from './project-card';
+
+const userNotifications = {
+    controller(args) {
+        const contributedProjects = m.prop(),
+              user_id = args.userId,
+              error = m.prop(false);
+
+        userVM.getUserContributedProjects(user_id, null).then((data) => {
+            contributedProjects(data);
+        }).catch(err => {
+            error(true);
+            m.redraw();
+        });
+
+        return {
+            projects: contributedProjects,
+            error: errok
+        };
+    },
+    view(ctrl, args) {
+        const user = args.user;
+        let projects_collection = ctrl.projects();
+
+        return m('[id=\'notifications-tab\']',
+    m(`form.simple_form.edit_user[accept-charset='UTF-8'][action='/pt/users/${user.id}'][method='post'][novalidate='novalidate']`,
+        [
+            m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
+            m('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'),
+            m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+            m('.w-container',
+                [
+                    m('.w-row',
+                        m('.w-col.w-col-10.w-col-push-1',
+                            m('.w-form.card.card-terciary',
+                                [
+                                    m('.w-row.u-marginbottom-20',
+                                        [
+                                            m('.w-col.w-col-4',
+                                                m('.fontweight-semibold.fontsize-small.u-marginbottom-10',
+                                                    'Newsletters:'
+                                                )
+                                            ),
+                                            m('.w-col.w-col-8',
+                                                m('.w-checkbox.w-clearfix',
+                                                    [
+                                                        m('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'),
+                                                        m(`input.w-checkbox-input${user.newsletter ? '[checked=\'checked\']' : ''}[id='user_newsletter'][name=user[newsletter]][type='checkbox'][value='1']`),
+                                                        m('label.w-form-label.fontsize-base.fontweight-semibold[for=\'checkbox\']',
+                                                            ' Newsletter do Catarse (semanal)'
+                                                        ),
+                                                        m('div',
+                                                            [
+                                                                'Projetos em destaque e posts do nosso Blog',
+                                                                m.trust('&nbsp;')
+                                                            ]
+                                                        )
+                                                    ]
+                                                )
+                                            )
+                                        ]
+                                    ),
+                                    m('.w-row.u-marginbottom-20',
+                                        [
+                                            m('.w-col.w-col-4',
+                                                m('.fontweight-semibold.fontsize-small.u-marginbottom-10',
+                                                    'Projetos que você apoiou:'
+                                                )
+                                            ),
+                                            m('.w-col.w-col-8',
+                                                m('.w-checkbox.w-clearfix',
+                                                    [
+                                                        m('input[name=user[subscribed_to_project_posts]][type=\'hidden\'][value=\'0\']'),
+                                                        m(`input.w-checkbox-input${user.subscribed_to_project_posts ? '[checked=\'checked\']' : ''}[id='user_subscribed_to_project_posts'][name=user[subscribed_to_project_posts]][type='checkbox'][value='1']`),
+                                                        m('label.w-form-label.fontsize-base.fontweight-semibold',
+                                                            ' Quero receber atualizações dos projetos'
+                                                        ),
+                                                        m('.u-marginbottom-20',
+                                                            m('a.alt-link[href=\'#\'][id=\'toggle-notifications\']',
+                                                                ` Gerenciar as notificações de ${user.total_contributed_projects} projetos`
+                                                            )
+                                                        ),
+                                                        m('ul.w-list-unstyled.u-radius.card.card-secondary.w-hidden[id=\'notifications-box\']', {style: {'display': 'none'}},
+                                                            [
+                                                            (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
+                                                                return m('li',
+                                                                      m('.w-checkbox.w-clearfix',
+                                                                        [
+                                                                            m('input[id=\'unsubscribes_7003\'][name=unsubscribes[7003]][type=\'hidden\'][value=\'\']'),
+                                                                            m(`input.w-checkbox-input${project.unsubscribed ? '' : '[checked=\'checked\']'}[type='checkbox'][value='1']`),
+                                                                            m('label.w-form-label.fontsize-small',
+                                                                                  project.project_name
+                                                                            )
+                                                                        ]
+                                                                    )
+                                                                );
+                                                            }) : '')
+                                                            ]
+                                                        )
+                                                    ]
+                                                )
+                                            )
+                                        ]
+                                    ),
+                                    m('.w-row.u-marginbottom-20',
+                                        [
+                                            m('.w-col.w-col-4',
+                                                m('.fontweight-semibold.fontsize-small.u-marginbottom-10',
+                                                    'Categorias que você segue:'
+                                                )
+                                            ),
+                                            m('.w-col.w-col-8',
+                                                m('input[id=\'category_followers_form\'][name=category_followers_form][type=\'hidden\'][value=\'true\']')
+                                            )
+                                        ]
+                                    ),
+                                    m('.w-row.u-marginbottom-20',
+                                        [
+                                            m('.w-col.w-col-4',
+                                                m('.fontweight-semibold.fontsize-small.u-marginbottom-10',
+                                                    'Social:'
+                                                )
+                                            ),
+                                            m('.w-col.w-col-8',
+                                                m('.w-checkbox.w-clearfix',
+                                                    [
+                                                        m('input[name=user[subscribed_to_friends_contributions]][type=\'hidden\'][value=\'0\']'),
+                                                        m(`input.w-checkbox-input${user.subscribed_to_friends_contributions ? '[checked=\'checked\']' : '' }[id='user_subscribed_to_friends_contributions'][name=user[subscribed_to_friends_contributions]][type='checkbox'][value='1']`),
+                                                        m('label.w-form-label.fontsize-small',
+                                                            'Um amigo apoiou ou lançou um projeto'
+                                                        )
+                                                    ]
+                                                )
+                                            ),
+                                            m('.w-col.w-col-8',
+                                                m('.w-checkbox.w-clearfix',
+                                                    [
+                                                        m('input[name=user[subscribed_to_new_followers]][type=\'hidden\'][value=\'0\']'),
+                                                        m(`input.w-checkbox-input${user.subscribed_to_new_followers ? '[checked=\'checked\']' : '' }[id='user_subscribed_to_new_followers'][name=user[subscribed_to_new_followers]][type='checkbox'][value='1']`),
+                                                        m('label.w-form-label.fontsize-small',
+                                                            'Um amigo começou a me seguir'
+                                                        )
+                                                    ]
+                                                )
+                                            )
+                                        ]
+                                    ),
+                                    m('.w-row.u-marginbottom-20',
+                                        [
+                                            m('.w-col.w-col-4',
+                                                m('.fontweight-semibold.fontsize-small.u-marginbottom-10',
+                                                    'Lembretes de projetos:'
+                                                )
+                                            ),
+                                            m('.w-col.w-col-8')
+                                        ]
+                                    )
+                                ]
+                            )
+                        )
+                    ),
+                    m('.u-margintop-30',
+                        m('.w-container',
+                            m('.w-row',
+                                m('.w-col.w-col-4.w-col-push-4',
+                                    m('input.btn.btn-large[id=\'save\'][name=\'commit\'][type=\'submit\'][value=\'Salvar\']')
+                                )
+                            )
+                        )
+                    )
+                ]
+            )
+        ]
+    )
+)
+            ;
+    }
+};
+
+export default userNotifications;

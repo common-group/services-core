@@ -6,7 +6,6 @@ import h from '../h';
 import userVM from '../vms/user-vm';
 import inlineError from './inline-error';
 import popNotification from './pop-notification';
-import projectCard from './project-card';
 
 const userSettings = {
     controller(args) {
@@ -30,20 +29,22 @@ const userSettings = {
               },
               user_id = args.userId,
               error = m.prop(''),
-              showEmailForm = h.toggleProp(false, true),
               countries = m.prop(),
               states = m.prop(),
               loader = m.prop(true),
-              showAlert = m.prop(false),
+              showEmailForm = h.toggleProp(false, true),
+              showSuccess = m.prop(false),
+              showError = m.prop(false),
               countriesLoader = postgrest.loader(models.country.getPageOptions()),
               statesLoader = postgrest.loader(models.state.getPageOptions()),
               onSubmit = () => {
-                if (fields.email() !== fields.email_confirmation()){
-                  error('Confirmação de email está incorreta.');
-                }
-                else{
-                  updateUserData(user_id);
-                }
+                  if (fields.email() !== fields.email_confirmation()){
+                    error('Confirmação de email está incorreta.');
+                    showError(true);
+                  }
+                  else{
+                    updateUserData(user_id);
+                  }
 
                   return false;
               },
@@ -77,10 +78,11 @@ const userSettings = {
                       data: {user: userData},
                       config: setCsrfToken
                   }).then(() =>  {
-                    showAlert(true);
+                    showSuccess(true);
                     m.redraw();
                   }).catch((err) => {
-                    showAlert(true);
+                    error('Erro ao atualizar informações.');
+                    showError(true);
                     m.redraw();
                   }
                   );
@@ -94,7 +96,8 @@ const userSettings = {
             states: states,
             fields: fields,
             loader: loader,
-            showAlert: showAlert,
+            showSuccess: showSuccess,
+            showError: showError,
             showEmailForm: showEmailForm,
             user: user,
             onSubmit: onSubmit,
@@ -106,12 +109,11 @@ const userSettings = {
             fields = ctrl.fields;
 
         return m('[id=\'settings-tab\']', [
-
-          (ctrl.showAlert() ? m.component(popNotification, {message: 'As suas informações foram atualizadas'}) : ''),
+          (ctrl.showSuccess() ? m.component(popNotification, {message: 'As suas informações foram atualizadas'}) : ''),
+          (ctrl.showError() ? m.component(popNotification, {message: ctrl.error()}) : ''),
           m('form.w-form', {
               onsubmit: ctrl.onSubmit
           }, [
-            ctrl.error(),
             m('div',
                 [
                     m('.w-container',

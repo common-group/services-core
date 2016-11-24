@@ -5,6 +5,7 @@ import userVM from '../vms/user-vm';
 import userHeader from '../c/user-header';
 import userCreated from '../c/user-created';
 import userSettings from '../c/user-settings';
+import userNotifications from '../c/user-notifications';
 import menu from '../root/menu';
 
 const usersEdit = {
@@ -15,6 +16,7 @@ const usersEdit = {
         //@TODO remove this after migrating all tabs to API
         const moveTabContent = () => {
           $('#created-tab').appendTo('#dashboard_projects');
+          $('#notifications-tab').appendTo('#dashboard_notifications');
           $('#settings-tab').appendTo('#dashboard_settings');
         };
 
@@ -33,6 +35,7 @@ const usersEdit = {
           m.component(userHeader, {user: user, hideDetails: true}),
           (!_.isEmpty(user) ? 
           [
+              m.component(userNotifications, {userId: user.id, user: user}),
               m.component(userCreated, {userId: user.id}),
               m.component(userSettings, {userId: user.id, user: user})
           ]
