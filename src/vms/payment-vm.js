@@ -1,9 +1,12 @@
+import m from 'mithril';
+import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import moment from 'moment';
 import I18n from 'i18n-js';
 import h from '../h';
 import usersVM from './user-vm';
 import models from '../models';
+
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
@@ -419,7 +422,7 @@ const paymentVM = (mode = 'aon') => {
 
     countriesLoader.load().then((data) => {
         const countryId = fields.userCountryId() || _.findWhere(data, {name: 'Brasil'}).id;
-        fields.countries(data);
+        fields.countries(_.sortBy(data, 'name_en'));
         fields.userCountryId(countryId);
     });
     statesLoader.load().then((data) => {
