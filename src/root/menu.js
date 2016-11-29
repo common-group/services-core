@@ -41,9 +41,11 @@ const menu = {
                             ctrl.homeAttrs(),
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
-                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
-                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']',{config: m.route},'Explore'),
-                        m.component(menuSearch)
+                        args.menuShort ? '' : m('div#menu-components', [
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']',{config: m.route},'Explore'),
+                            m.component(menuSearch)
+                        ])
                     ]
                 ),
                 m('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
@@ -51,7 +53,7 @@ const menu = {
                 ])
 
             ]),
-            m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
+            args.menuShort ? '' : m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
                 [
                     m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
                         {onclick: () => m.route('/start')},
