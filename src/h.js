@@ -486,7 +486,7 @@ const
         const offset = cumulativeOffset(el).top,
             duration = 300,
             dFrame = (offset - scrolled) / duration,
-            //EaseInOutCubic easing function. We'll abstract all animation funs later.
+            // EaseInOutCubic easing function. We'll abstract all animation funs later.
             eased = (t) => t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
             animation = setInterval(() => {
                 let pos = eased(scrolled / offset) * scrolled;
@@ -828,6 +828,7 @@ export default {
     i18nScope,
     RDTracker,
     selfOrEmpty,
+    animateScrollTo,
     scrollTo,
     projectStateTextClass,
     validationErrors,

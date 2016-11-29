@@ -16,14 +16,21 @@ const paymentForm = {
                        : I18nScope();
             };
 
+        const scrollTo = (el, isInit) => {
+            if(!isInit){
+                h.animateScrollTo(el);
+            }
+        };
+
         return {
+            scrollTo: scrollTo,
             isSlip: isSlip,
             scope: scope,
             vm: args.vm
         };
     },
     view(ctrl, args) {
-        return m('#catarse_pagarme_form', [
+        return m('#catarse_pagarme_form',{ config: ctrl.scrollTo },[
             m('.u-text-center-small-only.u-marginbottom-30', [
                 m('.fontsize-large.fontweight-semibold',
                     I18n.t('payment_info', ctrl.scope())
