@@ -23,8 +23,8 @@ const paymentCreditCard = {
 
         const onSubmit = () => {
             if (selectedCreditCard().id === -1) {
-                checkcvv();
                 checkExpiry();
+                checkcvv();
                 checkCreditCard();
                 checkCreditCardName();
             } else {
