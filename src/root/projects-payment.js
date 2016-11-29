@@ -400,13 +400,13 @@ const projectsPayment = {
                             ])
                         ),
                         m('.w-row.u-marginbottom-40',
-                            m('.w-col.w-col-push-3.w-col-6',
+                            !ctrl.showPaymentForm() ? m('.w-col.w-col-push-3.w-col-6',
                                 m('button.btn.btn-large', {
                                         onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_next_click'}, ctrl.validateForm)
                                     },
                                     I18n.t('next_step', ctrl.scope())
                                 )
-                            )
+                            ) : ''
                         ),
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
                             vm: ctrl.vm,
