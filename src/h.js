@@ -288,6 +288,14 @@ const
         return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : undefined;
     },
 
+    getSimilityCustomer = () => {
+        if (_dataCache.similityCustomer)
+            return _dataCache.similityCustomer;
+
+        const meta = _.first(document.querySelectorAll('[name=simility-customer]'));
+        return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : undefined;
+    },
+
     getMailchimpUrl = () => {
         if (_dataCache.mailchumUrl)
           return _dataCache.mailchumUrl;
@@ -801,6 +809,7 @@ export default {
     formatNumber,
     idVM,
     getUser,
+    getSimilityCustomer,
     getApiHost,
     getMailchimpUrl,
     getCurrentProject,

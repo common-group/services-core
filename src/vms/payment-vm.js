@@ -219,7 +219,7 @@ const paymentVM = (mode = 'aon') => {
                     loading(false);
                     error(I18n.t('submission.slip_validation', scope()));
                     m.redraw();
-                })
+                });
 
         } else {
             loading(false);
@@ -250,7 +250,20 @@ const paymentVM = (mode = 'aon') => {
         });
     };
 
+    const similityExecute = (contribution_id) => {
+        if(window.SimilityScript && h.getSimilityCustomer()) {
+            let similityContext = {
+                customer_id: h.getSimilityCustomer(),
+                session_id: contribution_id,
+                user_id: h.getUser().user_id
+            };
+            let ss = new window.SimilityScript(similityContext);
+            ss.execute();
+        }
+    };
+
     const requestPayment = (data, contribution_id) => {
+        similityExecute(contribution_id);
         return m.request({
             method: 'POST',
             url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
