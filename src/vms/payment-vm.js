@@ -368,9 +368,7 @@ const paymentVM = (mode = 'aon') => {
     const creditCardPaymentFail = (deferred) => (data) => {
         const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
         isLoading(false);
-        console.log('error Msg is: ', errorMsg);
         submissionError(I18n.t('submission.error', scope({message: errorMsg})));
-        console.log('Submission Error is: ', submissionError());
         m.redraw();
         deferred.reject();
     };
