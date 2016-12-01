@@ -52,8 +52,6 @@ const paymentCreditCard = {
                 errorObj = {field: 'cvv', message: I18n.t('errors.inline.creditcard_cvv', scope())};
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         const checkExpiry = () => {
@@ -61,8 +59,6 @@ const paymentCreditCard = {
                 errorObj = {field: 'expiry', message: I18n.t('errors.inline.creditcard_expiry', scope())};
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         const checkCreditCard = () => {
@@ -70,8 +66,6 @@ const paymentCreditCard = {
                 errorObj = {field: 'number', message: I18n.t('errors.inline.creditcard_number', scope())};
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         const checkCreditCardName = () => {
@@ -81,8 +75,6 @@ const paymentCreditCard = {
             const isValid = !(_.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         const applyCreditCardNameMask = _.compose(vm.creditCardFields.name, h.noNumbersMask);
@@ -281,6 +273,7 @@ const paymentCreditCard = {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('expiry'),
                                     class: ctrl.fieldHasError('expiry') ? 'error' : '',
                                     onchange: m.withAttr('value', ctrl.creditCard.expYear),
+                                    onblur: ctrl.checkExpiry,
                                     value: ctrl.creditCard.expYear()
                                 }, _.map(ctrl.expYears, year => m('option', {value: year}, year)))
                             ),

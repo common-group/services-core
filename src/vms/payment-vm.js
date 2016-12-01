@@ -100,8 +100,8 @@ const paymentVM = (mode = 'aon') => {
         return !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), {name: 'Brasil'}).id : false;
     };
 
-    const scope = () => {
-        return isInternational() ? I18nIntScope() : I18nScope();
+    const scope = (data) => {
+        return isInternational() ? I18nIntScope(data) : I18nScope(data);
     };
 
     const getLocale = () => {
@@ -309,7 +309,10 @@ const paymentVM = (mode = 'aon') => {
                         save_card: creditCardFields.save().toString(),
                         payment_card_installments: installment
                     };
-                    requestPayment(data, contribution_id).then(deferred.resolve).catch(deferred.reject);
+
+                    requestPayment(data, contribution_id)
+                        .then(deferred.resolve)
+                        .catch(deferred.reject);
                 });
 
             }
@@ -364,7 +367,6 @@ const paymentVM = (mode = 'aon') => {
 
     const creditCardPaymentFail = (deferred) => (data) => {
         const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
-
         isLoading(false);
         submissionError(I18n.t('submission.error', scope({message: errorMsg})));
         m.redraw();
