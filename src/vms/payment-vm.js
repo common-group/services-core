@@ -111,7 +111,7 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
-        currentUser = h.getUser(),
+        currentUser = h.getUser() || {},
         countriesLoader = postgrest.loader(models.country.getPageOptions()),
         statesLoader = postgrest.loader(models.state.getPageOptions());
 
@@ -268,10 +268,11 @@ const paymentVM = (mode = 'aon') => {
 
     const similityExecute = (contribution_id) => {
         if(window.SimilityScript && h.getSimilityCustomer()) {
+            const user = h.getUser() || {};
             let similityContext = {
                 customer_id: h.getSimilityCustomer(),
                 session_id: contribution_id,
-                user_id: h.getUser().user_id
+                user_id: user
             };
             let ss = new window.SimilityScript(similityContext);
             ss.execute();

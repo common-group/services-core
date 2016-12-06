@@ -40,7 +40,7 @@ const projectsExplore = {
                   currentFilter(filtersMap[defaultFilter]);
                   projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends']);
               },
-              currentUser = h.getUser(),
+              currentUser = h.getUser() || {},
               currentUserId = currentUser.id,
               hasFBAuth = currentUser.has_fb_auth,
               buildTooltip = (tooltipText) => {
