@@ -157,6 +157,21 @@ const paymentVM = (mode = 'aon') => {
         }
     };
 
+    const checkPhone = () => {
+        const phone = fields.phone(),
+            strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, ''),
+            error = {field: 'phone', message: I18n.t('validation.phone', scope())};
+
+        if (strippedPhone.length < 10) {
+            fields.errors().push(error);
+        } else {
+            const controlDigit = Number(strippedPhone.charAt(2));
+            if (!(controlDigit >= 2 && controlDigit <= 9)) {
+                fields.errors().push(error);
+            }
+        }
+    };
+
     const validate = () => {
         fields.errors([]);
 
@@ -168,6 +183,7 @@ const paymentVM = (mode = 'aon') => {
             checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
             checkUserState();
             checkDocument();
+            checkPhone();
         }
 
         return _.isEmpty(fields.errors());
