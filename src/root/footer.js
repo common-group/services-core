@@ -60,7 +60,7 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Ajuda'
                                                 ),
-                                                m('a.zendesk_widget.link-footer[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\']',
+                                                m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
                                                     ' Contato'
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
