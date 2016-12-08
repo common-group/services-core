@@ -47,9 +47,12 @@ const canShowSlip = (contribution) => {
     return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
 };
 
-//@TODO
 const canGenerateSlip = (contribution) => {
-    return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
+  return contribution.payment_method == 'BoletoBancario' &&
+    contribution.state == 'pending' &&
+    contribution.project_state == 'online' &&
+    !contribution.reward_sold_out &&
+    !contribution.waiting_payment;
 };
 
 const contributionVM =  {
