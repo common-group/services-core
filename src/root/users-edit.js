@@ -4,6 +4,7 @@ import h from '../h';
 import userVM from '../vms/user-vm';
 import userHeader from '../c/user-header';
 import userCreated from '../c/user-created';
+import userPrivateContributed from '../c/user-private-contributed';
 import userSettings from '../c/user-settings';
 import userNotifications from '../c/user-notifications';
 import menu from '../root/menu';
@@ -17,6 +18,7 @@ const usersEdit = {
         const moveTabContent = () => {
           $('#created-tab').appendTo('#dashboard_projects');
           $('#notifications-tab').appendTo('#dashboard_notifications');
+          $('#private-contributed-tab').appendTo('#dashboard_contributions');
           $('#settings-tab').appendTo('#dashboard_settings');
         };
 
@@ -36,6 +38,7 @@ const usersEdit = {
           (!_.isEmpty(user) ? 
           [
               m.component(userNotifications, {userId: user.id, user: user}),
+              m.component(userPrivateContributed, {userId: user.id, user: user}),
               m.component(userCreated, {userId: user.id}),
               m.component(userSettings, {userId: user.id, user: user})
           ]

@@ -1,11 +1,11 @@
-var c = (function (m$1,I18n$1,_$1,moment$1,$,postgrest$1,CatarseAnalytics$1,replaceDiacritics,Chart) {
+var c = (function (m$1,I18n$1,_$1,moment$1,$$1,postgrest$1,CatarseAnalytics$1,replaceDiacritics,Chart) {
 'use strict';
 
 m$1 = 'default' in m$1 ? m$1['default'] : m$1;
 I18n$1 = 'default' in I18n$1 ? I18n$1['default'] : I18n$1;
 _$1 = 'default' in _$1 ? _$1['default'] : _$1;
 moment$1 = 'default' in moment$1 ? moment$1['default'] : moment$1;
-$ = 'default' in $ ? $['default'] : $;
+$$1 = 'default' in $$1 ? $$1['default'] : $$1;
 postgrest$1 = 'default' in postgrest$1 ? postgrest$1['default'] : postgrest$1;
 CatarseAnalytics$1 = 'default' in CatarseAnalytics$1 ? CatarseAnalytics$1['default'] : CatarseAnalytics$1;
 replaceDiacritics = 'default' in replaceDiacritics ? replaceDiacritics['default'] : replaceDiacritics;
@@ -271,12 +271,6 @@ var getRdToken = function getRdToken() {
     var meta = _$1.first(document.querySelectorAll('[name=rd-token]'));
     return meta ? _dataCache.rdToken = meta.getAttribute('content') : undefined;
 };
-var getSimilityCustomer = function getSimilityCustomer() {
-    if (_dataCache.similityCustomer) return _dataCache.similityCustomer;
-
-    var meta = _$1.first(document.querySelectorAll('[name=simility-customer]'));
-    return meta ? _dataCache.similityCustomer = meta.getAttribute('content') : undefined;
-};
 var getMailchimpUrl = function getMailchimpUrl() {
     if (_dataCache.mailchumUrl) return _dataCache.mailchumUrl;
 
@@ -290,6 +284,17 @@ var getUser = function getUser() {
         data = _$1.first(body).getAttribute('data-user');
     if (data) {
         return _dataCache.user = JSON.parse(data);
+    } else {
+        return false;
+    }
+};
+var getBlogPosts = function getBlogPosts() {
+    if (_dataCache.blogPosts) return _dataCache.blogPosts;
+
+    var posts = _$1.first(document.getElementsByTagName('body')).getAttribute('data-blog');
+
+    if (posts) {
+        return _dataCache.blogPosts = JSON.parse(posts);
     } else {
         return false;
     }
@@ -357,7 +362,7 @@ var parseUrl = function parseUrl(href) {
 var UIHelper = function UIHelper() {
     return function (el, isInitialized) {
         if (!isInitialized && window.$) {
-            window.UIHelper.setupResponsiveIframes($(el));
+            window.UIHelper.setupResponsiveIframes($$1(el));
         }
     };
 };
@@ -448,7 +453,7 @@ var animateScrollTo = function animateScrollTo(el) {
         duration = 300,
         dFrame = (offset - scrolled) / duration,
 
-    // EaseInOutCubic easing function. We'll abstract all animation funs later.
+    //EaseInOutCubic easing function. We'll abstract all animation funs later.
     eased = function eased(t) {
         return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
     },
@@ -686,7 +691,7 @@ var analyticsWindowScroll = function analyticsWindowScroll(eventObj) {
             var fired = false;
             window.addEventListener('scroll', function (e) {
                 //console.log('windowScroll');
-                if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                if (!fired && window.$ && $$1(document).scrollTop() > $$1(window).height() * (3 / 4)) {
                     fired = true;
                     var fireEvent = analyticsEvent(eventObj);
                     fireEvent();
@@ -766,7 +771,6 @@ var h = {
     formatNumber: formatNumber,
     idVM: idVM,
     getUser: getUser,
-    getSimilityCustomer: getSimilityCustomer,
     getApiHost: getApiHost,
     getMailchimpUrl: getMailchimpUrl,
     getCurrentProject: getCurrentProject,
@@ -794,7 +798,6 @@ var h = {
     i18nScope: i18nScope,
     RDTracker: RDTracker,
     selfOrEmpty: selfOrEmpty,
-    animateScrollTo: animateScrollTo,
     scrollTo: scrollTo,
     projectStateTextClass: projectStateTextClass,
     validationErrors: validationErrors,
@@ -816,6 +819,7 @@ var h = {
     projectFullPermalink: projectFullPermalink,
     isProjectPage: isProjectPage,
     setPageTitle: setPageTitle,
+    getBlogPosts: getBlogPosts,
     rootUrl: rootUrl
 };
 
@@ -2319,6 +2323,21 @@ var getPublicUserContributedProjects = function getPublicUserContributedProjects
     return lUserContributed.load();
 };
 
+var getUserProjectReminders = function getUserProjectReminders(user_id) {
+    var contextVM = postgrest$1.filtersVM({
+        user_id: 'eq',
+        without_notification: 'eq'
+    });
+
+    contextVM.user_id(user_id).without_notification(true);
+
+    models.projectReminder;
+
+    var lUserReminders = postgrest$1.loaderWithToken(models.projectReminder.getPageOptions(contextVM.parameters()));
+
+    return lUserReminders.load();
+};
+
 var getUserContributedProjects = function getUserContributedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
 
@@ -2413,6 +2432,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
 
 var userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
+    getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,
     getUserContributedProjects: getUserContributedProjects,
     getPublicUserContributedProjects: getPublicUserContributedProjects,
@@ -2453,10 +2473,10 @@ var init = function init(project_id, project_user_id) {
                 var z = window.$zopim = function (c) {
                     z._.push(c);
                 },
-                    $$$1 = z.s = d.createElement(s),
+                    $ = z.s = d.createElement(s),
                     e = d.getElementsByTagName(s)[0];z.set = function (o) {
                     z.set._.push(o);
-                };z._ = [];z.set._ = [];$$$1.async = !0;$$$1.setAttribute('charset', 'utf-8');$$$1.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t = +new Date();$$$1.type = 'text/javascript';e.parentNode.insertBefore($$$1, e);
+                };z._ = [];z.set._ = [];$.async = !0;$.setAttribute('charset', 'utf-8');$.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t = +new Date();$.type = 'text/javascript';e.parentNode.insertBefore($, e);
             }(document, 'script');
             setTimeout(function t() {
                 var c = window.$zopim && window.$zopim.livechat;
@@ -2660,7 +2680,7 @@ var projectCard = {
             style: {
                 width: (ctrl.progress > 100 ? 100 : ctrl.progress) + '%'
             }
-        })])]), m$1('.card-project-stats', [m$1('.w-row', [m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [m$1('.fontsize-base.fontweight-semibold', Math.floor(project.progress) + '%')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [m$1('.fontsize-smaller.fontweight-semibold', 'R$ ' + h.formatNumber(project.pledged)), m$1('.fontsize-smallest.lineheight-tightest', 'Levantados')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', project.expires_at ? [m$1('.fontsize-smaller.fontweight-semibold', ctrl.remainingTextObj.total + ' ' + ctrl.remainingTextObj.unit), m$1('.fontsize-smallest.lineheight-tightest', ctrl.remainingTextObj.total > 1 ? 'Restantes' : 'Restante')] : [m$1('.fontsize-smallest.lineheight-tight', ['Iniciado há', m$1('br'), ctrl.elapsedTextObj.total + ' ' + ctrl.elapsedTextObj.unit])])])])]), args.showFriends && ctrl.type === 'big' ? m$1('.w-col.w-col-4.w-col-medium-6', [m$1.component(projectFriends, { project: project })]) : '']), args.showFriends && ctrl.type !== 'big' ? m$1.component(projectFriends, { project: project }) : '']);
+        })])]), m$1('.card-project-stats', [m$1('.w-row', [m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [m$1('.fontsize-base.fontweight-semibold', Math.ceil(project.progress) + '%')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [m$1('.fontsize-smaller.fontweight-semibold', 'R$ ' + h.formatNumber(project.pledged)), m$1('.fontsize-smallest.lineheight-tightest', 'Levantados')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', project.expires_at ? [m$1('.fontsize-smaller.fontweight-semibold', ctrl.remainingTextObj.total + ' ' + ctrl.remainingTextObj.unit), m$1('.fontsize-smallest.lineheight-tightest', ctrl.remainingTextObj.total > 1 ? 'Restantes' : 'Restante')] : [m$1('.fontsize-smallest.lineheight-tight', ['Iniciado há', m$1('br'), ctrl.elapsedTextObj.total + ' ' + ctrl.elapsedTextObj.unit])])])])]), args.showFriends && ctrl.type === 'big' ? m$1('.w-col.w-col-4.w-col-medium-6', [m$1.component(projectFriends, { project: project })]) : '']), args.showFriends && ctrl.type !== 'big' ? m$1.component(projectFriends, { project: project }) : '']);
     }
 };
 
@@ -2784,7 +2804,7 @@ var Flex = {
             answer: 'Ainda não sabemos quando abriremos o flex para o público em geral, mas você pode cadastrar seu email nessa página e receber um material especial de como inscrever seu projeto.'
         })])])])]), m$1('.w-section.section-large.u-text-center.bg-purple', [m$1('.w-container.fontcolor-negative', [m$1('.fontsize-largest', 'Inscreva seu projeto!'), m$1('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1.component(landingSignup, {
             builder: ctrl.builder
-        }), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [m$1('.w-container.u-text-center', [m$1('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'), m$1('.w-row.u-text-center', ctrl.statsLoader() ? h.loader() : [m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')])])])]), m$1('.w-section.section.bg-blue-one.fontcolor-negative', [m$1('.w-container', [m$1('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'), m$1('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')])]), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'), m$1('a.w-button.btn.btn-large.btn-tweet[href="https://twitter.com/intent/tweet?text=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')])])])]), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-large.bg-greenlime', [m$1('.w-container', [m$1('#participe-do-debate.u-text-center', { config: h.toAnchor() }, [m$1('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m$1('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')]), m$1('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
+        }), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [m$1('.w-container.u-text-center', [m$1('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'), m$1('.w-row.u-text-center', ctrl.statsLoader() ? h.loader() : [m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')])])])]), m$1('.w-section.section.bg-blue-one.fontcolor-negative', [m$1('.w-container', [m$1('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'), m$1('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')])]), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'), m$1('a.w-button.btn.btn-large.btn-tweet[href="http://twitter.com/?status=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')])])])]), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-large.bg-greenlime', [m$1('.w-container', [m$1('#participe-do-debate.u-text-center', { config: h.toAnchor() }, [m$1('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m$1('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')]), m$1('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
             config: ctrl.addDisqus
         })])])]];
     }
@@ -3476,7 +3496,118 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
 
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
 
 
 
@@ -4814,7 +4945,7 @@ var menu = {
     view: function view(ctrl, args) {
         return m$1('header.main-header', {
             class: ctrl.menuCss()
-        }, [m$1('.w-row', [m$1('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [m$1('a.header-logo.w-inline-block[href=\'/?ref=ctrse_header\'][title=\'Catarse\']', ctrl.homeAttrs(), m$1('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')), args.menuShort ? '' : m$1('div#menu-components', [m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m$1.route }, 'Comece seu projeto'), m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m$1.route }, 'Explore'), m$1.component(menuSearch)])]), m$1('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [ctrl.user ? m$1.component(menuProfile, { user: ctrl.user }) : m$1('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login')])]), args.menuShort ? '' : m$1('.header-controls-mobile.w-hidden-main.w-hidden-medium', [m$1('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']', { onclick: function onclick() {
+        }, [m$1('.w-row', [m$1('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [m$1('a.header-logo.w-inline-block[href=\'/?ref=ctrse_header\'][title=\'Catarse\']', ctrl.homeAttrs(), m$1('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')), m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m$1.route }, 'Comece seu projeto'), m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m$1.route }, 'Explore'), m$1.component(menuSearch)]), m$1('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [ctrl.user ? m$1.component(menuProfile, { user: ctrl.user }) : m$1('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login')])]), m$1('.header-controls-mobile.w-hidden-main.w-hidden-medium', [m$1('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']', { onclick: function onclick() {
                 return m$1.route('/start');
             } }, 'Comece seu projeto'), m$1('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']', { onclick: function onclick() {
                 return m$1.route('/explore');
@@ -4954,37 +5085,17 @@ var slider = {
  * }
  */
 
-/*       */
-var blogVM = {
-    getBlogPosts: function getBlogPosts() {
-        var deferred = m$1.deferred();
-        var posts = _$1.first(document.getElementsByTagName('body')).getAttribute('data-blog');
-
-        if (posts) {
-            deferred.resolve(JSON.parse(posts));
-        } else {
-            m$1.request({ method: 'GET', url: '/posts' }).then(deferred.resolve).catch(deferred.reject);
-        }
-
-        return deferred.promise;
-    }
-};
-
-//      
 var blogBanner = {
     controller: function controller(args) {
-        var posts = m$1.prop([]),
-            error = m$1.prop(false);
+        var posts = h.getBlogPosts();
 
-        blogVM.getBlogPosts().then(posts).catch(error);
-
-        return { posts: posts, error: error };
+        return { posts: posts };
     },
     view: function view(ctrl, args) {
 
-        return m$1('section.section-large.bg-gray.before-footer[id=\'blog\']', m$1('.w-container', [m$1('.u-text-center', [m$1('a[href=\'http://blog.catarse.me\'][target=\'blank\']', m$1('img.u-marginbottom-10[alt=\'Icon blog\'][src=\'/assets/icon-blog.png\']')), m$1('.fontsize-large.u-marginbottom-60.text-success', m$1('a.link-hidden-success[href=\'http://blog.catarse.me\'][target=\'__blank\']', 'Blog do Catarse'))]), m$1('.w-row', _$1.map(ctrl.posts(), function (post) {
+        return m$1('section.section-large.bg-gray.before-footer[id=\'blog\']', m$1('.w-container', [m$1('.u-text-center', [m$1('a[href=\'http://blog.catarse.me\'][target=\'blank\']', m$1('img.u-marginbottom-10[alt=\'Icon blog\'][src=\'/assets/icon-blog.png\']')), m$1('.fontsize-large.u-marginbottom-60.text-success', m$1('a.link-hidden-success[href=\'http://blog.catarse.me\'][target=\'__blank\']', 'Blog do Catarse'))]), m$1('.w-row', _$1.map(ctrl.posts, function (post) {
             return m$1('.w-col.w-col-4.col-blog-post', [m$1('a.link-hidden.fontweight-semibold.fontsize-base.u-marginbottom-10[href="' + post[1][1] + '"][target=\'__blank\']', post[0][1]), m$1('.fontsize-smaller.fontcolor-secondary.u-margintop-10', m$1.trust(h.strip(post[6][1].substr(0, 130)) + '...'))]);
-        })), ctrl.error() ? m$1('.w-row', m$1('.w-col.w-col-12.u-text-center', 'Erro ao carregar posts...')) : '']));
+        }))]));
     }
 };
 
@@ -5090,10 +5201,10 @@ var projectShareBox = {
             onclick: args.displayShareBox.toggle
         }, 'Fechar'), m$1('.fontsize-small.fontweight-semibold.u-marginbottom-30', 'Compartilhe este projeto')]), m$1('.w-widget.w-widget-twitter.w-hidden-small.w-hidden-tiny.share-block', [m$1('iframe[allowtransparency="true"][width="120px"][height="22px"][frameborder="0"][scrolling="no"][src="//platform.twitter.com/widgets/tweet_button.8d007ddfc184e6776be76fe9e5e52d69.en.html#_=1442425984936&count=horizontal&dnt=false&id=twitter-widget-1&lang=en&original_referer=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project().permalink + '&size=m&text=Confira%20o%20projeto%20' + args.project().name + '%20no%20%40catarse&type=share&url=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project().permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share&via=catarse"]')]), m$1('a.w-hidden-small.widget-embed.w-hidden-tiny.fontsize-small.link-hidden.fontcolor-secondary[href="js:void(0);"]', {
             onclick: ctrl.displayEmbed.toggle
-        }, '< embed >'), ctrl.displayEmbed() ? m$1('.embed-expanded.u-margintop-30', [m$1('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'), m$1('.w-form', [m$1('input.w-input[type="text"][value="<iframe frameborder="0" height="340px" src="https://www.catarse.me/pt/projects/' + args.project().project_id + '/embed" width="300px" scrolling="no"></iframe>"]')]), m$1('.card-embed', [m$1('iframe[frameborder="0"][height="350px"][src="/projects/' + args.project().project_id + '/embed"][width="300px"][scrolling="no"]')])]) : '', args.project().permalink ? m$1.component(facebookButton, {
+        }, '< embed >'), ctrl.displayEmbed() ? m$1('.embed-expanded.u-margintop-30', [m$1('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'), m$1('.w-form', [m$1('input.w-input[type="text"][value="<iframe frameborder="0" height="314px" src="https://www.catarse.me/pt/projects/' + args.project().project_id + '/embed" width="300px" scrolling="no"></iframe>"]')]), m$1('.card-embed', [m$1('iframe[frameborder="0"][height="350px"][src="/projects/' + args.project().project_id + '/embed"][width="300px"][scrolling="no"]')])]) : '', args.project().permalink ? m$1.component(facebookButton, {
             mobile: true,
             url: 'https://www.catarse.me/' + args.project().permalink + '?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share'
-        }) : '', m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href="https://twitter.com/intent/tweet?text=Acabei%20de%20apoiar%20o%20projeto%20' + args.project().name + '%20https://www.catarse.me/' + args.project().permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Tweet']), m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium[data-action="share/whatsapp/share"]', {
+        }) : '', m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href="http://twitter.com/?status=Acabei%20de%20apoiar%20o%20projeto%20' + args.project().name + '%20https://www.catarse.me/' + args.project().permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Tweet']), m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium[data-action="share/whatsapp/share"]', {
             href: 'whatsapp://send?text=' + encodeURIComponent('https://www.catarse.me/' + args.project().permalink + '/?ref=whatsapp&utm_source=whatsapp&utm_medium=social&utm_campaign=project_share')
         }, [m$1('span.fa.fa-whatsapp'), ' Whatsapp'])]);
     }
@@ -5529,8 +5640,28 @@ var getCurrentContribution = function getCurrentContribution() {
     }
 };
 
+var wasConfirmed = function wasConfirmed(contribution) {
+    return _$1.contains(['paid', 'pending_refund', 'refunded'], contribution.state);
+};
+
+var canShowReceipt = function canShowReceipt(contribution) {
+    return wasConfirmed(contribution);
+};
+
+var canShowSlip = function canShowSlip(contribution) {
+    return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
+};
+
+//@TODO
+var canGenerateSlip = function canGenerateSlip(contribution) {
+    return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
+};
+
 var contributionVM = {
     getCurrentContribution: getCurrentContribution,
+    canShowReceipt: canShowReceipt,
+    canGenerateSlip: canGenerateSlip,
+    canShowSlip: canShowSlip,
     getUserProjectContributions: getUserProjectContributions
 };
 
@@ -5715,7 +5846,7 @@ var projectRewardList = {
                         reward_value: reward.minimum_value
                     }
                 }, ctrl.selectReward(reward))
-            }, [reward.minimum_value >= 100 ? m$1('.tag-circle-installment', [m$1('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'), m$1('.fontsize-mini.lineheight-tightest', 's/ juros')]) : '', m$1('.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'), m$1('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), reward.maximum_contributions > 0 ? [reward.waiting_payment_count > 0 ? m$1('.maximum_contributions.in_time_to_confirm.clearfix', [m$1('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))]) : '', h.rewardSouldOut(reward) ? m$1('.u-margintop-10', [m$1('span.badge.badge-gone.fontsize-smaller', 'Esgotada')]) : m$1('.u-margintop-10', [m$1('span.badge.badge-attention.fontsize-smaller', [m$1('span.fontweight-bold', 'Limitada'), project.open_for_contributions ? ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)' : ''])])] : '']), m$1('.fontsize-smaller.u-margintop-20', m$1.trust(h.simpleFormat(h.strip(reward.description)))), !_$1.isEmpty(reward.deliver_at) ? m$1('.fontsize-smaller', [m$1('b', 'Estimativa de Entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', project.open_for_contributions && !h.rewardSouldOut(reward) ? [ctrl.openedReward().id === reward.id ? m$1('.w-form', [m$1('form.u-margintop-30', {
+            }, [reward.minimum_value >= 100 ? m$1('.tag-circle-installment', [m$1('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'), m$1('.fontsize-mini.lineheight-tightest', 's/ juros')]) : '', m$1('.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'), m$1('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), reward.maximum_contributions > 0 ? [reward.waiting_payment_count > 0 ? m$1('.maximum_contributions.in_time_to_confirm.clearfix', [m$1('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))]) : '', h.rewardSouldOut(reward) ? m$1('.u-margintop-10', [m$1('span.badge.badge-gone.fontsize-smaller', 'Esgotada')]) : m$1('.u-margintop-10', [m$1('span.badge.badge-attention.fontsize-smaller', [m$1('span.fontweight-bold', 'Limitada'), ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)'])])] : '']), m$1('.fontsize-smaller.u-margintop-20', m$1.trust(h.simpleFormat(h.strip(reward.description)))), !_$1.isEmpty(reward.deliver_at) ? m$1('.fontsize-smaller', [m$1('b', 'Estimativa de Entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', project.open_for_contributions && !h.rewardSouldOut(reward) ? [ctrl.openedReward().id === reward.id ? m$1('.w-form', [m$1('form.u-margintop-30', {
                 onsubmit: ctrl.submitContribution
             }, [m$1('.divider.u-marginbottom-20'), m$1('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-3.w-col-small-3.w-col-tiny-3', m$1('.back-reward-input-reward.placeholder', 'R$')), m$1('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', m$1('input.w-input.back-reward-input-reward[type="tel"]', {
                 config: ctrl.setInput,
@@ -6064,8 +6195,7 @@ var projectsShow = {
             project_user_id = args.project_user_id;
 
 
-        h.analytics.event({ cat: 'project_view', act: 'project_page_view', project: { id: project_id, user_id: project_user_id } });
-        h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll', project: { id: project_id, user_id: project_user_id } });
+        h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll' });
 
         if (project_id && !_$1.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
@@ -6100,12 +6230,15 @@ var projectsShow = {
     }
 };
 
+//       weak
 var userHeader = {
     view: function view(ctrl, args) {
+
         var user = args.user,
+            hideDetails = args.hideDetails,
             profileImage = userVM.displayImage(user),
             coverImage = userVM.displayCover(user);
-        return m$1('.hero-half', [m$1('.w-container.content-hero-profile', m$1('.w-row.u-text-center', m$1('.w-col.w-col-8.w-col-push-2', [m$1('.u-marginbottom-20', m$1('.avatar_wrapper', m$1('img.thumb.big.u-round[alt=\'User\'][src=\'' + profileImage + '\']'))), m$1('.fontsize-larger.fontweight-semibold.u-marginbottom-20', user.name), m$1('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base', ['Chegou junto em ' + h.momentify(user.created_at, 'MMMM [de] YYYY'), m$1('br'), user.total_contributed_projects == 0 ? 'Ainda não apoiou projetos' : 'Apoiou ' + h.pluralize(user.total_contributed_projects, ' projeto', ' projetos'), user.total_published_projects > 0 ? ' e j\xE1 criou ' + h.pluralize(user.total_published_projects, ' projeto', ' projetos') : ''])]))), m$1('.hero-profile', { style: 'background-image:url(\'' + coverImage + '\');' })]);
+        return m$1('.hero-' + (hideDetails ? 'small' : 'half'), [m$1('.w-container.content-hero-profile', m$1('.w-row.u-text-center', m$1('.w-col.w-col-8.w-col-push-2', [hideDetails ? '' : m$1('.u-marginbottom-20', m$1('.avatar_wrapper', m$1('img.thumb.big.u-round[alt=\'User\'][src=\'' + profileImage + '\']'))), m$1('.fontsize-larger.fontweight-semibold.u-marginbottom-20', user.name), hideDetails ? '' : m$1('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base', ['Chegou junto em ' + h.momentify(user.created_at, 'MMMM [de] YYYY'), m$1('br'), user.total_contributed_projects == 0 ? 'Ainda não apoiou projetos' : 'Apoiou ' + h.pluralize(user.total_contributed_projects, ' projeto', ' projetos'), user.total_published_projects > 0 ? ' e j\xE1 criou ' + h.pluralize(user.total_published_projects, ' projeto', ' projetos') : ''])]))), m$1('.hero-profile', { style: 'background-image:url(\'' + coverImage + '\');' })]);
     }
 };
 
@@ -6306,15 +6439,300 @@ var usersShow = {
     }
 };
 
-var I18nScope$16 = _$1.partial(h.i18nScope, 'projects.contributions.edit.errors');
-var I18nIntScope$1 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
+var userContributedBox = {
+    view: function view(ctrl, args) {
+        var collection = args.collection,
+            pagination = args.pagination,
+            title = args.title;
+        return m$1(".section-one-column.u-marginbottom-30", [m$1(".fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center", title), m$1(".w-row.w-hidden-small.w-hidden-tiny.card.card-secondary", [m$1(".w-col.w-col-3", m$1(".fontsize-small.fontweight-semibold", "Projetos que apoiei")), m$1(".w-col.w-col-2", m$1(".fontsize-small.fontweight-semibold", "Valor do apoio")), m$1(".w-col.w-col-3", m$1(".fontsize-small.fontweight-semibold", "Status do apoio")), m$1(".w-col.w-col-4", m$1(".fontsize-small.fontweight-semibold", "Recompensa"))]), !_$1.isEmpty(collection) ? _$1.map(collection, function (contribution) {
+            return m$1(".w-row.card", [m$1(".w-col.w-col-3", m$1(".w-row", [m$1(".w-col.w-col-4.u-marginbottom-10", m$1('a[href=\'/' + contribution.permalink + '\']', m$1('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), m$1(".w-col.w-col-8", m$1(".fontsize-small.fontweight-semibold", m$1('a.alt-link[href=\'/' + contribution.permalink + '\']', contribution.project_name)))])), m$1(".w-col.w-col-2.u-marginbottom-10", m$1(".fontsize-base.inline-block", [m$1("span.w-hidden-main.w-hidden-medium.fontweight-semibold", "Valor do apoio"), ' R$ ' + contribution.value])), m$1(".w-col.w-col-3.u-marginbottom-10", [m$1(".w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold", "Status"), m$1(".fontsize-smaller.fontweight-semibold", [m$1(".lineheight-tighter"), m$1('span.fa.fa-circle.fontsize-smallest.' + (contribution.state == 'paid' ? 'text-success' : contribution.state == 'pending' ? 'text-waiting' : 'text-error'), m$1.trust("&nbsp;")), 'Confirmado em ' + h.momentify(contribution.paid_at)]), m$1(".fontsize-smallest", contribution.installments > 1 ? contribution.installments + ' x R$ ' + contribution.installment_value + ' ' : '', contribution.payment_method), contributionVM.canShowReceipt(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10.btn-terciary[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/receipt\'][target=\'__blank\']', "Ver recibo") : '', contributionVM.canShowSlip(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10[href=\'' + contribution.gateway_data['boleto_url'] + '\'][target=\'__blank\']', "Imprimir boleto") : '', contributionVM.canGenerateSlip(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/second_slip\'][target=\'__blank\']', "Gerar 2a via") : '', m$1(".w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10", [m$1('input.w-checkbox-input[data-remote=\'true\'][data-url=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/toggle_anonymous\'][id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']' + (contribution.anonymous ? '[checked=\'checked\']' : '') + '[value=\'1\']'), m$1("label.w-form-label", "Quero que meu apoio não seja público")])]), m$1(".w-col.w-col-4", m$1(".fontsize-smallest", [m$1("span.w-hidden-main.w-hidden-medium.fontweight-semibold", "Recompensa"), contribution.reward_id ? m$1.trust(h.simpleFormat(contribution.reward_description)) : " Não selecionou recompensa"]), m$1(".fontsize-smallest.lineheight-looser", [m$1("span.fontweight-semibold", "Estimativa de entrega: "), h.momentify(contribution.deliver_at, 'MMMM/YYYY')]))]);
+        }) : h.loader(), !_$1.isEmpty(collection) ? m$1('.w-row.u-marginbottom-40.u-margintop-30', [m$1('.w-col.w-col-2.w-col-push-5', [!pagination.isLoading() ? pagination.isLastPage() ? '' : m$1('button#load-more.btn.btn-medium.btn-terciary', {
+            onclick: pagination.nextPage
+        }, 'Carregar mais') : h.loader()])]) : '']);
+    }
+};
+
+var userPrivateContributed = {
+    controller: function controller(args) {
+        var user_id = args.userId,
+            online = postgrest$1.paginationVM(models.project),
+            onlinePages = postgrest$1.paginationVM(models.userContribution),
+            successfulPages = postgrest$1.paginationVM(models.userContribution),
+            failedPages = postgrest$1.paginationVM(models.userContribution),
+            error = m$1.prop(false),
+            loader = m$1.prop(true),
+            contextVM = postgrest$1.filtersVM({
+            user_id: 'eq',
+            state: 'in',
+            project_state: 'in'
+        });
+
+        models.userContribution.pageSize(9);
+        contextVM.user_id(user_id).order({
+            created_at: 'desc'
+        }).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
+
+        contextVM.project_state(['online']);
+        onlinePages.firstPage(contextVM.parameters()).then(function () {
+            loader(false);
+        });
+
+        contextVM.project_state(['successful']);
+        successfulPages.firstPage(contextVM.parameters()).then(function () {
+            loader(false);
+        });
+
+        contextVM.project_state(['failed']);
+        failedPages.firstPage(contextVM.parameters()).then(function () {
+            loader(false);
+        });
+
+        return {
+            onlinePages: onlinePages,
+            successfulPages: successfulPages,
+            failedPages: failedPages,
+            error: error,
+            loader: loader
+        };
+    },
+    view: function view(ctrl, args) {
+        var online_collection = ctrl.onlinePages.collection(),
+            successful_collection = ctrl.successfulPages.collection(),
+            failed_collection = ctrl.failedPages.collection();
+        return m$1('.content[id=\'private-contributed-tab\']', ctrl.loader() ? h.loader() : [m$1.component(userContributedBox, { title: 'Projetos em andamento', collection: online_collection, pagination: ctrl.onlinePages }), m$1.component(userContributedBox, { title: 'Projetos bem-sucedidos', collection: successful_collection, pagination: ctrl.successfulPages }), m$1.component(userContributedBox, { title: 'Projetos não-financiados', collection: failed_collection, pagination: ctrl.failedPages })]);
+    }
+};
+
+var userSettings = {
+    controller: function controller(args) {
+        var user = args.user,
+            fields = {
+            email: m$1.prop(''),
+            email_confirmation: m$1.prop(''),
+            password: m$1.prop(''),
+            current_password: m$1.prop(''),
+            owner_document: m$1.prop(user.owner_document),
+            country_id: m$1.prop(user.address.country_id),
+            street: m$1.prop(user.address.street),
+            number: m$1.prop(user.address.number),
+            city: m$1.prop(user.address.city),
+            zipcode: m$1.prop(user.address.zipcode),
+            complement: m$1.prop(user.address.complement),
+            neighbourhood: m$1.prop(user.address.neighbourhood),
+            state: m$1.prop(user.address.state),
+            phonenumber: m$1.prop(user.address.phonenumber),
+            name: m$1.prop(user.name)
+        },
+            user_id = args.userId,
+            error = m$1.prop(''),
+            countries = m$1.prop(),
+            states = m$1.prop(),
+            loader = m$1.prop(true),
+            showEmailForm = h.toggleProp(false, true),
+            showSuccess = m$1.prop(false),
+            showError = m$1.prop(false),
+            countriesLoader = postgrest$1.loader(models.country.getPageOptions()),
+            statesLoader = postgrest$1.loader(models.state.getPageOptions()),
+            onSubmit = function onSubmit() {
+            if (fields.email() !== fields.email_confirmation()) {
+                error('Confirmação de email está incorreta.');
+                showError(true);
+            } else {
+                updateUserData(user_id);
+            }
+
+            return false;
+        },
+            setCsrfToken = function setCsrfToken(xhr) {
+            if (h.authenticityToken()) {
+                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+            }
+            return;
+        },
+            updateUserData = function updateUserData(user_id) {
+            var userData = {
+                email: fields.email(),
+                country_id: fields.country_id(),
+                address_street: fields.street(),
+                address_number: fields.number(),
+                address_city: fields.city(),
+                address_zip_code: fields.zipcode(),
+                address_complement: fields.complement(),
+                address_state: fields.state(),
+                address_neighbourhood: fields.neighbourhood(),
+                phone_number: fields.phonenumber(),
+                owner_document: fields.owner_document(),
+                current_password: fields.current_password(),
+                password: fields.password(),
+                name: fields.name()
+            };
+
+            return m$1.request({
+                method: 'PUT',
+                url: '/users/' + user_id + '.json',
+                data: { user: userData },
+                config: setCsrfToken
+            }).then(function () {
+                showSuccess(true);
+                m$1.redraw();
+            }).catch(function (err) {
+                error('Erro ao atualizar informações.');
+                showError(true);
+                m$1.redraw();
+            });
+        };
+
+        countriesLoader.load().then(countries);
+        statesLoader.load().then(states);
+
+        return {
+            countries: countries,
+            states: states,
+            fields: fields,
+            loader: loader,
+            showSuccess: showSuccess,
+            showError: showError,
+            showEmailForm: showEmailForm,
+            user: user,
+            onSubmit: onSubmit,
+            error: error
+        };
+    },
+    view: function view(ctrl, args) {
+        var user = ctrl.user,
+            fields = ctrl.fields;
+
+        return m$1('[id=\'settings-tab\']', [ctrl.showSuccess() ? m$1.component(popNotification, { message: 'As suas informações foram atualizadas' }) : '', ctrl.showError() ? m$1.component(popNotification, { message: ctrl.error() }) : '', m$1('form.w-form', {
+            onsubmit: ctrl.onSubmit
+        }, [m$1('div', [m$1('.w-container', m$1('.w-col.w-col-10.w-col-push-1', m$1('.w-form.card.card-terciary.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Email'), m$1('.fontsize-small.u-marginbottom-30', 'Mantenha esse email atualizado pois ele é o canal de comunicação entre você, a equipe do Catarse e a equipe dos projetos que você apoiou. '), m$1('.fontsize-base.u-marginbottom-40', [m$1('span.fontweight-semibold.card.u-radius', user.email), m$1('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', { onclick: function onclick() {
+                ctrl.showEmailForm.toggle();
+            } }, 'Alterar email')]), m$1((ctrl.showEmailForm() ? '' : '.w-hidden') + '.u-marginbottom-20.w-row[id=\'email_update_form\']', [m$1('.w-col.w-col-6.w-sub-col', [m$1('label.field-label.fontweight-semibold', 'Novo email'), m$1('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
+            value: fields.email(),
+            onchange: m$1.withAttr('value', fields.email)
+        })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', 'Confirmar novo email'), m$1('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
+            value: fields.email_confirmation(),
+            onchange: m$1.withAttr('value', fields.email_confirmation)
+        })])]), m$1('.fontsize-base.fontweight-semibold', 'Nome'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_name\'][name=\'user[name]\'][type=\'text\']', {
+            value: fields.name(),
+            onchange: m$1.withAttr('value', fields.name)
+        })), m$1('.w-col.w-col-6')]), m$1('.fontsize-base.fontweight-semibold', 'CPF / CNPJ'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', m$1('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_cpf\'][name=\'user[cpf]\'][type=\'tel\']', {
+            value: fields.owner_document(),
+            onchange: m$1.withAttr('value', fields.owner_document)
+        })), m$1('.w-col.w-col-6')]), m$1('.divider.u-marginbottom-20'), m$1('.fontsize-base.fontweight-semibold', 'Endereço'), m$1('.fontsize-small.u-marginbottom-20', 'Esse é o endereço que foi informado ao realizar seu último apoio. Se você mudou de endereço, altere aqui e, caso você esteja aguardando alguma recompensa, avise por email ao realizador do projeto apoiado.'), m$1('.w-row', [m$1('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [m$1('label.field-label', 'País'), m$1('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
+            onchange: m$1.withAttr('value', fields.country_id)
+        }, [m$1('option[value=\'\']'), !_$1.isEmpty(ctrl.countries()) ? _$1.map(ctrl.countries(), function (country) {
+            return m$1('option' + (country.id == fields.country_id() ? '[selected="selected"]' : ''), {
+                value: country.id
+            }, country.name);
+        }) : ''])]), m$1('.w-col.w-col-6')]), m$1('.w-row', [m$1('.input.string.optional.user_address_street.w-col.w-col-6.w-sub-col', [m$1('label.field-label', 'Endereço'), m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_street\'][name=\'user[address_street]\'][type=\'text\']', {
+            value: fields.street(),
+            onchange: m$1.withAttr('value', fields.street)
+        }), m$1('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_street\']', ' translation missing: pt.simple_form.validation_texts.user.address_street')]), m$1('.w-col.w-col-6', m$1('.w-row', [m$1('.input.tel.optional.user_address_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m$1('label.field-label', 'Número'), m$1('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_number\'][name=\'user[address_number]\'][type=\'tel\']', {
+            value: fields.number(),
+            onchange: m$1.withAttr('value', fields.number)
+        }), m$1('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_number\']', ' translation missing: pt.simple_form.validation_texts.user.address_number')]), m$1('.input.string.optional.user_address_complement.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [m$1('label.field-label', 'Complemento'), m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_complement\'][name=\'user[address_complement]\'][type=\'text\']', {
+            value: fields.complement(),
+            onchange: m$1.withAttr('value', fields.complement)
+        })])]))]), m$1('.w-row', [m$1('.input.string.optional.user_address_neighbourhood.w-col.w-col-6.w-sub-col', [m$1('label.field-label', 'Bairro'), m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_neighbourhood\'][name=\'user[address_neighbourhood]\'][type=\'text\']', {
+            value: fields.neighbourhood(),
+            onchange: m$1.withAttr('value', fields.neighbourhood)
+        })]), m$1('.input.string.optional.user_address_city.w-col.w-col-6', [m$1('label.field-label', 'Cidade'), m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_city\'][name=\'user[address_city]\'][type=\'text\']', {
+            value: fields.city(),
+            onchange: m$1.withAttr('value', fields.city)
+        }), m$1('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_city\']', ' translation missing: pt.simple_form.validation_texts.user.address_city')])]), m$1('.w-row', [m$1('.input.select.optional.user_address_state.w-col.w-col-6.w-sub-col', [m$1('label.field-label', 'Estado'), m$1('select.select.optional.w-input.text-field.w-select.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_state\'][name=\'user[address_state]\']', {
+
+            onchange: m$1.withAttr('value', fields.state)
+        }, [m$1('option[value=\'\']'), !_$1.isEmpty(ctrl.states()) ? _$1.map(ctrl.states(), function (state) {
+            return m$1('option[value=\'' + state.acronym + '\']' + (state.acronym == fields.state() ? '[selected="selected"]' : ''), {
+                value: state.acronym
+            }, state.name);
+        }) : '', m$1('option[value=\'outro / other\']', 'Outro / Other')]), m$1('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_state\']', ' translation missing: pt.simple_form.validation_texts.user.address_state')]), m$1('.w-col.w-col-6', m$1('.w-row', [m$1('.input.tel.optional.user_address_zip_code.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m$1('label.field-label', 'CEP'), m$1('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'99999-999\'][data-required-in-brazil=\'true\'][id=\'user_address_zip_code\'][name=\'user[address_zip_code]\'][type=\'tel\']', {
+            value: fields.zipcode(),
+            onchange: m$1.withAttr('value', fields.zipcode)
+        }), m$1('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_zip_code\']', ' translation missing: pt.simple_form.validation_texts.user.address_zip_code')]), m$1('.input.tel.optional.user_phone_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [m$1('label.field-label', 'Telefone'), m$1('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
+            value: fields.phonenumber(),
+            onchange: m$1.withAttr('value', fields.phonenumber)
+        })])]))]), m$1('.divider.u-maginbottom-20'), m$1('.fontsize-base.fontweight-semibold', 'Alterar minha senha'), m$1('.fontsize-small.u-marginbottom-20', 'Para que a senha seja alterada você precisa confirmar a sua senha atual.'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', [m$1('label.field-label.fontweight-semibold', ' Senha atual'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_current_password\'][name=\'user[current_password]\'][type=\'password\']', {
+            value: fields.current_password(),
+            onchange: m$1.withAttr('value', fields.current_password)
+        })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', ' Nova senha'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
+            value: fields.password(),
+            onchange: m$1.withAttr('value', fields.password)
+        })])]), m$1('.divider.u-marginbottom-20'), m$1('.fontweight-semibold.fontsize-smaller', 'Desativar minha conta'), m$1('.fontsize-smallest', 'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'), m$1('a.alt-link.fontsize-smaller[data-confirm=\'Voc\xEA deseja desativar essa conta?\'][data-method=\'delete\'][href=\'/pt/users/' + user.id + '\'][rel=\'nofollow\']', 'Desativar minha conta no Catarse')]))), m$1('div', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', m$1('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')), m$1('.w-col.w-col-4')])))])])]);
+    }
+};
+
+var userNotifications = {
+    controller: function controller(args) {
+        var contributedProjects = m$1.prop(),
+            projectReminders = m$1.prop(),
+            user_id = args.userId,
+            error = m$1.prop(false);
+
+        userVM.getUserProjectReminders(user_id).then(projectReminders).catch(function (err) {
+            error(true);
+            m$1.redraw();
+        });
+
+        userVM.getUserContributedProjects(user_id, null).then(contributedProjects).catch(function (err) {
+            error(true);
+            m$1.redraw();
+        });
+
+        return {
+            projects: contributedProjects,
+            projectReminders: projectReminders,
+            error: error
+        };
+    },
+    view: function view(ctrl, args) {
+        var user = args.user;
+        var projects_collection = ctrl.projects(),
+            reminders = ctrl.projectReminders();
+
+        return m$1('[id=\'notifications-tab\']', m$1('form.simple_form.edit_user[accept-charset=\'UTF-8\'][action=\'/pt/users/' + user.id + '\'][method=\'post\'][novalidate=\'novalidate\']', [m$1('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), m$1('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'), m$1('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + h.authenticityToken() + '\']'), m$1('.w-container', [m$1('.w-row', m$1('.w-col.w-col-10.w-col-push-1', m$1('.w-form.card.card-terciary', [m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Newsletters:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.newsletter ? '[checked=\'checked\']' : '') + '[id=\'user_newsletter\'][name=user[newsletter]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-base.fontweight-semibold[for=\'checkbox\']', ' Newsletter do Catarse (semanal)'), m$1('div', ['Projetos em destaque e posts do nosso Blog', m$1.trust('&nbsp;')])]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Projetos que você apoiou:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_project_posts]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_project_posts ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_project_posts\'][name=user[subscribed_to_project_posts]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-base.fontweight-semibold', ' Quero receber atualizações dos projetos'), m$1('.u-marginbottom-20', m$1('a.alt-link[href=\'#\'][id=\'toggle-notifications\']', ' Gerenciar as notifica\xE7\xF5es de ' + user.total_contributed_projects + ' projetos')), m$1('ul.w-list-unstyled.u-radius.card.card-secondary.w-hidden[id=\'notifications-box\']', { style: { 'display': 'none' } }, [!_$1.isEmpty(projects_collection) ? _$1.map(projects_collection, function (project) {
+            return m$1('li', m$1('.w-checkbox.w-clearfix', [m$1('input[id=\'unsubscribes_' + project.project_id + '\'][type=\'hidden\'][value=\'\']', { name: 'unsubscribes[' + project.project_id + ']' }), m$1('input.w-checkbox-input' + (project.unsubscribed ? '' : '[checked=\'checked\']') + '[type=\'checkbox\'][value=\'1\'][id=\'user_unsubscribes_' + project.project_id + '\']', { name: 'unsubscribes[' + project.project_id + ']' }), m$1('label.w-form-label.fontsize-small', project.project_name)]));
+        }) : ''])]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Social:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_friends_contributions]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_friends_contributions ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_friends_contributions\'][name=user[subscribed_to_friends_contributions]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-small', 'Um amigo apoiou ou lançou um projeto')])), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_new_followers]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_new_followers ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_new_followers\'][name=user[subscribed_to_new_followers]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-small', 'Um amigo começou a me seguir')]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Lembretes de projetos:')), m$1('.w-col.w-col-8', [!_$1.isEmpty(reminders) ? _$1.map(reminders, function (reminder) {
+            return m$1('.w-checkbox.w-clearfix', [m$1('input[id=\'user_reminders_' + reminder.project_id + '\'][type=\'hidden\'][value=\'false\']', { name: 'user[reminders][' + reminder.project_id + ']' }), m$1('input.w-checkbox-input[checked=\'checked\'][type=\'checkbox\'][value=\'1\'][id=\'user_reminders_' + reminder.project_id + '\']', { name: 'user[reminders][' + reminder.project_id + ']' }), m$1('label.w-form-label.fontsize-small', reminder.project_name)]);
+        }) : ''])])]))), m$1('.u-margintop-30', m$1('.w-container', m$1('.w-row', m$1('.w-col.w-col-4.w-col-push-4', m$1('input.btn.btn-large[id=\'save\'][name=\'commit\'][type=\'submit\'][value=\'Salvar\']')))))])]));
+    }
+};
+
+var usersEdit = {
+    controller: function controller(args) {
+        var userDetails = m$1.prop({}),
+            user_id = args.user_id;
+
+        //@TODO remove this after migrating all tabs to API
+        var moveTabContent = function moveTabContent() {
+            $('#created-tab').appendTo('#dashboard_projects');
+            $('#notifications-tab').appendTo('#dashboard_notifications');
+            $('#private-contributed-tab').appendTo('#dashboard_contributions');
+            $('#settings-tab').appendTo('#dashboard_settings');
+        };
+
+        userVM.fetchUser(user_id, true, userDetails);
+        return {
+            userDetails: userDetails,
+            moveTabContent: moveTabContent
+        };
+    },
+    view: function view(ctrl, args) {
+        var user = ctrl.userDetails();
+
+        return m$1('div', { config: ctrl.moveTabContent() }, [m$1.component(menu, { menuTransparency: true }), m$1.component(userHeader, { user: user, hideDetails: true }), !_$1.isEmpty(user) ? [m$1.component(userNotifications, { userId: user.id, user: user }), m$1.component(userPrivateContributed, { userId: user.id, user: user }), m$1.component(userCreated, { userId: user.id }), m$1.component(userSettings, { userId: user.id, user: user })] : '']);
+    }
+};
+
+var I18nScope$16 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+var I18nIntScope$1 = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 var paymentVM = function paymentVM() {
     var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'aon';
 
-    var pagarme = m$1.prop({}),
-        submissionError = m$1.prop(false),
-        isLoading = m$1.prop(false);
+    var pagarme = m.prop({}),
+        submissionError = m.prop(false),
+        isLoading = m.prop(false);
 
     var setCsrfToken = function setCsrfToken(xhr) {
         if (h.authenticityToken()) {
@@ -6324,37 +6742,37 @@ var paymentVM = function paymentVM() {
     };
 
     var fields = {
-        completeName: m$1.prop(''),
-        email: m$1.prop(''),
-        anonymous: m$1.prop(),
-        countries: m$1.prop(),
-        userCountryId: m$1.prop(),
-        zipCode: m$1.prop(''),
-        street: m$1.prop(''),
-        number: m$1.prop(''),
-        addressComplement: m$1.prop(''),
-        neighbourhood: m$1.prop(''),
-        city: m$1.prop(''),
-        states: m$1.prop([]),
-        userState: m$1.prop(),
-        ownerDocument: m$1.prop(''),
-        phone: m$1.prop(''),
-        errors: m$1.prop([])
+        completeName: m.prop(''),
+        email: m.prop(''),
+        anonymous: m.prop(),
+        countries: m.prop(),
+        userCountryId: m.prop(),
+        zipCode: m.prop(''),
+        street: m.prop(''),
+        number: m.prop(''),
+        addressComplement: m.prop(''),
+        neighbourhood: m.prop(''),
+        city: m.prop(''),
+        states: m.prop([]),
+        userState: m.prop(),
+        ownerDocument: m.prop(''),
+        phone: m.prop(''),
+        errors: m.prop([])
     };
 
     var creditCardFields = {
-        name: m$1.prop(''),
-        number: m$1.prop(''),
-        expMonth: m$1.prop(''),
-        expYear: m$1.prop(''),
-        save: m$1.prop(false),
-        cvv: m$1.prop(''),
-        errors: m$1.prop([])
+        name: m.prop(''),
+        number: m.prop(''),
+        expMonth: m.prop(''),
+        expYear: m.prop(''),
+        save: m.prop(false),
+        cvv: m.prop(''),
+        errors: m.prop([])
     };
 
     var populateForm = function populateForm(fetchedData) {
-        var data = _$1.first(fetchedData),
-            countryId = data.address.country_id || _$1.findWhere(fields.countries(), { name: 'Brasil' }).id;
+        var data = _.first(fetchedData),
+            countryId = data.address.country_id || _.findWhere(fields.countries(), { name: 'Brasil' }).id;
 
         fields.completeName(data.name);
         fields.email(data.email);
@@ -6384,11 +6802,11 @@ var paymentVM = function paymentVM() {
     };
 
     var isInternational = function isInternational() {
-        return !_$1.isEmpty(fields.countries()) ? fields.userCountryId() != _$1.findWhere(fields.countries(), { name: 'Brasil' }).id : false;
+        return !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), { name: 'Brasil' }).id : false;
     };
 
-    var scope = function scope(data) {
-        return isInternational() ? I18nIntScope$1(data) : I18nScope$16(data);
+    var scope = function scope() {
+        return isInternational() ? I18nIntScope$1() : I18nScope$16();
     };
 
     var getLocale = function getLocale() {
@@ -6403,10 +6821,10 @@ var paymentVM = function paymentVM() {
         statesLoader = postgrest$1.loader(models.state.getPageOptions());
 
     var checkEmptyFields = function checkEmptyFields(checkedFields) {
-        return _$1.map(checkedFields, function (field) {
+        return _.map(checkedFields, function (field) {
             var val = fields[field]();
 
-            if (!h.existy(val) || _$1.isEmpty(String(val).trim())) {
+            if (!h.existy(val) || _.isEmpty(String(val).trim())) {
                 fields.errors().push({ field: field, message: I18n$1.t('validation.empty_field', scope()) });
             }
         });
@@ -6440,7 +6858,7 @@ var paymentVM = function paymentVM() {
     };
 
     var checkUserState = function checkUserState() {
-        if (_$1.isEmpty(fields.userState()) || fields.userState() === 'null') {
+        if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
             fields.errors().push({ field: 'userState', message: I18n$1.t('validation.state', scope()) });
         }
     };
@@ -6458,13 +6876,13 @@ var paymentVM = function paymentVM() {
             checkDocument();
         }
 
-        return _$1.isEmpty(fields.errors());
+        return _.isEmpty(fields.errors());
     };
 
     var getSlipPaymentDate = function getSlipPaymentDate(contribution_id) {
-        var paymentDate = m$1.prop();
+        var paymentDate = m.prop();
 
-        m$1.request({
+        m.request({
             method: 'GET',
             config: setCsrfToken,
             url: '/payment/pagarme/' + contribution_id + '/slip_data'
@@ -6474,7 +6892,7 @@ var paymentVM = function paymentVM() {
     };
 
     var sendSlipPayment = function sendSlipPayment(contribution_id, project_id, error, loading, completed) {
-        m$1.request({
+        m.request({
             method: 'post',
             url: '/payment/pagarme/' + contribution_id + '/pay_slip.json',
             dataType: 'json'
@@ -6486,46 +6904,46 @@ var paymentVM = function paymentVM() {
                 window.location.href = '/projects/' + project_id + '/contributions/' + contribution_id;
             }
             loading(false);
-            m$1.redraw();
+            m.redraw();
         }).catch(function (err) {
             error(I18n$1.t('submission.slip_submission', scope()));
             loading(false);
             completed(false);
-            m$1.redraw();
+            m.redraw();
         });
     };
 
     var paySlip = function paySlip(contribution_id, project_id, error, loading, completed) {
         error(false);
-        m$1.redraw();
+        m.redraw();
         if (validate()) {
             updateContributionData(contribution_id, project_id).then(function () {
                 sendSlipPayment(contribution_id, project_id, error, loading, completed);
             }).catch(function () {
                 loading(false);
                 error(I18n$1.t('submission.slip_validation', scope()));
-                m$1.redraw();
+                m.redraw();
             });
         } else {
             loading(false);
             error(I18n$1.t('submission.slip_validation', scope()));
-            m$1.redraw();
+            m.redraw();
         }
     };
 
-    var savedCreditCards = m$1.prop([]);
+    var savedCreditCards = m.prop([]);
 
     var getSavedCreditCards = function getSavedCreditCards(user_id) {
         var otherSample = {
             id: -1
         };
 
-        return m$1.request({
+        return m.request({
             method: 'GET',
             config: setCsrfToken,
             url: '/users/' + user_id + '/credit_cards'
         }).then(function (creditCards) {
-            if (_$1.isArray(creditCards)) {
+            if (_.isArray(creditCards)) {
                 creditCards.push(otherSample);
             } else {
                 creditCards = [];
@@ -6535,21 +6953,8 @@ var paymentVM = function paymentVM() {
         });
     };
 
-    var similityExecute = function similityExecute(contribution_id) {
-        if (window.SimilityScript && h.getSimilityCustomer()) {
-            var similityContext = {
-                customer_id: h.getSimilityCustomer(),
-                session_id: contribution_id,
-                user_id: h.getUser().user_id
-            };
-            var ss = new window.SimilityScript(similityContext);
-            ss.execute();
-        }
-    };
-
     var requestPayment = function requestPayment(data, contribution_id) {
-        similityExecute(contribution_id);
-        return m$1.request({
+        return m.request({
             method: 'POST',
             url: '/payment/pagarme/' + contribution_id + '/pay_credit_card',
             data: data,
@@ -6576,8 +6981,8 @@ var paymentVM = function paymentVM() {
     };
 
     var payWithNewCard = function payWithNewCard(contribution_id, installment) {
-        var deferred = m$1.deferred();
-        m$1.request({
+        var deferred = m.deferred();
+        m.request({
             method: 'GET',
             url: '/payment/pagarme/' + contribution_id + '/get_encryption_key',
             config: setCsrfToken
@@ -6585,7 +6990,7 @@ var paymentVM = function paymentVM() {
             window.PagarMe.encryption_key = data.key;
             var card = setNewCreditCard();
             var errors = card.fieldErrors();
-            if (_$1.keys(errors).length > 0) {
+            if (_.keys(errors).length > 0) {
                 deferred.reject({ message: I18n$1.t('submission.card_invalid', scope()) });
             } else {
                 card.generateHash(function (cardHash) {
@@ -6594,12 +6999,11 @@ var paymentVM = function paymentVM() {
                         save_card: creditCardFields.save().toString(),
                         payment_card_installments: installment
                     };
-
                     requestPayment(data, contribution_id).then(deferred.resolve).catch(deferred.reject);
                 });
             }
         }).catch(function (error) {
-            if (!_$1.isEmpty(error.message)) {
+            if (!_.isEmpty(error.message)) {
                 deferred.reject(error);
             } else {
                 deferred.reject({ message: I18n$1.t('submission.encryption_error', scope()) });
@@ -6626,7 +7030,7 @@ var paymentVM = function paymentVM() {
             address_phone_number: fields.phone()
         };
 
-        return m$1.request({
+        return m.request({
             method: 'PUT',
             url: '/projects/' + project_id + '/contributions/' + contribution_id + '.json',
             data: { contribution: contributionData },
@@ -6641,7 +7045,7 @@ var paymentVM = function paymentVM() {
 
                 isLoading(false);
                 submissionError(I18n$1.t('submission.error', scope({ message: errorMsg })));
-                m$1.redraw();
+                m.redraw();
                 deferred.reject();
             } else {
                 window.location.href = '/projects/' + project_id + '/contributions/' + contribution_id;
@@ -6652,9 +7056,10 @@ var paymentVM = function paymentVM() {
     var creditCardPaymentFail = function creditCardPaymentFail(deferred) {
         return function (data) {
             var errorMsg = data.message || I18n$1.t('submission.payment_failed', scope());
+
             isLoading(false);
             submissionError(I18n$1.t('submission.error', scope({ message: errorMsg })));
-            m$1.redraw();
+            m.redraw();
             deferred.reject();
         };
     };
@@ -6670,11 +7075,11 @@ var paymentVM = function paymentVM() {
     };
 
     var sendPayment = function sendPayment(selectedCreditCard, selectedInstallment, contribution_id, project_id) {
-        var deferred = m$1.deferred();
+        var deferred = m.deferred();
         if (validate()) {
             isLoading(true);
             submissionError(false);
-            m$1.redraw();
+            m.redraw();
             updateContributionData(contribution_id, project_id).then(checkAndPayCreditCard(deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment)).catch(function () {
                 isLoading(false);
                 deferred.reject();
@@ -6689,8 +7094,8 @@ var paymentVM = function paymentVM() {
     var resetFieldError = function resetFieldError(fieldName) {
         return function () {
             var errors = fields.errors(),
-                errorField = _$1.findWhere(fields.errors(), { field: fieldName }),
-                newErrors = _$1.compose(fields.errors, _$1.without);
+                errorField = _.findWhere(fields.errors(), { field: fieldName }),
+                newErrors = _.compose(fields.errors, _.without);
 
             return newErrors(fields.errors(), errorField);
         };
@@ -6699,35 +7104,35 @@ var paymentVM = function paymentVM() {
     var resetCreditCardFieldError = function resetCreditCardFieldError(fieldName) {
         return function () {
             var errors = fields.errors(),
-                errorField = _$1.findWhere(creditCardFields.errors(), { field: fieldName }),
-                newErrors = _$1.compose(creditCardFields.errors, _$1.without);
+                errorField = _.findWhere(creditCardFields.errors(), { field: fieldName }),
+                newErrors = _.compose(creditCardFields.errors, _.without);
 
             return newErrors(creditCardFields.errors(), errorField);
         };
     };
 
-    var installments = m$1.prop([{ value: 10, number: 1 }]);
+    var installments = m.prop([{ value: 10, number: 1 }]);
 
     var getInstallments = function getInstallments(contribution_id) {
-        return m$1.request({
+        return m.request({
             method: 'GET',
             url: '/payment/pagarme/' + contribution_id + '/get_installment',
             config: h.setCsrfToken
         }).then(installments);
     };
 
-    var creditCardMask = _$1.partial(h.mask, '9999 9999 9999 9999');
+    var creditCardMask = _.partial(h.mask, '9999 9999 9999 9999');
 
-    var applyCreditCardMask = _$1.compose(creditCardFields.number, creditCardMask);
+    var applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
     countriesLoader.load().then(function (data) {
-        var countryId = fields.userCountryId() || _$1.findWhere(data, { name: 'Brasil' }).id;
-        fields.countries(_$1.sortBy(data, 'name_en'));
+        var countryId = fields.userCountryId() || _.findWhere(data, { name: 'Brasil' }).id;
+        fields.countries(data);
         fields.userCountryId(countryId);
     });
     statesLoader.load().then(function (data) {
         fields.states().push({ acronym: null, name: 'Estado' });
-        _$1.map(data, function (state) {
+        _.map(data, function (state) {
             return fields.states().push(state);
         });
     });
@@ -7353,8 +7758,8 @@ var paymentCreditCard = {
 
         var onSubmit = function onSubmit() {
             if (selectedCreditCard().id === -1) {
-                checkExpiry();
                 checkcvv();
+                checkExpiry();
                 checkCreditCard();
                 checkCreditCardName();
             } else {
@@ -7384,6 +7789,8 @@ var paymentCreditCard = {
                 errorObj = { field: 'cvv', message: I18n$1.t('errors.inline.creditcard_cvv', scope()) };
 
             handleValidity(isValid, errorObj);
+
+            return isValid;
         };
 
         var checkExpiry = function checkExpiry() {
@@ -7391,6 +7798,8 @@ var paymentCreditCard = {
                 errorObj = { field: 'expiry', message: I18n$1.t('errors.inline.creditcard_expiry', scope()) };
 
             handleValidity(isValid, errorObj);
+
+            return isValid;
         };
 
         var checkCreditCard = function checkCreditCard() {
@@ -7398,6 +7807,8 @@ var paymentCreditCard = {
                 errorObj = { field: 'number', message: I18n$1.t('errors.inline.creditcard_number', scope()) };
 
             handleValidity(isValid, errorObj);
+
+            return isValid;
         };
 
         var checkCreditCardName = function checkCreditCardName() {
@@ -7407,6 +7818,8 @@ var paymentCreditCard = {
             var isValid = !(_$1.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
             handleValidity(isValid, errorObj);
+
+            return isValid;
         };
 
         var applyCreditCardNameMask = _$1.compose(vm.creditCardFields.name, h.noNumbersMask);
@@ -7544,7 +7957,6 @@ var paymentCreditCard = {
             onfocus: ctrl.vm.resetCreditCardFieldError('expiry'),
             class: ctrl.fieldHasError('expiry') ? 'error' : '',
             onchange: m$1.withAttr('value', ctrl.creditCard.expYear),
-            onblur: ctrl.checkExpiry,
             value: ctrl.creditCard.expYear()
         }, _$1.map(ctrl.expYears, function (year) {
             return m$1('option', { value: year }, year);
@@ -7576,21 +7988,14 @@ var paymentForm = {
             return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$18();
         };
 
-        var scrollTo = function scrollTo(el, isInit) {
-            if (!isInit) {
-                h.animateScrollTo(el);
-            }
-        };
-
         return {
-            scrollTo: scrollTo,
             isSlip: isSlip,
             scope: scope,
             vm: args.vm
         };
     },
     view: function view(ctrl, args) {
-        return m$1('#catarse_pagarme_form', { config: ctrl.scrollTo }, [m$1('.u-text-center-small-only.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('payment_info', ctrl.scope())), m$1('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [m$1('span.fa.fa-lock'), I18n$1.t('safe_payment', ctrl.scope())])]), m$1('.flex-row.u-marginbottom-40', [m$1('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
+        return m$1('#catarse_pagarme_form', [m$1('.u-text-center-small-only.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('payment_info', ctrl.scope())), m$1('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [m$1('span.fa.fa-lock'), I18n$1.t('safe_payment', ctrl.scope())])]), m$1('.flex-row.u-marginbottom-40', [m$1('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
             onclick: function onclick() {
                 return ctrl.isSlip(false);
             },
@@ -7628,10 +8033,10 @@ var projectsPayment = {
                 var z = window.$zopim = function (c) {
                     z._.push(c);
                 },
-                    $$$1 = z.s = d.createElement(s),
+                    $ = z.s = d.createElement(s),
                     e = d.getElementsByTagName(s)[0];z.set = function (o) {
                     z.set._.push(o);
-                };z._ = [];z.set._ = [];$$$1.async = !0;$$$1.setAttribute('charset', 'utf-8');$$$1.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t = +new Date();$$$1.type = 'text/javascript';e.parentNode.insertBefore($$$1, e);
+                };z._ = [];z.set._ = [];$.async = !0;$.setAttribute('charset', 'utf-8');$.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t = +new Date();$.type = 'text/javascript';e.parentNode.insertBefore($, e);
             }(document, 'script');
             setTimeout(function t() {
                 var c = window.$zopim && window.$zopim.livechat;
@@ -7845,11 +8250,11 @@ var projectsPayment = {
             onkeyup: m$1.withAttr('value', ctrl.applyPhoneMask),
             value: ctrl.vm.fields.phone(),
             required: 'required'
-        }), ctrl.fieldHasError('phone')])]) : ''])), m$1('.w-row.u-marginbottom-40', !ctrl.showPaymentForm() ? m$1('.w-col.w-col-push-3.w-col-6', m$1('button.btn.btn-large', {
+        }), ctrl.fieldHasError('phone')])]) : ''])), m$1('.w-row.u-marginbottom-40', m$1('.w-col.w-col-push-3.w-col-6', m$1('button.btn.btn-large', {
             onclick: function onclick() {
                 return CatarseAnalytics.event({ cat: 'contribution_finish', act: 'contribution_next_click' }, ctrl.validateForm);
             }
-        }, I18n$1.t('next_step', ctrl.scope()))) : ''), ctrl.showPaymentForm() ? m$1.component(paymentForm, {
+        }, I18n$1.t('next_step', ctrl.scope())))), ctrl.showPaymentForm() ? m$1.component(paymentForm, {
             vm: ctrl.vm,
             contribution_id: ctrl.contribution().id,
             project_id: projectVM.currentProject().project_id,
@@ -8931,7 +9336,7 @@ var thankYou = {
             messenger: true,
             big: true,
             url: 'https://www.catarse.me/' + args.contribution.project.permalink + '?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=messenger&utm_campaign=thanks_share'
-        })), m$1('.w-col.w-col-4', m$1('a.btn.btn-large.btn-tweet.u-marginbottom-20[href="https://twitter.com/intent/tweet?text=Acabei%20de%20apoiar%20o%20projeto%20' + args.contribution.project.name + '%20https://www.catarse.me/' + args.contribution.project.permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Twitter']))]), m$1(".w-hidden-main.w-hidden-medium", [m$1('.u-marginbottom-30.u-text-center-small-only', m$1('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
+        })), m$1('.w-col.w-col-4', m$1('a.btn.btn-large.btn-tweet.u-marginbottom-20[href="http://twitter.com/?status=Acabei%20de%20apoiar%20o%20projeto%20' + args.contribution.project.name + '%20https://www.catarse.me/' + args.contribution.project.permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Twitter']))]), m$1(".w-hidden-main.w-hidden-medium", [m$1('.u-marginbottom-30.u-text-center-small-only', m$1('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
             onclick: ctrl.displayShareBox.toggle
         }, 'Compartilhe')), ctrl.displayShareBox() ? m$1(projectShareBox, {
             // Mocking a project m.prop
@@ -8967,6 +9372,7 @@ var c = {
         ProjectsHome: projectsHome,
         ProjectsShow: projectsShow,
         UsersShow: usersShow,
+        UsersEdit: usersEdit,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,
         ThankYou: thankYou,
@@ -8983,4 +9389,5 @@ var c = {
 return c;
 
 }(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsifQ==
+
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3JjLyoqLyouanMiLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
