@@ -484,7 +484,8 @@ const paymentVM = (mode = 'aon') => {
         isLoading: isLoading,
         pagarme: pagarme,
         locale: getLocale,
-        faq: faq
+        faq: faq,
+        similityExecute: similityExecute
     };
 };
 
