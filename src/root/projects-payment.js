@@ -48,6 +48,7 @@ const projectsPayment = {
 
         const validateForm = () => {
             if (vm.validate()) {
+                vm.similityExecute(contribution().id);
                 showPaymentForm(true);
             }
         };
@@ -104,6 +105,8 @@ const projectsPayment = {
         if (!user) {
             return h.navigateToDevise();
         }
+
+        vm.similityExecute(contribution().id);
 
         return {
             addressChange: addressChange,
