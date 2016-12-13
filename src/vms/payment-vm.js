@@ -272,7 +272,7 @@ const paymentVM = (mode = 'aon') => {
             let similityContext = {
                 customer_id: h.getSimilityCustomer(),
                 session_id: contribution_id,
-                user_id: user
+                user_id: user.user_id
             };
             let ss = new window.SimilityScript(similityContext);
             ss.execute();
