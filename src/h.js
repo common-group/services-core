@@ -788,7 +788,17 @@ const
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
         return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : undefined;
-    };
+    },
+    setRedactor = (prop) => (el, isInit) => {
+        if (!isInit) {
+            const $editor = window.$(el);
+
+            $editor.redactor();
+            $editor.redactor('code.set', prop());
+            $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')));
+        }
+    },
+    redactor = (prop) => m('form.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {config: setRedactor(prop)});
 
 setMomentifyLocale();
 closeFlash();
@@ -859,5 +869,6 @@ export default {
     projectFullPermalink,
     isProjectPage,
     setPageTitle,
-    rootUrl
+    rootUrl,
+    redactor
 };
