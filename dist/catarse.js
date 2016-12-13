@@ -6569,7 +6569,7 @@ var paymentVM = function paymentVM() {
             var similityContext = {
                 customer_id: h.getSimilityCustomer(),
                 session_id: contribution_id,
-                user_id: user
+                user_id: user.user_id
             };
             var ss = new window.SimilityScript(similityContext);
             ss.execute();
