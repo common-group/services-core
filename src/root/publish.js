@@ -289,7 +289,7 @@ const publish = {
                 m('.w-row', [
                   m('.w-col.w-col-2'),
                   m('.w-col.w-col-8', [
-                    m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ',m('a.alt-link[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\'][target=\'_blank\']', 'entre em contato'),'!'])
+                    m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ',m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'),'!'])
                   ]),
                   m('.w-col.w-col-2')
                 ])
