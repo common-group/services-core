@@ -798,7 +798,7 @@ const
             // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')));
         }
     },
-    redactor = (name, prop) => m('form.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {name, config: setRedactor(prop)});
+    redactor = (name, prop) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {name, config: setRedactor(prop)});
 
 setMomentifyLocale();
 closeFlash();

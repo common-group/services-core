@@ -1,10 +1,22 @@
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 
 const userAboutEdit = {
     controller(args) {
+        const removeLinks = [],
+            addLink = () => args.user.links.push(''),
+            removeLink = (idx) => () => {
+                args.user.links.splice(idx, 1);
+                removeLinks.push(idx);
+            };
 
+        return {
+            removeLinks,
+            removeLink,
+            addLink
+        };
     },
     view(ctrl, args) {
         const user = args.user || {};
@@ -97,7 +109,7 @@ const userAboutEdit = {
                                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
                                                             m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]',{
                                                                 name: 'user[permalink]',
-                                                                value: h.selfOrEmpty(user.permalink)
+                                                                value: user.permalink
                                                             })
                                                         ),
                                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover',
@@ -122,7 +134,7 @@ const userAboutEdit = {
                                             ),
                                             m('.w-col.w-col-7',
                                                 m('input.string.optional.w-input.text-field.positive[id="user_name"][type="text"]', {
-                                                    name: 'user[permalink]',
+                                                    name: 'user[name]',
                                                     value: user.name
                                                 })
                                             )
@@ -186,26 +198,32 @@ const userAboutEdit = {
                                                 m('.w-col.w-col-7',
                                                     [
                                                         m('.w-row',
-                                                            user.links && user.links.length <= 0 ? '' : m('.link', _.map(user.links,
-                                                                (link, idx) => m('div',
+                                                            [user.links && user.links.length <= 0 ? '' : m('.link', _.map(user.links,
+                                                                (link, idx) => m('div', {key: idx},
                                                                     [
                                                                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
-                                                                            m(`input.string.optional.w-input.text-field.w-input.text-field][type="text"][value="${link}"]`, {name: `user[links_attributes][${idx}][link]`})
+                                                                            m(`input.string.w-input.text-field.w-input.text-field][type="text"][value="${link}"]`, {
+                                                                                class: link === '' ? 'positive' : 'optional',
+                                                                                name: `user[links_attributes][${idx}][link]`,
+                                                                                onchange: m.withAttr('value', (val) => user.links[idx] = val)
+                                                                            })
                                                                         ),
                                                                         m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                                                                             [
-                                                                                m('button.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {onclick: ctrl.removeLink(link)})
+                                                                                m('button.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {onclick: ctrl.removeLink(idx)})
                                                                             ]
                                                                         )
                                                                     ]
                                                                 )
-                                                            ))
+                                                            )),
+                                                            ctrl.removeLinks.length <= 0 ? '' : _.map(ctrl.removeLinks, linkIdx => m('input[type="hidden"][value="1"]', {name: `user[links_attributes][${linkIdx}][_destroy]`}))
+                                                            ]
                                                         ),
                                                         m('.w-row',
                                                             [
                                                                 m('.w-col.w-col-6.w-col-push-6',
                                                                     m('a.btn.btn-small.btn-terciary',
-                                                                        { onclick: ctrl.AddLink },
+                                                                        { onclick: ctrl.addLink },
                                                                         m('span.translation_missing', 'Add Link')
                                                                     )
                                                                 )
