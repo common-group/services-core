@@ -6,10 +6,14 @@ import userVM from '../vms/user-vm';
 const userAboutEdit = {
     controller(args) {
         const removeLinks = [],
-            addLink = () => args.user.links.push(''),
-            removeLink = (idx) => () => {
-                args.user.links.splice(idx, 1);
-                removeLinks.push(idx);
+            addLink = () => args.user.links.push({link: '', id: '-1'}),
+            removeLink = (linkId, idx) => () => {
+                if (linkId != -1){
+                    removeLinks.push(linkId);
+                } else {
+                    args.user.links.splice(idx, 1);
+                }
+                return false;
             };
 
         return {
@@ -20,7 +24,7 @@ const userAboutEdit = {
     },
     view(ctrl, args) {
         const user = args.user || {};
-
+        console.log('Remove links: ', ctrl.removeLinks);
         return m('#about-tab',
             m('form.simple_form.w-form', {
                     action: `/pt/users/${user.id}`,
@@ -199,24 +203,41 @@ const userAboutEdit = {
                                                     [
                                                         m('.w-row',
                                                             [user.links && user.links.length <= 0 ? '' : m('.link', _.map(user.links,
-                                                                (link, idx) => m('div', {key: idx},
-                                                                    [
-                                                                        m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
-                                                                            m(`input.string.w-input.text-field.w-input.text-field][type="text"][value="${link}"]`, {
-                                                                                class: link === '' ? 'positive' : 'optional',
-                                                                                name: `user[links_attributes][${idx}][link]`,
-                                                                                onchange: m.withAttr('value', (val) => user.links[idx] = val)
-                                                                            })
-                                                                        ),
-                                                                        m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
-                                                                            [
-                                                                                m('button.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {onclick: ctrl.removeLink(idx)})
-                                                                            ]
-                                                                        )
-                                                                    ]
-                                                                )
-                                                            )),
-                                                            ctrl.removeLinks.length <= 0 ? '' : _.map(ctrl.removeLinks, linkIdx => m('input[type="hidden"][value="1"]', {name: `user[links_attributes][${linkIdx}][_destroy]`}))
+                                                                (link, idx) => {
+                                                                    const toRemove = _.indexOf(ctrl.removeLinks, link.id) >= 0;
+
+                                                                    return m('div', {
+                                                                            key: idx,
+                                                                            class: toRemove ? 'w-hidden' : 'none'
+                                                                        } , [
+                                                                            link.id === '-1' ? '' : [
+                                                                                m('input[type="hidden"]', {
+                                                                                    name: `user[links_attributes][${idx}][_destroy]`,
+                                                                                    value: toRemove
+                                                                                }),
+                                                                                m('input[type="hidden"]', {
+                                                                                    name: `user[links_attributes][${idx}][id]`,
+                                                                                    value: link.id
+                                                                                })
+                                                                            ],
+                                                                            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
+                                                                                m(`input.string.w-input.text-field.w-input.text-field][type="text"][value="${link.link}"]`, {
+                                                                                    class: link.link === '' ? 'positive' : 'optional',
+                                                                                    name: `user[links_attributes][${idx}][link]`,
+                                                                                    onchange: m.withAttr('value', (val) => user.links[idx].link = val)
+                                                                                })
+                                                                            ),
+                                                                            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
+                                                                                [
+                                                                                    m('button.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
+                                                                                        onclick: ctrl.removeLink(link.id, idx)
+                                                                                    })
+                                                                                ]
+                                                                            )
+                                                                        ]
+                                                                    )
+                                                                }
+                                                            ))
                                                             ]
                                                         ),
                                                         m('.w-row',
