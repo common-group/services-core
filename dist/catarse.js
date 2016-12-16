@@ -11,7 +11,7 @@ CatarseAnalytics$1 = 'default' in CatarseAnalytics$1 ? CatarseAnalytics$1['defau
 replaceDiacritics = 'default' in replaceDiacritics ? replaceDiacritics['default'] : replaceDiacritics;
 Chart = 'default' in Chart ? Chart['default'] : Chart;
 
-//       weak
+//      
 var _dataCache = {};
 var hashMatch = function hashMatch(str) {
     return window.location.hash === str;
@@ -23,7 +23,7 @@ var paramByName = function paramByName(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 var selfOrEmpty = function selfOrEmpty(obj) {
-    var emptyState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var emptyState = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
 
     return obj ? obj : emptyState;
 };
@@ -52,7 +52,7 @@ var getStoredObject = function getStoredObject(sessionKey) {
     if (sessionStorage.getItem(sessionKey)) {
         return JSON.parse(String(sessionStorage.getItem(sessionKey)));
     } else {
-        return undefined;
+        return null;
     }
 };
 var callStoredAction = function callStoredAction(action) {
@@ -62,7 +62,7 @@ var callStoredAction = function callStoredAction(action) {
         sessionStorage.removeItem(action);
         return item;
     } else {
-        return false;
+        return null;
     }
 };
 var discuss = function discuss(page, identifier) {
@@ -110,26 +110,26 @@ var validateCnpj = function validateCnpj(cnpjStr) {
     pos = tamanho - 7;
 
     for (var i = tamanho; i >= 1; i--) {
-        soma += numeros.charAt(tamanho - i) * pos--;
+        soma += Number(numeros.charAt(tamanho - i)) * pos--;
         if (pos < 2) {
             pos = 9;
         }
     }
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-    if (resultado != digitos.charAt(0)) return false;
+    if (String(resultado) != digitos.charAt(0)) return false;
 
     tamanho = tamanho + 1;
     numeros = cnpj.substring(0, tamanho);
     soma = 0;
     pos = tamanho - 7;
     for (var _i = tamanho; _i >= 1; _i--) {
-        soma += numeros.charAt(tamanho - _i) * pos--;
+        soma += Number(numeros.charAt(tamanho - _i)) * pos--;
         if (pos < 2) {
             pos = 9;
         }
     }
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-    if (resultado != digitos.charAt(1)) {
+    if (String(resultado) != digitos.charAt(1)) {
         return false;
     }
 
@@ -223,7 +223,7 @@ var translatedTime = function translatedTime(time) {
         unit = function unit() {
         var projUnit = translatedTime[time.unit || 'seconds'];
 
-        return time.total <= 1 ? projUnit.slice(0, -1) : projUnit;
+        return Number(time.total) <= 1 ? projUnit.slice(0, -1) : projUnit;
     };
 
     return {
@@ -262,20 +262,26 @@ var getCurrentProject = function getCurrentProject() {
     if (data) {
         return _dataCache.currentProject = JSON.parse(data);
     } else {
-        return false;
+        return null;
     }
 };
 var getRdToken = function getRdToken() {
     if (_dataCache.rdToken) return _dataCache.rdToken;
 
     var meta = _$1.first(document.querySelectorAll('[name=rd-token]'));
-    return meta ? _dataCache.rdToken = meta.getAttribute('content') : undefined;
+    return meta ? _dataCache.rdToken = meta.getAttribute('content') : null;
+};
+var getSimilityCustomer = function getSimilityCustomer() {
+    if (_dataCache.similityCustomer) return _dataCache.similityCustomer;
+
+    var meta = _$1.first(document.querySelectorAll('[name=simility-customer]'));
+    return meta ? _dataCache.similityCustomer = meta.getAttribute('content') : null;
 };
 var getMailchimpUrl = function getMailchimpUrl() {
     if (_dataCache.mailchumUrl) return _dataCache.mailchumUrl;
 
     var meta = _$1.first(document.querySelectorAll('[name=mailchimp-url]'));
-    return meta ? _dataCache.mailchumUrl = meta.getAttribute('content') : undefined;
+    return meta ? _dataCache.mailchumUrl = meta.getAttribute('content') : null;
 };
 var getUser = function getUser() {
     if (_dataCache.user) return _dataCache.user;
@@ -285,10 +291,10 @@ var getUser = function getUser() {
     if (data) {
         return _dataCache.user = JSON.parse(data);
     } else {
-        return false;
+        return null;
     }
 };
-var getBlogPosts = function getBlogPosts() {
+var getBlogPosts$1 = function getBlogPosts$1() {
     if (_dataCache.blogPosts) return _dataCache.blogPosts;
 
     var posts = _$1.first(document.getElementsByTagName('body')).getAttribute('data-blog');
@@ -296,7 +302,7 @@ var getBlogPosts = function getBlogPosts() {
     if (posts) {
         return _dataCache.blogPosts = JSON.parse(posts);
     } else {
-        return false;
+        return null;
     }
 };
 var getApiHost = function getApiHost() {
@@ -338,7 +344,7 @@ var strip = function strip(html) {
     return tmp.textContent || tmp.innerText || '';
 };
 var simpleFormat = function simpleFormat() {
-    var str = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var str = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 
     str = str.replace(/\r\n?/, '\n');
     if (str.length > 0) {
@@ -402,7 +408,7 @@ var cumulativeOffset = function cumulativeOffset(element) {
     };
 };
 var closeModal = function closeModal() {
-    //temp for rails unstyled close links
+    // Temp for rails unstyled close links
     var elById = document.getElementById('modal-close');
     if (_$1.isElement(elById)) {
         elById.onclick = function (event) {
@@ -425,8 +431,9 @@ var closeFlash = function closeFlash() {
     if (_$1.isElement(el)) {
         el.onclick = function (event) {
             event.preventDefault();
-
-            el.parentElement.remove();
+            if (el.parentElement) {
+                el.parentElement.remove();
+            }
         };
     }
 };
@@ -453,7 +460,7 @@ var animateScrollTo = function animateScrollTo(el) {
         duration = 300,
         dFrame = (offset - scrolled) / duration,
 
-    //EaseInOutCubic easing function. We'll abstract all animation funs later.
+    // EaseInOutCubic easing function. We'll abstract all animation funs later.
     eased = function eased(t) {
         return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
     },
@@ -546,9 +553,9 @@ var RDTracker = function RDTracker(eventId) {
     };
 };
 var analyticsEvent = function analyticsEvent(eventObj) {
-    var fn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Function.prototype;
+    var fn = arguments.length <= 1 || arguments[1] === undefined ? Function.prototype : arguments[1];
 
-    //https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
+    // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
     if (!eventObj) {
         return fn;
     }
@@ -749,7 +756,22 @@ var rootUrl = function rootUrl() {
     if (_dataCache.rootUrl) return _dataCache.rootUrl;
 
     var meta = _$1.first(document.querySelectorAll('[name=root-url]'));
-    return meta ? _dataCache.rootUrl = meta.getAttribute('content') : undefined;
+
+    return meta ? _dataCache.rootUrl = meta.getAttribute('content') : null;
+};
+var setRedactor = function setRedactor(prop) {
+    return function (el, isInit) {
+        if (!isInit) {
+            var $editor = window.$(el);
+
+            $editor.redactor();
+            $editor.redactor('code.set', prop());
+            // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')));
+        }
+    };
+};
+var redactor = function redactor(name, prop) {
+    return m$1('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', { name: name, config: setRedactor(prop) });
 };
 
 setMomentifyLocale();
@@ -771,6 +793,7 @@ var h = {
     formatNumber: formatNumber,
     idVM: idVM,
     getUser: getUser,
+    getSimilityCustomer: getSimilityCustomer,
     getApiHost: getApiHost,
     getMailchimpUrl: getMailchimpUrl,
     getCurrentProject: getCurrentProject,
@@ -798,6 +821,7 @@ var h = {
     i18nScope: i18nScope,
     RDTracker: RDTracker,
     selfOrEmpty: selfOrEmpty,
+    animateScrollTo: animateScrollTo,
     scrollTo: scrollTo,
     projectStateTextClass: projectStateTextClass,
     validationErrors: validationErrors,
@@ -819,8 +843,8 @@ var h = {
     projectFullPermalink: projectFullPermalink,
     isProjectPage: isProjectPage,
     setPageTitle: setPageTitle,
-    getBlogPosts: getBlogPosts,
-    rootUrl: rootUrl
+    rootUrl: rootUrl,
+    redactor: redactor
 };
 
 var models = {
@@ -2296,7 +2320,7 @@ var currentUser = m$1.prop();
 var createdVM = postgrest$1.filtersVM({ project_user_id: 'eq' });
 
 var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
-    var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+    var pageSize = arguments.length <= 1 || arguments[1] === undefined ? 3 : arguments[1];
 
     createdVM.project_user_id(user_id).order({ project_id: 'desc' });
 
@@ -2308,7 +2332,7 @@ var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
 };
 
 var getPublicUserContributedProjects = function getPublicUserContributedProjects(user_id) {
-    var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+    var pageSize = arguments.length <= 1 || arguments[1] === undefined ? 3 : arguments[1];
 
     var contextVM = postgrest$1.filtersVM({
         user_id: 'eq'
@@ -2339,7 +2363,7 @@ var getUserProjectReminders = function getUserProjectReminders(user_id) {
 };
 
 var getUserContributedProjects = function getUserContributedProjects(user_id) {
-    var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+    var pageSize = arguments.length <= 1 || arguments[1] === undefined ? 3 : arguments[1];
 
     var contextVM = postgrest$1.filtersVM({
         user_id: 'eq',
@@ -2358,8 +2382,8 @@ var getUserContributedProjects = function getUserContributedProjects(user_id) {
 };
 
 var fetchUser = function fetchUser(user_id) {
-    var handlePromise = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    var customProp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : currentUser;
+    var handlePromise = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+    var customProp = arguments.length <= 2 || arguments[2] === undefined ? currentUser : arguments[2];
 
     idVM$2.id(user_id);
 
@@ -2377,11 +2401,13 @@ var displayCover = function displayCover(user) {
 };
 
 var getUserRecommendedProjects = function getUserRecommendedProjects(contribution) {
-    var sample3 = _$1.partial(_$1.sample, _$1, 3),
-        loaders = m$1.prop([]),
-        collection = m$1.prop([]),
-        _h$getUser = h.getUser(),
-        user_id = _h$getUser.user_id;
+    var sample3 = _$1.partial(_$1.sample, _$1, 3);
+    var loaders = m$1.prop([]);
+    var collection = m$1.prop([]);
+
+    var _h$getUser = h.getUser();
+
+    var user_id = _h$getUser.user_id;
 
 
     var loader = function loader() {
@@ -2517,9 +2543,11 @@ var getCurrentProject$1 = function getCurrentProject$1() {
         data = root && root.getAttribute('data-parameters');
 
     if (data) {
-        var _currentProject = currentProject$1(JSON.parse(data)),
-            project_id = _currentProject.project_id,
-            project_user_id = _currentProject.project_user_id;
+        var _currentProject = currentProject$1(JSON.parse(data));
+
+        var project_id = _currentProject.project_id;
+        var project_user_id = _currentProject.project_user_id;
+
 
         m$1.redraw(true);
 
@@ -2666,21 +2694,21 @@ var projectCard = {
     view: function view(ctrl, args) {
         var project = args.project;
 
-        return m$1(ctrl.css().wrapper, [m$1(ctrl.css().innerWrapper, [m$1('a' + ctrl.css().thumb + '[href="/' + project.permalink + '"]', {
+        return m$1(ctrl.css().wrapper, [m$1(ctrl.css().innerWrapper, [m$1('a' + ctrl.css().thumb + '[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
             onclick: projectVM.routeToProject(project, args.ref),
             style: {
                 'background-image': 'url(' + project.project_img + ')',
                 'display': 'block'
             }
-        }), m$1(ctrl.css().descriptionWrapper, [m$1(ctrl.css().description, [m$1(ctrl.css().title, [m$1('a.link-hidden[href="/' + project.permalink + '"]', {
+        }), m$1(ctrl.css().descriptionWrapper, [m$1(ctrl.css().description, [m$1(ctrl.css().title, [m$1('a.link-hidden[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
             onclick: projectVM.routeToProject(project, args.ref)
-        }, project.project_name)]), m$1(ctrl.css().author, I18n$1.t('by', I18nScope$1()) + ' ' + project.owner_name), m$1(ctrl.css().headline, [m$1('a.link-hidden[href="/' + project.permalink + '"]', {
+        }, project.project_name)]), m$1(ctrl.css().author, I18n$1.t('by', I18nScope$1()) + ' ' + project.owner_name), m$1(ctrl.css().headline, [m$1('a.link-hidden[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
             onclick: projectVM.routeToProject(project, args.ref)
         }, project.headline)])]), m$1(ctrl.css().city, [m$1('.fontsize-smallest.fontcolor-secondary', [m$1('span.fa.fa-map-marker.fa-1', ' '), ' ' + (project.city_name ? project.city_name : '') + ', ' + (project.state_acronym ? project.state_acronym : '')])]), m$1(ctrl.cardMeter(), [_$1.contains(['successful', 'failed', 'waiting_funds'], project.state) ? m$1('div', project.state === 'successful' && ctrl.progress < 100 ? I18n$1.t('display_status.flex_successful', I18nScope$1()) : I18n$1.t('display_status.' + project.state, I18nScope$1())) : m$1('.meter', [m$1('.meter-fill', {
             style: {
                 width: (ctrl.progress > 100 ? 100 : ctrl.progress) + '%'
             }
-        })])]), m$1('.card-project-stats', [m$1('.w-row', [m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [m$1('.fontsize-base.fontweight-semibold', Math.ceil(project.progress) + '%')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [m$1('.fontsize-smaller.fontweight-semibold', 'R$ ' + h.formatNumber(project.pledged)), m$1('.fontsize-smallest.lineheight-tightest', 'Levantados')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', project.expires_at ? [m$1('.fontsize-smaller.fontweight-semibold', ctrl.remainingTextObj.total + ' ' + ctrl.remainingTextObj.unit), m$1('.fontsize-smallest.lineheight-tightest', ctrl.remainingTextObj.total > 1 ? 'Restantes' : 'Restante')] : [m$1('.fontsize-smallest.lineheight-tight', ['Iniciado há', m$1('br'), ctrl.elapsedTextObj.total + ' ' + ctrl.elapsedTextObj.unit])])])])]), args.showFriends && ctrl.type === 'big' ? m$1('.w-col.w-col-4.w-col-medium-6', [m$1.component(projectFriends, { project: project })]) : '']), args.showFriends && ctrl.type !== 'big' ? m$1.component(projectFriends, { project: project }) : '']);
+        })])]), m$1('.card-project-stats', [m$1('.w-row', [m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [m$1('.fontsize-base.fontweight-semibold', Math.floor(project.progress) + '%')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [m$1('.fontsize-smaller.fontweight-semibold', 'R$ ' + h.formatNumber(project.pledged)), m$1('.fontsize-smallest.lineheight-tightest', 'Levantados')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', project.expires_at ? [m$1('.fontsize-smaller.fontweight-semibold', ctrl.remainingTextObj.total + ' ' + ctrl.remainingTextObj.unit), m$1('.fontsize-smallest.lineheight-tightest', ctrl.remainingTextObj.total > 1 ? 'Restantes' : 'Restante')] : [m$1('.fontsize-smallest.lineheight-tight', ['Iniciado há', m$1('br'), ctrl.elapsedTextObj.total + ' ' + ctrl.elapsedTextObj.unit])])])])]), args.showFriends && ctrl.type === 'big' ? m$1('.w-col.w-col-4.w-col-medium-6', [m$1.component(projectFriends, { project: project })]) : '']), args.showFriends && ctrl.type !== 'big' ? m$1.component(projectFriends, { project: project }) : '']);
     }
 };
 
@@ -2804,7 +2832,7 @@ var Flex = {
             answer: 'Ainda não sabemos quando abriremos o flex para o público em geral, mas você pode cadastrar seu email nessa página e receber um material especial de como inscrever seu projeto.'
         })])])])]), m$1('.w-section.section-large.u-text-center.bg-purple', [m$1('.w-container.fontcolor-negative', [m$1('.fontsize-largest', 'Inscreva seu projeto!'), m$1('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1.component(landingSignup, {
             builder: ctrl.builder
-        }), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [m$1('.w-container.u-text-center', [m$1('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'), m$1('.w-row.u-text-center', ctrl.statsLoader() ? h.loader() : [m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')])])])]), m$1('.w-section.section.bg-blue-one.fontcolor-negative', [m$1('.w-container', [m$1('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'), m$1('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')])]), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'), m$1('a.w-button.btn.btn-large.btn-tweet[href="http://twitter.com/?status=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')])])])]), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-large.bg-greenlime', [m$1('.w-container', [m$1('#participe-do-debate.u-text-center', { config: h.toAnchor() }, [m$1('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m$1('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')]), m$1('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
+        }), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [m$1('.w-container.u-text-center', [m$1('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'), m$1('.w-row.u-text-center', ctrl.statsLoader() ? h.loader() : [m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')]), m$1('.w-col.w-col-4', [m$1('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m$1('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')])])])]), m$1('.w-section.section.bg-blue-one.fontcolor-negative', [m$1('.w-container', [m$1('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'), m$1('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')])]), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [m$1('div', [m$1('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'), m$1('a.w-button.btn.btn-large.btn-tweet[href="https://twitter.com/intent/tweet?text=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')])])])]), m$1('.w-col.w-col-2')])])]), m$1('.w-section.section-large.bg-greenlime', [m$1('.w-container', [m$1('#participe-do-debate.u-text-center', { config: h.toAnchor() }, [m$1('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m$1('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')]), m$1('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
             config: ctrl.addDisqus
         })])])]];
     }
@@ -3482,132 +3510,15 @@ var successfulProjectTaxModal = {
     view: function view(ctrl, args) {
         var pt = args.projectTransfer;
 
-        return m$1('div', [m$1('.modal-dialog-header', [m$1('.fontsize-large.u-text-center', 'Extrato do projeto')]), m$1('.modal-dialog-content', [m$1('p.fontsize-small.u-marginbottom-40', ['Confira o extrato do seu projeto, já incluindo as taxas e retenções. Se você tiver dúvidas sobre como esse cálculo é feito, ', m$1('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="__blank"]', 'acesse aqui'), '.']), m$1('div', [m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-4', [m$1('.text-success', '+\xA0R$ ' + h.formatNumber(pt.pledged, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Arrecada\xE7\xE3o total (' + pt.total_contributions + ' apoios)')])]), pt.irrf_tax > 0 ? m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-4', [m$1('.text-success', '+ R$ ' + h.formatNumber(pt.irrf_tax, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Retenção IRF (Imposto de Renda na Fonte)')])]) : '', m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-4', [m$1('.text-error', '- R$ ' + h.formatNumber(pt.catarse_fee, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Taxa do Catarse e meio de pagamento (' + h.formatNumber(pt.service_fee * 100, 2) + '%)\xA0')])]), m$1('.divider.u-marginbottom-10'), m$1('.w-row.fontsize-base.fontweight-semibold', [m$1('.w-col.w-col-4', [m$1('div', 'R$ ' + h.formatNumber(pt.total_amount, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Total a ser transferido')])])])])]);
+        return m$1('div', [m$1('.modal-dialog-header', [m$1('.fontsize-large.u-text-center', 'Extrato do projeto')]), m$1('.modal-dialog-content', [m$1('p.fontsize-small.u-marginbottom-40', ['Confira o extrato do seu projeto, já incluindo as taxas e retenções. Se você tiver dúvidas sobre como esse cálculo é feito, ', m$1('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/202037493-FINANCIADO-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-"][target="__blank"]', 'acesse aqui'), '.']), m$1('div', [m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-4', [m$1('.text-success', '+ R$ ' + h.formatNumber(pt.pledged, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Arrecadação total (' + pt.total_contributions + ' apoios)')])]), pt.irrf_tax > 0 ? m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-4', [m$1('.text-success', '+ R$ ' + h.formatNumber(pt.irrf_tax, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Retenção IRF (Imposto de Renda na Fonte)')])]) : '', m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-4', [m$1('.text-error', '- R$ ' + h.formatNumber(pt.catarse_fee, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Taxa do Catarse e meio de pagamento (' + h.formatNumber(pt.service_fee * 100, 2) + '%) ')])]), m$1('.divider.u-marginbottom-10'), m$1('.w-row.fontsize-base.fontweight-semibold', [m$1('.w-col.w-col-4', [m$1('div', 'R$ ' + h.formatNumber(pt.total_amount, 2))]), m$1('.w-col.w-col-8', [m$1('div', 'Total a ser transferido')])])])])]);
     }
 };
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
 };
-
-
-
-
-
-var asyncGenerator = function () {
-  function AwaitValue(value) {
-    this.value = value;
-  }
-
-  function AsyncGenerator(gen) {
-    var front, back;
-
-    function send(key, arg) {
-      return new Promise(function (resolve, reject) {
-        var request = {
-          key: key,
-          arg: arg,
-          resolve: resolve,
-          reject: reject,
-          next: null
-        };
-
-        if (back) {
-          back = back.next = request;
-        } else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
-
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
-
-        if (value instanceof AwaitValue) {
-          Promise.resolve(value.value).then(function (arg) {
-            resume("next", arg);
-          }, function (arg) {
-            resume("throw", arg);
-          });
-        } else {
-          settle(result.done ? "return" : "normal", result.value);
-        }
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
-
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value: value,
-            done: true
-          });
-          break;
-
-        case "throw":
-          front.reject(value);
-          break;
-
-        default:
-          front.resolve({
-            value: value,
-            done: false
-          });
-          break;
-      }
-
-      front = front.next;
-
-      if (front) {
-        resume(front.key, front.arg);
-      } else {
-        back = null;
-      }
-    }
-
-    this._invoke = send;
-
-    if (typeof gen.return !== "function") {
-      this.return = undefined;
-    }
-  }
-
-  if (typeof Symbol === "function" && Symbol.asyncIterator) {
-    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
-      return this;
-    };
-  }
-
-  AsyncGenerator.prototype.next = function (arg) {
-    return this._invoke("next", arg);
-  };
-
-  AsyncGenerator.prototype.throw = function (arg) {
-    return this._invoke("throw", arg);
-  };
-
-  AsyncGenerator.prototype.return = function (arg) {
-    return this._invoke("return", arg);
-  };
-
-  return {
-    wrap: function (fn) {
-      return function () {
-        return new AsyncGenerator(fn.apply(this, arguments));
-      };
-    },
-    await: function (value) {
-      return new AwaitValue(value);
-    }
-  };
-}();
 
 
 
@@ -3636,30 +3547,7 @@ var defineProperty = function (obj, key, value) {
   return obj;
 };
 
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
 
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
 
 
 
@@ -4128,7 +4016,7 @@ var insights = {
             content: [onlineSuccessModalContent]
         }) : '', m$1('.w-container', project.state === 'successful' ? m$1.component(projectSuccessfulOnboard, { project: m$1.prop(project) }) : [m$1('.w-row.u-marginbottom-40', [m$1('.w-col.w-col-8.w-col-push-2', [m$1('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', I18n$1.t('campaign_title', I18nScope$2())), project.state === 'online' ? m$1.component(projectInviteCard, { project: project }) : '', project.state === 'draft' ? m$1.component(adminProjectDetailsCard, {
             resource: project
-        }) : '', m$1('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [project.mode === 'flex' && _$1.isNull(project.expires_at) && project.state !== 'draft' ? m$1('span', [I18n$1.t('finish_explanation', I18nScope$2()), m$1('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/208141033-Como-definir-o-prazo-no-Catarse-flex-"][target="_blank"]', I18n$1.t('know_more', I18nScope$2()))]) : m$1.trust(I18n$1.t('campaign.' + project.mode + '.' + project.state, I18nScope$2({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))])])])]), project.state === 'draft' ? m$1.component(projectDeleteButton, { project: project }) : '', project.is_published ? [m$1('.divider'), m$1('.w-section.section-one-column.section.bg-gray.before-footer', [m$1('.w-container', [m$1.component(projectDataStats, { project: m$1.prop(project) }), m$1('.w-row', [m$1('.w-col.w-col-12.u-text-center', {
+        }) : '', m$1('p.' + project.state + '-project-text.u-text-center.fontsize-small.lineheight-loose', [project.mode === 'flex' && _$1.isNull(project.expires_at) && project.state !== 'draft' ? m$1('span', [I18n$1.t('finish_explanation', I18nScope$2()), m$1('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/208141033-Como-definir-o-prazo-no-Catarse-flex-"][target="_blank"]', I18n$1.t('know_more', I18nScope$2()))]) : m$1.trust(I18n$1.t('campaign.' + project.mode + '.' + project.state, I18nScope$2({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))])])])]), project.state === 'draft' ? m$1.component(projectDeleteButton, { project: project }) : '', project.is_published ? [m$1('.divider'), m$1('.w-section.section-one-column.section.bg-gray.before-footer', [m$1('.w-container', [m$1.component(projectDataStats, { project: m$1.prop(project) }), m$1('.w-row', [m$1('.w-col.w-col-12.u-text-center', {
             style: {
                 'min-height': '300px'
             }
@@ -4174,7 +4062,7 @@ var jobs = {
 
 var liveStatistics = {
     controller: function controller() {
-        var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var args = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
         var pageStatistics = m$1.prop([]),
             notificationData = m$1.prop({});
@@ -4264,21 +4152,21 @@ var projectContributionReportContentCard = {
         var contribution = args.contribution(),
             profile_img = _$1.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail,
             reward = contribution.reward || { minimum_value: 0, description: 'Nenhuma recompensa selecionada' };
-        return m$1('.w-clearfix.card', [m$1('.w-row', [m$1('.w-col.w-col-1.w-col-tiny-1', [m$1('img.user-avatar.u-marginbottom-10[src=\'' + profile_img + '\']')]), m$1('.w-col.w-col-11.w-col-tiny-11', [m$1('.w-row', [m$1('.w-col.w-col-3', [m$1('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')), m$1('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.user_name), m$1('.fontsize-smallest.lineheight-looser', [contribution.has_another ? [m$1('a.link-hidden-light.badge.badge-light', '+1 apoio ')] : '', contribution.anonymous ? m$1('span.fa.fa-eye-slash.fontcolor-secondary', m$1('span.fontcolor-secondary[style="font-size:11px;"]', ' Apoio não-público')) : '']), m$1('.fontsize-smallest.lineheight-looser', contribution.email)]), m$1('.w-col.w-col-3', [m$1('.lineheight-tighter', [m$1('span.fa.fontsize-smallest.' + ctrl.stateClass(contribution.state)), '   ', m$1('span.fontsize-large', 'R$ ' + h.formatNumber(contribution.value, 2, 3))])]), m$1('.w-col.w-col-3.w-hidden-small.w-hidden-tiny', [m$1('.fontsize-smallest.fontweight-semibold', 'Recompensa:\xA0R$ ' + h.formatNumber(reward.minimum_value, 2, 3)), m$1('.fontsize-smallest', reward.description.substring(0, 80) + '...')]) /*,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           m(".w-col.w-col-2.w-hidden-small.w-hidden-tiny.u-text-center", [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            m(".fontsize-smallest.fontcolor-secondary", "Enviei!"),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            m(".fontsize-smallest.u-marginbottom-20.lineheight-loose", [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                m("a.checkbox-big[href='#']", ".")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ])
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ]),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           m(".w-col.w-col-2", [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            m(".fontsize-smallest", [
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                m("a.link-hidden[href='#']", "Questionário")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ," "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ,m("span.fontweight-semibold.text-waiting", "enviado")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ]),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            m(".fontsize-smallest.fontcolor-terciary", "em 29/10/2015")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ])*/
+        return m$1('.w-clearfix.card', [m$1('.w-row', [m$1('.w-col.w-col-1.w-col-tiny-1', [m$1('img.user-avatar.u-marginbottom-10[src=\'' + profile_img + '\']')]), m$1('.w-col.w-col-11.w-col-tiny-11', [m$1('.w-row', [m$1('.w-col.w-col-3', [m$1('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')), m$1('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.user_name), m$1('.fontsize-smallest.lineheight-looser', [contribution.has_another ? [m$1('a.link-hidden-light.badge.badge-light', '+1 apoio ')] : '', contribution.anonymous ? m$1('span.fa.fa-eye-slash.fontcolor-secondary', m$1('span.fontcolor-secondary[style="font-size:11px;"]', ' Apoio não-público')) : '']), m$1('.fontsize-smallest.lineheight-looser', contribution.email)]), m$1('.w-col.w-col-3', [m$1('.lineheight-tighter', [m$1('span.fa.fontsize-smallest.' + ctrl.stateClass(contribution.state)), '   ', m$1('span.fontsize-large', 'R$ ' + h.formatNumber(contribution.value, 2, 3))])]), m$1('.w-col.w-col-3.w-hidden-small.w-hidden-tiny', [m$1('.fontsize-smallest.fontweight-semibold', 'Recompensa: R$ ' + h.formatNumber(reward.minimum_value, 2, 3)), m$1('.fontsize-smallest', reward.description.substring(0, 80) + '...')]) /*,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        m(".w-col.w-col-2.w-hidden-small.w-hidden-tiny.u-text-center", [
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         m(".fontsize-smallest.fontcolor-secondary", "Enviei!"),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         m(".fontsize-smallest.u-marginbottom-20.lineheight-loose", [
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             m("a.checkbox-big[href='#']", ".")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ])
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ]),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        m(".w-col.w-col-2", [
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         m(".fontsize-smallest", [
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             m("a.link-hidden[href='#']", "Questionário")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ," "
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ,m("span.fontweight-semibold.text-waiting", "enviado")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ]),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         m(".fontsize-smallest.fontcolor-terciary", "em 29/10/2015")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ])*/
         ])])])]);
     }
 };
@@ -4386,7 +4274,7 @@ var ProjectContributionStateLegendModal = {
             project_stage = project.state == 'waiting_funds' ? 'online' : project.state;
 
         return m$1('div', [m$1('.modal-dialog-header', [m$1('.fontsize-large.u-text-center', 'Status do apoio')]), m$1('.modal-dialog-content', _$1.map(ctrl.stages[project_stage], function (item, i) {
-            return m$1('.u-marginbottom-20', [m$1('.fontsize-small.fontweight-semibold', [m$1('span' + item.i_class), ' \xA0' + item.label]), m$1('.fontsize-smaller', m$1.trust(item.text))]);
+            return m$1('.u-marginbottom-20', [m$1('.fontsize-small.fontweight-semibold', [m$1('span' + item.i_class), '  ' + item.label]), m$1('.fontsize-smaller', m$1.trust(item.text))]);
         }))]);
     }
 };
@@ -4574,7 +4462,7 @@ var projectsDashboard = {
 
 var search = {
     view: function view(ctrl) {
-        var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var args = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
         var action = args.action || '/pt/explore?ref=ctrse_explore_pgsearch',
             method = args.method || 'GET';
@@ -4649,7 +4537,7 @@ var projectsExplore = {
             currentFilter(filtersMap[defaultFilter]);
             projectFiltersVM$$1.setContextFilters(['finished', 'all', 'contributed_by_friends']);
         },
-            currentUser = h.getUser(),
+            currentUser = h.getUser() || {},
             currentUserId = currentUser.id,
             hasFBAuth = currentUser.has_fb_auth,
             buildTooltip = function buildTooltip(tooltipText) {
@@ -4912,7 +4800,7 @@ var menuProfile = {
 
         return m$1('.w-dropdown.user-profile', [m$1('a.w-dropdown-toggle.dropdown-toggle[href=\'javascript:void()\'][id=\'user-menu\']', {
             onclick: ctrl.toggleMenu.toggle
-        }, [m$1('.user-name-menu', ctrl.userName()), m$1('img.user-avatar[alt=\'Thumbnail - ' + user.name + '\'][height=\'40\'][src=\'' + h.useAvatarOrDefault(user.profile_img_thumbnail) + '\'][width=\'40\']')]), ctrl.toggleMenu() ? m$1('nav.w-dropdown-list.dropdown-list.user-menu.w--open[id=\'user-menu-dropdown\']', { style: 'display:block;' }, [m$1('.w-row', [m$1('.w-col.w-col-12', [m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Meu hist\xF3rico'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#contributions\']', 'Hist\xF3rico de apoio')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados')), m$1('li.w-hidden-main.w-hidden-medium.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados'))]), m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Configura\xE7\xF5es'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#about_me\']', 'Sobre voc\xEA')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#notifications\']', 'Notifica\xE7\xF5es')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#settings\']', 'Dados e endere\xE7o')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#billing\']', 'Banco e cart\xF5es'))]), m$1('.divider.u-marginbottom-20'), args.user.is_admin_role ? m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Admin') : '', args.user.is_admin_role ? m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/users\']', 'Usu\xE1rios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin\']', 'Apoios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/financials\']', 'Rel. Financeiros')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/projects\']', 'Admin projetos')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/dbhero\']', 'Dataclips'))]) : '', m$1('.fontsize-mini', 'Seu e-mail de cadastro é: '), m$1('.fontsize-smallest.u-marginbottom-20', [m$1('span.fontweight-semibold', user.email + ' '), m$1('a.alt-link[href=\'/pt/users/' + user.id + '/edit#settings\']', 'alterar e-mail')]), m$1('.divider.u-marginbottom-20'), m$1('a.alt-link[href=\'/pt/logout\']', 'Sair')])])]) : '']);
+        }, [m$1('.user-name-menu', ctrl.userName()), m$1('img.user-avatar[alt=\'Thumbnail - ' + user.name + '\'][height=\'40\'][src=\'' + h.useAvatarOrDefault(user.profile_img_thumbnail) + '\'][width=\'40\']')]), ctrl.toggleMenu() ? m$1('nav.w-dropdown-list.dropdown-list.user-menu.w--open[id=\'user-menu-dropdown\']', { style: 'display:block;' }, [m$1('.w-row', [m$1('.w-col.w-col-12', [m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Meu histórico'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#contributions\']', 'Histórico de apoio')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados')), m$1('li.w-hidden-main.w-hidden-medium.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados'))]), m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Configurações'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#about_me\']', 'Sobre você')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#notifications\']', 'Notificações')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#settings\']', 'Dados e endereço')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#billing\']', 'Banco e cartões'))]), m$1('.divider.u-marginbottom-20'), args.user.is_admin_role ? m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Admin') : '', args.user.is_admin_role ? m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/users\']', 'Usuários')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin\']', 'Apoios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/financials\']', 'Rel. Financeiros')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/projects\']', 'Admin projetos')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/dbhero\']', 'Dataclips'))]) : '', m$1('.fontsize-mini', 'Seu e-mail de cadastro é: '), m$1('.fontsize-smallest.u-marginbottom-20', [m$1('span.fontweight-semibold', user.email + ' '), m$1('a.alt-link[href=\'/pt/users/' + user.id + '/edit#settings\']', 'alterar e-mail')]), m$1('.divider.u-marginbottom-20'), m$1('a.alt-link[href=\'/pt/logout\']', 'Sair')])])]) : '']);
     }
 };
 
@@ -4945,7 +4833,7 @@ var menu = {
     view: function view(ctrl, args) {
         return m$1('header.main-header', {
             class: ctrl.menuCss()
-        }, [m$1('.w-row', [m$1('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [m$1('a.header-logo.w-inline-block[href=\'/?ref=ctrse_header\'][title=\'Catarse\']', ctrl.homeAttrs(), m$1('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')), m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m$1.route }, 'Comece seu projeto'), m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m$1.route }, 'Explore'), m$1.component(menuSearch)]), m$1('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [ctrl.user ? m$1.component(menuProfile, { user: ctrl.user }) : m$1('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login')])]), m$1('.header-controls-mobile.w-hidden-main.w-hidden-medium', [m$1('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']', { onclick: function onclick() {
+        }, [m$1('.w-row', [m$1('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [m$1('a.header-logo.w-inline-block[href=\'/?ref=ctrse_header\'][title=\'Catarse\']', ctrl.homeAttrs(), m$1('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')), args.menuShort ? '' : m$1('div#menu-components', [m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m$1.route }, 'Comece seu projeto'), m$1('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m$1.route }, 'Explore'), m$1.component(menuSearch)])]), m$1('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [ctrl.user ? m$1.component(menuProfile, { user: ctrl.user }) : m$1('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login')])]), args.menuShort ? '' : m$1('.header-controls-mobile.w-hidden-main.w-hidden-medium', [m$1('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']', { onclick: function onclick() {
                 return m$1.route('/start');
             } }, 'Comece seu projeto'), m$1('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']', { onclick: function onclick() {
                 return m$1.route('/explore');
@@ -5085,23 +4973,43 @@ var slider = {
  * }
  */
 
+/*       */
+var blogVM = {
+    getBlogPosts: function getBlogPosts() {
+        var deferred = m$1.deferred();
+        var posts = _$1.first(document.getElementsByTagName('body')).getAttribute('data-blog');
+
+        if (posts) {
+            deferred.resolve(JSON.parse(posts));
+        } else {
+            m$1.request({ method: 'GET', url: '/posts' }).then(deferred.resolve).catch(deferred.reject);
+        }
+
+        return deferred.promise;
+    }
+};
+
+//      
 var blogBanner = {
     controller: function controller(args) {
-        var posts = h.getBlogPosts();
+        var posts = m$1.prop([]),
+            error = m$1.prop(false);
 
-        return { posts: posts };
+        blogVM.getBlogPosts().then(posts).catch(error);
+
+        return { posts: posts, error: error };
     },
     view: function view(ctrl, args) {
 
-        return m$1('section.section-large.bg-gray.before-footer[id=\'blog\']', m$1('.w-container', [m$1('.u-text-center', [m$1('a[href=\'http://blog.catarse.me\'][target=\'blank\']', m$1('img.u-marginbottom-10[alt=\'Icon blog\'][src=\'/assets/icon-blog.png\']')), m$1('.fontsize-large.u-marginbottom-60.text-success', m$1('a.link-hidden-success[href=\'http://blog.catarse.me\'][target=\'__blank\']', 'Blog do Catarse'))]), m$1('.w-row', _$1.map(ctrl.posts, function (post) {
+        return m$1('section.section-large.bg-gray.before-footer[id=\'blog\']', m$1('.w-container', [m$1('.u-text-center', [m$1('a[href=\'http://blog.catarse.me\'][target=\'blank\']', m$1('img.u-marginbottom-10[alt=\'Icon blog\'][src=\'/assets/icon-blog.png\']')), m$1('.fontsize-large.u-marginbottom-60.text-success', m$1('a.link-hidden-success[href=\'http://blog.catarse.me\'][target=\'__blank\']', 'Blog do Catarse'))]), m$1('.w-row', _$1.map(ctrl.posts(), function (post) {
             return m$1('.w-col.w-col-4.col-blog-post', [m$1('a.link-hidden.fontweight-semibold.fontsize-base.u-marginbottom-10[href="' + post[1][1] + '"][target=\'__blank\']', post[0][1]), m$1('.fontsize-smaller.fontcolor-secondary.u-margintop-10', m$1.trust(h.strip(post[6][1].substr(0, 130)) + '...'))]);
-        }))]));
+        })), ctrl.error() ? m$1('.w-row', m$1('.w-col.w-col-12.u-text-center', 'Erro ao carregar posts...')) : '']));
     }
 };
 
 var footer = {
     view: function view() {
-        return m$1('footer.main-footer.main-footer-neg', [m$1('section.w-container', m$1('.w-row', [m$1('.w-col.w-col-9', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.w-hidden-tiny', [m$1('.footer-full-signature-text.fontsize-small', 'Bem-vindo'), m$1('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']', ['Como funciona', m$1.trust('&nbsp;'), m$1('span.badge.badge-success', 'Novidade‍')]), m$1('a.link-footer[href=\'https://www.catarse.me/pt/flex?ref=ctrse_footer\']', ' Catarse flex'), m$1('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']', [' Nosso time ', m$1.trust('&lt;'), '3']), m$1('a.link-footer[href=\'http://facebook.com/catarse.me\']', ' Facebook'), m$1('a.link-footer[href=\'http://twitter.com/catarse\']', ' Twitter'), m$1('a.link-footer[href=\'http://instagram.com/catarse\']', ' Instagram'), m$1('a.link-footer[href=\'http://github.com/catarse/catarse\']', ' Github'), m$1('a.link-footer[href=\'http://blog.catarse.me\']', ' Blog'), m$1('a.link-footer[href=\'https://www.catarse.me/pt/jobs\']', ' Trabalhe conosco')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-firstcolumn', [m$1('.footer-full-signature-text.fontsize-small', 'Ajuda'), m$1('a.zendesk_widget.link-footer[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\']', ' Contato'), m$1('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']', ['Nossa Taxa', m$1.trust('&nbsp;'), m$1('span.badge.badge-success', 'Novidade‍')]), m$1('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']', ' Imprensa'), m$1('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']', ' Central de Suporte'), m$1('a.link-footer[href=\'https://www.catarse.me/pt/guides?ref=ctrse_footer\']', ' Guia dos Realizadores'), m$1('a.link-footer[href=\'http://pesquisa.catarse.me/\']', ' Retrato FC Brasil 2013/2014'), m$1('a.link-footer[href=\'/pt/terms-of-use\']', ' Termos de uso'), m$1('a.link-footer[href=\'/pt/privacy-policy\']', ' Política de privacidade')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn', [m$1('.footer-full-signature-text.fontsize-small', 'Navegue'), m$1('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start?ref=ctrse_footer\']', ' Comece seu projeto'), m$1('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']', ' Explore projetos'), m$1('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me?ref=ctrse_footer\']', ' Blog'), m$1('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\']', ' Contato'), m$1('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score&ref=ctrse_footer\']', ' Populares'), m$1('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online&ref=ctrse_footer\']', ' No ar'), m$1('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']', ' Finalizados')])])), m$1('.w-col.w-col-3.column-social-media-footer', [m$1('.footer-full-signature-text.fontsize-small', 'Assine nossa news'), m$1('.w-form', m$1('form[accept-charset=\'UTF-8\'][action=\'' + h.getMailchimpUrl() + '\'][id=\'mailee-form\'][method=\'post\']', [m$1('.w-form.footer-newsletter', m$1('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')), m$1('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]', m$1('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter.png\']'))])), m$1('.footer-full-signature-text.fontsize-small', 'Redes sociais'), m$1('.w-widget.w-widget-facebook.u-marginbottom-20', m$1('.facebook', m$1('.fb-like[data-colorscheme=\'dark\'][data-href=\'http://facebook.com/catarse.me\'][data-layout=\'button_count\'][data-send=\'false\'][data-show-faces=\'false\'][data-title=\'\'][data-width=\'260\']'))), m$1('.w-widget.w-widget-twitter', [m$1('a.twitter-follow-button[href="htt\u1E55://twitter.com/catarse"][data-button="blue"][data-text-color="#FFFFFF][data-link-color="#FFFFFF"][data-width="224px"]')]), m$1('.u-margintop-30', [m$1('.footer-full-signature-text.fontsize-small', 'Change language'), m$1('[id=\'google_translate_element\']')])])])), m$1('.w-container', m$1('.footer-full-copyleft', [m$1('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'), m$1('.lineheight-loose', m$1('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']', 'Feito com amor | 2016 | Open source'))]))]);
+        return m$1('footer.main-footer.main-footer-neg', [m$1('section.w-container', m$1('.w-row', [m$1('.w-col.w-col-9', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.w-hidden-tiny', [m$1('.footer-full-signature-text.fontsize-small', 'Bem-vindo'), m$1('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']', ['Como funciona', m$1.trust('&nbsp;'), m$1('span.badge.badge-success', 'Novidade‍')]), m$1('a.link-footer[href=\'https://www.catarse.me/pt/flex?ref=ctrse_footer\']', ' Catarse flex'), m$1('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']', [' Nosso time ', m$1.trust('&lt;'), '3']), m$1('a.link-footer[href=\'http://facebook.com/catarse.me\']', ' Facebook'), m$1('a.link-footer[href=\'http://twitter.com/catarse\']', ' Twitter'), m$1('a.link-footer[href=\'http://instagram.com/catarse\']', ' Instagram'), m$1('a.link-footer[href=\'http://github.com/catarse/catarse\']', ' Github'), m$1('a.link-footer[href=\'http://blog.catarse.me\']', ' Blog'), m$1('a.link-footer[href=\'https://www.catarse.me/pt/jobs\']', ' Trabalhe conosco')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-firstcolumn', [m$1('.footer-full-signature-text.fontsize-small', 'Ajuda'), m$1('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]', ' Contato'), m$1('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']', ['Nossa Taxa', m$1.trust('&nbsp;'), m$1('span.badge.badge-success', 'Novidade‍')]), m$1('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']', ' Imprensa'), m$1('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']', ' Central de Suporte'), m$1('a.link-footer[href=\'https://www.catarse.me/pt/guides?ref=ctrse_footer\']', ' Guia dos Realizadores'), m$1('a.link-footer[href=\'http://pesquisa.catarse.me/\']', ' Retrato FC Brasil 2013/2014'), m$1('a.link-footer[href=\'/pt/terms-of-use\']', ' Termos de uso'), m$1('a.link-footer[href=\'/pt/privacy-policy\']', ' Política de privacidade')]), m$1('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn', [m$1('.footer-full-signature-text.fontsize-small', 'Navegue'), m$1('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start?ref=ctrse_footer\']', ' Comece seu projeto'), m$1('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']', ' Explore projetos'), m$1('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me?ref=ctrse_footer\']', ' Blog'), m$1('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\']', ' Contato'), m$1('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score&ref=ctrse_footer\']', ' Populares'), m$1('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online&ref=ctrse_footer\']', ' No ar'), m$1('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']', ' Finalizados')])])), m$1('.w-col.w-col-3.column-social-media-footer', [m$1('.footer-full-signature-text.fontsize-small', 'Assine nossa news'), m$1('.w-form', m$1('form[accept-charset=\'UTF-8\'][action=\'' + h.getMailchimpUrl() + '\'][id=\'mailee-form\'][method=\'post\']', [m$1('.w-form.footer-newsletter', m$1('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')), m$1('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]', m$1('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter.png\']'))])), m$1('.footer-full-signature-text.fontsize-small', 'Redes sociais'), m$1('.w-widget.w-widget-facebook.u-marginbottom-20', m$1('.facebook', m$1('.fb-like[data-colorscheme=\'dark\'][data-href=\'http://facebook.com/catarse.me\'][data-layout=\'button_count\'][data-send=\'false\'][data-show-faces=\'false\'][data-title=\'\'][data-width=\'260\']'))), m$1('.w-widget.w-widget-twitter', [m$1('a.twitter-follow-button[href="httṕ://twitter.com/catarse"][data-button="blue"][data-text-color="#FFFFFF][data-link-color="#FFFFFF"][data-width="224px"]')]), m$1('.u-margintop-30', [m$1('.footer-full-signature-text.fontsize-small', 'Change language'), m$1('[id=\'google_translate_element\']')])])])), m$1('.w-container', m$1('.footer-full-copyleft', [m$1('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'), m$1('.lineheight-loose', m$1('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']', 'Feito com amor | 2016 | Open source'))]))]);
     }
 };
 
@@ -5117,7 +5025,7 @@ var projectsHome = {
             friendListVM = postgrest$1.paginationVM(models.userFriend, 'user_id.desc', {
             'Prefer': 'count=exact'
         }),
-            currentUser = h.getUser(),
+            currentUser = h.getUser() || {},
             hasFBAuth = currentUser.has_fb_auth,
             vm = homeVM();
 
@@ -5201,10 +5109,10 @@ var projectShareBox = {
             onclick: args.displayShareBox.toggle
         }, 'Fechar'), m$1('.fontsize-small.fontweight-semibold.u-marginbottom-30', 'Compartilhe este projeto')]), m$1('.w-widget.w-widget-twitter.w-hidden-small.w-hidden-tiny.share-block', [m$1('iframe[allowtransparency="true"][width="120px"][height="22px"][frameborder="0"][scrolling="no"][src="//platform.twitter.com/widgets/tweet_button.8d007ddfc184e6776be76fe9e5e52d69.en.html#_=1442425984936&count=horizontal&dnt=false&id=twitter-widget-1&lang=en&original_referer=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project().permalink + '&size=m&text=Confira%20o%20projeto%20' + args.project().name + '%20no%20%40catarse&type=share&url=https%3A%2F%2Fwww.catarse.me%2Fpt%2F' + args.project().permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share&via=catarse"]')]), m$1('a.w-hidden-small.widget-embed.w-hidden-tiny.fontsize-small.link-hidden.fontcolor-secondary[href="js:void(0);"]', {
             onclick: ctrl.displayEmbed.toggle
-        }, '< embed >'), ctrl.displayEmbed() ? m$1('.embed-expanded.u-margintop-30', [m$1('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'), m$1('.w-form', [m$1('input.w-input[type="text"][value="<iframe frameborder="0" height="314px" src="https://www.catarse.me/pt/projects/' + args.project().project_id + '/embed" width="300px" scrolling="no"></iframe>"]')]), m$1('.card-embed', [m$1('iframe[frameborder="0"][height="350px"][src="/projects/' + args.project().project_id + '/embed"][width="300px"][scrolling="no"]')])]) : '', args.project().permalink ? m$1.component(facebookButton, {
+        }, '< embed >'), ctrl.displayEmbed() ? m$1('.embed-expanded.u-margintop-30', [m$1('.fontsize-small.fontweight-semibold.u-marginbottom-20', 'Insira um widget em seu site'), m$1('.w-form', [m$1('input.w-input[type="text"][value="<iframe frameborder="0" height="340px" src="https://www.catarse.me/pt/projects/' + args.project().project_id + '/embed" width="300px" scrolling="no"></iframe>"]')]), m$1('.card-embed', [m$1('iframe[frameborder="0"][height="350px"][src="/projects/' + args.project().project_id + '/embed"][width="300px"][scrolling="no"]')])]) : '', args.project().permalink ? m$1.component(facebookButton, {
             mobile: true,
             url: 'https://www.catarse.me/' + args.project().permalink + '?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share'
-        }) : '', m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href="http://twitter.com/?status=Acabei%20de%20apoiar%20o%20projeto%20' + args.project().name + '%20https://www.catarse.me/' + args.project().permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Tweet']), m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium[data-action="share/whatsapp/share"]', {
+        }) : '', m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium.btn-tweet.u-marginbottom-20[href="https://twitter.com/intent/tweet?text=Acabei%20de%20apoiar%20o%20projeto%20' + args.project().name + '%20https://www.catarse.me/' + args.project().permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Tweet']), m$1('a.w-hidden-main.w-hidden-medium.btn.btn-medium[data-action="share/whatsapp/share"]', {
             href: 'whatsapp://send?text=' + encodeURIComponent('https://www.catarse.me/' + args.project().permalink + '/?ref=whatsapp&utm_source=whatsapp&utm_medium=social&utm_campaign=project_share')
         }, [m$1('span.fa.fa-whatsapp'), ' Whatsapp'])]);
     }
@@ -5296,7 +5204,7 @@ var projectMode = {
             buildTooltip = function buildTooltip(el) {
             return m$1.component(tooltip, {
                 el: el,
-                text: mode === 'aon' ? 'Somente receber\xE1 os recursos se atingir ou ultrapassar a meta at\xE9 o dia ' + h.momentify(project.zone_expires_at, 'DD/MM/YYYY') + '.' : 'O realizador receberá todos os recursos quando encerrar a campanha, mesmo que não tenha atingido esta meta.',
+                text: mode === 'aon' ? 'Somente receberá os recursos se atingir ou ultrapassar a meta até o dia ' + h.momentify(project.zone_expires_at, 'DD/MM/YYYY') + '.' : 'O realizador receberá todos os recursos quando encerrar a campanha, mesmo que não tenha atingido esta meta.',
                 width: 280
             });
         };
@@ -5431,7 +5339,7 @@ var ownerMessageContent = {
         };
     },
     view: function view(ctrl, args) {
-        var successMessage = m$1('.modal-dialog-content.u-text-center', [m$1('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m$1('p.fontsize-large', 'Sua mensagem foi enviada com sucesso para ' + ctrl.userDetails().name + '. Voc\xEA vai receber uma c\xF3pia no seu email e pode seguir a conversa por l\xE1!')]),
+        var successMessage = m$1('.modal-dialog-content.u-text-center', [m$1('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m$1('p.fontsize-large', 'Sua mensagem foi enviada com sucesso para ' + ctrl.userDetails().name + '. Você vai receber uma cópia no seu email e pode seguir a conversa por lá!')]),
             contactForm = [m$1('.modal-dialog-content', [m$1('.w-form', [m$1('form', { onsubmit: h.validate().submit([{
                 prop: ctrl.from_name,
                 rule: 'text'
@@ -5652,9 +5560,8 @@ var canShowSlip = function canShowSlip(contribution) {
     return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
 };
 
-//@TODO
 var canGenerateSlip = function canGenerateSlip(contribution) {
-    return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
+    return contribution.payment_method == 'BoletoBancario' && contribution.state == 'pending' && contribution.project_state == 'online' && !contribution.reward_sold_out && !contribution.waiting_payment;
 };
 
 var contributionVM = {
@@ -5784,7 +5691,7 @@ var projectRewardList = {
             var valueFloat = h.monetaryToFloat(vm.contributionValue);
 
             if (valueFloat < vm.selectedReward().minimum_value) {
-                vm.error('O valor de apoio para essa recompensa deve ser de no m\xEDnimo R$' + vm.selectedReward().minimum_value);
+                vm.error('O valor de apoio para essa recompensa deve ser de no mínimo R$' + vm.selectedReward().minimum_value);
             } else {
                 vm.error('');
 
@@ -5807,9 +5714,11 @@ var projectRewardList = {
         };
 
         if (h.getStoredObject(storeKey)) {
-            var _h$getStoredObject = h.getStoredObject(storeKey),
-                value = _h$getStoredObject.value,
-                reward = _h$getStoredObject.reward;
+            var _h$getStoredObject = h.getStoredObject(storeKey);
+
+            var value = _h$getStoredObject.value;
+            var reward = _h$getStoredObject.reward;
+
 
             h.removeStoredObject(storeKey);
             vm.selectedReward(reward);
@@ -5846,7 +5755,7 @@ var projectRewardList = {
                         reward_value: reward.minimum_value
                     }
                 }, ctrl.selectReward(reward))
-            }, [reward.minimum_value >= 100 ? m$1('.tag-circle-installment', [m$1('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'), m$1('.fontsize-mini.lineheight-tightest', 's/ juros')]) : '', m$1('.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'), m$1('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), reward.maximum_contributions > 0 ? [reward.waiting_payment_count > 0 ? m$1('.maximum_contributions.in_time_to_confirm.clearfix', [m$1('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))]) : '', h.rewardSouldOut(reward) ? m$1('.u-margintop-10', [m$1('span.badge.badge-gone.fontsize-smaller', 'Esgotada')]) : m$1('.u-margintop-10', [m$1('span.badge.badge-attention.fontsize-smaller', [m$1('span.fontweight-bold', 'Limitada'), ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)'])])] : '']), m$1('.fontsize-smaller.u-margintop-20', m$1.trust(h.simpleFormat(h.strip(reward.description)))), !_$1.isEmpty(reward.deliver_at) ? m$1('.fontsize-smaller', [m$1('b', 'Estimativa de Entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', project.open_for_contributions && !h.rewardSouldOut(reward) ? [ctrl.openedReward().id === reward.id ? m$1('.w-form', [m$1('form.u-margintop-30', {
+            }, [reward.minimum_value >= 100 ? m$1('.tag-circle-installment', [m$1('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'), m$1('.fontsize-mini.lineheight-tightest', 's/ juros')]) : '', m$1('.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'), m$1('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), reward.maximum_contributions > 0 ? [reward.waiting_payment_count > 0 ? m$1('.maximum_contributions.in_time_to_confirm.clearfix', [m$1('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))]) : '', h.rewardSouldOut(reward) ? m$1('.u-margintop-10', [m$1('span.badge.badge-gone.fontsize-smaller', 'Esgotada')]) : m$1('.u-margintop-10', [m$1('span.badge.badge-attention.fontsize-smaller', [m$1('span.fontweight-bold', 'Limitada'), project.open_for_contributions ? ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)' : ''])])] : '']), m$1('.fontsize-smaller.u-margintop-20', m$1.trust(h.simpleFormat(h.strip(reward.description)))), !_$1.isEmpty(reward.deliver_at) ? m$1('.fontsize-smaller', [m$1('b', 'Estimativa de Entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', project.open_for_contributions && !h.rewardSouldOut(reward) ? [ctrl.openedReward().id === reward.id ? m$1('.w-form', [m$1('form.u-margintop-30', {
                 onsubmit: ctrl.submitContribution
             }, [m$1('.divider.u-marginbottom-20'), m$1('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-3.w-col-small-3.w-col-tiny-3', m$1('.back-reward-input-reward.placeholder', 'R$')), m$1('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', m$1('input.w-input.back-reward-input-reward[type="tel"]', {
                 config: ctrl.setInput,
@@ -5878,7 +5787,7 @@ var projectSuggestedContributions = {
             suggestedValues = [10, 25, 50, 100];
 
         return m$1('#suggestions', _$1.map(suggestedValues, function (amount) {
-            return project ? m$1('a[href="' + suggestionUrl(amount) + '"].card-reward.card-big.card-secondary.u-marginbottom-20', [m$1('.fontsize-larger', 'R$\xA0' + amount)]) : '';
+            return project ? m$1('a[href="' + suggestionUrl(amount) + '"].card-reward.card-big.card-secondary.u-marginbottom-20', [m$1('.fontsize-larger', 'R$ ' + amount)]) : '';
         }));
     }
 };
@@ -5895,7 +5804,7 @@ var projectContributions$1 = {
             project_id: 'eq'
         }),
             groupedCollection = function groupedCollection() {
-            var collection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+            var collection = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
             var grouped = [[]],
                 group = 0;
@@ -6014,16 +5923,20 @@ var projectReport = {
     var displayForm = h.toggleProp(false, true),
         sendSuccess = m$1.prop(false),
         submitDisabled = m$1.prop(false),
-        user = h.getUser(),
+        user = h.getUser() || {},
         email = m$1.prop(user.email),
         details = m$1.prop(''),
         reason = m$1.prop(''),
         l = m$1.prop(false),
+        storeReport = 'report',
+        project = projectVM.currentProject(),
+        hasPendingAction = project && h.callStoredAction(storeReport) == project.project_id,
         checkLogin = function checkLogin() {
-      if (user) {
+      if (!_.isEmpty(user)) {
         displayForm.toggle();
       } else {
-        window.location.href = '/login';
+        h.storeAction(storeReport, project.project_id);
+        return h.navigateToDevise();
       }
     },
         sendReport = function sendReport() {
@@ -6032,16 +5945,26 @@ var projectReport = {
         email: email(),
         details: details(),
         reason: reason(),
-        project_id: h.getCurrentProject().project_id
+        project_id: project.project_id
       });
       l = postgrest$1.loaderWithToken(loaderOpts);
 
       l.load().then(sendSuccess(true));
       submitDisabled(false);
       return false;
+    },
+        checkScroll = function checkScroll(el, isInit) {
+      if (!isInit && hasPendingAction) {
+        h.animateScrollTo(el);
+      }
     };
 
+    if (!_.isEmpty(user) && hasPendingAction) {
+      displayForm(true);
+    }
+
     return {
+      checkScroll: checkScroll,
       checkLogin: checkLogin,
       displayForm: displayForm,
       sendSuccess: sendSuccess,
@@ -6055,7 +5978,8 @@ var projectReport = {
   },
   view: function view(ctrl, args) {
     var user = ctrl.user;
-    return m$1('.card.card-terciary.u-radius', [m$1('.fontsize-small.u-marginbottom-20', ['Este projeto desrespeita', m$1.trust('&nbsp;'), m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638\'][target=\'_blank\']', 'nossas regras? ')]), ctrl.sendSuccess() ? m$1('.w-form', m$1('p', 'Obrigado! A sua denúncia foi recebida.')) : [m$1('.a.w-button.btn.btn-medium.btn-terciary.btn-inline[href=\'javascript:void(0);\']', { onclick: ctrl.checkLogin }, 'Denunciar este projeto'), ctrl.displayForm() ? m$1('#report-form.u-margintop-30', m$1('.w-form', m$1('form', { onsubmit: ctrl.sendReport }, [m$1('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'Por que você está denunciando este projeto?'), m$1('select.w-select.text-field.positive[required=\'required\']', { onchange: m$1.withAttr('value', ctrl.reason) }, [m$1('option[value=\'\']', 'Selecione um motivo'), m$1('option[value=\'Violação de propriedade intelectual\']', 'Violação de propriedade intelectual'), m$1('option[value=\'Calúnia, injúria, difamação ou discriminação\']', 'Calúnia, injúria, difamação ou discriminação'), m$1('option[value=\'Escopo de projeto proibido\']', 'Escopo de projeto proibido'), m$1('option[value=\'Recompensas proibidas\']', 'Recompensas proibidas'), m$1('option[value=\'Cenas de sexo explícitas e gratuitas\']', 'Cenas de sexo explícitas e gratuitas'), m$1('option[value=\'Abuso de SPAM\']', 'Abuso de SPAM'), m$1('option[value=\'Outros\']', 'Outros')]), m$1('textarea.w-input.text-field.positive.u-marginbottom-30', { placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema', onchange: m$1.withAttr('value', ctrl.details) }), m$1('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', { disabled: ctrl.submitDisabled() })]))) : '']]);
+
+    return m$1('.card.card-terciary.u-radius', [m$1('.fontsize-small.u-marginbottom-20', ['Este projeto desrespeita', m$1.trust('&nbsp;'), m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638\'][target=\'_blank\']', 'nossas regras? ')]), ctrl.sendSuccess() ? m$1('.w-form', m$1('p', 'Obrigado! A sua denúncia foi recebida.')) : [m$1('.a.w-button.btn.btn-medium.btn-terciary.btn-inline[href=\'javascript:void(0);\']', { onclick: ctrl.checkLogin }, 'Denunciar este projeto'), ctrl.displayForm() ? m$1('#report-form.u-margintop-30', m$1('.w-form', m$1('form', { onsubmit: ctrl.sendReport, config: ctrl.checkScroll }, [m$1('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'Por que você está denunciando este projeto?'), m$1('select.w-select.text-field.positive[required=\'required\']', { onchange: m$1.withAttr('value', ctrl.reason) }, [m$1('option[value=\'\']', 'Selecione um motivo'), m$1('option[value=\'Violação de propriedade intelectual\']', 'Violação de propriedade intelectual'), m$1('option[value=\'Calúnia, injúria, difamação ou discriminação\']', 'Calúnia, injúria, difamação ou discriminação'), m$1('option[value=\'Escopo de projeto proibido\']', 'Escopo de projeto proibido'), m$1('option[value=\'Recompensas proibidas\']', 'Recompensas proibidas'), m$1('option[value=\'Cenas de sexo explícitas e gratuitas\']', 'Cenas de sexo explícitas e gratuitas'), m$1('option[value=\'Abuso de SPAM\']', 'Abuso de SPAM'), m$1('option[value=\'Outros\']', 'Outros')]), m$1('textarea.w-input.text-field.positive.u-marginbottom-30', { placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema', onchange: m$1.withAttr('value', ctrl.details) }), m$1('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', { disabled: ctrl.submitDisabled() })]))) : '']]);
   }
 };
 
@@ -6191,11 +6115,12 @@ var projectMain = {
 
 var projectsShow = {
     controller: function controller(args) {
-        var project_id = args.project_id,
-            project_user_id = args.project_user_id;
+        var project_id = args.project_id;
+        var project_user_id = args.project_user_id;
 
 
-        h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll' });
+        h.analytics.event({ cat: 'project_view', act: 'project_page_view', project: { id: project_id, user_id: project_user_id } });
+        h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll', project: { id: project_id, user_id: project_user_id } });
 
         if (project_id && !_$1.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
@@ -6238,7 +6163,7 @@ var userHeader = {
             hideDetails = args.hideDetails,
             profileImage = userVM.displayImage(user),
             coverImage = userVM.displayCover(user);
-        return m$1('.hero-' + (hideDetails ? 'small' : 'half'), [m$1('.w-container.content-hero-profile', m$1('.w-row.u-text-center', m$1('.w-col.w-col-8.w-col-push-2', [hideDetails ? '' : m$1('.u-marginbottom-20', m$1('.avatar_wrapper', m$1('img.thumb.big.u-round[alt=\'User\'][src=\'' + profileImage + '\']'))), m$1('.fontsize-larger.fontweight-semibold.u-marginbottom-20', user.name), hideDetails ? '' : m$1('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base', ['Chegou junto em ' + h.momentify(user.created_at, 'MMMM [de] YYYY'), m$1('br'), user.total_contributed_projects == 0 ? 'Ainda não apoiou projetos' : 'Apoiou ' + h.pluralize(user.total_contributed_projects, ' projeto', ' projetos'), user.total_published_projects > 0 ? ' e j\xE1 criou ' + h.pluralize(user.total_published_projects, ' projeto', ' projetos') : ''])]))), m$1('.hero-profile', { style: 'background-image:url(\'' + coverImage + '\');' })]);
+        return m$1('.hero-' + (hideDetails ? 'small' : 'half'), [m$1('.w-container.content-hero-profile', m$1('.w-row.u-text-center', m$1('.w-col.w-col-8.w-col-push-2', [hideDetails ? '' : m$1('.u-marginbottom-20', m$1('.avatar_wrapper', m$1('img.thumb.big.u-round[alt=\'User\'][src=\'' + profileImage + '\']'))), m$1('.fontsize-larger.fontweight-semibold.u-marginbottom-20', user.name), hideDetails ? '' : m$1('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base', ['Chegou junto em ' + h.momentify(user.created_at, 'MMMM [de] YYYY'), m$1('br'), user.total_contributed_projects == 0 ? 'Ainda não apoiou projetos' : 'Apoiou ' + h.pluralize(user.total_contributed_projects, ' projeto', ' projetos'), user.total_published_projects > 0 ? ' e já criou ' + h.pluralize(user.total_published_projects, ' projeto', ' projetos') : ''])]))), m$1('.hero-profile', { style: 'background-image:url(\'' + coverImage + '\');' })]);
     }
 };
 
@@ -6439,13 +6364,89 @@ var usersShow = {
     }
 };
 
+var userAboutEdit = {
+    controller: function controller(args) {
+        var removeLinks = [],
+            addLink = function addLink() {
+            return args.user.links.push('');
+        },
+            removeLink = function removeLink(idx) {
+            return function () {
+                args.user.links.splice(idx, 1);
+                removeLinks.push(idx);
+            };
+        };
+
+        return {
+            removeLinks: removeLinks,
+            removeLink: removeLink,
+            addLink: addLink
+        };
+    },
+    view: function view(ctrl, args) {
+        var user = args.user || {};
+
+        return m$1('#about-tab', m$1('form.simple_form.w-form', {
+            action: '/pt/users/' + user.id,
+            novalidate: true,
+            enctype: 'multipart/form-data',
+            'accept-charset': 'UTF-8',
+            method: 'POST'
+        }, [m$1('input[name="utf8"][type="hidden"][value="✓"]'), m$1('input[name="_method"][type="hidden"][value="patch"]'), m$1('input[name="authenticity_token"][type="hidden"][value=' + h.authenticityToken() + ']'), m$1('div', m$1('.w-container', m$1('.w-row', m$1('.w-col.w-col-10.w-col-push-1', [m$1('.w-form', [m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Imagem do perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Essa imagem será utilizada como a miniatura de seu perfil (PNG, JPG tamanho 280 x 280)')]), m$1('.w-col.w-col-4.w-sub-col', m$1('.input.file.optional.user_uploaded_image.field_with_hint', [m$1('label.field-label'), m$1('span.hint', m$1('img[alt="Avatar do Usuario"][src="' + userVM.displayImage(user) + '"]')), m$1('input.file.optional.w-input.text-field[id="user_uploaded_image"][type="file"]', { name: 'user[uploaded_image]' })]))]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Imagem de capa do perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Essa imagem será utilizada como fundo do cabeçalho do seu perfil público (PNG ou JPG). Caso você não envie nenhum imagem aqui, utilizaremos sua imagem de perfil como alternativa.')]), m$1('.w-col.w-col-4.w-sub-col', m$1('.input.file.optional.user_cover_image', [m$1('label.field-label'), m$1('span.hint', user.profile_cover_image ? m$1('img', { src: user.profile_cover_image }) : ''), m$1('input.file.optional.w-input.text-field[id="user_cover_image"][type="file"]', { name: 'user[cover_image]' })]))])]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', 'Endereço do seu perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', 'Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!    ')]), m$1('.w-col.w-col-7', m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', m$1('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]', {
+            name: 'user[permalink]',
+            value: user.permalink
+        })), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover', m$1('.fontcolor-secondary.fontsize-smaller', '  .catarse.me'))]))]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Nome'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Esse é o nome que os usuários irão ver no seu perfil público')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[id="user_name"][type="text"]', {
+            name: 'user[name]',
+            value: user.name
+        }))]), m$1('.w-form.card.card-terciary.u-marginbottom-30', [m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Perfil do facebook'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Cole o link do seu perfil')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[type="text"]', {
+            name: 'user[facebook_link]',
+            value: user.facebook_link
+        }))]), m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Perfil do twitter'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Cole o link do seu perfil')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[type="text"]', {
+            name: 'user[twitter]',
+            value: user.twitter_username
+        }))])]), m$1('.w-form.card.card-terciary.u-marginbottom-30', m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold[for="name-8"]', ' Presença na internet'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary[for="name-8"]', ' Inclua links que ajudem outros usuários a te conhecer melhor. ')]), m$1('.w-col.w-col-7', [m$1('.w-row', [user.links && user.links.length <= 0 ? '' : m$1('.link', _$1.map(user.links, function (link, idx) {
+            return m$1('div', { key: idx }, [m$1('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m$1('input.string.w-input.text-field.w-input.text-field][type="text"][value="' + link + '"]', {
+                class: link === '' ? 'positive' : 'optional',
+                name: 'user[links_attributes][' + idx + '][link]',
+                onchange: m$1.withAttr('value', function (val) {
+                    return user.links[idx] = val;
+                })
+            })), m$1('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [m$1('button.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', { onclick: ctrl.removeLink(idx) })])]);
+        })), ctrl.removeLinks.length <= 0 ? '' : _$1.map(ctrl.removeLinks, function (linkIdx) {
+            return m$1('input[type="hidden"][value="1"]', { name: 'user[links_attributes][' + linkIdx + '][_destroy]' });
+        })]), m$1('.w-row', [m$1('.w-col.w-col-6.w-col-push-6', m$1('a.btn.btn-small.btn-terciary', { onclick: ctrl.addLink }, m$1('span.translation_missing', 'Add Link')))])])])), m$1('.w-row', m$1('.w-col', m$1('.card.card-terciary.u-marginbottom-30', [m$1('label.field-label.fontweight-semibold', 'Sobre'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary.u-marginbottom-20', 'Fale sobre você e tente fornecer as informações mais relevantes para que visitantes possam te conhecer melhor. '), m$1('.w-form', m$1('.preview-container.u-marginbottom-40', h.redactor('user[about_html]', m$1.prop(user.about_html))))])))])))), m$1('div', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', [m$1('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'), m$1('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]')]), m$1('.w-col.w-col-4')])))]));
+    }
+};
+
+var I18nScope$15 = _$1.partial(h.i18nScope, 'payment.state');
+
 var userContributedBox = {
+    controller: function controller(args) {
+        var setCsrfToken = function setCsrfToken(xhr) {
+            if (h.authenticityToken()) {
+                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+            }
+            return;
+        };
+        var toggleAnonymous = function toggleAnonymous(projectId, contributionId) {
+            m$1.request({
+                method: 'GET',
+                config: setCsrfToken,
+                url: '/projects/' + projectId + '/contributions/' + contributionId + '/toggle_anonymous'
+            });
+        };
+        return {
+            toggleAnonymous: toggleAnonymous
+        };
+    },
     view: function view(ctrl, args) {
         var collection = args.collection,
             pagination = args.pagination,
             title = args.title;
-        return m$1(".section-one-column.u-marginbottom-30", [m$1(".fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center", title), m$1(".w-row.w-hidden-small.w-hidden-tiny.card.card-secondary", [m$1(".w-col.w-col-3", m$1(".fontsize-small.fontweight-semibold", "Projetos que apoiei")), m$1(".w-col.w-col-2", m$1(".fontsize-small.fontweight-semibold", "Valor do apoio")), m$1(".w-col.w-col-3", m$1(".fontsize-small.fontweight-semibold", "Status do apoio")), m$1(".w-col.w-col-4", m$1(".fontsize-small.fontweight-semibold", "Recompensa"))]), !_$1.isEmpty(collection) ? _$1.map(collection, function (contribution) {
-            return m$1(".w-row.card", [m$1(".w-col.w-col-3", m$1(".w-row", [m$1(".w-col.w-col-4.u-marginbottom-10", m$1('a[href=\'/' + contribution.permalink + '\']', m$1('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), m$1(".w-col.w-col-8", m$1(".fontsize-small.fontweight-semibold", m$1('a.alt-link[href=\'/' + contribution.permalink + '\']', contribution.project_name)))])), m$1(".w-col.w-col-2.u-marginbottom-10", m$1(".fontsize-base.inline-block", [m$1("span.w-hidden-main.w-hidden-medium.fontweight-semibold", "Valor do apoio"), ' R$ ' + contribution.value])), m$1(".w-col.w-col-3.u-marginbottom-10", [m$1(".w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold", "Status"), m$1(".fontsize-smaller.fontweight-semibold", [m$1(".lineheight-tighter"), m$1('span.fa.fa-circle.fontsize-smallest.' + (contribution.state == 'paid' ? 'text-success' : contribution.state == 'pending' ? 'text-waiting' : 'text-error'), m$1.trust("&nbsp;")), 'Confirmado em ' + h.momentify(contribution.paid_at)]), m$1(".fontsize-smallest", contribution.installments > 1 ? contribution.installments + ' x R$ ' + contribution.installment_value + ' ' : '', contribution.payment_method), contributionVM.canShowReceipt(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10.btn-terciary[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/receipt\'][target=\'__blank\']', "Ver recibo") : '', contributionVM.canShowSlip(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10[href=\'' + contribution.gateway_data['boleto_url'] + '\'][target=\'__blank\']', "Imprimir boleto") : '', contributionVM.canGenerateSlip(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/second_slip\'][target=\'__blank\']', "Gerar 2a via") : '', m$1(".w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10", [m$1('input.w-checkbox-input[data-remote=\'true\'][data-url=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/toggle_anonymous\'][id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']' + (contribution.anonymous ? '[checked=\'checked\']' : '') + '[value=\'1\']'), m$1("label.w-form-label", "Quero que meu apoio não seja público")])]), m$1(".w-col.w-col-4", m$1(".fontsize-smallest", [m$1("span.w-hidden-main.w-hidden-medium.fontweight-semibold", "Recompensa"), contribution.reward_id ? m$1.trust(h.simpleFormat(contribution.reward_description)) : " Não selecionou recompensa"]), m$1(".fontsize-smallest.lineheight-looser", [m$1("span.fontweight-semibold", "Estimativa de entrega: "), h.momentify(contribution.deliver_at, 'MMMM/YYYY')]))]);
+        return m$1('.section-one-column.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', title), m$1('.w-row.w-hidden-small.w-hidden-tiny.card.card-secondary', [m$1('.w-col.w-col-3', m$1('.fontsize-small.fontweight-semibold', 'Projetos que apoiei')), m$1('.w-col.w-col-2', m$1('.fontsize-small.fontweight-semibold', 'Valor do apoio')), m$1('.w-col.w-col-3', m$1('.fontsize-small.fontweight-semibold', 'Status do apoio')), m$1('.w-col.w-col-4', m$1('.fontsize-small.fontweight-semibold', 'Recompensa'))]), !_$1.isEmpty(collection) ? _$1.map(collection, function (contribution) {
+            return m$1('.w-row.card', [m$1('.w-col.w-col-3', m$1('.w-row', [m$1('.w-col.w-col-4.u-marginbottom-10', m$1('a[href=\'/' + contribution.permalink + '\']', m$1('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), m$1('.w-col.w-col-8', m$1('.fontsize-small.fontweight-semibold', m$1('a.alt-link[href=\'/' + contribution.permalink + '\']', contribution.project_name)))])), m$1('.w-col.w-col-2.u-marginbottom-10', m$1('.fontsize-base.inline-block', [m$1('span.w-hidden-main.w-hidden-medium.fontweight-semibold', 'Valor do apoio'), ' R$ ' + contribution.value])), m$1('.w-col.w-col-3.u-marginbottom-10', [m$1('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', 'Status'), m$1('.fontsize-smaller.fontweight-semibold', [m$1('.lineheight-tighter'), m$1('span.fa.fa-circle.fontsize-smallest.' + (contribution.state == 'paid' ? 'text-success' : contribution.state == 'pending' ? 'text-waiting' : 'text-error'), m$1.trust('&nbsp;')), I18n.t(contribution.state, I18nScope$15({ date: h.momentify(contribution[contribution.state + '_at']) }))]), m$1('.fontsize-smallest', contribution.installments > 1 ? contribution.installments + ' x R$ ' + contribution.installment_value + ' ' : '', contribution.payment_method == 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito'), contributionVM.canShowReceipt(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10.btn-terciary[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/receipt\'][target=\'__blank\']', 'Ver recibo') : '', contributionVM.canShowSlip(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10[href=\'' + contribution.gateway_data['boleto_url'] + '\'][target=\'__blank\']', 'Imprimir boleto') : '', contributionVM.canGenerateSlip(contribution) ? m$1('a.btn.btn-inline.btn-small.u-margintop-10[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/second_slip\'][target=\'__blank\']', 'Gerar 2a via') : '', m$1('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [m$1('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']' + (contribution.anonymous ? '[checked=\'checked\']' : '') + '[value=\'1\']', { onclick: function onclick() {
+                    return ctrl.toggleAnonymous(contribution.project_id, contribution.contribution_id);
+                } }), m$1('label.w-form-label', 'Quero que meu apoio não seja público')])]), m$1('.w-col.w-col-4', m$1('.fontsize-smallest', [m$1('span.w-hidden-main.w-hidden-medium.fontweight-semibold', 'Recompensa'), contribution.reward_id ? m$1.trust(h.simpleFormat(contribution.reward_description)) : ' Não selecionou recompensa']), m$1('.fontsize-smallest.lineheight-looser', [m$1('span.fontweight-semibold', 'Estimativa de entrega: '), h.momentify(contribution.deliver_at, 'MMMM/YYYY')]))]);
         }) : h.loader(), !_$1.isEmpty(collection) ? m$1('.w-row.u-marginbottom-40.u-margintop-30', [m$1('.w-col.w-col-2.w-col-push-5', [!pagination.isLoading() ? pagination.isLastPage() ? '' : m$1('button#load-more.btn.btn-medium.btn-terciary', {
             onclick: pagination.nextPage
         }, 'Carregar mais') : h.loader()])]) : '']);
@@ -6658,7 +6659,7 @@ var userSettings = {
         })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', ' Nova senha'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
             value: fields.password(),
             onchange: m$1.withAttr('value', fields.password)
-        })])]), m$1('.divider.u-marginbottom-20'), m$1('.fontweight-semibold.fontsize-smaller', 'Desativar minha conta'), m$1('.fontsize-smallest', 'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'), m$1('a.alt-link.fontsize-smaller[data-confirm=\'Voc\xEA deseja desativar essa conta?\'][data-method=\'delete\'][href=\'/pt/users/' + user.id + '\'][rel=\'nofollow\']', 'Desativar minha conta no Catarse')]))), m$1('div', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', m$1('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')), m$1('.w-col.w-col-4')])))])])]);
+        })])]), m$1('.divider.u-marginbottom-20'), m$1('.fontweight-semibold.fontsize-smaller', 'Desativar minha conta'), m$1('.fontsize-smallest', 'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'), m$1('a.alt-link.fontsize-smaller[data-confirm=\'Você deseja desativar essa conta?\'][data-method=\'delete\'][href=\'/pt/users/' + user.id + '\'][rel=\'nofollow\']', 'Desativar minha conta no Catarse')]))), m$1('div', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', m$1('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')), m$1('.w-col.w-col-4')])))])])]);
     }
 };
 
@@ -6690,7 +6691,7 @@ var userNotifications = {
         var projects_collection = ctrl.projects(),
             reminders = ctrl.projectReminders();
 
-        return m$1('[id=\'notifications-tab\']', m$1('form.simple_form.edit_user[accept-charset=\'UTF-8\'][action=\'/pt/users/' + user.id + '\'][method=\'post\'][novalidate=\'novalidate\']', [m$1('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), m$1('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'), m$1('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + h.authenticityToken() + '\']'), m$1('.w-container', [m$1('.w-row', m$1('.w-col.w-col-10.w-col-push-1', m$1('.w-form.card.card-terciary', [m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Newsletters:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.newsletter ? '[checked=\'checked\']' : '') + '[id=\'user_newsletter\'][name=user[newsletter]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-base.fontweight-semibold[for=\'checkbox\']', ' Newsletter do Catarse (semanal)'), m$1('div', ['Projetos em destaque e posts do nosso Blog', m$1.trust('&nbsp;')])]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Projetos que você apoiou:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_project_posts]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_project_posts ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_project_posts\'][name=user[subscribed_to_project_posts]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-base.fontweight-semibold', ' Quero receber atualizações dos projetos'), m$1('.u-marginbottom-20', m$1('a.alt-link[href=\'#\'][id=\'toggle-notifications\']', ' Gerenciar as notifica\xE7\xF5es de ' + user.total_contributed_projects + ' projetos')), m$1('ul.w-list-unstyled.u-radius.card.card-secondary.w-hidden[id=\'notifications-box\']', { style: { 'display': 'none' } }, [!_$1.isEmpty(projects_collection) ? _$1.map(projects_collection, function (project) {
+        return m$1('[id=\'notifications-tab\']', m$1('form.simple_form.edit_user[accept-charset=\'UTF-8\'][action=\'/pt/users/' + user.id + '\'][method=\'post\'][novalidate=\'novalidate\']', [m$1('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), m$1('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'), m$1('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + h.authenticityToken() + '\']'), m$1('.w-container', [m$1('.w-row', m$1('.w-col.w-col-10.w-col-push-1', m$1('.w-form.card.card-terciary', [m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Newsletters:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.newsletter ? '[checked=\'checked\']' : '') + '[id=\'user_newsletter\'][name=user[newsletter]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-base.fontweight-semibold[for=\'checkbox\']', ' Newsletter do Catarse (semanal)'), m$1('div', ['Projetos em destaque e posts do nosso Blog', m$1.trust('&nbsp;')])]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Projetos que você apoiou:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_project_posts]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_project_posts ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_project_posts\'][name=user[subscribed_to_project_posts]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-base.fontweight-semibold', ' Quero receber atualizações dos projetos'), m$1('.u-marginbottom-20', m$1('a.alt-link[href=\'#\'][id=\'toggle-notifications\']', ' Gerenciar as notificações de ' + user.total_contributed_projects + ' projetos')), m$1('ul.w-list-unstyled.u-radius.card.card-secondary.w-hidden[id=\'notifications-box\']', { style: { 'display': 'none' } }, [!_$1.isEmpty(projects_collection) ? _$1.map(projects_collection, function (project) {
             return m$1('li', m$1('.w-checkbox.w-clearfix', [m$1('input[id=\'unsubscribes_' + project.project_id + '\'][type=\'hidden\'][value=\'\']', { name: 'unsubscribes[' + project.project_id + ']' }), m$1('input.w-checkbox-input' + (project.unsubscribed ? '' : '[checked=\'checked\']') + '[type=\'checkbox\'][value=\'1\'][id=\'user_unsubscribes_' + project.project_id + '\']', { name: 'unsubscribes[' + project.project_id + ']' }), m$1('label.w-form-label.fontsize-small', project.project_name)]));
         }) : ''])]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Social:')), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_friends_contributions]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_friends_contributions ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_friends_contributions\'][name=user[subscribed_to_friends_contributions]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-small', 'Um amigo apoiou ou lançou um projeto')])), m$1('.w-col.w-col-8', m$1('.w-checkbox.w-clearfix', [m$1('input[name=user[subscribed_to_new_followers]][type=\'hidden\'][value=\'0\']'), m$1('input.w-checkbox-input' + (user.subscribed_to_new_followers ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_new_followers\'][name=user[subscribed_to_new_followers]][type=\'checkbox\'][value=\'1\']'), m$1('label.w-form-label.fontsize-small', 'Um amigo começou a me seguir')]))]), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4', m$1('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Lembretes de projetos:')), m$1('.w-col.w-col-8', [!_$1.isEmpty(reminders) ? _$1.map(reminders, function (reminder) {
             return m$1('.w-checkbox.w-clearfix', [m$1('input[id=\'user_reminders_' + reminder.project_id + '\'][type=\'hidden\'][value=\'false\']', { name: 'user[reminders][' + reminder.project_id + ']' }), m$1('input.w-checkbox-input[checked=\'checked\'][type=\'checkbox\'][value=\'1\'][id=\'user_reminders_' + reminder.project_id + '\']', { name: 'user[reminders][' + reminder.project_id + ']' }), m$1('label.w-form-label.fontsize-small', reminder.project_name)]);
@@ -6709,6 +6710,7 @@ var usersEdit = {
             $('#notifications-tab').appendTo('#dashboard_notifications');
             $('#private-contributed-tab').appendTo('#dashboard_contributions');
             $('#settings-tab').appendTo('#dashboard_settings');
+            $('#about-tab').appendTo('#dashboard_about_me');
         };
 
         userVM.fetchUser(user_id, true, userDetails);
@@ -6718,21 +6720,24 @@ var usersEdit = {
         };
     },
     view: function view(ctrl, args) {
-        var user = ctrl.userDetails();
+        var user = ctrl.userDetails(),
+            userId = user.id;
 
-        return m$1('div', { config: ctrl.moveTabContent() }, [m$1.component(menu, { menuTransparency: true }), m$1.component(userHeader, { user: user, hideDetails: true }), !_$1.isEmpty(user) ? [m$1.component(userNotifications, { userId: user.id, user: user }), m$1.component(userPrivateContributed, { userId: user.id, user: user }), m$1.component(userCreated, { userId: user.id }), m$1.component(userSettings, { userId: user.id, user: user })] : '']);
+        return m$1('div', { config: function config(el, isInit) {
+                return ctrl.moveTabContent();
+            } }, [m$1(menu, { menuTransparency: true }), m$1(userHeader, { user: user, hideDetails: true }), !_$1.isEmpty(user) ? [m$1(userAboutEdit, { userId: userId, user: user }), m$1(userSettings, { userId: userId, user: user }), m$1(userNotifications, { userId: userId, user: user }), m$1(userPrivateContributed, { userId: userId, user: user }), m$1(userCreated, { userId: userId })] : '']);
     }
 };
 
-var I18nScope$16 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
-var I18nIntScope$1 = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
+var I18nScope$17 = _$1.partial(h.i18nScope, 'projects.contributions.edit.errors');
+var I18nIntScope$1 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 var paymentVM = function paymentVM() {
-    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'aon';
+    var mode = arguments.length <= 0 || arguments[0] === undefined ? 'aon' : arguments[0];
 
-    var pagarme = m.prop({}),
-        submissionError = m.prop(false),
-        isLoading = m.prop(false);
+    var pagarme = m$1.prop({}),
+        submissionError = m$1.prop(false),
+        isLoading = m$1.prop(false);
 
     var setCsrfToken = function setCsrfToken(xhr) {
         if (h.authenticityToken()) {
@@ -6742,37 +6747,37 @@ var paymentVM = function paymentVM() {
     };
 
     var fields = {
-        completeName: m.prop(''),
-        email: m.prop(''),
-        anonymous: m.prop(),
-        countries: m.prop(),
-        userCountryId: m.prop(),
-        zipCode: m.prop(''),
-        street: m.prop(''),
-        number: m.prop(''),
-        addressComplement: m.prop(''),
-        neighbourhood: m.prop(''),
-        city: m.prop(''),
-        states: m.prop([]),
-        userState: m.prop(),
-        ownerDocument: m.prop(''),
-        phone: m.prop(''),
-        errors: m.prop([])
+        completeName: m$1.prop(''),
+        email: m$1.prop(''),
+        anonymous: m$1.prop(),
+        countries: m$1.prop(),
+        userCountryId: m$1.prop(),
+        zipCode: m$1.prop(''),
+        street: m$1.prop(''),
+        number: m$1.prop(''),
+        addressComplement: m$1.prop(''),
+        neighbourhood: m$1.prop(''),
+        city: m$1.prop(''),
+        states: m$1.prop([]),
+        userState: m$1.prop(),
+        ownerDocument: m$1.prop(''),
+        phone: m$1.prop(''),
+        errors: m$1.prop([])
     };
 
     var creditCardFields = {
-        name: m.prop(''),
-        number: m.prop(''),
-        expMonth: m.prop(''),
-        expYear: m.prop(''),
-        save: m.prop(false),
-        cvv: m.prop(''),
-        errors: m.prop([])
+        name: m$1.prop(''),
+        number: m$1.prop(''),
+        expMonth: m$1.prop(''),
+        expYear: m$1.prop(''),
+        save: m$1.prop(false),
+        cvv: m$1.prop(''),
+        errors: m$1.prop([])
     };
 
     var populateForm = function populateForm(fetchedData) {
-        var data = _.first(fetchedData),
-            countryId = data.address.country_id || _.findWhere(fields.countries(), { name: 'Brasil' }).id;
+        var data = _$1.first(fetchedData),
+            countryId = data.address.country_id || _$1.findWhere(fields.countries(), { name: 'Brasil' }).id;
 
         fields.completeName(data.name);
         fields.email(data.email);
@@ -6802,11 +6807,11 @@ var paymentVM = function paymentVM() {
     };
 
     var isInternational = function isInternational() {
-        return !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), { name: 'Brasil' }).id : false;
+        return !_$1.isEmpty(fields.countries()) ? fields.userCountryId() != _$1.findWhere(fields.countries(), { name: 'Brasil' }).id : false;
     };
 
-    var scope = function scope() {
-        return isInternational() ? I18nIntScope$1() : I18nScope$16();
+    var scope = function scope(data) {
+        return isInternational() ? I18nIntScope$1(data) : I18nScope$17(data);
     };
 
     var getLocale = function getLocale() {
@@ -6816,15 +6821,15 @@ var paymentVM = function paymentVM() {
     var faq = function faq() {
         return I18n$1.translations[I18n$1.currentLocale()].projects.faq[mode];
     },
-        currentUser = h.getUser(),
+        currentUser = h.getUser() || {},
         countriesLoader = postgrest$1.loader(models.country.getPageOptions()),
         statesLoader = postgrest$1.loader(models.state.getPageOptions());
 
     var checkEmptyFields = function checkEmptyFields(checkedFields) {
-        return _.map(checkedFields, function (field) {
+        return _$1.map(checkedFields, function (field) {
             var val = fields[field]();
 
-            if (!h.existy(val) || _.isEmpty(String(val).trim())) {
+            if (!h.existy(val) || _$1.isEmpty(String(val).trim())) {
                 fields.errors().push({ field: field, message: I18n$1.t('validation.empty_field', scope()) });
             }
         });
@@ -6858,8 +6863,23 @@ var paymentVM = function paymentVM() {
     };
 
     var checkUserState = function checkUserState() {
-        if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
+        if (_$1.isEmpty(fields.userState()) || fields.userState() === 'null') {
             fields.errors().push({ field: 'userState', message: I18n$1.t('validation.state', scope()) });
+        }
+    };
+
+    var checkPhone = function checkPhone() {
+        var phone = fields.phone(),
+            strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, ''),
+            error = { field: 'phone', message: I18n$1.t('validation.phone', scope()) };
+
+        if (strippedPhone.length < 10) {
+            fields.errors().push(error);
+        } else {
+            var controlDigit = Number(strippedPhone.charAt(2));
+            if (!(controlDigit >= 2 && controlDigit <= 9)) {
+                fields.errors().push(error);
+            }
         }
     };
 
@@ -6874,15 +6894,16 @@ var paymentVM = function paymentVM() {
             checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
             checkUserState();
             checkDocument();
+            checkPhone();
         }
 
-        return _.isEmpty(fields.errors());
+        return _$1.isEmpty(fields.errors());
     };
 
     var getSlipPaymentDate = function getSlipPaymentDate(contribution_id) {
-        var paymentDate = m.prop();
+        var paymentDate = m$1.prop();
 
-        m.request({
+        m$1.request({
             method: 'GET',
             config: setCsrfToken,
             url: '/payment/pagarme/' + contribution_id + '/slip_data'
@@ -6892,7 +6913,7 @@ var paymentVM = function paymentVM() {
     };
 
     var sendSlipPayment = function sendSlipPayment(contribution_id, project_id, error, loading, completed) {
-        m.request({
+        m$1.request({
             method: 'post',
             url: '/payment/pagarme/' + contribution_id + '/pay_slip.json',
             dataType: 'json'
@@ -6904,46 +6925,46 @@ var paymentVM = function paymentVM() {
                 window.location.href = '/projects/' + project_id + '/contributions/' + contribution_id;
             }
             loading(false);
-            m.redraw();
+            m$1.redraw();
         }).catch(function (err) {
             error(I18n$1.t('submission.slip_submission', scope()));
             loading(false);
             completed(false);
-            m.redraw();
+            m$1.redraw();
         });
     };
 
     var paySlip = function paySlip(contribution_id, project_id, error, loading, completed) {
         error(false);
-        m.redraw();
+        m$1.redraw();
         if (validate()) {
             updateContributionData(contribution_id, project_id).then(function () {
                 sendSlipPayment(contribution_id, project_id, error, loading, completed);
             }).catch(function () {
                 loading(false);
                 error(I18n$1.t('submission.slip_validation', scope()));
-                m.redraw();
+                m$1.redraw();
             });
         } else {
             loading(false);
             error(I18n$1.t('submission.slip_validation', scope()));
-            m.redraw();
+            m$1.redraw();
         }
     };
 
-    var savedCreditCards = m.prop([]);
+    var savedCreditCards = m$1.prop([]);
 
     var getSavedCreditCards = function getSavedCreditCards(user_id) {
         var otherSample = {
             id: -1
         };
 
-        return m.request({
+        return m$1.request({
             method: 'GET',
             config: setCsrfToken,
             url: '/users/' + user_id + '/credit_cards'
         }).then(function (creditCards) {
-            if (_.isArray(creditCards)) {
+            if (_$1.isArray(creditCards)) {
                 creditCards.push(otherSample);
             } else {
                 creditCards = [];
@@ -6953,8 +6974,22 @@ var paymentVM = function paymentVM() {
         });
     };
 
+    var similityExecute = function similityExecute(contribution_id) {
+        if (window.SimilityScript && h.getSimilityCustomer()) {
+            var user = h.getUser() || {};
+            var similityContext = {
+                customer_id: h.getSimilityCustomer(),
+                session_id: contribution_id,
+                user_id: user.user_id
+            };
+            var ss = new window.SimilityScript(similityContext);
+            ss.execute();
+        }
+    };
+
     var requestPayment = function requestPayment(data, contribution_id) {
-        return m.request({
+        similityExecute(contribution_id);
+        return m$1.request({
             method: 'POST',
             url: '/payment/pagarme/' + contribution_id + '/pay_credit_card',
             data: data,
@@ -6981,8 +7016,8 @@ var paymentVM = function paymentVM() {
     };
 
     var payWithNewCard = function payWithNewCard(contribution_id, installment) {
-        var deferred = m.deferred();
-        m.request({
+        var deferred = m$1.deferred();
+        m$1.request({
             method: 'GET',
             url: '/payment/pagarme/' + contribution_id + '/get_encryption_key',
             config: setCsrfToken
@@ -6990,7 +7025,7 @@ var paymentVM = function paymentVM() {
             window.PagarMe.encryption_key = data.key;
             var card = setNewCreditCard();
             var errors = card.fieldErrors();
-            if (_.keys(errors).length > 0) {
+            if (_$1.keys(errors).length > 0) {
                 deferred.reject({ message: I18n$1.t('submission.card_invalid', scope()) });
             } else {
                 card.generateHash(function (cardHash) {
@@ -6999,11 +7034,12 @@ var paymentVM = function paymentVM() {
                         save_card: creditCardFields.save().toString(),
                         payment_card_installments: installment
                     };
+
                     requestPayment(data, contribution_id).then(deferred.resolve).catch(deferred.reject);
                 });
             }
         }).catch(function (error) {
-            if (!_.isEmpty(error.message)) {
+            if (!_$1.isEmpty(error.message)) {
                 deferred.reject(error);
             } else {
                 deferred.reject({ message: I18n$1.t('submission.encryption_error', scope()) });
@@ -7030,7 +7066,7 @@ var paymentVM = function paymentVM() {
             address_phone_number: fields.phone()
         };
 
-        return m.request({
+        return m$1.request({
             method: 'PUT',
             url: '/projects/' + project_id + '/contributions/' + contribution_id + '.json',
             data: { contribution: contributionData },
@@ -7045,7 +7081,7 @@ var paymentVM = function paymentVM() {
 
                 isLoading(false);
                 submissionError(I18n$1.t('submission.error', scope({ message: errorMsg })));
-                m.redraw();
+                m$1.redraw();
                 deferred.reject();
             } else {
                 window.location.href = '/projects/' + project_id + '/contributions/' + contribution_id;
@@ -7056,10 +7092,9 @@ var paymentVM = function paymentVM() {
     var creditCardPaymentFail = function creditCardPaymentFail(deferred) {
         return function (data) {
             var errorMsg = data.message || I18n$1.t('submission.payment_failed', scope());
-
             isLoading(false);
             submissionError(I18n$1.t('submission.error', scope({ message: errorMsg })));
-            m.redraw();
+            m$1.redraw();
             deferred.reject();
         };
     };
@@ -7075,11 +7110,11 @@ var paymentVM = function paymentVM() {
     };
 
     var sendPayment = function sendPayment(selectedCreditCard, selectedInstallment, contribution_id, project_id) {
-        var deferred = m.deferred();
+        var deferred = m$1.deferred();
         if (validate()) {
             isLoading(true);
             submissionError(false);
-            m.redraw();
+            m$1.redraw();
             updateContributionData(contribution_id, project_id).then(checkAndPayCreditCard(deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment)).catch(function () {
                 isLoading(false);
                 deferred.reject();
@@ -7094,8 +7129,8 @@ var paymentVM = function paymentVM() {
     var resetFieldError = function resetFieldError(fieldName) {
         return function () {
             var errors = fields.errors(),
-                errorField = _.findWhere(fields.errors(), { field: fieldName }),
-                newErrors = _.compose(fields.errors, _.without);
+                errorField = _$1.findWhere(fields.errors(), { field: fieldName }),
+                newErrors = _$1.compose(fields.errors, _$1.without);
 
             return newErrors(fields.errors(), errorField);
         };
@@ -7104,35 +7139,35 @@ var paymentVM = function paymentVM() {
     var resetCreditCardFieldError = function resetCreditCardFieldError(fieldName) {
         return function () {
             var errors = fields.errors(),
-                errorField = _.findWhere(creditCardFields.errors(), { field: fieldName }),
-                newErrors = _.compose(creditCardFields.errors, _.without);
+                errorField = _$1.findWhere(creditCardFields.errors(), { field: fieldName }),
+                newErrors = _$1.compose(creditCardFields.errors, _$1.without);
 
             return newErrors(creditCardFields.errors(), errorField);
         };
     };
 
-    var installments = m.prop([{ value: 10, number: 1 }]);
+    var installments = m$1.prop([{ value: 10, number: 1 }]);
 
     var getInstallments = function getInstallments(contribution_id) {
-        return m.request({
+        return m$1.request({
             method: 'GET',
             url: '/payment/pagarme/' + contribution_id + '/get_installment',
             config: h.setCsrfToken
         }).then(installments);
     };
 
-    var creditCardMask = _.partial(h.mask, '9999 9999 9999 9999');
+    var creditCardMask = _$1.partial(h.mask, '9999 9999 9999 9999');
 
-    var applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
+    var applyCreditCardMask = _$1.compose(creditCardFields.number, creditCardMask);
 
     countriesLoader.load().then(function (data) {
-        var countryId = fields.userCountryId() || _.findWhere(data, { name: 'Brasil' }).id;
-        fields.countries(data);
+        var countryId = fields.userCountryId() || _$1.findWhere(data, { name: 'Brasil' }).id;
+        fields.countries(_$1.sortBy(data, 'name_en'));
         fields.userCountryId(countryId);
     });
     statesLoader.load().then(function (data) {
         fields.states().push({ acronym: null, name: 'Estado' });
-        _.map(data, function (state) {
+        _$1.map(data, function (state) {
             return fields.states().push(state);
         });
     });
@@ -7159,11 +7194,12 @@ var paymentVM = function paymentVM() {
         isLoading: isLoading,
         pagarme: pagarme,
         locale: getLocale,
-        faq: faq
+        faq: faq,
+        similityExecute: similityExecute
     };
 };
 
-var I18nScope$17 = _.partial(h.i18nScope, 'projects.faq');
+var I18nScope$18 = _.partial(h.i18nScope, 'projects.faq');
 
 var faqBox = {
     controller: function controller(args) {
@@ -7186,8 +7222,8 @@ var faqBox = {
             var updatedQuestions = {};
             _.each(questions, function (quest, idx) {
                 _.extend(updatedQuestions, defineProperty({}, idx + 1, {
-                    question: I18n$1.t(tKey() + '.questions.' + idx + '.question', I18nScope$17()),
-                    answer: I18n$1.t(tKey() + '.questions.' + idx + '.answer', I18nScope$17({ userLink: '/users/' + user().id,
+                    question: I18n$1.t(tKey() + '.questions.' + idx + '.question', I18nScope$18()),
+                    answer: I18n$1.t(tKey() + '.questions.' + idx + '.answer', I18nScope$18({ userLink: '/users/' + user().id,
                         userName: user().name
                     }))
                 }));
@@ -7209,7 +7245,7 @@ var faqBox = {
     view: function view(ctrl, args) {
         return m$1('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius', [m$1('.w-row.u-marginbottom-30', [m$1('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m$1('img[width=\'30\']', {
             src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
-        })), m$1('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m$1('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary', I18n$1.t(ctrl.tKey() + '.description', I18nScope$17())))]), m$1('.u-marginbottom-20.fontsize-small.fontweight-semibold', I18n$1.t('' + (args.vm.isInternational() ? 'international_title' : 'title'), I18nScope$17())), m$1('ul.w-list-unstyled', _.map(ctrl.scopedQuestions(), function (question, idx) {
+        })), m$1('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m$1('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary', I18n$1.t(ctrl.tKey() + '.description', I18nScope$18())))]), m$1('.u-marginbottom-20.fontsize-small.fontweight-semibold', I18n$1.t('' + (args.vm.isInternational() ? 'international_title' : 'title'), I18nScope$18())), m$1('ul.w-list-unstyled', _.map(ctrl.scopedQuestions(), function (question, idx) {
             return [m$1('li#faq_question_' + idx + '.fontsize-smaller.alt-link.list-question', {
                 onclick: ctrl.selectQuestion(idx)
             }, m$1('span', [m$1('span.faq-box-arrow'), ' ' + question.question])), m$1('li.list-answer', {
@@ -7219,7 +7255,7 @@ var faqBox = {
     }
 };
 
-var I18nScope$19 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+var I18nScope$20 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 
 var paymentSlip = {
     controller: function controller(args) {
@@ -7246,7 +7282,7 @@ var paymentSlip = {
         };
     },
     view: function view(ctrl, args) {
-        return m$1('.w-row', m$1('.w-col.w-col-12', m$1('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [m$1('.fontsize-small.u-marginbottom-20', ctrl.slipPaymentDate() ? 'Esse boleto banc\xE1rio vence no dia ' + h.momentify(ctrl.slipPaymentDate().slip_expiration_date) + '.' : 'carregando...'), m$1('.fontsize-small.u-marginbottom-40', 'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'), m$1('.w-row', m$1('.w-col.w-col-8.w-col-push-2', [ctrl.loading() ? h.loader() : ctrl.completed() ? '' : m$1('input.btn.btn-large.u-marginbottom-20', {
+        return m$1('.w-row', m$1('.w-col.w-col-12', m$1('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [m$1('.fontsize-small.u-marginbottom-20', ctrl.slipPaymentDate() ? 'Esse boleto bancário vence no dia ' + h.momentify(ctrl.slipPaymentDate().slip_expiration_date) + '.' : 'carregando...'), m$1('.fontsize-small.u-marginbottom-40', 'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'), m$1('.w-row', m$1('.w-col.w-col-8.w-col-push-2', [ctrl.loading() ? h.loader() : ctrl.completed() ? '' : m$1('input.btn.btn-large.u-marginbottom-20', {
             onclick: ctrl.buildSlip,
             value: 'Imprimir Boleto',
             type: 'submit'
@@ -7401,7 +7437,7 @@ var replaceFullWidthChars = function replaceFullWidthChars(str) {
     if (str == null) {
         str = '';
     }
-    fullWidth = '\uFF10\uFF11\uFF12\uFF13\uFF14\uFF15\uFF16\uFF17\uFF18\uFF19';
+    fullWidth = '０１２３４５６７８９';
     halfWidth = '0123456789';
     value = '';
     chars = str.split('');
@@ -7742,7 +7778,7 @@ var creditCardInput = {
     }
 };
 
-var I18nScope$20 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$21 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$3 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var paymentCreditCard = {
@@ -7758,8 +7794,8 @@ var paymentCreditCard = {
 
         var onSubmit = function onSubmit() {
             if (selectedCreditCard().id === -1) {
-                checkcvv();
                 checkExpiry();
+                checkcvv();
                 checkCreditCard();
                 checkCreditCardName();
             } else {
@@ -7789,8 +7825,6 @@ var paymentCreditCard = {
                 errorObj = { field: 'cvv', message: I18n$1.t('errors.inline.creditcard_cvv', scope()) };
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         var checkExpiry = function checkExpiry() {
@@ -7798,8 +7832,6 @@ var paymentCreditCard = {
                 errorObj = { field: 'expiry', message: I18n$1.t('errors.inline.creditcard_expiry', scope()) };
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         var checkCreditCard = function checkCreditCard() {
@@ -7807,8 +7839,6 @@ var paymentCreditCard = {
                 errorObj = { field: 'number', message: I18n$1.t('errors.inline.creditcard_number', scope()) };
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         var checkCreditCardName = function checkCreditCardName() {
@@ -7818,8 +7848,6 @@ var paymentCreditCard = {
             var isValid = !(_$1.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
             handleValidity(isValid, errorObj);
-
-            return isValid;
         };
 
         var applyCreditCardNameMask = _$1.compose(vm.creditCardFields.name, h.noNumbersMask);
@@ -7870,7 +7898,7 @@ var paymentCreditCard = {
         };
 
         var scope = function scope(attr) {
-            return vm.isInternational() ? I18nIntScope$3(attr) : I18nScope$20(attr);
+            return vm.isInternational() ? I18nIntScope$3(attr) : I18nScope$21(attr);
         };
 
         vm.getInstallments(args.contribution_id).then(function () {
@@ -7957,6 +7985,7 @@ var paymentCreditCard = {
             onfocus: ctrl.vm.resetCreditCardFieldError('expiry'),
             class: ctrl.fieldHasError('expiry') ? 'error' : '',
             onchange: m$1.withAttr('value', ctrl.creditCard.expYear),
+            onblur: ctrl.checkExpiry,
             value: ctrl.creditCard.expYear()
         }, _$1.map(ctrl.expYears, function (year) {
             return m$1('option', { value: year }, year);
@@ -7978,24 +8007,31 @@ var paymentCreditCard = {
     }
 };
 
-var I18nScope$18 = _.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$19 = _.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$2 = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var paymentForm = {
     controller: function controller(args) {
         var isSlip = m$1.prop(false),
             scope = function scope() {
-            return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$18();
+            return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$19();
+        };
+
+        var scrollTo = function scrollTo(el, isInit) {
+            if (!isInit) {
+                h.animateScrollTo(el);
+            }
         };
 
         return {
+            scrollTo: scrollTo,
             isSlip: isSlip,
             scope: scope,
             vm: args.vm
         };
     },
     view: function view(ctrl, args) {
-        return m$1('#catarse_pagarme_form', [m$1('.u-text-center-small-only.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('payment_info', ctrl.scope())), m$1('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [m$1('span.fa.fa-lock'), I18n$1.t('safe_payment', ctrl.scope())])]), m$1('.flex-row.u-marginbottom-40', [m$1('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
+        return m$1('#catarse_pagarme_form', { config: ctrl.scrollTo }, [m$1('.u-text-center-small-only.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('payment_info', ctrl.scope())), m$1('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [m$1('span.fa.fa-lock'), I18n$1.t('safe_payment', ctrl.scope())])]), m$1('.flex-row.u-marginbottom-40', [m$1('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
             onclick: function onclick() {
                 return ctrl.isSlip(false);
             },
@@ -8009,7 +8045,7 @@ var paymentForm = {
     }
 };
 
-var I18nScope$15 = _.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$16 = _.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var projectsPayment = {
@@ -8026,7 +8062,8 @@ var projectsPayment = {
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             zipcodeMask = _.partial(h.mask, '99999-999'),
-            isCnpj = m$1.prop(false);
+            isCnpj = m$1.prop(false),
+            user = h.getUser();
 
         if (_.contains([41679, 40191, 40271, 38768, 42815, 43002, 42129, 41867, 39655, 29706], project.project_id)) {
             window.$zopim && window.$zopim.livechat || function (d, s) {
@@ -8041,7 +8078,7 @@ var projectsPayment = {
             setTimeout(function t() {
                 var c = window.$zopim && window.$zopim.livechat;
                 if (c) {
-                    var u = h.getUser();
+                    var u = user;
                     if (u) {
                         c.setEmail(u.email);
                         c.setName(u.name);
@@ -8055,6 +8092,7 @@ var projectsPayment = {
 
         var validateForm = function validateForm() {
             if (vm.validate()) {
+                vm.similityExecute(contribution().id);
                 showPaymentForm(true);
             }
         };
@@ -8105,12 +8143,14 @@ var projectsPayment = {
         };
 
         var scope = function scope(attr) {
-            return vm.isInternational() ? I18nIntScope(attr) : I18nScope$15(attr);
+            return vm.isInternational() ? I18nIntScope(attr) : I18nScope$16(attr);
         };
 
-        if (!h.getUser()) {
+        if (!user) {
             return h.navigateToDevise();
         }
+
+        vm.similityExecute(contribution().id);
 
         return {
             addressChange: addressChange,
@@ -8132,6 +8172,8 @@ var projectsPayment = {
         };
     },
     view: function view(ctrl, args) {
+        var user = h.getUser() || {};
+
         return m$1('#project-payment.w-section.w-clearfix.section', [m$1('.w-col', m$1('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [m$1('.fontsize-smaller.fontweight-semibold', I18n$1.t('selected_reward.value', ctrl.scope())), m$1('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href=\'#\']'), m$1('.w-clearfix.u-marginbottom-20', m$1('.fontsize-larger.text-success.u-left', 'R$ ' + Number(ctrl.value).toFixed())), m$1('.w-clearfix.back-payment-info-reward', {
             style: {
                 'display': 'none'
@@ -8250,15 +8292,15 @@ var projectsPayment = {
             onkeyup: m$1.withAttr('value', ctrl.applyPhoneMask),
             value: ctrl.vm.fields.phone(),
             required: 'required'
-        }), ctrl.fieldHasError('phone')])]) : ''])), m$1('.w-row.u-marginbottom-40', m$1('.w-col.w-col-push-3.w-col-6', m$1('button.btn.btn-large', {
+        }), ctrl.fieldHasError('phone')])]) : ''])), m$1('.w-row.u-marginbottom-40', !ctrl.showPaymentForm() ? m$1('.w-col.w-col-push-3.w-col-6', m$1('button.btn.btn-large', {
             onclick: function onclick() {
                 return CatarseAnalytics.event({ cat: 'contribution_finish', act: 'contribution_next_click' }, ctrl.validateForm);
             }
-        }, I18n$1.t('next_step', ctrl.scope())))), ctrl.showPaymentForm() ? m$1.component(paymentForm, {
+        }, I18n$1.t('next_step', ctrl.scope()))) : ''), ctrl.showPaymentForm() ? m$1.component(paymentForm, {
             vm: ctrl.vm,
             contribution_id: ctrl.contribution().id,
             project_id: projectVM.currentProject().project_id,
-            user_id: h.getUser().user_id
+            user_id: user.user_id
         }) : '']), m$1('.w-col.w-col-4', [m$1('.w-hidden-small.w-hidden-tiny.card.u-radius.u-marginbottom-20', [m$1('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', I18n$1.t('selected_reward.value', ctrl.scope())), m$1('.w-clearfix.u-marginbottom-20', [m$1('.fontsize-larger.text-success.u-left', 'R$ ' + Number(ctrl.value).toFixed()), m$1('a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/' + projectVM.currentProject().project_id + '/contributions/new' + (ctrl.reward().id ? '?reward_id=' + ctrl.reward().id : '') + '"]', I18n$1.t('selected_reward.edit', ctrl.scope()))]), m$1('.back-payment-info-reward', [m$1('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.reward', ctrl.scope())), m$1('.fontsize-smallest', ctrl.reward().description ? ctrl.reward().description : m$1.trust(I18n$1.t('selected_reward.review_without_reward_html', ctrl.scope(_.extend({ value: Number(ctrl.value).toFixed() })))))])]), m$1.component(faqBox, {
             mode: ctrl.mode,
             vm: ctrl.vm,
@@ -8282,7 +8324,7 @@ var projectsReward = {
             var valueFloat = h.monetaryToFloat(vm.contributionValue);
 
             if (valueFloat < vm.selectedReward().minimum_value) {
-                vm.error('O valor de apoio para essa recompensa deve ser de no m\xEDnimo R$' + vm.selectedReward().minimum_value);
+                vm.error('O valor de apoio para essa recompensa deve ser de no mínimo R$' + vm.selectedReward().minimum_value);
             } else {
                 if (!h.getUser()) {
                     h.storeObject(storeKey, { value: valueFloat, reward: vm.selectedReward() });
@@ -8347,7 +8389,7 @@ var projectsReward = {
     }
 };
 
-var I18nScope$21 = _$1.partial(h.i18nScope, 'projects.publish');
+var I18nScope$22 = _$1.partial(h.i18nScope, 'projects.publish');
 
 var publish = {
   controller: function controller(args) {
@@ -8407,13 +8449,13 @@ var publish = {
                     ', m$1('br'), m$1('br'), m$1('span.fontweight-semibold', 'Você poderá: '), 'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', m$1('span.fontweight-semibold', 'Responsabilidade do Catarse')]), [m$1('div', [m$1('span.fontweight-semibold'), m$1('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', m$1('br'), m$1('br'), m$1('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', m$1('span.fontweight-semibold', 'Suas responsabilidades')]), m$1('div', [m$1('span.fontweight-semibold'), m$1('span.fontweight-semibold'), 'É sua responsabilidade tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, produção e entrega de recompensas dentro do prazo estimado e comunicação com apoiadores.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Retiradas de projetos no ar')]), m$1('div', [m$1('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos\'][target=\'_blank\']', 'Regras do Jogo'), ' e ', m$1('a.alt-link[href=\'http://www.catarse.me/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'), '.'])])];
     },
         terms = function terms(project) {
-      return [m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '1/9'), ' ', m$1('span.fontweight-semibold', 'Regras da modalidade Tudo-ou-nada')]), m$1('div', ['Você escolheu a campanha tudo-ou-nada. Dessa maneira, você só irá receber os recursos arrecadados ', m$1('span.fontweight-semibold', 'caso atinja ou supere a meta de arrecadação'), '. Caso contrário, todos seus apoiadores serão reembolsados. Você será responsável pela entrega das recompensas oferecidas se seu projeto alcançar a meta de arrecadação.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '2/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Meta de arrecadação')]), m$1('div', 'A meta não poderá ser alterada após o publicação do projeto.')]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '3/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Taxas')]), m$1('div', ['Cobramos 13% sobre o ', m$1('span.fontweight-semibold', 'valor total arrecadado'), ' pelo seu projeto caso ele atinja ou supere a meta dentro do prazo da campanha. Se o projeto não atingir a meta, nenhuma taxa será cobrada.', m$1('span.fontweight-semibold')])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '4/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Prazo da campanha')]), m$1('div', 'Seu projeto estar\xE1 em arrecada\xE7\xE3o no Catarse at\xE9 o dia ' + h.momentify(ctrl.expiresAt()) + ' \xE0s 23h59min59s. Este prazo n\xE3o poder\xE1 ser alterado ap\xF3s a publica\xE7\xE3o do projeto.')]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '5/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Regras do repasse e reembolso')]), m$1('div', ['Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Após essa confirmação, o Catarse depositará o valor arrecadado, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. ', m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202365507\'][target=\'_blank\']', 'Saiba mais sobre o processo de reembolso'), '.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '6/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), [m$1('div', [m$1('span.fontweight-semibold', 'Você não poderá:'), ' alterar o nome do projeto, a URL (link) do projeto, a categoria escolhida, o tipo de financiamento, a conta bancária, a meta de arrecadação, o prazo escolhido e as recompensas onde existirem apoios já efetuados.\ ', m$1('br'), m$1('br'), m$1('span.fontweight-semibold', 'Você poderá: '), 'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Responsabilidade do Catarse')]), [m$1('div', [m$1('span.fontweight-semibold'), m$1('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', m$1('br'), m$1('br'), m$1('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Suas responsabilidades')]), m$1('div', [m$1('span.fontweight-semibold'), m$1('span.fontweight-semibold'), 'É sua responsabilidade tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, produção e entrega de recompensas dentro do prazo estimado e comunicação com apoiadores.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Retiradas de projetos no ar')]), m$1('div', [m$1('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos\'][target=\'_blank\']', 'Regras do Jogo'), ' e ', m$1('a.alt-link[href=\'http://www.catarse.me/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'), '.'])])];
+      return [m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '1/9'), ' ', m$1('span.fontweight-semibold', 'Regras da modalidade Tudo-ou-nada')]), m$1('div', ['Você escolheu a campanha tudo-ou-nada. Dessa maneira, você só irá receber os recursos arrecadados ', m$1('span.fontweight-semibold', 'caso atinja ou supere a meta de arrecadação'), '. Caso contrário, todos seus apoiadores serão reembolsados. Você será responsável pela entrega das recompensas oferecidas se seu projeto alcançar a meta de arrecadação.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '2/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Meta de arrecadação')]), m$1('div', 'A meta não poderá ser alterada após o publicação do projeto.')]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '3/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Taxas')]), m$1('div', ['Cobramos 13% sobre o ', m$1('span.fontweight-semibold', 'valor total arrecadado'), ' pelo seu projeto caso ele atinja ou supere a meta dentro do prazo da campanha. Se o projeto não atingir a meta, nenhuma taxa será cobrada.', m$1('span.fontweight-semibold')])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '4/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Prazo da campanha')]), m$1('div', 'Seu projeto estará em arrecadação no Catarse até o dia ' + h.momentify(ctrl.expiresAt()) + ' às 23h59min59s. Este prazo não poderá ser alterado após a publicação do projeto.')]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '5/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Regras do repasse e reembolso')]), m$1('div', ['Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Após essa confirmação, o Catarse depositará o valor arrecadado, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. ', m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202365507\'][target=\'_blank\']', 'Saiba mais sobre o processo de reembolso'), '.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '6/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), [m$1('div', [m$1('span.fontweight-semibold', 'Você não poderá:'), ' alterar o nome do projeto, a URL (link) do projeto, a categoria escolhida, o tipo de financiamento, a conta bancária, a meta de arrecadação, o prazo escolhido e as recompensas onde existirem apoios já efetuados.\ ', m$1('br'), m$1('br'), m$1('span.fontweight-semibold', 'Você poderá: '), 'editar o conteúdo da descrição do projeto, alterar o vídeo principal da campanha, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação.'])]]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Responsabilidade do Catarse')]), [m$1('div', [m$1('span.fontweight-semibold'), m$1('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', m$1('br'), m$1('br'), m$1('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Suas responsabilidades')]), m$1('div', [m$1('span.fontweight-semibold'), m$1('span.fontweight-semibold'), 'É sua responsabilidade tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, produção e entrega de recompensas dentro do prazo estimado e comunicação com apoiadores.'])]), m$1('.w-col.w-col-11', [m$1('div', [m$1('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', m$1('span', { style: { 'font-weight': ' 600' } }, 'Retiradas de projetos no ar')]), m$1('div', [m$1('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', m$1('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos\'][target=\'_blank\']', 'Regras do Jogo'), ' e ', m$1('a.alt-link[href=\'http://www.catarse.me/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'), '.'])])];
     };
 
     return [!ctrl.l() && !ctrl.accountL() ? [project.is_owner_or_admin ? m$1.component(projectDashboardMenu, {
       project: m$1.prop(project),
       hidePublish: true
-    }) : '', m$1('.w-section.section-product.' + project.mode), m$1('.w-section.section', [m$1('.w-container', [m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', [m$1('.u-text-center', [m$1('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), m$1('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), m$1('.w-col.w-col-3')])])]), m$1('.divider'), m$1('.w-section.section-one-column.bg-gray.section.before-footer', [m$1('.w-container', [m$1('.card.medium.u-marginbottom-60.card-terciary', [m$1('.w-row', [m$1('.w-col.w-col-6.w-clearfix', [m$1('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), m$1('.w-col.w-col-6', [m$1('.u-marginbottom-30.fontsize-base', [m$1('div', [m$1('span.fontweight-semibold', 'Título: '), project.name]), m$1('div', [m$1('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), m$1('div', [m$1('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n$1.t(project.mode, I18nScope$21())]), m$1('div', [m$1('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + h.formatNumber(project.goal, 2, 3)]), project.online_days !== null ? m$1('div', [m$1('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', m$1('div', [m$1('span.fontweight-semibold', 'Responsável: '), account.owner_name]), m$1('div', [m$1('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), m$1('.u-text-center', [m$1('.w-row', [m$1('.w-col.w-col-1'), m$1('.w-col.w-col-10', [m$1('.divider.u-marginbottom-10'), m$1('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), m$1('.w-col.w-col-1')])])]), m$1('.card.medium.u-radius.u-marginbottom-60', [m$1('.u-text-center.u-marginbottom-60', [m$1('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', m$1('a.alt-link[href=\'https://equipecatarse.zendesk.com/account/dropboxes/20298537\'][target=\'_blank\']', 'entre em contato'), '!'])]), m$1('.w-col.w-col-2')])]), _$1.map(project.mode == 'flex' ? flexTerms(project) : terms(project), function (term, index) {
+    }) : '', m$1('.w-section.section-product.' + project.mode), m$1('.w-section.section', [m$1('.w-container', [m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', [m$1('.u-text-center', [m$1('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), m$1('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), m$1('.w-col.w-col-3')])])]), m$1('.divider'), m$1('.w-section.section-one-column.bg-gray.section.before-footer', [m$1('.w-container', [m$1('.card.medium.u-marginbottom-60.card-terciary', [m$1('.w-row', [m$1('.w-col.w-col-6.w-clearfix', [m$1('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), m$1('.w-col.w-col-6', [m$1('.u-marginbottom-30.fontsize-base', [m$1('div', [m$1('span.fontweight-semibold', 'Título: '), project.name]), m$1('div', [m$1('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), m$1('div', [m$1('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n$1.t(project.mode, I18nScope$22())]), m$1('div', [m$1('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + h.formatNumber(project.goal, 2, 3)]), project.online_days !== null ? m$1('div', [m$1('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', m$1('div', [m$1('span.fontweight-semibold', 'Responsável: '), account.owner_name]), m$1('div', [m$1('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), m$1('.u-text-center', [m$1('.w-row', [m$1('.w-col.w-col-1'), m$1('.w-col.w-col-10', [m$1('.divider.u-marginbottom-10'), m$1('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), m$1('.w-col.w-col-1')])])]), m$1('.card.medium.u-radius.u-marginbottom-60', [m$1('.u-text-center.u-marginbottom-60', [m$1('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), m$1('.w-row', [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', m$1('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), m$1('.w-col.w-col-2')])]), _$1.map(project.mode == 'flex' ? flexTerms(project) : terms(project), function (term, index) {
       return m$1('.u-marginbottom-30.fontsize-base' + (index == 0 ? '' : '.w-hidden.publish-rules'), [m$1('.w-row[id=\'rule-' + index + '\']', [m$1('.w-col.w-col-1.u-text-center', [m$1('div', [m$1((project.mode == 'flex' ? ctrl.flexAcceptTerm() : ctrl.acceptTerm())[index] ? 'a.w-inline-block.checkbox-big[href=\'#rule-' + (index + 1) + '\']' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg[href=\'#rule-' + (index + 1) + '\']', { onclick: function onclick() {
           return ctrl.showNextTerm(index, project.mode == 'flex' ? ctrl.flexAcceptTerm : ctrl.acceptTerm);
         } })])]), term])]);
@@ -8534,7 +8576,7 @@ var youtubeLightbox = {
     }
 };
 
-var I18nScope$22 = _$1.partial(h.i18nScope, 'pages.start');
+var I18nScope$23 = _$1.partial(h.i18nScope, 'pages.start');
 
 var start = {
     controller: function controller() {
@@ -8661,35 +8703,35 @@ var start = {
             });
         };
 
-        return m$1('#start', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$22())) }, [m$1('.w-section.hero-full.hero-start', [m$1('.w-container.u-text-center', [m$1('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n$1.t('slogan', I18nScope$22())), m$1('.w-row.u-marginbottom-40', [m$1('.w-col.w-col-4.w-col-push-4', [m$1('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
+        return m$1('#start', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$23())) }, [m$1('.w-section.hero-full.hero-start', [m$1('.w-container.u-text-center', [m$1('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n$1.t('slogan', I18nScope$23())), m$1('.w-row.u-marginbottom-40', [m$1('.w-col.w-col-4.w-col-push-4', [m$1('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
             config: h.scrollTo(),
             onclick: h.analytics.event({ cat: 'project_start', act: 'start_btnstart_click' })
-        }, I18n$1.t('submit', I18nScope$22()))])]), m$1('.w-row', _$1.isEmpty(stats) ? '' : [m$1('.w-col.w-col-4', [m$1('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m$1('p.fontsize-small.start-stats', I18n$1.t('header.people', I18nScope$22()))]), m$1('.w-col.w-col-4', [m$1('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m$1('p.fontsize-small.start-stats', I18n$1.t('header.money', I18nScope$22()))]), m$1('.w-col.w-col-4', [m$1('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m$1('p.fontsize-small.start-stats', I18n$1.t('header.success', I18nScope$22()))])])])]), m$1('.w-section.section', [m$1('.w-container', [m$1('.w-row', [m$1('.w-col.w-col-10.w-col-push-1.u-text-center', [m$1('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n$1.t('page-title', I18nScope$22())), m$1('.fontsize-small', I18n$1.t('page-subtitle', I18nScope$22()))])]), m$1('.w-clearfix.how-row', [m$1('.w-hidden-small.w-hidden-tiny.how-col-01', [m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$22())), m$1('.fontsize-base', I18n$1.t('banner.2', I18nScope$22()))]), m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$22())), m$1('.fontsize-base', I18n$1.t('banner.4', I18nScope$22()))])]), m$1('.how-col-02'), m$1('.how-col-03', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.5', I18nScope$22())), m$1('.fontsize-base', I18n$1.t('banner.6', I18nScope$22())), m$1('.fontweight-semibold.fontsize-large.u-margintop-30', I18n$1.t('banner.7', I18nScope$22())), m$1('.fontsize-base', I18n$1.t('banner.8', I18nScope$22()))]), m$1('.w-hidden-main.w-hidden-medium.how-col-01', [m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$22())), m$1('.fontsize-base', I18n$1.t('banner.2', I18nScope$22()))]), m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$22())), m$1('.fontsize-base', I18n$1.t('banner.4', I18nScope$22()))])])])])]), m$1('.w-section.divider'), m$1('.w-section.section-large', [m$1('.w-container.u-text-center.u-marginbottom-60', [m$1('div', [m$1('span.fontsize-largest.fontweight-semibold', I18n$1.t('features.title', I18nScope$22()))]), m$1('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n$1.t('features.subtitle', I18nScope$22())), m$1('.w-hidden-main.w-hidden-medium.u-margintop-30', [m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_1', I18nScope$22())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_2', I18nScope$22())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_3', I18nScope$22())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_4', I18nScope$22())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_5', I18nScope$22())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_6', I18nScope$22()))])]), m$1('.w-container', [m$1('.w-tabs.w-hidden-small.w-hidden-tiny', [m$1('.w-tab-menu.w-col.w-col-4', _$1.map(ctrl.paneImages, function (pane, idx) {
+        }, I18n$1.t('submit', I18nScope$23()))])]), m$1('.w-row', _$1.isEmpty(stats) ? '' : [m$1('.w-col.w-col-4', [m$1('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m$1('p.fontsize-small.start-stats', I18n$1.t('header.people', I18nScope$23()))]), m$1('.w-col.w-col-4', [m$1('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m$1('p.fontsize-small.start-stats', I18n$1.t('header.money', I18nScope$23()))]), m$1('.w-col.w-col-4', [m$1('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m$1('p.fontsize-small.start-stats', I18n$1.t('header.success', I18nScope$23()))])])])]), m$1('.w-section.section', [m$1('.w-container', [m$1('.w-row', [m$1('.w-col.w-col-10.w-col-push-1.u-text-center', [m$1('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n$1.t('page-title', I18nScope$23())), m$1('.fontsize-small', I18n$1.t('page-subtitle', I18nScope$23()))])]), m$1('.w-clearfix.how-row', [m$1('.w-hidden-small.w-hidden-tiny.how-col-01', [m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$23())), m$1('.fontsize-base', I18n$1.t('banner.2', I18nScope$23()))]), m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$23())), m$1('.fontsize-base', I18n$1.t('banner.4', I18nScope$23()))])]), m$1('.how-col-02'), m$1('.how-col-03', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.5', I18nScope$23())), m$1('.fontsize-base', I18n$1.t('banner.6', I18nScope$23())), m$1('.fontweight-semibold.fontsize-large.u-margintop-30', I18n$1.t('banner.7', I18nScope$23())), m$1('.fontsize-base', I18n$1.t('banner.8', I18nScope$23()))]), m$1('.w-hidden-main.w-hidden-medium.how-col-01', [m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$23())), m$1('.fontsize-base', I18n$1.t('banner.2', I18nScope$23()))]), m$1('.info-howworks-backers', [m$1('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$23())), m$1('.fontsize-base', I18n$1.t('banner.4', I18nScope$23()))])])])])]), m$1('.w-section.divider'), m$1('.w-section.section-large', [m$1('.w-container.u-text-center.u-marginbottom-60', [m$1('div', [m$1('span.fontsize-largest.fontweight-semibold', I18n$1.t('features.title', I18nScope$23()))]), m$1('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n$1.t('features.subtitle', I18nScope$23())), m$1('.w-hidden-main.w-hidden-medium.u-margintop-30', [m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_1', I18nScope$23())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_2', I18nScope$23())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_3', I18nScope$23())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_4', I18nScope$23())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_5', I18nScope$23())), m$1('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_6', I18nScope$23()))])]), m$1('.w-container', [m$1('.w-tabs.w-hidden-small.w-hidden-tiny', [m$1('.w-tab-menu.w-col.w-col-4', _$1.map(ctrl.paneImages, function (pane, idx) {
             return m$1('btn.w-tab-link.w-inline-block.tab-list-item' + (idx === ctrl.selectedPane() ? '.selected' : ''), {
                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_solution_click', lbl: pane.label }, ctrl.selectPane(idx))
             }, pane.label);
         })), m$1('.w-tab-content.w-col.w-col-8', _$1.map(ctrl.paneImages, function (pane, idx) {
             return m$1('.w-tab-pane', [m$1('img[src="' + pane.src + '"].pane-image' + (idx === ctrl.selectedPane() ? '.selected' : ''))]);
-        }))])])]), m$1('.w-section.section-large.card-terciary', m$1('.w-container', [m$1('.u-text-center.u-marginbottom-40', [m$1('div', m$1('span.fontsize-largest.fontweight-semibold', I18n$1.t('mode.title', I18nScope$22()))), m$1('.w-row', [m$1('.w-col.w-col-1'), m$1('.w-col.w-col-10', m$1('.fontsize-large.u-marginbottom-20', I18n$1.t('mode.subtitle', I18nScope$22()))), m$1('.w-col.w-col-1')])]), m$1('div', m$1('.flex-row.u-marginbottom-40', [m$1('.flex-column.card.u-radius.u-marginbottom-30', [m$1('.u-text-center.u-marginbottom-30', m$1('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')), m$1('.fontsize-large.flex-column.u-marginbottom-20', [I18n$1.t('mode.aon.info', I18nScope$22()), m$1.trust('&nbsp;')]), m$1('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.aon.info_2', I18nScope$22()))]), m$1('.flex-column.card.u-radius.u-marginbottom-30', [m$1('.u-text-center.u-marginbottom-30', m$1('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')), m$1('.fontsize-large.flex-column.u-marginbottom-20', I18n$1.t('mode.flex.info', I18nScope$22())), m$1('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.flex.info_2', I18nScope$22()))])])), m$1('.u-text-center.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('mode.tax_info', I18nScope$22())), m$1('.fontsize-smallest.fontcolor-secondary', [I18n$1.t('mode.failed_info', I18nScope$22()), m$1.trust(I18n$1.t('mode.more_link', I18nScope$22()))])])])), m$1('.w-section.section-large.bg-blue-one', [m$1('.w-container.u-text-center', [m$1('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [I18n$1.t('video.title', I18nScope$22()), m$1('br'), I18n$1.t('video.subtitle', I18nScope$22())]), m$1.component(youtubeLightbox, {
-            src: I18n$1.t('video.src', I18nScope$22()),
+        }))])])]), m$1('.w-section.section-large.card-terciary', m$1('.w-container', [m$1('.u-text-center.u-marginbottom-40', [m$1('div', m$1('span.fontsize-largest.fontweight-semibold', I18n$1.t('mode.title', I18nScope$23()))), m$1('.w-row', [m$1('.w-col.w-col-1'), m$1('.w-col.w-col-10', m$1('.fontsize-large.u-marginbottom-20', I18n$1.t('mode.subtitle', I18nScope$23()))), m$1('.w-col.w-col-1')])]), m$1('div', m$1('.flex-row.u-marginbottom-40', [m$1('.flex-column.card.u-radius.u-marginbottom-30', [m$1('.u-text-center.u-marginbottom-30', m$1('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')), m$1('.fontsize-large.flex-column.u-marginbottom-20', [I18n$1.t('mode.aon.info', I18nScope$23()), m$1.trust('&nbsp;')]), m$1('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.aon.info_2', I18nScope$23()))]), m$1('.flex-column.card.u-radius.u-marginbottom-30', [m$1('.u-text-center.u-marginbottom-30', m$1('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')), m$1('.fontsize-large.flex-column.u-marginbottom-20', I18n$1.t('mode.flex.info', I18nScope$23())), m$1('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.flex.info_2', I18nScope$23()))])])), m$1('.u-text-center.u-marginbottom-30', [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('mode.tax_info', I18nScope$23())), m$1('.fontsize-smallest.fontcolor-secondary', [I18n$1.t('mode.failed_info', I18nScope$23()), m$1.trust(I18n$1.t('mode.more_link', I18nScope$23()))])])])), m$1('.w-section.section-large.bg-blue-one', [m$1('.w-container.u-text-center', [m$1('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [I18n$1.t('video.title', I18nScope$23()), m$1('br'), I18n$1.t('video.subtitle', I18nScope$23())]), m$1.component(youtubeLightbox, {
+            src: I18n$1.t('video.src', I18nScope$23()),
             onclick: h.analytics.event({ cat: 'project_start', act: 'start_video_play' })
-        })])]), m$1('.w-hidden-small.w-hidden-tiny.section-categories', [m$1('.w-container', [m$1('.u-text-center', [m$1('.w-row', [m$1('.w-col.w-col-10.w-col-push-1', [m$1('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n$1.t('categories.title', I18nScope$22()))])])]), m$1('.w-tabs', [m$1('.w-tab-menu.u-text-center', _$1.map(ctrl.categories(), function (category) {
+        })])]), m$1('.w-hidden-small.w-hidden-tiny.section-categories', [m$1('.w-container', [m$1('.u-text-center', [m$1('.w-row', [m$1('.w-col.w-col-10.w-col-push-1', [m$1('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n$1.t('categories.title', I18nScope$23()))])])]), m$1('.w-tabs', [m$1('.w-tab-menu.u-text-center', _$1.map(ctrl.categories(), function (category) {
             return m$1('a.w-tab-link.w-inline-block.btn-category.small.btn-inline' + (ctrl.selectedCategoryIdx() === category.id ? '.w--current' : ''), {
                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_category_click', lbl: category.name }, ctrl.selectCategory(category))
             }, [m$1('div', category.name)]);
         })), m$1('.w-tab-content.u-margintop-40', [m$1('.w-tab-pane.w--tab-active', [m$1('.w-row', ctrl.selectedCategoryIdx() !== -1 ? _$1.map(ctrl.selectedCategory(), function (category) {
             return [m$1('.w-col.w-col-5', [m$1('.fontsize-jumbo.u-marginbottom-20', category.name), m$1('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
                 config: h.scrollTo()
-            }, I18n$1.t('submit', I18nScope$22()))]), m$1('.w-col.w-col-7', [m$1('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...')), m$1('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), m$1('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), m$1('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_$1.isEmpty(ctrl.featuredProjects()) ? _$1.map(ctrl.featuredProjects(), function (project) {
-                return !_$1.isUndefined(project) ? m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-1', [m$1('img.user-avatar[src="' + h.useAvatarOrDefault(project.userThumb) + '"]')]), m$1('.w-col.w-col-11', [m$1('.fontsize-base.fontweight-semibold', project.user.name), m$1('.fontsize-smallest', [I18n$1.t('categories.pledged', I18nScope$22({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })), m$1('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : m$1('.fontsize-base', I18n$1.t('categories.loading_featured', I18nScope$22()));
+            }, I18n$1.t('submit', I18nScope$23()))]), m$1('.w-col.w-col-7', [m$1('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...')), m$1('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), m$1('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), m$1('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_$1.isEmpty(ctrl.featuredProjects()) ? _$1.map(ctrl.featuredProjects(), function (project) {
+                return !_$1.isUndefined(project) ? m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-1', [m$1('img.user-avatar[src="' + h.useAvatarOrDefault(project.userThumb) + '"]')]), m$1('.w-col.w-col-11', [m$1('.fontsize-base.fontweight-semibold', project.user.name), m$1('.fontsize-smallest', [I18n$1.t('categories.pledged', I18nScope$23({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })), m$1('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : m$1('.fontsize-base', I18n$1.t('categories.loading_featured', I18nScope$23()));
             }) : ''])];
         }) : '')])])])])]), m$1.component(slider, {
             slides: testimonials(),
-            title: I18n$1.t('testimonials_title', I18nScope$22()),
+            title: I18n$1.t('testimonials_title', I18nScope$23()),
             slideClass: 'slide-testimonials-content',
             wrapperClass: 'slide-testimonials',
             onchange: h.analytics.event({ cat: 'project_start', act: 'start_testimonials_change' })
-        }), m$1('.w-section.divider.u-margintop-30'), m$1('.w-container', [m$1('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n$1.t('qa_title', I18nScope$22())), m$1('.w-row.u-marginbottom-60', [m$1('.w-col.w-col-6', _$1.map(ctrl.questions.col_1, function (question) {
+        }), m$1('.w-section.divider.u-margintop-30'), m$1('.w-container', [m$1('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n$1.t('qa_title', I18nScope$23())), m$1('.w-row.u-marginbottom-60', [m$1('.w-col.w-col-6', _$1.map(ctrl.questions.col_1, function (question) {
             return m$1.component(landingQA, {
                 question: question.question,
                 answer: question.answer,
@@ -8706,7 +8748,7 @@ var start = {
                 h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_submit' })(e);
                 return ctrl.validateProjectForm();
             }
-        }, [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n$1.t('form.title', I18nScope$22())), m$1('input[name="utf8"][type="hidden"][value="✓"]'), m$1('input[name="authenticity_token"][type="hidden"][value="' + h.authenticityToken() + '"]'), m$1('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
+        }, [m$1('.w-col.w-col-2'), m$1('.w-col.w-col-8', [m$1('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n$1.t('form.title', I18nScope$23())), m$1('input[name="utf8"][type="hidden"][value="✓"]'), m$1('input[name="authenticity_token"][type="hidden"][value="' + h.authenticityToken() + '"]'), m$1('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
             name: 'project[name]',
             class: ctrl.projectNameError() ? 'error' : '',
             onfocus: function onfocus() {
@@ -8726,9 +8768,9 @@ var start = {
                 h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'category' })(e);
                 m$1.withAttr('value', ctrl.projectCategory)(e);
             }
-        }, [m$1('option[value="-1"]', I18n$1.t('form.select_default', I18nScope$22())), _$1.map(ctrl.categories(), function (category) {
+        }, [m$1('option[value="-1"]', I18n$1.t('form.select_default', I18nScope$23())), _$1.map(ctrl.categories(), function (category) {
             return m$1('option[value="' + category.id + '"]', { selected: ctrl.projectCategory() === category.id }, category.name);
-        })])]), m$1('.w-col.w-col-2'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4.w-col-push-4.u-margintop-40', [m$1('input[type="submit"][value="' + I18n$1.t('form.submit', I18nScope$22()) + '"].w-button.btn.btn-large')])]), m$1('.w-row.u-marginbottom-80', ctrl.projectNameError() || ctrl.projectCategoryError() ? m$1.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')])])])]);
+        })])]), m$1('.w-col.w-col-2'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-4.w-col-push-4.u-margintop-40', [m$1('input[type="submit"][value="' + I18n$1.t('form.submit', I18nScope$23()) + '"].w-button.btn.btn-large')])]), m$1('.w-row.u-marginbottom-80', ctrl.projectNameError() || ctrl.projectCategoryError() ? m$1.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')])])])]);
     }
 };
 
@@ -8796,7 +8838,7 @@ var team = {
  *     balance: {user_id: 123, amount: 123} // userBalance struct
  * })
  */
-var I18nScope$24 = _$1.partial(h.i18nScope, 'users.balance');
+var I18nScope$25 = _$1.partial(h.i18nScope, 'users.balance');
 
 var userBalanceRequestModelContent = {
     controller: function controller(args) {
@@ -8828,7 +8870,7 @@ var userBalanceRequestModelContent = {
         var balance = args.balance;
 
         return ctrl.loadBankA() ? h.loader() : m$1('div', _$1.map(ctrl.bankAccounts(), function (item) {
-            return [m$1('.modal-dialog-header', [m$1('.fontsize-large.u-text-center', I18n$1.t('withdraw', I18nScope$24()))]), ctrl.displayDone() ? m$1('.modal-dialog-content.u-text-center', [m$1('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m$1('p.fontsize-large', I18n$1.t('sucess_message', I18nScope$24()))]) : m$1('.modal-dialog-content', [m$1('.fontsize-base.u-marginbottom-20', [m$1('span.fontweight-semibold', 'Valor:'), m$1.trust('&nbsp;'), m$1('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))]), m$1('.fontsize-base.u-marginbottom-10', [m$1('span', { style: { 'font-weight': ' 600' } }, I18n$1.t('bank.account', I18nScope$24()))]), m$1('.fontsize-small.u-marginbottom-10', [m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.name', I18nScope$24())), m$1.trust('&nbsp;'), item.owner_name]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.cpf_cnpj', I18nScope$24())), m$1.trust('&nbsp;'), item.owner_document]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.bank_name', I18nScope$24())), m$1.trust('&nbsp;'), item.bank_name]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.agency', I18nScope$24())), m$1.trust('&nbsp;'), item.agency + '-' + item.agency_digit]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.account', I18nScope$24())), m$1.trust('&nbsp;'), item.account + '-' + item.account_digit])])]), !ctrl.displayDone() ? m$1('.modal-dialog-nav-bottom', [m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', [ctrl.requestLoader() ? h.loader() : m$1('a.btn.btn-large.btn-request-fund[href="js:void(0);"]', { onclick: ctrl.requestFund }, 'Solicitar saque')]), m$1('.w-col.w-col-3')])]) : ''];
+            return [m$1('.modal-dialog-header', [m$1('.fontsize-large.u-text-center', I18n$1.t('withdraw', I18nScope$25()))]), ctrl.displayDone() ? m$1('.modal-dialog-content.u-text-center', [m$1('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m$1('p.fontsize-large', I18n$1.t('sucess_message', I18nScope$25()))]) : m$1('.modal-dialog-content', [m$1('.fontsize-base.u-marginbottom-20', [m$1('span.fontweight-semibold', 'Valor:'), m$1.trust('&nbsp;'), m$1('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))]), m$1('.fontsize-base.u-marginbottom-10', [m$1('span', { style: { 'font-weight': ' 600' } }, I18n$1.t('bank.account', I18nScope$25()))]), m$1('.fontsize-small.u-marginbottom-10', [m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.name', I18nScope$25())), m$1.trust('&nbsp;'), item.owner_name]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.cpf_cnpj', I18nScope$25())), m$1.trust('&nbsp;'), item.owner_document]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.bank_name', I18nScope$25())), m$1.trust('&nbsp;'), item.bank_name]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.agency', I18nScope$25())), m$1.trust('&nbsp;'), item.agency + '-' + item.agency_digit]), m$1('div', [m$1('span.fontcolor-secondary', I18n$1.t('bank.account', I18nScope$25())), m$1.trust('&nbsp;'), item.account + '-' + item.account_digit])])]), !ctrl.displayDone() ? m$1('.modal-dialog-nav-bottom', [m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', [ctrl.requestLoader() ? h.loader() : m$1('a.btn.btn-large.btn-request-fund[href="js:void(0);"]', { onclick: ctrl.requestFund }, 'Solicitar saque')]), m$1('.w-col.w-col-3')])]) : ''];
         }));
     }
 };
@@ -8842,7 +8884,7 @@ var userBalanceRequestModelContent = {
  *     user_id: 123,
  * })
  */
-var I18nScope$23 = _$1.partial(h.i18nScope, 'users.balance');
+var I18nScope$24 = _$1.partial(h.i18nScope, 'users.balance');
 
 var userBalance = {
     controller: function controller(args) {
@@ -8860,11 +8902,11 @@ var userBalance = {
         return m$1('.w-section.section.user-balance-section', [ctrl.displayModal() ? m$1.component(modalBox, {
             displayModal: ctrl.displayModal,
             content: balanceRequestModalC
-        }) : '', m$1('.w-container', [m$1('.w-row', [m$1('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m$1('.fontsize-larger', [I18n.t('totals', I18nScope$23()), m$1('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m$1('.w-col.w-col-4', [m$1('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 ? 'btn-inactive' : '') + '"][href="js:void(0);"]', { onclick: balance.amount > 0 ? ctrl.displayModal.toggle : 'js:void(0);' }, I18n.t('withdraw_cta', I18nScope$23()))])])])]);
+        }) : '', m$1('.w-container', [m$1('.w-row', [m$1('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m$1('.fontsize-larger', [I18n.t('totals', I18nScope$24()), m$1('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m$1('.w-col.w-col-4', [m$1('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 ? 'btn-inactive' : '') + '"][href="js:void(0);"]', { onclick: balance.amount > 0 ? ctrl.displayModal.toggle : 'js:void(0);' }, I18n.t('withdraw_cta', I18nScope$24()))])])])]);
     }
 };
 
-var I18nScope$25 = _.partial(h.i18nScope, 'users.balance');
+var I18nScope$26 = _.partial(h.i18nScope, 'users.balance');
 
 var userBalanceTrasactionRow = {
     controller: function controller(args) {
@@ -8882,7 +8924,7 @@ var userBalanceTrasactionRow = {
         var item = args.item,
             createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 
-        return m$1('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m$1('.w-clearfix.card.card-clickable', [m$1('.w-row', [m$1('.w-col.w-col-2.w-col-tiny-2', [m$1('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m$1('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m$1('.w-col.w-col-10.w-col-tiny-10', [m$1('.w-row', [m$1('.w-col.w-col-4', [m$1('div', [m$1('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$25())), m$1.trust('&nbsp;'), m$1('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m$1('.w-col.w-col-4', [m$1('div', [m$1('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$25())), m$1.trust('&nbsp;'), m$1('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m$1('.w-col.w-col-4', [m$1('div', [m$1('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$25())), m$1.trust('&nbsp;'), m$1('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m$1('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m$1('.card', _.map(item.source, function (transaction) {
+        return m$1('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m$1('.w-clearfix.card.card-clickable', [m$1('.w-row', [m$1('.w-col.w-col-2.w-col-tiny-2', [m$1('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m$1('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m$1('.w-col.w-col-10.w-col-tiny-10', [m$1('.w-row', [m$1('.w-col.w-col-4', [m$1('div', [m$1('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$26())), m$1.trust('&nbsp;'), m$1('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m$1('.w-col.w-col-4', [m$1('div', [m$1('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$26())), m$1.trust('&nbsp;'), m$1('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m$1('.w-col.w-col-4', [m$1('div', [m$1('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$26())), m$1.trust('&nbsp;'), m$1('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m$1('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m$1('.card', _.map(item.source, function (transaction) {
             var pos = transaction.amount >= 0;
 
             return m$1('div', [m$1('.w-row.fontsize-small.u-marginbottom-10', [m$1('.w-col.w-col-2', [m$1('.text-' + (pos ? 'success' : 'error'), (pos ? '+' : '-') + ' R$ ' + h.formatNumber(Math.abs(transaction.amount), 2, 3))]), m$1('.w-col.w-col-10', [m$1('div', transaction.event_name + ' ' + transaction.origin_object.name)])]), m$1('.divider.u-marginbottom-10')]);
@@ -9294,7 +9336,7 @@ var FollowFoundFriends = {
     }
 };
 
-var I18nScope$26 = _$1.partial(h.i18nScope, 'projects.contributions');
+var I18nScope$27 = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var thankYou = {
     controller: function controller(args) {
@@ -9325,18 +9367,18 @@ var thankYou = {
         };
     },
     view: function view(ctrl, args) {
-        return m$1('#thank-you', { config: ctrl.setEvents }, [m$1(".page-header.u-marginbottom-30", m$1(".w-container", m$1(".w-row", m$1(".w-col.w-col-10.w-col-push-1", [m$1(".u-marginbottom-20.u-text-center", m$1('img.big.thumb.u-round[src=\'' + args.contribution.project.user_thumb + '\']')), m$1("#thank-you.u-text-center", !ctrl.isSlip ? [m$1("#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20", I18n$1.t('thank_you.thank_you', I18nScope$26())), m$1(".fontsize-base.u-marginbottom-40", m$1.trust(I18n$1.t('thank_you.thank_you_text_html', I18nScope$26({
+        return m$1('#thank-you', { config: ctrl.setEvents }, [m$1(".page-header.u-marginbottom-30", m$1(".w-container", m$1(".w-row", m$1(".w-col.w-col-10.w-col-push-1", [m$1(".u-marginbottom-20.u-text-center", m$1('img.big.thumb.u-round[src=\'' + args.contribution.project.user_thumb + '\']')), m$1("#thank-you.u-text-center", !ctrl.isSlip ? [m$1("#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20", I18n$1.t('thank_you.thank_you', I18nScope$27())), m$1(".fontsize-base.u-marginbottom-40", m$1.trust(I18n$1.t('thank_you.thank_you_text_html', I18nScope$27({
             total: args.contribution.project.total_contributions,
             email: args.contribution.contribution_email,
             link2: '/pt/users/' + h.getUser().user_id + '/edit#contributions'
-        })))), m$1(".fontsize-base.fontweight-semibold.u-marginbottom-20", "Compartilhe com seus amigos e ajude esse projeto a bater a meta!")] : [m$1('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$26())), m$1('.fontsize-base.u-marginbottom-40', I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$26({ email: args.contribution.contribution_email })))]), ctrl.isSlip ? '' : m$1(".w-row", [m$1(".w-hidden-small.w-hidden-tiny", [m$1('.w-sub-col.w-col.w-col-4', m$1.component(facebookButton, {
+        })))), m$1(".fontsize-base.fontweight-semibold.u-marginbottom-20", "Compartilhe com seus amigos e ajude esse projeto a bater a meta!")] : [m$1('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$27())), m$1('.fontsize-base.u-marginbottom-40', I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$27({ email: args.contribution.contribution_email })))]), ctrl.isSlip ? '' : m$1(".w-row", [m$1(".w-hidden-small.w-hidden-tiny", [m$1('.w-sub-col.w-col.w-col-4', m$1.component(facebookButton, {
             url: 'https://www.catarse.me/' + args.contribution.project.permalink + '?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share',
             big: true
         })), m$1('.w-sub-col.w-col.w-col-4', m$1.component(facebookButton, {
             messenger: true,
             big: true,
             url: 'https://www.catarse.me/' + args.contribution.project.permalink + '?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=messenger&utm_campaign=thanks_share'
-        })), m$1('.w-col.w-col-4', m$1('a.btn.btn-large.btn-tweet.u-marginbottom-20[href="http://twitter.com/?status=Acabei%20de%20apoiar%20o%20projeto%20' + args.contribution.project.name + '%20https://www.catarse.me/' + args.contribution.project.permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Twitter']))]), m$1(".w-hidden-main.w-hidden-medium", [m$1('.u-marginbottom-30.u-text-center-small-only', m$1('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
+        })), m$1('.w-col.w-col-4', m$1('a.btn.btn-large.btn-tweet.u-marginbottom-20[href="https://twitter.com/intent/tweet?text=Acabei%20de%20apoiar%20o%20projeto%20' + args.contribution.project.name + '%20https://www.catarse.me/' + args.contribution.project.permalink + '%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share"][target="_blank"]', [m$1('span.fa.fa-twitter'), ' Twitter']))]), m$1(".w-hidden-main.w-hidden-medium", [m$1('.u-marginbottom-30.u-text-center-small-only', m$1('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
             onclick: ctrl.displayShareBox.toggle
         }, 'Compartilhe')), ctrl.displayShareBox() ? m$1(projectShareBox, {
             // Mocking a project m.prop
@@ -9351,7 +9393,7 @@ var thankYou = {
             height: '905px',
             frameborder: '0',
             style: 'overflow: hidden;'
-        }))) : [m$1('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', I18n$1.t('thank_you.project_recommendations', I18nScope$26())), m$1.component(projectRow, {
+        }))) : [m$1('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', I18n$1.t('thank_you.project_recommendations', I18nScope$27())), m$1.component(projectRow, {
             collection: ctrl.recommendedProjects,
             ref: 'ctrse_thankyou_r'
         })]))]);
@@ -9390,4 +9432,4 @@ return c;
 
 }(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart));
 
-//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3JjLyoqLyouanMiLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3JjLyoqLyouanMiLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Iiwic291cmNlUm9vdCI6Ii9zb3VyY2UvIn0=

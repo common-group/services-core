@@ -4,25 +4,30 @@
  *
  */
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import models from '../models';
 import h from '../h';
-import postgrest from 'mithril-postgrest';
+import projectVM from '../vms/project-vm';
 
 const projectReport = {
     controller(args) {
         let displayForm = h.toggleProp(false, true),
             sendSuccess = m.prop(false),
             submitDisabled = m.prop(false),
-            user = h.getUser(),
+            user = h.getUser() || {},
             email = m.prop(user.email),
             details = m.prop(''),
             reason = m.prop(''),
             l = m.prop(false),
+            storeReport = 'report',
+            project = projectVM.currentProject(),
+            hasPendingAction = project && (h.callStoredAction(storeReport) == project.project_id),
             checkLogin = () => {
-                if (user) {
+                if (!_.isEmpty(user)) {
                     displayForm.toggle();
                 } else {
-                    window.location.href = '/login';
+                    h.storeAction(storeReport, project.project_id);
+                    return h.navigateToDevise();
                 }
             },
             sendReport = () => {
@@ -31,16 +36,27 @@ const projectReport = {
                     email: email(),
                     details: details(),
                     reason: reason() ,
-                    project_id: h.getCurrentProject().project_id
+                    project_id: project.project_id
                 });
                 l = postgrest.loaderWithToken(loaderOpts);
 
                 l.load().then(sendSuccess(true));
                 submitDisabled(false);
                 return false;
+            },
+            checkScroll = (el, isInit) => {
+                if (!isInit && hasPendingAction) {
+                    h.animateScrollTo(el);
+                }
             };
 
+
+        if (!_.isEmpty(user) && hasPendingAction) {
+            displayForm(true);
+        }
+
         return {
+            checkScroll: checkScroll,
             checkLogin: checkLogin,
             displayForm: displayForm,
             sendSuccess: sendSuccess,
@@ -55,6 +71,7 @@ const projectReport = {
 
     view(ctrl, args) {
         const user = ctrl.user;
+
         return m('.card.card-terciary.u-radius',
                     [
                       m('.fontsize-small.u-marginbottom-20',
@@ -78,7 +95,7 @@ const projectReport = {
                       ),
                       ctrl.displayForm() ? m('#report-form.u-margintop-30',
                         m('.w-form',
-                          m('form', {onsubmit: ctrl.sendReport},
+                          m('form', {onsubmit: ctrl.sendReport, config: ctrl.checkScroll},
                             [
                               m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                                 'Por que você está denunciando este projeto?'

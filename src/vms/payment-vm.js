@@ -111,7 +111,7 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
-        currentUser = h.getUser(),
+        currentUser = h.getUser() || {},
         countriesLoader = postgrest.loader(models.country.getPageOptions()),
         statesLoader = postgrest.loader(models.state.getPageOptions());
 
@@ -157,6 +157,21 @@ const paymentVM = (mode = 'aon') => {
         }
     };
 
+    const checkPhone = () => {
+        const phone = fields.phone(),
+            strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, ''),
+            error = {field: 'phone', message: I18n.t('validation.phone', scope())};
+
+        if (strippedPhone.length < 10) {
+            fields.errors().push(error);
+        } else {
+            const controlDigit = Number(strippedPhone.charAt(2));
+            if (!(controlDigit >= 2 && controlDigit <= 9)) {
+                fields.errors().push(error);
+            }
+        }
+    };
+
     const validate = () => {
         fields.errors([]);
 
@@ -168,6 +183,7 @@ const paymentVM = (mode = 'aon') => {
             checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
             checkUserState();
             checkDocument();
+            checkPhone();
         }
 
         return _.isEmpty(fields.errors());
@@ -252,10 +268,11 @@ const paymentVM = (mode = 'aon') => {
 
     const similityExecute = (contribution_id) => {
         if(window.SimilityScript && h.getSimilityCustomer()) {
+            const user = h.getUser() || {};
             let similityContext = {
                 customer_id: h.getSimilityCustomer(),
                 session_id: contribution_id,
-                user_id: h.getUser().user_id
+                user_id: user.user_id
             };
             let ss = new window.SimilityScript(similityContext);
             ss.execute();
@@ -467,7 +484,8 @@ const paymentVM = (mode = 'aon') => {
         isLoading: isLoading,
         pagarme: pagarme,
         locale: getLocale,
-        faq: faq
+        faq: faq,
+        similityExecute: similityExecute
     };
 };
 

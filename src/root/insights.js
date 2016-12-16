@@ -160,7 +160,7 @@ const insights = {
                         (project.state === 'draft' ? m.component(adminProjectDetailsCard, {
                             resource: project
                         }) : ''),
-                        m('p.' + project.state + '-project-text.fontsize-small.lineheight-loose', [
+                        m('p.' + project.state + '-project-text.u-text-center.fontsize-small.lineheight-loose', [
                             project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
                                 I18n.t('finish_explanation', I18nScope()),
                                 m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/208141033-Como-definir-o-prazo-no-Catarse-flex-"][target="_blank"]',I18n.t('know_more', I18nScope()))

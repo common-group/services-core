@@ -28,7 +28,7 @@ const projectsHome = {
             friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
                 'Prefer':  'count=exact'
             }),
-            currentUser = h.getUser(),
+            currentUser = h.getUser() || {},
             hasFBAuth = currentUser.has_fb_auth,
             vm = homeVM();
 
