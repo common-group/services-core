@@ -7,6 +7,7 @@ import userCreated from '../c/user-created';
 import userAboutEdit from '../c/user-about-edit';
 import userPrivateContributed from '../c/user-private-contributed';
 import userSettings from '../c/user-settings';
+import userBilling from '../c/user-billing';
 import userNotifications from '../c/user-notifications';
 import menu from '../root/menu';
 
@@ -19,6 +20,7 @@ const usersEdit = {
         const moveTabContent = () => {
           $('#created-tab').appendTo('#dashboard_projects');
           $('#notifications-tab').appendTo('#dashboard_notifications');
+          $('#billing-tab').appendTo('#dashboard_billing');
           $('#private-contributed-tab').appendTo('#dashboard_contributions');
           $('#settings-tab').appendTo('#dashboard_settings');
           $('#about-tab').appendTo('#dashboard_about_me');
@@ -42,6 +44,7 @@ const usersEdit = {
           [   m(userAboutEdit, {userId, user}),
               m(userSettings, {userId, user}),
               m(userNotifications, {userId, user}),
+              m(userBilling, {userId, user}),
               m(userPrivateContributed, {userId, user}),
               m(userCreated, {userId})
           ]

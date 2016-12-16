@@ -12,6 +12,7 @@ const models = {
     balanceTransfer: postgrest.model('balance_transfers'),
     user: postgrest.model('users'),
     bankAccount: postgrest.model('bank_accounts'),
+    bank: postgrest.model('banks'),
     rewardDetail: postgrest.model('reward_details'),
     projectReminder: postgrest.model('project_reminders'),
     projectReport: postgrest.model('project_reports'),

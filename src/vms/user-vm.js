@@ -35,6 +35,18 @@ const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
     return lUserContributed.load();
 };
 
+const getUserBankAccount = (user_id) => {
+    const contextVM = postgrest.filtersVM({
+      user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    const lUserAccount = models.bankAccount.getRowWithToken(contextVM.parameters());
+
+    return lUserAccount;
+};
+
 const getUserProjectReminders = (user_id) => {
     const contextVM = postgrest.filtersVM({
       user_id: 'eq',
@@ -157,6 +169,7 @@ const userVM = {
     getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,
     getUserContributedProjects: getUserContributedProjects,
+    getUserBankAccount: getUserBankAccount,
     getPublicUserContributedProjects: getPublicUserContributedProjects,
     currentUser: currentUser,
     displayImage: displayImage,
