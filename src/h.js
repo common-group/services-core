@@ -815,7 +815,8 @@ const
 
         return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : null;
     },
-    redactorConfig = {
+    redactorConfig = params => {
+        return {
           source: false,
           formatting: ['p'],
           formattingAdd: [
@@ -853,6 +854,7 @@ const
           "imageGetJson":"/redactor_rails/pictures",
           "path":"/assets/redactor-rails",
           "css":"style.css"
+        };
     },
     setRedactor = (prop) => (el, isInit) => {
         if (!isInit) {
@@ -863,7 +865,7 @@ const
             if (csrf_param && csrf_token) {
                 params = csrf_param + "=" + encodeURIComponent(csrf_token);
             }
-            $editor.redactor(redactorConfig);
+            $editor.redactor(redactorConfig(params));
             $editor.redactor('code.set', prop());
             // If we need to get redactor values and send it to js objects we'll have to add
             // a hook on the change.callback.redactor event. e.g.:

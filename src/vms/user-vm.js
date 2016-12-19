@@ -63,6 +63,21 @@ const getUserProjectReminders = (user_id) => {
     return lUserReminders.load();
 };
 
+const getUserCreditCards = (user_id) => {
+    const contextVM = postgrest.filtersVM({
+        user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    models.userCreditCard.pageSize(false);
+
+    const lUserCards = postgrest.loaderWithToken(
+        models.userCreditCard.getPageOptions(contextVM.parameters()));
+
+    return lUserCards.load();
+};
+
 const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = postgrest.filtersVM({
         user_id: 'eq',
@@ -166,6 +181,7 @@ const getUserRecommendedProjects = (contribution) => {
 
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
+    getUserCreditCards: getUserCreditCards,
     getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,
     getUserContributedProjects: getUserContributedProjects,
