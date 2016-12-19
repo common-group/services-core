@@ -6,6 +6,7 @@ import h from '../h';
 import userVM from '../vms/user-vm';
 import projectCard from './project-card';
 import inlineError from './inline-error';
+import loadMoreBtn from './load-more-btn';
 
 const userContributed = {
     controller(args) {
@@ -85,11 +86,7 @@ const userContributed = {
 
                   (!_.isEmpty(projects_collection) ?
                   m('.w-row.u-marginbottom-40.u-margintop-30', [
-                      m('.w-col.w-col-2.w-col-push-5', [!ctrl.projects.isLoading() ?
-                                                        ctrl.projects.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                                            onclick: ctrl.projects.nextPage
-                                                        }, 'Carregar mais') : h.loader(),
-                                                       ])
+                     m(loadMoreBtn, {collection: ctrl.projects, cssClass: '.w-col-push-5'})
                   ]) : '')
                 ]
               ))

@@ -24,8 +24,7 @@ const userAboutEdit = {
     },
     view(ctrl, args) {
         const user = args.user || {};
-        console.log('Remove links: ', ctrl.removeLinks);
-        return m('#about-tab',
+        return m('#about-tab.content',
             m('form.simple_form.w-form', {
                     action: `/pt/users/${user.id}`,
                     novalidate: true,
