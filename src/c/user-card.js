@@ -51,7 +51,7 @@ const userCard = {
                         ]) : ''),
                         _.map(user.links, (link) => {
                             return m('li', [
-                                m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]', link)
+                                m('a.link-hidden[itemprop="url"][href="' + link.link + '"][target="_blank"]', link.link)
                             ]);
                         })
                     ]),

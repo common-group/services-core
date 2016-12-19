@@ -35,6 +35,49 @@ const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
     return lUserContributed.load();
 };
 
+const getUserBankAccount = (user_id) => {
+    const contextVM = postgrest.filtersVM({
+      user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    const lUserAccount = models.bankAccount.getRowWithToken(contextVM.parameters());
+
+    return lUserAccount;
+};
+
+const getUserProjectReminders = (user_id) => {
+    const contextVM = postgrest.filtersVM({
+      user_id: 'eq',
+      without_notification: 'eq'
+    });
+
+    contextVM.user_id(user_id).without_notification(true);
+
+    models.projectReminder;
+
+    const lUserReminders = postgrest.loaderWithToken(
+        models.projectReminder.getPageOptions(contextVM.parameters()));
+
+    return lUserReminders.load();
+};
+
+const getUserCreditCards = (user_id) => {
+    const contextVM = postgrest.filtersVM({
+        user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    models.userCreditCard.pageSize(false);
+
+    const lUserCards = postgrest.loaderWithToken(
+        models.userCreditCard.getPageOptions(contextVM.parameters()));
+
+    return lUserCards.load();
+};
+
 const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = postgrest.filtersVM({
         user_id: 'eq',
@@ -138,8 +181,11 @@ const getUserRecommendedProjects = (contribution) => {
 
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
+    getUserCreditCards: getUserCreditCards,
+    getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,
     getUserContributedProjects: getUserContributedProjects,
+    getUserBankAccount: getUserBankAccount,
     getPublicUserContributedProjects: getPublicUserContributedProjects,
     currentUser: currentUser,
     displayImage: displayImage,

@@ -1,5 +1,6 @@
 import postgrest from 'mithril-postgrest';
 import models from '../models';
+import _ from 'underscore';
 
 const currentContribution = m.prop({});
 
@@ -34,8 +35,31 @@ const getCurrentContribution = () => {
     }
 };
 
+const wasConfirmed = (contribution) => {
+    return _.contains(['paid', 'pending_refund', 'refunded'], contribution.state);
+};
+
+const canShowReceipt = (contribution) => {
+    return wasConfirmed(contribution);
+};
+
+const canShowSlip = (contribution) => {
+    return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
+};
+
+const canGenerateSlip = (contribution) => {
+  return contribution.payment_method == 'BoletoBancario' &&
+    contribution.state == 'pending' &&
+    contribution.project_state == 'online' &&
+    !contribution.reward_sold_out &&
+    !contribution.waiting_payment;
+};
+
 const contributionVM =  {
     getCurrentContribution: getCurrentContribution,
+    canShowReceipt: canShowReceipt,
+    canGenerateSlip: canGenerateSlip,
+    canShowSlip: canShowSlip,
     getUserProjectContributions: getUserProjectContributions
 };
 

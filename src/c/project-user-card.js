@@ -41,10 +41,10 @@ const projectUserCard = {
                                 m('a.link-hidden[itemprop="url"][href="https://twitter.com/' + userDetail.twitter_username + '"][target="_blank"]',{onclick: h.analytics.event({cat: 'project_view',act: 'project_creator_twitter',lbl: userDetail.twitter_username,project: project()})}, 'Perfil no Twitter')
                             ]) : ''),
                             _.map(userDetail.links, (link) => {
-                                var parsedLink = h.parseUrl(link);
+                                var parsedLink = h.parseUrl(link.link);
 
                                 return (!_.isEmpty(parsedLink.hostname) ? m('li', [
-                                    m('a.link-hidden[itemprop="url"][href="' + link + '"][target="_blank"]',{onclick: h.analytics.event({cat: 'project_view',act: 'project_creator_otherlinks',lbl: link,project: project()})}, parsedLink.hostname)
+                                    m('a.link-hidden[itemprop="url"][href="' + link.link + '"][target="_blank"]',{onclick: h.analytics.event({cat: 'project_view',act: 'project_creator_otherlinks',lbl: link.link,project: project()})}, parsedLink.hostname)
                                 ]) : '');
                             })
                         ]),

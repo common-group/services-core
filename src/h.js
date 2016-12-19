@@ -500,8 +500,14 @@ const
 
     authenticityToken = () => {
         const meta = _.first(document.querySelectorAll('[name=csrf-token]'));
-        return meta ? meta.getAttribute('content') : undefined;
+        return meta ? meta.getAttribute('content') : null;
     },
+
+    authenticityParam = () => {
+        const meta = _.first(document.querySelectorAll('[name=csrf-param]'));
+        return meta ? meta.getAttribute('content') : null;
+    },
+
     animateScrollTo = (el: HTMLElement) => {
         let scrolled = window.scrollY;
 
@@ -806,8 +812,68 @@ const
           return _dataCache.rootUrl;
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
+
         return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : null;
-    };
+    },
+    redactorConfig = params => {
+        return {
+          source: false,
+          formatting: ['p'],
+          formattingAdd: [
+            {
+                tag: 'blockquote',
+                title: 'Citar',
+                class: 'fontsize-base quote',
+                clear: true
+            },
+
+            {
+                tag: 'p',
+                title: 'Cabeçalho 1',
+                class: 'fontsize-larger fontweight-semibold',
+                clear: true
+            },
+            {
+                tag: 'p',
+                title: 'Cabeçalho 2',
+                class: 'fontsize-large',
+                clear: true
+            }],
+          lang: 'pt_br',
+          maxHeight: 800,
+          minHeight: 300,
+          convertVideoLinks: true,
+          convertUrlLinks: true,
+          convertImageLinks: false,
+          // You can specify, which ones plugins you need.
+          // If you want to use plugins, you have add plugins to your
+          // application.js and application.css files and uncomment the line below:
+          // "plugins": ['fontsize', 'fontcolor', 'fontfamily', 'fullscreen', 'textdirection', 'clips'],
+          plugins: ['video'],
+          "imageUpload":"/redactor_rails/pictures?" + params,
+          "imageGetJson":"/redactor_rails/pictures",
+          "path":"/assets/redactor-rails",
+          "css":"style.css"
+        };
+    },
+    setRedactor = (prop) => (el, isInit) => {
+        if (!isInit) {
+            const $editor = window.$(el);
+            const csrf_token = authenticityToken();
+            const csrf_param = authenticityParam();
+            let params = '';
+            if (csrf_param && csrf_token) {
+                params = csrf_param + "=" + encodeURIComponent(csrf_token);
+            }
+            $editor.redactor(redactorConfig(params));
+            $editor.redactor('code.set', prop());
+            // If we need to get redactor values and send it to js objects we'll have to add
+            // a hook on the change.callback.redactor event. e.g.:
+            // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')));
+        }
+    },
+    redactor = (name: string, prop: Function) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {name, config: setRedactor(prop)});
+
 
 setMomentifyLocale();
 closeFlash();
@@ -815,6 +881,7 @@ closeModal();
 checkReminder();
 
 export default {
+    authenticityParam,
     authenticityToken,
     buildLink,
     cumulativeOffset,
@@ -878,5 +945,6 @@ export default {
     projectFullPermalink,
     isProjectPage,
     setPageTitle,
-    rootUrl
+    rootUrl,
+    redactor
 };
