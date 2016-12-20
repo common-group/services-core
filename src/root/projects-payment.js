@@ -5,6 +5,7 @@ import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
+import usersVM from '../vms/user-vm';
 import faqBox from '../c/faq-box';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
@@ -27,14 +28,17 @@ const projectsPayment = {
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             zipcodeMask = _.partial(h.mask, '99999-999'),
             isCnpj = m.prop(false),
-            user = h.getUser();
+            user = m.prop({}),
+            currentUserID = h.getUserID();
+
+        usersVM.fetchUser(currentUserID, false).then((data) => user(_.first(data)));
 
         if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655,29706], project.project_id)) {
             (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
             setTimeout(function t(){
                 const c = window.$zopim && window.$zopim.livechat;
                 if(c) {
-                    const u = user;
+                    const u = h.getUser();
                     if(u) {
                         c.setEmail(u.email);
                         c.setName(u.name);
@@ -102,7 +106,7 @@ const projectsPayment = {
                    : I18nScope(attr);
         };
 
-        if (!user) {
+        if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
 
@@ -124,11 +128,12 @@ const projectsPayment = {
             mode: mode,
             scope: scope,
             isCnpj: isCnpj,
-            vm: vm
+            vm: vm,
+            user: user
         };
     },
     view(ctrl, args) {
-        const user = h.getUser() || {};
+        const user = ctrl.user();
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
