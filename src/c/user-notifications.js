@@ -88,7 +88,7 @@ const userNotifications = {
                                             ),
                                             m('.u-marginbottom-20',
                                                 m('a.alt-link[href=\'javascript:void(0);\']', {
-                                                        onclick: () => ctrl.showNotifications.toggle()
+                                                        onclick: ctrl.showNotifications.toggle
                                                     },
                                                     ` Gerenciar as notificações de ${user.total_contributed_projects} projetos`
                                                 )

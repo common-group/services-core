@@ -14,11 +14,16 @@ const userBilling = {
             bankAccount = m.prop({bank_id: '',bank_name: '', bank_code: '', account: '', digit: '', account_digit: '', agency: '', agency_digit: '', owner_name: '', owner_document: ''}),
             userId = args.userId,
             error = m.prop(false),
+            loader = m.prop(true),
             bankInput = m.prop(''),
             bankCode = m.prop('-1'),
-            loader = m.prop(true),
             banks = m.prop(),
             creditCards = m.prop(),
+            handleError = () => {
+              error(true);
+              loader(false);
+              m.redraw();
+            },
             banksLoader = postgrest.loader(models.bank.getPageOptions()),
             showSuccess = m.prop(false),
             showOtherBanks = h.toggleProp(false, true),
@@ -49,21 +54,9 @@ const userBilling = {
                 name: 'Banco Bradesco S.A.'
             }];
 
-        userVM.getUserBankAccount(userId).then(data => bankAccount(_.first(data))).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
-        userVM.getUserCreditCards(userId).then(creditCards).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
-        banksLoader.load().then(banks).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        userVM.getUserBankAccount(userId).then(data => bankAccount(_.first(data))).catch(handleError);
+        userVM.getUserCreditCards(userId).then(creditCards).catch(handleError);
+        banksLoader.load().then(banks).catch(handleError);
 
         return {
             creditCards: creditCards,

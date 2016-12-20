@@ -16,6 +16,11 @@ const userPrivateContributed = {
             failedPages = postgrest.paginationVM(models.userContribution),
             error = m.prop(false),
             loader = m.prop(true),
+            handleError = () => {
+              error(true);
+              loader(false);
+              m.redraw();
+            },
             contextVM = postgrest.filtersVM({
                 user_id: 'eq',
                 state: 'in',
@@ -30,29 +35,17 @@ const userPrivateContributed = {
         contextVM.project_state(['online']);
         onlinePages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        }).catch(handleError);
 
         contextVM.project_state(['successful']);
         successfulPages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        }).catch(handleError);
 
         contextVM.project_state(['failed']);
         failedPages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        }).catch(handleError);
 
         return {
             onlinePages: onlinePages,
@@ -84,7 +77,7 @@ const userPrivateContributed = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6',
                                 m('a.btn.btn-large[href=\'/pt/explore\']', {
-                                        config: m.rout,
+                                        config: m.route,
                                         onclick: () => {
                                             m.route('/explore');
                                         }
