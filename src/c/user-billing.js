@@ -11,8 +11,8 @@ const userBilling = {
     controller(args) {
         models.bank.pageSize(false);
         const user = args.user,
-            bankAccount = m.prop({}),
-            user_id = args.userId,
+            bankAccount = m.prop({bank_id: '',bank_name: '', bank_code: '', account: '', digit: '', account_digit: '', agency: '', agency_digit: '', owner_name: '', owner_document: ''}),
+            userId = args.userId,
             error = m.prop(false),
             bankInput = m.prop(''),
             bankCode = m.prop('-1'),
@@ -23,7 +23,6 @@ const userBilling = {
             showSuccess = m.prop(false),
             showOtherBanks = h.toggleProp(false, true),
             showOtherBanksInput = m.prop(false),
-            showError = m.prop(false),
             popularBanks = [{
                 id: '51',
                 code: '001',
@@ -50,12 +49,12 @@ const userBilling = {
                 name: 'Banco Bradesco S.A.'
             }];
 
-        userVM.getUserBankAccount(user_id).then(data => bankAccount(_.first(data))).catch(err => {
+        userVM.getUserBankAccount(userId).then(data => bankAccount(_.first(data))).catch(err => {
             error(true);
             loader(false);
             m.redraw();
         });
-        userVM.getUserCreditCards(user_id).then(creditCards).catch(err => {
+        userVM.getUserCreditCards(userId).then(creditCards).catch(err => {
             error(true);
             loader(false);
             m.redraw();
@@ -77,7 +76,6 @@ const userBilling = {
             bankCode: bankCode,
             showSuccess: showSuccess,
             popularBanks: popularBanks,
-            showError: showError,
             user: user,
             error: error
         };
@@ -196,7 +194,7 @@ const userBilling = {
                                                 ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
                                             }
                                         }, [
-                                            m('option[value=\'\']'),
+                                            m('option[value=\'\']', {selected: bankAccount.bank_id === ''}),
                                             (_.map(ctrl.popularBanks, (bank) => {
                                                 return m(`option[value='${bank.id}']`, {
                                                         selected: bankAccount.bank_id == bank.id
