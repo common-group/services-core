@@ -11,7 +11,7 @@ const userBilling = {
     controller(args) {
         models.bank.pageSize(false);
         const user = args.user,
-            bankAccount = m.prop({bank_id: '',bank_name: '', bank_code: '', account: '', digit: '', account_digit: '', agency: '', agency_digit: '', owner_name: '', owner_document: ''}),
+            bankAccount = m.prop({}),
             userId = args.userId,
             error = m.prop(false),
             loader = m.prop(true),
@@ -54,7 +54,12 @@ const userBilling = {
                 name: 'Banco Bradesco S.A.'
             }];
 
-        userVM.getUserBankAccount(userId).then(data => bankAccount(_.first(data))).catch(handleError);
+            userVM.getUserBankAccount(userId).then(data => {
+              bankAccount(_.first(data));
+              if(!bankAccount()){
+                bankAccount({bank_id: '', bank_name: '', bank_code: '', account: '', digit: '', account_digit: '', agency: '', agency_digit: '', owner_name: '', owner_document: ''});
+              }
+            }).catch(handleError);
         userVM.getUserCreditCards(userId).then(creditCards).catch(handleError);
         banksLoader.load().then(banks).catch(handleError);
 
@@ -194,7 +199,7 @@ const userBilling = {
                                                     },
                                                     `${bank.code} . ${bank.name}`);
                                             })),
-                                            (_.find(ctrl.popularBanks, (bank) => {
+                                            (bankAccount.bank_id === '' || _.find(ctrl.popularBanks, (bank) => {
                                                     return bank.id === bankAccount.bank_id;
                                                 }) ? '' :
                                                 m(`option[value='${bankAccount.bank_id}']`, {
@@ -357,10 +362,11 @@ const userBilling = {
                                     ])
                                 )
                             ]),
+                            (bankAccount.bank_account_id ? 
                             m('input[id=\'user_bank_account_attributes_id\'][type=\'hidden\']', {
                                 name: 'user[bank_account_attributes][id]',
                                 value: bankAccount.bank_account_id
-                            })
+                            }) : '')
                         ]),
                         m('.u-margintop-30',
                             m('.w-container',
