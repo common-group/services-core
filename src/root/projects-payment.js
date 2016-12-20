@@ -224,22 +224,21 @@ const projectsPayment = {
                                         }),
                                         ctrl.fieldHasError('completeName')
                                     ]),
-                                    m('.w-col.w-col-5', [
-                                        m('label.field-label.fontweight-semibold[for=\'email\']',
-                                            I18n.t('fields.email', ctrl.scope())
-                                        ),
-                                        m('input.w-input.text-field[id=\'email\']', {
-                                            onfocus: ctrl.vm.resetFieldError('email'),
-                                            class: ctrl.fieldHasError('email') ? 'error' : false,
-                                            type: 'email',
-                                            onchange: m.withAttr('value', ctrl.vm.fields.email),
-                                            value: ctrl.vm.fields.email(),
-                                            required: 'required',
-                                            placeholder: 'email@catarse.me'
+                                    m('.w-col.w-col-5', (ctrl.vm.isInternational() ? '' : [
+                                        m('label.field-label.fontweight-semibold[for=\'document\']',
+                                          I18n.t('fields.owner_document', ctrl.scope())
+                                         ),
+                                        m('input.w-input.text-field[id=\'document\']', {
+                                            onfocus: ctrl.vm.resetFieldError('ownerDocument'),
+                                            class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
+                                            type: 'tel',
+                                            onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
+                                            value: ctrl.vm.fields.ownerDocument(),
+                                            required: 'required'
                                         }),
-                                        ctrl.fieldHasError('email')
-                                    ])
-                                ]),
+                                        ctrl.fieldHasError('ownerDocument')
+                                    ])),
+                                ])),
                                 m('.w-checkbox.w-clearfix', [
                                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
                                         onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_anonymous_change'}),
@@ -379,20 +378,6 @@ const projectsPayment = {
                                     ])
                                 ]),
                                 !ctrl.vm.isInternational() ? m('.w-row', [
-                                    m('.w-col.w-col-6.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold[for=\'document\']',
-                                            I18n.t('fields.owner_document', ctrl.scope())
-                                        ),
-                                        m('input.w-input.text-field[id=\'document\']', {
-                                            onfocus: ctrl.vm.resetFieldError('ownerDocument'),
-                                            class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
-                                            type: 'tel',
-                                            onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
-                                            value: ctrl.vm.fields.ownerDocument(),
-                                            required: 'required'
-                                        }),
-                                        ctrl.fieldHasError('ownerDocument')
-                                    ]),
                                     m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'phone\']',
                                             I18n.t('fields.phone', ctrl.scope())
