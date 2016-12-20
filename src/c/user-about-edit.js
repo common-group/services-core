@@ -15,6 +15,8 @@ const userAboutEdit = {
                 }
                 return false;
             };
+        // Temporary fix for the menu selection bug. Should be fixed/removed as soon as we route all tabs from mithril.
+        setTimeout(m.redraw, 0);
 
         return {
             removeLinks,
@@ -112,7 +114,7 @@ const userAboutEdit = {
                                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
                                                             m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]',{
                                                                 name: 'user[permalink]',
-                                                                value: user.permalink
+                                                                value: h.selfOrEmpty(user.permalink)
                                                             })
                                                         ),
                                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover',
