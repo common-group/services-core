@@ -16,6 +16,11 @@ const userPrivateContributed = {
             failedPages = postgrest.paginationVM(models.userContribution),
             error = m.prop(false),
             loader = m.prop(true),
+            handleError = () => {
+              error(true);
+              loader(false);
+              m.redraw();
+            },
             contextVM = postgrest.filtersVM({
                 user_id: 'eq',
                 state: 'in',
@@ -30,29 +35,17 @@ const userPrivateContributed = {
         contextVM.project_state(['online']);
         onlinePages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        }).catch(handleError);
 
         contextVM.project_state(['successful']);
         successfulPages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        }).catch(handleError);
 
         contextVM.project_state(['failed']);
         failedPages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
-            error(true);
-            loader(false);
-            m.redraw();
-        });
+        }).catch(handleError);
 
         return {
             onlinePages: onlinePages,
@@ -63,30 +56,59 @@ const userPrivateContributed = {
         };
     },
     view(ctrl, args) {
-        let online_collection = ctrl.onlinePages.collection(),
-            successful_collection = ctrl.successfulPages.collection(),
-            failed_collection = ctrl.failedPages.collection();
+        let onlineCollection = ctrl.onlinePages.collection(),
+            successfulCollection = ctrl.successfulPages.collection(),
+            failedCollection = ctrl.failedPages.collection();
 
         return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m.component(inlineError, {
-            message: 'Erro ao carregar os projetos.'
-        }) : ctrl.loader() ? h.loader() : [
-            m.component(userContributedBox, {
-                title: 'Projetos em andamento',
-                collection: online_collection,
-                pagination: ctrl.onlinePages
-            }),
-            m.component(userContributedBox, {
-                title: 'Projetos bem-sucedidos',
-                collection: successful_collection,
-                pagination: ctrl.successfulPages
-            }),
-            m.component(userContributedBox, {
-                title: 'Projetos não-financiados',
-                collection: failed_collection,
-                pagination: ctrl.failedPages
-            }),
+                message: 'Erro ao carregar os projetos.'
+            }) : ctrl.loader() ? h.loader() :
+            (_.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
+            m('.w-container',
+                m('.w-row.u-margintop-30.u-text-center', [
+                    m('.w-col.w-col-3'),
+                    m('.w-col.w-col-6', [
+                        m('.fontsize-large.u-marginbottom-30', [
+                            'Você ainda não apoiou nenhum projeto no',
+                            m.trust('&nbsp;'),
+                            'Catarse...'
+                        ]),
+                        m('.w-row', [
+                            m('.w-col.w-col-3'),
+                            m('.w-col.w-col-6',
+                                m('a.btn.btn-large[href=\'/pt/explore\']', {
+                                        config: m.route,
+                                        onclick: () => {
+                                            m.route('/explore');
+                                        }
+                                    },
+                                    'Apoie agora!'
+                                )
+                            ),
+                            m('.w-col.w-col-3')
+                        ])
+                    ]),
+                    m('.w-col.w-col-3')
+                ])
+            ) :
+            [
+                m.component(userContributedBox, {
+                    title: 'Projetos em andamento',
+                    collection: onlineCollection,
+                    pagination: ctrl.onlinePages
+                }),
+                m.component(userContributedBox, {
+                    title: 'Projetos bem-sucedidos',
+                    collection: successfulCollection,
+                    pagination: ctrl.successfulPages
+                }),
+                m.component(userContributedBox, {
+                    title: 'Projetos não-financiados',
+                    collection: failedCollection,
+                    pagination: ctrl.failedPages
+                }),
 
-        ]);
+            ]);
     }
 };
 

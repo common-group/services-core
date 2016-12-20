@@ -29,7 +29,7 @@ const userContributedBox = {
         let collection = args.collection,
             pagination = args.pagination,
             title = args.title;
-        return m('.section-one-column.u-marginbottom-30', [
+        return (!_.isEmpty(collection) ? m('.section-one-column.u-marginbottom-30', [
             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
                 title
             ),
@@ -56,7 +56,7 @@ const userContributedBox = {
                 )
             ]),
 
-            (!_.isEmpty(collection) ? _.map(collection, (contribution) => {
+            _.map(collection, (contribution) => {
                 return m('.w-row.card', [
                     m('.w-col.w-col-3',
                         m('.w-row', [
@@ -143,15 +143,14 @@ const userContributedBox = {
                     )
                 ]);
 
-            }) : h.loader()),
-            (!_.isEmpty(collection) ?
-                m('.w-row.u-marginbottom-40.u-margintop-30', [
-                    m(loadMoreBtn, {
-                        collection: pagination,
-                        cssClass: '.w-col-push-5'
-                    })
-                ]) : ''),
-        ]);
+            }),
+            m('.w-row.u-marginbottom-40.u-margintop-30', [
+                m(loadMoreBtn, {
+                    collection: pagination,
+                    cssClass: '.w-col-push-5'
+                })
+            ])
+        ]) : m('div', ''));
     }
 };
 

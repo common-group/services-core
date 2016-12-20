@@ -42,9 +42,9 @@ const getUserBankAccount = (user_id) => {
 
     contextVM.user_id(user_id);
 
-    const lUserAccount = models.bankAccount.getRowWithToken(contextVM.parameters());
-
-    return lUserAccount;
+    const lUserAccount = postgrest.loaderWithToken(
+        models.bankAccount.getPageOptions(contextVM.parameters()));
+    return lUserAccount.load();
 };
 
 const getUserProjectReminders = (user_id) => {

@@ -13,6 +13,7 @@ const userNotifications = {
         const contributedProjects = m.prop(),
             projectReminders = m.prop(),
             user_id = args.userId,
+            showNotifications = h.toggleProp(false, true),
             error = m.prop(false);
 
         userVM.getUserProjectReminders(user_id).then(
@@ -31,6 +32,7 @@ const userNotifications = {
 
         return {
             projects: contributedProjects,
+            showNotifications: showNotifications,
             projectReminders: projectReminders,
             error: error
         };
@@ -85,31 +87,31 @@ const userNotifications = {
                                                 ' Quero receber atualizações dos projetos'
                                             ),
                                             m('.u-marginbottom-20',
-                                                m('a.alt-link[href=\'#\'][id=\'toggle-notifications\']',
+                                                m('a.alt-link[href=\'javascript:void(0);\']', {
+                                                        onclick: ctrl.showNotifications.toggle
+                                                    },
                                                     ` Gerenciar as notificações de ${user.total_contributed_projects} projetos`
                                                 )
                                             ),
-                                            m('ul.w-list-unstyled.u-radius.card.card-secondary.w-hidden[id=\'notifications-box\']', {
-                                                style: {
-                                                    'display': 'none'
-                                                }
-                                            }, [
-                                                (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
-                                                    return m('li',
-                                                        m('.w-checkbox.w-clearfix', [
-                                                            m(`input[id='unsubscribes_${project.project_id}'][type='hidden'][value='']`, {
-                                                                name: `unsubscribes[${project.project_id}]`
-                                                            }),
-                                                            m(`input.w-checkbox-input${project.unsubscribed ? '' : '[checked=\'checked\']'}[type='checkbox'][value='1'][id='user_unsubscribes_${project.project_id}']`, {
-                                                                name: `unsubscribes[${project.project_id}]`
-                                                            }),
-                                                            m('label.w-form-label.fontsize-small',
-                                                                project.project_name
-                                                            )
-                                                        ])
-                                                    );
-                                                }) : '')
-                                            ])
+                                            (ctrl.showNotifications() ?
+                                                m('ul.w-list-unstyled.u-radius.card.card-secondary[id=\'notifications-box\']', [
+                                                    (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
+                                                        return m('li',
+                                                            m('.w-checkbox.w-clearfix', [
+                                                                m(`input[id='unsubscribes_${project.project_id}'][type='hidden'][value='']`, {
+                                                                    name: `unsubscribes[${project.project_id}]`
+                                                                }),
+                                                                m(`input.w-checkbox-input${project.unsubscribed ? '' : '[checked=\'checked\']'}[type='checkbox'][value='1'][id='user_unsubscribes_${project.project_id}']`, {
+                                                                    name: `unsubscribes[${project.project_id}]`
+                                                                }),
+                                                                m('label.w-form-label.fontsize-small',
+                                                                    project.project_name
+                                                                )
+                                                            ])
+                                                        );
+                                                    }) : '')
+                                                ]) :
+                                                '')
                                         ])
                                     )
                                 ]),
