@@ -7,7 +7,7 @@ import projectFilters from './project-filters-vm';
 
 const idVM = h.idVM,
       userDetails = m.prop([]),
-      currentUser = m.prop(),
+      currentUser = m.prop({}),
       createdVM = postgrest.filtersVM({project_user_id: 'eq'});
 
 const getUserCreatedProjects = (user_id, pageSize = 3) => {
@@ -104,6 +104,10 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     return !handlePromise ? lUser.load() : lUser.load().then(_.compose(customProp, _.first));
 };
 
+const getCurrentUser = () => {
+    fetchUser(h.getUserID());
+    return currentUser;
+};
 
 const displayImage = (user) => {
   return user.profile_img_thumbnail || "https://catarse.me/assets/catarse_bootstrap/user.jpg";
@@ -148,7 +152,7 @@ const getUserRecommendedProjects = (contribution) => {
             )
         );
 
-        loaders().push(project)
+        loaders().push(project);
         project.load().then((data) => {
             collection().push(_.first(data));
         });
@@ -165,9 +169,9 @@ const getUserRecommendedProjects = (contribution) => {
 
 
     projects.load().then(recommended => {
-        console.log('Recommended response is: ', recommended)
+        console.log('Recommended response is: ', recommended);
         if(recommended.length > 0) {
-            _.map(recommended, pushProject)
+            _.map(recommended, pushProject);
         } else {
             loadPopular();
         }
@@ -187,10 +191,10 @@ const userVM = {
     getUserContributedProjects: getUserContributedProjects,
     getUserBankAccount: getUserBankAccount,
     getPublicUserContributedProjects: getPublicUserContributedProjects,
-    currentUser: currentUser,
     displayImage: displayImage,
     displayCover: displayCover,
-    fetchUser: fetchUser
+    fetchUser: fetchUser,
+    getCurrentUser: getCurrentUser
 };
 
 export default userVM;

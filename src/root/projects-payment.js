@@ -16,22 +16,20 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 const projectsPayment = {
     controller(args) {
         const project = projectVM.getCurrentProject(),
-            mode = project.mode,
-            projectUserId = project.user.id,
-            vm = paymentVM(mode),
-            showPaymentForm = m.prop(false),
-            contribution = contributionVM.getCurrentContribution(),
-            reward = m.prop(contribution().reward),
-            value = contribution().value,
-            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
-            documentMask = _.partial(h.mask, '999.999.999-99'),
-            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            zipcodeMask = _.partial(h.mask, '99999-999'),
-            isCnpj = m.prop(false),
-            user = m.prop({}),
-            currentUserID = h.getUserID();
-
-        usersVM.fetchUser(currentUserID, false).then((data) => user(_.first(data)));
+              mode = project.mode,
+              projectUserId = project.user.id,
+              vm = paymentVM(mode),
+              showPaymentForm = m.prop(false),
+              contribution = contributionVM.getCurrentContribution(),
+              reward = m.prop(contribution().reward),
+              value = contribution().value,
+              phoneMask = _.partial(h.mask, '(99) 9999-99999'),
+              documentMask = _.partial(h.mask, '999.999.999-99'),
+              documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
+              zipcodeMask = _.partial(h.mask, '99999-999'),
+              isCnpj = m.prop(false),
+              currentUserID = h.getUserID(),
+              user = usersVM.getCurrentUser();
 
         if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655,29706], project.project_id)) {
             (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
@@ -75,10 +73,10 @@ const projectsPayment = {
 
         const applyDocumentMask = (value) => {
             if(value.length > 14) {
-                isCnpj(true)
+                isCnpj(true);
                 vm.fields.ownerDocument(documentCompanyMask(value));
             } else  {
-                isCnpj(false)
+                isCnpj(false);
                 vm.fields.ownerDocument(documentMask(value));
             }
 
