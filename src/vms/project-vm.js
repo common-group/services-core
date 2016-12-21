@@ -29,7 +29,7 @@ const init = (project_id, project_user_id) => {
 
     fetchParallelData(project_id, project_user_id);
 
-    try {
+    /*try {
         if(project_id && _.contains([29706], project_id)) {
             (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
             setTimeout(function t(){
@@ -48,7 +48,7 @@ const init = (project_id, project_user_id) => {
         }
     } catch(e) {
         console.error(e);
-    }
+    }*/
 
     return lProject.load().then(setProject(project_user_id));
 };

@@ -29,7 +29,7 @@ const projectsPayment = {
             isCnpj = m.prop(false),
             user = h.getUser();
 
-        if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655,29706], project.project_id)) {
+        if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655], project.project_id)) {
             (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
             setTimeout(function t(){
                 const c = window.$zopim && window.$zopim.livechat;
