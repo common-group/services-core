@@ -49,6 +49,7 @@ const userNotifications = {
                 m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                 m('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'),
                 m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+                m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'notifications\']'),
                 m('.w-container', [
                     m('.w-row',
                         m('.w-col.w-col-10.w-col-push-1',
@@ -153,13 +154,13 @@ const userNotifications = {
                                                 m(`input[id='user_reminders_${reminder.project_id}'][type='hidden'][value='false']`, {
                                                     name: `user[reminders][${reminder.project_id}]`
                                                 }),
-                                                m(`input.w-checkbox-input[checked=\'checked\'][type='checkbox'][value='1'][id='user_reminders_${reminder.project_id}']`, {
+                                                m(`input.w-checkbox-input[checked='checked'][type='checkbox'][value='1'][id='user_reminders_${reminder.project_id}']`, {
                                                     name: `user[reminders][${reminder.project_id}]`
                                                 }),
                                                 m('label.w-form-label.fontsize-small',
                                                     reminder.project_name
                                                 )
-                                            ])
+                                            ]);
                                         }) : '')
                                     ])
                                 ])

@@ -20,14 +20,33 @@ const userBilling = {
             banks = m.prop(),
             creditCards = m.prop(),
             handleError = () => {
-              error(true);
-              loader(false);
-              m.redraw();
+                error(true);
+                loader(false);
+                m.redraw();
             },
             banksLoader = postgrest.loader(models.bank.getPageOptions()),
             showSuccess = m.prop(false),
             showOtherBanks = h.toggleProp(false, true),
             showOtherBanksInput = m.prop(false),
+            setCsrfToken = (xhr) => {
+                if (h.authenticityToken()) {
+                    xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+                }
+                return;
+            },
+            confirmDelete = (cardId) => {
+              let r = confirm('você tem certeza?');
+              if(r){
+                return m.request({
+                    method: 'DELETE',
+                    url: `/users/${user.id}/credit_cards/${cardId}`,
+                    config: setCsrfToken
+                }).then(() => {
+                  location.reload();
+                }).catch(handleError);
+              }
+              return false;
+            },
             popularBanks = [{
                 id: '51',
                 code: '001',
@@ -54,18 +73,19 @@ const userBilling = {
                 name: 'Banco Bradesco S.A.'
             }];
 
-            userVM.getUserBankAccount(userId).then(data => {
-              bankAccount(_.first(data));
-              if(!bankAccount()){
+        userVM.getUserBankAccount(userId).then(data => {
+            bankAccount(_.first(data));
+            if (!bankAccount()){
                 bankAccount({bank_id: '', bank_name: '', bank_code: '', account: '', digit: '', account_digit: '', agency: '', agency_digit: '', owner_name: '', owner_document: ''});
-              }
-            }).catch(handleError);
+            }
+        }).catch(handleError);
         userVM.getUserCreditCards(userId).then(creditCards).catch(handleError);
         banksLoader.load().then(banks).catch(handleError);
 
         return {
             creditCards: creditCards,
             bankAccount: bankAccount,
+            confirmDelete: confirmDelete,
             bankInput: bankInput,
             banks: banks,
             showOtherBanks: showOtherBanks,
@@ -132,7 +152,7 @@ const userBilling = {
                                     )
                                 ),
                                 m('.w-col.w-col-2.w-col-small-2',
-                                    m(`a.btn.btn-terciary.btn-small[data-confirm=\'você tem certeza?\'][data-method=\'delete\'][href=\'/pt/users/${user.id}/credit_cards/${card.id}\'][rel=\'nofollow\']`,
+                                    m(`a.btn.btn-terciary.btn-small[href=\'javascript:void(0);\'][rel='nofollow']`, {onclick: () => {ctrl.confirmDelete(card.id);}},
                                         'Remover'
                                     )
                                 )
@@ -143,6 +163,7 @@ const userBilling = {
                         m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                         m('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'),
                         m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+                        m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'billing\']'),
                         m('.w-form.card.card-terciary', [
                             m('.fontsize-base.fontweight-semibold',
                                 'Dados bancários'
@@ -200,8 +221,8 @@ const userBilling = {
                                                     `${bank.code} . ${bank.name}`);
                                             })),
                                             (bankAccount.bank_id === '' || _.find(ctrl.popularBanks, (bank) => {
-                                                    return bank.id === bankAccount.bank_id;
-                                                }) ? '' :
+                                                return bank.id === bankAccount.bank_id;
+                                            }) ? '' :
                                                 m(`option[value='${bankAccount.bank_id}']`, {
                                                         selected: true
                                                     },
@@ -236,14 +257,14 @@ const userBilling = {
                                                     )
                                                 ]),
                                                 m('a.w-hidden-small.w-hidden-tiny.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                                                    onclick: () => ctrl.showOtherBanks.toggle()
+                                                    onclick: ctrl.showOtherBanks.toggle
                                                 }, [
                                                     'Busca por nome  ',
                                                     m.trust('&nbsp;'),
                                                     m.trust('&gt;')
                                                 ]),
                                                 m('a.w-hidden-main.w-hidden-medium.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                                                    onclick: () => ctrl.showOtherBanks.toggle()
+                                                    onclick: ctrl.showOtherBanks.toggle
                                                 }, [
                                                     'Busca por nome  ',
                                                     m.trust('&nbsp;'),
@@ -362,7 +383,7 @@ const userBilling = {
                                     ])
                                 )
                             ]),
-                            (bankAccount.bank_account_id ? 
+                            (bankAccount.bank_account_id ?
                             m('input[id=\'user_bank_account_attributes_id\'][type=\'hidden\']', {
                                 name: 'user[bank_account_attributes][id]',
                                 value: bankAccount.bank_account_id
