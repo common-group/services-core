@@ -317,8 +317,9 @@ const
         }
     },
 
-    getUserID = (): ?Object => {
-        return _.isNull(getUser()) ? null : getUser().user_id;
+    getUserID = (): ?integer => {
+        const user = getUser();
+        return user == null || user.user_id == null ? null : user.user_id;
     },
 
     getBlogPosts = (): ?Object => {
