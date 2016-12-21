@@ -134,7 +134,6 @@ const projectsPayment = {
     view(ctrl, args) {
         const user = ctrl.user(),
               project = ctrl.project;
-        console.log(user);
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',

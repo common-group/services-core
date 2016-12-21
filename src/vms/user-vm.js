@@ -169,7 +169,6 @@ const getUserRecommendedProjects = (contribution) => {
 
 
     projects.load().then(recommended => {
-        console.log('Recommended response is: ', recommended);
         if(recommended.length > 0) {
             _.map(recommended, pushProject);
         } else {
