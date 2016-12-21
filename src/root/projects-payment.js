@@ -5,6 +5,7 @@ import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
+import usersVM from '../vms/user-vm';
 import faqBox from '../c/faq-box';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
@@ -15,26 +16,27 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 const projectsPayment = {
     controller(args) {
         const project = projectVM.getCurrentProject(),
-            mode = project.mode,
-            projectUserId = project.user.id,
-            vm = paymentVM(mode),
-            showPaymentForm = m.prop(false),
-            contribution = contributionVM.getCurrentContribution(),
-            reward = m.prop(contribution().reward),
-            value = contribution().value,
-            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
-            documentMask = _.partial(h.mask, '999.999.999-99'),
-            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            zipcodeMask = _.partial(h.mask, '99999-999'),
-            isCnpj = m.prop(false),
-            user = h.getUser();
+              mode = project.mode,
+              projectUserId = project.user.id,
+              vm = paymentVM(mode),
+              showPaymentForm = m.prop(false),
+              contribution = contributionVM.getCurrentContribution(),
+              reward = m.prop(contribution().reward),
+              value = contribution().value,
+              phoneMask = _.partial(h.mask, '(99) 9999-99999'),
+              documentMask = _.partial(h.mask, '999.999.999-99'),
+              documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
+              zipcodeMask = _.partial(h.mask, '99999-999'),
+              isCnpj = m.prop(false),
+              currentUserID = h.getUserID(),
+              user = usersVM.getCurrentUser();
 
         if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655,29706], project.project_id)) {
             (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
             setTimeout(function t(){
                 const c = window.$zopim && window.$zopim.livechat;
                 if(c) {
-                    const u = user;
+                    const u = h.getUser();
                     if(u) {
                         c.setEmail(u.email);
                         c.setName(u.name);
@@ -71,10 +73,10 @@ const projectsPayment = {
 
         const applyDocumentMask = (value) => {
             if(value.length > 14) {
-                isCnpj(true)
+                isCnpj(true);
                 vm.fields.ownerDocument(documentCompanyMask(value));
             } else  {
-                isCnpj(false)
+                isCnpj(false);
                 vm.fields.ownerDocument(documentMask(value));
             }
 
@@ -102,7 +104,7 @@ const projectsPayment = {
                    : I18nScope(attr);
         };
 
-        if (!user) {
+        if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
 
@@ -124,11 +126,14 @@ const projectsPayment = {
             mode: mode,
             scope: scope,
             isCnpj: isCnpj,
-            vm: vm
+            vm: vm,
+            user: user,
+            project: project
         };
     },
     view(ctrl, args) {
-        const user = h.getUser() || {};
+        const user = ctrl.user(),
+              project = ctrl.project;
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
@@ -157,7 +162,7 @@ const projectsPayment = {
                                 ctrl.scope(_.extend({value: Number(ctrl.value).toFixed()}))
                             ))
                         ),
-                        m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new"]`,
+                        m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${project.project_id}/contributions/new"]`,
                             I18n.t(`selected_reward.edit`, ctrl.scope()))
                     ])
                 ])
@@ -180,6 +185,21 @@ const projectsPayment = {
                                         I18n.t('required', ctrl.scope())
                                     )
                                 ]),
+                                ((user.name && user.owner_document) ?
+                                 m('.card.card-terciary.u-radius.u-marginbottom-40', [
+                                     m('.w-row', [
+                                         m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
+                                             m(`img.thumb.u-margintop-10.u-round[src="${h.useAvatarOrDefault(user.profile_img_thumbnail)}"][width="100"]`)
+                                         ]),
+                                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
+                                             m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
+                                                 'Dados do apoiador ',
+                                                 m(`a.alt-link[href="/not-my-account?project_id=${project.project_id}"]`, 'Não é você?')
+                                             ]),m('.fontsize-base.fontweight-semibold', user.name),
+                                             m('label.field-label', `CPF/CNPJ: ${user.owner_document}`)
+                                         ])
+                                     ])
+                                 ]) : ''),
                                 m('.w-row.u-marginbottom-30',[
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'country\']',[
@@ -203,11 +223,11 @@ const projectsPayment = {
                                     ]),
                                     m('.w-col.w-col-5')
                                 ]),
-                                m('.w-row', [
+                                ((user.name && user.owner_document) ? '' :  m('.w-row', [
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'complete-name\']',
-                                            I18n.t('fields.complete_name', ctrl.scope())
-                                        ),
+                                          I18n.t('fields.complete_name', ctrl.scope())
+                                         ),
                                         m('input.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
                                             onfocus: ctrl.vm.resetFieldError('completeName'),
                                             class: ctrl.fieldHasError('completeName') ? 'error' : false,
@@ -219,22 +239,21 @@ const projectsPayment = {
                                         }),
                                         ctrl.fieldHasError('completeName')
                                     ]),
-                                    m('.w-col.w-col-5', [
-                                        m('label.field-label.fontweight-semibold[for=\'email\']',
-                                            I18n.t('fields.email', ctrl.scope())
-                                        ),
-                                        m('input.w-input.text-field[id=\'email\']', {
-                                            onfocus: ctrl.vm.resetFieldError('email'),
-                                            class: ctrl.fieldHasError('email') ? 'error' : false,
-                                            type: 'email',
-                                            onchange: m.withAttr('value', ctrl.vm.fields.email),
-                                            value: ctrl.vm.fields.email(),
-                                            required: 'required',
-                                            placeholder: 'email@catarse.me'
+                                    m('.w-col.w-col-5', (ctrl.vm.isInternational() ? '' : [
+                                        m('label.field-label.fontweight-semibold[for=\'document\']',
+                                          I18n.t('fields.owner_document', ctrl.scope())
+                                         ),
+                                        m('input.w-input.text-field[id=\'document\']', {
+                                            onfocus: ctrl.vm.resetFieldError('ownerDocument'),
+                                            class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
+                                            type: 'tel',
+                                            onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
+                                            value: ctrl.vm.fields.ownerDocument(),
+                                            required: 'required'
                                         }),
-                                        ctrl.fieldHasError('email')
-                                    ])
-                                ]),
+                                        ctrl.fieldHasError('ownerDocument')
+                                    ])),
+                                ])),
                                 m('.w-checkbox.w-clearfix', [
                                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
                                         onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_anonymous_change'}),
@@ -374,20 +393,6 @@ const projectsPayment = {
                                     ])
                                 ]),
                                 !ctrl.vm.isInternational() ? m('.w-row', [
-                                    m('.w-col.w-col-6.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold[for=\'document\']',
-                                            I18n.t('fields.owner_document', ctrl.scope())
-                                        ),
-                                        m('input.w-input.text-field[id=\'document\']', {
-                                            onfocus: ctrl.vm.resetFieldError('ownerDocument'),
-                                            class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
-                                            type: 'tel',
-                                            onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
-                                            value: ctrl.vm.fields.ownerDocument(),
-                                            required: 'required'
-                                        }),
-                                        ctrl.fieldHasError('ownerDocument')
-                                    ]),
                                     m('.w-col.w-col-6', [
                                         m('label.field-label.fontweight-semibold[for=\'phone\']',
                                             I18n.t('fields.phone', ctrl.scope())

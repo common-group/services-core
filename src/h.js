@@ -317,6 +317,11 @@ const
         }
     },
 
+    getUserID = (): ?number => {
+        const user = getUser();
+        return user == null || user.user_id == null ? null : user.user_id;
+    },
+
     getBlogPosts = (): ?Object => {
         if (_dataCache.blogPosts)
             return _dataCache.blogPosts;
@@ -895,6 +900,7 @@ export default {
     formatNumber,
     idVM,
     getUser,
+    getUserID,
     getSimilityCustomer,
     getApiHost,
     getMailchimpUrl,

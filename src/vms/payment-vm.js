@@ -24,7 +24,6 @@ const paymentVM = (mode = 'aon') => {
 
     const fields = {
         completeName: m.prop(''),
-        email: m.prop(''),
         anonymous: m.prop(),
         countries: m.prop(),
         userCountryId: m.prop(),
@@ -56,7 +55,6 @@ const paymentVM = (mode = 'aon') => {
             countryId = data.address.country_id || _.findWhere(fields.countries(), {name: 'Brasil'}).id;
 
         fields.completeName(data.name);
-        fields.email(data.email);
         fields.city(data.address.city);
         fields.zipCode(data.address.zipcode);
         fields.street(data.address.street);

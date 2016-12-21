@@ -1,11 +1,9 @@
 import m from 'mithril';
+import userVM from '../../../src/vms/user-vm';
 import projectsPayment from '../../../src/root/projects-payment';
 
 describe('ProjectsPayment', () => {
-  let $output,
-    test = {
-
-    };
+  let $output;
 
   beforeAll(() => {
     const root = document.createElement('div');
@@ -13,10 +11,10 @@ describe('ProjectsPayment', () => {
     root.setAttribute('data-parameters', JSON.stringify(ProjectDetailsMockery()));
     root.setAttribute('data-contribution', JSON.stringify(ContributionMockery()));
 
-    document.body.setAttribute('data-user', JSON.stringify(UserDetailMockery()));
+    document.body.setAttribute('data-user', JSON.stringify(UserDetailMockery()[0]));
     document.body.appendChild(root);
+    $output = mq(projectsPayment);
 
-    $output = mq(projectsPayment, test);
   });
 
   describe('when contribution is international', () => {
