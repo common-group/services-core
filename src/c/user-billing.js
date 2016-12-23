@@ -10,6 +10,7 @@ import popNotification from './pop-notification';
 const userBilling = {
     controller(args) {
         models.bank.pageSize(false);
+        let deleteFormSubmit;
         const user = args.user,
             bankAccount = m.prop({}),
             userId = args.userId,
@@ -52,7 +53,24 @@ const userBilling = {
                 id: '23',
                 code: '237',
                 name: 'Banco Bradesco S.A.'
-            }];
+            }],
+            // Little trick to reproduce Rails+SimpleForm behavior
+            // We create a hidden form with the correct input values set
+            // Then we submit it when the remove card button is clicked
+            // The card id is set on the go, with the help of a closure.
+            toDeleteCard = m.prop(-1),
+            deleteCard = (id) => () => {
+                toDeleteCard(id);
+                // We must redraw here to update the action output of the hidden form on the DOM.
+                m.redraw(true);
+                deleteFormSubmit();
+                return false;
+            },
+            setCardDeletionForm = (el, isInit) => {
+                if (!isInit) {
+                    deleteFormSubmit = () => el.submit();
+                }
+            };
 
             userVM.getUserBankAccount(userId).then(data => {
               bankAccount(_.first(data));
@@ -65,6 +83,9 @@ const userBilling = {
 
         return {
             creditCards: creditCards,
+            deleteCard: deleteCard,
+            toDeleteCard: toDeleteCard,
+            setCardDeletionForm: setCardDeletionForm,
             bankAccount: bankAccount,
             bankInput: bankInput,
             banks: banks,
@@ -132,12 +153,18 @@ const userBilling = {
                                     )
                                 ),
                                 m('.w-col.w-col-2.w-col-small-2',
-                                    m(`a.btn.btn-terciary.btn-small[data-confirm=\'você tem certeza?\'][data-method=\'delete\'][href=\'/pt/users/${user.id}/credit_cards/${card.id}\'][rel=\'nofollow\']`,
+                                    m(`a.btn.btn-terciary.btn-small[rel=\'nofollow\']`,
+                                        {onclick: ctrl.deleteCard(card.id)},
                                         'Remover'
                                     )
                                 )
                             ]);
-                        }))
+                        })),
+                        m('form.w-hidden', {action: `/pt/users/${user.id}/credit_cards/${ctrl.toDeleteCard()}`, method: 'POST', config: ctrl.setCardDeletionForm}, [
+                            m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
+                            m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),
+                            m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+                        ])
                     ]),
                     m(`form.simple_form.refund_bank_account_form[accept-charset='UTF-8'][action='/pt/users/${user.id}'][id='user_billing_form'][method='post'][novalidate='novalidate']`, [
                         m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
@@ -362,7 +389,7 @@ const userBilling = {
                                     ])
                                 )
                             ]),
-                            (bankAccount.bank_account_id ? 
+                            (bankAccount.bank_account_id ?
                             m('input[id=\'user_bank_account_attributes_id\'][type=\'hidden\']', {
                                 name: 'user[bank_account_attributes][id]',
                                 value: bankAccount.bank_account_id
