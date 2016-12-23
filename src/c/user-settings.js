@@ -9,6 +9,7 @@ import popNotification from './pop-notification';
 
 const userSettings = {
     controller(args) {
+        let deleteUser;
         const user = args.user,
             fields = {
                 email: m.prop(''),
@@ -84,6 +85,18 @@ const userSettings = {
                     m.redraw();
                 });
             },
+            setDeleteForm = (el, isInit) => {
+                if (!isInit) {
+                    deleteUser = () => el.submit();
+                }
+            },
+            deleteAccount = () => {
+                if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
+                    deleteUser();
+                };
+
+                return false;
+            },
             validateEmailConfirmation = () => {
                 if (fields.email() !== fields.email_confirmation()) {
                     emailHasError(true);
@@ -151,6 +164,8 @@ const userSettings = {
             applyDocumentMask: applyDocumentMask,
             applyZipcodeMask: applyZipcodeMask,
             applyPhoneMask: applyPhoneMask,
+            deleteAccount: deleteAccount,
+            setDeleteForm: setDeleteForm,
             countries: countries,
             states: states,
             fields: fields,
@@ -442,7 +457,9 @@ const userSettings = {
                                 m('.fontsize-smallest',
                                     'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'
                                 ),
-                                m(`a.alt-link.fontsize-smaller[data-confirm=\'Você deseja desativar essa conta?\'][data-method=\'delete\'][href=\'/pt/users/${user.id}\'][rel=\'nofollow\']`,
+                                m(`a.alt-link.fontsize-smaller[href=\'/pt/users/${user.id}\'][rel=\'nofollow\']`,{
+                                        onclick: ctrl.deleteAccount,
+                                    },
                                     'Desativar minha conta no Catarse'
                                 )
                             ])
@@ -459,6 +476,10 @@ const userSettings = {
                         )
                     )
                 ])
+            ]),
+            m('form.w-hidden', {action: `/pt/users/${user.id}`, method: 'post', config: ctrl.setDeleteForm}, [
+                m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+                m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')
             ])
         ]);
     }
