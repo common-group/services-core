@@ -423,7 +423,7 @@ const projectsPayment = {
                             vm: ctrl.vm,
                             contribution_id: ctrl.contribution().id,
                             project_id: projectVM.currentProject().project_id,
-                            user_id: user.user_id
+                            user_id: user.id
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
