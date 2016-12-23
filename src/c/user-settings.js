@@ -39,6 +39,11 @@ const userSettings = {
             showError = m.prop(false),
             countriesLoader = postgrest.loader(models.country.getPageOptions()),
             statesLoader = postgrest.loader(models.state.getPageOptions()),
+            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
+            documentMask = _.partial(h.mask, '999.999.999-99'),
+            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
+            zipcodeMask = _.partial(h.mask, '99999-999'),
+            isCnpj = m.prop(false),
             setCsrfToken = (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
@@ -95,6 +100,20 @@ const userSettings = {
 
                 return !passwordHasError();
             },
+            validateDocument = () => {
+                const document = fields.owner_document(),
+                    striped = String(document).replace(/[\.|\-|\/]*/g,'');
+                let isValid = false, errorMessage = '';
+
+                if (document.length > 14) {
+                    return h.validateCnpj(document);
+                } else if (document.length > 0) {
+                    return h.validateCpf(striped);
+                }
+
+                return;
+            },
+            // TODO: this form validation should be abstracted/merged together with others
             onSubmit = () => {
                 if (!validateEmailConfirmation()) {
                     error('Confirmação de email está incorreta.');
@@ -102,17 +121,36 @@ const userSettings = {
                 } else if (!validatePassword()) {
                     error('Nova senha está incorreta.');
                     showError(true);
+                } else if (!validateDocument()) {
+                    error('CPF/CNPJ inválido');
+                    showError(true);
                 } else {
                     updateUserData(user_id);
                 }
 
                 return false;
+            },
+            applyZipcodeMask = _.compose(fields.zipcode, zipcodeMask),
+            applyPhoneMask = _.compose(fields.phonenumber, phoneMask),
+            applyDocumentMask = (value) => {
+                if(value.length > 14) {
+                    isCnpj(true);
+                    fields.owner_document(documentCompanyMask(value));
+                } else  {
+                    isCnpj(false);
+                    fields.owner_document(documentMask(value));
+                }
+
+                return;
             };
 
         countriesLoader.load().then(countries);
         statesLoader.load().then(states);
 
         return {
+            applyDocumentMask: applyDocumentMask,
+            applyZipcodeMask: applyZipcodeMask,
+            applyPhoneMask: applyPhoneMask,
             countries: countries,
             states: states,
             fields: fields,
@@ -211,7 +249,8 @@ const userSettings = {
                                     m('.w-col.w-col-6.w-sub-col',
                                         m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_cpf\'][name=\'user[cpf]\'][type=\'tel\']', {
                                             value: fields.owner_document(),
-                                            onchange: m.withAttr('value', fields.owner_document)
+                                            onchange: m.withAttr('value', ctrl.applyDocumentMask),
+                                            onkeyup: m.withAttr('value', ctrl.applyDocumentMask)
                                         })
                                     ),
                                     m('.w-col.w-col-6')
@@ -358,7 +397,8 @@ const userSettings = {
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
                                                     value: fields.phonenumber(),
-                                                    onchange: m.withAttr('value', fields.phonenumber)
+                                                    onchange: m.withAttr('value', fields.phonenumber),
+                                                    onkeyup: m.withAttr('value', (value) => ctrl.applyPhoneMask(value))
                                                 })
                                             ])
                                         ])
