@@ -18,7 +18,7 @@ const paymentForm = {
 
         const scrollTo = (el, isInit) => {
             if(!isInit){
-                h.animateScrollTo(el);
+                // h.animateScrollTo(el);
             }
         };
 

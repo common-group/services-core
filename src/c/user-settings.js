@@ -9,6 +9,7 @@ import popNotification from './pop-notification';
 
 const userSettings = {
     controller(args) {
+        let deleteUser;
         const user = args.user,
             fields = {
                 email: m.prop(''),
@@ -27,6 +28,8 @@ const userSettings = {
                 phonenumber: m.prop(user.address.phonenumber),
                 name: m.prop(user.name)
             },
+            emailHasError = m.prop(false),
+            passwordHasError = m.prop(false),
             user_id = args.userId,
             error = m.prop(''),
             countries = m.prop(),
@@ -37,16 +40,11 @@ const userSettings = {
             showError = m.prop(false),
             countriesLoader = postgrest.loader(models.country.getPageOptions()),
             statesLoader = postgrest.loader(models.state.getPageOptions()),
-            onSubmit = () => {
-                if (fields.email() !== fields.email_confirmation()) {
-                    error('Confirmação de email está incorreta.');
-                    showError(true);
-                } else {
-                    updateUserData(user_id);
-                }
-
-                return false;
-            },
+            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
+            documentMask = _.partial(h.mask, '999.999.999-99'),
+            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
+            zipcodeMask = _.partial(h.mask, '99999-999'),
+            isCnpj = m.prop(false),
             setCsrfToken = (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
@@ -86,12 +84,88 @@ const userSettings = {
                     showError(true);
                     m.redraw();
                 });
+            },
+            setDeleteForm = (el, isInit) => {
+                if (!isInit) {
+                    deleteUser = () => el.submit();
+                }
+            },
+            deleteAccount = () => {
+                if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
+                    deleteUser();
+                };
+
+                return false;
+            },
+            validateEmailConfirmation = () => {
+                if (fields.email() !== fields.email_confirmation()) {
+                    emailHasError(true);
+                } else {
+                    emailHasError(false);
+                }
+                return !emailHasError();
+            },
+            validatePassword = () => {
+                const pass = String(fields.password());
+                if (pass.length > 0 && pass.length <= 5) {
+                    passwordHasError(true);
+                }
+
+                return !passwordHasError();
+            },
+            validateDocument = () => {
+                const document = fields.owner_document(),
+                    striped = String(document).replace(/[\.|\-|\/]*/g,'');
+                let isValid = false, errorMessage = '';
+
+                if (document.length > 14) {
+                    return h.validateCnpj(document);
+                } else if (document.length > 0) {
+                    return h.validateCpf(striped);
+                }
+
+                return;
+            },
+            // TODO: this form validation should be abstracted/merged together with others
+            onSubmit = () => {
+                if (!validateEmailConfirmation()) {
+                    error('Confirmação de email está incorreta.');
+                    showError(true);
+                } else if (!validatePassword()) {
+                    error('Nova senha está incorreta.');
+                    showError(true);
+                } else if (!validateDocument()) {
+                    error('CPF/CNPJ inválido');
+                    showError(true);
+                } else {
+                    updateUserData(user_id);
+                }
+
+                return false;
+            },
+            applyZipcodeMask = _.compose(fields.zipcode, zipcodeMask),
+            applyPhoneMask = _.compose(fields.phonenumber, phoneMask),
+            applyDocumentMask = (value) => {
+                if(value.length > 14) {
+                    isCnpj(true);
+                    fields.owner_document(documentCompanyMask(value));
+                } else  {
+                    isCnpj(false);
+                    fields.owner_document(documentMask(value));
+                }
+
+                return;
             };
 
         countriesLoader.load().then(countries);
         statesLoader.load().then(states);
 
         return {
+            applyDocumentMask: applyDocumentMask,
+            applyZipcodeMask: applyZipcodeMask,
+            applyPhoneMask: applyPhoneMask,
+            deleteAccount: deleteAccount,
+            setDeleteForm: setDeleteForm,
             countries: countries,
             states: states,
             fields: fields,
@@ -101,7 +175,11 @@ const userSettings = {
             showEmailForm: showEmailForm,
             user: user,
             onSubmit: onSubmit,
-            error: error
+            error: error,
+            emailHasError: emailHasError,
+            passwordHasError: passwordHasError,
+            validatePassword: validatePassword,
+            validateEmailConfirmation: validateEmailConfirmation
         };
     },
     view(ctrl, args) {
@@ -113,7 +191,8 @@ const userSettings = {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: ctrl.error()
+                message: ctrl.error(),
+                error: true
             }) : ''),
             m('form.w-form', {
                 onsubmit: ctrl.onSubmit
@@ -146,7 +225,9 @@ const userSettings = {
                                             'Novo email'
                                         ),
                                         m('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
+                                            class: ctrl.emailHasError() ? 'error' : '',
                                             value: fields.email(),
+                                            onfocus: () => ctrl.emailHasError(false),
                                             onchange: m.withAttr('value', fields.email)
                                         })
                                     ]),
@@ -155,10 +236,14 @@ const userSettings = {
                                             'Confirmar novo email'
                                         ),
                                         m('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
+                                            class: ctrl.emailHasError() ? 'error' : '',
                                             value: fields.email_confirmation(),
+                                            onfocus: () => ctrl.emailHasError(false),
+                                            onblur: ctrl.validateEmailConfirmation,
                                             onchange: m.withAttr('value', fields.email_confirmation)
                                         })
-                                    ])
+                                    ]),
+                                    ctrl.emailHasError() ? m(inlineError, {message: 'Confirmação de email está incorreta.'}) : ''
                                 ]),
                                 m('.fontsize-base.fontweight-semibold',
                                     'Nome'
@@ -179,7 +264,8 @@ const userSettings = {
                                     m('.w-col.w-col-6.w-sub-col',
                                         m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_cpf\'][name=\'user[cpf]\'][type=\'tel\']', {
                                             value: fields.owner_document(),
-                                            onchange: m.withAttr('value', fields.owner_document)
+                                            onchange: m.withAttr('value', ctrl.applyDocumentMask),
+                                            onkeyup: m.withAttr('value', ctrl.applyDocumentMask)
                                         })
                                     ),
                                     m('.w-col.w-col-6')
@@ -326,7 +412,8 @@ const userSettings = {
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
                                                     value: fields.phonenumber(),
-                                                    onchange: m.withAttr('value', fields.phonenumber)
+                                                    onchange: m.withAttr('value', fields.phonenumber),
+                                                    onkeyup: m.withAttr('value', (value) => ctrl.applyPhoneMask(value))
                                                 })
                                             ])
                                         ])
@@ -354,9 +441,13 @@ const userSettings = {
                                             ' Nova senha'
                                         ),
                                         m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
+                                            class: ctrl.passwordHasError() ? 'error' : '',
                                             value: fields.password(),
+                                            onfocus: () => ctrl.passwordHasError(false),
+                                            onblur: ctrl.validatePassword,
                                             onchange: m.withAttr('value', fields.password)
-                                        })
+                                        }),
+                                        !ctrl.passwordHasError() ? '' : m(inlineError, {message: 'A sua nova senha deve ter no mínimo 6 caracteres.'})
                                     ])
                                 ]),
                                 m('.divider.u-marginbottom-20'),
@@ -366,7 +457,9 @@ const userSettings = {
                                 m('.fontsize-smallest',
                                     'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'
                                 ),
-                                m(`a.alt-link.fontsize-smaller[data-confirm=\'Você deseja desativar essa conta?\'][data-method=\'delete\'][href=\'/pt/users/${user.id}\'][rel=\'nofollow\']`,
+                                m(`a.alt-link.fontsize-smaller[href=\'/pt/users/${user.id}\'][rel=\'nofollow\']`,{
+                                        onclick: ctrl.deleteAccount,
+                                    },
                                     'Desativar minha conta no Catarse'
                                 )
                             ])
@@ -383,6 +476,10 @@ const userSettings = {
                         )
                     )
                 ])
+            ]),
+            m('form.w-hidden', {action: `/pt/users/${user.id}`, method: 'post', config: ctrl.setDeleteForm}, [
+                m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+                m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')
             ])
         ]);
     }

@@ -96,7 +96,7 @@ const userAboutEdit = {
                                             )
                                         ]
                                     ),
-                                    m('.w-row.u-marginbottom-30.card.card-terciary',
+                                    !user.is_admin ? '' : m('.w-row.u-marginbottom-30.card.card-terciary',
                                         [
                                             m('.w-col.w-col-5.w-sub-col',
                                                 [

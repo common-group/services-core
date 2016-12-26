@@ -175,8 +175,6 @@ const paymentVM = (mode = 'aon') => {
 
         checkEmptyFields(['completeName', 'zipCode', 'street', 'userState', 'city', 'userCountryId']);
 
-        checkEmail();
-
         if (!isInternational()){
             checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
             checkUserState();
@@ -347,7 +345,6 @@ const paymentVM = (mode = 'aon') => {
             anonymous: fields.anonymous(),
             country_id: fields.userCountryId(),
             payer_name: fields.completeName(),
-            payer_email: fields.email(),
             payer_document: fields.ownerDocument(),
             address_street: fields.street(),
             address_number: fields.number(),
