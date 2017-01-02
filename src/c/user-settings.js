@@ -80,7 +80,12 @@ const userSettings = {
                     showSuccess(true);
                     m.redraw();
                 }).catch((err) => {
-                    error('Erro ao atualizar informações.');
+                    if (_.isArray(err.errors)) {
+                        error(err.errors.join('\n'));
+                    } else {
+                        error('Erro ao atualizar informações.');
+                    }
+
                     showError(true);
                     m.redraw();
                 });
