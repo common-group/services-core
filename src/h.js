@@ -458,17 +458,10 @@ const
 
     closeModal = (): void => {
         // Temp for rails unstyled close links
-        const collectionHas = (a, b) => {
-            for(let i = 0, len = a.length; i < len; i++) {
-                if(a[i] == b) return true;
-            }
-            return false;
-        };
-
         const close = (elm, selector) => {
             const all = document.getElementsByClassName(selector);
             let cur = elm.parentNode;
-            while(cur && !collectionHas(all, cur)) {
+            while(cur && !_.contains(all, cur)) {
                 cur = cur.parentNode;
             }
             if(cur){
