@@ -458,22 +458,35 @@ const
 
     closeModal = (): void => {
         // Temp for rails unstyled close links
+        const close = (elm, selector) => {
+            const all = document.getElementsByClassName(selector);
+            let cur = elm.parentNode;
+            while(cur && !_.contains(all, cur)) {
+                cur = cur.parentNode;
+            }
+            if(cur){
+                cur.style.display = 'none';
+            }
+            return cur;
+        };
+
         let elById = document.getElementById('modal-close');
         if (_.isElement(elById)){
             elById.onclick = (event) => {
                 event.preventDefault();
-                document.getElementsByClassName('modal-backdrop')[0].style.display = 'none';
+                close(elById, 'modal-backdrop');
             };
         }
 
-        let el = document.getElementsByClassName('modal-close')[0];
-        if (_.isElement(el)){
-            el.onclick = (event) => {
-                event.preventDefault();
-
-                document.getElementsByClassName('modal-backdrop')[0].style.display = 'none';
-            };
-        };
+        let els = document.getElementsByClassName('modal-close');
+        _.map(els, el => {
+            if (_.isElement(el)) {
+                el.onclick = (event) => {
+                    event.preventDefault();
+                    close(el, 'modal-backdrop');
+                };
+            }
+        });
     },
 
     closeFlash = (): void => {
