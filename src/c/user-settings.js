@@ -81,7 +81,7 @@ const userSettings = {
                     m.redraw();
                 }).catch((err) => {
                     if (_.isArray(err.errors)) {
-                        error(err.errors.join('\n'));
+                        error(err.errors.join('<br>'));
                     } else {
                         error('Erro ao atualizar informações.');
                     }
@@ -196,7 +196,7 @@ const userSettings = {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: ctrl.error(),
+                message: m.trust(ctrl.error()),
                 error: true
             }) : ''),
             m('form.w-form', {

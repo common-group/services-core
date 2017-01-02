@@ -13,8 +13,19 @@ const userBilling = {
         let deleteFormSubmit;
         const user = args.user,
             bankAccount = m.prop({}),
+            fields = {
+                owner_name: m.prop(''),
+                agency: m.prop(''),
+                bank_id: m.prop(''),
+                agency_digit: m.prop(''),
+                account: m.prop(''),
+                account_digit: m.prop(''),
+                owner_document: m.prop(''),
+                bank_account_id: m.prop('')
+            },
             userId = args.userId,
-            error = m.prop(false),
+            error = m.prop(''),
+            showError = m.prop(false),
             loader = m.prop(true),
             bankInput = m.prop(''),
             bankCode = m.prop('-1'),
@@ -85,6 +96,47 @@ const userBilling = {
                 deleteFormSubmit();
                 return false;
             },
+            updateUserData = (user_id) => {
+                let userData = {
+                    owner_name: fields.owner_name(),
+                    owner_document: fields.owner_document(),
+                    bank_id: bankCode(),
+                    input_bank_number: bankInput(),
+                    agency_digit: fields.agency_digit(),
+                    agency: fields.agency(),
+                    account: fields.account(),
+                    account_digit: fields.account_digit()
+                };
+                if((fields.bank_account_id())){
+                  userData['id'] = fields.bank_account_id().toString();
+                }
+
+                return m.request({
+                    method: 'PUT',
+                    url: `/users/${user_id}.json`,
+                    data: {
+                      user: {bank_account_attributes: userData}
+                    },
+                    config: setCsrfToken
+                }).then(() => {
+                    showSuccess(true);
+                    m.redraw();
+                }).catch((err) => {
+                    if (_.isArray(err.errors)) {
+                        error(err.errors.join('<br>'));
+                    } else {
+                        error('Erro ao atualizar informações.');
+                    }
+
+                    showError(true);
+                    m.redraw();
+                });
+            },
+            onSubmit = () => {
+                updateUserData(userId);
+
+                return false;
+            },
             setCardDeletionForm = (el, isInit) => {
                 if (!isInit) {
                     deleteFormSubmit = () => el.submit();
@@ -93,10 +145,16 @@ const userBilling = {
 
         userVM.getUserBankAccount(userId).then(data => {
             bankAccount(_.first(data));
-            if (!bankAccount()){
-                bankAccount({bank_id: '', bank_name: '', bank_code: '', account: '', digit: '', account_digit: '', agency: '', agency_digit: '', owner_name: '', owner_document: ''});
-            }
+            fields.owner_document(bankAccount().owner_document);
+            fields.owner_name(bankAccount().owner_name);
+            fields.bank_account_id(bankAccount().bank_account_id);
+            fields.account(bankAccount().account);
+            fields.account_digit(bankAccount().account_digit);
+            fields.agency(bankAccount().agency);
+            fields.agency_digit(bankAccount().agency_digit);
+            fields.bank_id(bankAccount().bank_id);
         }).catch(handleError);
+
         userVM.getUserCreditCards(userId).then(creditCards).catch(handleError);
         banksLoader.load().then(banks).catch(handleError);
 
@@ -109,10 +167,13 @@ const userBilling = {
             confirmDelete: confirmDelete,
             bankInput: bankInput,
             banks: banks,
+            showError: showError,
             showOtherBanks: showOtherBanks,
+            fields: fields,
             showOtherBanksInput: showOtherBanksInput,
             loader: loader,
             bankCode: bankCode,
+            onSubmit: onSubmit,
             showSuccess: showSuccess,
             popularBanks: popularBanks,
             user: user,
@@ -121,11 +182,17 @@ const userBilling = {
     },
     view(ctrl, args) {
         let user = args.user,
+            fields = ctrl.fields,
             bankAccount = ctrl.bankAccount();
 
-        return m('[id=\'billing-tab\']', ctrl.error() ? m.component(inlineError, {
-            message: 'Erro ao carregar a página.'
-        }) : [
+        return m('[id=\'billing-tab\']', [
+            (ctrl.showSuccess() ? m.component(popNotification, {
+                message: 'As suas informações foram atualizadas'
+            }) : ''),
+            (ctrl.showError() ? m.component(popNotification, {
+                message: m.trust(ctrl.error()),
+                error: true
+            }) : ''),
             m('.w-row',
                 m('.w-col.w-col-10.w-col-push-1', [
                     m('.w-form.card.card-terciary.u-marginbottom-20', [
@@ -186,10 +253,7 @@ const userBilling = {
                             m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                         ])
                     ]),
-                    m(`form.simple_form.refund_bank_account_form[accept-charset='UTF-8'][action='/pt/users/${user.id}'][id='user_billing_form'][method='post'][novalidate='novalidate']`, [
-                        m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
-                        m('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'),
-                        m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
+                    m(`form.simple_form.refund_bank_account_form`, {onsubmit: ctrl.onSubmit}, [
                         m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'billing\']'),
                         m('.w-form.card.card-terciary', [
                             m('.fontsize-base.fontweight-semibold',
@@ -213,8 +277,9 @@ const userBilling = {
                                         'Nome do titular'
                                     ),
                                     m(`input.string.required.w-input.text-field.positive[id='user_bank_account_attributes_owner_name'][type='text']`, {
-                                        value: bankAccount.owner_name,
-                                        name: 'user[bank_account_attributes][owner_name]'
+                                        value: fields.owner_name(),
+                                        name: 'user[bank_account_attributes][owner_name]',
+                                        onchange: m.withAttr('value', fields.owner_name)
                                     })
                                 ]),
                                 m('.w-col.w-col-6', [
@@ -222,8 +287,9 @@ const userBilling = {
                                         'CPF / CNPJ do titular'
                                     ),
                                     m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
-                                        value: bankAccount.owner_document,
-                                        name: 'user[bank_account_attributes][owner_document]'
+                                        value: fields.owner_document(),
+                                        name: 'user[bank_account_attributes][owner_document]',
+                                        onchange: m.withAttr('value', fields.owner_document)
                                     })
                                 ])
                             ]),
@@ -240,17 +306,17 @@ const userBilling = {
                                                 ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
                                             }
                                         }, [
-                                            m('option[value=\'\']', {selected: bankAccount.bank_id === ''}),
+                                            m('option[value=\'\']', {selected: fields.bank_id() === ''}),
                                             (_.map(ctrl.popularBanks, (bank) => {
-                                                return m(`option[value='${bank.id}']`, {
-                                                        selected: bankAccount.bank_id == bank.id
+                                                return (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
+                                                        selected: fields.bank_id() == bank.id
                                                     },
-                                                    `${bank.code} . ${bank.name}`);
+                                                    `${bank.code} . ${bank.name}`) : '');
                                             })),
-                                            (bankAccount.bank_id === '' || _.find(ctrl.popularBanks, (bank) => {
-                                                return bank.id === bankAccount.bank_id;
+                                            (fields.bank_id() === '' || _.find(ctrl.popularBanks, (bank) => {
+                                                return bank.id === fields.bank_id();
                                             }) ? '' :
-                                                m(`option[value='${bankAccount.bank_id}']`, {
+                                                m(`option[value='${fields.bank_id()}']`, {
                                                         selected: true
                                                     },
                                                     `${bankAccount.bank_code} . ${bankAccount.bank_name}`
@@ -362,8 +428,9 @@ const userBilling = {
                                                 'Agência'
                                             ),
                                             m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_agency\'][type=\'text\']', {
-                                                value: bankAccount.agency,
-                                                name: 'user[bank_account_attributes][agency]'
+                                                value: fields.agency(),
+                                                name: 'user[bank_account_attributes][agency]',
+                                                onchange: m.withAttr('value', fields.agency)
                                             })
                                         ]),
                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
@@ -371,8 +438,9 @@ const userBilling = {
                                                 'Dígito agência'
                                             ),
                                             m('input.string.optional.w-input.text-field.positive[id=\'user_bank_account_attributes_agency_digit\'][type=\'text\']', {
-                                                value: bankAccount.agency_digit,
-                                                name: 'user[bank_account_attributes][agency_digit]'
+                                                value: fields.agency_digit(),
+                                                name: 'user[bank_account_attributes][agency_digit]',
+                                                onchange: m.withAttr('value', fields.agency_digit)
                                             })
                                         ])
                                     ])
@@ -394,7 +462,8 @@ const userBilling = {
                                                 'No. da conta'
                                             ),
                                             m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account\'][type=\'text\']', {
-                                                value: bankAccount.account,
+                                                value: fields.account(),
+                                                onchange: m.withAttr('value', fields.account),
                                                 name: 'user[bank_account_attributes][account]'
                                             })
                                         ]),
@@ -403,7 +472,8 @@ const userBilling = {
                                                 'Dígito conta'
                                             ),
                                             m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account_digit\'][type=\'text\']', {
-                                                value: bankAccount.account_digit,
+                                                value: fields.account_digit(),
+                                                onchange: m.withAttr('value', fields.account_digit),
                                                 name: 'user[bank_account_attributes][account_digit]'
                                             })
                                         ])
@@ -413,7 +483,7 @@ const userBilling = {
                             (bankAccount.bank_account_id ?
                             m('input[id=\'user_bank_account_attributes_id\'][type=\'hidden\']', {
                                 name: 'user[bank_account_attributes][id]',
-                                value: bankAccount.bank_account_id
+                                value: fields.bank_account_id()
                             }) : '')
                         ]),
                         m('.u-margintop-30',
@@ -433,3 +503,4 @@ const userBilling = {
 };
 
 export default userBilling;
+
