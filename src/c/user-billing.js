@@ -144,15 +144,18 @@ const userBilling = {
             };
 
         userVM.getUserBankAccount(userId).then(data => {
-            bankAccount(_.first(data));
-            fields.owner_document(bankAccount().owner_document);
-            fields.owner_name(bankAccount().owner_name);
-            fields.bank_account_id(bankAccount().bank_account_id);
-            fields.account(bankAccount().account);
-            fields.account_digit(bankAccount().account_digit);
-            fields.agency(bankAccount().agency);
-            fields.agency_digit(bankAccount().agency_digit);
-            fields.bank_id(bankAccount().bank_id);
+            if(!_.isEmpty(_.first(data))){
+              bankAccount(_.first(data));
+              fields.owner_document(bankAccount().owner_document);
+              fields.owner_name(bankAccount().owner_name);
+              fields.bank_account_id(bankAccount().bank_account_id);
+              fields.account(bankAccount().account);
+              fields.account_digit(bankAccount().account_digit);
+              fields.agency(bankAccount().agency);
+              fields.agency_digit(bankAccount().agency_digit);
+              fields.bank_id(bankAccount().bank_id);
+              bankCode(bankAccount().bank_id);
+            }
         }).catch(handleError);
 
         userVM.getUserCreditCards(userId).then(creditCards).catch(handleError);
