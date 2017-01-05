@@ -234,7 +234,6 @@ const projectsPayment = {
                                             type: 'text',
                                             onchange: m.withAttr('value', ctrl.vm.fields.completeName),
                                             value: ctrl.vm.fields.completeName(),
-                                            required: 'required',
                                             placeholder: 'Nome Completo'
                                         }),
                                         ctrl.fieldHasError('completeName')
@@ -248,8 +247,7 @@ const projectsPayment = {
                                             class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
                                             type: 'tel',
                                             onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
-                                            value: ctrl.vm.fields.ownerDocument(),
-                                            required: 'required'
+                                            value: ctrl.vm.fields.ownerDocument()
                                         }),
                                         ctrl.fieldHasError('ownerDocument')
                                     ])),
@@ -287,7 +285,6 @@ const projectsPayment = {
                                     type: 'text',
                                     onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.street)),
                                     value: ctrl.vm.fields.street(),
-                                    required: 'required',
                                     placeholder: 'Rua Da Minha Casa'
                                 }),
                                 ctrl.fieldHasError('street'),
@@ -303,7 +300,6 @@ const projectsPayment = {
                                             type: 'text',
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.number)),
                                             value: ctrl.vm.fields.number(),
-                                            required: 'required',
                                             placeholder: '421'
                                         }),
                                         ctrl.fieldHasError('number')
@@ -332,7 +328,6 @@ const projectsPayment = {
                                             type: 'text',
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.neighbourhood)),
                                             value: ctrl.vm.fields.neighbourhood(),
-                                            required: !ctrl.vm.isInternational(),
                                             placeholder: 'São José'
                                         }),
                                         ctrl.fieldHasError('neighbourhood')
@@ -350,7 +345,6 @@ const projectsPayment = {
                                             onchange: ctrl.addressChange(),
                                             onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
-                                            required: 'required',
                                             placeholder: '42100000'
                                         }),
                                         ctrl.fieldHasError('zipCode')
@@ -365,7 +359,6 @@ const projectsPayment = {
                                             type: 'text',
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.city)),
                                             value: ctrl.vm.fields.city(),
-                                            required: 'required',
                                             placeholder: 'Cidade'
                                         }),
                                         ctrl.fieldHasError('city')
@@ -377,8 +370,7 @@ const projectsPayment = {
                                         ctrl.vm.isInternational() ? m('input.w-input.text-field[id=\'address-state\']', {
                                             onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
                                             class: ctrl.fieldHasError('userState') ? 'error' : false,
-                                            value: ctrl.vm.fields.userState(),
-                                            required: 'required'
+                                            value: ctrl.vm.fields.userState()
                                         }) : m('select.w-select.text-field[id=\'address-state\']', {
                                                 onfocus: ctrl.vm.resetFieldError('userState'),
                                                 class: ctrl.fieldHasError('userState') ? 'error' : false,
@@ -402,8 +394,7 @@ const projectsPayment = {
                                             class: ctrl.fieldHasError('phone') ? 'error' : false,
                                             type: 'tel',
                                             onkeyup: m.withAttr('value', ctrl.applyPhoneMask),
-                                            value: ctrl.vm.fields.phone(),
-                                            required: 'required'
+                                            value: ctrl.vm.fields.phone()
                                         }),
                                         ctrl.fieldHasError('phone')
                                     ])

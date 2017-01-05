@@ -226,7 +226,7 @@ const paymentCreditCard = {
                         m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             I18n.t('credit_card.name_tip', ctrl.scope())
                         ),
-                        m('input.w-input.text-field[name="credit-card-name"][required="required"][type="text"]', {
+                        m('input.w-input.text-field[name="credit-card-name"][type="text"]', {
                             onfocus: ctrl.vm.resetCreditCardFieldError('name'),
                             class: ctrl.fieldHasError('name') ? 'error' : '',
                             onblur: ctrl.checkCreditCardName,
@@ -290,7 +290,7 @@ const paymentCreditCard = {
                         ),
                         m('.w-row', [
                             m('.w-col.w-col-8.w-col-tiny-6.w-sub-col-middle',
-                                m('input.w-input.text-field[name="credit-card-cvv"][required="required"][type="tel"]', {
+                                m('input.w-input.text-field[name="credit-card-cvv"][type="tel"]', {
                                     onfocus: ctrl.vm.resetCreditCardFieldError('cvv'),
                                     class: ctrl.fieldHasError('cvv') ? 'error' : '',
                                     onkeyup: m.withAttr('value', ctrl.applyCvvMask),
