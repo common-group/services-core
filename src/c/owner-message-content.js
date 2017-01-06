@@ -12,9 +12,13 @@ const ownerMessageContent = {
     controller(args) {
         let l = m.prop(false),
             sendSuccess = m.prop(false),
+            userDetails = args,
             submitDisabled = m.prop(false),
             //sets default values when user is not logged in
-            user = h.getUser() || {name: '', email: ''},
+            user = h.getUser() || {
+                name: '',
+                email: ''
+            },
             from_name = m.prop(user.name),
             from_email = m.prop(user.email),
             content = m.prop('');
@@ -25,14 +29,15 @@ const ownerMessageContent = {
             }
             submitDisabled(true);
             content(content().split('\n').join('<br />'));
+            const project = h.getCurrentProject();
 
             let loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
                 from_email: from_email(),
                 user_id: h.getUser().user_id,
                 content: content(),
-                project_id: h.getCurrentProject().project_id,
-                to_user_id: h.getCurrentProject().project_user_id
+                project_id: project ? project.project_id : null,
+                to_user_id: userDetails().id
             });
 
             l = postgrest.loaderWithToken(loaderOpts);
@@ -62,20 +67,18 @@ const ownerMessageContent = {
             contactForm = [
                 m('.modal-dialog-content', [
                     m('.w-form', [
-                        m('form', {onsubmit: h.validate().submit([
-                            {
+                        m('form', {
+                            onsubmit: h.validate().submit([{
                                 prop: ctrl.from_name,
                                 rule: 'text'
-                            },
-                            {
+                            }, {
                                 prop: ctrl.from_email,
                                 rule: 'email'
-                            },
-                            {
+                            }, {
                                 prop: ctrl.content,
                                 rule: 'text'
-                            }
-                        ], ctrl.sendMessage)}, [
+                            }], ctrl.sendMessage)
+                        }, [
                             m('.w-row', [
                                 m('.w-col.w-col-6.w-sub-col', [
                                     m('label.fontsize-smaller', 'Seu nome'),
@@ -99,16 +102,15 @@ const ownerMessageContent = {
                             }),
                             m('.u-marginbottom-10.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'),
                             m('.w-row', h.validationErrors().length ? _.map(h.validationErrors(), errors => m('span.fontsize-smallest.text-error', [
-                                    m('span.fa.fa-exclamation-triangle'),
-                                    ` ${errors.message}`,
-                                    m('br')
-                                ])) : ''
-                            ),
+                                m('span.fa.fa-exclamation-triangle'),
+                                ` ${errors.message}`,
+                                m('br')
+                            ])) : ''),
                             m('.modal-dialog-nav-bottom',
                                 m('.w-row',
-                                    m('.w-col.w-col-6.w-col-push-3',
-                                        !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]', {disabled: ctrl.submitDisabled()}) : h.loader()
-                                    )
+                                    m('.w-col.w-col-6.w-col-push-3', !ctrl.l() ? m('input.w-button.btn.btn-large[type="submit"][value="Enviar mensagem"]', {
+                                        disabled: ctrl.submitDisabled()
+                                    }) : h.loader())
                                 )
                             )
                         ]),
