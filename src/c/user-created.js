@@ -26,7 +26,7 @@ const userCreated = {
             states.push('draft');
         }
         contextVM.state(states).project_user_id(user_id).order({
-            online_date: 'desc'
+            updated_at: 'desc'
         });
 
         models.project.pageSize(9);
