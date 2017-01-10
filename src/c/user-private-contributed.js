@@ -32,7 +32,7 @@ const userPrivateContributed = {
             created_at: 'desc'
         }).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 
-        contextVM.project_state(['online']);
+        contextVM.project_state(['online', 'waiting_funds']);
         onlinePages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
         }).catch(handleError);
