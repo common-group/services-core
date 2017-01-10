@@ -13,13 +13,15 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 const paymentCreditCard = {
     controller(args) {
         const vm = args.vm,
-            loadingInstallments = m.prop(true),
-            loadingSavedCreditCards = m.prop(true),
-            selectedCreditCard = m.prop({id: -1}),
-            selectedInstallment = m.prop('1'),
-            showForm = m.prop(false),
-            creditCardType = m.prop('unknown'),
-            errors = m.prop([]);
+              loadingInstallments = m.prop(true),
+              loadingSavedCreditCards = m.prop(true),
+              selectedCreditCard = m.prop({id: -1}),
+              selectedInstallment = m.prop('1'),
+              showForm = m.prop(false),
+              creditCardType = m.prop('unknown'),
+              errors = m.prop([]),
+              documentMask = _.partial(h.mask, '999.999.999-99'),
+              documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
 
         const onSubmit = () => {
             if (selectedCreditCard().id === -1) {
@@ -68,6 +70,22 @@ const paymentCreditCard = {
             handleValidity(isValid, errorObj);
         };
 
+        const checkCardOwnerDocument = () => {
+            const document = vm.creditCardFields.cardOwnerDocument(),
+                  striped = String(document).replace(/[\.|\-|\/]*/g,'');
+            let isValid = false, errorMessage = '';
+
+            if (document.length > 14) {
+                isValid = h.validateCnpj(document);
+                errorMessage = 'CNPJ inválido.';
+            } else {
+                isValid = h.validateCpf(striped);
+                errorMessage = 'CPF inválido.';
+            }
+
+            handleValidity(isValid, {field: 'cardOwnerDocument', message: errorMessage});
+        };
+
         const checkCreditCardName = () => {
             const trimmedString = vm.creditCardFields.name().replace(/ /g,'');
             const charsOnly = /^[a-zA-Z]*$/;
@@ -82,8 +100,19 @@ const paymentCreditCard = {
         const applyCvvMask = (value) => {
             const setValue = h.numbersOnlyMask(value.substr(0, 4));
 
-            return vm.creditCardFields.cvv(setValue)
+            return vm.creditCardFields.cvv(setValue);
         };
+
+        const applyDocumentMask = (value) => {
+            if(value.length > 14) {
+                vm.creditCardFields.cardOwnerDocument(documentCompanyMask(value));
+            } else  {
+                vm.creditCardFields.cardOwnerDocument(documentMask(value));
+            }
+
+            return;
+        };
+
 
         const fieldHasError = (fieldName) => {
             const fieldWithError = _.findWhere(vm.creditCardFields.errors(), {field: fieldName});
@@ -159,6 +188,8 @@ const paymentCreditCard = {
             checkCreditCardName: checkCreditCardName,
             applyCreditCardNameMask: applyCreditCardNameMask,
             applyCreditCardMask: vm.applyCreditCardMask,
+            applyDocumentMask: applyDocumentMask,
+            checkCardOwnerDocument: checkCardOwnerDocument,
             applyCvvMask: applyCvvMask,
             checkcvv: checkcvv,
             selectCreditCard: selectCreditCard,
@@ -171,6 +202,8 @@ const paymentCreditCard = {
         };
     },
     view(ctrl, args) {
+        const isInternational = ctrl.vm.isInternational();
+
         return m('.w-form.u-marginbottom-40', {
             config: ctrl.loadPagarme
         },[
@@ -220,20 +253,41 @@ const paymentCreditCard = {
                 ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-small.u-marginbottom-40', I18n.t('credit_card.loading', ctrl.scope())) : '',
                 !ctrl.showForm() ? '' : m('#credit-card-payment-form.u-marginbottom-40', [
                     m('div#credit-card-name', [
-                        m('label.field-label.fontweight-semibold[for="credit-card-name"]',
-                            I18n.t('credit_card.name', ctrl.scope())
-                        ),
-                        m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
-                            I18n.t('credit_card.name_tip', ctrl.scope())
-                        ),
-                        m('input.w-input.text-field[name="credit-card-name"][type="text"]', {
-                            onfocus: ctrl.vm.resetCreditCardFieldError('name'),
-                            class: ctrl.fieldHasError('name') ? 'error' : '',
-                            onblur: ctrl.checkCreditCardName,
-                            onkeyup: m.withAttr('value', ctrl.applyCreditCardNameMask),
-                            value: ctrl.creditCard.name()
-                        }),
-                        ctrl.fieldHasError('name')
+                        m('.w-row', [
+                            m((isInternational ? '.w-col.w-col-12' : '.w-col.w-col-6.w-col-tiny-6.w-sub-col-middle'), [
+                                m('label.field-label.fontweight-semibold[for="credit-card-name"]',
+                                  I18n.t('credit_card.name', ctrl.scope())
+                                 ),
+                                m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
+                                  I18n.t('credit_card.name_tip', ctrl.scope())
+                                 ),
+                                m('input.w-input.text-field[name="credit-card-name"][type="text"]', {
+                                    onfocus: ctrl.vm.resetCreditCardFieldError('name'),
+                                    class: ctrl.fieldHasError('name') ? 'error' : '',
+                                    onblur: ctrl.checkCreditCardName,
+                                    onkeyup: m.withAttr('value', ctrl.applyCreditCardNameMask),
+                                    value: ctrl.creditCard.name()
+                                }),
+                                ctrl.fieldHasError('name')
+                            ]),
+                            (!isInternational ?
+                             m('.w-col.w-col-6.w-col-tiny-6.w-sub-col-middle', [
+                                 m('label.field-label.fontweight-semibold[for="credit-card-document"]',
+                                   I18n.t('credit_card.document', ctrl.scope())
+                                  ),
+                                 m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
+                                   I18n.t('credit_card.document_tip', ctrl.scope())
+                                  ),
+                                 m('input.w-input.text-field[name="credit-card-document"]', {
+                                     onfocus: ctrl.vm.resetCreditCardFieldError('cardOwnerDocument'),
+                                     class: ctrl.fieldHasError('cardOwnerDocument') ? 'error' : '',
+                                     onblur: ctrl.checkCardOwnerDocument,
+                                     onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
+                                     value: ctrl.creditCard.cardOwnerDocument()
+                                 }),
+                                 ctrl.fieldHasError('cardOwnerDocument')
+                             ]) : '')
+                        ]),
                     ]),
                     m('div#credit-card-number', [
                         m('label.field-label.fontweight-semibold[for="credit-card-number"]',
