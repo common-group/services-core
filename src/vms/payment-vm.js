@@ -47,7 +47,8 @@ const paymentVM = (mode = 'aon') => {
         expYear: m.prop(''),
         save: m.prop(false),
         cvv: m.prop(''),
-        errors: m.prop([])
+        errors: m.prop([]),
+        cardOwnerDocument: m.prop('')
     };
 
     const populateForm = (fetchedData) => {
@@ -65,6 +66,8 @@ const paymentVM = (mode = 'aon') => {
         fields.ownerDocument(data.owner_document);
         fields.phone(data.address.phonenumber);
         fields.neighbourhood(data.address.neighbourhood);
+
+        creditCardFields.cardOwnerDocument(data.owner_document);
     };
 
     const expMonthOptions = () => {
@@ -353,7 +356,8 @@ const paymentVM = (mode = 'aon') => {
             address_zip_code: fields.zipCode(),
             address_city: fields.city(),
             address_state: fields.userState(),
-            address_phone_number: fields.phone()
+            address_phone_number: fields.phone(),
+            card_owner_document: creditCardFields.cardOwnerDocument()
         };
 
         return m.request({
