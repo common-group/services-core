@@ -890,7 +890,19 @@ const
             // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')));
         }
     },
-    redactor = (name: string, prop: Function) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {name, config: setRedactor(prop)});
+
+    redactor = (name: string, prop: Function) => {
+        return m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
+            name, config: setRedactor(prop)
+        });
+    },
+
+    setCsrfToken = (xhr: Object) => {
+        if (authenticityToken()) {
+            xhr.setRequestHeader('X-CSRF-Token', authenticityToken());
+        }
+        return;
+    };
 
 
 setMomentifyLocale();
@@ -965,5 +977,6 @@ export default {
     isProjectPage,
     setPageTitle,
     rootUrl,
-    redactor
+    redactor,
+    setCsrfToken
 };

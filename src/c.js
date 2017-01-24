@@ -21,6 +21,7 @@ import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
 import thankYou from './root/thank-you';
+import CheckEmail from './root/check-email';
 
 const c = {
     root: {
@@ -46,7 +47,8 @@ const c = {
         UsersBalance: usersBalanceMain,
         Menu: menu,
         Footer: footer,
-        FollowFoundFriends: FollowFoundFriends
+        FollowFoundFriends: FollowFoundFriends,
+        CheckEmail: CheckEmail
     }
 };
 
