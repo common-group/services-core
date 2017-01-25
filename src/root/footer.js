@@ -16,18 +16,21 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Bem-vindo'
                                                 ),
-                                                m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
+                                                m('a.link-footer[href=\'http://ano.catarse.me/2016?ref=ctrse_footer\']',
                                                     [
-                                                        'Como funciona',
+                                                        'Retrospectiva 2016',
                                                         m.trust('&nbsp;'),
                                                         m('span.badge.badge-success',
                                                             'Novidade‍'
                                                         )
                                                     ]
                                                 ),
+                                                m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
+                                                    ' Como funciona'
+                                                ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/flex?ref=ctrse_footer\']',
                                                     ' Catarse flex'
-                                                ),
+                                                ),                                                
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']',
                                                     [
                                                         ' Nosso time ',
@@ -64,14 +67,8 @@ const footer = {
                                                     ' Contato'
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
-                                                    [
-                                                        'Nossa Taxa',
-                                                        m.trust('&nbsp;'),
-                                                        m('span.badge.badge-success',
-                                                            'Novidade‍'
-                                                        )
-                                                    ]
-                                                ),
+                                                    ' Nossa Taxa'
+                                                ),                                                
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
                                                 ),
