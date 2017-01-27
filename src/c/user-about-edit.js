@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
+import popNotification from './pop-notification';
 
 const userAboutEdit = {
     controller(args) {
@@ -113,22 +114,24 @@ const userAboutEdit = {
             addLink,
             fields,
             updateUser,
-            loading
+            loading,
+            showSuccess,
+            showError
         };
     },
     view(ctrl, args) {
         const user = args.user || {},
               fields = ctrl.fields;
 
-        return m('#about-tab.content',
-            m('form.simple_form.w-form', {
-                    action: `/pt/users/${user.id}`,
-                    novalidate: true,
-                    enctype: 'multipart/form-data',
-                    'accept-charset': 'UTF-8',
-                method: 'POST',
-                onsubmit: ctrl.updateUser
-                } , [
+        return m('#about-tab.content', [
+            (ctrl.showSuccess() ? m.component(popNotification, {
+                message: 'As suas informações foram atualizadas'
+            }) : ''),
+            (ctrl.showError() ? m.component(popNotification, {
+                message: m.trust(ctrl.error()),
+                error: true
+            }) : ''),
+            m('form.simple_form.w-form', { onsubmit: ctrl.updateUser } , [
                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                 m('input[name="_method"][type="hidden"][value="patch"]'),
                 m(`input[name="authenticity_token"][type="hidden"][value=${h.authenticityToken()}]`),
@@ -385,6 +388,7 @@ const userAboutEdit = {
                     )
                 )
             ])
+            ]
         );
     }
 };
