@@ -887,7 +887,9 @@ const
             $editor.redactor('code.set', prop());
             // If we need to get redactor values and send it to js objects we'll have to add
             // a hook on the change.callback.redactor event. e.g.:
-            // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')));
+            //$editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
+            // TODO: workaround to get redactor data
+            window.$('.redactor-editor').on('keypress', () => prop($editor.redactor('code.get')) );
         }
     },
 
