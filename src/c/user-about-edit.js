@@ -21,6 +21,11 @@ const userAboutEdit = {
               showError = m.prop(false),
               errors = m.prop(),
               loading = m.prop(false),
+              uploading = m.prop(false),
+              errorsArray = m.prop([]),
+              pushErrosMessage = () => {
+                  errors(errorsArray().join('<br/>'));
+              },
               updateFieldsFromUser = () => {
                   userVM.fetchUser(args.userId, false).then((dataResponse) => {
                       let data = _.first(dataResponse);
@@ -42,7 +47,7 @@ const userAboutEdit = {
                   formData.append('uploaded_image', userUploadedImageEl.files[0]);
                   formData.append('cover_image', userCoverImageEl.files[0]);
 
-                  loading(true);
+                  uploading(true);
                   m.redraw();
 
                   return m.request({
@@ -54,6 +59,16 @@ const userAboutEdit = {
                   }).then((data) => {
                       fields.uploaded_image(data.uploaded_image);
                       fields.cover_image(data.cover_image);
+                      uploading(false);
+                  }).catch((err) => {
+                      if (_.isArray(err.errors)) {
+                          errorsArray(errorsArray().concat(err.errors));
+                      } else {
+                          error('Erro ao atualizar informações.');
+                      }
+                      pushErrosMessage();
+                      showError(true);
+                      uploading(false);
                   });
               },
 
@@ -68,6 +83,7 @@ const userAboutEdit = {
                       links_attributes: linkAttributes()
                   };
 
+                  loading(true);
                   uploadImage();
 
                   return m.request({
@@ -84,10 +100,12 @@ const userAboutEdit = {
                       m.redraw();
                   }).catch((err) => {
                       if (_.isArray(err.errors)) {
-                          error(err.errors.join('<br>'));
+                          errorArray(errorsArray().concat(err.errors));
                       } else {
                           error('Erro ao atualizar informações.');
                       }
+
+                      pushErrosMessage();
                       showError(true);
                       loading(false);
                       m.redraw();
@@ -116,7 +134,9 @@ const userAboutEdit = {
             updateUser,
             loading,
             showSuccess,
-            showError
+            showError,
+            errors,
+            uploading
         };
     },
     view(ctrl, args) {
@@ -124,11 +144,11 @@ const userAboutEdit = {
               fields = ctrl.fields;
 
         return m('#about-tab.content', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
-                message: m.trust(ctrl.error()),
+            (ctrl.showError() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
+                message: m.trust(ctrl.errors()),
                 error: true
             }) : ''),
             m('form.simple_form.w-form', { onsubmit: ctrl.updateUser } , [
@@ -378,7 +398,7 @@ const userAboutEdit = {
                             m('.w-col.w-col-4.w-col-push-4',
                                 [
                                     m('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'),
-                                    (!ctrl.loading() ? m('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
+                                    (!ctrl.loading() && !ctrl.uploading() ? m('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
                                         onclick: ctrl.updateUser
                                     }) : h.loader())
                                 ]
