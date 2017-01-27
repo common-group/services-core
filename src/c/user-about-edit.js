@@ -20,7 +20,19 @@ const userAboutEdit = {
               showError = m.prop(false),
               errors = m.prop(),
               loading = m.prop(false),
-
+              updateFieldsFromUser = () => {
+                  userVM.fetchUser(args.userId, false).then((dataResponse) => {
+                      let data = _.first(dataResponse);
+                      fields.uploaded_image(userVM.displayImage(data));
+                      fields.cover_image(data.profile_cover_image);
+                      fields.permalink(data.permalink);
+                      fields.name(data.name);
+                      fields.facebook_link(data.facebook_link);
+                      fields.twitter(data.twitter_username);
+                      fields.links(data.links);
+                      fields.about_html(data.about_html);
+                  });
+              },
               uploadImage = () => {
                   const userUploadedImageEl = window.document.getElementById('user_uploaded_image'),
                         userCoverImageEl = window.document.getElementById('user_cover_image'),
@@ -41,19 +53,18 @@ const userAboutEdit = {
                   }).then((data) => {
                       fields.uploaded_image(data.uploaded_image);
                       fields.cover_image(data.cover_image);
-                      loading(false);
                   });
               },
 
               updateUser = (e) => {
                   e.preventDefault();
-                  // TODO: missing user_links
                   const userData = {
                       permalink: fields.permalink(),
                       name: fields.name(),
                       facebook_link: fields.facebook_link(),
                       twitter: fields.twitter(),
-                      about_html: fields.about_html()
+                      about_html: fields.about_html(),
+                      links_attributes: linkAttributes()
                   };
 
                   uploadImage();
@@ -67,6 +78,8 @@ const userAboutEdit = {
                       config: h.setCsrfToken
                   }).then(() => {
                       showSuccess(true);
+                      updateFieldsFromUser();
+                      loading(false);
                       m.redraw();
                   }).catch((err) => {
                       if (_.isArray(err.errors)) {
@@ -74,20 +87,22 @@ const userAboutEdit = {
                       } else {
                           error('Erro ao atualizar informações.');
                       }
-
                       showError(true);
+                      loading(false);
                       m.redraw();
                   });
               },
               removeLinks = [],
-              addLink = () => field.links().push({link: '', id: '-1'}),
+              addLink = () => fields.links().push({link: ''}),
               removeLink = (linkId, idx) => () => {
-                  if (linkId != -1){
-                      removeLinks.push(linkId);
-                  } else {
-                      fields.links().splice(idx, 1);
-                  }
+                  fields.links()[idx]._destroy = true;
                   return false;
+              },
+              linkAttributes = () =>{
+                  return _.reduce(fields.links(), (memo, item, index) => {
+                      memo[index.toString()] = item;
+                      return memo;
+                  }, {});
               };
         // Temporary fix for the menu selection bug. Should be fixed/removed as soon as we route all tabs from mithril.
         setTimeout(m.redraw, 0);
@@ -289,34 +304,24 @@ const userAboutEdit = {
                                                 m('.w-col.w-col-7',
                                                     [
                                                         m('.w-row',
-                                                            [user.links && user.links.length <= 0 ? '' : m('.link', _.map(user.links,
+                                                          [fields.links() && fields.links().length <= 0 ? '' : m('.link', _.map(fields.links(),
                                                                 (link, idx) => {
-                                                                    const toRemove = _.indexOf(ctrl.removeLinks, link.id) >= 0;
+                                                                    const toRemove = link._destroy;
 
                                                                     return m('div', {
                                                                             key: idx,
                                                                             class: toRemove ? 'w-hidden' : 'none'
                                                                         } , [
-                                                                            link.id === '-1' ? '' : [
-                                                                                m('input[type="hidden"]', {
-                                                                                    name: `user[links_attributes][${idx}][_destroy]`,
-                                                                                    value: toRemove
-                                                                                }),
-                                                                                m('input[type="hidden"]', {
-                                                                                    name: `user[links_attributes][${idx}][id]`,
-                                                                                    value: link.id
-                                                                                })
-                                                                            ],
                                                                             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                                                                                 m(`input.string.w-input.text-field.w-input.text-field][type="text"][value="${link.link}"]`, {
                                                                                     class: link.link === '' ? 'positive' : 'optional',
                                                                                     name: `user[links_attributes][${idx}][link]`,
-                                                                                    onchange: m.withAttr('value', (val) => user.links[idx].link = val)
+                                                                                    onchange: m.withAttr('value', (val) => fields.links()[idx].link = val)
                                                                                 })
                                                                             ),
                                                                             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                                                                                 [
-                                                                                    m('button.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
+                                                                                    m('a.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
                                                                                         onclick: ctrl.removeLink(link.id, idx)
                                                                                     })
                                                                                 ]
