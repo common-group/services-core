@@ -393,7 +393,7 @@ const userAboutEdit = {
                     )
                 ),
                 m('div',
-                    m('.w-container',
+                  m(`.w-container${(args.useFloatBtn ? '.w-section.save-draft-btn-section' : '')}`,
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-push-4',
                                 [
