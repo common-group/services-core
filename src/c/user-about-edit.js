@@ -261,7 +261,7 @@ const userAboutEdit = {
                                             m('.w-col.w-col-7',
                                                 m('input.string.optional.w-input.text-field.positive[id="user_name"][type="text"]', {
                                                     name: 'user[name]',
-                                                    value: user.name,
+                                                    value: fields.name(),
                                                     onchange: m.withAttr('value', fields.name)
                                                 })
                                             )
