@@ -73,10 +73,10 @@ const projectDashboardMenu = {
                         m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [
                             m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
                         ]), (project.is_published ? [
-                            m(`a#dashboard_reports_link.dashboard-nav-link-left[href="${projectRoute}/contributions_report"]`, [
+                            m('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('contributions_report') ? 'selected' : '') + `"][href="${projectRoute}/contributions_report"]`, [
                                 m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
                             ]),
-                            m('a#dashboard_reports_link.dashboard-nav-link-left.u-marginbottom-30[href="' + editRoute + '#posts' + '"]', [
+                            m('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + `"][href="${projectRoute}/posts"]`, [
                                 m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n.t('posts_tab', I18nScope()), m('span.badge', project.posts_count)
                             ])
                         ] : '')
