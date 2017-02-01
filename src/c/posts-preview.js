@@ -2,24 +2,20 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
-import popNotification from './pop-notification';
 
 const postsPreview = {
     controller(args) {
-        const showSuccess = m.prop(false),
-            showError = m.prop(false),
-
-            togglePreview = () => {
+        const togglePreview = () => {
                 args.showPreview(false);
             },
             sendNotification = (e) => {
                 e.preventDefault();
 
                 const notificationData = {
-                    title: args.title,
-                    comment_html: args.comment_html,
-                    reward_id: args.reward_id > 1 ? args.reward_id : null,
-                    recipients: args.reward_id > 1 ? 'reward' : args.reward_id == '-1' ? 'public' : 'backers'
+                    title: args.title(),
+                    comment_html: args.comment_html(),
+                    reward_id: args.reward_id >= 1 ? args.reward_id : null,
+                    recipients: args.reward_id >= 1 ? 'reward' : args.reward_id == '-1' ? 'public' : 'backers'
                 };
 
                 return m.request({
@@ -31,32 +27,42 @@ const postsPreview = {
                     },
                     config: h.setCsrfToken
                 }).then(() => {
-                    showSuccess(true);
+                    args.showSuccess(true);
+                    args.comment_html('');
+                    args.title('');
+                    togglePreview();
                     m.redraw();
                 }).catch((err) => {
-                    showError(true);
+                    args.showError(true);
                     m.redraw();
                 });
             };
         return {
             sendNotification: sendNotification,
-            showSuccess: showSuccess,
-            showError: showError,
             togglePreview
         };
     },
     view(ctrl, args) {
-        const comment_html = args.comment_html,
-            title = args.title;
+        const comment_html = args.comment_html(),
+            title = args.title(),
+            recipientsText = args.reward_id > 1 ?
+            m('.fontsize-small.u-marginbottom-30', [
+                'A novidade acima será enviada por email para os apoiadores da ',
+                m('span.fontweight-semibold',
+                    args.rewardText
+                ),
+                ' e ficará visível na plataforma somente para estes apoiadores.'
+            ]) :
+            args.reward_id == '-1' ?
+            m('.fontsize-small.u-marginbottom-30',
+                'A novidade acima será enviada por email para todos os apoiadores e ficará visível publicamente na plataforma.'
+            ) :
+            m('.fontsize-small.u-marginbottom-30',
+                'A novidade acima será enviada por email para todos os apoiadores e ficará visível somente para estes na plataforma.'
+            );
+
         return m('div', [
 
-            (ctrl.showSuccess() ? m.component(popNotification, {
-                message: 'Mensagem enviada com sucesso'
-            }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
-                message: 'Erro ao enviar mensagem',
-                error: true
-            }) : ''),
             m('.dashboard-header.u-text-center',
                 m('.w-container',
                     m('.w-row', [
@@ -89,13 +95,7 @@ const postsPreview = {
                 m('.w-row', [
                     m('.w-col.w-col-3'),
                     m('.w-col.w-col-6',
-                        m('.fontsize-small.u-marginbottom-30', [
-                            'A novidade acima será enviada por email para os apoiadores da ',
-                            m('span.fontweight-semibold',
-                                'Recompensa R$50 - Alguma descrição com caracteres que ajude a identificar...'
-                            ),
-                            ' e ficará visível na plataforma somente para estes apoiadores.'
-                        ])
+                        recipientsText
                     ),
                     m('.w-col.w-col-3')
                 ]),

@@ -7,12 +7,15 @@ import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import postsPreview from '../c/posts-preview';
 import rewardVM from '../vms/reward-vm';
+import popNotification from '../c/pop-notification';
 
 const posts = {
     controller(args) {
 
         let deleteFormSubmit;
         const showPreview = m.prop(false),
+            showSuccess = m.prop(false),
+            showError = m.prop(false),
             projectPosts = m.prop(),
             fields = {
                 title: m.prop(''),
@@ -37,17 +40,19 @@ const posts = {
                     filterVM.project_id(args.root.getAttribute('data-id'));
                 }
             },
+            rewardText = (rewardId) => {
+                let reward = _.find(rewardVM.rewards(), (reward) => reward.id == rewardId);
+                return `Apoiadores da recompensa R$${reward.minimum_value} - ${reward.description.substring(0, 50) + '...'}`;
+            },
             showRecipientes = (post) => {
                 if (post.recipients == 'public') {
                     return 'Todo mundo (apoiadores e não apoiadores)';
                 } else if (post.recipients == 'backers') {
                     return 'Todos os apoiadores';
                 } else {
-                    let reward = _.find(rewardVM.rewards(), (reward) => {
-                        return reward.id == post.reward_id;
-                    });
+                    let reward = _.find(rewardVM.rewards(), (reward) => reward.id == post.reward_id);
                     if (reward) {
-                        return `Apoiadores da recompensa R$${reward.minimum_value} - ${reward.description.substring(0, 50) + '...'}`;
+                        return rewardText(reward.id);
                     } else {
                         return '...';
                     }
@@ -87,6 +92,9 @@ const posts = {
             togglePreview: togglePreview,
             project_id: project_id,
             deletePost: deletePost,
+            rewardText: rewardText,
+            showSuccess: showSuccess,
+            showError: showError,
             setPostDeletionForm: setPostDeletionForm,
             toDeletePost: toDeletePost,
             projectDetails: projectDetails,
@@ -100,13 +108,23 @@ const posts = {
                 project: m.prop(project)
             }) : ''),
             ctrl.showPreview() ? m.component(postsPreview, {
+                showError: ctrl.showError,
+                showSuccess: ctrl.showSuccess,
                 showPreview: ctrl.showPreview,
                 project_id: ctrl.project_id,
-                comment_html: ctrl.fields.comment_html(),
-                title: ctrl.fields.title(),
-                reward_id: ctrl.fields.reward_id()
+                comment_html: ctrl.fields.comment_html,
+                title: ctrl.fields.title,
+                reward_id: ctrl.fields.reward_id(),
+                rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id()) : null
             }) : [
 
+                (ctrl.showSuccess() ? m.component(popNotification, {
+                    message: 'Mensagem enviada com sucesso'
+                }) : ''),
+                (ctrl.showError() ? m.component(popNotification, {
+                    message: 'Erro ao enviar mensagem',
+                    error: true
+                }) : ''),
                 m('.dashboard-header.u-text-center',
                     m('.w-container',
                         m('.w-row', [
