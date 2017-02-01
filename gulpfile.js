@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var $ = require('gulp-load-plugins')();
 var concat = require('gulp-concat');
 var argv = require('yargs').argv;
 var multiEntry = require('rollup-plugin-multi-entry').default;
@@ -110,7 +111,7 @@ gulp.task('dist', function(done){
     .pipe(sourcemaps.write())
     .pipe(rename('catarse.js'))
     .pipe(gulp.dest('dist'))
-    .pipe(uglify())
+    .pipe($.if(!argv.fast, uglify()))
     .pipe(rename('catarse.min.js'))
     .pipe(gulp.dest('dist'))
     .on('end', done);

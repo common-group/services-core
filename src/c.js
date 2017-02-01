@@ -2,6 +2,7 @@ import adminUsers from './root/admin-users';
 import adminContributions from './root/admin-contributions';
 import flex from './root/flex';
 import insights from './root/insights';
+import posts from './root/posts';
 import jobs from './root/jobs';
 import liveStatistics from './root/live-statistics';
 import projectsContributionReport from './root/projects-contribution-report';
@@ -31,6 +32,7 @@ const c = {
         AdminContributions: adminContributions,
         Flex: flex,
         Insights: insights,
+        Posts: posts,
         Jobs: jobs,
         LiveStatistics: liveStatistics,
         ProjectsContributionReport: projectsContributionReport,
