@@ -3,20 +3,29 @@ import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import popNotification from './pop-notification';
+import inlineError from './inline-error';
 
 const userAboutEdit = {
     controller(args) {
+        let deleteUser;
         const user = args.user,
               fields = {
+                  password: m.prop(''),
+                  current_password: m.prop(''),
                   uploaded_image: m.prop(userVM.displayImage(user)),
                   cover_image: m.prop(user.profile_cover_image),
+                  email: m.prop(''),
                   permalink: m.prop(user.permalink),
-                  name: m.prop(user.name),
+                  public_name: m.prop(user.public_name),
                   facebook_link: m.prop(user.facebook_link),
                   twitter: m.prop(user.twitter_username),
                   links: m.prop(user.links||[]),
-                  about_html: m.prop(user.about_html)
+                  about_html: m.prop(user.about_html),
+                  email_confirmation: m.prop('')
               },
+              passwordHasError = m.prop(false),
+              emailHasError = m.prop(false),
+              showEmailForm = h.toggleProp(false, true),
               showSuccess = m.prop(false),
               showError = m.prop(false),
               errors = m.prop(),
@@ -32,7 +41,7 @@ const userAboutEdit = {
                       fields.uploaded_image(userVM.displayImage(data));
                       fields.cover_image(data.profile_cover_image);
                       fields.permalink(data.permalink);
-                      fields.name(data.name);
+                      fields.public_name(data.public_name);
                       fields.facebook_link(data.facebook_link);
                       fields.twitter(data.twitter_username);
                       fields.links(data.links);
@@ -64,7 +73,7 @@ const userAboutEdit = {
                       if (_.isArray(err.errors)) {
                           errorsArray(errorsArray().concat(err.errors));
                       } else {
-                          error('Erro ao atualizar informações.');
+                          errors('Erro ao atualizar informações.');
                       }
                       pushErrosMessage();
                       showError(true);
@@ -72,11 +81,13 @@ const userAboutEdit = {
                   });
               },
 
-              updateUser = (e) => {
-                  e.preventDefault();
+              updateUser = () => {
                   const userData = {
+                      current_password: fields.current_password(),
+                      password: fields.password(),
+                      email: fields.email(),
                       permalink: fields.permalink(),
-                      name: fields.name(),
+                      public_name: fields.public_name(),
                       facebook_link: fields.facebook_link(),
                       twitter: fields.twitter(),
                       about_html: fields.about_html(),
@@ -100,9 +111,9 @@ const userAboutEdit = {
                       m.redraw();
                   }).catch((err) => {
                       if (_.isArray(err.errors)) {
-                          errorArray(errorsArray().concat(err.errors));
+                          errorsArray(errorsArray().concat(err.errors));
                       } else {
-                          error('Erro ao atualizar informações.');
+                          errors('Erro ao atualizar informações.');
                       }
 
                       pushErrosMessage();
@@ -122,6 +133,47 @@ const userAboutEdit = {
                       memo[index.toString()] = item;
                       return memo;
                   }, {});
+              },
+              validateEmailConfirmation = () => {
+                  if (fields.email() !== fields.email_confirmation()) {
+                      emailHasError(true);
+                  } else {
+                      emailHasError(false);
+                  }
+                  return !emailHasError();
+              },
+              validatePassword = () => {
+                  const pass = String(fields.password());
+                  if (pass.length > 0 && pass.length <= 5) {
+                      passwordHasError(true);
+                  }
+
+                  return !passwordHasError();
+              },
+              setDeleteForm = (el, isInit) => {
+                  if (!isInit) {
+                      deleteUser = () => el.submit();
+                  }
+              },
+              deleteAccount = () => {
+                  if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
+                      deleteUser();
+                  };
+
+                  return false;
+              },
+              onSubmit = (e) => {
+                  e.preventDefault();
+                  if (!validateEmailConfirmation()) {
+                      errors('Confirmação de email está incorreta.');
+                      showError(true);
+                  } else if (!validatePassword()) {
+                      errors('Nova senha está incorreta.');
+                      showError(true);
+                  } else {
+                      updateUser();
+                  }
+                  return false;
               };
         // Temporary fix for the menu selection bug. Should be fixed/removed as soon as we route all tabs from mithril.
         setTimeout(m.redraw, 0);
@@ -131,12 +183,19 @@ const userAboutEdit = {
             removeLink,
             addLink,
             fields,
-            updateUser,
             loading,
             showSuccess,
             showError,
             errors,
-            uploading
+            uploading,
+            onSubmit,
+            emailHasError,
+            showEmailForm,
+            validateEmailConfirmation,
+            passwordHasError,
+            validatePassword,
+            deleteAccount,
+            setDeleteForm
         };
     },
     view(ctrl, args) {
@@ -151,7 +210,7 @@ const userAboutEdit = {
                 message: m.trust(ctrl.errors()),
                 error: true
             }) : ''),
-            m('form.simple_form.w-form', { onsubmit: ctrl.updateUser } , [
+            m('form.simple_form.w-form', { onsubmit: ctrl.onSubmit } , [
                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                 m('input[name="_method"][type="hidden"][value="patch"]'),
                 m(`input[name="authenticity_token"][type="hidden"][value=${h.authenticityToken()}]`),
@@ -160,6 +219,102 @@ const userAboutEdit = {
                         m('.w-row',
                             m('.w-col.w-col-10.w-col-push-1',
                                 [
+                                    !user.is_admin ? '' : m('.w-row.u-marginbottom-30.card.card-terciary',
+                                        [
+                                            m('.w-col.w-col-5.w-sub-col',
+                                                [
+                                                    m('label.field-label.fontweight-semibold',
+                                                        'Endereço do seu perfil'
+                                                    ),
+                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary',
+                                                        'Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!    '
+                                                    )
+                                                ]
+                                            ),
+                                            m('.w-col.w-col-7',
+                                                m('.w-row',
+                                                    [
+                                                        m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
+                                                            m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]',{
+                                                                name: 'user[permalink]',
+                                                                value: fields.permalink(),
+                                                                onchange: m.withAttr('value', fields.permalink)
+                                                            })
+                                                        ),
+                                                        m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover',
+                                                            m('.fontcolor-secondary.fontsize-smaller', '  .catarse.me')
+                                                        )
+                                                    ]
+                                                )
+                                            )
+                                        ]
+                                    ),
+                                    m('.w-row.u-marginbottom-30.card.card-terciary',
+                                        [
+                                            m('.fontsize-base.fontweight-semibold',
+                                              'Email'
+                                             ),
+                                            m('.fontsize-small.u-marginbottom-30',
+                                              'Mantenha esse email atualizado pois ele é o canal de comunicação entre você, a equipe do Catarse e a equipe dos projetos que você apoiou. '
+                                             ),
+                                            m('.fontsize-base.u-marginbottom-40', [
+                                                m('span.fontweight-semibold.card.u-radius',
+                                                  user.email
+                                                 ),
+                                                m('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', {
+                                                    onclick: () => {
+                                                        ctrl.showEmailForm.toggle();
+                                                    }
+                                                },
+                                                  'Alterar email'
+                                                 )
+                                            ]),
+                                            m(`${ctrl.showEmailForm() ? '' : '.w-hidden'}.u-marginbottom-20.w-row[id=\'email_update_form\']`, [
+                                                m('.w-col.w-col-6.w-sub-col', [
+                                                    m('label.field-label.fontweight-semibold',
+                                                      'Novo email'
+                                                     ),
+                                                    m('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
+                                                        class: ctrl.emailHasError() ? 'error' : '',
+                                                        value: fields.email(),
+                                                        onfocus: () => ctrl.emailHasError(false),
+                                                        onchange: m.withAttr('value', fields.email)
+                                                    })
+                                                ]),
+                                                m('.w-col.w-col-6', [
+                                                    m('label.field-label.fontweight-semibold',
+                                                      'Confirmar novo email'
+                                                     ),
+                                                    m('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
+                                                        class: ctrl.emailHasError() ? 'error' : '',
+                                                        value: fields.email_confirmation(),
+                                                        onfocus: () => ctrl.emailHasError(false),
+                                                        onblur: ctrl.validateEmailConfirmation,
+                                                        onchange: m.withAttr('value', fields.email_confirmation)
+                                                    })
+                                                ]),
+                                                ctrl.emailHasError() ? m(inlineError, {message: 'Confirmação de email está incorreta.'}) : ''
+                                            ]) ]),
+                                    m('.w-row.u-marginbottom-30.card.card-terciary', [
+                                            m('.w-col.w-col-5.w-sub-col',
+                                                [
+                                                    m('label.field-label.fontweight-semibold',
+                                                      '  Nome no perfil público'
+                                                    ),
+                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary',
+                                                      '  Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a realização de um apoio ou públicação de um projeto.'
+                                                    )
+                                                ]
+                                            ),
+                                            m('.w-col.w-col-7',
+                                                m('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
+                                                    name: 'user[public_name]',
+                                                    value: fields.public_name(),
+                                                    onchange: m.withAttr('value', fields.public_name)
+                                                })
+                                            )
+                                        ]
+                                    ),
                                     m('.w-form',
                                         [
                                             m('.w-row.u-marginbottom-30.card.card-terciary',
@@ -216,56 +371,22 @@ const userAboutEdit = {
                                             )
                                         ]
                                     ),
-                                    !user.is_admin ? '' : m('.w-row.u-marginbottom-30.card.card-terciary',
-                                        [
-                                            m('.w-col.w-col-5.w-sub-col',
+                                    m('.w-row',
+                                        m('.w-col',
+                                            m('.card.card-terciary.u-marginbottom-30',
                                                 [
                                                     m('label.field-label.fontweight-semibold',
-                                                        'Endereço do seu perfil'
+                                                        'Sobre'
                                                     ),
-                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary',
-                                                        'Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!    '
+                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                                                        'Fale sobre você e tente fornecer as informações mais relevantes para que visitantes possam te conhecer melhor. '
+                                                    ),
+                                                    m('.w-form',
+                                                        m('.preview-container.u-marginbottom-40', h.redactor('user[about_html]', fields.about_html))
                                                     )
                                                 ]
-                                            ),
-                                            m('.w-col.w-col-7',
-                                                m('.w-row',
-                                                    [
-                                                        m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
-                                                            m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]',{
-                                                                name: 'user[permalink]',
-                                                                value: fields.permalink(),
-                                                                onchange: m.withAttr('value', fields.permalink)
-                                                            })
-                                                        ),
-                                                        m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover',
-                                                            m('.fontcolor-secondary.fontsize-smaller', '  .catarse.me')
-                                                        )
-                                                    ]
-                                                )
                                             )
-                                        ]
-                                    ),
-                                    m('.w-row.u-marginbottom-30.card.card-terciary',
-                                        [
-                                            m('.w-col.w-col-5.w-sub-col',
-                                                [
-                                                    m('label.field-label.fontweight-semibold',
-                                                        '  Nome'
-                                                    ),
-                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary',
-                                                        '  Esse é o nome que os usuários irão ver no seu perfil público'
-                                                    )
-                                                ]
-                                            ),
-                                            m('.w-col.w-col-7',
-                                                m('input.string.optional.w-input.text-field.positive[id="user_name"][type="text"]', {
-                                                    name: 'user[name]',
-                                                    value: fields.name(),
-                                                    onchange: m.withAttr('value', fields.name)
-                                                })
-                                            )
-                                        ]
+                                        )
                                     ),
                                     m('.w-form.card.card-terciary.u-marginbottom-30',
                                         [
@@ -369,27 +490,62 @@ const userAboutEdit = {
                                                 )
                                             ]
                                         )
-                                    ),
-                                    m('.w-row',
-                                        m('.w-col',
-                                            m('.card.card-terciary.u-marginbottom-30',
-                                                [
-                                                    m('label.field-label.fontweight-semibold',
-                                                        'Sobre'
-                                                    ),
-                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                                                        'Fale sobre você e tente fornecer as informações mais relevantes para que visitantes possam te conhecer melhor. '
-                                                    ),
-                                                    m('.w-form',
-                                                        m('.preview-container.u-marginbottom-40', h.redactor('user[about_html]', fields.about_html))
-                                                    )
-                                                ]
-                                            )
-                                        )
-                                    )
+                                     ),
+                                    m('.w-form.card.card-terciary.u-marginbottom-30',
+                                      m('.w-row.u-marginbottom-10', [
+                                          m('.fontsize-base.fontweight-semibold',
+                                            'Alterar minha senha'
+                                           ),
+                                          m('.fontsize-small.u-marginbottom-20',
+                                            'Para que a senha seja alterada você precisa confirmar a sua senha atual.'
+                                           ),
+                                          m('.w-row.u-marginbottom-20', [
+                                              m('.w-col.w-col-6.w-sub-col', [
+                                                  m('label.field-label.fontweight-semibold',
+                                                    ' Senha atual'
+                                                   ),
+                                                  m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_current_password\'][name=\'user[current_password]\'][type=\'password\']', {
+                                                      value: fields.current_password(),
+                                                      onchange: m.withAttr('value', fields.current_password)
+                                                  })
+                                              ]),
+                                              m('.w-col.w-col-6', [
+                                                  m('label.field-label.fontweight-semibold',
+                                                    ' Nova senha'
+                                                   ),
+                                                  m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
+                                                      class: ctrl.passwordHasError() ? 'error' : '',
+                                                      value: fields.password(),
+                                                      onfocus: () => ctrl.passwordHasError(false),
+                                                      onblur: ctrl.validatePassword,
+                                                      onchange: m.withAttr('value', fields.password)
+                                                  }),
+                                                  !ctrl.passwordHasError() ? '' : m(inlineError, {message: 'A sua nova senha deve ter no mínimo 6 caracteres.'})
+                                              ])
+                                          ]),
+
+                                      ])
+                                     ),
+                                    m('.w-form.card.card-terciary.u-marginbottom-30',
+                                      m('.w-row.u-marginbottom-10', [
+                                          m('.fontweight-semibold.fontsize-smaller',
+                                            'Desativar minha conta'
+                                           ),
+                                          m('.fontsize-smallest',
+                                            'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'
+                                           ),
+                                          m(`a.alt-link.fontsize-smaller[href=\'/pt/users/${user.id}\'][rel=\'nofollow\']`,{
+                                              onclick: ctrl.deleteAccount,
+                                          },
+                                            'Desativar minha conta no Catarse'
+                                           )
+
+                                      ])
+                                     )
+
                                 ]
-                            )
-                        )
+                             )
+                         )
                     )
                 ),
                 m('div',
@@ -399,7 +555,7 @@ const userAboutEdit = {
                                 [
                                     m('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'),
                                     (!ctrl.loading() && !ctrl.uploading() ? m('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
-                                        onclick: ctrl.updateUser
+                                        onclick: ctrl.onSubmit
                                     }) : h.loader())
                                 ]
                             ),
