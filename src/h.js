@@ -889,7 +889,7 @@ const
             // a hook on the change.callback.redactor event. e.g.:
             //$editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
             // TODO: workaround to get redactor data
-            window.$('.redactor-editor').on('keypress', () => prop($editor.redactor('code.get')) );
+            window.$('.redactor-editor').on('blur', () => prop($editor.redactor('code.get')) );
         }
     },
 
