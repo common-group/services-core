@@ -23,6 +23,8 @@ import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
 import thankYou from './root/thank-you';
 import CheckEmail from './root/check-email';
+import projectEditUserAbout from './root/project-edit-user-about';
+
 
 const c = {
     root: {
@@ -50,7 +52,8 @@ const c = {
         Menu: menu,
         Footer: footer,
         FollowFoundFriends: FollowFoundFriends,
-        CheckEmail: CheckEmail
+        CheckEmail: CheckEmail,
+        projectEditUserAbout: projectEditUserAbout
     }
 };
 

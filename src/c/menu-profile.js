@@ -81,7 +81,7 @@ const menuProfile = {
                                             [
                                                 m(`li.lineheight-looser`,
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#about_me']`,
-                                                        `Sobre você`
+                                                        `Perfil público`
                                                     )
                                                 ),
                                                 m(`li.lineheight-looser`,

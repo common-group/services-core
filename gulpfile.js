@@ -47,7 +47,8 @@ gulp.task('bundle-tests', function(done){
           }),
           multiEntry()
       ],
-      globals: rollupGlobals
+      globals: rollupGlobals,
+      external: Object.keys(rollupGlobals)
     })
     .pipe(source('spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'))
     .pipe(buffer())
@@ -101,7 +102,8 @@ gulp.task('dist', function(done){
               "presets": [ "es2015-rollup" ]
             })
         ],
-        globals: rollupGlobals
+        globals: rollupGlobals,
+        external: Object.keys(rollupGlobals)
     })
     .pipe(source('src/**/*.js'))
     .pipe(buffer())
