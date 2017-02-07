@@ -834,7 +834,7 @@ var setRedactor = function setRedactor(prop) {
                 // a hook on the change.callback.redactor event. e.g.:
                 //$editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
                 // TODO: workaround to get redactor data
-                window.$('.redactor-editor').on('keypress', function () {
+                window.$('.redactor-editor').on('blur', function () {
                     return prop($editor.redactor('code.get'));
                 });
             })();
@@ -3080,7 +3080,7 @@ var projectDashboardMenu = {
 
         ctrl.body.className = ctrl.bodyToggleForNav();
 
-        return m$1('#project-nav', [m$1('.project-nav-wrapper', [m$1('nav.w-section.dashboard-nav.side', [m$1('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [m$1('img.thumb-project-dashboard[src="' + (project ? ctrl.projectThumb(project) : '/assets/thumb-project.png') + '"][width="114"]'), m$1('.fontcolor-negative.lineheight-tight.fontsize-small', project.name), m$1('img.u-margintop-10[src="/assets/catarse_bootstrap/badge-' + project.mode + '-h.png"][width=80]')]), m$1('#info-links', [m$1('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [m$1('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n$1.t('start_tab', I18nScope$3())]), project.is_published ? [m$1('a#dashboard_reports_link.dashboard-nav-link-left[href="' + projectRoute + '/contributions_report"]', [m$1('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n$1.t('reports_tab', I18nScope$3())]), m$1('a#dashboard_reports_link.dashboard-nav-link-left.u-marginbottom-30[href="' + editRoute + '#posts' + '"]', [m$1('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n$1.t('posts_tab', I18nScope$3()), m$1('span.badge', project.posts_count)])] : '']), m$1('.edit-project-div', [!project.is_published ? '' : m$1('button#toggle-edit-menu.dashboard-nav-link-left', {
+        return m$1('#project-nav', [m$1('.project-nav-wrapper', [m$1('nav.w-section.dashboard-nav.side', [m$1('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [m$1('img.thumb-project-dashboard[src="' + (project ? ctrl.projectThumb(project) : '/assets/thumb-project.png') + '"][width="114"]'), m$1('.fontcolor-negative.lineheight-tight.fontsize-small', project.name), m$1('img.u-margintop-10[src="/assets/catarse_bootstrap/badge-' + project.mode + '-h.png"][width=80]')]), m$1('#info-links', [m$1('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [m$1('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n$1.t('start_tab', I18nScope$3())]), project.is_published ? [m$1('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('contributions_report') ? 'selected' : '') + ('"][href="' + projectRoute + '/contributions_report"]'), [m$1('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n$1.t('reports_tab', I18nScope$3())]), m$1('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + ('"][href="' + projectRoute + '/posts"]'), [m$1('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n$1.t('posts_tab', I18nScope$3()), m$1('span.badge', project.posts_count)])] : '']), m$1('.edit-project-div', [!project.is_published ? '' : m$1('button#toggle-edit-menu.dashboard-nav-link-left', {
             onclick: ctrl.editLinksToggle.toggle
         }, [m$1('span.fa.fa-pencil.fa-fw.fa-lg'), I18n$1.t('edit_project', I18nScope$3())]), ctrl.editLinksToggle() ? m$1('#edit-menu-items', [m$1('#dashboard-links', [!project.is_published || project.is_admin_role ? [m$1('a#basics_link[class="' + editLinkClass + '"][href="' + editRoute + '#basics' + '"]', I18n$1.t(project.mode + '.basics_tab', linksScope())), m$1('a#goal_link[class="' + editLinkClass + '"][href="' + editRoute + '#goal' + '"]', I18n$1.t(project.mode + '.goal_tab', linksScope()))] : '', m$1('a#description_link[class="' + editLinkClass + '"][href="' + editRoute + '#description' + '"]', I18n$1.t(project.mode + '.description_tab', linksScope())), m$1('a#video_link[class="' + editLinkClass + '"][href="' + editRoute + '#video' + '"]', ['Vídeo', m$1('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')]), m$1('a#budget_link[class="' + editLinkClass + '"][href="' + editRoute + '#budget' + '"]', I18n$1.t(project.mode + '.budget_tab', linksScope())), m$1('a#card_link[class="' + editLinkClass + '"][href="' + editRoute + '#card' + '"]', I18n$1.t(project.mode + '.card_tab', linksScope())), m$1('a#dashboard_reward_link[class="' + editLinkClass + '"][href="' + editRoute + '#reward' + '"]', ['Recompensas', optionalOpt]), m$1('a#dashboard_user_about_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_about' + '"]', I18n$1.t(project.mode + '.about_you_tab', linksScope())), project.is_published || project.state === 'draft' || project.is_admin_role ? [m$1('a#dashboard_user_settings_link[class="' + editLinkClass + '"][href="' + editRoute + '#user_settings' + '"]', I18n$1.t(project.mode + '.account_tab', linksScope()))] : '', !project.is_published ? [m$1('a#dashboard_preview_link[class="' + editLinkClass + '"][href="' + editRoute + '#preview' + '"]', [m$1('span.fa.fa-fw.fa-eye.fa-lg'), I18n$1.t(project.mode + '.preview_tab', linksScope())])] : ''])]) : '', !project.is_published && ctrl.showPublish() ? [m$1('.btn-send-draft-fixed', project.mode === 'aon' ? [project.state === 'draft' ? m$1('a.btn.btn-medium[href="/projects/' + project.project_id + '/validate_publish"]', [I18n$1.t('publish', I18nScope$3()), m$1.trust('&nbsp;&nbsp;'), m$1('span.fa.fa-chevron-right')]) : ''] : [project.state === 'draft' ? m$1('a.btn.btn-medium[href="/flexible_projects/' + project.project_id + '/validate_publish"]', [I18n$1.t('publish', I18nScope$3()), m$1.trust('&nbsp;&nbsp;'), m$1('span.fa.fa-chevron-right')]) : ''])] : [project.mode === 'flex' && project.is_published ? [m$1('.btn-send-draft-fixed', _$1.isNull(project.expires_at) ? m$1('a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/' + project.project_id + '/edit#announce_expiration"]', I18n$1.t('announce_expiration', I18nScope$3())) : '')] : '']])])]), m$1('a.btn-dashboard href="javascript:void(0);"', {
             onclick: ctrl.bodyToggleForNav.toggle
@@ -4186,6 +4186,236 @@ var insights = {
     }
 };
 
+var postsPreview = {
+    controller: function controller(args) {
+        var togglePreview = function togglePreview() {
+            args.showPreview(false);
+        },
+            sendNotification = function sendNotification(e) {
+            e.preventDefault();
+
+            var notificationData = {
+                title: args.title(),
+                comment_html: args.comment_html(),
+                reward_id: args.reward_id >= 1 ? args.reward_id : null,
+                recipients: args.reward_id >= 1 ? 'reward' : args.reward_id == '-1' ? 'public' : 'backers'
+            };
+
+            return m$1.request({
+                method: 'POST',
+                url: '/projects/' + args.project_id + '/posts.json',
+                data: {
+                    project_post: notificationData,
+                    project: args.project_id
+                },
+                config: h.setCsrfToken
+            }).then(function () {
+                args.showSuccess(true);
+                args.comment_html('');
+                args.title('');
+                togglePreview();
+                m$1.redraw();
+            }).catch(function (err) {
+                args.errors('Erro ao enviar mensagem.'), args.showError(true);
+                m$1.redraw();
+            });
+        };
+        return {
+            sendNotification: sendNotification,
+            togglePreview: togglePreview
+        };
+    },
+    view: function view(ctrl, args) {
+        var comment_html = args.comment_html(),
+            title = args.title(),
+            recipientsText = args.reward_id > 1 ? m$1('.fontsize-small.u-marginbottom-30', ['A novidade acima será enviada por email para os apoiadores da ', m$1('span.fontweight-semibold', args.rewardText), ' e ficará visível na plataforma somente para estes apoiadores.']) : args.reward_id == '-1' ? m$1('.fontsize-small.u-marginbottom-30', 'A novidade acima será enviada por email para todos os apoiadores e ficará visível publicamente na plataforma.') : m$1('.fontsize-small.u-marginbottom-30', 'A novidade acima será enviada por email para todos os apoiadores e ficará visível somente para estes na plataforma.');
+
+        return m$1('div', [m$1('.dashboard-header.u-text-center', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', m$1('.fontsize-larger.fontweight-semibold.lineheight-tight', 'Revise sua novidade antes de enviar!')), m$1('.w-col.w-col-3')]))), m$1('.section', [m$1('.w-container', m$1('.card.u-marginbottom-60.u-radius.w-row', [m$1('.w-col.w-col-1'), m$1('.u-marginbottom-30.u-margintop-30.w-col.w-col-10.w-hidden-small.w-hidden-tiny', [m$1('.fontcolor-secondary.fontsize-small.u-text-center', '16/01/2017'), m$1('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center', title), m$1.trust(comment_html)]), m$1('.w-col.w-col-1')])), m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', recipientsText), m$1('.w-col.w-col-3')]), m$1('.u-marginbottom-20.w-row', [m$1('.w-col.w-col-3'), m$1('._w-sub-col.w-col.w-col-4', m$1('button.btn.btn-large', {
+            onclick: ctrl.sendNotification
+        }, [m$1('span.fa.fa-paper-plane', ''), ' ', m$1.trust('&nbsp;'), 'Enviar'])), m$1('.w-col.w-col-2', m$1('button.btn.btn-large.btn-terciary', {
+            onclick: ctrl.togglePreview
+        }, 'Editar')), m$1('.w-col.w-col-3')])])]);
+    }
+};
+
+var posts = {
+    controller: function controller(args) {
+
+        var deleteFormSubmit = void 0;
+        var showPreview = m$1.prop(false),
+            showSuccess = m$1.prop(false),
+            showError = m$1.prop(false),
+            titleHasError = m$1.prop(false),
+            commentHasError = m$1.prop(false),
+            projectPosts = m$1.prop(),
+            errors = m$1.prop(''),
+            fields = {
+            title: m$1.prop(''),
+            comment_html: m$1.prop(''),
+            reward_id: m$1.prop('-1')
+        },
+            filterVM = postgrest$1.filtersVM({
+            project_id: 'eq'
+        }),
+            togglePreview = function togglePreview() {
+            if (!validateTitle()) {
+                errors('Título não pode ficar em branco.');
+                showError(true);
+            } else if (!validateComment()) {
+                errors('Mensagem não pode ficar em branco.');
+                showError(true);
+            } else {
+                showPreview(true);
+            }
+            return false;
+        },
+            project_id = args.root.getAttribute('data-id'),
+            projectDetails = m$1.prop([]),
+            loader = postgrest$1.loaderWithToken,
+            validateComment = function validateComment() {
+            var comment = String(fields.comment_html());
+            if (comment.length == 0) {
+                commentHasError(true);
+            }
+
+            return !commentHasError();
+        },
+            validateTitle = function validateTitle() {
+            var title = String(fields.title());
+            if (title.length == 0) {
+                titleHasError(true);
+            }
+
+            return !titleHasError();
+        },
+            setProjectId = function setProjectId() {
+            try {
+                var _project_id = m$1.route.param('project_id');
+
+                filterVM.project_id(_project_id);
+            } catch (e) {
+                filterVM.project_id(args.root.getAttribute('data-id'));
+            }
+        },
+            rewardText = function rewardText(rewardId) {
+            var reward = _$1.find(rewardVM.rewards(), function (reward) {
+                return reward.id == rewardId;
+            });
+            return 'Apoiadores da recompensa R$' + reward.minimum_value + ' - ' + (reward.description.substring(0, 50) + '...');
+        },
+            showRecipientes = function showRecipientes(post) {
+            if (post.recipients == 'public') {
+                return 'Todo mundo (apoiadores e não apoiadores)';
+            } else if (post.recipients == 'backers') {
+                return 'Todos os apoiadores';
+            } else {
+                var reward = _$1.find(rewardVM.rewards(), function (reward) {
+                    return reward.id == post.reward_id;
+                });
+                if (reward) {
+                    return rewardText(reward.id);
+                } else {
+                    return '...';
+                }
+            }
+        },
+            toDeletePost = m$1.prop(-1),
+            deletePost = function deletePost(post) {
+            return function () {
+                toDeletePost(post.id);
+                m$1.redraw(true);
+                deleteFormSubmit();
+                return false;
+            };
+        },
+            setPostDeletionForm = function setPostDeletionForm(el, isInit) {
+            if (!isInit) {
+                deleteFormSubmit = function deleteFormSubmit() {
+                    return el.submit();
+                };
+            }
+        };
+
+        filterVM.project_id(project_id);
+        var listVM = postgrest$1.loaderWithToken(models.projectPostDetail.getPageOptions(filterVM.parameters())),
+            l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
+
+        listVM.load().then(projectPosts);
+
+        setProjectId();
+
+        rewardVM.fetchRewards(project_id);
+
+        l.load().then(projectDetails);
+
+        return {
+            l: l,
+            projectPosts: projectPosts,
+            showRecipientes: showRecipientes,
+            fields: fields,
+            showPreview: showPreview,
+            togglePreview: togglePreview,
+            project_id: project_id,
+            deletePost: deletePost,
+            rewardText: rewardText,
+            errors: errors,
+            showSuccess: showSuccess,
+            titleHasError: titleHasError,
+            commentHasError: commentHasError,
+            showError: showError,
+            setPostDeletionForm: setPostDeletionForm,
+            toDeletePost: toDeletePost,
+            projectDetails: projectDetails
+        };
+    },
+    view: function view(ctrl) {
+        var project = _$1.first(ctrl.projectDetails());
+
+        return project ? m$1('.project-posts', project.is_owner_or_admin ? m$1.component(projectDashboardMenu, {
+            project: m$1.prop(project)
+        }) : '', ctrl.showPreview() ? m$1.component(postsPreview, {
+            showError: ctrl.showError,
+            showSuccess: ctrl.showSuccess,
+            errors: ctrl.errors,
+            showPreview: ctrl.showPreview,
+            project_id: ctrl.project_id,
+            comment_html: ctrl.fields.comment_html,
+            title: ctrl.fields.title,
+            reward_id: ctrl.fields.reward_id(),
+            rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id()) : null
+        }) : [ctrl.showSuccess() ? m$1.component(popNotification, {
+            message: 'Mensagem enviada com sucesso'
+        }) : '', ctrl.showError() ? m$1.component(popNotification, {
+            message: ctrl.errors(),
+            error: true
+        }) : '', m$1('.dashboard-header.u-text-center', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-6', m$1('.fontsize-larger.fontweight-semibold.lineheight-tight', 'Envie uma novidade para seus apoiadores')), m$1('.w-col.w-col-3')]))), m$1('.section', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-1'), m$1('.w-col.w-col-10.w-hidden-small.w-hidden-tiny', [m$1('.u-marginbottom-60.u-text-center', m$1('._w-inline-block.card.fontsize-small.u-radius', [m$1('span.fa.fa-lightbulb-o', ''), ' Veja ótimo motivos para ', m$1('a.alt-link[href=\'https://catarse.attach.io/BJmQVOiR\'][target=\'_blank\']', 'falar com seus apoiadores agora mesmo!')])), m$1('.card.card-terciary.medium.u-marginbottom-80.w-form', [m$1('form', [m$1('label.field-label.fontweight-semibold', 'Destinatários'), m$1('select.positive.text-field.w-select', {
+            onchange: m$1.withAttr('value', ctrl.fields.reward_id)
+        }, [m$1('option[value=\'-1\']', {
+            selected: true
+        }, 'Todo mundo (apoiadores e não apoiadores)'), m$1('option[value=\'0\']', 'Todos os apoiadores'), _$1.map(rewardVM.rewards(), function (reward) {
+            return m$1('option[value=\'' + reward.id + '\']', 'Apoiadores da recompensa R$' + reward.minimum_value + ' - ' + (reward.description.substring(0, 50) + '...'));
+        })]), m$1('label.field-label.fontweight-semibold', 'Título'), m$1('input.positive.text-field.w-input[id=\'post_title\'][maxlength=\'256\'][type=\'text\']', {
+            name: 'posts[title]',
+            value: ctrl.fields.title(),
+            onfocus: function onfocus() {
+                return ctrl.titleHasError(false);
+            },
+            class: ctrl.titleHasError() ? 'error' : '',
+            onchange: m$1.withAttr('value', ctrl.fields.title)
+        }), m$1('label.field-label.fontweight-semibold', 'Texto'), m$1('.preview-container.u-marginbottom-40', h.redactor('posts[comment_html]', ctrl.fields.comment_html)), m$1('.u-marginbottom-20.w-row', [m$1('.w-col.w-col-3'), m$1('._w-sub-col.w-col.w-col-6', m$1('button.btn.btn-large', {
+            onclick: ctrl.togglePreview
+        }, 'Pré-visualizar')), m$1('.w-col.w-col-3')])])]), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-40', 'Novidades já enviadas'), m$1('.table-outer.u-marginbottom-60', [m$1('.fontsize-smaller.fontweight-semibold.header.table-row.w-row', [m$1('.table-col.w-col.w-col-5', m$1('div', 'Título')), m$1('.table-col.u-text-center.w-col.w-col-3', m$1('div', 'Enviadas')), m$1('.table-col.u-text-center.w-col.w-col-3', m$1('div', 'Abertas')), m$1('.table-col.w-col.w-col-1')]), m$1('.fontsize-small.table-inner', [_$1.map(ctrl.projectPosts(), function (post) {
+            return m$1('.table-row.w-row', [m$1('.table-col.w-col.w-col-5', [m$1('a.alt-link.fontsize-base[href=\'#\']', post.title), m$1('.fontcolor-secondary.fontsize-smallest', [m$1('span.fontweight-semibold', 'Enviada em: '), h.momentify(post.created_at, 'DD/MM/YYYY, h:mm A')]), m$1('.fontcolor-secondary.fontsize-smallest', [m$1('span.fontweight-semibold', 'Destinatários: '), ctrl.showRecipientes(post)])]), m$1('.table-col.u-text-center.w-col.w-col-3', m$1('.fontsize-base', post.delivered_count)), m$1('.table-col.u-text-center.w-col.w-col-3', m$1('.fontsize-base', post.open_count)), m$1('.table-col.w-col.w-col-1', m$1('button.btn.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash', {
+                onclick: ctrl.deletePost(post)
+            }))]);
+        }), m$1('form.w-hidden', {
+            action: '/pt/projects/' + project.project_id + '/posts/' + ctrl.toDeletePost(),
+            method: 'POST',
+            config: ctrl.setPostDeletionForm
+        }, [m$1('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), m$1('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'), m$1('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + h.authenticityToken() + '\']')])])])]), m$1('.w-col.w-col-1')])))]) : h.loader();
+    }
+};
+
 var I18nScope$9 = _.partial(h.i18nScope, 'pages.jobs');
 
 var jobs = {
@@ -4934,7 +5164,7 @@ var menuProfile = {
 
         return m$1('.w-dropdown.user-profile', [m$1('a.w-dropdown-toggle.dropdown-toggle[href=\'javascript:void()\'][id=\'user-menu\']', {
             onclick: ctrl.toggleMenu.toggle
-        }, [m$1('.user-name-menu', ctrl.userName()), m$1('img.user-avatar[alt=\'Thumbnail - ' + user.name + '\'][height=\'40\'][src=\'' + h.useAvatarOrDefault(user.profile_img_thumbnail) + '\'][width=\'40\']')]), ctrl.toggleMenu() ? m$1('nav.w-dropdown-list.dropdown-list.user-menu.w--open[id=\'user-menu-dropdown\']', { style: 'display:block;' }, [m$1('.w-row', [m$1('.w-col.w-col-12', [m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Meu hist\xF3rico'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#contributions\']', 'Hist\xF3rico de apoio')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados')), m$1('li.w-hidden-main.w-hidden-medium.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados'))]), m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Configura\xE7\xF5es'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#about_me\']', 'Sobre voc\xEA')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#notifications\']', 'Notifica\xE7\xF5es')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#settings\']', 'Dados e endere\xE7o')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#billing\']', 'Banco e cart\xF5es'))]), m$1('.divider.u-marginbottom-20'), args.user.is_admin_role ? m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Admin') : '', args.user.is_admin_role ? m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/users\']', 'Usu\xE1rios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin\']', 'Apoios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/financials\']', 'Rel. Financeiros')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/projects\']', 'Admin projetos')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/dbhero\']', 'Dataclips'))]) : '', m$1('.fontsize-mini', 'Seu e-mail de cadastro é: '), m$1('.fontsize-smallest.u-marginbottom-20', [m$1('span.fontweight-semibold', user.email + ' '), m$1('a.alt-link[href=\'/pt/users/' + user.id + '/edit#settings\']', 'alterar e-mail')]), m$1('.divider.u-marginbottom-20'), m$1('a.alt-link[href=\'/pt/logout\']', 'Sair')])])]) : '']);
+        }, [m$1('.user-name-menu', ctrl.userName()), m$1('img.user-avatar[alt=\'Thumbnail - ' + user.name + '\'][height=\'40\'][src=\'' + h.useAvatarOrDefault(user.profile_img_thumbnail) + '\'][width=\'40\']')]), ctrl.toggleMenu() ? m$1('nav.w-dropdown-list.dropdown-list.user-menu.w--open[id=\'user-menu-dropdown\']', { style: 'display:block;' }, [m$1('.w-row', [m$1('.w-col.w-col-12', [m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Meu hist\xF3rico'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#contributions\']', 'Hist\xF3rico de apoio')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados')), m$1('li.w-hidden-main.w-hidden-medium.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#projects\']', 'Projetos criados'))]), m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Configura\xE7\xF5es'), m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#about_me\']', 'Perfil p\xFAblico')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#notifications\']', 'Notifica\xE7\xF5es')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#settings\']', 'Dados e endere\xE7o')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '/edit#billing\']', 'Banco e cart\xF5es'))]), m$1('.divider.u-marginbottom-20'), args.user.is_admin_role ? m$1('.fontweight-semibold.fontsize-smaller.u-marginbottom-10', 'Admin') : '', args.user.is_admin_role ? m$1('ul.w-list-unstyled.u-marginbottom-20', [m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/users\']', 'Usu\xE1rios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/new-admin\']', 'Apoios')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/financials\']', 'Rel. Financeiros')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/admin/projects\']', 'Admin projetos')), m$1('li.lineheight-looser', m$1('a.alt-link.fontsize-smaller[href=\'/pt/dbhero\']', 'Dataclips'))]) : '', m$1('.fontsize-mini', 'Seu e-mail de cadastro é: '), m$1('.fontsize-smallest.u-marginbottom-20', [m$1('span.fontweight-semibold', user.email + ' '), m$1('a.alt-link[href=\'/pt/users/' + user.id + '/edit#settings\']', 'alterar e-mail')]), m$1('.divider.u-marginbottom-20'), m$1('a.alt-link[href=\'/pt/logout\']', 'Sair')])])]) : '']);
     }
 };
 
@@ -6541,17 +6771,25 @@ var usersShow = {
 
 var userAboutEdit = {
     controller: function controller(args) {
+        var deleteUser = void 0;
         var user = args.user,
             fields = {
+            password: m$1.prop(''),
+            current_password: m$1.prop(''),
             uploaded_image: m$1.prop(userVM.displayImage(user)),
             cover_image: m$1.prop(user.profile_cover_image),
+            email: m$1.prop(''),
             permalink: m$1.prop(user.permalink),
-            name: m$1.prop(user.name),
+            public_name: m$1.prop(user.public_name),
             facebook_link: m$1.prop(user.facebook_link),
             twitter: m$1.prop(user.twitter_username),
             links: m$1.prop(user.links || []),
-            about_html: m$1.prop(user.about_html)
+            about_html: m$1.prop(user.about_html),
+            email_confirmation: m$1.prop('')
         },
+            passwordHasError = m$1.prop(false),
+            emailHasError = m$1.prop(false),
+            showEmailForm = h.toggleProp(false, true),
             showSuccess = m$1.prop(false),
             showError = m$1.prop(false),
             errors = m$1.prop(),
@@ -6567,7 +6805,7 @@ var userAboutEdit = {
                 fields.uploaded_image(userVM.displayImage(data));
                 fields.cover_image(data.profile_cover_image);
                 fields.permalink(data.permalink);
-                fields.name(data.name);
+                fields.public_name(data.public_name);
                 fields.facebook_link(data.facebook_link);
                 fields.twitter(data.twitter_username);
                 fields.links(data.links);
@@ -6601,18 +6839,20 @@ var userAboutEdit = {
                 if (_$1.isArray(err.errors)) {
                     errorsArray(errorsArray().concat(err.errors));
                 } else {
-                    error('Erro ao atualizar informações.');
+                    errors('Erro ao atualizar informações.');
                 }
                 pushErrosMessage();
                 showError(true);
                 uploading(false);
             });
         },
-            updateUser = function updateUser(e) {
-            e.preventDefault();
+            updateUser = function updateUser() {
             var userData = {
+                current_password: fields.current_password(),
+                password: fields.password(),
+                email: fields.email(),
                 permalink: fields.permalink(),
-                name: fields.name(),
+                public_name: fields.public_name(),
                 facebook_link: fields.facebook_link(),
                 twitter: fields.twitter(),
                 about_html: fields.about_html(),
@@ -6636,9 +6876,9 @@ var userAboutEdit = {
                 m$1.redraw();
             }).catch(function (err) {
                 if (_$1.isArray(err.errors)) {
-                    errorArray(errorsArray().concat(err.errors));
+                    errorsArray(errorsArray().concat(err.errors));
                 } else {
-                    error('Erro ao atualizar informações.');
+                    errors('Erro ao atualizar informações.');
                 }
 
                 pushErrosMessage();
@@ -6662,6 +6902,49 @@ var userAboutEdit = {
                 memo[index.toString()] = item;
                 return memo;
             }, {});
+        },
+            validateEmailConfirmation = function validateEmailConfirmation() {
+            if (fields.email() !== fields.email_confirmation()) {
+                emailHasError(true);
+            } else {
+                emailHasError(false);
+            }
+            return !emailHasError();
+        },
+            validatePassword = function validatePassword() {
+            var pass = String(fields.password());
+            if (pass.length > 0 && pass.length <= 5) {
+                passwordHasError(true);
+            }
+
+            return !passwordHasError();
+        },
+            setDeleteForm = function setDeleteForm(el, isInit) {
+            if (!isInit) {
+                deleteUser = function deleteUser() {
+                    return el.submit();
+                };
+            }
+        },
+            deleteAccount = function deleteAccount() {
+            if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
+                deleteUser();
+            }
+
+            return false;
+        },
+            onSubmit = function onSubmit(e) {
+            e.preventDefault();
+            if (!validateEmailConfirmation()) {
+                errors('Confirmação de email está incorreta.');
+                showError(true);
+            } else if (!validatePassword()) {
+                errors('Nova senha está incorreta.');
+                showError(true);
+            } else {
+                updateUser();
+            }
+            return false;
         };
         // Temporary fix for the menu selection bug. Should be fixed/removed as soon as we route all tabs from mithril.
         setTimeout(m$1.redraw, 0);
@@ -6671,12 +6954,19 @@ var userAboutEdit = {
             removeLink: removeLink,
             addLink: addLink,
             fields: fields,
-            updateUser: updateUser,
             loading: loading,
             showSuccess: showSuccess,
             showError: showError,
             errors: errors,
-            uploading: uploading
+            uploading: uploading,
+            onSubmit: onSubmit,
+            emailHasError: emailHasError,
+            showEmailForm: showEmailForm,
+            validateEmailConfirmation: validateEmailConfirmation,
+            passwordHasError: passwordHasError,
+            validatePassword: validatePassword,
+            deleteAccount: deleteAccount,
+            setDeleteForm: setDeleteForm
         };
     },
     view: function view(ctrl, args) {
@@ -6688,17 +6978,36 @@ var userAboutEdit = {
         }) : '', ctrl.showError() && !ctrl.loading() && !ctrl.uploading() ? m$1.component(popNotification, {
             message: m$1.trust(ctrl.errors()),
             error: true
-        }) : '', m$1('form.simple_form.w-form', { onsubmit: ctrl.updateUser }, [m$1('input[name="utf8"][type="hidden"][value="✓"]'), m$1('input[name="_method"][type="hidden"][value="patch"]'), m$1('input[name="authenticity_token"][type="hidden"][value=' + h.authenticityToken() + ']'), m$1('div', m$1('.w-container', m$1('.w-row', m$1('.w-col.w-col-10.w-col-push-1', [m$1('.w-form', [m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Imagem do perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Essa imagem será utilizada como a miniatura de seu perfil (PNG, JPG tamanho 280 x 280)')]), m$1('.w-col.w-col-4.w-sub-col', m$1('.input.file.optional.user_uploaded_image.field_with_hint', [m$1('label.field-label'), m$1('span.hint', m$1('img[alt="Avatar do Usuario"][src="' + fields.uploaded_image() + '"]')), m$1('input.file.optional.w-input.text-field[id="user_uploaded_image"][type="file"]', {
-            name: 'user[uploaded_image]'
-        })]))]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Imagem de capa do perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Essa imagem será utilizada como fundo do cabeçalho do seu perfil público (PNG ou JPG). Caso você não envie nenhum imagem aqui, utilizaremos sua imagem de perfil como alternativa.')]), m$1('.w-col.w-col-4.w-sub-col', m$1('.input.file.optional.user_cover_image', [m$1('label.field-label'), m$1('span.hint', user.profile_cover_image ? m$1('img', { src: fields.cover_image() }) : ''), m$1('input.file.optional.w-input.text-field[id="user_cover_image"][type="file"]', { name: 'user[cover_image]' })]))])]), !user.is_admin ? '' : m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', 'Endereço do seu perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', 'Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!    ')]), m$1('.w-col.w-col-7', m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', m$1('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]', {
+        }) : '', m$1('form.simple_form.w-form', { onsubmit: ctrl.onSubmit }, [m$1('input[name="utf8"][type="hidden"][value="✓"]'), m$1('input[name="_method"][type="hidden"][value="patch"]'), m$1('input[name="authenticity_token"][type="hidden"][value=' + h.authenticityToken() + ']'), m$1('div', m$1('.w-container', m$1('.w-row', m$1('.w-col.w-col-10.w-col-push-1', [!user.is_admin ? '' : m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', 'Endereço do seu perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', 'Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!    ')]), m$1('.w-col.w-col-7', m$1('.w-row', [m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', m$1('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]', {
             name: 'user[permalink]',
             value: fields.permalink(),
             onchange: m$1.withAttr('value', fields.permalink)
-        })), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover', m$1('.fontcolor-secondary.fontsize-smaller', '  .catarse.me'))]))]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Nome'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Esse é o nome que os usuários irão ver no seu perfil público')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[id="user_name"][type="text"]', {
-            name: 'user[name]',
-            value: fields.name(),
-            onchange: m$1.withAttr('value', fields.name)
-        }))]), m$1('.w-form.card.card-terciary.u-marginbottom-30', [m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Perfil do facebook'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Cole o link do seu perfil')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[type="text"]', {
+        })), m$1('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover', m$1('.fontcolor-secondary.fontsize-smaller', '  .catarse.me'))]))]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.fontsize-base.fontweight-semibold', 'Email'), m$1('.fontsize-small.u-marginbottom-30', 'Mantenha esse email atualizado pois ele é o canal de comunicação entre você, a equipe do Catarse e a equipe dos projetos que você apoiou. '), m$1('.fontsize-base.u-marginbottom-40', [m$1('span.fontweight-semibold.card.u-radius', user.email), m$1('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', {
+            onclick: function onclick() {
+                ctrl.showEmailForm.toggle();
+            }
+        }, 'Alterar email')]), m$1((ctrl.showEmailForm() ? '' : '.w-hidden') + '.u-marginbottom-20.w-row[id=\'email_update_form\']', [m$1('.w-col.w-col-6.w-sub-col', [m$1('label.field-label.fontweight-semibold', 'Novo email'), m$1('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
+            class: ctrl.emailHasError() ? 'error' : '',
+            value: fields.email(),
+            onfocus: function onfocus() {
+                return ctrl.emailHasError(false);
+            },
+            onchange: m$1.withAttr('value', fields.email)
+        })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', 'Confirmar novo email'), m$1('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
+            class: ctrl.emailHasError() ? 'error' : '',
+            value: fields.email_confirmation(),
+            onfocus: function onfocus() {
+                return ctrl.emailHasError(false);
+            },
+            onblur: ctrl.validateEmailConfirmation,
+            onchange: m$1.withAttr('value', fields.email_confirmation)
+        })]), ctrl.emailHasError() ? m$1(inlineError, { message: 'Confirmação de email está incorreta.' }) : ''])]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Nome no perfil público'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a realização de um apoio ou públicação de um projeto.')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
+            name: 'user[public_name]',
+            value: fields.public_name(),
+            onchange: m$1.withAttr('value', fields.public_name)
+        }))]), m$1('.w-form', [m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Imagem do perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Essa imagem será utilizada como a miniatura de seu perfil (PNG, JPG tamanho 280 x 280)')]), m$1('.w-col.w-col-4.w-sub-col', m$1('.input.file.optional.user_uploaded_image.field_with_hint', [m$1('label.field-label'), m$1('span.hint', m$1('img[alt="Avatar do Usuario"][src="' + fields.uploaded_image() + '"]')), m$1('input.file.optional.w-input.text-field[id="user_uploaded_image"][type="file"]', {
+            name: 'user[uploaded_image]'
+        })]))]), m$1('.w-row.u-marginbottom-30.card.card-terciary', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Imagem de capa do perfil'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Essa imagem será utilizada como fundo do cabeçalho do seu perfil público (PNG ou JPG). Caso você não envie nenhum imagem aqui, utilizaremos sua imagem de perfil como alternativa.')]), m$1('.w-col.w-col-4.w-sub-col', m$1('.input.file.optional.user_cover_image', [m$1('label.field-label'), m$1('span.hint', user.profile_cover_image ? m$1('img', { src: fields.cover_image() }) : ''), m$1('input.file.optional.w-input.text-field[id="user_cover_image"][type="file"]', { name: 'user[cover_image]' })]))])]), m$1('.w-row', m$1('.w-col', m$1('.card.card-terciary.u-marginbottom-30', [m$1('label.field-label.fontweight-semibold', 'Sobre'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary.u-marginbottom-20', 'Fale sobre você e tente fornecer as informações mais relevantes para que visitantes possam te conhecer melhor. '), m$1('.w-form', m$1('.preview-container.u-marginbottom-40', h.redactor('user[about_html]', fields.about_html)))]))), m$1('.w-form.card.card-terciary.u-marginbottom-30', [m$1('.w-row.u-marginbottom-10', [m$1('.w-col.w-col-5.w-sub-col', [m$1('label.field-label.fontweight-semibold', '  Perfil do facebook'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary', '  Cole o link do seu perfil')]), m$1('.w-col.w-col-7', m$1('input.string.optional.w-input.text-field.positive[type="text"]', {
             name: 'user[facebook_link]',
             value: fields.facebook_link(),
             onchange: m$1.withAttr('value', fields.facebook_link)
@@ -6721,8 +7030,21 @@ var userAboutEdit = {
             })), m$1('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [m$1('a.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
                 onclick: ctrl.removeLink(link.id, idx)
             })])]);
-        }))]), m$1('.w-row', [m$1('.w-col.w-col-6.w-col-push-6', m$1('a.btn.btn-small.btn-terciary', { onclick: ctrl.addLink }, m$1('span.translation_missing', 'Add Link')))])])])), m$1('.w-row', m$1('.w-col', m$1('.card.card-terciary.u-marginbottom-30', [m$1('label.field-label.fontweight-semibold', 'Sobre'), m$1('label.field-label.fontsize-smallest.fontcolor-secondary.u-marginbottom-20', 'Fale sobre você e tente fornecer as informações mais relevantes para que visitantes possam te conhecer melhor. '), m$1('.w-form', m$1('.preview-container.u-marginbottom-40', h.redactor('user[about_html]', fields.about_html)))])))])))), m$1('div', m$1('.w-container' + (args.useFloatBtn ? '.w-section.save-draft-btn-section' : ''), m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', [m$1('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'), !ctrl.loading() && !ctrl.uploading() ? m$1('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
-            onclick: ctrl.updateUser
+        }))]), m$1('.w-row', [m$1('.w-col.w-col-6.w-col-push-6', m$1('a.btn.btn-small.btn-terciary', { onclick: ctrl.addLink }, m$1('span.translation_missing', 'Add Link')))])])])), m$1('.w-form.card.card-terciary.u-marginbottom-30', m$1('.w-row.u-marginbottom-10', [m$1('.fontsize-base.fontweight-semibold', 'Alterar minha senha'), m$1('.fontsize-small.u-marginbottom-20', 'Para que a senha seja alterada você precisa confirmar a sua senha atual.'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', [m$1('label.field-label.fontweight-semibold', ' Senha atual'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_current_password\'][name=\'user[current_password]\'][type=\'password\']', {
+            value: fields.current_password(),
+            onchange: m$1.withAttr('value', fields.current_password)
+        })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', ' Nova senha'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
+            class: ctrl.passwordHasError() ? 'error' : '',
+            value: fields.password(),
+            onfocus: function onfocus() {
+                return ctrl.passwordHasError(false);
+            },
+            onblur: ctrl.validatePassword,
+            onchange: m$1.withAttr('value', fields.password)
+        }), !ctrl.passwordHasError() ? '' : m$1(inlineError, { message: 'A sua nova senha deve ter no mínimo 6 caracteres.' })])])])), m$1('.w-form.card.card-terciary.u-marginbottom-30', m$1('.w-row.u-marginbottom-10', [m$1('.fontweight-semibold.fontsize-smaller', 'Desativar minha conta'), m$1('.fontsize-smallest', 'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'), m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '\'][rel=\'nofollow\']', {
+            onclick: ctrl.deleteAccount
+        }, 'Desativar minha conta no Catarse')]))])))), m$1('div', m$1('.w-container' + (args.useFloatBtn ? '.w-section.save-draft-btn-section' : ''), m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', [m$1('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'), !ctrl.loading() && !ctrl.uploading() ? m$1('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
+            onclick: ctrl.onSubmit
         }) : h.loader()]), m$1('.w-col.w-col-4')])))])]);
     }
 };
@@ -6845,13 +7167,8 @@ var userPrivateContributed = {
 
 var userSettings = {
     controller: function controller(args) {
-        var deleteUser = void 0;
         var user = args.user,
             fields = {
-            email: m$1.prop(''),
-            email_confirmation: m$1.prop(''),
-            password: m$1.prop(''),
-            current_password: m$1.prop(''),
             owner_document: m$1.prop(user.owner_document),
             country_id: m$1.prop(user.address.country_id),
             street: m$1.prop(user.address.street),
@@ -6864,14 +7181,11 @@ var userSettings = {
             phonenumber: m$1.prop(user.address.phonenumber),
             name: m$1.prop(user.name)
         },
-            emailHasError = m$1.prop(false),
-            passwordHasError = m$1.prop(false),
             user_id = args.userId,
             error = m$1.prop(''),
             countries = m$1.prop(),
             states = m$1.prop(),
             loader = m$1.prop(true),
-            showEmailForm = h.toggleProp(false, true),
             showSuccess = m$1.prop(false),
             showError = m$1.prop(false),
             countriesLoader = postgrest$1.loader(models.country.getPageOptions()),
@@ -6889,7 +7203,6 @@ var userSettings = {
         },
             updateUserData = function updateUserData(user_id) {
             var userData = {
-                email: fields.email(),
                 country_id: fields.country_id(),
                 address_street: fields.street(),
                 address_number: fields.number(),
@@ -6900,8 +7213,6 @@ var userSettings = {
                 address_neighbourhood: fields.neighbourhood(),
                 phone_number: fields.phonenumber(),
                 owner_document: fields.owner_document(),
-                current_password: fields.current_password(),
-                password: fields.password(),
                 name: fields.name()
             };
 
@@ -6926,36 +7237,6 @@ var userSettings = {
                 m$1.redraw();
             });
         },
-            setDeleteForm = function setDeleteForm(el, isInit) {
-            if (!isInit) {
-                deleteUser = function deleteUser() {
-                    return el.submit();
-                };
-            }
-        },
-            deleteAccount = function deleteAccount() {
-            if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
-                deleteUser();
-            }
-
-            return false;
-        },
-            validateEmailConfirmation = function validateEmailConfirmation() {
-            if (fields.email() !== fields.email_confirmation()) {
-                emailHasError(true);
-            } else {
-                emailHasError(false);
-            }
-            return !emailHasError();
-        },
-            validatePassword = function validatePassword() {
-            var pass = String(fields.password());
-            if (pass.length > 0 && pass.length <= 5) {
-                passwordHasError(true);
-            }
-
-            return !passwordHasError();
-        },
             validateDocument = function validateDocument() {
             var document = fields.owner_document(),
                 striped = String(document).replace(/[\.|\-|\/]*/g, '');
@@ -6973,13 +7254,7 @@ var userSettings = {
 
         // TODO: this form validation should be abstracted/merged together with others
         onSubmit = function onSubmit() {
-            if (!validateEmailConfirmation()) {
-                error('Confirmação de email está incorreta.');
-                showError(true);
-            } else if (!validatePassword()) {
-                error('Nova senha está incorreta.');
-                showError(true);
-            } else if (!validateDocument()) {
+            if (!validateDocument()) {
                 error('CPF/CNPJ inválido');
                 showError(true);
             } else {
@@ -7009,22 +7284,15 @@ var userSettings = {
             applyDocumentMask: applyDocumentMask,
             applyZipcodeMask: applyZipcodeMask,
             applyPhoneMask: applyPhoneMask,
-            deleteAccount: deleteAccount,
-            setDeleteForm: setDeleteForm,
             countries: countries,
             states: states,
             fields: fields,
             loader: loader,
             showSuccess: showSuccess,
             showError: showError,
-            showEmailForm: showEmailForm,
             user: user,
             onSubmit: onSubmit,
-            error: error,
-            emailHasError: emailHasError,
-            passwordHasError: passwordHasError,
-            validatePassword: validatePassword,
-            validateEmailConfirmation: validateEmailConfirmation
+            error: error
         };
     },
     view: function view(ctrl, args) {
@@ -7038,26 +7306,7 @@ var userSettings = {
             error: true
         }) : '', m$1('form.w-form', {
             onsubmit: ctrl.onSubmit
-        }, [m$1('div', [m$1('.w-container', m$1('.w-col.w-col-10.w-col-push-1', m$1('.w-form.card.card-terciary.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Email'), m$1('.fontsize-small.u-marginbottom-30', 'Mantenha esse email atualizado pois ele é o canal de comunicação entre você, a equipe do Catarse e a equipe dos projetos que você apoiou. '), m$1('.fontsize-base.u-marginbottom-40', [m$1('span.fontweight-semibold.card.u-radius', user.email), m$1('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', {
-            onclick: function onclick() {
-                ctrl.showEmailForm.toggle();
-            }
-        }, 'Alterar email')]), m$1((ctrl.showEmailForm() ? '' : '.w-hidden') + '.u-marginbottom-20.w-row[id=\'email_update_form\']', [m$1('.w-col.w-col-6.w-sub-col', [m$1('label.field-label.fontweight-semibold', 'Novo email'), m$1('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
-            class: ctrl.emailHasError() ? 'error' : '',
-            value: fields.email(),
-            onfocus: function onfocus() {
-                return ctrl.emailHasError(false);
-            },
-            onchange: m$1.withAttr('value', fields.email)
-        })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', 'Confirmar novo email'), m$1('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
-            class: ctrl.emailHasError() ? 'error' : '',
-            value: fields.email_confirmation(),
-            onfocus: function onfocus() {
-                return ctrl.emailHasError(false);
-            },
-            onblur: ctrl.validateEmailConfirmation,
-            onchange: m$1.withAttr('value', fields.email_confirmation)
-        })]), ctrl.emailHasError() ? m$1(inlineError, { message: 'Confirmação de email está incorreta.' }) : '']), m$1('.fontsize-base.fontweight-semibold', 'Nome'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_name\'][name=\'user[name]\'][type=\'text\']', {
+        }, [m$1('div', [m$1('.w-container', m$1('.w-col.w-col-10.w-col-push-1', m$1('.w-form.card.card-terciary.u-marginbottom-20', [m$1('.fontsize-base.fontweight-semibold', 'Nome'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', m$1('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_name\'][name=\'user[name]\'][type=\'text\']', {
             value: fields.name(),
             onchange: m$1.withAttr('value', fields.name)
         })), m$1('.w-col.w-col-6')]), m$1('.fontsize-base.fontweight-semibold', 'CPF / CNPJ'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', m$1('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_cpf\'][name=\'user[cpf]\'][type=\'tel\']', {
@@ -7101,20 +7350,7 @@ var userSettings = {
             onkeyup: m$1.withAttr('value', function (value) {
                 return ctrl.applyPhoneMask(value);
             })
-        })])]))]), m$1('.divider.u-maginbottom-20'), m$1('.fontsize-base.fontweight-semibold', 'Alterar minha senha'), m$1('.fontsize-small.u-marginbottom-20', 'Para que a senha seja alterada você precisa confirmar a sua senha atual.'), m$1('.w-row.u-marginbottom-20', [m$1('.w-col.w-col-6.w-sub-col', [m$1('label.field-label.fontweight-semibold', ' Senha atual'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_current_password\'][name=\'user[current_password]\'][type=\'password\']', {
-            value: fields.current_password(),
-            onchange: m$1.withAttr('value', fields.current_password)
-        })]), m$1('.w-col.w-col-6', [m$1('label.field-label.fontweight-semibold', ' Nova senha'), m$1('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
-            class: ctrl.passwordHasError() ? 'error' : '',
-            value: fields.password(),
-            onfocus: function onfocus() {
-                return ctrl.passwordHasError(false);
-            },
-            onblur: ctrl.validatePassword,
-            onchange: m$1.withAttr('value', fields.password)
-        }), !ctrl.passwordHasError() ? '' : m$1(inlineError, { message: 'A sua nova senha deve ter no mínimo 6 caracteres.' })])]), m$1('.divider.u-marginbottom-20'), m$1('.fontweight-semibold.fontsize-smaller', 'Desativar minha conta'), m$1('.fontsize-smallest', 'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'), m$1('a.alt-link.fontsize-smaller[href=\'/pt/users/' + user.id + '\'][rel=\'nofollow\']', {
-            onclick: ctrl.deleteAccount
-        }, 'Desativar minha conta no Catarse')]))), m$1('div', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', m$1('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')), m$1('.w-col.w-col-4')])))])]), m$1('form.w-hidden', { action: '/pt/users/' + user.id, method: 'post', config: ctrl.setDeleteForm }, [m$1('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + h.authenticityToken() + '\']'), m$1('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')])]);
+        })])]))])]))), m$1('div', m$1('.w-container', m$1('.w-row', [m$1('.w-col.w-col-4.w-col-push-4', m$1('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')), m$1('.w-col.w-col-4')])))])]), m$1('form.w-hidden', { action: '/pt/users/' + user.id, method: 'post', config: ctrl.setDeleteForm }, [m$1('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + h.authenticityToken() + '\']'), m$1('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')])]);
     }
 };
 
@@ -7494,7 +7730,7 @@ var usersEdit = {
                 'z-index': '10',
                 'position': 'relative'
             }
-        }, m$1('.w-container', [m$1('a.dashboard-nav-link' + (ctrl.hash() === '#contributions' ? '.selected' : '') + '[data-target=\'#dashboard_contributions\'][href=\'#contributions\'][id=\'dashboard_contributions_link\']', 'Apoiados'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#projects' ? '.selected' : '') + '[data-target=\'#dashboard_projects\'][href=\'#projects\'][id=\'dashboard_projects_link\']', 'Criados'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#about_me' ? '.selected' : '') + '[data-target=\'#dashboard_about_me\'][href=\'#about_me\'][id=\'dashboard_about_me_link\']', 'Sobre você'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#settings' ? '.selected' : '') + '[data-target=\'#dashboard_settings\'][href=\'#settings\'][id=\'dashboard_settings_link\']', 'Dados e endereço'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#notifications' ? '.selected' : '') + '[data-target=\'#dashboard_notifications\'][href=\'#notifications\'][id=\'dashboard_notifications_link\']', 'Notificações'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#billing' ? '.selected' : '') + '[data-target=\'#dashboard_billing\'][href=\'#billing\'][id=\'dashboard_billing_link\']', 'Banco e cartões'), m$1('a.dashboard-nav-link.u-right-big-only[href=\'/pt/users/' + user.id + '\']', {
+        }, m$1('.w-container', [m$1('a.dashboard-nav-link' + (ctrl.hash() === '#contributions' ? '.selected' : '') + '[data-target=\'#dashboard_contributions\'][href=\'#contributions\'][id=\'dashboard_contributions_link\']', 'Apoiados'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#projects' ? '.selected' : '') + '[data-target=\'#dashboard_projects\'][href=\'#projects\'][id=\'dashboard_projects_link\']', 'Criados'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#about_me' ? '.selected' : '') + '[data-target=\'#dashboard_about_me\'][href=\'#about_me\'][id=\'dashboard_about_me_link\']', 'Perfil Público'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#settings' ? '.selected' : '') + '[data-target=\'#dashboard_settings\'][href=\'#settings\'][id=\'dashboard_settings_link\']', 'Dados e endereço'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#notifications' ? '.selected' : '') + '[data-target=\'#dashboard_notifications\'][href=\'#notifications\'][id=\'dashboard_notifications_link\']', 'Notificações'), m$1('a.dashboard-nav-link' + (ctrl.hash() === '#billing' ? '.selected' : '') + '[data-target=\'#dashboard_billing\'][href=\'#billing\'][id=\'dashboard_billing_link\']', 'Banco e cartões'), m$1('a.dashboard-nav-link.u-right-big-only[href=\'/pt/users/' + user.id + '\']', {
             config: m$1.route,
             onclick: function onclick() {
                 m$1.route("/users/" + user.id, {
@@ -10152,10 +10388,10 @@ var thankYou = {
             total: args.contribution.project.total_contributions,
             email: args.contribution.contribution_email,
             link2: '/pt/users/' + h.getUser().user_id + '/edit#contributions',
-            link_email: '/pt/users/' + h.getUser().user_id + '/edit#settings'
+            link_email: '/pt/users/' + h.getUser().user_id + '/edit#about_me'
         })))), m$1(".fontsize-base.fontweight-semibold.u-marginbottom-20", "Compartilhe com seus amigos e ajude esse projeto a bater a meta!")] : [m$1('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$27())), m$1('.fontsize-base.u-marginbottom-40', m$1.trust(I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$27({
             email: args.contribution.contribution_email,
-            link_email: '/pt/users/' + h.getUser().user_id + '/edit#settings'
+            link_email: '/pt/users/' + h.getUser().user_id + '/edit#about_me'
         }))))]), ctrl.isSlip ? '' : m$1(".w-row", [m$1(".w-hidden-small.w-hidden-tiny", [m$1('.w-sub-col.w-col.w-col-4', m$1.component(facebookButton, {
             url: 'https://www.catarse.me/' + args.contribution.project.permalink + '?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share',
             big: true
@@ -10221,9 +10457,9 @@ var CheckEmail = {
     },
     view: function view(ctrl, args) {
         var user = ctrl.user();
-        return user && !user.email_active && !ctrl.hideAlert() ? m$1('.card-alert.section.u-text-center', { style: args.menuTransparency ? { 'padding-top': '100px' } : {} }, [m$1('.w-container', ctrl.confirmedEmail() ? [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('confirmed_title', I18nScope$28())), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('confirmed_sub', I18nScope$28()))] : [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('hello', I18nScope$28({ name: user.name }))), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('hello_sub', I18nScope$28())), m$1('.fontsize-base.u-marginbottom-10', I18n$1.t('hello_email', I18nScope$28({ email: user.email }))), m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-3', [m$1('a.btn.btn-medium.btn-terciary.w-button[href="javacript:void(0);"]', {
+        return user && !user.email_active && !ctrl.hideAlert() ? m$1('.card-alert.section.u-text-center', { style: args.menuTransparency ? { 'padding-top': '100px' } : {} }, [m$1('.w-container', ctrl.confirmedEmail() ? [m$1('.fontsize-large.fontweight-semibold', I18n$1.t('confirmed_title', I18nScope$28())), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('confirmed_sub', I18nScope$28()))] : [m$1('.fontsize-large.fontweight-semibold', _$1.isNull(user.name) ? "Olá" : I18n$1.t('hello', I18nScope$28({ name: user.name }))), m$1('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('hello_sub', I18nScope$28())), m$1('.fontsize-base.u-marginbottom-10', I18n$1.t('hello_email', I18nScope$28({ email: user.email }))), m$1('.w-row', [m$1('.w-col.w-col-3'), m$1('.w-col.w-col-3', [m$1('a.btn.btn-medium.btn-terciary.w-button[href="javacript:void(0);"]', {
             onclick: ctrl.checkEmail
-        }, 'Sim!')]), m$1('.w-col.w-col-3', [m$1('a.btn.btn-medium.w-button[href="/users/' + user.id + '/edit#settings"]', 'Editar o email')]), m$1('.w-col.w-col-3')])])]) : m$1('div');
+        }, 'Sim!')]), m$1('.w-col.w-col-3', [m$1('a.btn.btn-medium.w-button[href="/users/' + user.id + '/edit#about_me"]', 'Editar o email')]), m$1('.w-col.w-col-3')])])]) : m$1('div');
     }
 };
 
@@ -10247,6 +10483,7 @@ var c = {
         AdminContributions: adminContributions,
         Flex: Flex,
         Insights: insights,
+        Posts: posts,
         Jobs: jobs,
         LiveStatistics: liveStatistics,
         ProjectsContributionReport: projectContributionReport,
@@ -10274,4 +10511,4 @@ var c = {
 return c;
 
 }(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
