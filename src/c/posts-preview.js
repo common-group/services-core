@@ -33,6 +33,7 @@ const postsPreview = {
                     togglePreview();
                     m.redraw();
                 }).catch((err) => {
+                    args.errors('Erro ao enviar mensagem.'),
                     args.showError(true);
                     m.redraw();
                 });

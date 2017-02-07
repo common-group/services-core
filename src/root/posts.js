@@ -16,7 +16,10 @@ const posts = {
         const showPreview = m.prop(false),
             showSuccess = m.prop(false),
             showError = m.prop(false),
+            titleHasError = m.prop(false),
+            commentHasError = m.prop(false),
             projectPosts = m.prop(),
+            errors = m.prop(''),
             fields = {
                 title: m.prop(''),
                 comment_html: m.prop(''),
@@ -26,11 +29,36 @@ const posts = {
                 project_id: 'eq'
             }),
             togglePreview = () => {
-                showPreview(true);
+                if (!validateTitle()) {
+                    errors('Título não pode ficar em branco.');
+                    showError(true);
+                } else if (!validateComment()) {
+                    errors('Mensagem não pode ficar em branco.');
+                    showError(true);
+                } else {
+                    showPreview(true);
+                }
+                return false;
             },
             project_id = args.root.getAttribute('data-id'),
             projectDetails = m.prop([]),
             loader = postgrest.loaderWithToken,
+            validateComment = () => {
+              const comment = String(fields.comment_html());
+              if (comment.length == 0) {
+                  commentHasError(true);
+              }
+
+              return !commentHasError();
+            },
+            validateTitle = () => {
+              const title = String(fields.title());
+              if (title.length == 0) {
+                  titleHasError(true);
+              }
+
+              return !titleHasError();
+            },
             setProjectId = () => {
                 try {
                     const project_id = m.route.param('project_id');
@@ -93,7 +121,10 @@ const posts = {
             project_id: project_id,
             deletePost: deletePost,
             rewardText: rewardText,
+            errors: errors,
             showSuccess: showSuccess,
+            titleHasError: titleHasError,
+            commentHasError: commentHasError,
             showError: showError,
             setPostDeletionForm: setPostDeletionForm,
             toDeletePost: toDeletePost,
@@ -103,13 +134,14 @@ const posts = {
     view(ctrl) {
         const project = _.first(ctrl.projectDetails());
 
-        return (m('.project-posts',
+        return (project ? m('.project-posts',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project)
             }) : ''),
             ctrl.showPreview() ? m.component(postsPreview, {
                 showError: ctrl.showError,
                 showSuccess: ctrl.showSuccess,
+                errors: ctrl.errors,
                 showPreview: ctrl.showPreview,
                 project_id: ctrl.project_id,
                 comment_html: ctrl.fields.comment_html,
@@ -122,7 +154,7 @@ const posts = {
                     message: 'Mensagem enviada com sucesso'
                 }) : ''),
                 (ctrl.showError() ? m.component(popNotification, {
-                    message: 'Erro ao enviar mensagem',
+                    message: ctrl.errors(),
                     error: true
                 }) : ''),
                 m('.dashboard-header.u-text-center',
@@ -180,6 +212,8 @@ const posts = {
                                     m('input.positive.text-field.w-input[id=\'post_title\'][maxlength=\'256\'][type=\'text\']', {
                                         name: 'posts[title]',
                                         value: ctrl.fields.title(),
+                                        onfocus: () => ctrl.titleHasError(false),
+                                        class: ctrl.titleHasError() ? 'error' : '',
                                         onchange: m.withAttr('value', ctrl.fields.title)
                                     }),
                                     m('label.field-label.fontweight-semibold',
@@ -274,7 +308,7 @@ const posts = {
                         m('.w-col.w-col-1')
                     ])
                 ))
-            ]));
+            ]) : h.loader());
     }
 };
 
