@@ -48,19 +48,33 @@ const postsPreview = {
             title = args.title(),
             recipientsText = args.reward_id > 1 ?
             m('.fontsize-small.u-marginbottom-30', [
-                'A novidade acima será enviada por email para os apoiadores da ',
+                'A novidade acima será enviada por email para os ',
                 m('span.fontweight-semibold',
                     args.rewardText
                 ),
-                ' e ficará visível na plataforma somente para estes apoiadores.'
+                ' e ficará ',
+                m('span.fontweight-semibold',
+                'visível na plataforma somente para esses apoiadores.'
+                )
             ]) :
             args.reward_id == '-1' ?
-            m('.fontsize-small.u-marginbottom-30',
-                'A novidade acima será enviada por email para todos os apoiadores e ficará visível publicamente na plataforma.'
-            ) :
-            m('.fontsize-small.u-marginbottom-30',
-                'A novidade acima será enviada por email para todos os apoiadores e ficará visível somente para estes na plataforma.'
-            );
+            m('.fontsize-small.u-marginbottom-30', [
+                'A novidade acima será  ',
+                m('span.fontweight-semibold',
+                    'enviada por email para todos'
+                ),
+                ' os apoiadores e ficará ',
+                m('span.fontweight-semibold',
+                    'visível publicamente '
+                ),
+                'na plataforma.'
+            ]) :
+            m('.fontsize-small.u-marginbottom-30', [
+                m('span', ' A novidade acima será  '),
+                m('span.fontweight-semibold', 'enviada por email para todos os apoiadores'),
+                m('span', ' e ficará '),
+                m('span.fontweight-semibold' , 'visível somente para esses na plataforma.')
+            ]);
 
         return m('div', [
 
@@ -88,7 +102,7 @@ const postsPreview = {
                             m('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center',
                                 title
                             ),
-                            m.trust(comment_html)
+                            m('.fontsize-base', m.trust(comment_html))
                         ]),
                         m('.w-col.w-col-1')
                     ])

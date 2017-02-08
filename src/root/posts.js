@@ -179,7 +179,7 @@ const posts = {
                                         ''
                                     ),
                                     ' Veja ótimo motivos para ',
-                                    m('a.alt-link[href=\'https://catarse.attach.io/BJmQVOiR\'][target=\'_blank\']',
+                                    m('a.alt-link[href=\'https://catarse.attach.io/B1AHAGm1x\'][target=\'_blank\']',
                                         'falar com seus apoiadores agora mesmo!'
                                     )
                                 ])
