@@ -58,7 +58,7 @@ const projectCard = {
         const cardMeter = () => {
             const failed = () => ((project.state === 'failed') || (project.state === 'waiting_funds')) ? 'card-secondary' : '';
 
-            return `.card-project-meter.${project.mode}.${project.state}.${progress}.${failed()}`;
+            return `.card-project-meter.${project.mode}.${project.state}.${progress > 100 ? 'complete' : 'incomplete'}.${failed()}`;
 
         };
 
