@@ -20,7 +20,7 @@ const userAboutEdit = {
                   facebook_link: m.prop(user.facebook_link),
                   twitter: m.prop(user.twitter_username),
                   links: m.prop(user.links||[]),
-                  about_html: m.prop(user.about_html),
+                  about_html: m.prop(user.about_html||''),
                   email_confirmation: m.prop('')
               },
               passwordHasError = m.prop(false),
