@@ -6784,7 +6784,7 @@ var userAboutEdit = {
             facebook_link: m$1.prop(user.facebook_link),
             twitter: m$1.prop(user.twitter_username),
             links: m$1.prop(user.links || []),
-            about_html: m$1.prop(user.about_html),
+            about_html: m$1.prop(user.about_html || ''),
             email_confirmation: m$1.prop('')
         },
             passwordHasError = m$1.prop(false),
