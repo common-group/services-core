@@ -26,7 +26,7 @@ const UserFollowCard = {
             [
               m(`img.thumb.u-marginbottom-10.u-round[src='${profile_img}']`),
               m('.fontsize-base.fontweight-semibold.lineheight-tight',
-                m('a.link-hidden', {href: `/users/${friend.friend_id}`}, friend.name)
+                m('a.link-hidden', {href: `/users/${friend.friend_id}`}, (friend.public_name || friend.name))
               ),
               m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
                 (_.isNull(friend.city) ? '' :

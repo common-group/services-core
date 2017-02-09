@@ -3,6 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 import ownerMessageContent from './owner-message-content';
 import modalBox from './modal-box';
+import UserFollowBtn from './user-follow-btn';
 
 const projectUserCard = {
     controller(args) {
@@ -25,9 +26,9 @@ const projectUserCard = {
                     m('.w-col.w-col-8', [
                         m('.fontsize-small.link-hidden.fontweight-semibold.u-marginbottom-10.lineheight-tight[itemprop="name"]', [
                             m('a.link-hidden[href="/users/' + userDetail.id + '"]',{config: m.route, onclick: () => {
-                              m.route("/users/" + userDetail.id, {user_id: userDetail.id} );
-                              h.analytics.event({cat: 'project_view',act: 'project_creator_link',lbl: userDetail.id,project: project()})
-                            }}, userDetail.name)
+                                m.route("/users/" + userDetail.id, {user_id: userDetail.id} );
+                                h.analytics.event({cat: 'project_view',act: 'project_creator_link',lbl: userDetail.id,project: project()});
+                            }}, (userDetail.public_name || userDetail.name))
                         ]),
                         m('.fontsize-smallest', [
                             h.pluralize(userDetail.total_published_projects, ' criado', ' criados'),
@@ -48,7 +49,13 @@ const projectUserCard = {
                                 ]) : '');
                             })
                         ]),
-                        (!_.isEmpty(userDetail) ? [m('a.w-button.btn.btn-terciary.btn-small.btn-inline[href=\'javascript:void(0);\']',{onclick: h.analytics.event({cat: 'project_view',act: 'project_creator_sendmsg',lbl: userDetail.id,project: project()}, ctrl.displayModal.toggle)}, 'Enviar mensagem')] : ''),
+                        (!_.isEmpty(userDetail) ? [
+                            m(UserFollowBtn, {
+                                enabledClass: 'a.w-button.btn.btn-terciary.btn-small..u-marginbottom-10',
+                                disabledClass: 'a.w-button.btn.btn-terciary.btn-small.u-marginbottom-10',
+                                follow_id: userDetail.id, following: userDetail.following_this_user}),
+                            m('a.w-button.btn.btn-terciary.btn-small[href=\'javascript:void(0);\']',{onclick: h.analytics.event({cat: 'project_view',act: 'project_creator_sendmsg',lbl: userDetail.id,project: project()}, ctrl.displayModal.toggle)}, 'Contato')
+                        ] : ''),
                         args.project().is_admin_role ?
                         m('p', userDetail.email) : ''
                     ]),

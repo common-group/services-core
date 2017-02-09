@@ -5,6 +5,7 @@ import models from '../models';
 import h from '../h';
 import projectDataTable from './project-data-table';
 import projectDataChart from './project-data-chart';
+import UserFollowBtn from './user-follow-btn';
 
 const projectContributions = {
     controller(args) {
@@ -156,19 +157,19 @@ const projectContributions = {
                                     lbl: contribution.user_id,
                                     project: args.project()
                                 })
-                            }, contribution.data.name),
+                            }, (contribution.data.public_name || contribution.data.name)),
                             m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${contribution.data.city},${contribution.data.state}`),
                             m('.fontsize-smaller', [
                                 m('span.fontweight-semibold', contribution.data.total_contributed_projects),' apoiados  |  ',
                                 m('span.fontweight-semibold', contribution.data.total_published_projects),' criado'
                             ]),
-                            //m('.btn-bottom-card.w-row', [
-                            //    m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
-                            //    m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
-                            //        m("a.btn.btn-medium.w-button[href='#']", "Seguindo")
-                            //    ]),
-                            //    m(".w-col.w-col-3.w-col-small-4.w-col-tiny-3")
-                            //])
+                            m('.btn-bottom-card.w-row', [
+                                m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
+                                m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
+                                    m(UserFollowBtn, {follow_id: contribution.user_id, following: contribution.is_follow})
+                                ]),
+                                m(".w-col.w-col-3.w-col-small-4.w-col-tiny-3")
+                            ])
                         ])
                         // new card
                     ]);
