@@ -54,7 +54,9 @@ const userAboutEdit = {
                         formData = new FormData();
 
                   formData.append('uploaded_image', userUploadedImageEl.files[0]);
-                  formData.append('cover_image', userCoverImageEl.files[0]);
+                  if(!args.hideCoverImg) {
+                      formData.append('cover_image', userCoverImageEl.files[0]);
+                  }
 
                   uploading(true);
                   m.redraw();
@@ -344,7 +346,7 @@ const userAboutEdit = {
                                                     )
                                                 ]
                                             ),
-                                            m('.w-row.u-marginbottom-30.card.card-terciary',
+                                            (args.hideCoverImg ? '' : m('.w-row.u-marginbottom-30.card.card-terciary',
                                                 [
                                                     m('.w-col.w-col-5.w-sub-col',
                                                         [
@@ -368,7 +370,7 @@ const userAboutEdit = {
                                                         )
                                                     )
                                                 ]
-                                            )
+                                                                       ))
                                         ]
                                     ),
                                     m('.w-row',
@@ -491,7 +493,7 @@ const userAboutEdit = {
                                             ]
                                         )
                                      ),
-                                    m('.w-form.card.card-terciary.u-marginbottom-30',
+                                    ( args.hidePasswordChange ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                       m('.w-row.u-marginbottom-10', [
                                           m('.fontsize-base.fontweight-semibold',
                                             'Alterar minha senha'
@@ -525,8 +527,8 @@ const userAboutEdit = {
                                           ]),
 
                                       ])
-                                     ),
-                                    m('.w-form.card.card-terciary.u-marginbottom-30',
+                                                                      )),
+                                    ( args.hideDisableAcc ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                       m('.w-row.u-marginbottom-10', [
                                           m('.fontweight-semibold.fontsize-smaller',
                                             'Desativar minha conta'
@@ -541,7 +543,7 @@ const userAboutEdit = {
                                            )
 
                                       ])
-                                     )
+                                         ))
 
                                 ]
                              )

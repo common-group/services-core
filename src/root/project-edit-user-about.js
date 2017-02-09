@@ -13,7 +13,11 @@ const projectEditUserAbout = {
         return m(userAboutEdit, {
             user: ctrl.user(),
             userId: args.user_id,
-            useFloatBtn: true});
+            useFloatBtn: true,
+            hideDisableAcc: true,
+            hideCoverImg: true,
+            hidePasswordChange: true
+        });
     }
 };
 
