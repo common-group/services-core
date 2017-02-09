@@ -100,7 +100,7 @@ const posts = {
             };
 
         filterVM.project_id(project_id);
-        const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(filterVM.parameters())),
+        const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), {order: 'created_at.desc'} ))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         listVM.load().then(projectPosts);
@@ -255,11 +255,11 @@ const posts = {
                                     ),
                                     m('.table-col.w-col.w-col-1')
                                 ]),
-                                m('.fontsize-small.table-inner', [
+                                (!_.isEmpty(ctrl.projectPosts()) ? m('.fontsize-small.table-inner', [
                                     (_.map(ctrl.projectPosts(), (post) => {
                                         return m('.table-row.w-row', [
                                             m('.table-col.w-col.w-col-5', [
-                                                m('a.alt-link.fontsize-base[href=\'#\']',
+                                                m(`a.alt-link.fontsize-base[href=\'/projects/${project.project_id}/posts/${post.id}#posts#\'][target=\'_blank\']`,
                                                     post.title
                                                 ),
                                                 m('.fontcolor-secondary.fontsize-smallest', [
@@ -302,7 +302,7 @@ const posts = {
                                         m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                                     ])
 
-                                ])
+                                ] ): h.loader())
                             ])
                         ]),
                         m('.w-col.w-col-1')
