@@ -53,9 +53,11 @@ const UserFollowBtn = {
         };
     },
     view(ctrl, args) {
+        let disableClass = args.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
+            enabledClass = args.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';
         if (ctrl.loading()) { return h.loader(); }
         if (ctrl.following()) {
-            return m('a.w-button.btn.btn-medium.u-margintop-20',
+            return m(`a${enabledClass}`,
                      {
                          onclick: ctrl.unfollow,
                          onmouseover: () => ctrl.hover(true),
@@ -63,7 +65,7 @@ const UserFollowBtn = {
                      },
                      (ctrl.hover() ? 'Deixar de seguir' : 'Seguindo'));
         } else {
-            return m('a.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
+            return m(`a${disableClass}`,
                      {onclick: ctrl.follow},
                      'Seguir');
         }
