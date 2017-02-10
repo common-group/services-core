@@ -322,6 +322,10 @@ const
         return user == null || user.user_id == null ? null : user.user_id;
     },
 
+    userSignedIn = (): ?boolean => {
+        return !_.isNull(getUserID());
+    },
+
     getBlogPosts = (): ?Object => {
         if (_dataCache.blogPosts)
             return _dataCache.blogPosts;
@@ -980,5 +984,6 @@ export default {
     setPageTitle,
     rootUrl,
     redactor,
-    setCsrfToken
+    setCsrfToken,
+    userSignedIn
 };
