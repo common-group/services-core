@@ -98,7 +98,7 @@ const posts = {
                     deleteFormSubmit = () => el.submit();
                 }
             };
-
+        models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
         const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), {order: 'created_at.desc'} ))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
