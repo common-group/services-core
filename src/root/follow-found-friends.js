@@ -14,7 +14,7 @@ const FollowFoundFriends = {
                   const c_opts = {
                       user: user
                   },
-                  tabs = {
+                        tabs = {
                             '#creators': m.component(userCreators, c_opts),
                             '#friends': m.component(userFriends, c_opts),
                             '#follows': m.component(userFollows, c_opts),
@@ -38,7 +38,7 @@ const FollowFoundFriends = {
         };
     },
     view(ctrl, args) {
-        return [
+        return m('div', [
             m('.w-section.dashboard-header', [
                 m('.w-container', [
                     m('.w-row.u-margintop-20.u-marginbottom-20', [
@@ -51,40 +51,39 @@ const FollowFoundFriends = {
                     ])
                 ])
             ]),
-            [m('.divider.u-margintop-30'),
-              m('.project-nav',
-                m('.u-text-center.w-container',
-                  [
+            m('.divider.u-margintop-30'),
+            m('.project-nav',
+              m('.u-text-center.w-container',
+                [
                     m('a[id="creators-link"][class="dashboard-nav-link ' + (h.hashMatch('#creators') ? 'selected' : '') + '"] [href="#creators"]',
                       'Encontre realizadores'
                      ),
                     m('a[id="friends-link"][class="dashboard-nav-link ' + (h.hashMatch('#friends') || h.hashMatch('') ? 'selected' : '') + '"] [href="#friends"]',
                       'Encontre amigos'
-                    ),
+                     ),
                     m('a[id="follows-link"][class="dashboard-nav-link ' + (h.hashMatch('#follows') ? 'selected' : '') + '"] [href="#follows"]',
                       [
-                        'Seguindo',
-                        m.trust('&nbsp;'),
-                        m('span.w-hidden-small.w-hidden-tiny.badge',
-                          ctrl.user.follows_count
-                        )
+                          'Seguindo',
+                          m.trust('&nbsp;'),
+                          m('span.w-hidden-small.w-hidden-tiny.badge',
+                            ctrl.user.follows_count
+                           )
                       ]
-                    ),
+                     ),
                     m('a[id="followers-link"][class="dashboard-nav-link ' + (h.hashMatch('#followers') ? 'selected' : '') + '"] [href="#followers"]',
                       [
-                        'Seguidores',
-                        m.trust('&nbsp;'),
-                        m('span.w-hidden-small.w-hidden-tiny.badge',
-                          ctrl.user.followers_count
-                        )
+                          'Seguidores',
+                          m.trust('&nbsp;'),
+                          m('span.w-hidden-small.w-hidden-tiny.badge',
+                            ctrl.user.followers_count
+                           )
                       ]
-                    )
-                  ]
-                )
-              )
-            ],
+                     )
+                ]
+               )
+             ),
             ctrl.displayTabContent()
-        ];
+        ]);
     }
 };
 
