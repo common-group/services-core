@@ -80,6 +80,13 @@ const menuProfile = {
                                         m(`ul.w-list-unstyled.u-marginbottom-20`,
                                             [
                                                 m(`li.lineheight-looser`,
+                                                  m(`a.alt-link.fontsize-smaller[href='/connect-facebook/']`,
+                                                    `Encontre amigos`
+                                                   ),
+                                                  m.trust('&nbsp;'),
+                                                  m('span.badge.badge-success', 'Novidade')
+                                                 ),
+                                                m(`li.lineheight-looser`,
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#about_me']`,
                                                         `Perfil público`
                                                     )
