@@ -18,7 +18,7 @@ const projectTabs = {
                 }
 
                 if (viewportOffset.top < 0 || (window.scrollY > originalPosition() && originalPosition() > 0)) {
-                    if (!isFixed()){
+                    if (!isFixed()) {
                         originalPosition(window.scrollY);
                         isFixed(true);
                         m.redraw();
@@ -66,7 +66,7 @@ const projectTabs = {
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_about_view',project: project()})
                             }, 'Sobre'),
-                            m(`a[id="posts-link"][class="dashboard-nav-link mf ${(h.hashMatch('#posts') ? 'selected' : '')}"][href="#posts"]`, {
+                            m(`a[id="posts-link"][class="dashboard-nav-link mf ${(h.hashMatch('#posts') ? 'selected' : '')}"][href="/${project().permalink}#posts"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
                                     cat: 'project_view',act: 'project_posts_view',project: project()})
