@@ -36,6 +36,7 @@ const posts = {
                     errors('Mensagem não pode ficar em branco.');
                     showError(true);
                 } else {
+                    h.scrollTop();
                     showPreview(true);
                 }
                 return false;
