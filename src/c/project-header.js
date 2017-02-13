@@ -33,7 +33,7 @@ const projectHeader = {
                     m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
                     m('h2.fontsize-base.lineheight-looser[itemprop="author"]', [
                         'por ',
-                        project().user ? project().user.name : project().owner_name ? project().owner_name : ''
+                        (project().user ? project().user.public_name : (project().owner_public_name ? project().owner_name : ''))
                     ]),
                     !_.isEmpty(ctrl.projectContributions()) ? m('.card.card-terciary.u-radius.u-margintop-20',
                         [
