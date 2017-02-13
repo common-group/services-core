@@ -77,7 +77,11 @@ const projectDashboardMenu = {
                                 m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
                             ]),
                             m('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + `"][href="${projectRoute}/posts"]`, [
-                                m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n.t('posts_tab', I18nScope()), m('span.badge', project.posts_count)
+                                m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
+                                I18n.t('posts_tab', I18nScope()),
+                                project.posts_count > 0
+                                ? m('span.badge', project.posts_count)
+                                : m('span.badge.badge-attention', 'Nenhuma')
                             ])
                         ] : '')
                     ]),
