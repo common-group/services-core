@@ -32,7 +32,7 @@ const projectMain = {
                             },c_opts))
                         };
 
-                  if (_.isNumber(args.post_id)) {
+                  if (_.isNumber(args.post_id) && !window.location.hash) {
                       window.location.hash = 'posts';
                   }
 

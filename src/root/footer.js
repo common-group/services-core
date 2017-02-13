@@ -30,7 +30,7 @@ const footer = {
                                                 ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/flex?ref=ctrse_footer\']',
                                                     ' Catarse flex'
-                                                ),                                                
+                                                ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']',
                                                     [
                                                         ' Nosso time ',
@@ -68,7 +68,7 @@ const footer = {
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
                                                     ' Nossa Taxa'
-                                                ),                                                
+                                                ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
                                                 ),
@@ -138,24 +138,9 @@ const footer = {
                                         )
                                     ),
                                     m('.footer-full-signature-text.fontsize-small',
-                                        'Redes sociais'
+                                        'Change language'
                                     ),
-                                    m('.w-widget.w-widget-facebook.u-marginbottom-20',
-                                        m('.facebook',
-                                            m('.fb-like[data-colorscheme=\'dark\'][data-href=\'http://facebook.com/catarse.me\'][data-layout=\'button_count\'][data-send=\'false\'][data-show-faces=\'false\'][data-title=\'\'][data-width=\'260\']')
-                                        )
-                                    ),
-                                    m('.w-widget.w-widget-twitter', [
-                                        m(`a.twitter-follow-button[href="httṕ://twitter.com/catarse"][data-button="blue"][data-text-color="#FFFFFF][data-link-color="#FFFFFF"][data-width="224px"]`)
-                                    ]),
-                                    m('.u-margintop-30',
-                                        [
-                                            m('.footer-full-signature-text.fontsize-small',
-                                                'Change language'
-                                            ),
-                                            m('[id=\'google_translate_element\']')
-                                        ]
-                                    )
+                                    m('[id=\'google_translate_element\']')
                                 ]
                             )
                         ]
