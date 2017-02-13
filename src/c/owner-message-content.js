@@ -19,7 +19,7 @@ const ownerMessageContent = {
                 name: '',
                 email: ''
             },
-            from_name = m.prop(user.name),
+            from_name = m.prop(user.public_name),
             from_email = m.prop(user.email),
             content = m.prop('');
 
