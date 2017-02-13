@@ -14,7 +14,7 @@ const menuProfile = {
             user_id = args.user.user_id;
 
         const userName = () => {
-            const name = userDetails().name;
+            const name = userDetails().public_name || userDetails().name;
             if (name && !_.isEmpty(name)) {
                 return _.first(name.split(' '));
             }
@@ -144,7 +144,7 @@ const menuProfile = {
                                         m('.fontsize-mini', 'Seu e-mail de cadastro é: '),
                                         m('.fontsize-smallest.u-marginbottom-20', [
                                             m('span.fontweight-semibold',`${user.email} `),
-                                            m(`a.alt-link[href='/pt/users/${user.id}/edit#settings']`, 'alterar e-mail')
+                                            m(`a.alt-link[href='/pt/users/${user.id}/edit#about_me']`, 'alterar e-mail')
                                         ]),
                                         m('.divider.u-marginbottom-20'),
                                         m(`a.alt-link[href='/pt/logout']`,
