@@ -550,6 +550,7 @@ const
                 scrolled = scrolled + dFrame;
             }, 1);
     },
+    scrollTop = () => window.scrollTo(0, 0),
     scrollTo = (): mConfig => {
         const setTrigger = (el: HTMLElement, anchorId: string): void => {
             el.onclick = (): boolean => {
@@ -962,6 +963,7 @@ export default {
     selfOrEmpty,
     animateScrollTo,
     scrollTo,
+    scrollTop,
     projectStateTextClass,
     validationErrors,
     validate,

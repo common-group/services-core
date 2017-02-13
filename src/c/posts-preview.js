@@ -6,6 +6,7 @@ import userVM from '../vms/user-vm';
 const postsPreview = {
     controller(args) {
         const togglePreview = () => {
+                h.scrollTop();
                 args.showPreview(false);
             },
             sendNotification = (e) => {

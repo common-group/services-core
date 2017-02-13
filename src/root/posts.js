@@ -36,6 +36,7 @@ const posts = {
                     errors('Mensagem não pode ficar em branco.');
                     showError(true);
                 } else {
+                    h.scrollTop();
                     showPreview(true);
                 }
                 return false;
@@ -219,7 +220,10 @@ const posts = {
                                     m('label.field-label.fontweight-semibold',
                                         'Texto'
                                     ),
-                                    m('.preview-container.u-marginbottom-40', h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
+                                    m('.preview-container.u-marginbottom-40',{
+                                        class: ctrl.commentHasError() ? 'error' : '',
+                                        onclick: () => ctrl.commentHasError(false),
+                                    }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
                                     m('.u-marginbottom-20.w-row', [
                                         m('.w-col.w-col-3'),
                                         m('._w-sub-col.w-col.w-col-6',
