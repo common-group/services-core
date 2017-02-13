@@ -8,21 +8,25 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 
 const userContributedBox = {
     controller(args) {
-        const setCsrfToken = (xhr) => {
-            if (h.authenticityToken()) {
-                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
-            }
-            return;
-        };
-        const toggleAnonymous = (projectId, contributionId) => {
+        const confirmDelivery = (projectId, contribution) => {
             m.request({
-                method: 'GET',
-                config: setCsrfToken,
-                url: `/projects/${projectId}/contributions/${contributionId}/toggle_anonymous`
-            });
-        };
+                    method: 'GET',
+                    config: h.setCsrfToken,
+                    url: `/projects/${projectId}/contributions/${contribution.contribution_id}/confirm_delivery`
+                }).then(
+                    contribution.delivery_status = 'received' //so we don't have to reload the page
+                );
+        },
+            toggleAnonymous = (projectId, contributionId) => {
+                m.request({
+                    method: 'GET',
+                    config: h.setCsrfToken,
+                    url: `/projects/${projectId}/contributions/${contributionId}/toggle_anonymous`
+                });
+            };
         return {
-            toggleAnonymous: toggleAnonymous
+            toggleAnonymous: toggleAnonymous,
+            confirmDelivery: confirmDelivery
         };
     },
     view(ctrl, args) {
@@ -125,7 +129,7 @@ const userContributedBox = {
                             )
                         ])
                     ]),
-                    m('.w-col.w-col-4',
+                    m('.w-col.w-col-3',
                         m('.fontsize-smallest', [
                             m('span.w-hidden-main.w-hidden-medium.fontweight-semibold',
                                 'Recompensa'
@@ -140,9 +144,21 @@ const userContributedBox = {
                             ),
                             h.momentify(contribution.deliver_at, 'MMMM/YYYY')
                         ])
-                    )
-                ]);
+                    ),
+                    m('.u-text-center.w-col.w-col-1', {
+                        onclick: () => ctrl.confirmDelivery(contribution.project_id, contribution)
+                    }, [
+                        m('.fontsize-smallest',
+                            m(`a.checkbox-big${contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,
+                                ''
+                            )
+                        ),
+                        m('.fontcolor-secondary.fontsize-smallest.lineheight-looser',
+                            'Recebi!'
+                        )
+                    ])
 
+                ]);
             }),
             m('.w-row.u-marginbottom-40.u-margintop-30', [
                 m(loadMoreBtn, {

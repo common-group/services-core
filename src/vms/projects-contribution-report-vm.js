@@ -3,14 +3,15 @@ import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
 
 const vm = postgrest.filtersVM({
-    full_text_index: '@@',
-    state: 'in',
-    reward_id: 'eq',
-    project_id: 'eq'
-}),
-      paramToString = (p) => {
-          return (p || '').toString().trim();
-      };
+        full_text_index: '@@',
+        state: 'in',
+        reward_id: 'eq',
+        delivery_status: 'eq',
+        project_id: 'eq'
+    }),
+    paramToString = (p) => {
+        return (p || '').toString().trim();
+    };
 
 vm.state('');
 vm.order({
@@ -27,6 +28,7 @@ vm.withNullParameters = () => {
         full_text_index: '@@',
         state: 'in',
         reward_id: 'is',
+        delivery_status: 'eq',
         project_id: 'eq'
     });
 
@@ -34,6 +36,7 @@ vm.withNullParameters = () => {
     withNullVm.order(vm.order());
     withNullVm.state(vm.state());
     withNullVm.reward_id(vm.reward_id());
+    withNullVm.delivery_status(vm.delivery_status());
     withNullVm.project_id(vm.project_id());
 
     return withNullVm.parameters();
