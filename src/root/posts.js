@@ -263,7 +263,7 @@ const posts = {
                                     (_.map(ctrl.projectPosts(), (post) => {
                                         return m('.table-row.w-row', [
                                             m('.table-col.w-col.w-col-5', [
-                                                m(`a.alt-link.fontsize-base[href=\'/projects/${project.project_id}/posts/${post.id}#posts#\'][target=\'_blank\']`,
+                                                m(`a.alt-link.fontsize-base[href=\'/projects/${project.project_id}/posts/${post.id}#posts\'][target=\'_blank\']`,
                                                     post.title
                                                 ),
                                                 m('.fontcolor-secondary.fontsize-smallest', [
