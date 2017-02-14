@@ -5,9 +5,7 @@ import h from '../h';
 const projectContributionReportContentCard = {
     controller(args) {
         const project = args.project(),
-            checked = (contribution) => {
-                return _.contains(args.selectedContributions(), contribution.id);
-            },
+            checked = (contribution) =>  _.contains(args.selectedContributions(), contribution.id),
             selectContribution = (contribution) => {
                 const anyChecked = $('input:checkbox').is(':checked');
 
@@ -75,9 +73,7 @@ const projectContributionReportContentCard = {
                             m(`input.w-checkbox-input[type='checkbox']`, {
                                 checked: ctrl.checked(contribution),
                                 value: contribution.id,
-                                onclick: () => {
-                                    ctrl.selectContribution(contribution);
-                                }
+                                onclick: () => ctrl.selectContribution(contribution)
                             })
                         )
                     )
@@ -126,21 +122,6 @@ const projectContributionReportContentCard = {
                                     m('.fontsize-smallest.fontweight-semibold', `Recompensa: R$ ${h.formatNumber(reward.minimum_value, 2, 3)}`),
                                     m('.fontsize-smallest', reward.description.substring(0, 80) + '...')
                                 ])
-                                /*,
-                                                        m(".w-col.w-col-2.w-hidden-small.w-hidden-tiny.u-text-center", [
-                                                            m(".fontsize-smallest.fontcolor-secondary", "Enviei!"),
-                                                            m(".fontsize-smallest.u-marginbottom-20.lineheight-loose", [
-                                                                m("a.checkbox-big[href='#']", ".")
-                                                            ])
-                                                        ]),
-                                                        m(".w-col.w-col-2", [
-                                                            m(".fontsize-smallest", [
-                                                                m("a.link-hidden[href='#']", "Questionário")
-                                                                ," "
-                                                                ,m("span.fontweight-semibold.text-waiting", "enviado")
-                                                            ]),
-                                                            m(".fontsize-smallest.fontcolor-terciary", "em 29/10/2015")
-                                                        ])*/
                             ])
                         ])
                     ])

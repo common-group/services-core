@@ -4,6 +4,7 @@ import _ from 'underscore';
 import h from '../h';
 import popNotification from './pop-notification';
 import projectContributionReportContentCard from './project-contribution-report-content-card';
+import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 
 const projectContributionReportContent = {
     controller(args) {
@@ -12,28 +13,21 @@ const projectContributionReportContent = {
             showSuccess = m.prop(false),
             selectedContributions = m.prop([]),
             selectAll = () => {
-                models.projectContribution.pageSize(false);
-                const allContributions = postgrest.loaderWithToken(
-                  models.projectContribution.getPageOptions(args.filterVM.parameters())).load().then(data => {
+                projectsContributionReportVM.getAllContributions(args.filterVM).then(data => {
                     selectedContributions().push(..._.pluck(data, 'id'));
                     selectedAny(true);
                   });
-                models.projectContribution.pageSize(9);
             },
             unselectAll = () => {
                 selectedContributions([]);
                 selectedAny(false);
             },
             updateStatus = (status) => {
-                return m.request({
-                    method: 'PUT',
-                    url: `/projects/${args.project().project_id}/contributions/update_status.json`,
-                    data: {
+                const data = {
                         contributions: selectedContributions(),
                         delivery_status: status
-                    },
-                    config: h.setCsrfToken
-                }).then(() => {
+                    };
+                projectsContributionReportVM.updateStatus(data).then(() => {
                     showSuccess(true);
                     showSelectedMenu.toggle();
                     m.redraw();
@@ -98,16 +92,12 @@ const projectContributionReportContent = {
                                     (ctrl.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                             m('a.dropdown-link.fontsize-smaller', {
-                                                    onclick: () => {
-                                                        ctrl.updateStatus('delivered');
-                                                    }
+                                                    onclick: () => ctrl.updateStatus('delivered')
                                                 },
                                                 'Enviada'
                                             ),
                                             m('a.dropdown-link.fontsize-smaller', {
-                                                    onclick: () => {
-                                                        ctrl.updateStatus('error');
-                                                    }
+                                                    onclick: () => ctrl.updateStatus('error')
                                                 },
                                                 'Erro no envio'
                                             )

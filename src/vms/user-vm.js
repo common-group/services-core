@@ -78,6 +78,22 @@ const getUserCreditCards = (user_id) => {
     return lUserCards.load();
 };
 
+const confirmDelivery = (projectId, contribution) => {
+    return m.request({
+        method: 'GET',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/confirm_delivery`
+    });
+};
+
+const toggleAnonymous = (projectId, contribution) => {
+    return m.request({
+        method: 'GET',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_anonymous`
+    });
+};
+
 const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = postgrest.filtersVM({
         user_id: 'eq',
@@ -185,6 +201,8 @@ const getUserRecommendedProjects = (contribution) => {
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
     getUserCreditCards: getUserCreditCards,
+    confirmDelivery: confirmDelivery,
+    toggleAnonymous: toggleAnonymous,
     getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,
     getUserContributedProjects: getUserContributedProjects,

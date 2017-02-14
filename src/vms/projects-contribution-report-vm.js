@@ -1,6 +1,7 @@
 import m from 'mithril';
 import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
+import models from '../models';
 
 const vm = postgrest.filtersVM({
         full_text_index: '@@',
@@ -21,6 +22,23 @@ vm.order({
 vm.full_text_index.toFilter = () => {
     const filter = paramToString(vm.full_text_index());
     return filter && replaceDiacritics(filter) || undefined;
+};
+
+vm.getAllContributions = (filterVM) => {
+    models.projectContribution.pageSize(false);
+    const allContributions = postgrest.loaderWithToken(
+      models.projectContribution.getPageOptions(filterVM.parameters())).load();
+    models.projectContribution.pageSize(9);
+    return allContributions;
+};
+
+vm.updateStatus = (data) => {
+    return m.request({
+        method: 'PUT',
+        url: `/projects/${vm.project_id()}/contributions/update_status.json`,
+        data: data,
+        config: h.setCsrfToken
+    });
 };
 
 vm.withNullParameters = () => {

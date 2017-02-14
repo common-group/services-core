@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
+import userVM from '../vms/user-vm';
 import loadMoreBtn from './load-more-btn';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
@@ -9,23 +10,12 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const userContributedBox = {
     controller(args) {
         const confirmDelivery = (projectId, contribution) => {
-            m.request({
-                    method: 'GET',
-                    config: h.setCsrfToken,
-                    url: `/projects/${projectId}/contributions/${contribution.contribution_id}/confirm_delivery`
-                }).then(
+                userVM.confirmDelivery(projectId, contribution).then(
                     contribution.delivery_status = 'received' //so we don't have to reload the page
                 );
-        },
-            toggleAnonymous = (projectId, contributionId) => {
-                m.request({
-                    method: 'GET',
-                    config: h.setCsrfToken,
-                    url: `/projects/${projectId}/contributions/${contributionId}/toggle_anonymous`
-                });
             };
         return {
-            toggleAnonymous: toggleAnonymous,
+            toggleAnonymous: userVM.toggleAnonymous,
             confirmDelivery: confirmDelivery
         };
     },
@@ -122,7 +112,7 @@ const userContributedBox = {
 
                         m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                             m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
-                                onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution.contribution_id)
+                                onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution)
                             }),
                             m('label.w-form-label',
                                 'Quero que meu apoio não seja público'
