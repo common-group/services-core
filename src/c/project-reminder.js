@@ -62,7 +62,7 @@ const projectReminder = {
     },
     view(ctrl, args) {
         const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
-              buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-small',
+              buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-large',
               hideTextOnMobile = args.hideTextOnMobile || false,
               project = args.project,
               onclickFunc = h.analytics.event({cat: 'project_view',act: 'project_floatingreminder_click', project: project()}, ctrl.submitReminder);
