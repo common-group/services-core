@@ -2,27 +2,21 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
+import userVM from '../vms/user-vm';
 import loadMoreBtn from './load-more-btn';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 
 const userContributedBox = {
     controller(args) {
-        const setCsrfToken = (xhr) => {
-            if (h.authenticityToken()) {
-                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
-            }
-            return;
-        };
-        const toggleAnonymous = (projectId, contributionId) => {
-            m.request({
-                method: 'GET',
-                config: setCsrfToken,
-                url: `/projects/${projectId}/contributions/${contributionId}/toggle_anonymous`
-            });
-        };
+        const confirmDelivery = (projectId, contribution) => {
+                userVM.confirmDelivery(projectId, contribution).then(
+                    contribution.delivery_status = 'received' //so we don't have to reload the page
+                );
+            };
         return {
-            toggleAnonymous: toggleAnonymous
+            toggleAnonymous: userVM.toggleAnonymous,
+            confirmDelivery: confirmDelivery
         };
     },
     view(ctrl, args) {
@@ -118,14 +112,14 @@ const userContributedBox = {
 
                         m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                             m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
-                                onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution.contribution_id)
+                                onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution)
                             }),
                             m('label.w-form-label',
                                 'Quero que meu apoio não seja público'
                             )
                         ])
                     ]),
-                    m('.w-col.w-col-4',
+                    m('.w-col.w-col-3',
                         m('.fontsize-smallest', [
                             m('span.w-hidden-main.w-hidden-medium.fontweight-semibold',
                                 'Recompensa'
@@ -140,9 +134,21 @@ const userContributedBox = {
                             ),
                             h.momentify(contribution.deliver_at, 'MMMM/YYYY')
                         ])
-                    )
-                ]);
+                    ),
+                    m('.u-text-center.w-col.w-col-1', {
+                        onclick: () => ctrl.confirmDelivery(contribution.project_id, contribution)
+                    }, [
+                        m('.fontsize-smallest',
+                            m(`a.checkbox-big${contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,
+                                ''
+                            )
+                        ),
+                        m('.fontcolor-secondary.fontsize-smallest.lineheight-looser',
+                            'Recebi!'
+                        )
+                    ])
 
+                ]);
             }),
             m('.w-row.u-marginbottom-40.u-margintop-30', [
                 m(loadMoreBtn, {
