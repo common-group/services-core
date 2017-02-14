@@ -5,13 +5,14 @@ import h from '../h';
 const projectContributionReportContentCard = {
     controller(args) {
         const project = args.project(),
-            checked = h.toggleProp(false, true),
+            checked = (contribution) => {
+                return _.contains(args.selectedContributions(), contribution.id);
+            },
             selectContribution = (contribution) => {
-                checked.toggle();
                 const anyChecked = $('input:checkbox').is(':checked');
 
                 args.selectedAny(anyChecked);
-                if (checked()) {
+                if (!checked(contribution)) {
                     args.selectedContributions().push(contribution.id);
                 } else {
                     args.selectedContributions(_.without(args.selectedContributions(), contribution.id));
@@ -66,12 +67,13 @@ const projectContributionReportContentCard = {
                 minimum_value: 0,
                 description: 'Nenhuma recompensa selecionada'
             };
-        return m(`.w-clearfix.card${ctrl.checked() ? '.card-alert' : ''}`, [
+        return m(`.w-clearfix.card${ctrl.checked(contribution) ? '.card-alert' : ''}`, [
             m('.w-row', [
                 m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                     m('.w-inline-block',
                         m('.w-checkbox.w-clearfix',
                             m(`input.w-checkbox-input[type='checkbox']`, {
+                                checked: ctrl.checked(contribution),
                                 value: contribution.id,
                                 onclick: () => {
                                     ctrl.selectContribution(contribution);
@@ -114,9 +116,12 @@ const projectContributionReportContentCard = {
                                             m('span.badge.badge-success.fontsize-smaller',
                                                 'Enviada'
                                             ) : contribution.delivery_status == 'received' ?
-                                            m('span.badge.badge-success.fontsize-smaller',
-                                                'Recebida'
-                                            ) : '')
+                                            m('span.fontsize-smaller.badge.badge-success', [
+                                                m('span.fa.fa-check-circle',
+                                                    ''
+                                                ),
+                                                ' Recebida'
+                                            ]) : '')
                                     ),
                                     m('.fontsize-smallest.fontweight-semibold', `Recompensa: R$ ${h.formatNumber(reward.minimum_value, 2, 3)}`),
                                     m('.fontsize-smallest', reward.description.substring(0, 80) + '...')

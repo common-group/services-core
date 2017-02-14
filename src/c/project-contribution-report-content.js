@@ -1,15 +1,25 @@
 import m from 'mithril';
+import models from '../models';
 import _ from 'underscore';
 import h from '../h';
+import popNotification from './pop-notification';
 import projectContributionReportContentCard from './project-contribution-report-content-card';
 
 const projectContributionReportContent = {
     controller(args) {
-        const showFilters = h.toggleProp(false, true),
-            showSelectedMenu = h.toggleProp(false, true),
+        const showSelectedMenu = h.toggleProp(false, true),
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
             selectedContributions = m.prop([]),
+            selectAll = () => {
+                //TODO get all pages
+                selectedContributions().push(..._.pluck(args.list.collection(), 'id'));
+                selectedAny(true);
+            },
+            unselectAll = () => {
+                selectedContributions([]);
+                selectedAny(false);
+            },
             updateStatus = (status) => {
                 return m.request({
                     method: 'PUT',
@@ -27,152 +37,105 @@ const projectContributionReportContent = {
                     m.redraw();
                 });
 
-            },
-            filterStatus = (status) => {
-                args.filterVM.delivery_status(status);
-                args.submit();
-                showFilters.toggle();
             };
 
         return {
+            showSuccess: showSuccess,
+            selectAll: selectAll,
+            unselectAll: unselectAll,
             updateStatus: updateStatus,
-            showFilters: showFilters,
             showSelectedMenu: showSelectedMenu,
             selectedAny: selectedAny,
-            selectedContributions: selectedContributions,
-            filterStatus: filterStatus
+            selectedContributions: selectedContributions
         };
     },
     view(ctrl, args) {
         const list = args.list;
         return m('.w-section.bg-gray.before-footer.section', [
-            m('.w-container', [
-                m('.w-row.u-marginbottom-20', [
-                    m('.w-col.w-col-9.w-col-small-6.w-col-tiny-6', [
-                        m('.fontsize-base', [
-                            m('span.fontweight-semibold', (list.isLoading() ? '' : list.total())),
-                            ' apoios'
-                        ]),
-                        //m(".fontsize-large.fontweight-semibold", "R$ 12.000,00")
-                    ]),
-                    /*
-                     TODO: ordering filter template
-                    m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
-                        m(".w-form", [
-                            m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
-                                m(".fontsize-smallest.fontcolor-secondary", "Ordenar por:"),
-                                m("select.w-select.text-field.positive.fontsize-smallest[id='field-9'][name='field-9']", [
-                                    m("option[value='']", "Data (recentes para antigos)"),
-                                    m("option[value='']", "Data (antigos para recentes)"),
-                                    m("option[value='']", "Valor (maior para menor)"),
-                                    m("option[value='First']", "Valor (menor para maior)")
-                                ])
-                            ])
-                        ])
-                    ])*/
-                ]),
-                m('.menu-actions',
-                    m('.w-row', [
-                        m('.w-col.w-col-2', [
-                            m('.btn.btn-medium.btn-terciary', {
-                                onclick: ctrl.showFilters.toggle
-                            }, [
-                                m(`.checkbox-menu${ctrl.selectedAny() ? '.checkbox-menu-partial-selected' : ''}`),
-                                m('._w-inline-block.fontsize-smaller', [
-                                    'Selecionar ',
-                                    m.trust('&nbsp;'),
-                                    m('span.fa.fa-sort-desc',
-                                        ''
-                                    )
-                                ])
-                            ]),
-                            (ctrl.showFilters() ? m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
-                                m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                    onclick: () => {
-                                        ctrl.filterStatus('');
-                                    }
-                                }, [
-                                    'Todos ',
-                                    m('span.badge',
-                                        '125'
-                                    )
-                                ]),
-                                m('a.dropdown-link.fontsize-smaller[href=\'#\']',
-                                    'Nenhum'
-                                ),
-                                m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                    onclick: () => {
-                                        ctrl.filterStatus('delivered');
-                                    }
-                                }, [
-                                    'Enviadas ',
-                                    m('span.badge',
-                                        '45'
-                                    )
-                                ]),
-                                m('a.dropdown-link.fontsize-smaller', {
-                                    onclick: () => {
-                                        ctrl.filterStatus('received');
-                                    }
-                                }, [
-                                    'Recebidas ',
-                                    m('span.badge',
-                                        '45'
-                                    )
-                                ]),
-                                m('a.dropdown-link.fontsize-smaller', {
-                                        onclick: () => {
-                                            ctrl.filterStatus('undelivered');
-                                        }
-                                    },
 
-                                    [
-                                        'Não enviadas ',
-                                        m('span.badge',
-                                            '23'
-                                        )
-                                    ]
+            (ctrl.showSuccess() ? m.component(popNotification, {
+                message: 'As informações foram atualizadas'
+            }) : ''),
+            m('.w-container', [
+                m('.u-marginbottom-40',
+                    m('.w-row', [
+                        m('.u-text-center-small-only.w-col.w-col-2',
+                            m('.fontsize-base.u-marginbottom-10', [
+                                m('span.fontweight-semibold',
+                                    (list.isLoading() ? '' : list.total())
                                 ),
-                                m('a.dropdown-link.fontsize-smaller', {
-                                    onclick: () => {
-                                        ctrl.filterStatus('error');
-                                    }
-                                }, [
-                                    'Erro no envio ',
-                                    m('span.badge',
-                                        '2'
-                                    )
-                                ])
-                            ]) : '')
-                        ]),
-                        (ctrl.selectedAny() ?
-                            m('.w-col.w-col-3', [
-                                m('button.btn.btn-medium.btn-terciary.w-button', {
-                                        onclick: ctrl.showSelectedMenu.toggle
+                                ' apoios'
+                            ])
+                        ),
+                        m('.w-col.w-col-6', [
+                            (!ctrl.selectedAny() ?
+                                m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
+                                        onclick: ctrl.selectAll
                                     },
-                                    'Marcar recompensa como'
-                                ),
-                                (ctrl.showSelectedMenu() ?
-                                    m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
-                                        m('a.dropdown-link.fontsize-smaller', {
-                                                onclick: () => {
-                                                    ctrl.updateStatus('delivered');
-                                                }
-                                            },
-                                            'Enviada'
+                                    'Selecionar todos'
+                                ) :
+                                m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
+                                        onclick: ctrl.unselectAll
+                                    },
+                                    'Desmarcar todos'
+                                )
+                            ),
+                            (ctrl.selectedAny() ?
+                                m('._w-inline-block', [
+                                    m('button.btn.btn-inline.btn-small.btn-terciary.w-button', {
+                                        onclick: ctrl.showSelectedMenu.toggle
+                                    }, [
+                                        'Marcar ',
+                                        m('span.w-hidden-tiny',
+                                            'entrega'
                                         ),
-                                        m('a.dropdown-link.fontsize-smaller', {
-                                                onclick: () => {
-                                                    ctrl.updateStatus('error');
-                                                }
-                                            },
-                                            'Erro no envio'
-                                        )
-                                    ]) : '')
-                            ]) : ''),
-                        m('.w-col.w-col-7')
+                                        ' como'
+                                    ]),
+                                    (ctrl.showSelectedMenu() ?
+                                        m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
+                                            m('a.dropdown-link.fontsize-smaller', {
+                                                    onclick: () => {
+                                                        ctrl.updateStatus('delivered');
+                                                    }
+                                                },
+                                                'Enviada'
+                                            ),
+                                            m('a.dropdown-link.fontsize-smaller', {
+                                                    onclick: () => {
+                                                        ctrl.updateStatus('error');
+                                                    }
+                                                },
+                                                'Erro no envio'
+                                            )
+                                        ]) : '')
+                                ]) : '')
+                        ]),
+                        m('.w-clearfix.w-col.w-col-4',
+                            m(`a.alt-link.fontsize-small.lineheight-looser.u-right[href="/projects/${args.project().project_id}/download_reports"]`, [
+                                m('span.fa.fa-download',
+                                    ''
+                                ),
+                                ' Baixar relatórios'
+                            ])
+                        )
                     ])
                 ),
+
+                //TODO: ordering filter template
+                //m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
+                //m(".w-form", [
+                //m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
+                //m(".fontsize-smallest.fontcolor-secondary", "Ordenar por:"),
+                //m("select.w-select.text-field.positive.fontsize-smallest[id='field-9'][name='field-9']", [
+                //m("option[value='']", "Data (recentes para antigos)"),
+                //m("option[value='']", "Data (antigos para recentes)"),
+                //m("option[value='']", "Valor (maior para menor)"),
+                //m("option[value='First']", "Valor (menor para maior)")
+                //])
+                //])
+                //])
+                //])*/
+                //]),
                 _.map(list.collection(), (item) => {
                     const contribution = m.prop(item);
                     return m.component(projectContributionReportContentCard, {

@@ -82,37 +82,71 @@ const projectContributionReport = {
                 contributionStateOptions(opts);
             },
             filterBuilder = [{
-                component: FilterMain,
-                data: {
-                    inputWrapperClass: '.w-input.text-field',
-                    btnClass: '.btn.btn-medium',
-                    vm: filterVM.full_text_index,
-                    placeholder: 'Busque por nome ou email do apoiador'
+                    component: FilterMain,
+                    data: {
+                        inputWrapperClass: '.w-input.text-field',
+                        btnClass: '.btn.btn-medium',
+                        vm: filterVM.full_text_index,
+                        placeholder: 'Busque por nome ou email do apoiador'
+                    }
+                },
+                {
+                    label: 'reward_filter',
+                    component: FilterDropdown,
+                    data: {
+                        label: 'Recompensa selecionada',
+                        name: 'reward_id',
+                        vm: filterVM.reward_id,
+                        wrapper_class: '._w-sub-col.w-col.w-col-4',
+                        options: []
+                    }
+                },
+                {
+                    label: 'delivery_filter',
+                    component: FilterDropdown,
+                    data: {
+                        label: 'Status da entrega',
+                        name: 'delivery_status',
+                        vm: filterVM.delivery_status,
+                        wrapper_class: '.w-col.w-col-4',
+                        options: [{
+                                value: '',
+                                option: 'Todos'
+                            },
+                            {
+                                value: 'undelivered',
+                                option: 'Não enviada'
+                            },
+                            {
+                                value: 'delivered',
+                                option: 'Enviada'
+                            },
+                            {
+                                value: 'error',
+                                option: 'Erro no envio'
+                            },
+                            {
+                                value: 'received',
+                                option: 'Recebida'
+                            }
+                        ]
+                    }
+                },
+                {
+                    label: 'payment_state',
+                    component: FilterDropdown,
+                    data: {
+                        custom_label: [InfoProjectContributionStateLegend, {
+                            text: 'Status do apoio',
+                            project: project
+                        }],
+                        name: 'state',
+                        vm: filterVM.state,
+                        wrapper_class: '._w-sub-col.w-col.w-col-4',
+                        options: contributionStateOptions
+                    }
                 }
-            }, {
-                label: 'reward_filter',
-                component: FilterDropdown,
-                data: {
-                    label: 'Recompensa',
-                    name: 'reward_id',
-                    vm: filterVM.reward_id,
-                    wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
-                    options: []
-                }
-            }, {
-                label: 'payment_state',
-                component: FilterDropdown,
-                data: {
-                    custom_label: [InfoProjectContributionStateLegend, {
-                        text: 'Status do apoio',
-                        project: project
-                    }],
-                    name: 'state',
-                    vm: filterVM.state,
-                    wrapper_class: '.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle',
-                    options: contributionStateOptions
-                }
-            }],
+            ],
             submit = () => {
                 if (filterVM.reward_id() === 'null') {
                     listVM.firstPage(filterVM.withNullParameters()).then(null);
