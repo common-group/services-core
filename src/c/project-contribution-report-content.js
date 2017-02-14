@@ -12,9 +12,13 @@ const projectContributionReportContent = {
             showSuccess = m.prop(false),
             selectedContributions = m.prop([]),
             selectAll = () => {
-                //TODO get all pages
-                selectedContributions().push(..._.pluck(args.list.collection(), 'id'));
-                selectedAny(true);
+                models.projectContribution.pageSize(false);
+                const allContributions = postgrest.loaderWithToken(
+                  models.projectContribution.getPageOptions(args.filterVM.parameters())).load().then(data => {
+                    selectedContributions().push(..._.pluck(data, 'id'));
+                    selectedAny(true);
+                  });
+                models.projectContribution.pageSize(9);
             },
             unselectAll = () => {
                 selectedContributions([]);
