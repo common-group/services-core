@@ -2745,12 +2745,12 @@ var projectFriends = {
     view: function view(ctrl, args) {
         var project = ctrl.project,
             friendsCount = ctrl.listVM.collection().length;
-        return [m$1('.friend-facepile', [_$1.map(ctrl.friendsSample(), function (user) {
+        return m$1('div', [m$1('.friend-facepile', [_$1.map(ctrl.friendsSample(), function (user) {
             var profile_img = _$1.isEmpty(user.data.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : user.data.profile_img_thumbnail;
             return m$1('img.user-avatar[src=\'' + profile_img + '\']');
         })]), m$1('p.fontsize-smallest.friend-namepile.lineheight-tighter', [m$1('span.fontweight-semibold', _$1.map(ctrl.friendsSample(), function (user) {
             return user.data.name.split(' ')[0];
-        }).join(friendsCount > 2 ? ', ' : ' e ')), friendsCount > 2 ? [' e ', m$1('span.fontweight-semibold', 'mais ' + (friendsCount - ctrl.friendsSample().length))] : '', friendsCount > 1 ? ' apoiaram' : ' apoiou'])];
+        }).join(friendsCount > 2 ? ', ' : ' e ')), friendsCount > 2 ? [' e ', m$1('span.fontweight-semibold', 'mais ' + (friendsCount - ctrl.friendsSample().length))] : '', friendsCount > 1 ? ' apoiaram' : ' apoiou'])]);
     }
 };
 

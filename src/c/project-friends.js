@@ -30,7 +30,7 @@ const projectFriends = {
     view(ctrl, args) {
         const project = ctrl.project,
             friendsCount = ctrl.listVM.collection().length;
-        return [
+        return m('div', [
             m('.friend-facepile', [
                 _.map(ctrl.friendsSample(), (user) => {
                     const profile_img = _.isEmpty(user.data.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : user.data.profile_img_thumbnail;
@@ -52,7 +52,7 @@ const projectFriends = {
                 (friendsCount > 1 ?
                     ' apoiaram' : ' apoiou')
             ])
-        ];
+        ]);
     }
 };
 
