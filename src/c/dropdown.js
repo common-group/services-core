@@ -8,7 +8,7 @@ const dropdown = {
         return m(
             `select${args.classes}[id="${args.id}"]`,
             {
-                onchange: m.withAttr('value', args.valueProp),
+                onchange: (e) => {args.valueProp(e.target.value);args.onchange()},
                 value: args.valueProp()
             },
             _.map(opts, function(data) {

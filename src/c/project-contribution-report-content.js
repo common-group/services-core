@@ -30,10 +30,13 @@ const projectContributionReportContent = {
                 projectsContributionReportVM.updateStatus(data).then(() => {
                     showSuccess(true);
                     showSelectedMenu.toggle();
-                    m.redraw();
+                    //update status so we don't have to reload the page
+                    _.map(_.filter(args.list.collection(), (contrib) => _.contains(selectedContributions(), contrib.id)),
+                          (item) => item.delivery_status = status);
                 }).catch((err) => {
                     m.redraw();
                 });
+                return false;
 
             };
 
@@ -91,12 +94,12 @@ const projectContributionReportContent = {
                                     ]),
                                     (ctrl.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
-                                            m('a.dropdown-link.fontsize-smaller', {
+                                            m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                     onclick: () => ctrl.updateStatus('delivered')
                                                 },
                                                 'Enviada'
                                             ),
-                                            m('a.dropdown-link.fontsize-smaller', {
+                                            m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                     onclick: () => ctrl.updateStatus('error')
                                                 },
                                                 'Erro no envio'
