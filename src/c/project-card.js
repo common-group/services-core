@@ -62,12 +62,34 @@ const projectCard = {
 
         };
 
+        const isFinished = (project) => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
+
+        const cardCopy = (project) => {
+            if (project.expires_at) {
+                return isFinished(project) ? [
+                    m('.fontsize-smaller.fontweight-loose', `Encerrado`),
+                    m('.fontsize-smallest.lineheight-tightest', h.momentify(project.expires_at))
+                ] : [
+                    m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
+                    m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
+                ]
+            } else{
+                return [
+                    m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${elapsedTextObj.total} ${elapsedTextObj.unit}`])
+                ];
+            }
+        };
+
+
+
         return {
+            cardCopy: cardCopy,
             css: css,
             type: type,
             progress: progress,
             remainingTextObj: remainingTextObj,
             elapsedTextObj: elapsedTextObj,
+            isFinished: isFinished,
             cardMeter: cardMeter
         };
     },
@@ -105,7 +127,7 @@ const projectCard = {
                         ])
                     ]),
                     m(ctrl.cardMeter(), [
-                        (_.contains(['successful', 'failed', 'waiting_funds'], project.state)) ?
+                        (ctrl.isFinished(project)) ?
                             m('div',
                                 project.state === 'successful' && ctrl.progress < 100 ? I18n.t(`display_status.flex_successful`, I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
                             ) :
@@ -126,12 +148,7 @@ const projectCard = {
                                 m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
                                 m('.fontsize-smallest.lineheight-tightest', 'Levantados')
                             ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', project.expires_at ? [
-                                m('.fontsize-smaller.fontweight-semibold', `${ctrl.remainingTextObj.total} ${ctrl.remainingTextObj.unit}`),
-                                m('.fontsize-smallest.lineheight-tightest', (ctrl.remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
-                            ] : [
-                                m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${ctrl.elapsedTextObj.total} ${ctrl.elapsedTextObj.unit}`])
-                            ]),
+                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', ctrl.cardCopy(project)),
                         ])
                     ]),
                 ]),

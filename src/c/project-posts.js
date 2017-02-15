@@ -15,8 +15,7 @@ const projectPosts = {
                 id: 'eq'
             });
         const scrollTo = (el, isInit) => {
-            if (!isInit && _.isNumber(args.post_id)) {
-                console.log('Will scroll to posts');
+            if (!isInit) {
                 h.animateScrollTo(el);
             }
         };

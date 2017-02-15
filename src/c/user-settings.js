@@ -117,7 +117,7 @@ const userSettings = {
                 return;
             };
 
-        countriesLoader.load().then(countries);
+        countriesLoader.load().then((data) => countries(_.sortBy(data, 'name_en')));
         statesLoader.load().then(states);
 
         return {
@@ -200,7 +200,7 @@ const userSettings = {
                                                     return m(`option${country.id == fields.country_id() ? '[selected="selected"]' : ''}`, {
                                                             value: country.id
                                                         },
-                                                        country.name
+                                                        country.name_en
                                                     );
                                                 })
 
