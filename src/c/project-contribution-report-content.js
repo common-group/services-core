@@ -36,6 +36,7 @@ const projectContributionReportContent = {
                 }).catch((err) => {
                     m.redraw();
                 });
+                return false;
 
             };
 
@@ -93,12 +94,12 @@ const projectContributionReportContent = {
                                     ]),
                                     (ctrl.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
-                                            m('a.cursor-pointer.dropdown-link.fontsize-smaller', {
+                                            m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                     onclick: () => ctrl.updateStatus('delivered')
                                                 },
                                                 'Enviada'
                                             ),
-                                            m('a.cursor-pointer.dropdown-link.fontsize-smaller', {
+                                            m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                     onclick: () => ctrl.updateStatus('error')
                                                 },
                                                 'Erro no envio'
