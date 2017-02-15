@@ -78,11 +78,11 @@ const getUserCreditCards = (user_id) => {
     return lUserCards.load();
 };
 
-const confirmDelivery = (projectId, contribution) => {
+const toggleDelivery = (projectId, contribution) => {
     return m.request({
         method: 'GET',
         config: h.setCsrfToken,
-        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/confirm_delivery`
+        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_delivery`
     });
 };
 
@@ -201,7 +201,7 @@ const getUserRecommendedProjects = (contribution) => {
 const userVM = {
     getUserCreatedProjects: getUserCreatedProjects,
     getUserCreditCards: getUserCreditCards,
-    confirmDelivery: confirmDelivery,
+    toggleDelivery: toggleDelivery,
     toggleAnonymous: toggleAnonymous,
     getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,

@@ -9,14 +9,14 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 
 const userContributedBox = {
     controller(args) {
-        const confirmDelivery = (projectId, contribution) => {
-                userVM.confirmDelivery(projectId, contribution).then(
-                    contribution.delivery_status = 'received' //so we don't have to reload the page
+        const toggleDelivery = (projectId, contribution) => {
+                userVM.toggleDelivery(projectId, contribution).then(
+                    contribution.delivery_status = contribution.delivery_status == 'received' ? '' : 'received' //so we don't have to reload the page
                 );
             };
         return {
             toggleAnonymous: userVM.toggleAnonymous,
-            confirmDelivery: confirmDelivery
+            toggleDelivery: toggleDelivery
         };
     },
     view(ctrl, args) {
@@ -136,7 +136,7 @@ const userContributedBox = {
                         ])
                     ),
                     m('.u-text-center.w-col.w-col-1', {
-                        onclick: () => ctrl.confirmDelivery(contribution.project_id, contribution)
+                        onclick: () => ctrl.toggleDelivery(contribution.project_id, contribution)
                     }, [
                         m('.fontsize-smallest',
                             m(`a.checkbox-big${contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,

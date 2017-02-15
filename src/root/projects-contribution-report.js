@@ -81,6 +81,15 @@ const projectContributionReport = {
 
                 contributionStateOptions(opts);
             },
+            submit = () => {
+                if (filterVM.reward_id() === 'null') {
+                    listVM.firstPage(filterVM.withNullParameters()).then(null);
+                } else {
+                    listVM.firstPage(filterVM.parameters()).then(null);
+                }
+
+                return false;
+            },
             filterBuilder = [{
                     component: FilterMain,
                     data: {
@@ -95,6 +104,7 @@ const projectContributionReport = {
                     component: FilterDropdown,
                     data: {
                         label: 'Recompensa selecionada',
+                        onchange: submit,
                         name: 'reward_id',
                         vm: filterVM.reward_id,
                         wrapper_class: '._w-sub-col.w-col.w-col-4',
@@ -106,6 +116,7 @@ const projectContributionReport = {
                     component: FilterDropdown,
                     data: {
                         label: 'Status da entrega',
+                        onchange: submit,
                         name: 'delivery_status',
                         vm: filterVM.delivery_status,
                         wrapper_class: '.w-col.w-col-4',
@@ -141,21 +152,13 @@ const projectContributionReport = {
                             project: project
                         }],
                         name: 'state',
+                        onchange: submit,
                         vm: filterVM.state,
                         wrapper_class: '._w-sub-col.w-col.w-col-4',
                         options: contributionStateOptions
                     }
                 }
-            ],
-            submit = () => {
-                if (filterVM.reward_id() === 'null') {
-                    listVM.firstPage(filterVM.withNullParameters()).then(null);
-                } else {
-                    listVM.firstPage(filterVM.parameters()).then(null);
-                }
-
-                return false;
-            };
+            ];
 
         filterVM.project_id(args.root.getAttribute('data-id'));
 
