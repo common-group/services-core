@@ -138,7 +138,7 @@ const projectSidebar = {
                     }))
                 ]) : ''),
                 m('.friend-backed-card.project-page', [
-                    (!_.isUndefined(project()) && project().contributed_by_friends ? m.component(projectFriends, {project: project()}) : '')
+                    (!_.isUndefined(project()) && project().contributed_by_friends ? m.component(projectFriends, {project: project(), wrapper: 'div'}) : '')
                 ]),
                 m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())
             ]),
