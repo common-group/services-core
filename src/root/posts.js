@@ -89,7 +89,8 @@ const posts = {
                 if (!isInit) {
                     deleteFormSubmit = () => el.submit();
                 }
-            };
+            },
+            openedPercentage = (post) => Math.floor((post.open_count / post.delivered_count) * 100);
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
@@ -122,6 +123,7 @@ const posts = {
             setPostDeletionForm: setPostDeletionForm,
             toDeletePost: toDeletePost,
             projectDetails: projectDetails,
+            openedPercentage: openedPercentage
         };
     },
     view(ctrl) {
@@ -278,9 +280,10 @@ const posts = {
                                                 )
                                             ),
                                             m('.table-col.u-text-center.w-col.w-col-3',
-                                                m('.fontsize-base',
-                                                    post.open_count
-                                                )
+                                                m('.fontsize-base',[
+                                                    post.open_count,
+                                                    m('span.fontcolor-secondary', ` (${ctrl.openedPercentage(post)}%)`)
+                                                ])
                                             ),
                                             m('.table-col.w-col.w-col-1',
                                                 m('button.btn.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash', {
