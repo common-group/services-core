@@ -3,7 +3,7 @@ import h from '../h';
 import ProjectContributionStateLegendModal from '../c/project-contribution-state-legend-modal';
 import modalBox from './modal-box';
 
-const InfoProjectContributionStateLegend = {
+const InfoProjectContributionLegend = {
     controller(args) {
         return {
             modalToggle: h.toggleProp(false, true)
@@ -18,12 +18,10 @@ const InfoProjectContributionStateLegend = {
             },''),
             (ctrl.modalToggle() ? m.component(modalBox, {
                 displayModal: ctrl.modalToggle,
-                content: [ProjectContributionStateLegendModal, {
-                    project: args.project
-                }]
+                content: args.content
             }) : '')
         ]);
     }
 };
 
-export default InfoProjectContributionStateLegend;
+export default InfoProjectContributionLegend;

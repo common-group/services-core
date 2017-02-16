@@ -9,7 +9,9 @@ import projectContributionReportContent from '../c/project-contribution-report-c
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 import FilterMain from '../c/filter-main';
 import FilterDropdown from '../c/filter-dropdown';
-import InfoProjectContributionStateLegend from '../c/info-project-contribution-state-legend';
+import InfoProjectContributionLegend from '../c/info-project-contribution-legend';
+import ProjectContributionStateLegendModal from '../c/project-contribution-state-legend-modal';
+import ProjectContributionDeliveryLegendModal from '../c/project-contribution-delivery-legend-modal';
 
 const projectContributionReport = {
     controller(args) {
@@ -115,7 +117,10 @@ const projectContributionReport = {
                     label: 'delivery_filter',
                     component: FilterDropdown,
                     data: {
-                        label: 'Status da entrega',
+                        custom_label: [InfoProjectContributionLegend, {
+                            content: [ProjectContributionDeliveryLegendModal],
+                            text: 'Status da entrega'
+                        }],
                         onchange: submit,
                         name: 'delivery_status',
                         vm: filterVM.delivery_status,
@@ -147,9 +152,11 @@ const projectContributionReport = {
                     label: 'payment_state',
                     component: FilterDropdown,
                     data: {
-                        custom_label: [InfoProjectContributionStateLegend, {
-                            text: 'Status do apoio',
-                            project: project
+                        custom_label: [InfoProjectContributionLegend, {
+                            text: 'Status do jpoio',
+                            content: [ProjectContributionStateLegendModal, {
+                    project: project
+                }]
                         }],
                         name: 'state',
                         onchange: submit,
