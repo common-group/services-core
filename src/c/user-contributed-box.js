@@ -10,10 +10,11 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const userContributedBox = {
     controller(args) {
         const toggleDelivery = (projectId, contribution) => {
-                userVM.toggleDelivery(projectId, contribution).then(
-                    contribution.delivery_status = contribution.delivery_status == 'received' ? '' : 'received' //so we don't have to reload the page
-                );
-            };
+            userVM.toggleDelivery(projectId, contribution).then(() => {
+                const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
+                contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; //so we don't have to reload the page
+            });
+        };
         return {
             toggleAnonymous: userVM.toggleAnonymous,
             toggleDelivery: toggleDelivery
@@ -23,6 +24,27 @@ const userContributedBox = {
         let collection = args.collection,
             pagination = args.pagination,
             title = args.title;
+        const statusText = (contribution) => {
+            switch (contribution.delivery_status) {
+                case 'delivered':
+                    return m('span.fontsize-smallest.badge.badge-success',
+                        'Enviada'
+                    );
+                case 'received':
+                    return m('span.fontsize-smallest.badge.badge-success',
+                        'Recebida'
+                    );
+                case 'undelivered':
+                    return m('span.fontsize-smallest.badge.badge-light',
+                        'Não enviada'
+                    );
+                case 'error':
+                    return m('span.fontsize-smallest.badge.badge-attention',
+                        'Erro no envio'
+                    );
+            };
+        };
+
         return (!_.isEmpty(collection) ? m('.section-one-column.u-marginbottom-30', [
             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
                 title
@@ -133,6 +155,13 @@ const userContributedBox = {
                                 'Estimativa de entrega: '
                             ),
                             h.momentify(contribution.deliver_at, 'MMMM/YYYY')
+                        ]),
+                        m('.fontsize-smallest', [
+                            m('span.fontweight-semibold',
+                                'Status da entrega:'
+                            ),
+                            m.trust('&nbsp;'),
+                            statusText(contribution)
                         ])
                     ),
                     m('.u-text-center.w-col.w-col-1', {

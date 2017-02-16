@@ -14,8 +14,9 @@ const projectContributionReportContent = {
             selectedContributions = m.prop([]),
             selectAll = () => {
                 projectsContributionReportVM.getAllContributions(args.filterVM).then(data => {
-                    selectedContributions().push(..._.pluck(data, 'id'));
-                    selectedAny(true);
+                    const exceptReceived = _.filter(data, (contrib) => contrib.delivery_status != 'received');
+                    selectedContributions().push(..._.pluck(exceptReceived, 'id'));
+                    selectedAny(!_.isEmpty(exceptReceived));
                   });
             },
             unselectAll = () => {

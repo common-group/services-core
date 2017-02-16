@@ -70,11 +70,12 @@ const projectContributionReportContentCard = {
                 m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                     m('.w-inline-block',
                         m('.w-checkbox.w-clearfix',
+                            (contribution.delivery_status != 'received' ? 
                             m(`input.w-checkbox-input[type='checkbox']`, {
                                 checked: ctrl.checked(contribution),
                                 value: contribution.id,
                                 onclick: () => ctrl.selectContribution(contribution)
-                            })
+                            }) : '')
                         )
                     )
                 ),
