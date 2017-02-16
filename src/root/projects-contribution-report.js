@@ -107,7 +107,7 @@ const projectContributionReport = {
                         onchange: submit,
                         name: 'reward_id',
                         vm: filterVM.reward_id,
-                        wrapper_class: '._w-sub-col.w-col.w-col-4',
+                        wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: []
                     }
                 },
@@ -154,7 +154,7 @@ const projectContributionReport = {
                         name: 'state',
                         onchange: submit,
                         vm: filterVM.state,
-                        wrapper_class: '._w-sub-col.w-col.w-col-4',
+                        wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: contributionStateOptions
                     }
                 }
