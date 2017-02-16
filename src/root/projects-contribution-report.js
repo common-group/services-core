@@ -155,8 +155,8 @@ const projectContributionReport = {
                         custom_label: [InfoProjectContributionLegend, {
                             text: 'Status do jpoio',
                             content: [ProjectContributionStateLegendModal, {
-                    project: project
-                }]
+                                project: project
+                            }]
                         }],
                         name: 'state',
                         onchange: submit,
