@@ -909,6 +909,25 @@ const
             xhr.setRequestHeader('X-CSRF-Token', authenticityToken());
         }
         return;
+    },
+
+    contributionStatusBadge = (contribution: Object) => {
+        const status = {
+            delivered: m('span.fontsize-smallest.badge.badge-success',
+                'Enviada'
+            ),
+            received: m('span.fontsize-smallest.badge.badge-success',
+                'Recebida'
+            ),
+            undelivered: m('span.fontsize-smallest.badge.badge-light',
+                'Não enviada'
+            ),
+            error: m('span.fontsize-smallest.badge.badge-attention',
+                'Erro no envio'
+            )
+        };
+
+        return status[contribution.delivery_status];
     };
 
 
@@ -921,6 +940,7 @@ export default {
     authenticityParam,
     authenticityToken,
     buildLink,
+    contributionStatusBadge,
     cumulativeOffset,
     discuss,
     existy,

@@ -4,6 +4,7 @@ import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import userVM from '../vms/user-vm';
 import loadMoreBtn from './load-more-btn';
+import rewardReceiver from './reward-receiver';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 
@@ -26,26 +27,7 @@ const userContributedBox = {
         let collection = args.collection,
             pagination = args.pagination,
             title = args.title;
-        const statusText = (contribution) => {
-            switch (contribution.delivery_status) {
-                case 'delivered':
-                    return m('span.fontsize-smallest.badge.badge-success',
-                        'Enviada'
-                    );
-                case 'received':
-                    return m('span.fontsize-smallest.badge.badge-success',
-                        'Recebida'
-                    );
-                case 'undelivered':
-                    return m('span.fontsize-smallest.badge.badge-light',
-                        'Não enviada'
-                    );
-                case 'error':
-                    return m('span.fontsize-smallest.badge.badge-attention',
-                        'Erro no envio'
-                    );
-            };
-        };
+        const statusText = h.contributionStatusBadge;
 
         return (!_.isEmpty(collection) ? m('.section-one-column.u-marginbottom-30', [
             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
@@ -166,20 +148,7 @@ const userContributedBox = {
                             statusText(contribution)
                         ])
                     ),
-                    (ctrl.canReceiveReward(contribution) ?
-                        m('.u-text-center.w-col.w-col-1', {
-                            onclick: () => ctrl.toggleDelivery(contribution.project_id, contribution)
-                        }, [
-                            m('.fontsize-smallest',
-                                m(`a.checkbox-big${contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,
-                                    ''
-                                )
-                            ),
-                            m('.fontcolor-secondary.fontsize-smallest.lineheight-looser',
-                                'Recebi!'
-                            )
-                        ]) : '')
-
+                    m(rewardReceiver, { contribution })
                 ]);
             }),
             m('.w-row.u-marginbottom-40.u-margintop-30', [
