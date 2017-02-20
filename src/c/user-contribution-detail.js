@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import paymentStatus from './payment-status';
+import rewardReceiver from './reward-receiver';
 
 const userContributionDetail = {
     controller(args) {
@@ -18,7 +19,7 @@ const userContributionDetail = {
         const contribution = args.contribution;
 
         return m('.user-contribution-detail', [
-            m('.w-col.w-col-4',
+            m('.w-col.w-col-3',
               [
                   m('.fontsize-smallest.lineheight-tight.fontweight-semibold.u-marginbottom-10',
                     'Valor do apoio:'
@@ -28,10 +29,10 @@ const userContributionDetail = {
                    )
               ]
              ),
-            m('.w-col.w-col-4',
+            m('.w-col.w-col-3',
               m.component(paymentStatus, {item: contribution})
              ),
-            m('.w-col.w-col-4',
+            m('.w-col.w-col-5',
               [
                   m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
                     'Recompensa:'
@@ -45,10 +46,15 @@ const userContributionDetail = {
                           'Estimativa de entrega: '
                          ),
                         h.momentify(ctrl.chosenReward.deliver_at, 'MMM/YYYY')
-                    ] : '')
-                   )
+                    ] : ''),
+                   ),
+                  m('.fontsize-smallest.lineheight-looser', [
+                      m('span.fontweight-semibold', 'Status da entrega: '),
+                      h.contributionStatusBadge(contribution)
+                  ])
               ]
-             )
+             ),
+            m(rewardReceiver, {contribution, wrapperClass: ''})
         ]);
     }
 };
