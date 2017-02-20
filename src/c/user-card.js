@@ -22,6 +22,7 @@ const userCard = {
         const user = ctrl.userDetails(),
             contactModalC = [ownerMessageContent, ctrl.userDetails],
             profileImage = userVM.displayImage(user);
+
         return m('#user-card', m('.card.card-user.u-radius.u-marginbottom-30[itemprop=\'author\']', [
             m('.w-row', [
                 m('.w-col.w-col-4.w.col-small-4.w-col-tiny-4.w-clearfix',
