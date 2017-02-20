@@ -6267,7 +6267,7 @@ var rewardReceiver = {
             onclick: function onclick() {
                 return ctrl.toggleDelivery(contribution.project_id, contribution);
             }
-        }, [m$1('.fontsize-smallest', m$1('a.checkbox-big' + (contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''), '')), m$1('.fontcolor-secondary.fontsize-smallest.lineheight-looser', 'Recebi!')]) : '';
+        }, [m$1('.fontsize-smallest', m$1('a.checkbox-big' + (contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''), '')), m$1('.fontcolor-secondary.fontsize-smallest.lineheight-looser', 'Recebi!')]) : m$1('');
     }
 };
 
