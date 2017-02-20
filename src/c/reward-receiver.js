@@ -31,7 +31,7 @@ const rewardReceiver = {
                 m('.fontcolor-secondary.fontsize-smallest.lineheight-looser',
                     'Recebi!'
                 )
-            ]) : '';
+            ]) : m('');
     }
 }
 
