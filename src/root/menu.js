@@ -17,21 +17,20 @@ const menu = {
                     return {
                         href: h.rootUrl()
                     };
-                } else {
-                    return {
-                        config: m.route
-                    };
                 }
+                return {
+                    config: m.route
+                };
             };
 
         return {
-            user: user,
-            menuCss: menuCss,
-            homeAttrs: homeAttrs
+            user,
+            menuCss,
+            homeAttrs
         };
     },
     view(ctrl, args) {
-        return m('header.main-header',{
+        return m('header.main-header', {
             class: ctrl.menuCss()
         }, [
             m('.w-row', [
@@ -42,25 +41,25 @@ const menu = {
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
                         args.menuShort ? '' : m('div#menu-components', [
-                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
-                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']',{config: m.route},'Explore'),
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m.route }, 'Comece seu projeto'),
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m.route }, 'Explore'),
                             m.component(menuSearch)
                         ])
                     ]
                 ),
                 m('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
-                    ctrl.user ? m.component(menuProfile, {user: ctrl.user}) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
+                    ctrl.user ? m.component(menuProfile, { user: ctrl.user }) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
                 ])
 
             ]),
             args.menuShort ? '' : m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
                 [
                     m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
-                        {onclick: () => m.route('/start')},
+                        { onclick: () => m.route('/start') },
                         'Comece seu projeto'
                     ),
                     m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
-                        {onclick: () => m.route('/explore')},
+                        { onclick: () => m.route('/explore') },
                         'Explore'
                     )
                 ]

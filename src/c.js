@@ -51,9 +51,9 @@ const c = {
         UsersBalance: usersBalanceMain,
         Menu: menu,
         Footer: footer,
-        FollowFoundFriends: FollowFoundFriends,
-        CheckEmail: CheckEmail,
-        projectEditUserAbout: projectEditUserAbout
+        FollowFoundFriends,
+        CheckEmail,
+        projectEditUserAbout
     }
 };
 
