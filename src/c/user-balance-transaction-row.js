@@ -12,12 +12,12 @@ const userBalanceTrasactionRow = {
         }
 
         return {
-            expanded: expanded
+            expanded
         };
     },
     view(ctrl, args) {
         const item = args.item,
-              createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
+            createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 
         return m(`div[class='balance-card ${(ctrl.expanded() ? 'card-detailed-open' : '')}']`,
                  m('.w-clearfix.card.card-clickable', [
@@ -52,12 +52,12 @@ const userBalanceTrasactionRow = {
                              ])
                          ])
                      ]),
-                     m(`a.w-inline-block.arrow-admin.${(ctrl.expanded() ? 'arrow-admin-opened' : '')}.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]`, {onclick: ctrl.expanded.toggle})
+                     m(`a.w-inline-block.arrow-admin.${(ctrl.expanded() ? 'arrow-admin-opened' : '')}.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]`, { onclick: ctrl.expanded.toggle })
                  ]),
                  (ctrl.expanded() ? m('.card', _.map(item.source, (transaction) => {
-                     let pos = transaction.amount >= 0;
+                     const pos = transaction.amount >= 0;
 
-                     return m('div',[
+                     return m('div', [
                          m('.w-row.fontsize-small.u-marginbottom-10', [
                              m('.w-col.w-col-2', [
                                  m(`.text-${(pos ? 'success' : 'error')}`, `${pos ? '+' : '-'} R$ ${h.formatNumber(Math.abs(transaction.amount), 2, 3)}`)

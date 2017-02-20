@@ -10,32 +10,32 @@ import UserFollowBtn from './user-follow-btn';
 const projectContributions = {
     controller(args) {
         const contributionsPerLocation = m.prop([]),
-              contributionsPerDay = m.prop([]),
-              listVM = postgrest.paginationVM(models.contributor),
-              filterStats = postgrest.filtersVM({
-                  project_id: 'eq'
-              }),
-              filterVM = postgrest.filtersVM({
-                  project_id: 'eq'
-              }),
-              groupedCollection = (collection = []) => {
-                  let grouped = [
+            contributionsPerDay = m.prop([]),
+            listVM = postgrest.paginationVM(models.contributor),
+            filterStats = postgrest.filtersVM({
+                project_id: 'eq'
+            }),
+            filterVM = postgrest.filtersVM({
+                project_id: 'eq'
+            }),
+            groupedCollection = (collection = []) => {
+                let grouped = [
                       []
-                  ],
-                      group = 0;
+                    ],
+                    group = 0;
 
-                  _.map(collection, (item, index) => {
-                      if (grouped[group].length >= 3) {
-                          group = group + 1;
-                          grouped[group] = [];
-                      }
+                _.map(collection, (item, index) => {
+                    if (grouped[group].length >= 3) {
+                        group += 1;
+                        grouped[group] = [];
+                    }
 
-                      grouped[group].push(item);
-                  });
+                    grouped[group].push(item);
+                });
 
-                  return grouped;
-              },
-              contributionsStats = m.prop({});
+                return grouped;
+            },
+            contributionsStats = m.prop({});
 
         filterVM.project_id(args.project().project_id);
         filterStats.project_id(args.project().project_id);
@@ -43,28 +43,26 @@ const projectContributions = {
         if (!listVM.collection().length) {
             listVM.firstPage(filterVM.parameters());
         }
-        //TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
+        // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
         const lContributionsPerDay = postgrest.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
 
-        let contributionsPerLocationTable = [
+        const contributionsPerLocationTable = [
             ['Estado', 'Apoios', 'R$ apoiados (% do total)']
         ];
-        const buildPerLocationTable = (contributions) => {
-            return (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
-                let column = [];
+        const buildPerLocationTable = contributions => (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
+            const column = [];
 
-                column.push(contribution.state_acronym || 'Outro/other');
-                column.push(contribution.total_contributions);
-                column.push([contribution.total_contributed, [//Adding row with custom comparator => read project-data-table description
-                    m(`input[type="hidden"][value="${contribution.total_contributed}"`),
-                    'R$ ',
-                    h.formatNumber(contribution.total_contributed, 2, 3),
-                    m('span.w-hidden-small.w-hidden-tiny', ' (' + contribution.total_on_percentage.toFixed(2) + '%)')
-                ]]);
-                return contributionsPerLocationTable.push(column);
-            }) : [];
-        };
+            column.push(contribution.state_acronym || 'Outro/other');
+            column.push(contribution.total_contributions);
+            column.push([contribution.total_contributed, [// Adding row with custom comparator => read project-data-table description
+                m(`input[type="hidden"][value="${contribution.total_contributed}"`),
+                'R$ ',
+                h.formatNumber(contribution.total_contributed, 2, 3),
+                m('span.w-hidden-small.w-hidden-tiny', ` (${contribution.total_on_percentage.toFixed(2)}%)`)
+            ]]);
+            return contributionsPerLocationTable.push(column);
+        }) : [];
 
         const lContributionsPerLocation = postgrest.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
         lContributionsPerLocation.load().then(buildPerLocationTable);
@@ -73,21 +71,21 @@ const projectContributions = {
         lContributionsStats.load().then(data => contributionsStats(_.first(data)));
 
         return {
-            listVM: listVM,
-            filterVM: filterVM,
-            groupedCollection: groupedCollection,
-            lContributionsStats: lContributionsStats,
-            contributionsPerLocationTable: contributionsPerLocationTable,
-            lContributionsPerLocation: lContributionsPerLocation,
-            contributionsPerDay: contributionsPerDay,
-            lContributionsPerDay: lContributionsPerDay,
-            contributionsStats: contributionsStats
+            listVM,
+            filterVM,
+            groupedCollection,
+            lContributionsStats,
+            contributionsPerLocationTable,
+            lContributionsPerLocation,
+            contributionsPerDay,
+            lContributionsPerDay,
+            contributionsStats
         };
     },
     view(ctrl, args) {
         const list = ctrl.listVM,
-              stats = ctrl.contributionsStats(),
-              groupedCollection = ctrl.groupedCollection(list.collection());
+            stats = ctrl.contributionsStats(),
+            groupedCollection = ctrl.groupedCollection(list.collection());
 
         return m('#project_contributions', m('#contributions_top', [
             m('.section.w-section',
@@ -136,50 +134,48 @@ const projectContributions = {
             m('.divider.w-section'),
             m('.section.w-section', m('.w-container', [
                 m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', 'Apoiadores'),
-                m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, (contribution) => {
-                    return m('.project-contribution-item.w-col.w-col-4', [
+                m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, contribution => m('.project-contribution-item.w-col.w-col-4', [
                         // here new card
-                        m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
-                            m('a[href="/users/' + contribution.user_id + '"][style="display: block;"]', {
-                                onclick: h.analytics.event({
-                                    cat: 'project_view',
-                                    act: 'project_backer_link',
-                                    lbl: contribution.user_id,
-                                    project: args.project()
-                                })
-                            }, [
-                                m('img.thumb.u-marginbottom-10.u-round[src="' + (!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg') + '"]')
+                    m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
+                        m(`a[href="/users/${contribution.user_id}"][style="display: block;"]`, {
+                            onclick: h.analytics.event({
+                                cat: 'project_view',
+                                act: 'project_backer_link',
+                                lbl: contribution.user_id,
+                                project: args.project()
+                            })
+                        }, [
+                            m(`img.thumb.u-marginbottom-10.u-round[src="${!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg'}"]`)
+                        ]),
+                        m(`a.fontsize-base.fontweight-semibold.lineheigh-tight.link-hidden-dark[href="/users/${contribution.user_id}"]`, {
+                            onclick: h.analytics.event({
+                                cat: 'project_view',
+                                act: 'project_backer_link',
+                                lbl: contribution.user_id,
+                                project: args.project()
+                            })
+                        }, (contribution.data.public_name || contribution.data.name)),
+                        m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${h.selfOrEmpty(contribution.data.city)}, ${h.selfOrEmpty(contribution.data.state)}`),
+                        m('.fontsize-smaller', [
+                            m('span.fontweight-semibold', contribution.data.total_contributed_projects), ' apoiados  |  ',
+                            m('span.fontweight-semibold', contribution.data.total_published_projects), ' criado'
+                        ]),
+                        m('.btn-bottom-card.w-row', [
+                            m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
+                            m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
+                                m(UserFollowBtn, { follow_id: contribution.user_id, following: contribution.is_follow })
                             ]),
-                            m('a.fontsize-base.fontweight-semibold.lineheigh-tight.link-hidden-dark[href="/users/' + contribution.user_id + '"]', {
-                                onclick: h.analytics.event({
-                                    cat: 'project_view',
-                                    act: 'project_backer_link',
-                                    lbl: contribution.user_id,
-                                    project: args.project()
-                                })
-                            }, (contribution.data.public_name || contribution.data.name)),
-                            m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${h.selfOrEmpty(contribution.data.city)}, ${h.selfOrEmpty(contribution.data.state)}`),
-                            m('.fontsize-smaller', [
-                                m('span.fontweight-semibold', contribution.data.total_contributed_projects),' apoiados  |  ',
-                                m('span.fontweight-semibold', contribution.data.total_published_projects),' criado'
-                            ]),
-                            m('.btn-bottom-card.w-row', [
-                                m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
-                                m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
-                                    m(UserFollowBtn, {follow_id: contribution.user_id, following: contribution.is_follow})
-                                ]),
-                                m(".w-col.w-col-3.w-col-small-4.w-col-tiny-3")
-                            ])
+                            m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3')
                         ])
+                    ])
                         // new card
-                    ]);
-                })))),
+                ]))))),
                 m('.w-row.u-marginbottom-40.u-margintop-20', [
                     m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?
                                                       list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
                                                           onclick: list.nextPage
                                                       }, 'Carregar mais') : h.loader(),
-                                                     ])
+                    ])
                 ])
             ]))
         ]),
@@ -193,7 +189,7 @@ const projectContributions = {
                              collection: ctrl.contributionsPerDay,
                              label: 'R$ arrecadados por dia',
                              dataKey: 'total_amount',
-                             xAxis: (item) => h.momentify(item.paid_at),
+                             xAxis: item => h.momentify(item.paid_at),
                              emptyState: 'Apoios não contabilizados'
                          }) : h.loader()]),
                      ]),

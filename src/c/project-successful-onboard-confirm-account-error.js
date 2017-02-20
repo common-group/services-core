@@ -18,20 +18,19 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 const projectSuccessfulOnboardConfirmAccountError = {
     controller(args) {
         const errorReasonM = m.prop(''),
-        error = m.prop(false);
+            error = m.prop(false);
 
         const addErrorReason = () => {
             if (errorReasonM().trim() === '')	{
                 return error(true);
-            } else {
-                return args.addErrorReason(errorReasonM).call();
             }
+            return args.addErrorReason(errorReasonM).call();
         };
 
         return {
-            addErrorReason: addErrorReason,
-            errorReasonM: errorReasonM,
-            error: error
+            addErrorReason,
+            errorReasonM,
+            error
         };
     },
     view(ctrl, args) {
@@ -39,7 +38,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
             m('.w-col.w-col-6.w-col-push-3', [
                 m('.w-form.bank-transfer-problem.card.u-radius', [
                     m('form#successful-onboard-error', [
-                        m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', {href: '#confirm_account', onclick: args.changeToAction('start')}),
+                        m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', { href: '#confirm_account', onclick: args.changeToAction('start') }),
                         m('label.field-label.fontweight-semibold.u-marginbottom-20', I18n.t('title', I18nScope())),
                         m('textarea.w-input.text-field', {
                             placeholder: I18n.t('placeholder', I18nScope()),

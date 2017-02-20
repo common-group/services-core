@@ -41,7 +41,6 @@ const userSettings = {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
                 }
-                return;
             },
             updateUserData = (user_id) => {
                 const userData = {
@@ -81,16 +80,15 @@ const userSettings = {
             },
             validateDocument = () => {
                 const document = fields.owner_document(),
-                    striped = String(document).replace(/[\.|\-|\/]*/g,'');
-                let isValid = false, errorMessage = '';
+                    striped = String(document).replace(/[\.|\-|\/]*/g, '');
+                let isValid = false,
+                    errorMessage = '';
 
                 if (document.length > 14) {
                     return h.validateCnpj(document);
                 } else if (document.length > 0) {
                     return h.validateCpf(striped);
                 }
-
-                return;
             },
             // TODO: this form validation should be abstracted/merged together with others
             onSubmit = () => {
@@ -106,33 +104,31 @@ const userSettings = {
             applyZipcodeMask = _.compose(fields.zipcode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phonenumber, phoneMask),
             applyDocumentMask = (value) => {
-                if(value.length > 14) {
+                if (value.length > 14) {
                     isCnpj(true);
                     fields.owner_document(documentCompanyMask(value));
-                } else  {
+                } else {
                     isCnpj(false);
                     fields.owner_document(documentMask(value));
                 }
-
-                return;
             };
 
-        countriesLoader.load().then((data) => countries(_.sortBy(data, 'name_en')));
+        countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));
         statesLoader.load().then(states);
 
         return {
-            applyDocumentMask: applyDocumentMask,
-            applyZipcodeMask: applyZipcodeMask,
-            applyPhoneMask: applyPhoneMask,
-            countries: countries,
-            states: states,
-            fields: fields,
-            loader: loader,
-            showSuccess: showSuccess,
-            showError: showError,
-            user: user,
-            onSubmit: onSubmit,
-            error: error
+            applyDocumentMask,
+            applyZipcodeMask,
+            applyPhoneMask,
+            countries,
+            states,
+            fields,
+            loader,
+            showSuccess,
+            showError,
+            user,
+            onSubmit,
+            error
         };
     },
     view(ctrl, args) {
@@ -196,13 +192,11 @@ const userSettings = {
                                         }, [
                                             m('option[value=\'\']'),
                                             (!_.isEmpty(ctrl.countries()) ?
-                                                _.map(ctrl.countries(), (country) => {
-                                                    return m(`option${country.id == fields.country_id() ? '[selected="selected"]' : ''}`, {
-                                                            value: country.id
-                                                        },
+                                                _.map(ctrl.countries(), country => m(`option${country.id == fields.country_id() ? '[selected="selected"]' : ''}`, {
+                                                    value: country.id
+                                                },
                                                         country.name_en
-                                                    );
-                                                })
+                                                    ))
 
                                                 :
                                                 '')
@@ -283,13 +277,11 @@ const userSettings = {
                                         }, [
                                             m('option[value=\'\']'),
                                             (!_.isEmpty(ctrl.states()) ?
-                                                _.map(ctrl.states(), (state) => {
-                                                    return m(`option[value='${state.acronym}']${state.acronym == fields.state() ? '[selected="selected"]' : ''}`, {
-                                                            value: state.acronym
-                                                        },
+                                                _.map(ctrl.states(), state => m(`option[value='${state.acronym}']${state.acronym == fields.state() ? '[selected="selected"]' : ''}`, {
+                                                    value: state.acronym
+                                                },
                                                         state.name
-                                                    );
-                                                })
+                                                    ))
 
                                                 :
                                                 ''),
@@ -322,7 +314,7 @@ const userSettings = {
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
                                                     value: fields.phonenumber(),
                                                     onchange: m.withAttr('value', fields.phonenumber),
-                                                    onkeyup: m.withAttr('value', (value) => ctrl.applyPhoneMask(value))
+                                                    onkeyup: m.withAttr('value', value => ctrl.applyPhoneMask(value))
                                                 })
                                             ])
                                         ])

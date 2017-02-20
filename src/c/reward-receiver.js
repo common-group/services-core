@@ -6,10 +6,10 @@ const rewardReceiver = {
         const toggleDelivery = (projectId, contribution) => {
                 userVM.toggleDelivery(projectId, contribution).then(() => {
                     const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
-                    contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; //so we don't have to reload the page
+                    contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
             },
-            canReceiveReward = (contribution) => (contribution.state == 'paid' && contribution.reward_id && contribution.project_state != 'failed');
+            canReceiveReward = contribution => (contribution.state == 'paid' && contribution.reward_id && contribution.project_state != 'failed');
 
         return {
             toggleDelivery,
@@ -33,6 +33,6 @@ const rewardReceiver = {
                 )
             ]) : m('');
     }
-}
+};
 
 export default rewardReceiver;

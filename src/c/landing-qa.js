@@ -22,7 +22,7 @@ const landingQA = {
         };
     },
     view(ctrl, args) {
-        return m('.card.qa-card.u-marginbottom-20.u-radius.btn-terciary',[
+        return m('.card.qa-card.u-marginbottom-20.u-radius.btn-terciary', [
             m('.fontsize-base', {
                 onclick: () => {
                     ctrl.showAnswer.toggle();

@@ -19,7 +19,6 @@ const paymentVM = (mode = 'aon') => {
         if (h.authenticityToken()) {
             xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
         }
-        return;
     };
 
     const fields = {
@@ -53,7 +52,7 @@ const paymentVM = (mode = 'aon') => {
 
     const populateForm = (fetchedData) => {
         const data = _.first(fetchedData),
-            countryId = data.address.country_id || _.findWhere(fields.countries(), {name: 'Brasil'}).id;
+            countryId = data.address.country_id || _.findWhere(fields.countries(), { name: 'Brasil' }).id;
 
         fields.completeName(data.name);
         fields.city(data.address.city);
@@ -70,8 +69,7 @@ const paymentVM = (mode = 'aon') => {
         creditCardFields.cardOwnerDocument(data.owner_document);
     };
 
-    const expMonthOptions = () => {
-        return [
+    const expMonthOptions = () => [
             [null, 'Mês'],
             [1, '01 - Janeiro'],
             [2, '02 - Fevereiro'],
@@ -85,59 +83,51 @@ const paymentVM = (mode = 'aon') => {
             [10, '10 - Outubro'],
             [11, '11 - Novembro'],
             [12, '12 - Dezembro']
-        ];
-    };
+    ];
 
     const expYearOptions = () => {
         const currentYear = moment().year();
-        let yearsOptions = ['Ano'];
+        const yearsOptions = ['Ano'];
         for (let i = currentYear; i <= currentYear + 25; i++) {
             yearsOptions.push(i);
         }
         return yearsOptions;
     };
 
-    const isInternational = () => {
-        return !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), {name: 'Brasil'}).id : false;
-    };
+    const isInternational = () => !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), { name: 'Brasil' }).id : false;
 
-    const scope = (data) => {
-        return isInternational() ? I18nIntScope(data) : I18nScope(data);
-    };
+    const scope = data => isInternational() ? I18nIntScope(data) : I18nScope(data);
 
-    const getLocale = () => {
-        return isInternational()
-            ? {locale: 'en'}
-            : {locale: 'pt'};
-    };
+    const getLocale = () => isInternational()
+            ? { locale: 'en' }
+            : { locale: 'pt' };
 
     const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
         currentUser = h.getUser() || {},
         countriesLoader = postgrest.loader(models.country.getPageOptions()),
         statesLoader = postgrest.loader(models.state.getPageOptions());
 
-    const checkEmptyFields = (checkedFields) => {
-        return _.map(checkedFields, (field) => {
-            const val = fields[field]();
+    const checkEmptyFields = checkedFields => _.map(checkedFields, (field) => {
+        const val = fields[field]();
 
-            if (!h.existy(val) || _.isEmpty(String(val).trim())) {
-                fields.errors().push({field: field, message: I18n.t('validation.empty_field', scope())});
-            }
-        });
-    };
+        if (!h.existy(val) || _.isEmpty(String(val).trim())) {
+            fields.errors().push({ field, message: I18n.t('validation.empty_field', scope()) });
+        }
+    });
 
     const checkEmail = () => {
         const isValid = h.validateEmail(fields.email());
 
-        if (!isValid){
-            fields.errors().push({field: 'email', message: I18n.t('validation.email', scope())});
+        if (!isValid) {
+            fields.errors().push({ field: 'email', message: I18n.t('validation.email', scope()) });
         }
     };
 
     const checkDocument = () => {
         const document = fields.ownerDocument(),
-            striped = String(document).replace(/[\.|\-|\/]*/g,'');
-        let isValid = false, errorMessage = '';
+            striped = String(document).replace(/[\.|\-|\/]*/g, '');
+        let isValid = false,
+            errorMessage = '';
 
         if (document.length > 14) {
             isValid = h.validateCnpj(document);
@@ -148,20 +138,20 @@ const paymentVM = (mode = 'aon') => {
         }
 
         if (!isValid) {
-            fields.errors().push({field: 'ownerDocument', message: errorMessage});
+            fields.errors().push({ field: 'ownerDocument', message: errorMessage });
         }
     };
 
     const checkUserState = () => {
         if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
-            fields.errors().push({field: 'userState', message: I18n.t('validation.state', scope())});
+            fields.errors().push({ field: 'userState', message: I18n.t('validation.state', scope()) });
         }
     };
 
     const checkPhone = () => {
         const phone = fields.phone(),
             strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, ''),
-            error = {field: 'phone', message: I18n.t('validation.phone', scope())};
+            error = { field: 'phone', message: I18n.t('validation.phone', scope()) };
 
         if (strippedPhone.length < 10) {
             fields.errors().push(error);
@@ -178,7 +168,7 @@ const paymentVM = (mode = 'aon') => {
 
         checkEmptyFields(['completeName', 'zipCode', 'street', 'userState', 'city', 'userCountryId']);
 
-        if (!isInternational()){
+        if (!isInternational()) {
             checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
             checkUserState();
             checkDocument();
@@ -205,8 +195,8 @@ const paymentVM = (mode = 'aon') => {
             method: 'post',
             url: `/payment/pagarme/${contribution_id}/pay_slip.json`,
             dataType: 'json'
-        }).then(data => {
-            if (data.payment_status == 'failed'){
+        }).then((data) => {
+            if (data.payment_status == 'failed') {
                 error(I18n.t('submission.slip_submission', scope()));
             } else if (data.boleto_url) {
                 completed(true);
@@ -214,7 +204,7 @@ const paymentVM = (mode = 'aon') => {
             }
             loading(false);
             m.redraw();
-        }).catch(err => {
+        }).catch((err) => {
             error(I18n.t('submission.slip_submission', scope()));
             loading(false);
             completed(false);
@@ -235,7 +225,6 @@ const paymentVM = (mode = 'aon') => {
                     error(I18n.t('submission.slip_validation', scope()));
                     m.redraw();
                 });
-
         } else {
             loading(false);
             error(I18n.t('submission.slip_validation', scope()));
@@ -255,7 +244,7 @@ const paymentVM = (mode = 'aon') => {
             config: setCsrfToken,
             url: `/users/${user_id}/credit_cards`
         }).then((creditCards) => {
-            if (_.isArray(creditCards)){
+            if (_.isArray(creditCards)) {
                 creditCards.push(otherSample);
             } else {
                 creditCards = [];
@@ -266,14 +255,14 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const similityExecute = (contribution_id) => {
-        if(window.SimilityScript && h.getSimilityCustomer()) {
+        if (window.SimilityScript && h.getSimilityCustomer()) {
             const user = h.getUser() || {};
-            let similityContext = {
+            const similityContext = {
                 customer_id: h.getSimilityCustomer(),
                 session_id: contribution_id,
                 user_id: user.user_id
             };
-            let ss = new window.SimilityScript(similityContext);
+            const ss = new window.SimilityScript(similityContext);
             ss.execute();
         }
     };
@@ -283,7 +272,7 @@ const paymentVM = (mode = 'aon') => {
         return m.request({
             method: 'POST',
             url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
-            data: data,
+            data,
             config: setCsrfToken
         });
     };
@@ -297,7 +286,7 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const setNewCreditCard = () => {
-        let creditCard = new window.PagarMe.creditCard();
+        const creditCard = new window.PagarMe.creditCard();
         creditCard.cardHolderName = creditCardFields.name();
         creditCard.cardExpirationMonth = creditCardFields.expMonth();
         creditCard.cardExpirationYear = creditCardFields.expYear();
@@ -317,7 +306,7 @@ const paymentVM = (mode = 'aon') => {
             const card = setNewCreditCard();
             const errors = card.fieldErrors();
             if (_.keys(errors).length > 0) {
-                deferred.reject({message: I18n.t('submission.card_invalid', scope())});
+                deferred.reject({ message: I18n.t('submission.card_invalid', scope()) });
             } else {
                 card.generateHash((cardHash) => {
                     const data = {
@@ -330,13 +319,12 @@ const paymentVM = (mode = 'aon') => {
                         .then(deferred.resolve)
                         .catch(deferred.reject);
                 });
-
             }
         }).catch((error) => {
-            if(!_.isEmpty(error.message)){
+            if (!_.isEmpty(error.message)) {
                 deferred.reject(error);
             } else {
-                deferred.reject({message: I18n.t('submission.encryption_error', scope())});
+                deferred.reject({ message: I18n.t('submission.encryption_error', scope()) });
             }
         });
 
@@ -363,7 +351,7 @@ const paymentVM = (mode = 'aon') => {
         return m.request({
             method: 'PUT',
             url: `/projects/${project_id}/contributions/${contribution_id}.json`,
-            data: {contribution: contributionData},
+            data: { contribution: contributionData },
             config: setCsrfToken
         });
     };
@@ -373,7 +361,7 @@ const paymentVM = (mode = 'aon') => {
             const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
 
             isLoading(false);
-            submissionError(I18n.t('submission.error', scope({message: errorMsg})));
+            submissionError(I18n.t('submission.error', scope({ message: errorMsg })));
             m.redraw();
             deferred.reject();
         } else {
@@ -381,10 +369,10 @@ const paymentVM = (mode = 'aon') => {
         }
     };
 
-    const creditCardPaymentFail = (deferred) => (data) => {
+    const creditCardPaymentFail = deferred => (data) => {
         const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
         isLoading(false);
-        submissionError(I18n.t('submission.error', scope({message: errorMsg})));
+        submissionError(I18n.t('submission.error', scope({ message: errorMsg })));
         m.redraw();
         deferred.reject();
     };
@@ -394,11 +382,10 @@ const paymentVM = (mode = 'aon') => {
             return payWithSavedCard(selectedCreditCard(), selectedInstallment(), contribution_id)
                 .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
                 .catch(creditCardPaymentFail(deferred));
-        } else {
-            return payWithNewCard(contribution_id, selectedInstallment)
+        }
+        return payWithNewCard(contribution_id, selectedInstallment)
                 .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
                 .catch(creditCardPaymentFail(deferred));
-        }
     };
 
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
@@ -413,7 +400,6 @@ const paymentVM = (mode = 'aon') => {
                     isLoading(false);
                     deferred.reject();
                 });
-
         } else {
             isLoading(false);
             deferred.reject();
@@ -421,70 +407,68 @@ const paymentVM = (mode = 'aon') => {
         return deferred.promise;
     };
 
-    const resetFieldError = (fieldName) => () => {
+    const resetFieldError = fieldName => () => {
         const errors = fields.errors(),
-            errorField = _.findWhere(fields.errors(), {field: fieldName}),
+            errorField = _.findWhere(fields.errors(), { field: fieldName }),
             newErrors = _.compose(fields.errors, _.without);
 
         return newErrors(fields.errors(), errorField);
     };
 
-    const resetCreditCardFieldError = (fieldName) => () => {
+    const resetCreditCardFieldError = fieldName => () => {
         const errors = fields.errors(),
-            errorField = _.findWhere(creditCardFields.errors(), {field: fieldName}),
+            errorField = _.findWhere(creditCardFields.errors(), { field: fieldName }),
             newErrors = _.compose(creditCardFields.errors, _.without);
 
         return newErrors(creditCardFields.errors(), errorField);
     };
 
-    const installments = m.prop([{value: 10, number: 1}]);
+    const installments = m.prop([{ value: 10, number: 1 }]);
 
-    const getInstallments = (contribution_id) => {
-        return m.request({
-            method: 'GET',
-            url: `/payment/pagarme/${contribution_id}/get_installment`,
-            config: h.setCsrfToken
-        }).then(installments);
-    };
+    const getInstallments = contribution_id => m.request({
+        method: 'GET',
+        url: `/payment/pagarme/${contribution_id}/get_installment`,
+        config: h.setCsrfToken
+    }).then(installments);
 
     const creditCardMask = _.partial(h.mask, '9999 9999 9999 9999');
 
     const applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
     countriesLoader.load().then((data) => {
-        const countryId = fields.userCountryId() || _.findWhere(data, {name: 'Brasil'}).id;
+        const countryId = fields.userCountryId() || _.findWhere(data, { name: 'Brasil' }).id;
         fields.countries(_.sortBy(data, 'name_en'));
         fields.userCountryId(countryId);
     });
     statesLoader.load().then((data) => {
-        fields.states().push({acronym: null, name: 'Estado'});
+        fields.states().push({ acronym: null, name: 'Estado' });
         _.map(data, state => fields.states().push(state));
     });
     usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
 
     return {
-        fields: fields,
-        validate: validate,
-        isInternational: isInternational,
-        resetFieldError: resetFieldError,
-        getSlipPaymentDate: getSlipPaymentDate,
-        paySlip: paySlip,
-        installments: installments,
-        getInstallments: getInstallments,
-        savedCreditCards: savedCreditCards,
-        getSavedCreditCards: getSavedCreditCards,
-        applyCreditCardMask: applyCreditCardMask,
-        creditCardFields: creditCardFields,
-        resetCreditCardFieldError: resetCreditCardFieldError,
-        expMonthOptions: expMonthOptions,
-        expYearOptions: expYearOptions,
-        sendPayment: sendPayment,
-        submissionError: submissionError,
-        isLoading: isLoading,
-        pagarme: pagarme,
+        fields,
+        validate,
+        isInternational,
+        resetFieldError,
+        getSlipPaymentDate,
+        paySlip,
+        installments,
+        getInstallments,
+        savedCreditCards,
+        getSavedCreditCards,
+        applyCreditCardMask,
+        creditCardFields,
+        resetCreditCardFieldError,
+        expMonthOptions,
+        expYearOptions,
+        sendPayment,
+        submissionError,
+        isLoading,
+        pagarme,
         locale: getLocale,
-        faq: faq,
-        similityExecute: similityExecute
+        faq,
+        similityExecute
     };
 };
 

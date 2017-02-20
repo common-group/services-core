@@ -51,9 +51,9 @@ const adminContributionDetail = {
                     getModel: models.rewardDetail,
                     updateModel: models.contributionDetail,
                     selectedItem: loadReward(),
-                    addEmpty: {id: -1, minimum_value: 10, description: 'Sem recompensa'},
+                    addEmpty: { id: -1, minimum_value: 10, description: 'Sem recompensa' },
                     validate(rewards, newRewardID) {
-                        let reward = _.findWhere(rewards, {id: newRewardID});
+                        const reward = _.findWhere(rewards, { id: newRewardID });
                         return (args.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
                     }
                 },
@@ -76,7 +76,7 @@ const adminContributionDetail = {
                     model: models.contributionDetail
                 }
             },
-            l: l
+            l
         };
     },
     view(ctrl, args) {
@@ -84,21 +84,19 @@ const adminContributionDetail = {
             item = args.item,
             reward = ctrl.reward;
 
-        const addOptions = (builder, id) => {
-            return _.extend({}, builder, {
-                requestOptions: {
-                    url: (`/admin/contributions/${id}/gateway_refund`),
-                    method: 'PUT'
-                }
-            });
-        };
+        const addOptions = (builder, id) => _.extend({}, builder, {
+            requestOptions: {
+                url: (`/admin/contributions/${id}/gateway_refund`),
+                method: 'PUT'
+            }
+        });
 
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
             m('.w-row.u-marginbottom-30', [
                 m.component(adminInputAction, {
                     data: actions.transfer,
-                    item: item
+                    item
                 }),
                 (ctrl.l()) ? h.loader :
                 m.component(adminRadioAction, {
@@ -109,11 +107,11 @@ const adminContributionDetail = {
                 }),
                 m.component(adminExternalAction, {
                     data: addOptions(actions.refund, item.id),
-                    item: item
+                    item
                 }),
                 m.component(adminInputAction, {
                     data: actions.remove,
-                    item: item
+                    item
                 })
             ]),
             m('.w-row.card.card-terciary.u-radius', [
@@ -125,7 +123,7 @@ const adminContributionDetail = {
                 }),
                 (ctrl.l()) ? h.loader :
                 m.component(adminReward, {
-                    reward: reward,
+                    reward,
                     key: item.key
                 })
             ])

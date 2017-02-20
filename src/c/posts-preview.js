@@ -40,7 +40,7 @@ const postsPreview = {
                 });
             };
         return {
-            sendNotification: sendNotification,
+            sendNotification,
             togglePreview
         };
     },
@@ -74,7 +74,7 @@ const postsPreview = {
                 m('span', ' A novidade acima será  '),
                 m('span.fontweight-semibold', 'enviada por email para todos os apoiadores'),
                 m('span', ' e ficará '),
-                m('span.fontweight-semibold' , 'visível somente para esses na plataforma.')
+                m('span.fontweight-semibold', 'visível somente para esses na plataforma.')
             ]);
 
         return m('div', [
@@ -131,8 +131,8 @@ const postsPreview = {
                     ),
                     m('.w-col.w-col-2',
                         m('button.btn.btn-large.btn-terciary', {
-                                onclick: ctrl.togglePreview
-                            },
+                            onclick: ctrl.togglePreview
+                        },
                             'Editar'
                         )
                     ),

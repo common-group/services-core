@@ -11,7 +11,7 @@ const projectHeader = {
         const project = args.project,
             currentUser = h.getUser();
 
-        if (h.isProjectPage() && currentUser && !_.isUndefined(project())){
+        if (h.isProjectPage() && currentUser && !_.isUndefined(project())) {
             contributionVM
                 .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
                 .then(args.projectContributions);
@@ -27,7 +27,7 @@ const projectHeader = {
             rewardDetails = args.rewardDetails;
 
         return (!_.isUndefined(project()) ? m('#project-header', [
-            m('.w-section.section-product.' + project().mode),
+            m(`.w-section.section-product.${project().mode}`),
             m('.w-section.page-header.u-text-center', [
                 m('.w-container', [
                     m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
@@ -41,12 +41,12 @@ const projectHeader = {
                                 [
                                     m('span.fa.fa-thumbs-up'),
                                     ' Você é apoiador deste projeto! ',
-                                    m('a.alt-link[href=\'javascript:void(0);\']', {onclick: ctrl.showContributions.toggle}, 'Detalhes')
+                                    m('a.alt-link[href=\'javascript:void(0);\']', { onclick: ctrl.showContributions.toggle }, 'Detalhes')
                                 ]
                             ),
                             ctrl.showContributions() ? m('.card.u-margintop-20',
                                 m('.w-row',
-                                    _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, {contribution: contribution, rewardDetails: rewardDetails}))
+                                    _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, { contribution, rewardDetails }))
                                 )
                             ) : ''
                         ]
@@ -57,16 +57,16 @@ const projectHeader = {
                 m('.w-container', [
                     m('.w-row.project-main', [
                         m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {
-                            project: project
+                            project
                         })),
                         m('.w-col.w-col-4', m.component(projectSidebar, {
-                            project: project,
+                            project,
                             userDetails: args.userDetails
                         }))
                     ])
                 ])
             ])
-            ]) : m(''));
+        ]) : m(''));
     }
 };
 

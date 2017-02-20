@@ -16,10 +16,8 @@ const userBalanceTransactions = {
         const list = ctrl.list;
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
-            m('.w-container', _.map(list.collection(), (item, index) => {
-                return m.component(
-                    userBalanceTransactionRow, {item: item, index: index});
-            })),
+            m('.w-container', _.map(list.collection(), (item, index) => m.component(
+                    userBalanceTransactionRow, { item, index }))),
             m('.container', [
                 m('.w-row.u-margintop-40', [
                     m('.w-col.w-col-2.w-col-push-5', [

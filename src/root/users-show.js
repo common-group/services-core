@@ -13,61 +13,61 @@ const usersShow = {
             user_id = args.user_id.split('-')[0],
             hash = m.prop(window.location.hash),
             displayTabContent = (user) => {
-                  const tabs = {
-                      '#created': m.component(userCreated, {userId: user.id}),
-                      '#contributed': m.component(userContributed, {userId: user.id}),
-                      '#about': m.component(userAbout, {userId: user.id})
-                  };
+                const tabs = {
+                    '#created': m.component(userCreated, { userId: user.id }),
+                    '#contributed': m.component(userContributed, { userId: user.id }),
+                    '#about': m.component(userAbout, { userId: user.id })
+                };
 
-                  hash(window.location.hash);
+                hash(window.location.hash);
 
-                  if (_.isEmpty(hash()) || hash() === '#_=_') {
-                    if(user.total_published_projects > 0){
-                      hash('#created');
-                      return tabs['#created'];
+                if (_.isEmpty(hash()) || hash() === '#_=_') {
+                    if (user.total_published_projects > 0) {
+                        hash('#created');
+                        return tabs['#created'];
+                    } else if (user.total_contributed_projects > 0) {
+                        hash('#contributed');
+                        return tabs['#contributed'];
                     }
-                    else if(user.total_contributed_projects > 0){
-                      hash('#contributed');
-                      return tabs['#contributed'];
-                    }
-                    else{
-                      hash('#about');
-                      return tabs['#about'];
-                    }
-                  }
 
-                  return tabs[hash()];
-              };
+                    hash('#about');
+                    return tabs['#about'];
+                }
+
+                return tabs[hash()];
+            };
 
         h.redrawHashChange();
 
         userVM.fetchUser(user_id, true, userDetails);
 
         return {
-            displayTabContent: displayTabContent,
-            hash: hash,
-            userDetails: userDetails
+            displayTabContent,
+            hash,
+            userDetails
         };
     },
     view(ctrl, args) {
         const user = ctrl.userDetails();
 
         return m('div', [
-          m.component(userHeader, {user: user}),
+            m.component(userHeader, { user }),
 
-          m('nav.project-nav.u-text-center.u-marginbottom-30.profile', {style: {'z-index': '10', 'position': 'relative'}},
+            m('nav.project-nav.u-text-center.u-marginbottom-30.profile', { style: { 'z-index': '10', position: 'relative' } },
               m('.w-container[data-anchor=\'created\']',
                   [
-                    (!_.isEmpty(user) ? 
+                    (!_.isEmpty(user) ?
                      (user.is_owner_or_admin ?
-                      m(`a.dashboard-nav-link.dashboard[href=\'/pt/users/${user.id}/edit\']`,{config: m.route, onclick: () => {
-                              m.route("/users/edit/" + user.id, {user_id: user.id} );}},
+                      m(`a.dashboard-nav-link.dashboard[href=\'/pt/users/${user.id}/edit\']`, { config: m.route,
+                          onclick: () => {
+                              m.route(`/users/edit/${user.id}`, { user_id: user.id });
+                          } },
                           [
                               m('span.fa.fa-cog'),
                               m.trust('&nbsp;'),
                               ' Editar perfil'
                           ]
-                      ) :'') : h.loader()),
+                      ) : '') : h.loader()),
                       m(`a[data-target=\'#contributed-tab\'][href=\'#contributed\'][id=\'contributed_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#contributed' ? 'selected' : '')}\']`,
                           [
                               'Apoiados ',
@@ -93,13 +93,12 @@ const usersShow = {
               )
           ),
 
-          m('section.section',
+            m('section.section',
               m('.w-container',
                   m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
               )
           )
-      ]);
-
+        ]);
     }
 };
 

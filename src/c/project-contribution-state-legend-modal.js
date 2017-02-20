@@ -7,9 +7,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions_report.legend_l
 
 const ProjectContributionStateLegendModal = {
     controller(args) {
-        const translate = (path) => {
-            return I18n.t(path, I18nScope());
-        };
+        const translate = path => I18n.t(path, I18nScope());
 
         return {
             stages: {
@@ -63,22 +61,20 @@ const ProjectContributionStateLegendModal = {
     },
     view(ctrl, args) {
         const project = _.first(args.project()),
-              project_stage = (project.state == 'waiting_funds' ? 'online' : project.state);
+            project_stage = (project.state == 'waiting_funds' ? 'online' : project.state);
 
         return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center',
                   'Status do apoio')
             ]),
-            m('.modal-dialog-content', _.map(ctrl.stages[project_stage], (item, i) => {
-                return m('.u-marginbottom-20', [
-                    m('.fontsize-small.fontweight-semibold', [
-                        m(`span${item.i_class}`),
-                        `  ${item.label}`
-                    ]),
-                    m('.fontsize-smaller', m.trust(item.text))
-                ]);
-            }))
+            m('.modal-dialog-content', _.map(ctrl.stages[project_stage], (item, i) => m('.u-marginbottom-20', [
+                m('.fontsize-small.fontweight-semibold', [
+                    m(`span${item.i_class}`),
+                    `  ${item.label}`
+                ]),
+                m('.fontsize-smaller', m.trust(item.text))
+            ])))
         ]);
     }
 };

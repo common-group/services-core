@@ -11,45 +11,45 @@ import projectPosts from './project-posts';
 const projectMain = {
     controller(args) {
         const hash = m.prop(window.location.hash),
-              displayTabContent = (project) => {
-                  const c_opts = {
-                      project: project,
-                      post_id: args.post_id
-                  },
-                        tabs = {
-                            '#rewards': m('.w-col.w-col-12', m.component(projectRewardList, _.extend({}, {
-                                rewardDetails: args.rewardDetails
-                            }, c_opts))),
-                            '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
-                            '#contributions': m.component(projectContributions, c_opts),
-                            '#about': m.component(projectAbout, _.extend({}, {
-                                rewardDetails: args.rewardDetails
-                            }, c_opts)),
-                            '#comments': m.component(projectComments, c_opts),
-                            '#posts': m.component(projectPosts, _.extend({},{
-                                projectContributions: args.projectContributions,
-                                userDetails: args.userDetails,
-                            },c_opts))
-                        };
+            displayTabContent = (project) => {
+                const c_opts = {
+                        project,
+                        post_id: args.post_id
+                    },
+                    tabs = {
+                        '#rewards': m('.w-col.w-col-12', m.component(projectRewardList, _.extend({}, {
+                            rewardDetails: args.rewardDetails
+                        }, c_opts))),
+                        '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
+                        '#contributions': m.component(projectContributions, c_opts),
+                        '#about': m.component(projectAbout, _.extend({}, {
+                            rewardDetails: args.rewardDetails
+                        }, c_opts)),
+                        '#comments': m.component(projectComments, c_opts),
+                        '#posts': m.component(projectPosts, _.extend({}, {
+                            projectContributions: args.projectContributions,
+                            userDetails: args.userDetails,
+                        }, c_opts))
+                    };
 
-                  if (_.isNumber(args.post_id) && !window.location.hash) {
-                      window.location.hash = 'posts';
-                  }
+                if (_.isNumber(args.post_id) && !window.location.hash) {
+                    window.location.hash = 'posts';
+                }
 
-                  hash(window.location.hash);
+                hash(window.location.hash);
 
-                  if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
-                      return tabs['#about'];
-                  }
+                if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
+                    return tabs['#about'];
+                }
 
-                  return tabs[hash()];
-              };
+                return tabs[hash()];
+            };
 
         h.redrawHashChange();
 
         return {
-            displayTabContent: displayTabContent,
-            hash: hash
+            displayTabContent,
+            hash
         };
     },
     view(ctrl, args) {

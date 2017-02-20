@@ -15,7 +15,7 @@ const InfoProjectContributionLegend = {
             m.trust('&nbsp;'),
             m('a.fa.fa-question-circle.fontcolor-secondary[href="#"]', {
                 onclick: ctrl.modalToggle.toggle
-            },''),
+            }, ''),
             (ctrl.modalToggle() ? m.component(modalBox, {
                 displayModal: ctrl.modalToggle,
                 content: args.content

@@ -7,7 +7,7 @@ const adminList = {
         const list = args.vm.list;
 
         if (!list.collection().length && list.firstPage) {
-            list.firstPage().then(null, function(serverError) {
+            list.firstPage().then(null, (serverError) => {
                 args.vm.error(serverError.message);
             });
         }
@@ -30,14 +30,12 @@ const adminList = {
                         ])
                     ]),
                     m('#admin-contributions-list.w-container', [
-                        list.collection().map((item) => {
-                            return m.component(adminItem, {
-                                listItem: args.listItem,
-                                listDetail: args.listDetail,
-                                item: item,
-                                key: item.id
-                            });
-                        }),
+                        list.collection().map(item => m.component(adminItem, {
+                            listItem: args.listItem,
+                            listDetail: args.listDetail,
+                            item,
+                            key: item.id
+                        })),
                         m('.w-section.section', [
                             m('.w-container', [
                                 m('.w-row', [

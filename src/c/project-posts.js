@@ -31,16 +31,16 @@ const projectPosts = {
         }
 
         return {
-            listVM: listVM,
-            filterVM: filterVM,
-            scrollTo: scrollTo
+            listVM,
+            filterVM,
+            scrollTo
         };
     },
     view(ctrl, args) {
         const list = ctrl.listVM,
             project = args.project() || {};
 
-        return m('#posts.project-posts.w-section',{config: ctrl.scrollTo},[
+        return m('#posts.project-posts.w-section', { config: ctrl.scrollTo }, [
             m('.w-container.u-margintop-20', [
                 (project.is_owner_or_admin ? [
                     (!list.isLoading()) ?
@@ -52,24 +52,22 @@ const projectPosts = {
                             m(`a.btn.btn-edit.btn-small[href='/pt/projects/${project.project_id}/edit#posts']`, 'Escrever novidade')
                         ])
                     ])
-                ] : ''), (_.map(list.collection(), (post) => {
-                    return m('.w-row', [
-                        m('.w-col.w-col-1'),
-                        m('.w-col.w-col-10', [
-                            m('.post', [
-                                m('.u-marginbottom-60 .w-clearfix', [
-                                    m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
-                                    m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
-                                        m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
-                                    ]),
-                                    (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores.'))
+                ] : ''), (_.map(list.collection(), post => m('.w-row', [
+                    m('.w-col.w-col-1'),
+                    m('.w-col.w-col-10', [
+                        m('.post', [
+                            m('.u-marginbottom-60 .w-clearfix', [
+                                m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
+                                m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
+                                    m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
                                 ]),
-                                m('.divider.u-marginbottom-60')
-                            ])
-                        ]),
-                        m('.w-col.w-col-1')
-                    ]);
-                })),
+                                    (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores.'))
+                            ]),
+                            m('.divider.u-marginbottom-60')
+                        ])
+                    ]),
+                    m('.w-col.w-col-1')
+                ]))),
                 m('.w-row', [
                     (!_.isUndefined(args.post_id) ? '' :
                         (!list.isLoading() ?
@@ -90,8 +88,8 @@ const projectPosts = {
                                 (list.isLastPage() ?
                                     list.collection().length === 0 ? 'Nenhuma novidade.' : ''
                                  : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                    onclick: list.nextPage
-                                }, 'Carregar mais'))
+                                     onclick: list.nextPage
+                                 }, 'Carregar mais'))
                             ) :
                             m('.w-col.w-col-2.w-col-push-5', h.loader())
                         ))

@@ -16,28 +16,32 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 const projectsPayment = {
     controller(args) {
         const project = projectVM.getCurrentProject(),
-              mode = project.mode,
-              projectUserId = project.user.id,
-              vm = paymentVM(mode),
-              showPaymentForm = m.prop(false),
-              contribution = contributionVM.getCurrentContribution(),
-              reward = m.prop(contribution().reward),
-              value = contribution().value,
-              phoneMask = _.partial(h.mask, '(99) 9999-99999'),
-              documentMask = _.partial(h.mask, '999.999.999-99'),
-              documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-              zipcodeMask = _.partial(h.mask, '99999-999'),
-              isCnpj = m.prop(false),
-              currentUserID = h.getUserID(),
-              user = usersVM.getCurrentUser();
+            mode = project.mode,
+            projectUserId = project.user.id,
+            vm = paymentVM(mode),
+            showPaymentForm = m.prop(false),
+            contribution = contributionVM.getCurrentContribution(),
+            reward = m.prop(contribution().reward),
+            value = contribution().value,
+            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
+            documentMask = _.partial(h.mask, '999.999.999-99'),
+            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
+            zipcodeMask = _.partial(h.mask, '99999-999'),
+            isCnpj = m.prop(false),
+            currentUserID = h.getUserID(),
+            user = usersVM.getCurrentUser();
 
-        if(_.contains([41679,40191,40271,38768,42815,43002,42129,41867,39655], project.project_id)) {
-            (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
-            setTimeout(function t(){
+        if (_.contains([41679, 40191, 40271, 38768, 42815, 43002, 42129, 41867, 39655], project.project_id)) {
+            (window.$zopim && window.$zopim.livechat) || (function (d, s) {
+                var z = window.$zopim = function (c) { z._.push(c); },
+                    $ = z.s = d.createElement(s),
+                    e = d.getElementsByTagName(s)[0]; z.set = function (o) { z.set._.push(o); }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8'); $.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm'; z.t = +new Date(); $.type = 'text/javascript'; e.parentNode.insertBefore($, e);
+            }(document, 'script'));
+            setTimeout(function t() {
                 const c = window.$zopim && window.$zopim.livechat;
-                if(c) {
+                if (c) {
                     const u = h.getUser();
-                    if(u) {
+                    if (u) {
                         c.setEmail(u.email);
                         c.setName(u.name);
                     }
@@ -72,37 +76,33 @@ const projectsPayment = {
         };
 
         const applyDocumentMask = (value) => {
-            if(value.length > 14) {
+            if (value.length > 14) {
                 isCnpj(true);
                 vm.fields.ownerDocument(documentCompanyMask(value));
-            } else  {
+            } else {
                 isCnpj(false);
                 vm.fields.ownerDocument(documentMask(value));
             }
-
-            return;
         };
 
         const applyZipcodeMask = _.compose(vm.fields.zipCode, zipcodeMask);
 
         const applyPhoneMask = _.compose(vm.fields.phone, phoneMask);
 
-        const addressChange = (fn) => (e) => {
+        const addressChange = fn => (e) => {
             CatarseAnalytics.oneTimeEvent({
                 cat: 'contribution_finish',
                 act: vm.isInternational ? 'contribution_address_br' : 'contribution_address_int'
             });
 
-            if(_.isFunction(fn)){
+            if (_.isFunction(fn)) {
                 fn(e);
             }
         };
 
-        const scope = (attr) => {
-            return vm.isInternational()
+        const scope = attr => vm.isInternational()
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
-        };
 
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
@@ -111,35 +111,35 @@ const projectsPayment = {
         vm.similityExecute(contribution().id);
 
         return {
-            addressChange: addressChange,
-            applyDocumentMask: applyDocumentMask,
-            applyZipcodeMask: applyZipcodeMask,
-            applyPhoneMask: applyPhoneMask,
-            fieldHasError: fieldHasError,
-            setStateOther: setStateOther,
-            validateForm: validateForm,
-            projectUserId: projectUserId,
-            showPaymentForm: showPaymentForm,
-            contribution: contribution,
-            reward: reward,
-            value: value,
-            mode: mode,
-            scope: scope,
-            isCnpj: isCnpj,
-            vm: vm,
-            user: user,
-            project: project
+            addressChange,
+            applyDocumentMask,
+            applyZipcodeMask,
+            applyPhoneMask,
+            fieldHasError,
+            setStateOther,
+            validateForm,
+            projectUserId,
+            showPaymentForm,
+            contribution,
+            reward,
+            value,
+            mode,
+            scope,
+            isCnpj,
+            vm,
+            user,
+            project
         };
     },
     view(ctrl, args) {
         const user = ctrl.user(),
-              project = ctrl.project;
+            project = ctrl.project;
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
                 m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
                     m('.fontsize-smaller.fontweight-semibold',
-                        I18n.t(`selected_reward.value`, ctrl.scope())
+                        I18n.t('selected_reward.value', ctrl.scope())
                     ),
                     m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href=\'#\']'),
                     m('.w-clearfix.u-marginbottom-20',
@@ -149,21 +149,21 @@ const projectsPayment = {
                     ),
                     m('.w-clearfix.back-payment-info-reward', {
                         style: {
-                            'display': 'none'
+                            display: 'none'
                         }
                     }, [
                         m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                            I18n.t(`selected_reward.reward`, ctrl.scope())
+                            I18n.t('selected_reward.reward', ctrl.scope())
                         ),
                         m('.fontsize-smallest',
                             ctrl.reward().description
                             ? ctrl.reward().description
-                            : m.trust(I18n.t(`selected_reward.review_without_reward_html`,
-                                ctrl.scope(_.extend({value: Number(ctrl.value).toFixed()}))
+                            : m.trust(I18n.t('selected_reward.review_without_reward_html',
+                                ctrl.scope(_.extend({ value: Number(ctrl.value).toFixed() }))
                             ))
                         ),
                         m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${project.project_id}/contributions/new"]`,
-                            I18n.t(`selected_reward.edit`, ctrl.scope()))
+                            I18n.t('selected_reward.edit', ctrl.scope()))
                     ])
                 ])
             ),
@@ -172,7 +172,7 @@ const projectsPayment = {
                     m('.w-col.w-col-8', [!_.isEmpty(ctrl.vm.fields.errors()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
                             m('.u-marginbottom-10.fontweight-bold', [
                                 I18n.t('errors.global', ctrl.scope()),
-                                m('.errors', _.map(ctrl.vm.fields.errors(), (error) => m('p', error.message)))
+                                m('.errors', _.map(ctrl.vm.fields.errors(), error => m('p', error.message)))
                             ])
                         ) : '',
                         m('.w-form', [
@@ -195,24 +195,24 @@ const projectsPayment = {
                                              m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
                                                  'Dados do apoiador ',
                                                  m(`a.alt-link[href="/not-my-account?project_id=${project.project_id}"]`, 'Não é você?')
-                                             ]),m('.fontsize-base.fontweight-semibold', user.name),
+                                             ]), m('.fontsize-base.fontweight-semibold', user.name),
                                              m('label.field-label', `CPF/CNPJ: ${user.owner_document}`)
                                          ])
                                      ])
                                  ]) : ''),
-                                m('.w-row.u-marginbottom-30',[
+                                m('.w-row.u-marginbottom-30', [
                                     m('.w-col.w-col-7.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold[for=\'country\']',[
+                                        m('label.field-label.fontweight-semibold[for=\'country\']', [
                                             'País / ',
                                             m('em', 'Country'),
                                             ' *'
                                         ]),
                                         m('select.w-select.text-field[id=\'country\']', {
-                                                onfocus: ctrl.vm.resetFieldError('userCountryId'),
-                                                class: ctrl.fieldHasError('userCountryId') ? 'error' : false,
-                                                onchange: m.withAttr('value', ctrl.vm.fields.userCountryId),
-                                                value: ctrl.vm.fields.userCountryId()
-                                            },
+                                            onfocus: ctrl.vm.resetFieldError('userCountryId'),
+                                            class: ctrl.fieldHasError('userCountryId') ? 'error' : false,
+                                            onchange: m.withAttr('value', ctrl.vm.fields.userCountryId),
+                                            value: ctrl.vm.fields.userCountryId()
+                                        },
                                             _.map(ctrl.vm.fields.countries(), (country, idx) => m('option', {
                                                 value: country.id,
                                                 key: idx,
@@ -223,7 +223,7 @@ const projectsPayment = {
                                     ]),
                                     m('.w-col.w-col-5')
                                 ]),
-                                ((user.name && user.owner_document) ? '' :  m('.w-row', [
+                                ((user.name && user.owner_document) ? '' : m('.w-row', [
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'complete-name\']',
                                           I18n.t('fields.complete_name', ctrl.scope())
@@ -254,7 +254,7 @@ const projectsPayment = {
                                 ])),
                                 m('.w-checkbox.w-clearfix', [
                                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
-                                        onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_anonymous_change'}),
+                                        onclick: () => CatarseAnalytics.event({ cat: 'contribution_finish', act: 'contribution_anonymous_change' }),
                                         onchange: m.withAttr('value', ctrl.vm.fields.anonymous),
                                         checked: ctrl.vm.fields.anonymous(),
                                     }),
@@ -343,7 +343,7 @@ const projectsPayment = {
                                             onfocus: ctrl.vm.resetFieldError('zipCode'),
                                             class: ctrl.fieldHasError('zipCode') ? 'error' : false,
                                             onchange: ctrl.addressChange(),
-                                            onkeyup: m.withAttr('value', (value) => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
+                                            onkeyup: m.withAttr('value', value => !ctrl.vm.isInternational() ? ctrl.applyZipcodeMask(value) : ctrl.vm.fields.zipCode(value)),
                                             value: ctrl.vm.fields.zipCode(),
                                             placeholder: '42100000'
                                         }),
@@ -372,14 +372,14 @@ const projectsPayment = {
                                             class: ctrl.fieldHasError('userState') ? 'error' : false,
                                             value: ctrl.vm.fields.userState()
                                         }) : m('select.w-select.text-field[id=\'address-state\']', {
-                                                onfocus: ctrl.vm.resetFieldError('userState'),
-                                                class: ctrl.fieldHasError('userState') ? 'error' : false,
-                                                onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
-                                                value: ctrl.vm.fields.userState()
-                                            }, _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
-                                                    value: state.acronym,
-                                                    selected: state.acronym === ctrl.vm.fields.userState()
-                                            }, state.name))
+                                            onfocus: ctrl.vm.resetFieldError('userState'),
+                                            class: ctrl.fieldHasError('userState') ? 'error' : false,
+                                            onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.userState)),
+                                            value: ctrl.vm.fields.userState()
+                                        }, _.map(ctrl.vm.fields.states(), (state, idx) => m('option', {
+                                            value: state.acronym,
+                                            selected: state.acronym === ctrl.vm.fields.userState()
+                                        }, state.name))
                                         ),
                                         ctrl.fieldHasError('userState')
                                     ])
@@ -404,8 +404,8 @@ const projectsPayment = {
                         m('.w-row.u-marginbottom-40',
                             !ctrl.showPaymentForm() ? m('.w-col.w-col-push-3.w-col-6',
                                 m('button.btn.btn-large', {
-                                        onclick: () => CatarseAnalytics.event({cat:'contribution_finish',act:'contribution_next_click'}, ctrl.validateForm)
-                                    },
+                                    onclick: () => CatarseAnalytics.event({ cat: 'contribution_finish', act: 'contribution_next_click' }, ctrl.validateForm)
+                                },
                                     I18n.t('next_step', ctrl.scope())
                                 )
                             ) : ''
@@ -420,25 +420,25 @@ const projectsPayment = {
                     m('.w-col.w-col-4', [
                         m('.w-hidden-small.w-hidden-tiny.card.u-radius.u-marginbottom-20', [
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                                I18n.t(`selected_reward.value`, ctrl.scope())
+                                I18n.t('selected_reward.value', ctrl.scope())
                             ),
                             m('.w-clearfix.u-marginbottom-20', [
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${Number(ctrl.value).toFixed()}`
                                 ),
-                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? '?reward_id=' + ctrl.reward().id : '' }"]`,
-                                    I18n.t(`selected_reward.edit`, ctrl.scope()))
+                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                    I18n.t('selected_reward.edit', ctrl.scope()))
                             ]),
                             m('.back-payment-info-reward', [
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                    I18n.t(`selected_reward.reward`, ctrl.scope())
+                                    I18n.t('selected_reward.reward', ctrl.scope())
                                 ),
                                 m('.fontsize-smallest',
                                     ctrl.reward().description
                                     ? ctrl.reward().description
-                                    : m.trust(I18n.t(`selected_reward.review_without_reward_html`,
+                                    : m.trust(I18n.t('selected_reward.review_without_reward_html',
                                         ctrl.scope(
-                                            _.extend({value: Number(ctrl.value).toFixed()})
+                                            _.extend({ value: Number(ctrl.value).toFixed() })
                                         )
                                     ))
                                 )

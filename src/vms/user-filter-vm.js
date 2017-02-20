@@ -6,7 +6,7 @@ const vm = postgrest.filtersVM({
         deactivated_at: 'is.null'
     }),
 
-    paramToString = function(p) {
+    paramToString = function (p) {
         return (p || '').toString().trim();
     };
 
@@ -15,13 +15,13 @@ vm.deactivated_at(null).order({
     id: 'desc'
 });
 
-vm.deactivated_at.toFilter = function() {
-    var filter = JSON.parse(vm.deactivated_at());
+vm.deactivated_at.toFilter = function () {
+    const filter = JSON.parse(vm.deactivated_at());
     return filter;
 };
 
-vm.full_text_index.toFilter = function() {
-    var filter = paramToString(vm.full_text_index());
+vm.full_text_index.toFilter = function () {
+    const filter = paramToString(vm.full_text_index());
     return filter && replaceDiacritics(filter) || undefined;
 };
 

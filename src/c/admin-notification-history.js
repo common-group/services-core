@@ -16,7 +16,7 @@ const adminNotificationHistory = {
     controller(args) {
         const notifications = m.prop([]),
             getNotifications = (user) => {
-                let notification = models.notification;
+                const notification = models.notification;
                 notification.getPageWithToken(postgrest.filtersVM({
                     user_id: 'eq',
                     sent_at: 'is.null'
@@ -33,20 +33,18 @@ const adminNotificationHistory = {
         getNotifications(args.user);
 
         return {
-            notifications: notifications
+            notifications
         };
     },
     view(ctrl) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico de notificações'),
-            ctrl.notifications().map((cEvent) => {
-                return m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
-                    m('.w-col.w-col-24', [
-                        m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'),
-                          ' - ', m(`a[target="blank"][href="/notifications/${cEvent.relation}/${cEvent.id}"]`, cEvent.template_name), cEvent.origin ? ' - ' + cEvent.origin : '')
-                    ]),
-                ]);
-            })
+            ctrl.notifications().map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
+                m('.w-col.w-col-24', [
+                    m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'),
+                          ' - ', m(`a[target="blank"][href="/notifications/${cEvent.relation}/${cEvent.id}"]`, cEvent.template_name), cEvent.origin ? ` - ${cEvent.origin}` : '')
+                ]),
+            ]))
         ]);
     }
 };

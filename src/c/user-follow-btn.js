@@ -14,42 +14,42 @@ import models from '../models';
 const UserFollowBtn = {
     controller(args) {
         const following = m.prop((args.following || false)),
-              followVM = postgrest.filtersVM({follow_id: 'eq'}),
-              loading = m.prop(false),
-              hover = m.prop(false),
-              userFollowInsert = models.userFollow.postOptions({
-                  follow_id: args.follow_id}),
-              userFollowDelete = (() => {
-                  followVM.follow_id(args.follow_id);
+            followVM = postgrest.filtersVM({ follow_id: 'eq' }),
+            loading = m.prop(false),
+            hover = m.prop(false),
+            userFollowInsert = models.userFollow.postOptions({
+                follow_id: args.follow_id }),
+            userFollowDelete = (() => {
+                followVM.follow_id(args.follow_id);
 
-                  return models.userFollow.deleteOptions(
+                return models.userFollow.deleteOptions(
                       followVM.parameters());
-              })(),
-              follow = () => {
-                  const l = postgrest.loaderWithToken(userFollowInsert);
-                  loading(true);
+            })(),
+            follow = () => {
+                const l = postgrest.loaderWithToken(userFollowInsert);
+                loading(true);
 
-                  l.load().then(() => {
-                      following(true);
-                      loading(false);
-                  });
-              },
-              unfollow = () => {
-                  const l = postgrest.loaderWithToken(userFollowDelete);
-                  loading(true);
+                l.load().then(() => {
+                    following(true);
+                    loading(false);
+                });
+            },
+            unfollow = () => {
+                const l = postgrest.loaderWithToken(userFollowDelete);
+                loading(true);
 
-                  l.load().then(() => {
-                      following(false);
-                      loading(false);
-                  });
-              };
+                l.load().then(() => {
+                    following(false);
+                    loading(false);
+                });
+            };
 
         return {
-            following: following,
-            follow: follow,
-            unfollow: unfollow,
-            loading: loading,
-            hover: hover
+            following,
+            follow,
+            unfollow,
+            loading,
+            hover
         };
     },
     view(ctrl, args) {
@@ -59,20 +59,18 @@ const UserFollowBtn = {
             if (ctrl.loading()) { return h.loader(); }
             if (ctrl.following()) {
                 return m(`a${enabledClass}`,
-                         {
-                             onclick: ctrl.unfollow,
-                             onmouseover: () => ctrl.hover(true),
-                             onmouseout: () => ctrl.hover(false)
-                         },
+                    {
+                        onclick: ctrl.unfollow,
+                        onmouseover: () => ctrl.hover(true),
+                        onmouseout: () => ctrl.hover(false)
+                    },
                          (ctrl.hover() ? 'Deixar de seguir' : 'Seguindo'));
-            } else {
-                return m(`a${disableClass}`,
-                         {onclick: ctrl.follow},
-                         'Seguir');
             }
-        } else {
-            return m('');
+            return m(`a${disableClass}`,
+                         { onclick: ctrl.follow },
+                         'Seguir');
         }
+        return m('');
     }
 };
 

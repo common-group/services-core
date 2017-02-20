@@ -17,39 +17,39 @@ const projectCard = {
 
         const css = () => {
             const cssClasses = {
-                'small': {
-                      wrapper: '.w-col.w-col-4',
-                      innerWrapper: '.card-project.card.u-radius',
-                      thumb: '.card-project-thumb',
-                      descriptionWrapper: '',
-                      description: '.card-project-description.alt',
-                      title: '.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base',
-                      author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                      headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
-                      city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
-                  },
-                'medium': {
-                      wrapper: '.w-col.w-col-6',
-                      innerWrapper: '.card-project.card.u-radius',
-                      thumb: '.card-project-thumb.medium',
-                      descriptionWrapper: '',
-                      description: '.card-project-description.alt',
-                      title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                      author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                      headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
-                      city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
-                  },
-                'big': {
-                      wrapper: '.card.u-radius.card-project',
-                      innerWrapper: '.w-row',
-                      thumb: '.w-col.w-col-8.w-col-medium-6.card-project-thumb.big',
-                      descriptionWrapper: '.w-col.w-col-4.w-col-medium-6',
-                      description: '.card-project-description.big',
-                      title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                      author: '.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                      headline: '.fontcolor-secondary.fontsize-smaller',
-                      city: '.w-hidden'
-                  }
+                small: {
+                    wrapper: '.w-col.w-col-4',
+                    innerWrapper: '.card-project.card.u-radius',
+                    thumb: '.card-project-thumb',
+                    descriptionWrapper: '',
+                    description: '.card-project-description.alt',
+                    title: '.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base',
+                    author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                    headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
+                    city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
+                },
+                medium: {
+                    wrapper: '.w-col.w-col-6',
+                    innerWrapper: '.card-project.card.u-radius',
+                    thumb: '.card-project-thumb.medium',
+                    descriptionWrapper: '',
+                    description: '.card-project-description.alt',
+                    title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
+                    author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                    headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
+                    city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
+                },
+                big: {
+                    wrapper: '.card.u-radius.card-project',
+                    innerWrapper: '.w-row',
+                    thumb: '.w-col.w-col-8.w-col-medium-6.card-project-thumb.big',
+                    descriptionWrapper: '.w-col.w-col-4.w-col-medium-6',
+                    description: '.card-project-description.big',
+                    title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
+                    author: '.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                    headline: '.fontcolor-secondary.fontsize-smaller',
+                    city: '.w-hidden'
+                }
             };
 
             return cssClasses[type];
@@ -59,38 +59,35 @@ const projectCard = {
             const failed = () => ((project.state === 'failed') || (project.state === 'waiting_funds')) ? 'card-secondary' : '';
 
             return `.card-project-meter.${project.mode}.${project.state}.${progress > 100 ? 'complete' : 'incomplete'}.${failed()}`;
-
         };
 
-        const isFinished = (project) => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
+        const isFinished = project => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
 
         const cardCopy = (project) => {
             if (project.expires_at) {
                 return isFinished(project) ? [
-                    m('.fontsize-smaller.fontweight-loose', `Encerrado`),
+                    m('.fontsize-smaller.fontweight-loose', 'Encerrado'),
                     m('.fontsize-smallest.lineheight-tightest', h.momentify(project.expires_at))
                 ] : [
                     m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
                     m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
-                ]
-            } else{
-                return [
-                    m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${elapsedTextObj.total} ${elapsedTextObj.unit}`])
                 ];
             }
+            return [
+                m('.fontsize-smallest.lineheight-tight', ['Iniciado há', m('br'), `${elapsedTextObj.total} ${elapsedTextObj.unit}`])
+            ];
         };
 
 
-
         return {
-            cardCopy: cardCopy,
-            css: css,
-            type: type,
-            progress: progress,
-            remainingTextObj: remainingTextObj,
-            elapsedTextObj: elapsedTextObj,
-            isFinished: isFinished,
-            cardMeter: cardMeter
+            cardCopy,
+            css,
+            type,
+            progress,
+            remainingTextObj,
+            elapsedTextObj,
+            isFinished,
+            cardMeter
         };
     },
     view(ctrl, args) {
@@ -102,22 +99,22 @@ const projectCard = {
                     onclick: projectVM.routeToProject(project, args.ref),
                     style: {
                         'background-image': `url(${project.project_img})`,
-                        'display': 'block'
+                        display: 'block'
                     }
                 }),
                 m(ctrl.css().descriptionWrapper, [
                     m(ctrl.css().description, [
                         m(ctrl.css().title, [
-                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`,{
+                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
                             },
                             project.project_name)
                         ]),
                         m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${project.owner_public_name}`),
                         m(ctrl.css().headline, [
-                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`,{
+                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
-                            },project.headline)
+                            }, project.headline)
                         ])
                     ]),
                     m(ctrl.css().city, [
@@ -129,7 +126,7 @@ const projectCard = {
                     m(ctrl.cardMeter(), [
                         (ctrl.isFinished(project)) ?
                             m('div',
-                                project.state === 'successful' && ctrl.progress < 100 ? I18n.t(`display_status.flex_successful`, I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
+                                project.state === 'successful' && ctrl.progress < 100 ? I18n.t('display_status.flex_successful', I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
                             ) :
                         m('.meter', [
                             m('.meter-fill', {
@@ -153,10 +150,10 @@ const projectCard = {
                     ]),
                 ]),
                 (args.showFriends && ctrl.type === 'big' ?
-                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, {project: project})]) : '')
+                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, { project })]) : '')
             ]),
             (args.showFriends && ctrl.type !== 'big' ?
-              m.component(projectFriends, {project: project}) : '')
+              m.component(projectFriends, { project }) : '')
         ]);
     }
 };

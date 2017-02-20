@@ -32,7 +32,7 @@ const userCreated = {
         models.project.pageSize(9);
         pages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
-        }).catch(err => {
+        }).catch((err) => {
             error(true);
             loader(false);
             m.redraw();
@@ -40,24 +40,22 @@ const userCreated = {
 
         return {
             projects: pages,
-            loader: loader,
-            error: error
+            loader,
+            error
         };
     },
     view(ctrl, args) {
-        let projects_collection = ctrl.projects.collection();
+        const projects_collection = ctrl.projects.collection();
 
         return m('.content[id=\'created-tab\']',
             (ctrl.error() ? m.component(inlineError, {
                 message: 'Erro ao carregar os projetos.'
             }) : !ctrl.loader() ? [
-                (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
-                        return m.component(projectCard, {
-                            project: project,
-                            ref: 'user_contributed',
-                            showFriends: false
-                        });
-                    }) :
+                (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m.component(projectCard, {
+                    project,
+                    ref: 'user_contributed',
+                    showFriends: false
+                })) :
                     m('.w-container',
                         m('.u-margintop-30.u-text-center.w-row', [
                             m('.w-col.w-col-3'),

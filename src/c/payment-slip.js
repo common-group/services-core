@@ -22,11 +22,11 @@ const paymentSlip = {
         };
 
         return {
-            buildSlip: buildSlip,
-            slipPaymentDate: slipPaymentDate,
-            loading: loading,
-            completed: completed,
-            error: error
+            buildSlip,
+            slipPaymentDate,
+            loading,
+            completed,
+            error
         };
     },
     view(ctrl, args) {
@@ -41,25 +41,25 @@ const paymentSlip = {
                             ),
                             m('.w-row',
                                 m('.w-col.w-col-8.w-col-push-2', [
-                            ctrl.loading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20',{
-                                onclick: ctrl.buildSlip,
-                                value: 'Imprimir Boleto',
-                                type: 'submit'
-                            }),
-                            ctrl.error() ? m.component(inlineError, {message: ctrl.error()}) : '',
-                            m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
-                                'Ao apoiar, você concorda com os ',
-                                m('a.alt-link[href=\'/pt/terms-of-use\']',
+                                    ctrl.loading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
+                                        onclick: ctrl.buildSlip,
+                                        value: 'Imprimir Boleto',
+                                        type: 'submit'
+                                    }),
+                                    ctrl.error() ? m.component(inlineError, { message: ctrl.error() }) : '',
+                                    m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
+                                        'Ao apoiar, você concorda com os ',
+                                        m('a.alt-link[href=\'/pt/terms-of-use\']',
                                     'Termos de Uso '
                                 ),
-                                'e ',
-                                m('a.alt-link[href=\'/pt/privacy-policy\']',
+                                        'e ',
+                                        m('a.alt-link[href=\'/pt/privacy-policy\']',
                                     'Política de Privacidade'
                                 )
-                            ])
-                        ])
+                                    ])
+                                ])
                     )
-                ])
+                        ])
             )
         );
     }
