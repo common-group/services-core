@@ -5,15 +5,15 @@ import models from '../models';
 
 const currentContribution = m.prop({});
 
-const getUserProjectContributions = (user_id, project_id, states) => {
+const getUserProjectContributions = (userId, projectId, states) => {
     const vm = postgrest.filtersVM({
         user_id: 'eq',
         project_id: 'eq',
         state: 'in'
     });
 
-    vm.user_id(user_id);
-    vm.project_id(project_id);
+    vm.user_id(userId);
+    vm.project_id(projectId);
     vm.state(states);
 
     const lProjectContributions = postgrest.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
@@ -39,7 +39,7 @@ const wasConfirmed = contribution => _.contains(['paid', 'pending_refund', 'refu
 
 const canShowReceipt = contribution => wasConfirmed(contribution);
 
-const canShowSlip = contribution => contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
+const canShowSlip = contribution => contribution.payment_method === 'BoletoBancario' && contribution.waiting_payment;
 
 const canGenerateSlip = contribution => contribution.payment_method === 'BoletoBancario' &&
     contribution.state === 'pending' &&
@@ -47,12 +47,15 @@ const canGenerateSlip = contribution => contribution.payment_method === 'BoletoB
     !contribution.reward_sold_out &&
     !contribution.waiting_payment;
 
+const canBeDelivered = contribution => (contribution.state === 'paid' && contribution.reward_id && contribution.project_state !== 'failed');
+
 const contributionVM = {
     getCurrentContribution,
     canShowReceipt,
     canGenerateSlip,
     canShowSlip,
-    getUserProjectContributions
+    getUserProjectContributions,
+    canBeDelivered
 };
 
 export default contributionVM;

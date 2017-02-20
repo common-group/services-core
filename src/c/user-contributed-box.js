@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import userVM from '../vms/user-vm';
@@ -9,16 +10,15 @@ import rewardReceiver from './reward-receiver';
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 
 const userContributedBox = {
-    controller(args) {
+    controller() {
         const toggleDelivery = (projectId, contribution) => {
-                userVM.toggleDelivery(projectId, contribution).then(() => {
-                    const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
-                    contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; // so we don't have to reload the page
-                });
-            },
-            canReceiveReward = contribution => (contribution.state == 'paid' && contribution.reward_id && contribution.project_state != 'failed');
+            userVM.toggleDelivery(projectId, contribution).then(() => {
+                const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
+                contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; // so we don't have to reload the page
+            });
+        };
+
         return {
-            canReceiveReward,
             toggleAnonymous: userVM.toggleAnonymous,
             toggleDelivery
         };
@@ -26,8 +26,7 @@ const userContributedBox = {
     view(ctrl, args) {
         const collection = args.collection,
             pagination = args.pagination,
-            title = args.title,
-            statusText = h.contributionStatusBadge;
+            title = args.title;
 
         return (!_.isEmpty(collection) ? m('.section-one-column.u-marginbottom-30', [
             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
@@ -132,20 +131,19 @@ const userContributedBox = {
                             (contribution.reward_id ? m.trust(h.simpleFormat(contribution.reward_description)) : ' Não selecionou recompensa')
 
                         ]),
-
-                        m('.fontsize-smallest.lineheight-looser', [
+                        contribution.deliver_at ? m('.fontsize-smallest.lineheight-looser', [
                             m('span.fontweight-semibold',
                                 'Estimativa de entrega: '
                             ),
                             h.momentify(contribution.deliver_at, 'MMMM/YYYY')
-                        ]),
-                        m('.fontsize-smallest', [
+                        ]) : '',
+                        contributionVM.canBeDelivered(contribution) ? m('.fontsize-smallest', [
                             m('span.fontweight-semibold',
                                 'Status da entrega:'
                             ),
                             m.trust('&nbsp;'),
-                            statusText(contribution)
-                        ])
+                            h.contributionStatusBadge(contribution)
+                        ]) : ''
                     ),
                 m(rewardReceiver, { contribution })
             ])),
