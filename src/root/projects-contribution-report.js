@@ -153,7 +153,7 @@ const projectContributionReport = {
                     component: FilterDropdown,
                     data: {
                         custom_label: [InfoProjectContributionLegend, {
-                            text: 'Status do jpoio',
+                            text: 'Status do apoio',
                             content: [ProjectContributionStateLegendModal, {
                                 project: project
                             }]
