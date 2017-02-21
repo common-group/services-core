@@ -18,35 +18,35 @@ const projectReminder = {
     controller(args) {
         let l = m.prop(false);
         const project = args.project,
-              filterVM = postgrest.filtersVM({
-                  project_id: 'eq'
-              }),
-              storeReminderName = 'reminder',
-              popNotification = m.prop(false),
-              submitReminder = () => {
-                  if (!h.getUser()) {
-                      h.storeAction(storeReminderName, project().project_id);
-                      return h.navigateToDevise();
-                  }
-                  let loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
-                      project_id: project().project_id
-                  });
-                  l = postgrest.loaderWithToken(loaderOpts);
+            filterVM = postgrest.filtersVM({
+                project_id: 'eq'
+            }),
+            storeReminderName = 'reminder',
+            popNotification = m.prop(false),
+            submitReminder = () => {
+                if (!h.getUser()) {
+                    h.storeAction(storeReminderName, project().project_id);
+                    return h.navigateToDevise();
+                }
+                const loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
+                    project_id: project().project_id
+                });
+                l = postgrest.loaderWithToken(loaderOpts);
 
-                  l.load().then(() => {
-                      project().in_reminder = !project().in_reminder;
+                l.load().then(() => {
+                    project().in_reminder = !project().in_reminder;
 
-                      if (project().in_reminder) {
-                          popNotification(true);
-                          setTimeout(() => {
-                              popNotification(false);
-                              m.redraw();
-                          }, 5000);
-                      } else {
-                          popNotification(false);
-                      }
-                  });
-              };
+                    if (project().in_reminder) {
+                        popNotification(true);
+                        setTimeout(() => {
+                            popNotification(false);
+                            m.redraw();
+                        }, 5000);
+                    } else {
+                        popNotification(false);
+                    }
+                });
+            };
 
         if (h.callStoredAction(storeReminderName) == project().project_id) {
             submitReminder();
@@ -55,17 +55,17 @@ const projectReminder = {
         filterVM.project_id(project().project_id);
 
         return {
-            l: l,
-            submitReminder: submitReminder,
-            popNotification: popNotification
+            l,
+            submitReminder,
+            popNotification
         };
     },
     view(ctrl, args) {
         const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
-              buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-large',
-              hideTextOnMobile = args.hideTextOnMobile || false,
-              project = args.project,
-              onclickFunc = h.analytics.event({cat: 'project_view',act: 'project_floatingreminder_click', project: project()}, ctrl.submitReminder);
+            buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-large',
+            hideTextOnMobile = args.hideTextOnMobile || false,
+            project = args.project,
+            onclickFunc = h.analytics.event({ cat: 'project_view', act: 'project_floatingreminder_click', project: project() }, ctrl.submitReminder);
 
         return m(`#project-reminder${mainClass}`, [
             m('a.btn.btn-small.btn-terciary.w-hidden-main.w-hidden-medium[data-ix=\'popshare\'][href=\'#\']', {

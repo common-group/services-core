@@ -15,38 +15,31 @@ import Chart from 'chartjs';
 const projectDataChart = {
     controller(args) {
         const resource = _.first(args.collection()),
-              source = (!_.isUndefined(resource) ? resource.source : []),
+            source = (!_.isUndefined(resource) ? resource.source : []),
 
-            mountDataset = () => {
-                return [{
-                    fillColor: 'rgba(126,194,69,0.2)',
-                    strokeColor: 'rgba(126,194,69,1)',
-                    pointColor: 'rgba(126,194,69,1)',
-                    pointStrokeColor: '#fff',
-                    pointHighlightFill: '#fff',
-                    pointHighlightStroke: 'rgba(220,220,220,1)',
-                    data: _.map(source, (item) => {
-                        return item[args.dataKey];
-                    })
-                }];
-            },
+            mountDataset = () => [{
+                fillColor: 'rgba(126,194,69,0.2)',
+                strokeColor: 'rgba(126,194,69,1)',
+                pointColor: 'rgba(126,194,69,1)',
+                pointStrokeColor: '#fff',
+                pointHighlightFill: '#fff',
+                pointHighlightStroke: 'rgba(220,220,220,1)',
+                data: _.map(source, item => item[args.dataKey])
+            }],
             renderChart = (element, isInitialized) => {
                 if (!isInitialized) {
                     const ctx = element.getContext('2d');
 
                     new Chart(ctx).Line({
-                        labels: _.map(source, (item) => {
-                            return args.xAxis(item);
-                        }),
+                        labels: _.map(source, item => args.xAxis(item)),
                         datasets: mountDataset()
                     });
                 }
-
             };
 
         return {
-            renderChart: renderChart,
-            source: source
+            renderChart,
+            source
         };
     },
     view(ctrl, args) {

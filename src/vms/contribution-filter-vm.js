@@ -1,7 +1,7 @@
 import m from 'mithril';
-import h from '../h';
 import postgrest from 'mithril-postgrest';
 import replaceDiacritics from 'replaceDiacritics';
+import h from '../h';
 
 const vm = postgrest.filtersVM({
         full_text_index: '@@',
@@ -11,7 +11,7 @@ const vm = postgrest.filtersVM({
         created_at: 'between'
     }),
 
-    paramToString = function(p) {
+    paramToString = function (p) {
         return (p || '').toString().trim();
     };
 
@@ -22,18 +22,18 @@ vm.order({
     id: 'desc'
 });
 
-vm.created_at.lte.toFilter = function() {
-    var filter = paramToString(vm.created_at.lte());
+vm.created_at.lte.toFilter = function () {
+    const filter = paramToString(vm.created_at.lte());
     return filter && h.momentFromString(filter).endOf('day').format('');
 };
 
-vm.created_at.gte.toFilter = function() {
-    var filter = paramToString(vm.created_at.gte());
+vm.created_at.gte.toFilter = function () {
+    const filter = paramToString(vm.created_at.gte());
     return filter && h.momentFromString(filter).format();
 };
 
-vm.full_text_index.toFilter = function() {
-    var filter = paramToString(vm.full_text_index());
+vm.full_text_index.toFilter = function () {
+    const filter = paramToString(vm.full_text_index());
     return filter && replaceDiacritics(filter) || undefined;
 };
 

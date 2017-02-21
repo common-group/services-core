@@ -3,7 +3,7 @@ import m from 'mithril';
 const facebookButton = {
     controller(args) {
         const share = () => {
-            if (FB){
+            if (FB) {
                 FB.ui({
                     method: args.messenger ? 'send' : 'share',
                     link: args.url,
@@ -13,7 +13,7 @@ const facebookButton = {
         };
 
         return {
-            share: share
+            share
         };
     },
     view(ctrl, args) {
@@ -24,15 +24,14 @@ const facebookButton = {
                 return 'btn btn-fb btn-large u-marginbottom-20 w-button';
             } else if (args.medium) {
                 return `btn ${args.messenger ? 'btn-messenger' : 'btn-fb'} btn-medium u-marginbottom-20 w-button`;
-            } else {
-                return 'btn btn-inline btn-medium btn-terciary u-marginright-20';
             }
+            return 'btn btn-inline btn-medium btn-terciary u-marginright-20';
         };
 
-        return m('button',{
+        return m('button', {
             class: buttonCss(),
             onclick: ctrl.share
-        },[
+        }, [
             m('span.fa', {
                 class: args.messenger ? 'fa-comment' : 'fa-facebook'
             }),

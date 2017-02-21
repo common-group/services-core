@@ -14,7 +14,7 @@ const userCard = {
         userVM.fetchUser(user_id, true, userDetails);
 
         return {
-            userDetails: userDetails,
+            userDetails,
             displayModal: h.toggleProp(false, true)
         };
     },
@@ -25,11 +25,11 @@ const userCard = {
         return m('#user-card', m('.card.card-user.u-radius.u-marginbottom-30[itemprop=\'author\']', [
             m('.w-row', [
                 m('.w-col.w-col-4.w.col-small-4.w-col-tiny-4.w-clearfix',
-                    m(`img.thumb.u-round[itemprop=\'image\'][src=\'${profileImage}\'][width=\'100\']`)
+                    m(`img.thumb.u-round[itemprop='image'][src='${profileImage}'][width='100']`)
                 ),
                 m('.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [
                     m('.fontsize-small.fontweight-semibold.lineheight-tighter[itemprop=\'name\']',
-                      m('a.link-hidden[href="/users/' + user.id + '"]', (user.public_name || user.name))
+                      m(`a.link-hidden[href="/users/${user.id}"]`, (user.public_name || user.name))
                     ),
                     m('.fontsize-smallest.lineheight-looser[itemprop=\'address\']',
                         user.address_city
@@ -45,15 +45,13 @@ const userCard = {
             m('.project-author-contacts', [
                 m('ul.w-list-unstyled.fontsize-smaller.fontweight-semibold', [
                     (!_.isEmpty(user.facebook_link) ? m('li', [
-                        m('a.link-hidden[itemprop="url"][href="' + user.facebook_link + '"][target="_blank"]', 'Perfil no Facebook')
+                        m(`a.link-hidden[itemprop="url"][href="${user.facebook_link}"][target="_blank"]`, 'Perfil no Facebook')
                     ]) : ''), (!_.isEmpty(user.twitter_username) ? m('li', [
-                        m('a.link-hidden[itemprop="url"][href="https://twitter.com/' + user.twitter_username + '"][target="_blank"]', 'Perfil no Twitter')
+                        m(`a.link-hidden[itemprop="url"][href="https://twitter.com/${user.twitter_username}"][target="_blank"]`, 'Perfil no Twitter')
                     ]) : ''),
-                    _.map(user.links, (link) => {
-                        return m('li', [
-                            m('a.link-hidden[itemprop="url"][href="' + link.link + '"][target="_blank"]', link.link)
-                        ]);
-                    })
+                    _.map(user.links, link => m('li', [
+                        m(`a.link-hidden[itemprop="url"][href="${link.link}"][target="_blank"]`, link.link)
+                    ]))
                 ]),
             ]),
             (ctrl.displayModal() ? m.component(modalBox, {
@@ -61,7 +59,7 @@ const userCard = {
                 content: contactModalC
             }) : ''),
             m(UserFollowBtn, { follow_id: user.id, following: user.follwing_this_user, enabledClass: '.btn.btn-medium.btn-message.u-marginbottom-10', disabledClass: '.btn.btn-medium.btn-message.u-marginbottom-10' }),
-            (!_.isEmpty(user.email) ? m('a.btn.btn-medium.btn-message[href=\'javascript:void(0);\']', {onclick: ctrl.displayModal.toggle}, 'Enviar mensagem') : '')
+            (!_.isEmpty(user.email) ? m('a.btn.btn-medium.btn-message[href=\'javascript:void(0);\']', { onclick: ctrl.displayModal.toggle }, 'Enviar mensagem') : '')
         ]));
     }
 };

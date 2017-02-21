@@ -18,21 +18,20 @@ import _ from 'underscore';
 const dashboardInfo = {
     controller(args) {
         const toRedraw = args.dataToRedraw || {},
-              listenToReplace = (element, isInitialized, context) => {
+            listenToReplace = (element, isInitialized, context) => {
+                if (isInitialized) return;
 
-                  if (isInitialized) return;
+                _.map(element.children, (item) => {
+                    const toR = toRedraw[item.getAttribute('id')];
 
-                  _.map(element.children, function(item) {
-                      let toR = toRedraw[item.getAttribute('id')];
-
-                      if (toR) {
-                          item[toR.action] = toR.actionSource;
-                      }
-                  });
-              };
+                    if (toR) {
+                        item[toR.action] = toR.actionSource;
+                    }
+                });
+            };
 
         return {
-            listenToReplace: listenToReplace
+            listenToReplace
         };
     },
     view(ctrl, args) {
@@ -42,10 +41,10 @@ const dashboardInfo = {
             m('.w-row.u-marginbottom-40', [
                 m('.w-col.w-col-6.w-col-push-3', [
                     m('.u-text-center', [
-                        m('img.u-marginbottom-20', {src: content.icon, width: 94}),
+                        m('img.u-marginbottom-20', { src: content.icon, width: 94 }),
                         m('.fontsize-large.fontweight-semibold.u-marginbottom-20', content.title),
-                        m('.fontsize-base.u-marginbottom-30', {config: ctrl.listenToReplace}, m.trust(content.text)),
-                        content.cta ? m('a.btn.btn-large.btn-inline', {href: content.href, onclick: args.nextStage}, content.cta) : ''
+                        m('.fontsize-base.u-marginbottom-30', { config: ctrl.listenToReplace }, m.trust(content.text)),
+                        content.cta ? m('a.btn.btn-large.btn-inline', { href: content.href, onclick: args.nextStage }, content.cta) : ''
                     ])
                 ])
             ])

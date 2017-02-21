@@ -14,7 +14,7 @@ const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const start = {
     controller() {
-        h.analytics.windowScroll({cat: 'project_start',act: 'start_page_scroll'});
+        h.analytics.windowScroll({ cat: 'project_start', act: 'start_page_scroll' });
         const stats = m.prop([]),
             categories = m.prop([]),
             selectedPane = m.prop(0),
@@ -35,47 +35,35 @@ const start = {
             }),
             loader = postgrest.loader,
             statsLoader = loader(models.statistic.getRowOptions()),
-            loadCategories = () => {
-                return models.category.getPage(filters({}).order({
-                    name: 'asc'
-                }).parameters()).then(categories);
+            loadCategories = () => models.category.getPage(filters({}).order({
+                name: 'asc'
+            }).parameters()).then(categories),
+            selectPane = idx => () => {
+                selectedPane(idx);
             },
-            selectPane = (idx) => {
-                return () => {
-                    selectedPane(idx);
-                };
-            },
-            lCategory = () => {
-                return loader(models.categoryTotals.getRowOptions(categoryvm.parameters()));
-            },
-            lProject = () => {
-                return loader(models.projectDetail.getRowOptions(projectvm.parameters()));
-            },
-            lUser = () => {
-                return loader(models.userDetail.getRowOptions(uservm.parameters()));
-            },
-            selectCategory = (category) => {
-                return () => {
-                    selectedCategoryIdx(category.id);
-                    categoryvm.category_id(category.id);
-                    selectedCategory([category]);
-                    m.redraw();
-                    lCategory().load().then(loadCategoryProjects);
-                };
+            lCategory = () => loader(models.categoryTotals.getRowOptions(categoryvm.parameters())),
+            lProject = () => loader(models.projectDetail.getRowOptions(projectvm.parameters())),
+            lUser = () => loader(models.userDetail.getRowOptions(uservm.parameters())),
+            selectCategory = category => () => {
+                selectedCategoryIdx(category.id);
+                categoryvm.category_id(category.id);
+                selectedCategory([category]);
+                m.redraw();
+                lCategory().load().then(loadCategoryProjects);
             },
             setUser = (user, idx) => {
                 featuredProjects()[idx] = _.extend({}, featuredProjects()[idx], {
-                    userThumb:  _.first(user).profile_img_thumbnail
+                    userThumb: _.first(user).profile_img_thumbnail
                 });
             },
             setProject = (project, idx) => {
                 featuredProjects()[idx] = _.first(project);
                 uservm.id(_.first(project).user.id);
-                lUser().load().then((user) => setUser(user, idx));
+                lUser().load().then(user => setUser(user, idx));
             },
             loadCategoryProjects = (category) => {
                 selectedCategory(category);
-                let categoryProjects = _.findWhere(startvm.categoryProjects, {
+                const categoryProjects = _.findWhere(startvm.categoryProjects, {
                     categoryId: _.first(category).category_id
                 });
                 featuredProjects([]);
@@ -83,7 +71,7 @@ const start = {
                     _.map(categoryProjects.sampleProjects, (project_id, idx) => {
                         if (!_.isUndefined(project_id)) {
                             projectvm.project_id(project_id);
-                            lProject().load().then((project) => setProject(project, idx));
+                            lProject().load().then(project => setProject(project, idx));
                         }
                     });
                 }
@@ -103,47 +91,44 @@ const start = {
         loadCategories();
 
         return {
-            stats: stats,
-            categories: categories,
-            paneImages: paneImages,
-            selectCategory: selectCategory,
-            selectedCategory: selectedCategory,
-            selectedCategoryIdx: selectedCategoryIdx,
-            selectPane: selectPane,
-            selectedPane: selectedPane,
-            featuredProjects: featuredProjects,
+            stats,
+            categories,
+            paneImages,
+            selectCategory,
+            selectedCategory,
+            selectedCategoryIdx,
+            selectPane,
+            selectedPane,
+            featuredProjects,
             testimonials: startvm.testimonials,
             questions: startvm.questions,
-            projectCategory: projectCategory,
-            projectName: projectName,
-            projectNameError: projectNameError,
-            projectCategoryError: projectCategoryError,
-            validateProjectForm: validateProjectForm
+            projectCategory,
+            projectName,
+            projectNameError,
+            projectCategoryError,
+            validateProjectForm
         };
     },
     view(ctrl, args) {
-        let stats = _.first(ctrl.stats());
-        const testimonials = () => {
-            return _.map(ctrl.testimonials, (testimonial) => {
-                const content = m('.card.u-radius.card-big.card-terciary', [
-                    m('.u-text-center.u-marginbottom-20', [
-                        m(`img.thumb-testimonial.u-round.u-marginbottom-20[src="${testimonial.thumbUrl}"]`)
-                    ]),
-                    m('p.fontsize-large.u-marginbottom-30', `"${testimonial.content}"`),
-                    m('.u-text-center', [
-                        m('.fontsize-large.fontweight-semibold', testimonial.name),
-                        m('.fontsize-base', testimonial.totals)
-                    ])
-                ]);
+        const stats = _.first(ctrl.stats());
+        const testimonials = () => _.map(ctrl.testimonials, (testimonial) => {
+            const content = m('.card.u-radius.card-big.card-terciary', [
+                m('.u-text-center.u-marginbottom-20', [
+                    m(`img.thumb-testimonial.u-round.u-marginbottom-20[src="${testimonial.thumbUrl}"]`)
+                ]),
+                m('p.fontsize-large.u-marginbottom-30', `"${testimonial.content}"`),
+                m('.u-text-center', [
+                    m('.fontsize-large.fontweight-semibold', testimonial.name),
+                    m('.fontsize-base', testimonial.totals)
+                ])
+            ]);
 
-                return {
-                    content: content
-                };
-            });
+            return {
+                content
+            };
+        });
 
-        };
-
-        return m('#start',{config: h.setPageTitle(I18n.t('header_html', I18nScope()))},[
+        return m('#start', { config: h.setPageTitle(I18n.t('header_html', I18nScope())) }, [
             m('.w-section.hero-full.hero-start', [
                 m('.w-container.u-text-center', [
                     m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n.t('slogan', I18nScope())),
@@ -151,7 +136,7 @@ const start = {
                         m('.w-col.w-col-4.w-col-push-4', [
                             m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
                                 config: h.scrollTo(),
-                                onclick: h.analytics.event({cat: 'project_start',act: 'start_btnstart_click'})
+                                onclick: h.analytics.event({ cat: 'project_start', act: 'start_btnstart_click' })
                             }, I18n.t('submit', I18nScope()))
                         ])
                     ]),
@@ -161,7 +146,7 @@ const start = {
                             m('p.fontsize-small.start-stats', I18n.t('header.people', I18nScope()))
                         ]),
                         m('.w-col.w-col-4', [
-                            m('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'),
+                            m('.fontsize-largest.lineheight-loose', `${stats.total_contributed.toString().slice(0, 2)} milhões`),
                             m('p.fontsize-small.start-stats', I18n.t('header.money', I18nScope()))
                         ]),
                         m('.w-col.w-col-4', [
@@ -204,7 +189,7 @@ const start = {
                             ]),
                             m('.info-howworks-backers', [
                                 m('.fontweight-semibold.fontsize-large', I18n.t('banner.3', I18nScope())),
-                                m('.fontsize-base',  I18n.t('banner.4', I18nScope()))
+                                m('.fontsize-base', I18n.t('banner.4', I18nScope()))
                             ])
                         ])
                     ])
@@ -228,16 +213,12 @@ const start = {
                 ]),
                 m('.w-container', [
                     m('.w-tabs.w-hidden-small.w-hidden-tiny', [
-                        m('.w-tab-menu.w-col.w-col-4', _.map(ctrl.paneImages, (pane, idx) => {
-                            return m(`btn.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
-                                onclick: h.analytics.event({cat: 'project_start',act: 'start_solution_click',lbl: pane.label},ctrl.selectPane(idx))
-                            }, pane.label);
-                        })),
-                        m('.w-tab-content.w-col.w-col-8', _.map(ctrl.paneImages, (pane, idx) => {
-                            return m('.w-tab-pane', [
-                                m(`img[src="${pane.src}"].pane-image${(idx === ctrl.selectedPane()) ? '.selected' : ''}`)
-                            ]);
-                        }))
+                        m('.w-tab-menu.w-col.w-col-4', _.map(ctrl.paneImages, (pane, idx) => m(`btn.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
+                            onclick: h.analytics.event({ cat: 'project_start', act: 'start_solution_click', lbl: pane.label }, ctrl.selectPane(idx))
+                        }, pane.label))),
+                        m('.w-tab-content.w-col.w-col-8', _.map(ctrl.paneImages, (pane, idx) => m('.w-tab-pane', [
+                            m(`img[src="${pane.src}"].pane-image${(idx === ctrl.selectedPane()) ? '.selected' : ''}`)
+                        ])))
                     ])
                 ])
             ]),
@@ -326,7 +307,7 @@ const start = {
                     ]),
                     m.component(youtubeLightbox, {
                         src: I18n.t('video.src', I18nScope()),
-                        onclick: h.analytics.event({cat: 'project_start',act: 'start_video_play'})
+                        onclick: h.analytics.event({ cat: 'project_start', act: 'start_video_play' })
                     })
                 ])
             ]),
@@ -340,45 +321,39 @@ const start = {
                         ])
                     ]),
                     m('.w-tabs', [
-                        m('.w-tab-menu.u-text-center', _.map(ctrl.categories(), (category) => {
-                            return m(`a.w-tab-link.w-inline-block.btn-category.small.btn-inline${(ctrl.selectedCategoryIdx() === category.id) ? '.w--current' : ''}`, {
-                                onclick: h.analytics.event({cat: 'project_start',act: 'start_category_click',lbl: category.name}, ctrl.selectCategory(category))
-                            }, [
-                                m('div', category.name)
-                            ]);
-                        })),
+                        m('.w-tab-menu.u-text-center', _.map(ctrl.categories(), category => m(`a.w-tab-link.w-inline-block.btn-category.small.btn-inline${(ctrl.selectedCategoryIdx() === category.id) ? '.w--current' : ''}`, {
+                            onclick: h.analytics.event({ cat: 'project_start', act: 'start_category_click', lbl: category.name }, ctrl.selectCategory(category))
+                        }, [
+                            m('div', category.name)
+                        ]))),
                         m('.w-tab-content.u-margintop-40', [
                             m('.w-tab-pane.w--tab-active', [
-                                m('.w-row', (ctrl.selectedCategoryIdx() !== -1) ? _.map(ctrl.selectedCategory(), (category) => {
-                                    return [
-                                        m('.w-col.w-col-5', [
-                                            m('.fontsize-jumbo.u-marginbottom-20', category.name),
-                                            m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
-                                                config: h.scrollTo()
-                                            }, I18n.t('submit', I18nScope()))
-                                        ]),
-                                        m('.w-col.w-col-7', [
-                                            m('.fontsize-megajumbo.fontcolor-negative', `R$ ${category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...'}`),
-                                            m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
-                                            m('.fontsize-megajumbo.fontcolor-negative', (category.successful_projects) ? category.successful_projects : '...'),
-                                            m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
-                                            !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), (project) => {
-                                                return !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
-                                                    m('.w-col.w-col-1', [
-                                                        m(`img.user-avatar[src="${h.useAvatarOrDefault(project.userThumb)}"]`)
-                                                    ]),
-                                                    m('.w-col.w-col-11', [
-                                                        m('.fontsize-base.fontweight-semibold', project.user.name),
-                                                        m('.fontsize-smallest', [
-                                                            I18n.t('categories.pledged', I18nScope({pledged: h.formatNumber(project.pledged), contributors: project.total_contributors})),
-                                                            m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
-                                                        ])
-                                                    ])
-                                                ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()));
-                                            }) : '',
-                                        ])
-                                    ];
-                                }) : '')
+                                m('.w-row', (ctrl.selectedCategoryIdx() !== -1) ? _.map(ctrl.selectedCategory(), category => [
+                                    m('.w-col.w-col-5', [
+                                        m('.fontsize-jumbo.u-marginbottom-20', category.name),
+                                        m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
+                                            config: h.scrollTo()
+                                        }, I18n.t('submit', I18nScope()))
+                                    ]),
+                                    m('.w-col.w-col-7', [
+                                        m('.fontsize-megajumbo.fontcolor-negative', `R$ ${category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...'}`),
+                                        m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
+                                        m('.fontsize-megajumbo.fontcolor-negative', (category.successful_projects) ? category.successful_projects : '...'),
+                                        m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
+                                        !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), project => !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
+                                            m('.w-col.w-col-1', [
+                                                m(`img.user-avatar[src="${h.useAvatarOrDefault(project.userThumb)}"]`)
+                                            ]),
+                                            m('.w-col.w-col-11', [
+                                                m('.fontsize-base.fontweight-semibold', project.user.name),
+                                                m('.fontsize-smallest', [
+                                                    I18n.t('categories.pledged', I18nScope({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })),
+                                                    m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
+                                                ])
+                                            ])
+                                        ]) : m('.fontsize-base', I18n.t('categories.loading_featured', I18nScope()))) : '',
+                                    ])
+                                ]) : '')
                             ])
                         ])
                     ])
@@ -389,26 +364,22 @@ const start = {
                 title: I18n.t('testimonials_title', I18nScope()),
                 slideClass: 'slide-testimonials-content',
                 wrapperClass: 'slide-testimonials',
-                onchange: h.analytics.event({cat: 'project_start',act: 'start_testimonials_change'})
+                onchange: h.analytics.event({ cat: 'project_start', act: 'start_testimonials_change' })
             }),
             m('.w-section.divider.u-margintop-30'),
             m('.w-container', [
                 m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n.t('qa_title', I18nScope())),
                 m('.w-row.u-marginbottom-60', [
-                    m('.w-col.w-col-6', _.map(ctrl.questions.col_1, (question) => {
-                        return m.component(landingQA, {
-                            question: question.question,
-                            answer: question.answer,
-                            onclick: h.analytics.event({cat: 'project_start',act: 'start_qa_click',lbl: question.question})
-                        });
-                    })),
-                    m('.w-col.w-col-6', _.map(ctrl.questions.col_2, (question) => {
-                        return m.component(landingQA, {
-                            question: question.question,
-                            answer: question.answer,
-                            onclick: h.analytics.event({cat: 'project_start',act: 'start_qa_click',lbl: question.question})
-                        });
-                    }))
+                    m('.w-col.w-col-6', _.map(ctrl.questions.col_1, question => m.component(landingQA, {
+                        question: question.question,
+                        answer: question.answer,
+                        onclick: h.analytics.event({ cat: 'project_start', act: 'start_qa_click', lbl: question.question })
+                    }))),
+                    m('.w-col.w-col-6', _.map(ctrl.questions.col_2, question => m.component(landingQA, {
+                        question: question.question,
+                        answer: question.answer,
+                        onclick: h.analytics.event({ cat: 'project_start', act: 'start_qa_click', lbl: question.question })
+                    })))
                 ])
             ]),
             m('#start-form.w-section.section-large.u-text-center.bg-purple.before-footer', [
@@ -416,49 +387,47 @@ const start = {
                     m('.fontsize-jumbo.fontcolor-negative.u-marginbottom-60', 'Crie o seu rascunho gratuitamente!'),
                     m('form[action="/projects/fallback_create"][method="GET"].w-row.w-form', {
                         onsubmit: (e) => {
-                            h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_submit'})(e);
+                            h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_submit' })(e);
                             return ctrl.validateProjectForm();
                         }
                     },
-                    [
-                        m('.w-col.w-col-2'),
-                        m('.w-col.w-col-8', [
-                            m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
-                            m('input[name="utf8"][type="hidden"][value="✓"]'),
-                            m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
-                            m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
-                                name: 'project[name]',
-                                class: ctrl.projectNameError() ? 'error' : '',
-                                onfocus: () => ctrl.projectNameError(false),
-                                onchange: (e) => {
-                                    h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'name'})(e);
-                                    m.withAttr('value', ctrl.projectName)(e);
-                                }
-                            }),
-                            m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
-                            m('select.w-select.text-field.medium.u-marginbottom-40', {
-                                name: 'project[category_id]',
-                                class: ctrl.projectCategoryError() ? 'error' : '',
-                                onfocus: () => ctrl.projectCategoryError(false),
-                                onchange: (e) => {
-                                    h.analytics.oneTimeEvent({cat: 'project_create',act: 'create_form_change',lbl: 'category'})(e);
-                                    m.withAttr('value', ctrl.projectCategory)(e);
-                                }
-                            },[
-                                m('option[value="-1"]', I18n.t('form.select_default', I18nScope())),
-                                _.map(ctrl.categories(), (category) => {
-                                    return m(`option[value="${category.id}"]`,{selected: ctrl.projectCategory() === category.id},category.name);
-                                })
-                            ])
-                        ]),
-                        m('.w-col.w-col-2'),
-                        m('.w-row.u-marginbottom-20', [
-                            m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [
-                                m(`input[type="submit"][value="${I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
+                        [
+                            m('.w-col.w-col-2'),
+                            m('.w-col.w-col-8', [
+                                m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n.t('form.title', I18nScope())),
+                                m('input[name="utf8"][type="hidden"][value="✓"]'),
+                                m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
+                                m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
+                                    name: 'project[name]',
+                                    class: ctrl.projectNameError() ? 'error' : '',
+                                    onfocus: () => ctrl.projectNameError(false),
+                                    onchange: (e) => {
+                                        h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'name' })(e);
+                                        m.withAttr('value', ctrl.projectName)(e);
+                                    }
+                                }),
+                                m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
+                                m('select.w-select.text-field.medium.u-marginbottom-40', {
+                                    name: 'project[category_id]',
+                                    class: ctrl.projectCategoryError() ? 'error' : '',
+                                    onfocus: () => ctrl.projectCategoryError(false),
+                                    onchange: (e) => {
+                                        h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'category' })(e);
+                                        m.withAttr('value', ctrl.projectCategory)(e);
+                                    }
+                                }, [
+                                    m('option[value="-1"]', I18n.t('form.select_default', I18nScope())),
+                                    _.map(ctrl.categories(), category => m(`option[value="${category.id}"]`, { selected: ctrl.projectCategory() === category.id }, category.name))
+                                ])
                             ]),
-                        ]),
-                        m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m.component(inlineError, {message: 'Por favor, verifique novamente os campos acima!'}) : '')
-                    ])
+                            m('.w-col.w-col-2'),
+                            m('.w-row.u-marginbottom-20', [
+                                m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [
+                                    m(`input[type="submit"][value="${I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
+                                ]),
+                            ]),
+                            m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')
+                        ])
                 ])
             ])
         ]);

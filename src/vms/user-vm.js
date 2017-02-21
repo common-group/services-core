@@ -6,12 +6,11 @@ import models from '../models';
 import projectFilters from './project-filters-vm';
 
 const idVM = h.idVM,
-      userDetails = m.prop([]),
-      currentUser = m.prop({}),
-      createdVM = postgrest.filtersVM({project_user_id: 'eq'});
+    currentUser = m.prop({}),
+    createdVM = postgrest.filtersVM({ project_user_id: 'eq' });
 
 const getUserCreatedProjects = (user_id, pageSize = 3) => {
-    createdVM.project_user_id(user_id).order({project_id: 'desc'});
+    createdVM.project_user_id(user_id).order({ project_id: 'desc' });
 
     models.project.pageSize(pageSize);
 
@@ -37,7 +36,7 @@ const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
 
 const getUserBankAccount = (user_id) => {
     const contextVM = postgrest.filtersVM({
-      user_id: 'eq'
+        user_id: 'eq'
     });
 
     contextVM.user_id(user_id);
@@ -49,8 +48,8 @@ const getUserBankAccount = (user_id) => {
 
 const getUserProjectReminders = (user_id) => {
     const contextVM = postgrest.filtersVM({
-      user_id: 'eq',
-      without_notification: 'eq'
+        user_id: 'eq',
+        without_notification: 'eq'
     });
 
     contextVM.user_id(user_id).without_notification(true);
@@ -78,21 +77,17 @@ const getUserCreditCards = (user_id) => {
     return lUserCards.load();
 };
 
-const confirmDelivery = (projectId, contribution) => {
-    return m.request({
-        method: 'GET',
-        config: h.setCsrfToken,
-        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/confirm_delivery`
-    });
-};
+const toggleDelivery = (projectId, contribution) => m.request({
+    method: 'GET',
+    config: h.setCsrfToken,
+    url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_delivery`
+});
 
-const toggleAnonymous = (projectId, contribution) => {
-    return m.request({
-        method: 'GET',
-        config: h.setCsrfToken,
-        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_anonymous`
-    });
-};
+const toggleAnonymous = (projectId, contribution) => m.request({
+    method: 'GET',
+    config: h.setCsrfToken,
+    url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_anonymous`
+});
 
 const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = postgrest.filtersVM({
@@ -125,32 +120,28 @@ const getCurrentUser = () => {
     return currentUser;
 };
 
-const displayImage = (user) => {
-  return user.profile_img_thumbnail || "https://catarse.me/assets/catarse_bootstrap/user.jpg";
-};
+const displayImage = user => user.profile_img_thumbnail || 'https://catarse.me/assets/catarse_bootstrap/user.jpg';
 
-const displayCover = (user) => user.profile_cover_image || displayImage(user);
+const displayCover = user => user.profile_cover_image || displayImage(user);
 
 const getUserRecommendedProjects = (contribution) => {
     const sample3 = _.partial(_.sample, _, 3),
         loaders = m.prop([]),
         collection = m.prop([]),
-        {user_id} = h.getUser();
+        { user_id } = h.getUser();
 
-    const loader = () => {
-        return _.reduce(loaders(), (memo, curr) => {
-            const _memo = _.isFunction(memo) ? memo() : memo,
-                _curr = _.isFunction(curr) ? curr() : curr;
+    const loader = () => _.reduce(loaders(), (memo, curr) => {
+        const _memo = _.isFunction(memo) ? memo() : memo,
+            _curr = _.isFunction(curr) ? curr() : curr;
 
-            return _memo && _curr;
-        }, true);
-    };
+        return _memo && _curr;
+    }, true);
 
     const loadPopular = () => {
         const filters = projectFilters().filters;
         const popular = postgrest.loaderWithToken(
             models.project.getPageOptions(
-                _.extend({}, {order: 'score.desc'}, filters['score'].filter.parameters())
+                _.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())
             )
         );
 
@@ -159,10 +150,10 @@ const getUserRecommendedProjects = (contribution) => {
         popular.load().then(_.compose(collection, sample3));
     };
 
-    const pushProject = ({project_id}) => {
+    const pushProject = ({ project_id }) => {
         const project = postgrest.loaderWithToken(
             models.project.getPageOptions(
-                postgrest.filtersVM({project_id: 'eq'})
+                postgrest.filtersVM({ project_id: 'eq' })
                     .project_id(project_id)
                     .parameters()
             )
@@ -176,16 +167,15 @@ const getUserRecommendedProjects = (contribution) => {
 
     const projects = postgrest.loaderWithToken(
         models.recommendedProjects.getPageOptions(
-            postgrest.filtersVM({user_id: 'eq'})
+            postgrest.filtersVM({ user_id: 'eq' })
                 .user_id(user_id)
                 .parameters()
         )
     );
 
 
-
-    projects.load().then(recommended => {
-        if(recommended.length > 0) {
+    projects.load().then((recommended) => {
+        if (recommended.length > 0) {
             _.map(recommended, pushProject);
         } else {
             loadPopular();
@@ -193,25 +183,25 @@ const getUserRecommendedProjects = (contribution) => {
     });
 
     return {
-        loader: loader,
-        collection: collection
+        loader,
+        collection
     };
 };
 
 const userVM = {
-    getUserCreatedProjects: getUserCreatedProjects,
-    getUserCreditCards: getUserCreditCards,
-    confirmDelivery: confirmDelivery,
-    toggleAnonymous: toggleAnonymous,
-    getUserProjectReminders: getUserProjectReminders,
-    getUserRecommendedProjects: getUserRecommendedProjects,
-    getUserContributedProjects: getUserContributedProjects,
-    getUserBankAccount: getUserBankAccount,
-    getPublicUserContributedProjects: getPublicUserContributedProjects,
-    displayImage: displayImage,
-    displayCover: displayCover,
-    fetchUser: fetchUser,
-    getCurrentUser: getCurrentUser
+    getUserCreatedProjects,
+    getUserCreditCards,
+    toggleDelivery,
+    toggleAnonymous,
+    getUserProjectReminders,
+    getUserRecommendedProjects,
+    getUserContributedProjects,
+    getUserBankAccount,
+    getPublicUserContributedProjects,
+    displayImage,
+    displayCover,
+    fetchUser,
+    getCurrentUser
 };
 
 export default userVM;

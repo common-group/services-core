@@ -47,10 +47,10 @@ const slider = {
                 startSliderTimer();
             },
             config = (el, isInitialized, context) => {
-                if (!isInitialized){
+                if (!isInitialized) {
                     translationSize(Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
                     m.redraw();
-                };
+                }
 
                 context.onunload = () => clearInterval(interval);
             };
@@ -58,12 +58,12 @@ const slider = {
         startSliderTimer();
 
         return {
-            config: config,
-            selectedSlideIdx: selectedSlideIdx,
-            translationSize: translationSize,
-            decrementSlide: decrementSlide,
-            incrementSlide: incrementSlide,
-            resetSliderTimer: resetSliderTimer
+            config,
+            selectedSlideIdx,
+            translationSize,
+            decrementSlide,
+            incrementSlide,
+            resetSliderTimer
         };
     },
     view(ctrl, args) {
@@ -103,19 +103,17 @@ const slider = {
                 }),
                 m('#slide-prev.w-slider-arrow-left.w-hidden-small.w-hidden-tiny', {
                     onclick: () => sliderClick(ctrl.decrementSlide)
-                },[
+                }, [
                     m('.w-icon-slider-left.fa.fa-lg.fa-angle-left.fontcolor-terciary')
                 ]),
                 m('#slide-next.w-slider-arrow-right.w-hidden-small.w-hidden-tiny', {
                     onclick: () => sliderClick(ctrl.incrementSlide)
-                },[
+                }, [
                     m('.w-icon-slider-right.fa.fa-lg.fa-angle-right.fontcolor-terciary')
                 ]),
-                m('.w-slider-nav.w-slider-nav-invert.w-round.slide-nav', _(args.slides.length).times((idx) => {
-                    return m(`.slide-bullet.w-slider-dot${ctrl.selectedSlideIdx() === idx ? '.w-active' : ''}`, {
-                        onclick: () => sliderClick(ctrl.selectedSlideIdx, idx)
-                    });
-                }))
+                m('.w-slider-nav.w-slider-nav-invert.w-round.slide-nav', _(args.slides.length).times(idx => m(`.slide-bullet.w-slider-dot${ctrl.selectedSlideIdx() === idx ? '.w-active' : ''}`, {
+                    onclick: () => sliderClick(ctrl.selectedSlideIdx, idx)
+                })))
             ])
         ]);
     }

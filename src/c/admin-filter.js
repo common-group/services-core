@@ -30,9 +30,7 @@ const adminFilter = {
                                 onclick: ctrl.toggler.toggle
                             }, 'Filtros avançados  >')), (ctrl.toggler() ?
                             m('#advanced-search.w-row.admin-filters', [
-                                _.map(filterBuilder, function(f) {
-                                    return (f.component !== filterMain) ? m.component(f.component, f.data) : '';
-                                })
+                                _.map(filterBuilder, f => (f.component !== filterMain) ? m.component(f.component, f.data) : '')
                             ]) : ''
                         )
                     ])

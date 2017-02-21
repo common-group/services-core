@@ -55,7 +55,7 @@ const adminRadioAction = {
 
             radios(data);
 
-            if (!_.isUndefined(emptyState)){
+            if (!_.isUndefined(emptyState)) {
                 radios().unshift(emptyState);
             }
         };
@@ -66,7 +66,7 @@ const adminRadioAction = {
 
         const submit = () => {
             if (newID()) {
-                let validation = validate(radios(), newID());
+                const validation = validate(radios(), newID());
                 if (_.isUndefined(validation)) {
                     data[builder.selectKey] = newID() === -1 ? null : newID();
                     setLoader.load().then(updateItem, error);
@@ -96,17 +96,17 @@ const adminRadioAction = {
         fetch();
 
         return {
-            complete: complete,
-            description: description,
-            setDescription: setDescription,
-            error: error,
-            setLoader: setLoader,
-            getLoader: getLoader,
-            newID: newID,
-            submit: submit,
+            complete,
+            description,
+            setDescription,
+            error,
+            setLoader,
+            getLoader,
+            newID,
+            submit,
             toggler: h.toggleProp(false, true),
-            unload: unload,
-            radios: radios
+            unload,
+            radios
         };
     },
     view(ctrl, args) {
@@ -126,18 +126,18 @@ const adminRadioAction = {
                 }, (!ctrl.complete()) ? [
                     (ctrl.radios()) ?
                     _.map(ctrl.radios(), (radio, index) => m('.w-radio', [
-                        m('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]', {
+                        m(`input#r-${index}.w-radio-input[type=radio][name="admin-radio"][value="${radio.id}"]`, {
                             checked: radio.id === (item[data.selectKey] || item.id),
                             onclick: () => {
                                 ctrl.newID(radio.id);
                                 ctrl.setDescription(radio.description);
                             }
                         }),
-                        m('label.w-form-label[for="r-' + index + '"]', 'R$' + radio.minimum_value)
+                        m(`label.w-form-label[for="r-${index}"]`, `R$${radio.minimum_value}`)
                     ])) : h.loader(),
                     m('strong', 'Descrição'),
                     m('p', ctrl.description()),
-                    m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
+                    m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
                 ] : (!ctrl.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', 'Recompensa alterada com sucesso!')

@@ -52,19 +52,19 @@ const adminExternalAction = {
         };
 
         const unload = (el, isinit, context) => {
-            context.onunload = function() {
+            context.onunload = function () {
                 complete(false);
                 error(false);
             };
         };
 
         return {
-            l: l,
-            complete: complete,
-            error: error,
-            submit: submit,
+            l,
+            complete,
+            error,
+            submit,
             toggler: h.toggleProp(false, true),
-            unload: unload
+            unload
         };
     },
     view(ctrl, args) {
@@ -82,7 +82,7 @@ const adminExternalAction = {
                     onsubmit: ctrl.submit
                 }, (!ctrl.complete()) ? [
                     m('label', data.innerLabel),
-                    m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
+                    m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
                 ] : (!ctrl.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', 'Requisição feita com sucesso.')

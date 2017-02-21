@@ -13,16 +13,16 @@ import filterDateRange from '../c/filter-date-range';
 
 const adminContributions = {
     controller() {
-        var listVM = contributionListVM,
+        let listVM = contributionListVM,
             filterVM = contributionFilterVM,
             error = m.prop(''),
-            filterBuilder = [{ //full_text_index
+            filterBuilder = [{ // full_text_index
                 component: filterMain,
                 data: {
                     vm: filterVM.full_text_index,
                     placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
                 }
-            }, { //state
+            }, { // state
                 component: filterDropdown,
                 data: {
                     label: 'Com o estado',
@@ -54,7 +54,7 @@ const adminContributions = {
                         option: 'deleted'
                     }]
                 }
-            }, { //gateway
+            }, { // gateway
                 component: filterDropdown,
                 data: {
                     label: 'gateway',
@@ -77,14 +77,14 @@ const adminContributions = {
                         option: 'Créditos'
                     }]
                 }
-            }, { //value
+            }, { // value
                 component: filterNumberRange,
                 data: {
                     label: 'Valores entre',
                     first: filterVM.value.gte,
                     last: filterVM.value.lte
                 }
-            }, { //created_at
+            }, { // created_at
                 component: filterDateRange,
                 data: {
                     label: 'Período do apoio',
@@ -101,16 +101,16 @@ const adminContributions = {
             };
 
         return {
-            filterVM: filterVM,
-            filterBuilder: filterBuilder,
+            filterVM,
+            filterBuilder,
             listVM: {
                 list: listVM,
-                error: error
+                error
             },
             data: {
                 label: 'Apoios'
             },
-            submit: submit
+            submit
         };
     },
 

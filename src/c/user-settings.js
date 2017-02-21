@@ -1,10 +1,8 @@
 import m from 'mithril';
-import models from '../models';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
+import models from '../models';
 import h from '../h';
-import userVM from '../vms/user-vm';
-import inlineError from './inline-error';
 import popNotification from './pop-notification';
 import UserOwnerBox from './user-owner-box';
 

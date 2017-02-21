@@ -4,17 +4,18 @@
  *
  */
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 
 const ownerMessageContent = {
     controller(args) {
-        let l = m.prop(false),
-            sendSuccess = m.prop(false),
+        let l = m.prop(false);
+        const sendSuccess = m.prop(false),
             userDetails = args,
             submitDisabled = m.prop(false),
-            //sets default values when user is not logged in
+            // sets default values when user is not logged in
             user = h.getUser() || {
                 name: '',
                 email: ''
@@ -31,7 +32,7 @@ const ownerMessageContent = {
             content(content().split('\n').join('<br />'));
             const project = h.getCurrentProject();
 
-            let loaderOpts = models.directMessage.postOptions({
+            const loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
                 from_email: from_email(),
                 user_id: h.getUser().user_id,
@@ -49,14 +50,14 @@ const ownerMessageContent = {
         };
 
         return {
-            sendMessage: sendMessage,
-            submitDisabled: submitDisabled,
-            sendSuccess: sendSuccess,
+            sendMessage,
+            submitDisabled,
+            sendSuccess,
             userDetails: args,
-            from_name: from_name,
-            from_email: from_email,
-            content: content,
-            l: l
+            from_name,
+            from_email,
+            content,
+            l
         };
     },
     view(ctrl, args) {

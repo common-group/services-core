@@ -1,5 +1,4 @@
 import m from 'mithril';
-import models from '../models';
 import _ from 'underscore';
 import h from '../h';
 import popNotification from './pop-notification';
@@ -13,10 +12,11 @@ const projectContributionReportContent = {
             showSuccess = m.prop(false),
             selectedContributions = m.prop([]),
             selectAll = () => {
-                projectsContributionReportVM.getAllContributions(args.filterVM).then(data => {
-                    selectedContributions().push(..._.pluck(data, 'id'));
-                    selectedAny(true);
-                  });
+                projectsContributionReportVM.getAllContributions(args.filterVM).then((data) => {
+                    const exceptReceived = _.filter(data, contrib => contrib.delivery_status !== 'received');
+                    selectedContributions().push(..._.pluck(exceptReceived, 'id'));
+                    selectedAny(!_.isEmpty(exceptReceived));
+                });
             },
             unselectAll = () => {
                 selectedContributions([]);
@@ -24,27 +24,29 @@ const projectContributionReportContent = {
             },
             updateStatus = (status) => {
                 const data = {
-                        contributions: selectedContributions(),
-                        delivery_status: status
-                    };
+                    contributions: selectedContributions(),
+                    delivery_status: status
+                };
                 projectsContributionReportVM.updateStatus(data).then(() => {
                     showSuccess(true);
                     showSelectedMenu.toggle();
-                    m.redraw();
+                    // update status so we don't have to reload the page
+                    _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
+                          item => item.delivery_status = status);
                 }).catch((err) => {
                     m.redraw();
                 });
-
+                return false;
             };
 
         return {
-            showSuccess: showSuccess,
-            selectAll: selectAll,
-            unselectAll: unselectAll,
-            updateStatus: updateStatus,
-            showSelectedMenu: showSelectedMenu,
-            selectedAny: selectedAny,
-            selectedContributions: selectedContributions
+            showSuccess,
+            selectAll,
+            unselectAll,
+            updateStatus,
+            showSelectedMenu,
+            selectedAny,
+            selectedContributions
         };
     },
     view(ctrl, args) {
@@ -68,13 +70,13 @@ const projectContributionReportContent = {
                         m('.w-col.w-col-6', [
                             (!ctrl.selectedAny() ?
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                                        onclick: ctrl.selectAll
-                                    },
+                                    onclick: ctrl.selectAll
+                                },
                                     'Selecionar todos'
                                 ) :
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                                        onclick: ctrl.unselectAll
-                                    },
+                                    onclick: ctrl.unselectAll
+                                },
                                     'Desmarcar todos'
                                 )
                             ),
@@ -91,14 +93,14 @@ const projectContributionReportContent = {
                                     ]),
                                     (ctrl.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
-                                            m('a.dropdown-link.fontsize-smaller', {
-                                                    onclick: () => ctrl.updateStatus('delivered')
-                                                },
+                                            m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
+                                                onclick: () => ctrl.updateStatus('delivered')
+                                            },
                                                 'Enviada'
                                             ),
-                                            m('a.dropdown-link.fontsize-smaller', {
-                                                    onclick: () => ctrl.updateStatus('error')
-                                                },
+                                            m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
+                                                onclick: () => ctrl.updateStatus('error')
+                                            },
                                                 'Erro no envio'
                                             )
                                         ]) : '')
@@ -115,26 +117,26 @@ const projectContributionReportContent = {
                     ])
                 ),
 
-                //TODO: ordering filter template
-                //m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
-                //m(".w-form", [
-                //m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
-                //m(".fontsize-smallest.fontcolor-secondary", "Ordenar por:"),
-                //m("select.w-select.text-field.positive.fontsize-smallest[id='field-9'][name='field-9']", [
-                //m("option[value='']", "Data (recentes para antigos)"),
-                //m("option[value='']", "Data (antigos para recentes)"),
-                //m("option[value='']", "Valor (maior para menor)"),
-                //m("option[value='First']", "Valor (menor para maior)")
-                //])
-                //])
-                //])
-                //])*/
-                //]),
+                // TODO: ordering filter template
+                // m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
+                // m(".w-form", [
+                // m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
+                // m(".fontsize-smallest.fontcolor-secondary", "Ordenar por:"),
+                // m("select.w-select.text-field.positive.fontsize-smallest[id='field-9'][name='field-9']", [
+                // m("option[value='']", "Data (recentes para antigos)"),
+                // m("option[value='']", "Data (antigos para recentes)"),
+                // m("option[value='']", "Valor (maior para menor)"),
+                // m("option[value='First']", "Valor (menor para maior)")
+                // ])
+                // ])
+                // ])
+                // ])*/
+                // ]),
                 _.map(list.collection(), (item) => {
                     const contribution = m.prop(item);
                     return m.component(projectContributionReportContentCard, {
                         project: args.project,
-                        contribution: contribution,
+                        contribution,
                         selectedContributions: ctrl.selectedContributions,
                         selectedAny: ctrl.selectedAny
                     });

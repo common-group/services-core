@@ -52,9 +52,9 @@ const usersEdit = {
         h.redrawHashChange();
         userVM.fetchUser(userId, true, userDetails);
         return {
-            displayTabContent: displayTabContent,
-            hash: hash,
-            userDetails: userDetails
+            displayTabContent,
+            hash,
+            userDetails
         };
     },
 
@@ -70,11 +70,11 @@ const usersEdit = {
                 hideDetails: true
             }),
             (!_.isEmpty(user) ? [m('nav.dashboard-nav.u-text-center', {
-                            style: {
-                                'z-index': '10',
-                                'position': 'relative'
-                            }
-                        },
+                style: {
+                    'z-index': '10',
+                    position: 'relative'
+                }
+            },
                         m('.w-container', [
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#contributions' ? '.selected' : '')}[data-target='#dashboard_contributions'][href='#contributions'][id='dashboard_contributions_link']`, 'Apoiados'),
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#projects' ? '.selected' : '')}[data-target='#dashboard_projects'][href='#projects'][id='dashboard_projects_link']`,
@@ -90,28 +90,27 @@ const usersEdit = {
                                 'Notificações'
                             ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/pt/users/${user.id}']`, {
-                                    config: m.route,
-                                    onclick: () => {
-                                        m.route("/users/" + user.id, {
-                                            user_id: user.id
-                                        });
-                                    }
-                                },
+                                config: m.route,
+                                onclick: () => {
+                                    m.route(`/users/${user.id}`, {
+                                        user_id: user.id
+                                    });
+                                }
+                            },
                                 'Ir para o perfil público'
                             )
                         ])
                     ),
 
-                    m('section.section',
+                m('section.section',
                         m('.w-container',
                             m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
                         )
                     )
 
-                ] :
+            ] :
                 '')
         ]);
-
     }
 };
 

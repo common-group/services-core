@@ -10,16 +10,15 @@ import userContributedBox from './user-contributed-box';
 const userPrivateContributed = {
     controller(args) {
         const user_id = args.userId,
-            online = postgrest.paginationVM(models.project),
             onlinePages = postgrest.paginationVM(models.userContribution),
             successfulPages = postgrest.paginationVM(models.userContribution),
             failedPages = postgrest.paginationVM(models.userContribution),
             error = m.prop(false),
             loader = m.prop(true),
             handleError = () => {
-              error(true);
-              loader(false);
-              m.redraw();
+                error(true);
+                loader(false);
+                m.redraw();
             },
             contextVM = postgrest.filtersVM({
                 user_id: 'eq',
@@ -48,21 +47,21 @@ const userPrivateContributed = {
         }).catch(handleError);
 
         return {
-            onlinePages: onlinePages,
-            successfulPages: successfulPages,
-            failedPages: failedPages,
-            error: error,
-            loader: loader
+            onlinePages,
+            successfulPages,
+            failedPages,
+            error,
+            loader
         };
     },
     view(ctrl, args) {
-        let onlineCollection = ctrl.onlinePages.collection(),
+        const onlineCollection = ctrl.onlinePages.collection(),
             successfulCollection = ctrl.successfulPages.collection(),
             failedCollection = ctrl.failedPages.collection();
 
         return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m.component(inlineError, {
-                message: 'Erro ao carregar os projetos.'
-            }) : ctrl.loader() ? h.loader() :
+            message: 'Erro ao carregar os projetos.'
+        }) : ctrl.loader() ? h.loader() :
             (_.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
             m('.w-container',
                 m('.w-row.u-margintop-30.u-text-center', [
@@ -77,11 +76,11 @@ const userPrivateContributed = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6',
                                 m('a.btn.btn-large[href=\'/pt/explore\']', {
-                                        config: m.route,
-                                        onclick: () => {
-                                            m.route('/explore');
-                                        }
-                                    },
+                                    config: m.route,
+                                    onclick: () => {
+                                        m.route('/explore');
+                                    }
+                                },
                                     'Apoie agora!'
                                 )
                             ),

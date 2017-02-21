@@ -19,13 +19,13 @@ const adminUsers = {
                 component: adminUser,
                 wrapperClass: '.w-col.w-col-4'
             }],
-            filterBuilder = [{ //name
+            filterBuilder = [{ // name
                 component: filterMain,
                 data: {
                     vm: filterVM.full_text_index,
                     placeholder: 'Busque por nome, e-mail, Ids do usuário...',
                 },
-            }, { //status
+            }, { // status
                 component: filterDropdown,
                 data: {
                     label: 'Com o estado',
@@ -45,20 +45,20 @@ const adminUsers = {
                 }
             }],
             submit = () => {
-                listVM.firstPage(filterVM.parameters()).then(null, function(serverError) {
+                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
                     error(serverError.message);
                 });
                 return false;
             };
 
         return {
-            filterVM: filterVM,
-            filterBuilder: filterBuilder,
+            filterVM,
+            filterBuilder,
             listVM: {
                 list: listVM,
-                error: error
+                error
             },
-            submit: submit
+            submit
         };
     },
     view(ctrl) {
@@ -68,12 +68,12 @@ const adminUsers = {
             m.component(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
-                label: label,
+                label,
                 submit: ctrl.submit
             }),
             m.component(adminList, {
                 vm: ctrl.listVM,
-                label: label,
+                label,
                 listItem: adminUserItem,
                 listDetail: adminUserDetail
             })

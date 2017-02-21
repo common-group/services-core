@@ -34,8 +34,8 @@ const projectContributionReportHeader = {
                 ]),
                 m('.w-form', [
                     m('form', {
-                            onsubmit: args.submit
-                        },
+                        onsubmit: args.submit
+                    },
                         m('.w-row', [
                             m('.w-col.w-col-8',
                                 m('.w-row', [

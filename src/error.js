@@ -6,27 +6,21 @@ import inlineError from './c/inline-error';
 const fields = m.prop([]);
 const submissionError = m.prop(false);
 const submissionErrorMsg = m.prop('');
-const fieldIdxValue = (fieldName, idx, initialValue) => {
-    return _.reduce(fields(), (memo, field) => {
-        return field[0] === fieldName ? field[idx] : memo;
-    }, initialValue);
-};
+const fieldIdxValue = (fieldName, idx, initialValue) => _.reduce(fields(), (memo, field) => field[0] === fieldName ? field[idx] : memo, initialValue);
 
 const setError = (fieldName, flag) => {
-    const updated = _.map(fields(), (field) => {
-        return field[0] === fieldName ? [field[0], field[1], flag] : field;
-    });
+    const updated = _.map(fields(), field => field[0] === fieldName ? [field[0], field[1], flag] : field);
 
     fields(updated);
 };
 
-const hasError = (fieldName) => fieldIdxValue(fieldName, 2, false);
+const hasError = fieldName => fieldIdxValue(fieldName, 2, false);
 
-const getErrorMsg = (fieldName) => fieldIdxValue(fieldName, 1, '');
+const getErrorMsg = fieldName => fieldIdxValue(fieldName, 1, '');
 
 const e = (fieldOrArray, errorMessage = '') => {
     if (Array.isArray(fieldOrArray)) {
-        _.map(fieldOrArray, field => {
+        _.map(fieldOrArray, (field) => {
             field.push(false);
             console.log('Will push: ', field);
             return fields().push(field);
@@ -62,18 +56,15 @@ e.hasError = hasError;
 e.inlineError = (field, flag) => {
     if (_.isUndefined(flag)) {
         if (hasError(field)) {
-            return m(inlineError, {message: getErrorMsg(field)});
+            return m(inlineError, { message: getErrorMsg(field) });
         }
 
         return null;
-    } else {
-        setError(field, flag);
     }
+    setError(field, flag);
 };
 
-e.resetFieldErrors = () => {
-    return _.map(fields(), field => field[2] = false);
-};
+e.resetFieldErrors = () => _.map(fields(), field => field[2] = false);
 
 e.resetErrors = () => {
     e.resetFieldErrors();

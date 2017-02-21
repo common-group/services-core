@@ -3,7 +3,7 @@ import _ from 'underscore';
 const defaultFormat = /(\d{1,4})/g;
 
 const slice = [].slice,
-indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    indexOf = [].indexOf || function (item) { for (let i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 const cards = [
     {
@@ -87,7 +87,7 @@ const cards = [
 ];
 
 const inputCardType = (num) => {
-    var ref;
+    let ref;
     if (!num) {
         return null;
     }
@@ -95,7 +95,9 @@ const inputCardType = (num) => {
 };
 
 const cardFromType = (type) => {
-    let card, i, len;
+    let card,
+        i,
+        len;
     for (i = 0, len = cards.length; i < len; i++) {
         card = cards[i];
         if (card.type === type) {
@@ -105,7 +107,11 @@ const cardFromType = (type) => {
 };
 
 const setCardType = (e, type) => {
-    let $target, allTypes, card, cardType, val;
+    let $target,
+        allTypes,
+        card,
+        cardType,
+        val;
     $target = e.currentTarget;
     val = $target.value;
     cardType = inputCardType(val) || 'unknown';
@@ -113,7 +119,8 @@ const setCardType = (e, type) => {
 };
 
 const formatBackCardNumber = (e, prop) => {
-    var $target, value;
+    let $target,
+        value;
     $target = e.currentTarget;
     value = $target.value;
     if (e.which !== 8) {
@@ -124,19 +131,22 @@ const formatBackCardNumber = (e, prop) => {
     }
     if (/\d\s$/.test(value)) {
         e.preventDefault();
-        return setTimeout(function() {
-            return $target.value = prop(value.replace(/\d\s$/, ''));
-        });
+        return setTimeout(() => $target.value = prop(value.replace(/\d\s$/, '')));
     } else if (/\s\d?$/.test(value)) {
         e.preventDefault();
-        return setTimeout(function() {
-            return $target.value = prop(value.replace(/\d$/, ''));
-        });
+        return setTimeout(() => $target.value = prop(value.replace(/\d$/, '')));
     }
 };
 
 const replaceFullWidthChars = (str) => {
-    var chars, chr, fullWidth, halfWidth, i, idx, len, value;
+    let chars,
+        chr,
+        fullWidth,
+        halfWidth,
+        i,
+        idx,
+        len,
+        value;
     if (str == null) {
         str = '';
     }
@@ -156,7 +166,13 @@ const replaceFullWidthChars = (str) => {
 };
 
 const safeVal = (value, $target, prop) => {
-    var currPair, cursor, digit, error, error1, last, prevPair;
+    let currPair,
+        cursor,
+        digit,
+        error,
+        error1,
+        last,
+        prevPair;
     try {
         cursor = $target.selectionStart;
     } catch (error1) {
@@ -173,8 +189,8 @@ const safeVal = (value, $target, prop) => {
             prevPair = last.slice(cursor - 1, +cursor + 1 || 9e9);
             currPair = value.slice(cursor - 1, +cursor + 1 || 9e9);
             digit = value[cursor];
-            if (/\d/.test(digit) && prevPair === (digit + ' ') && currPair === (' ' + digit)) {
-                cursor = cursor + 1;
+            if (/\d/.test(digit) && prevPair === (`${digit} `) && currPair === (` ${digit}`)) {
+                cursor += 1;
             }
         }
         $target.selectionStart = cursor;
@@ -185,7 +201,7 @@ const safeVal = (value, $target, prop) => {
 const reFormatCardNumber = (e, prop) => {
     const $target = e.currentTarget;
     return setTimeout(() => {
-        var value;
+        let value;
         value = $target.value;
         value = replaceFullWidthChars(value);
         value = formatCardNumber(value);
@@ -193,8 +209,11 @@ const reFormatCardNumber = (e, prop) => {
     });
 };
 
-const formatCardNumber = function(num) {
-    let card, groups, ref, upperLength;
+const formatCardNumber = function (num) {
+    let card,
+        groups,
+        ref,
+        upperLength;
     num = num.replace(/\D/g, '');
     card = cardFromNumber(num);
     if (!card) {
@@ -204,21 +223,24 @@ const formatCardNumber = function(num) {
     num = num.slice(0, upperLength);
     if (card.format.global) {
         return (ref = num.match(card.format)) != null ? ref.join(' ') : void 0;
-    } else {
-        groups = card.format.exec(num);
-        if (groups == null) {
-            return;
-        }
-        groups.shift();
-        groups = _.filter(groups, function(n) {
-            return n;
-        });
-        return groups.join(' ');
     }
+    groups = card.format.exec(num);
+    if (groups == null) {
+        return;
+    }
+    groups.shift();
+    groups = _.filter(groups, n => n);
+    return groups.join(' ');
 };
 
 const formatCardInputNumber = (e, prop) => {
-    let $target, card, digit, length, re, upperLength, value;
+    let $target,
+        card,
+        digit,
+        length,
+        re,
+        upperLength,
+        value;
     digit = String.fromCharCode(e.which);
     if (!/^\d+$/.test(digit)) {
         return;
@@ -244,26 +266,29 @@ const formatCardInputNumber = (e, prop) => {
     }
     if (re.test(value)) {
         e.preventDefault();
-        return setTimeout(function() {
-            return $target.value = prop(value + ' ' + digit);
-        });
+        return setTimeout(() => $target.value = prop(`${value} ${digit}`));
     } else if (re.test(value + digit)) {
         e.preventDefault();
-        return setTimeout(function() {
-            return $target.value = prop(value + digit + ' ');
-        });
+        return setTimeout(() => $target.value = prop(`${value + digit} `));
     }
 };
 
 const cardFromNumber = (num) => {
-    let card, i, j, len, len1, p, pattern, ref;
-    num = (num + '').replace(/\D/g, '');
+    let card,
+        i,
+        j,
+        len,
+        len1,
+        p,
+        pattern,
+        ref;
+    num = (`${num}`).replace(/\D/g, '');
     for (i = 0, len = cards.length; i < len; i++) {
         card = cards[i];
         ref = card.patterns;
         for (j = 0, len1 = ref.length; j < len1; j++) {
             pattern = ref[j];
-            p = pattern + '';
+            p = `${pattern}`;
             if (num.substr(0, p.length) === p) {
                 return card;
             }
@@ -303,7 +328,10 @@ const restrictNumeric = (e) => {
 };
 
 const restrictCardNumber = (e) => {
-    let $target, card, digit, value;
+    let $target,
+        card,
+        digit,
+        value;
     $target = e.currentTarget;
     digit = String.fromCharCode(e.which);
     if (!/^\d+$/.test(digit)) {
@@ -316,9 +344,8 @@ const restrictCardNumber = (e) => {
     card = cardFromNumber(value);
     if (card) {
         return value.length <= card.length[card.length.length - 1];
-    } else {
-        return value.length <= 16;
     }
+    return value.length <= 16;
 };
 const setEvents = (el, cardType, prop) => {
     el.onkeypress = (event) => {
@@ -330,22 +357,27 @@ const setEvents = (el, cardType, prop) => {
         reFormatCardNumber(event, prop);
         setCardType(event, cardType);
     };
-    el.onkeydown = (event) => formatBackCardNumber(event, prop);
+    el.onkeydown = event => formatBackCardNumber(event, prop);
     el.onkeyup = (event) => {
         setCardType(event, cardType);
     };
-    el.onpaste = (event) => reFormatCardNumber(event, prop);
+    el.onpaste = event => reFormatCardNumber(event, prop);
     el.onchange = (event) => {
-        CatarseAnalytics.oneTimeEvent({cat:'contribution_finish',act:'contribution_cc_edit'});
-        reFormatCardNumber(event, prop);        
+        CatarseAnalytics.oneTimeEvent({ cat: 'contribution_finish', act: 'contribution_cc_edit' });
+        reFormatCardNumber(event, prop);
     };
 };
 
 const luhnCheck = (num) => {
-    var digit, digits, i, len, odd, sum;
+    let digit,
+        digits,
+        i,
+        len,
+        odd,
+        sum;
     odd = true;
     sum = 0;
-    digits = (num + '').split('').reverse();
+    digits = (`${num}`).split('').reverse();
     for (i = 0, len = digits.length; i < len; i++) {
         digit = digits[i];
         digit = parseInt(digit, 10);
@@ -360,9 +392,10 @@ const luhnCheck = (num) => {
     return sum % 10 === 0;
 };
 
-const validateCardNumber = function(num) {
-    let card, ref;
-    num = (num + '').replace(/\s+|-/g, '');
+const validateCardNumber = function (num) {
+    let card,
+        ref;
+    num = (`${num}`).replace(/\s+|-/g, '');
     if (!/^\d+$/.test(num)) {
         return false;
     }
@@ -373,8 +406,10 @@ const validateCardNumber = function(num) {
     return (ref = num.length, indexOf.call(card.length, ref) >= 0) && (card.luhn === false || luhnCheck(num));
 };
 
-const validateCardExpiry = function(month, year) {
-    var currentTime, expiry, ref;
+const validateCardExpiry = function (month, year) {
+    let currentTime,
+        expiry,
+        ref;
     if (typeof month === 'object' && 'month' in month) {
         ref = month, month = ref.month, year = ref.year;
     }
@@ -389,28 +424,29 @@ const validateCardExpiry = function(month, year) {
     if (!/^\d+$/.test(year)) {
         return false;
     }
-    if (!((1 <= month && month <= 12))) {
+    if (!((month >= 1 && month <= 12))) {
         return false;
     }
     if (year.length === 2) {
         if (year < 70) {
-            year = '20' + year;
+            year = `20${year}`;
         } else {
-            year = '19' + year;
+            year = `19${year}`;
         }
     }
     if (year.length !== 4) {
         return false;
     }
     expiry = new Date(year, month);
-    currentTime = new Date;
+    currentTime = new Date();
     expiry.setMonth(expiry.getMonth() - 1);
     expiry.setMonth(expiry.getMonth() + 1, 1);
     return expiry > currentTime;
 };
 
-const validateCardcvv = function(cvv, type) {
-    let card, ref;
+const validateCardcvv = function (cvv, type) {
+    let card,
+        ref;
     cvv = String(cvv).trim();
     if (!/^\d+$/.test(cvv)) {
         return false;
@@ -418,16 +454,15 @@ const validateCardcvv = function(cvv, type) {
     card = cardFromType(type);
     if (card != null) {
         return ref = cvv.length, indexOf.call(card.cvvLength, ref) >= 0;
-    } else {
-        return cvv.length >= 3 && cvv.length <= 4;
     }
+    return cvv.length >= 3 && cvv.length <= 4;
 };
 
 const creditCardVM = {
-    setEvents: setEvents,
-    validateCardNumber: validateCardNumber,
-    validateCardcvv: validateCardcvv,
-    validateCardExpiry: validateCardExpiry
+    setEvents,
+    validateCardNumber,
+    validateCardcvv,
+    validateCardExpiry
 };
 
 export default creditCardVM;
