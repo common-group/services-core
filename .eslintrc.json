@@ -4,6 +4,7 @@
         "airbnb-base",
         "plugin:flowtype/recommended"
     ],
+    "env": {"browser": true},
     "rules": {
         "indent": ["error", 4],
         "comma-dangle": 0,
