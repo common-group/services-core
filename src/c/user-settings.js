@@ -1,4 +1,5 @@
 import m from 'mithril';
+import userVM from '../vms/user-vm';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import models from '../models';
@@ -33,6 +34,7 @@ const userSettings = {
                   birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
                   account_type: m.prop(user.account_type || '')
               },
+              loading = m.prop(false),
               user_id = args.userId,
               error = m.prop(''),
               countries = m.prop(),
@@ -132,6 +134,7 @@ const userSettings = {
                       },
                       config: h.setCsrfToken
                   }).then(() => {
+                      loading(false);
                       showSuccess(true);
                       m.redraw();
                   }).catch((err) => {
@@ -140,7 +143,7 @@ const userSettings = {
                       } else {
                           error('Erro ao atualizar informações.');
                       }
-
+                      loading(false);
                       showError(true);
                       m.redraw();
                   });
@@ -163,6 +166,8 @@ const userSettings = {
                       error('CPF/CNPJ inválido');
                       showError(true);
                   } else {
+                      loading(true);
+                      m.redraw();
                       updateUserData(user_id);
                   }
 
@@ -201,6 +206,8 @@ const userSettings = {
             }
         }).catch(handleError);
 
+        console.log(user_id);
+
         banksLoader.load().then(banks).catch(handleError);
         userVM.getUserCreditCards(args.userId).then(creditCards).catch(handleError);
         countriesLoader.load().then((data) => countries(_.sortBy(data, 'name_en')));
@@ -231,7 +238,8 @@ const userSettings = {
             showOtherBanksInput,
             bankCode,
             popularBanks,
-            applyBirthDateMask
+            applyBirthDateMask,
+            loading
         };
     },
     view(ctrl, args) {
@@ -727,7 +735,7 @@ const userSettings = {
                       m('.w-container',
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-push-4',
-                              m('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']')
+                              (ctrl.loading() ? h.loader() :  m('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']') )
                              ),
                             m('.w-col.w-col-4')
                         ])
