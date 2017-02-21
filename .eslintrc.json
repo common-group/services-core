@@ -1,5 +1,9 @@
 {
-    "extends": "airbnb-base",
+    "parser": "babel-eslint",
+    "extends": [
+        "airbnb-base",
+        "plugin:flowtype/recommended"
+    ],
     "rules": {
         "indent": ["error", 4],
         "comma-dangle": 0,
@@ -7,6 +11,7 @@
         "one-var": 0
     },
     "plugins": [
-        "import"
+        "import",
+        "flowtype"
     ]
 }
