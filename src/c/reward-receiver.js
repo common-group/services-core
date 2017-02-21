@@ -9,7 +9,7 @@ const rewardReceiver = {
                     contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
             },
-            canReceiveReward = contribution => (contribution.state == 'paid' && contribution.reward_id && contribution.project_state != 'failed');
+            canReceiveReward = contribution => (contribution.state === 'paid' && contribution.reward_id && contribution.project_state !== 'failed');
 
         return {
             toggleDelivery,
@@ -24,7 +24,7 @@ const rewardReceiver = {
                 onclick: () => ctrl.toggleDelivery(contribution.project_id, contribution)
             }, [
                 m('.fontsize-smallest',
-                    m(`a.checkbox-big${contribution.delivery_status == 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,
+                    m(`a.checkbox-big${contribution.delivery_status === 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,
                         ''
                     )
                 ),

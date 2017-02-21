@@ -24,10 +24,10 @@ const userContributedBox = {
         };
     },
     view(ctrl, args) {
-        let collection = args.collection,
+        const collection = args.collection,
             pagination = args.pagination,
-            title = args.title;
-        const statusText = h.contributionStatusBadge;
+            title = args.title,
+            statusText = h.contributionStatusBadge;
 
         return (!_.isEmpty(collection) ? m('.section-one-column.u-marginbottom-30', [
             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
@@ -88,7 +88,7 @@ const userContributedBox = {
 
                     m('.fontsize-smaller.fontweight-semibold', [
                         m('.lineheight-tighter'),
-                        m(`span.fa.fa-circle.fontsize-smallest.${contribution.state == 'paid' ? 'text-success' : contribution.state == 'pending' ? 'text-waiting' : 'text-error'}`,
+                        m(`span.fa.fa-circle.fontsize-smallest.${contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'}`,
                                 m.trust('&nbsp;')
                             ),
                         I18n.t(contribution.state, I18nScope({
@@ -97,7 +97,7 @@ const userContributedBox = {
                     ]),
                     m('.fontsize-smallest',
                             (contribution.installments > 1 ? (`${contribution.installments} x R$ ${contribution.installment_value} `) : ''),
-                            (contribution.payment_method == 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
+                            (contribution.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
                         ),
 
                         (contributionVM.canShowReceipt(contribution) ?

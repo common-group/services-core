@@ -18,20 +18,19 @@ const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
 
 const projectDashboardMenu = {
     controller(args) {
-        let body = document.getElementsByTagName('body')[0],
+        const body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
             showPublish = h.toggleProp(true, false),
-            bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed');
-
-        const projectThumb = (project) => {
-            if (_.isEmpty(project.large_image)) {
-                if (_.isEmpty(project.thumb_image)) {
-                    return '/assets/thumb-project.png';
+            bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed'),
+            projectThumb = (project) => {
+                if (_.isEmpty(project.large_image)) {
+                    if (_.isEmpty(project.thumb_image)) {
+                        return '/assets/thumb-project.png';
+                    }
+                    return project.thumb_image;
                 }
-                return project.thumb_image;
-            }
-            return project.large_image;
-        };
+                return project.large_image;
+            };
 
         if (args.project().is_published) {
             editLinksToggle.toggle(false);

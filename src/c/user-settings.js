@@ -1,10 +1,8 @@
 import m from 'mithril';
-import models from '../models';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
+import models from '../models';
 import h from '../h';
-import userVM from '../vms/user-vm';
-import inlineError from './inline-error';
 import popNotification from './pop-notification';
 
 const userSettings = {
@@ -81,8 +79,6 @@ const userSettings = {
             validateDocument = () => {
                 const document = fields.owner_document(),
                     striped = String(document).replace(/[\.|\-|\/]*/g, '');
-                let isValid = false,
-                    errorMessage = '';
 
                 if (document.length > 14) {
                     return h.validateCnpj(document);
@@ -132,8 +128,7 @@ const userSettings = {
         };
     },
     view(ctrl, args) {
-        let user = ctrl.user,
-            fields = ctrl.fields;
+        const fields = ctrl.fields;
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {

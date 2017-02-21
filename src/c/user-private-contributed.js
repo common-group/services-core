@@ -10,7 +10,6 @@ import userContributedBox from './user-contributed-box';
 const userPrivateContributed = {
     controller(args) {
         const user_id = args.userId,
-            online = postgrest.paginationVM(models.project),
             onlinePages = postgrest.paginationVM(models.userContribution),
             successfulPages = postgrest.paginationVM(models.userContribution),
             failedPages = postgrest.paginationVM(models.userContribution),
@@ -56,7 +55,7 @@ const userPrivateContributed = {
         };
     },
     view(ctrl, args) {
-        let onlineCollection = ctrl.onlinePages.collection(),
+        const onlineCollection = ctrl.onlinePages.collection(),
             successfulCollection = ctrl.successfulPages.collection(),
             failedCollection = ctrl.failedPages.collection();
 

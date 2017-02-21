@@ -4,14 +4,14 @@
  *
  */
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
 
 const deleteProjectModalContent = {
     controller(args) {
-        let l = m.prop(false),
-            deleteSuccess = m.prop(false),
+        let l = m.prop(false);
+        const deleteSuccess = m.prop(false),
             confirmed = m.prop(true),
             error = m.prop(''),
             check = m.prop('');
@@ -45,7 +45,6 @@ const deleteProjectModalContent = {
         };
     },
     view(ctrl, args) {
-        const project = args.project;
         return m('div',
                  (ctrl.deleteSuccess() ? '' : m('.modal-dialog-header',
                   m('.fontsize-large.u-text-center',

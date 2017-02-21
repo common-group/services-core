@@ -4,24 +4,20 @@
  *
  */
 import m from 'mithril';
-import models from '../models';
-import postgrest from 'mithril-postgrest';
 
 const cancelProjectModalContent = {
     controller(args) {
-        let l = m.prop(false),
-            checkError = m.prop(false),
-            check = m.prop('');
-
-        const showNextModal = () => {
-            if (check() === 'cancelar-projeto') {
-                args.displayModal.toggle();
-                document.getElementById('send-message').style.display = 'block';
-            } else {
-                checkError(true);
-            }
-            return false;
-        };
+        const checkError = m.prop(false),
+            check = m.prop(''),
+            showNextModal = () => {
+                if (check() === 'cancelar-projeto') {
+                    args.displayModal.toggle();
+                    document.getElementById('send-message').style.display = 'block';
+                } else {
+                    checkError(true);
+                }
+                return false;
+            };
 
         return {
             showNextModal,

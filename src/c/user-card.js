@@ -25,7 +25,7 @@ const userCard = {
         return m('#user-card', m('.card.card-user.u-radius.u-marginbottom-30[itemprop=\'author\']', [
             m('.w-row', [
                 m('.w-col.w-col-4.w.col-small-4.w-col-tiny-4.w-clearfix',
-                    m(`img.thumb.u-round[itemprop=\'image\'][src=\'${profileImage}\'][width=\'100\']`)
+                    m(`img.thumb.u-round[itemprop='image'][src='${profileImage}'][width='100']`)
                 ),
                 m('.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [
                     m('.fontsize-small.fontweight-semibold.lineheight-tighter[itemprop=\'name\']',

@@ -6,8 +6,7 @@ import models from '../models';
 import rewardVM from './reward-vm';
 import userVM from './user-vm';
 
-const idVM = h.idVM,
-    currentProject = m.prop(),
+const currentProject = m.prop(),
     userDetails = m.prop(),
     projectContributions = m.prop([]),
     vm = postgrest.filtersVM({ project_id: 'eq' });

@@ -1,12 +1,8 @@
 import m from 'mithril';
-import models from '../models';
-import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import inlineError from './inline-error';
-import popNotification from './pop-notification';
-import projectCard from './project-card';
 
 const userNotifications = {
     controller(args) {
@@ -38,9 +34,9 @@ const userNotifications = {
         };
     },
     view(ctrl, args) {
-        const user = args.user;
-        let projects_collection = ctrl.projects(),
+        const user = args.user,
             reminders = ctrl.projectReminders();
+        const projects_collection = ctrl.projects();
 
         return m('[id=\'notifications-tab\']', ctrl.error() ? m.component(inlineError, {
             message: 'Erro ao carregar a página.'

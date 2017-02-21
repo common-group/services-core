@@ -10,8 +10,7 @@ import projectCard from './project-card';
 
 const userCreated = {
     controller(args) {
-        const createdProjects = m.prop(),
-            user_id = args.userId,
+        const user_id = args.userId,
             showDraft = args.showDraft || false,
             error = m.prop(false),
             pages = postgrest.paginationVM(models.project),

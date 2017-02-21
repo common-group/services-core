@@ -29,7 +29,7 @@ const userHeader = {
                            [
                                `Chegou junto em ${h.momentify(user.created_at, 'MMMM [de] YYYY')}`,
                                m('br'),
-                             (user.total_contributed_projects == 0 ? 'Ainda não apoiou projetos' :
+                             (user.total_contributed_projects === 0 ? 'Ainda não apoiou projetos' :
                               `Apoiou ${h.pluralize(user.total_contributed_projects, ' projeto', ' projetos')}`),
                              (user.total_published_projects > 0 ?
                               ` e já criou ${h.pluralize(user.total_published_projects, ' projeto', ' projetos')}` : '')

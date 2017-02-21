@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
 import adminInputAction from './admin-input-action';
@@ -80,16 +81,15 @@ const adminContributionDetail = {
         };
     },
     view(ctrl, args) {
-        let actions = ctrl.actions,
+        const actions = ctrl.actions,
             item = args.item,
-            reward = ctrl.reward;
-
-        const addOptions = (builder, id) => _.extend({}, builder, {
-            requestOptions: {
-                url: (`/admin/contributions/${id}/gateway_refund`),
-                method: 'PUT'
-            }
-        });
+            reward = ctrl.reward,
+            addOptions = (builder, id) => _.extend({}, builder, {
+                requestOptions: {
+                    url: (`/admin/contributions/${id}/gateway_refund`),
+                    method: 'PUT'
+                }
+            });
 
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),

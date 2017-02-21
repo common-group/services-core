@@ -2,7 +2,6 @@ import m from 'mithril';
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
-import models from '../models';
 import projectVM from '../vms/project-vm';
 import projectFriends from './project-friends';
 

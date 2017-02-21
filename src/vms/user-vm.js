@@ -6,7 +6,6 @@ import models from '../models';
 import projectFilters from './project-filters-vm';
 
 const idVM = h.idVM,
-    userDetails = m.prop([]),
     currentUser = m.prop({}),
     createdVM = postgrest.filtersVM({ project_user_id: 'eq' });
 

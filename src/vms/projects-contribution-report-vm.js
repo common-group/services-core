@@ -1,4 +1,5 @@
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
 import models from '../models';

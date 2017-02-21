@@ -23,7 +23,7 @@ const projectHeader = {
         };
     },
     view(ctrl, args) {
-        let project = args.project,
+        const project = args.project,
             rewardDetails = args.rewardDetails;
 
         return (!_.isUndefined(project()) ? m('#project-header', [

@@ -1,7 +1,7 @@
 import m from 'mithril';
-import h from '../h';
 import postgrest from 'mithril-postgrest';
 import replaceDiacritics from 'replaceDiacritics';
+import h from '../h';
 
 const vm = postgrest.filtersVM({
         full_text_index: '@@',

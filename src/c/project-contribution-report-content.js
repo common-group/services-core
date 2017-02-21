@@ -1,5 +1,4 @@
 import m from 'mithril';
-import models from '../models';
 import _ from 'underscore';
 import h from '../h';
 import popNotification from './pop-notification';
@@ -14,7 +13,7 @@ const projectContributionReportContent = {
             selectedContributions = m.prop([]),
             selectAll = () => {
                 projectsContributionReportVM.getAllContributions(args.filterVM).then((data) => {
-                    const exceptReceived = _.filter(data, contrib => contrib.delivery_status != 'received');
+                    const exceptReceived = _.filter(data, contrib => contrib.delivery_status !== 'received');
                     selectedContributions().push(..._.pluck(exceptReceived, 'id'));
                     selectedAny(!_.isEmpty(exceptReceived));
                 });

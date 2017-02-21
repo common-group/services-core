@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'mithril-postgrest';
 import I18n from 'i18n-js';
 import h from '../h';
 // Add translations to payment state.
@@ -6,8 +7,8 @@ const I18nScope = _.partial(h.i18nScope, 'projects.payment');
 
 const paymentStatus = {
     controller(args) {
-        let payment = args.item,
-            card = null,
+        const payment = args.item;
+        let card = null,
             displayPaymentMethod,
             paymentMethodClass,
             stateClass;

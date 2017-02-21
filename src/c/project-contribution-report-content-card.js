@@ -59,7 +59,7 @@ const projectContributionReportContentCard = {
         };
     },
     view(ctrl, args) {
-        let contribution = args.contribution(),
+        const contribution = args.contribution(),
             profile_img = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {
                 minimum_value: 0,
@@ -70,7 +70,7 @@ const projectContributionReportContentCard = {
                 m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                     m('.w-inline-block',
                         m('.w-checkbox.w-clearfix',
-                            (contribution.delivery_status != 'received' ?
+                            (contribution.delivery_status !== 'received' ?
                             m('input.w-checkbox-input[type=\'checkbox\']', {
                                 checked: ctrl.checked(contribution),
                                 value: contribution.id,

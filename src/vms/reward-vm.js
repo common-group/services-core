@@ -1,4 +1,6 @@
 import postgrest from 'mithril-postgrest';
+import _ from 'underscore';
+import m from 'mithril';
 import models from '../models';
 import h from '../h';
 

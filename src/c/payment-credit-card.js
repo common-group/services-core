@@ -19,7 +19,6 @@ const paymentCreditCard = {
             selectedInstallment = m.prop('1'),
             showForm = m.prop(false),
             creditCardType = m.prop('unknown'),
-            errors = m.prop([]),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
 

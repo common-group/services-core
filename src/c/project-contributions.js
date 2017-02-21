@@ -9,8 +9,7 @@ import UserFollowBtn from './user-follow-btn';
 
 const projectContributions = {
     controller(args) {
-        const contributionsPerLocation = m.prop([]),
-            contributionsPerDay = m.prop([]),
+        const contributionsPerDay = m.prop([]),
             listVM = postgrest.paginationVM(models.contributor),
             filterStats = postgrest.filtersVM({
                 project_id: 'eq'

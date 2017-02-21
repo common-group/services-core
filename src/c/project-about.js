@@ -1,4 +1,6 @@
 import m from 'mithril';
+import _ from 'underscore';
+import moment from 'moment';
 import h from '../h';
 import projectRewardList from './project-reward-list';
 import projectReport from './project-report';
@@ -8,7 +10,7 @@ const projectAbout = {
     view(ctrl, args) {
         const project = args.project() || {},
             onlineDays = () => {
-                let diff = moment(project.zone_online_date).diff(moment(project.zone_expires_at)),
+                const diff = moment(project.zone_online_date).diff(moment(project.zone_expires_at)),
                     duration = moment.duration(diff);
 
                 return -Math.ceil(duration.asDays());

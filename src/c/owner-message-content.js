@@ -4,14 +4,15 @@
  *
  */
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 
 const ownerMessageContent = {
     controller(args) {
-        let l = m.prop(false),
-            sendSuccess = m.prop(false),
+        let l = m.prop(false);
+        const sendSuccess = m.prop(false),
             userDetails = args,
             submitDisabled = m.prop(false),
             // sets default values when user is not logged in

@@ -1,10 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
 import userVM from '../vms/user-vm';
-import models from '../models';
 import h from '../h';
-import quickProjectList from '../c/quick-project-list';
 
 const menuProfile = {
     controller(args) {

@@ -10,7 +10,6 @@
  * }
  */
 import m from 'mithril';
-import _ from 'underscore';
 import h from '../h';
 
 const loadMoreBtn = {

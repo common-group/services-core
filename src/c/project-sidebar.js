@@ -20,16 +20,13 @@ const projectSidebar = {
                     let animation,
                         progress = 0,
                         pledged = 0,
-                        contributors = 0,
-                        pledgedIncrement = project().pledged / project().progress,
+                        contributors = 0;
+                    const pledgedIncrement = project().pledged / project().progress,
                         contributorsIncrement = project().total_contributors / project().progress;
 
                     const progressBar = document.getElementById('progressBar'),
                         pledgedEl = document.getElementById('pledged'),
                         contributorsEl = document.getElementById('contributors'),
-                        animate = () => {
-                            animation = setInterval(incrementProgress, 28);
-                        },
                         incrementProgress = () => {
                             if (progress <= parseInt(project().progress)) {
                                 progressBar.style.width = `${progress}%`;
@@ -42,6 +39,9 @@ const projectSidebar = {
                             } else {
                                 clearInterval(animation);
                             }
+                        },
+                        animate = () => {
+                            animation = setInterval(incrementProgress, 28);
                         };
 
                     setTimeout(() => {

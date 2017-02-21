@@ -1,6 +1,5 @@
 import m from 'mithril';
 import h from '../h';
-import ProjectContributionStateLegendModal from '../c/project-contribution-state-legend-modal';
 import modalBox from './modal-box';
 
 const InfoProjectContributionLegend = {
