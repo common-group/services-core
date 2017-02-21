@@ -1559,7 +1559,7 @@ var adminContributionUser = {
 };
 
 // Add translations to payment state.
-var I18nScope = postgrest$1.partial(h.i18nScope, 'projects.payment');
+var I18nScope = _$1.partial(h.i18nScope, 'projects.payment');
 
 var paymentStatus = {
     controller: function controller(args) {

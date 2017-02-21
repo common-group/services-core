@@ -1,5 +1,5 @@
 import m from 'mithril';
-import _ from 'mithril-postgrest';
+import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 // Add translations to payment state.
