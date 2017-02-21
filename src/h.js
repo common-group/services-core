@@ -417,7 +417,7 @@ const
 
     UIHelper = (): Function => {
         return (el, isInitialized): void => {
-            if (!isInitialized && window.$) {
+            if (!isInitialized && window.$ && window.UIHelper) {
                 window.UIHelper.setupResponsiveIframes($(el));
             }
         };
