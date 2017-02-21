@@ -7,7 +7,26 @@ import UserFollowBtn from './user-follow-btn';
 
 const projectUserCard = {
     controller(args) {
-        return { displayModal: h.toggleProp(false, true) };
+        const project = args.project || m.prop({}),
+            displayModal = h.toggleProp(false, true),
+            storeId = 'message',
+            sendMessage = () => {
+                if (!h.getUser()) {
+                    h.storeAction(storeId, project().project_id);
+                    return h.navigateToDevise();
+                }
+
+                displayModal(true);
+            };
+
+        if(h.callStoredAction(storeId) == project().project_id) {
+            displayModal(true);
+        }
+
+        return {
+            displayModal,
+            sendMessage
+        };
     },
     view(ctrl, args) {
         const project = args.project;
@@ -56,7 +75,7 @@ const projectUserCard = {
                                 disabledClass: 'a.w-button.btn.btn-terciary.btn-small.u-marginbottom-10',
                                 follow_id: userDetail.id,
                                 following: userDetail.following_this_user }),
-                            m('a.w-button.btn.btn-terciary.btn-small[href=\'javascript:void(0);\']', { onclick: h.analytics.event({ cat: 'project_view', act: 'project_creator_sendmsg', lbl: userDetail.id, project: project() }, ctrl.displayModal.toggle) }, 'Contato')
+                            m('a.w-button.btn.btn-terciary.btn-small[href=\'javascript:void(0);\']', { onclick: h.analytics.event({ cat: 'project_view', act: 'project_creator_sendmsg', lbl: userDetail.id, project: project() }, ctrl.sendMessage) }, 'Contato')
                         ] : ''),
                     args.project().is_admin_role ?
                         m('p', userDetail.email) : ''

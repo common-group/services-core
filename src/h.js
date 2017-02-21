@@ -6,6 +6,7 @@ import $ from 'jquery';
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import CatarseAnalytics from 'CatarseAnalytics';
+import contributionVM from './vms/contribution-vm';
 
 const
     _dataCache : Object = {},
@@ -927,7 +928,7 @@ const
             )
         };
 
-        return status[contribution.delivery_status];
+        return contributionVM.canBeDelivered(contribution) ? status[contribution.delivery_status] : '';
     };
 
 
