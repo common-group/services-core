@@ -1,10 +1,9 @@
 import m from 'mithril';
-import models from '../models';
-import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
+import postgrest from 'mithril-postgrest';
+import models from '../models';
 import h from '../h';
 import userVM from '../vms/user-vm';
-import inlineError from './inline-error';
 import popNotification from './pop-notification';
 
 const userBilling = {
@@ -44,20 +43,19 @@ const userBilling = {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
                 }
-                return;
             },
             confirmDelete = (cardId) => {
-              let r = confirm('você tem certeza?');
-              if(r){
-                return m.request({
-                    method: 'DELETE',
-                    url: `/users/${user.id}/credit_cards/${cardId}`,
-                    config: setCsrfToken
-                }).then(() => {
-                  location.reload();
-                }).catch(handleError);
-              }
-              return false;
+                const r = confirm('você tem certeza?');
+                if (r) {
+                    return m.request({
+                        method: 'DELETE',
+                        url: `/users/${user.id}/credit_cards/${cardId}`,
+                        config: setCsrfToken
+                    }).then(() => {
+                        location.reload();
+                    }).catch(handleError);
+                }
+                return false;
             },
             popularBanks = [{
                 id: '51',
@@ -89,7 +87,7 @@ const userBilling = {
             // Then we submit it when the remove card button is clicked
             // The card id is set on the go, with the help of a closure.
             toDeleteCard = m.prop(-1),
-            deleteCard = (id) => () => {
+            deleteCard = id => () => {
                 toDeleteCard(id);
                 // We must redraw here to update the action output of the hidden form on the DOM.
                 m.redraw(true);
@@ -97,7 +95,7 @@ const userBilling = {
                 return false;
             },
             updateUserData = (user_id) => {
-                let userData = {
+                const userData = {
                     owner_name: fields.owner_name(),
                     owner_document: fields.owner_document(),
                     bank_id: bankCode(),
@@ -107,15 +105,15 @@ const userBilling = {
                     account: fields.account(),
                     account_digit: fields.account_digit()
                 };
-                if((fields.bank_account_id())){
-                  userData['id'] = fields.bank_account_id().toString();
+                if ((fields.bank_account_id())) {
+                    userData.id = fields.bank_account_id().toString();
                 }
 
                 return m.request({
                     method: 'PUT',
                     url: `/users/${user_id}.json`,
                     data: {
-                      user: {bank_account_attributes: userData}
+                        user: { bank_account_attributes: userData }
                     },
                     config: setCsrfToken
                 }).then(() => {
@@ -143,18 +141,18 @@ const userBilling = {
                 }
             };
 
-        userVM.getUserBankAccount(userId).then(data => {
-            if(!_.isEmpty(_.first(data))){
-              bankAccount(_.first(data));
-              fields.owner_document(bankAccount().owner_document);
-              fields.owner_name(bankAccount().owner_name);
-              fields.bank_account_id(bankAccount().bank_account_id);
-              fields.account(bankAccount().account);
-              fields.account_digit(bankAccount().account_digit);
-              fields.agency(bankAccount().agency);
-              fields.agency_digit(bankAccount().agency_digit);
-              fields.bank_id(bankAccount().bank_id);
-              bankCode(bankAccount().bank_id);
+        userVM.getUserBankAccount(userId).then((data) => {
+            if (!_.isEmpty(_.first(data))) {
+                bankAccount(_.first(data));
+                fields.owner_document(bankAccount().owner_document);
+                fields.owner_name(bankAccount().owner_name);
+                fields.bank_account_id(bankAccount().bank_account_id);
+                fields.account(bankAccount().account);
+                fields.account_digit(bankAccount().account_digit);
+                fields.agency(bankAccount().agency);
+                fields.agency_digit(bankAccount().agency_digit);
+                fields.bank_id(bankAccount().bank_id);
+                bankCode(bankAccount().bank_id);
             }
         }).catch(handleError);
 
@@ -162,25 +160,25 @@ const userBilling = {
         banksLoader.load().then(banks).catch(handleError);
 
         return {
-            creditCards: creditCards,
-            deleteCard: deleteCard,
-            toDeleteCard: toDeleteCard,
-            setCardDeletionForm: setCardDeletionForm,
-            bankAccount: bankAccount,
-            confirmDelete: confirmDelete,
-            bankInput: bankInput,
-            banks: banks,
-            showError: showError,
-            showOtherBanks: showOtherBanks,
-            fields: fields,
-            showOtherBanksInput: showOtherBanksInput,
-            loader: loader,
-            bankCode: bankCode,
-            onSubmit: onSubmit,
-            showSuccess: showSuccess,
-            popularBanks: popularBanks,
-            user: user,
-            error: error
+            creditCards,
+            deleteCard,
+            toDeleteCard,
+            setCardDeletionForm,
+            bankAccount,
+            confirmDelete,
+            bankInput,
+            banks,
+            showError,
+            showOtherBanks,
+            fields,
+            showOtherBanksInput,
+            loader,
+            bankCode,
+            onSubmit,
+            showSuccess,
+            popularBanks,
+            user,
+            error
         };
     },
     view(ctrl, args) {
@@ -228,35 +226,33 @@ const userBilling = {
                             m('.w-col.w-col-2.w-col-small-2')
                         ]),
 
-                        (_.map(ctrl.creditCards(), (card) => {
-                            return m('.w-row.card', [
-                                m('.w-col.w-col-5.w-col-small-5',
+                        (_.map(ctrl.creditCards(), card => m('.w-row.card', [
+                            m('.w-col.w-col-5.w-col-small-5',
                                     m('.fontsize-small.fontweight-semibold', [
                                         'XXXX XXXX XXXX',
                                         m.trust('&nbsp;'),
                                         card.last_digits
                                     ])
                                 ),
-                                m('.w-col.w-col-5.w-col-small-5',
+                            m('.w-col.w-col-5.w-col-small-5',
                                     m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                                         card.card_brand.toUpperCase()
                                     )
                                 ),
-                                m('.w-col.w-col-2.w-col-small-2',
-                                    m(`a.btn.btn-terciary.btn-small[rel=\'nofollow\']`,
-                                        {onclick: ctrl.deleteCard(card.id)},
+                            m('.w-col.w-col-2.w-col-small-2',
+                                    m('a.btn.btn-terciary.btn-small[rel=\'nofollow\']',
+                                        { onclick: ctrl.deleteCard(card.id) },
                                         'Remover'
                                     )
                                 )
-                            ]);
-                        })),
-                        m('form.w-hidden', {action: `/pt/users/${user.id}/credit_cards/${ctrl.toDeleteCard()}`, method: 'POST', config: ctrl.setCardDeletionForm}, [
+                        ]))),
+                        m('form.w-hidden', { action: `/pt/users/${user.id}/credit_cards/${ctrl.toDeleteCard()}`, method: 'POST', config: ctrl.setCardDeletionForm }, [
                             m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                             m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),
                             m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                         ])
                     ]),
-                    m(`form.simple_form.refund_bank_account_form`, {onsubmit: ctrl.onSubmit}, [
+                    m('form.simple_form.refund_bank_account_form', { onsubmit: ctrl.onSubmit }, [
                         m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'billing\']'),
                         m('.w-form.card.card-terciary', [
                             m('.fontsize-base.fontweight-semibold',
@@ -279,7 +275,7 @@ const userBilling = {
                                     m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
                                         'Nome do titular'
                                     ),
-                                    m(`input.string.required.w-input.text-field.positive[id='user_bank_account_attributes_owner_name'][type='text']`, {
+                                    m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_owner_name\'][type=\'text\']', {
                                         value: fields.owner_name(),
                                         name: 'user[bank_account_attributes][owner_name]',
                                         onchange: m.withAttr('value', fields.owner_name)
@@ -309,19 +305,15 @@ const userBilling = {
                                                 ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
                                             }
                                         }, [
-                                            m('option[value=\'\']', {selected: fields.bank_id() === ''}),
-                                            (_.map(ctrl.popularBanks, (bank) => {
-                                                return (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
-                                                        selected: fields.bank_id() == bank.id
-                                                    },
-                                                    `${bank.code} . ${bank.name}`) : '');
-                                            })),
-                                            (fields.bank_id() === '' || _.find(ctrl.popularBanks, (bank) => {
-                                                return bank.id === fields.bank_id();
-                                            }) ? '' :
+                                            m('option[value=\'\']', { selected: fields.bank_id() === '' }),
+                                            (_.map(ctrl.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
+                                                selected: fields.bank_id() == bank.id
+                                            },
+                                                    `${bank.code} . ${bank.name}`) : ''))),
+                                            (fields.bank_id() === '' || _.find(ctrl.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
                                                 m(`option[value='${fields.bank_id()}']`, {
-                                                        selected: true
-                                                    },
+                                                    selected: true
+                                                },
                                                     `${bankAccount.bank_code} . ${bankAccount.bank_name}`
                                                 )
                                             ),
@@ -373,10 +365,10 @@ const userBilling = {
                                     m('.w-row[id=\'bank_search_list\']',
                                         m('.w-col.w-col-12',
                                             m('.select-bank-list[data-ix=\'height-0-on-load\']', {
-                                                    style: {
-                                                        'height': '395px'
-                                                    }
-                                                },
+                                                style: {
+                                                    height: '395px'
+                                                }
+                                            },
                                                 m('.card.card-terciary', [
                                                     m('.fontsize-small.fontweight-semibold.u-marginbottom-10.u-text-center',
                                                         'Selecione o seu banco abaixo'
@@ -395,30 +387,28 @@ const userBilling = {
                                                             )
                                                         ]),
                                                         (!_.isEmpty(ctrl.banks()) ?
-                                                            _.map(ctrl.banks(), (bank) => {
-                                                                return m('.w-row.card.fontsize-smallest', [
-                                                                    m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
+                                                            _.map(ctrl.banks(), bank => m('.w-row.card.fontsize-smallest', [
+                                                                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                                                         m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
-                                                                                onclick: () => {
-                                                                                    ctrl.bankInput(bank.code);
-                                                                                    ctrl.showOtherBanks.toggle();
-                                                                                }
-                                                                            },
+                                                                            onclick: () => {
+                                                                                ctrl.bankInput(bank.code);
+                                                                                ctrl.showOtherBanks.toggle();
+                                                                            }
+                                                                        },
                                                                             bank.code
                                                                         )
                                                                     ),
-                                                                    m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
+                                                                m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                                                         m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
-                                                                                onclick: () => {
-                                                                                    ctrl.bankInput(bank.code);
-                                                                                    ctrl.showOtherBanks.toggle();
-                                                                                }
-                                                                            },
+                                                                            onclick: () => {
+                                                                                ctrl.bankInput(bank.code);
+                                                                                ctrl.showOtherBanks.toggle();
+                                                                            }
+                                                                        },
                                                                             `${bank.code} . ${bank.name}`
                                                                         )
                                                                     )
-                                                                ]);
-                                                            }) : '')
+                                                            ])) : '')
                                                     ])
                                                 ])
                                             )

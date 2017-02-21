@@ -19,13 +19,13 @@ const projectHighlight = {
             (project().video_embed_url ? m('.w-embed.w-video.project-video', {
                 style: 'min-height: 240px;'
             }, [
-                m('iframe.embedly-embed[itemprop="video"][src="' + project().video_embed_url + '"][frameborder="0"][allowFullScreen]')
+                m(`iframe.embedly-embed[itemprop="video"][src="${project().video_embed_url}"][frameborder="0"][allowFullScreen]`)
             ]) : m('.project-image', {
                 style: `background-image:url('${project().original_image || project().project_img}');`
             })),
             m('.w-hidden-small.w-hidden-tiny', [
-                m.component(addressTag, {project: project}),
-                m.component(categoryTag, {project: project})
+                m.component(addressTag, { project }),
+                m.component(categoryTag, { project })
             ]),
             m('.project-blurb', project().headline),
             m('.project-share.w-hidden-small.w-hidden-tiny',
@@ -42,7 +42,7 @@ const projectHighlight = {
                     }) : '',
                     m('button#more-share.btn.btn-inline.btn-medium.btn-terciary', {
                         style: {
-                            'transition': 'all 0.5s ease 0s'
+                            transition: 'all 0.5s ease 0s'
                         },
                         onclick: ctrl.displayShareBox.toggle
                     }, [
@@ -50,7 +50,7 @@ const projectHighlight = {
                         ' Mais'
                     ]),
                     (ctrl.displayShareBox() ? m(projectShareBox, {
-                        project: project,
+                        project,
                         displayShareBox: ctrl.displayShareBox
                     }) : '')
                 ])

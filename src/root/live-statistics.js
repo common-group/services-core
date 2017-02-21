@@ -20,33 +20,31 @@ const liveStatistics = {
         }
 
         return {
-            pageStatistics: pageStatistics,
-            notificationData: notificationData
+            pageStatistics,
+            notificationData
         };
     },
     view(ctrl) {
         const data = ctrl.notificationData();
 
         return m('.w-section.bg-stats.section.min-height-100', [
-            m('.w-container.u-text-center', _.map(ctrl.pageStatistics(), (stat) => {
-                return [m('img.u-marginbottom-60[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/55ada5dd11b36a52616d97df_symbol-catarse.png"]'),
-                    m('.fontcolor-negative.u-marginbottom-40', [
-                        m('.fontsize-megajumbo.fontweight-semibold', 'R$ ' + h.formatNumber(stat.total_contributed, 2, 3)),
-                        m('.fontsize-large', 'Doados para projetos publicados por aqui')
-                    ]),
-                    m('.fontcolor-negative.u-marginbottom-60', [
-                        m('.fontsize-megajumbo.fontweight-semibold', stat.total_contributors),
-                        m('.fontsize-large', 'Pessoas já apoiaram pelo menos 1 projeto no Catarse')
-                    ])
-                ];
-            })), (!_.isEmpty(data) ? m('.w-container', [
+            m('.w-container.u-text-center', _.map(ctrl.pageStatistics(), stat => [m('img.u-marginbottom-60[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/55ada5dd11b36a52616d97df_symbol-catarse.png"]'),
+                m('.fontcolor-negative.u-marginbottom-40', [
+                    m('.fontsize-megajumbo.fontweight-semibold', `R$ ${h.formatNumber(stat.total_contributed, 2, 3)}`),
+                    m('.fontsize-large', 'Doados para projetos publicados por aqui')
+                ]),
+                m('.fontcolor-negative.u-marginbottom-60', [
+                    m('.fontsize-megajumbo.fontweight-semibold', stat.total_contributors),
+                    m('.fontsize-large', 'Pessoas já apoiaram pelo menos 1 projeto no Catarse')
+                ])
+            ])), (!_.isEmpty(data) ? m('.w-container', [
                 m('div', [
                     m('.card.u-radius.u-marginbottom-60.medium', [
                         m('.w-row', [
                             m('.w-col.w-col-4', [
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-col-small-4', [
-                                        m('img.thumb.u-round[src="' + h.useAvatarOrDefault(data.user_image) + '"]')
+                                        m(`img.thumb.u-round[src="${h.useAvatarOrDefault(data.user_image)}"]`)
                                     ]),
                                     m('.w-col.w-col-8.w-col-small-8', [
                                         m('.fontsize-large.lineheight-tight', data.user_name)
@@ -59,7 +57,7 @@ const liveStatistics = {
                             m('.w-col.w-col-4', [
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-col-small-4', [
-                                        m('img.thumb-project.u-radius[src="' + data.project_image + '"][width="75"]')
+                                        m(`img.thumb-project.u-radius[src="${data.project_image}"][width="75"]`)
                                     ]),
                                     m('.w-col.w-col-8.w-col-small-8', [
                                         m('.fontsize-large.lineheight-tight', data.project_name)

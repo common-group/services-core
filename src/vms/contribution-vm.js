@@ -1,6 +1,7 @@
 import postgrest from 'mithril-postgrest';
-import models from '../models';
+import m from 'mithril';
 import _ from 'underscore';
+import models from '../models';
 
 const currentContribution = m.prop({});
 
@@ -22,7 +23,7 @@ const getUserProjectContributions = (user_id, project_id, states) => {
 
 const getCurrentContribution = () => {
     const root = document.getElementById('application'),
-          data = root && root.getAttribute('data-contribution');
+        data = root && root.getAttribute('data-contribution');
 
     if (data) {
         currentContribution(JSON.parse(data));
@@ -30,37 +31,28 @@ const getCurrentContribution = () => {
         m.redraw(true);
 
         return currentContribution;
-    } else {
-        return false;
     }
+    return false;
 };
 
-const wasConfirmed = (contribution) => {
-    return _.contains(['paid', 'pending_refund', 'refunded'], contribution.state);
-};
+const wasConfirmed = contribution => _.contains(['paid', 'pending_refund', 'refunded'], contribution.state);
 
-const canShowReceipt = (contribution) => {
-    return wasConfirmed(contribution);
-};
+const canShowReceipt = contribution => wasConfirmed(contribution);
 
-const canShowSlip = (contribution) => {
-    return contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
-};
+const canShowSlip = contribution => contribution.payment_method == 'BoletoBancario' && contribution.waiting_payment;
 
-const canGenerateSlip = (contribution) => {
-  return contribution.payment_method == 'BoletoBancario' &&
-    contribution.state == 'pending' &&
-    contribution.project_state == 'online' &&
+const canGenerateSlip = contribution => contribution.payment_method === 'BoletoBancario' &&
+    contribution.state === 'pending' &&
+    contribution.project_state === 'online' &&
     !contribution.reward_sold_out &&
     !contribution.waiting_payment;
-};
 
-const contributionVM =  {
-    getCurrentContribution: getCurrentContribution,
-    canShowReceipt: canShowReceipt,
-    canGenerateSlip: canGenerateSlip,
-    canShowSlip: canShowSlip,
-    getUserProjectContributions: getUserProjectContributions
+const contributionVM = {
+    getCurrentContribution,
+    canShowReceipt,
+    canGenerateSlip,
+    canShowSlip,
+    getUserProjectContributions
 };
 
 export default contributionVM;

@@ -8,7 +8,7 @@ const jobs = {
     view(ctrl, args) {
         return [
             m('.w-section.hero-jobs.hero-medium', [
-                m('.w-containe.u-text-center',[
+                m('.w-containe.u-text-center', [
                     m('img.icon-hero[src="/assets/logo-white.png"]'),
                     m('.u-text-center.u-marginbottom-20.fontsize-largest', I18n.t('title', I18nScope()))
                 ])

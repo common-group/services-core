@@ -9,24 +9,24 @@ import projectGoogleContactImport from './project-google-contact-import';
 const projectEmailInvite = {
     controller(args) {
         const emailText = m.prop(''),
-              loading = m.prop(false),
-              project = args.project,
-              showSuccess = m.prop(false),
+            loading = m.prop(false),
+            project = args.project,
+            showSuccess = m.prop(false),
 
-              submitInvite = () => {
-                  if (_.isEmpty(emailText()) || loading() === true) {
-                  } else {
-                      loading(true);
-                      const emailList = _.reduce(emailText().split('\n'), (memo, text) => {
-                          if (h.validateEmail(text)) {
-                              memo.push(text);
-                          }
-                          return memo;
-                      }, []);
+            submitInvite = () => {
+                if (_.isEmpty(emailText()) || loading() === true) {
+                } else {
+                    loading(true);
+                    const emailList = _.reduce(emailText().split('\n'), (memo, text) => {
+                        if (h.validateEmail(text)) {
+                            memo.push(text);
+                        }
+                        return memo;
+                    }, []);
 
-                      if (!_.isEmpty(emailList)) {
-                          showSuccess(false);
-                          postgrest.loaderWithToken(
+                    if (!_.isEmpty(emailList)) {
+                        showSuccess(false);
+                        postgrest.loaderWithToken(
                               models.inviteProjectEmail.postOptions({
                                   data: {
                                       project_id: project.project_id,
@@ -37,31 +37,31 @@ const projectEmailInvite = {
                                   loading(false);
                                   showSuccess(true);
                               });
-                      } else {
-                          loading(false);
-                      }
-                  }
-              };
+                    } else {
+                        loading(false);
+                    }
+                }
+            };
 
         return {
-            emailText: emailText,
-            submitInvite: submitInvite,
-            loading: loading,
-            showSuccess: showSuccess
+            emailText,
+            submitInvite,
+            loading,
+            showSuccess
         };
     },
     view(ctrl, args) {
         const project = args.project;
 
         return m('.email-invite-box', [
-            (ctrl.showSuccess() ? m.component(popNotification, {message: 'Convites enviados.'}) : ''),
+            (ctrl.showSuccess() ? m.component(popNotification, { message: 'Convites enviados.' }) : ''),
             (ctrl.loading() ? h.loader()
              : [
                  m('.w-form', [
                      m('form', [
                          m('.u-marginbottom-10', [
                              m.component(projectGoogleContactImport, {
-                                 project: project,
+                                 project,
                                  showSuccess: ctrl.showSuccess
                              })
                          //    m("a.btn.btn-inline.btn-no-border.btn-terciary.w-inline-block[href='#']", [

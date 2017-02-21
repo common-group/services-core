@@ -17,31 +17,29 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 const projectSuccessfulOnboardConfirmAccount = {
     controller(args) {
         const actionStages = {
-                  'error': projectSuccessfulOnboardConfirmAccountError,
-                  'accept': projectSuccessfulOnboardConfirmAccountAccept
-              },
-              currentStage = m.prop('start'),
-              actionStage = () => actionStages[currentStage()],
-              changeToAction = (stage) => {
-                  return () => {
-                      currentStage(stage);
+                error: projectSuccessfulOnboardConfirmAccountError,
+                accept: projectSuccessfulOnboardConfirmAccountAccept
+            },
+            currentStage = m.prop('start'),
+            actionStage = () => actionStages[currentStage()],
+            changeToAction = stage => () => {
+                currentStage(stage);
 
-                      return false;
-                  };
-              };
+                return false;
+            };
 
         return {
-            changeToAction: changeToAction,
-            actionStage: actionStage,
-            currentStage: currentStage
+            changeToAction,
+            actionStage,
+            currentStage
         };
     },
     view(ctrl, args) {
         const projectAccount = args.projectAccount,
-              actionStage = ctrl.actionStage,
-              currentStage = ctrl.currentStage,
-              personKind = (projectAccount.owner_document.length > 14 ? 'juridical' : 'natural'),
-              juridicalPerson = projectAccount.owner_document.length > 14;
+            actionStage = ctrl.actionStage,
+            currentStage = ctrl.currentStage,
+            personKind = (projectAccount.owner_document.length > 14 ? 'juridical' : 'natural'),
+            juridicalPerson = projectAccount.owner_document.length > 14;
 
         return m('.w-container.u-marginbottom-40', [
             m('.u-text-center', [
@@ -59,7 +57,7 @@ const projectSuccessfulOnboardConfirmAccount = {
                             projectAccount.owner_name
                         ]),
                         ((projectAccount.state_inscription && juridicalPerson) ? m('div', [
-                            m('span.fontcolor-secondary', I18n.t(`person.state_inscription`, I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t('person.state_inscription', I18nScope())),
                             projectAccount.state_inscription
                         ]) : ''),
                         m('div', [
@@ -108,14 +106,14 @@ const projectSuccessfulOnboardConfirmAccount = {
             (currentStage() === 'start') ? m('#confirmation-dialog.w-row.bank-transfer-answer', [
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny'),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#confirm-account.btn.btn-large', {href: '#confirm_account', onclick: ctrl.changeToAction('accept')}, 'Sim')
+                    m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: ctrl.changeToAction('accept') }, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#refuse-account.btn.btn-large.btn-terciary', {href: '#error_account', onclick: ctrl.changeToAction('error')}, 'Não')
+                    m('a#refuse-account.btn.btn-large.btn-terciary', { href: '#error_account', onclick: ctrl.changeToAction('error') }, 'Não')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
             ]) : m.component(actionStage(), {
-                projectAccount: projectAccount,
+                projectAccount,
                 changeToAction: ctrl.changeToAction,
                 addErrorReason: args.addErrorReason,
                 acceptAccount: args.acceptAccount,

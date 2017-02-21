@@ -3,10 +3,10 @@ import m from 'mithril';
 const filterDateRange = {
     view(ctrl, args) {
         return m('.w-col.w-col-3.w-col-small-6', [
-            m('label.fontsize-smaller[for="' + args.index + '"]', args.label),
+            m(`label.fontsize-smaller[for="${args.index}"]`, args.label),
             m('.w-row', [
                 m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
-                    m('input.w-input.text-field.positive[id="' + args.index + '"][type="text"]', {
+                    m(`input.w-input.text-field.positive[id="${args.index}"][type="text"]`, {
                         onchange: m.withAttr('value', args.first),
                         value: args.first()
                     })

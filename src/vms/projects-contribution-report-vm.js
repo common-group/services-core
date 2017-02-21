@@ -1,4 +1,5 @@
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
 import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
 import models from '../models';
@@ -10,9 +11,7 @@ const vm = postgrest.filtersVM({
         delivery_status: 'eq',
         project_id: 'eq'
     }),
-    paramToString = (p) => {
-        return (p || '').toString().trim();
-    };
+    paramToString = p => (p || '').toString().trim();
 
 vm.state('');
 vm.order({
@@ -32,14 +31,12 @@ vm.getAllContributions = (filterVM) => {
     return allContributions;
 };
 
-vm.updateStatus = (data) => {
-    return m.request({
-        method: 'PUT',
-        url: `/projects/${vm.project_id()}/contributions/update_status.json`,
-        data: data,
-        config: h.setCsrfToken
-    });
-};
+vm.updateStatus = data => m.request({
+    method: 'PUT',
+    url: `/projects/${vm.project_id()}/contributions/update_status.json`,
+    data,
+    config: h.setCsrfToken
+});
 
 vm.withNullParameters = () => {
     const withNullVm = postgrest.filtersVM({

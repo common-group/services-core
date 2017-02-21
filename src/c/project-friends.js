@@ -9,7 +9,7 @@ const projectFriends = {
         const project = args.project,
             friendsSample = m.prop([]),
             listVM = postgrest.paginationVM(models.contributor, 'user_id.desc', {
-                'Prefer': 'count=exact'
+                Prefer: 'count=exact'
             }),
             filterVM = postgrest.filtersVM({
                 project_id: 'eq',
@@ -22,9 +22,9 @@ const projectFriends = {
             });
         }
         return {
-            project: project,
-            listVM: listVM,
-            friendsSample: friendsSample
+            project,
+            listVM,
+            friendsSample
         };
     },
     view(ctrl, args) {
@@ -41,9 +41,7 @@ const projectFriends = {
             ]),
             m('p.fontsize-smallest.friend-namepile.lineheight-tighter', [
                 m('span.fontweight-semibold',
-                    _.map(ctrl.friendsSample(), (user) => {
-                        return user.data.name.split(' ')[0];
-                    }).join(friendsCount > 2 ? ', ' : ' e ')
+                    _.map(ctrl.friendsSample(), user => user.data.name.split(' ')[0]).join(friendsCount > 2 ? ', ' : ' e ')
                 ),
                 (friendsCount > 2 ? [
                     ' e ',

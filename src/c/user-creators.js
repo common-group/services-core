@@ -14,8 +14,8 @@ import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
-import UserFollowCard from  '../c/user-follow-card';
-import loadMoreBtn from  '../c/load-more-btn';
+import UserFollowCard from '../c/user-follow-card';
+import loadMoreBtn from '../c/load-more-btn';
 
 const userCreators = {
     controller(args) {
@@ -24,7 +24,7 @@ const userCreators = {
         const creatorsListVM = postgrest.paginationVM(
             models.creatorSuggestion,
             'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
-                'Prefer':  'count=exact'
+                Prefer: 'count=exact'
             });
 
         if (!creatorsListVM.collection().length) {
@@ -32,7 +32,7 @@ const userCreators = {
         }
 
         return {
-            creatorsListVM: creatorsListVM
+            creatorsListVM
         };
     },
     view(ctrl, args) {
@@ -41,22 +41,20 @@ const userCreators = {
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
                 m('.w-row', [
-                    _.map(creatorsVM.collection(), (friend) => {
-                        return m.component(
+                    _.map(creatorsVM.collection(), friend => m.component(
                             UserFollowCard,
-                            {
-                                friend: _.extend({},{
-                                    friend_id: friend.user_id
-                                }, friend)
-                            });
-                    }),
+                        {
+                            friend: _.extend({}, {
+                                friend_id: friend.user_id
+                            }, friend)
+                        })),
                 ]),
                 m('.w-section.section.bg-gray', [
                     m('.w-container', [
                         m('.w-row.u-marginbottom-60', [
                             m('.w-col.w-col-5', [
                                 m('.u-marginright-20')
-                            ]), m.component(loadMoreBtn, {collection: creatorsVM}),
+                            ]), m.component(loadMoreBtn, { collection: creatorsVM }),
                             m('.w-col.w-col-5')
                         ])
                     ])

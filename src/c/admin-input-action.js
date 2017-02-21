@@ -17,23 +17,23 @@ const adminInputAction = {
 
         const l = postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
-        const updateItem = function(res) {
+        const updateItem = function (res) {
             _.extend(item, res[0]);
             complete(true);
             error(false);
         };
 
-        const submit = function() {
+        const submit = function () {
             data[key] = newValue();
-            l.load().then(updateItem, function() {
+            l.load().then(updateItem, () => {
                 complete(true);
                 error(true);
             });
             return false;
         };
 
-        const unload = function(el, isinit, context) {
-            context.onunload = function() {
+        const unload = function (el, isinit, context) {
+            context.onunload = function () {
                 complete(false);
                 error(false);
                 newValue(forceValue);
@@ -41,13 +41,13 @@ const adminInputAction = {
         };
 
         return {
-            complete: complete,
-            error: error,
-            l: l,
-            newValue: newValue,
-            submit: submit,
+            complete,
+            error,
+            l,
+            newValue,
+            submit,
             toggler: h.toggleProp(false, true),
-            unload: unload
+            unload
         };
     },
     view(ctrl, args) {
@@ -65,18 +65,18 @@ const adminInputAction = {
                     onsubmit: ctrl.submit
                 }, (!ctrl.complete()) ? [
                     m('label', data.innerLabel), (data.forceValue === undefined) ?
-                    m('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
+                    m(`input.w-input.text-field[type="text"][placeholder="${data.placeholder}"]`, {
                         onchange: m.withAttr('value', ctrl.newValue),
                         value: ctrl.newValue()
                     }) : '',
-                    m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
+                    m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
                 ] : (!ctrl.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', data.successMessage)
                     ])
                 ] : [
                     m('.w-form-error[style="display:block;"]', [
-                        m('p', 'Houve um problema na requisição. ' + data.errorMessage)
+                        m('p', `Houve um problema na requisição. ${data.errorMessage}`)
                     ])
                 ])
             ]) : ''

@@ -8,9 +8,9 @@ const popNotification = {
         };
     },
     view(ctrl, args) {
-        return (ctrl.displayNotification() ? m('.flash.w-clearfix.card.card-notification.u-radius.zindex-20',{
-                class: args.error ? 'card-error' : ''
-            },[
+        return (ctrl.displayNotification() ? m('.flash.w-clearfix.card.card-notification.u-radius.zindex-20', {
+            class: args.error ? 'card-error' : ''
+        }, [
             m('img.icon-close[src="/assets/catarse_bootstrap/x.png"][width="12"][alt="fechar"]', {
                 onclick: ctrl.displayNotification.toggle
             }),

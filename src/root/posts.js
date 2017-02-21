@@ -1,7 +1,6 @@
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
@@ -11,7 +10,6 @@ import popNotification from '../c/pop-notification';
 
 const posts = {
     controller(args) {
-
         let deleteFormSubmit;
         const showPreview = m.prop(false),
             showSuccess = m.prop(false),
@@ -29,6 +27,22 @@ const posts = {
             filterVM = postgrest.filtersVM({
                 project_id: 'eq'
             }),
+            validateTitle = () => {
+                const title = String(fields.title());
+                if (title.length === 0) {
+                    titleHasError(true);
+                }
+
+                return !titleHasError();
+            },
+            validateComment = () => {
+                const comment = String(fields.comment_html());
+                if (comment.length === 0) {
+                    commentHasError(true);
+                }
+
+                return !commentHasError();
+            },
             togglePreview = () => {
                 if (!validateTitle()) {
                     errors('Título não pode ficar em branco.');
@@ -44,42 +58,24 @@ const posts = {
             },
             project_id = args.root.getAttribute('data-id'),
             projectDetails = m.prop([]),
-            validateComment = () => {
-              const comment = String(fields.comment_html());
-              if (comment.length == 0) {
-                  commentHasError(true);
-              }
-
-              return !commentHasError();
-            },
-            validateTitle = () => {
-              const title = String(fields.title());
-              if (title.length == 0) {
-                  titleHasError(true);
-              }
-
-              return !titleHasError();
-            },
             rewardText = (rewardId) => {
-                let reward = _.find(rewardVM.rewards(), (reward) => reward.id == rewardId);
-                return `Apoiadores da recompensa R$${reward.minimum_value} - ${reward.description.substring(0, 70) + '...'}`;
+                const reward = _.find(rewardVM.rewards(), r => r.id === rewardId);
+                return `Apoiadores da recompensa R$${reward.minimum_value} - ${`${reward.description.substring(0, 70)}...`}`;
             },
             showRecipientes = (post) => {
-                if (post.recipients == 'public') {
+                if (post.recipients === 'public') {
                     return 'Todo mundo (apoiadores e não apoiadores)';
-                } else if (post.recipients == 'backers') {
+                } else if (post.recipients === 'backers') {
                     return 'Todos os apoiadores';
-                } else {
-                    let reward = _.find(rewardVM.rewards(), (reward) => reward.id == post.reward_id);
-                    if (reward) {
-                        return rewardText(reward.id);
-                    } else {
-                        return '...';
-                    }
                 }
+                const reward = _.find(rewardVM.rewards(), r => r.id === post.reward_id);
+                if (reward) {
+                    return rewardText(reward.id);
+                }
+                return '...';
             },
             toDeletePost = m.prop(-1),
-            deletePost = (post) => () => {
+            deletePost = post => () => {
                 toDeletePost(post.id);
                 m.redraw(true);
                 deleteFormSubmit();
@@ -90,12 +86,12 @@ const posts = {
                     deleteFormSubmit = () => el.submit();
                 }
             },
-            openedPercentage = (post) => Math.floor((post.open_count / post.delivered_count) * 100);
+            openedPercentage = post => Math.floor((post.open_count / post.delivered_count) * 100);
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
-        const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), {order: 'created_at.desc'} ))),
-              l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
+        const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
+            l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         listVM.load().then(projectPosts);
 
@@ -105,30 +101,30 @@ const posts = {
         l.load().then(projectDetails);
 
         return {
-            listVM: listVM,
-            l: l,
-            projectPosts: projectPosts,
-            showRecipientes: showRecipientes,
-            fields: fields,
-            showPreview: showPreview,
-            togglePreview: togglePreview,
-            project_id: project_id,
-            deletePost: deletePost,
-            rewardText: rewardText,
-            errors: errors,
-            showSuccess: showSuccess,
-            titleHasError: titleHasError,
-            commentHasError: commentHasError,
-            showError: showError,
-            setPostDeletionForm: setPostDeletionForm,
-            toDeletePost: toDeletePost,
-            projectDetails: projectDetails,
-            openedPercentage: openedPercentage
+            listVM,
+            l,
+            projectPosts,
+            showRecipientes,
+            fields,
+            showPreview,
+            togglePreview,
+            project_id,
+            deletePost,
+            rewardText,
+            errors,
+            showSuccess,
+            titleHasError,
+            commentHasError,
+            showError,
+            setPostDeletionForm,
+            toDeletePost,
+            projectDetails,
+            openedPercentage
         };
     },
     view(ctrl) {
         const project = _.first(ctrl.projectDetails()),
-              paidRewards = _.filter(rewardVM.rewards(), (reward) => {return reward.paid_count > 0;});
+            paidRewards = _.filter(rewardVM.rewards(), reward => reward.paid_count > 0);
 
         return (project ? m('.project-posts',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
@@ -189,18 +185,16 @@ const posts = {
                                         onchange: m.withAttr('value', ctrl.fields.reward_id)
                                     }, [
                                         m('option[value=\'-1\']', {
-                                                selected: true
-                                            },
+                                            selected: true
+                                        },
                                             'Todo mundo (apoiadores e não apoiadores)'
                                         ),
                                         m('option[value=\'0\']',
                                             'Todos os apoiadores'
                                         ),
-                                        (_.map(paidRewards, (reward) => {
-                                            return m(`option[value='${reward.id}']`,
+                                        (_.map(paidRewards, reward => m(`option[value='${reward.id}']`,
                                               ctrl.rewardText(reward.id)
-                                            );
-                                        }))
+                                            )))
                                     ]),
                                     m('label.field-label.fontweight-semibold',
                                         'Título'
@@ -215,7 +209,7 @@ const posts = {
                                     m('label.field-label.fontweight-semibold',
                                         'Texto'
                                     ),
-                                    m('.preview-container.u-marginbottom-40',{
+                                    m('.preview-container.u-marginbottom-40', {
                                         class: ctrl.commentHasError() ? 'error' : '',
                                         onclick: () => ctrl.commentHasError(false),
                                     }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
@@ -223,8 +217,8 @@ const posts = {
                                         m('.w-col.w-col-3'),
                                         m('._w-sub-col.w-col.w-col-6',
                                             m('button.btn.btn-large', {
-                                                    onclick: ctrl.togglePreview
-                                                },
+                                                onclick: ctrl.togglePreview
+                                            },
                                                 'Pré-visualizar'
                                             )
                                         ),
@@ -254,44 +248,42 @@ const posts = {
                                     ),
                                     m('.table-col.w-col.w-col-1')
                                 ]),
-                                ( ctrl.projectPosts() ? m('.fontsize-small.table-inner', [
-                                    (_.map(ctrl.projectPosts(), (post) => {
-                                        return m('.table-row.w-row', [
-                                            m('.table-col.w-col.w-col-5', [
-                                                m(`a.alt-link.fontsize-base[href=\'/projects/${project.project_id}/posts/${post.id}#posts\'][target=\'_blank\']`,
+                                (ctrl.projectPosts() ? m('.fontsize-small.table-inner', [
+                                    (_.map(ctrl.projectPosts(), post => m('.table-row.w-row', [
+                                        m('.table-col.w-col.w-col-5', [
+                                            m(`a.alt-link.fontsize-base[href='/projects/${project.project_id}/posts/${post.id}#posts'][target='_blank']`,
                                                     post.title
                                                 ),
-                                                m('.fontcolor-secondary.fontsize-smallest', [
-                                                    m('span.fontweight-semibold',
+                                            m('.fontcolor-secondary.fontsize-smallest', [
+                                                m('span.fontweight-semibold',
                                                         'Enviada em: '
                                                     ),
-                                                    h.momentify(post.created_at, 'DD/MM/YYYY, h:mm A')
-                                                ]),
-                                                m('.fontcolor-secondary.fontsize-smallest', [
-                                                    m('span.fontweight-semibold',
+                                                h.momentify(post.created_at, 'DD/MM/YYYY, h:mm A')
+                                            ]),
+                                            m('.fontcolor-secondary.fontsize-smallest', [
+                                                m('span.fontweight-semibold',
                                                         'Destinatários: '
                                                     ),
-                                                    ctrl.showRecipientes(post)
-                                                ])
-                                            ]),
-                                            m('.table-col.u-text-center.w-col.w-col-3',
+                                                ctrl.showRecipientes(post)
+                                            ])
+                                        ]),
+                                        m('.table-col.u-text-center.w-col.w-col-3',
                                                 m('.fontsize-base',
                                                     post.delivered_count
                                                 )
                                             ),
-                                            m('.table-col.u-text-center.w-col.w-col-3',
-                                                m('.fontsize-base',[
+                                        m('.table-col.u-text-center.w-col.w-col-3',
+                                                m('.fontsize-base', [
                                                     post.open_count,
                                                     m('span.fontcolor-secondary', ` (${ctrl.openedPercentage(post)}%)`)
                                                 ])
                                             ),
-                                            m('.table-col.w-col.w-col-1',
+                                        m('.table-col.w-col.w-col-1',
                                                 m('button.btn.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash', {
                                                     onclick: ctrl.deletePost(post)
                                                 })
                                             )
-                                        ]);
-                                    })),
+                                    ]))),
                                     m('form.w-hidden', {
                                         action: `/pt/projects/${project.project_id}/posts/${ctrl.toDeletePost()}`,
                                         method: 'POST',
@@ -302,7 +294,7 @@ const posts = {
                                         m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                                     ])
 
-                                ] ): h.loader())
+                                ]) : h.loader())
                             ])
                         ]),
                         m('.w-col.w-col-1')

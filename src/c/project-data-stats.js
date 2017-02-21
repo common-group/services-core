@@ -13,16 +13,16 @@ import h from '../h';
 const projectDataStats = {
     view(ctrl, args) {
         const project = args.project(),
-              progress = project.progress.toFixed(2),
-              statusTextObj = h.projectStateTextClass(project.state),
-              remainingTextObj = h.translatedTime(project.remaining_time),
-              elapsedTextObj = h.translatedTime(project.elapsed_time);
+            progress = project.progress.toFixed(2),
+            statusTextObj = h.projectStateTextClass(project.state),
+            remainingTextObj = h.translatedTime(project.remaining_time),
+            elapsedTextObj = h.translatedTime(project.elapsed_time);
 
         return m('.w-row.u-marginbottom-40', [
             m('.w-col.w-col-3.u-text-center-small-only', [
                 m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [
                     m('span.fontcolor-secondary', 'Status: '),
-                    m('span', {class: statusTextObj.cssClass} ,statusTextObj.text)
+                    m('span', { class: statusTextObj.cssClass }, statusTextObj.text)
                 ])
             ]),
             m('.w-col.w-col-9', [

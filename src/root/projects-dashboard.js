@@ -22,7 +22,7 @@ const projectsDashboard = {
         const project = ctrl.currentProject;
 
         return project().is_owner_or_admin ?
-            m.component(projectDashboardMenu, {project: project}) : '';
+            m.component(projectDashboardMenu, { project }) : '';
     }
 };
 

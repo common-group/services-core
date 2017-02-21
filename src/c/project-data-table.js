@@ -33,14 +33,14 @@ const projectDataTable = {
 
         const comparator = (a, b) => {
             let idx = sortIndex(),
-                //Check if a custom comparator is used => Read component description
+                // Check if a custom comparator is used => Read component description
                 x = (_.isArray(a[idx]) && a[idx].length > 1) ? a[idx][0] : a[idx],
                 y = (_.isArray(b[idx]) && b[idx].length > 1) ? b[idx][0] : b[idx];
 
-            if (x < y){
+            if (x < y) {
                 return -1;
             }
-            if (y < x){
+            if (y < x) {
                 return 1;
             }
             return 0;
@@ -49,25 +49,25 @@ const projectDataTable = {
         const sortTable = (idx) => {
             let header = _.first(table()),
                 body;
-            if (sortIndex() === idx){
+            if (sortIndex() === idx) {
                 body = _.rest(table()).reverse();
             } else {
                 sortIndex(idx);
                 body = _.rest(table()).sort(comparator);
             }
 
-            table(_.union([header],body));
+            table(_.union([header], body));
         };
 
         sortTable(Math.abs(args.defaultSortIndex) || 0);
 
-        if (args.defaultSortIndex < 0){
+        if (args.defaultSortIndex < 0) {
             sortTable(Math.abs(args.defaultSortIndex) || 0);
         }
 
         return {
-            table: table,
-            sortTable: sortTable
+            table,
+            sortTable
         };
     },
     view(ctrl, args) {
@@ -76,7 +76,7 @@ const projectDataTable = {
         return m('.table-outer.u-marginbottom-60', [
             m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
                 _.map(header, (heading, idx) => {
-                    let sort = () => ctrl.sortTable(idx);
+                    const sort = () => ctrl.sortTable(idx);
                     return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
                         m('a.link-hidden[href="javascript:void(0);"]', {
                             onclick: sort
@@ -86,17 +86,15 @@ const projectDataTable = {
                     ]);
                 })
             ), m('.table-inner.fontsize-small',
-                _.map(body, (rowData) => {
-                    return m('.w-row.table-row',
+                _.map(body, rowData => m('.w-row.table-row',
                         _.map(rowData, (row) => {
-                            //Check if a custom comparator is used => Read component description
+                            // Check if a custom comparator is used => Read component description
                             row = (_.isArray(row) && row.length > 1) ? row[1] : row;
                             return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
                                 m('div', row)
                             ]);
                         })
-                    );
-                })
+                    ))
             )
         ]);
     }

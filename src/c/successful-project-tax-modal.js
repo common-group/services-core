@@ -7,9 +7,9 @@ import h from '../h';
 
 const successfulProjectTaxModal = {
     view(ctrl, args) {
-        let pt = args.projectTransfer;
+        const pt = args.projectTransfer;
 
-        return m('div',[
+        return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center',
                   'Extrato do projeto')

@@ -9,174 +9,172 @@ const userAboutEdit = {
     controller(args) {
         let deleteUser;
         const user = args.user,
-              fields = {
-                  password: m.prop(''),
-                  current_password: m.prop(''),
-                  uploaded_image: m.prop(userVM.displayImage(user)),
-                  cover_image: m.prop(user.profile_cover_image),
-                  email: m.prop(''),
-                  permalink: m.prop(user.permalink),
-                  public_name: m.prop(user.public_name),
-                  facebook_link: m.prop(user.facebook_link),
-                  twitter: m.prop(user.twitter_username),
-                  links: m.prop(user.links||[]),
-                  about_html: m.prop(user.about_html||''),
-                  email_confirmation: m.prop('')
-              },
-              passwordHasError = m.prop(false),
-              emailHasError = m.prop(false),
-              showEmailForm = h.toggleProp(false, true),
-              showSuccess = m.prop(false),
-              showError = m.prop(false),
-              errors = m.prop(),
-              loading = m.prop(false),
-              uploading = m.prop(false),
-              errorsArray = m.prop([]),
-              pushErrosMessage = () => {
-                  errors(errorsArray().join('<br/>'));
-              },
-              updateFieldsFromUser = () => {
-                  userVM.fetchUser(args.userId, false).then((dataResponse) => {
-                      let data = _.first(dataResponse);
-                      fields.uploaded_image(userVM.displayImage(data));
-                      fields.cover_image(data.profile_cover_image);
-                      fields.permalink(data.permalink);
-                      fields.public_name(data.public_name);
-                      fields.facebook_link(data.facebook_link);
-                      fields.twitter(data.twitter_username);
-                      fields.links(data.links);
-                      fields.about_html(data.about_html);
-                  });
-              },
-              uploadImage = () => {
-                  const userUploadedImageEl = window.document.getElementById('user_uploaded_image'),
-                        userCoverImageEl = window.document.getElementById('user_cover_image'),
-                        formData = new FormData();
+            fields = {
+                password: m.prop(''),
+                current_password: m.prop(''),
+                uploaded_image: m.prop(userVM.displayImage(user)),
+                cover_image: m.prop(user.profile_cover_image),
+                email: m.prop(''),
+                permalink: m.prop(user.permalink),
+                public_name: m.prop(user.public_name),
+                facebook_link: m.prop(user.facebook_link),
+                twitter: m.prop(user.twitter_username),
+                links: m.prop(user.links || []),
+                about_html: m.prop(user.about_html || ''),
+                email_confirmation: m.prop('')
+            },
+            passwordHasError = m.prop(false),
+            emailHasError = m.prop(false),
+            showEmailForm = h.toggleProp(false, true),
+            showSuccess = m.prop(false),
+            showError = m.prop(false),
+            errors = m.prop(),
+            loading = m.prop(false),
+            uploading = m.prop(false),
+            errorsArray = m.prop([]),
+            pushErrosMessage = () => {
+                errors(errorsArray().join('<br/>'));
+            },
+            updateFieldsFromUser = () => {
+                userVM.fetchUser(args.userId, false).then((dataResponse) => {
+                    const data = _.first(dataResponse);
+                    fields.uploaded_image(userVM.displayImage(data));
+                    fields.cover_image(data.profile_cover_image);
+                    fields.permalink(data.permalink);
+                    fields.public_name(data.public_name);
+                    fields.facebook_link(data.facebook_link);
+                    fields.twitter(data.twitter_username);
+                    fields.links(data.links);
+                    fields.about_html(data.about_html);
+                });
+            },
+            uploadImage = () => {
+                const userUploadedImageEl = window.document.getElementById('user_uploaded_image'),
+                    userCoverImageEl = window.document.getElementById('user_cover_image'),
+                    formData = new FormData();
 
-                  formData.append('uploaded_image', userUploadedImageEl.files[0]);
-                  if(!args.hideCoverImg) {
-                      formData.append('cover_image', userCoverImageEl.files[0]);
-                  }
+                formData.append('uploaded_image', userUploadedImageEl.files[0]);
+                if (!args.hideCoverImg) {
+                    formData.append('cover_image', userCoverImageEl.files[0]);
+                }
 
-                  uploading(true);
-                  m.redraw();
+                uploading(true);
+                m.redraw();
 
-                  return m.request({
-                      method: 'POST',
-                      url: `/users/${user.id}/upload_image.json`,
-                      data: formData,
-                      config: h.setCsrfToken,
-                      serialize: function(data) {return data}
-                  }).then((data) => {
-                      fields.uploaded_image(data.uploaded_image);
-                      fields.cover_image(data.cover_image);
-                      uploading(false);
-                  }).catch((err) => {
-                      if (_.isArray(err.errors)) {
-                          errorsArray(errorsArray().concat(err.errors));
-                      } else {
-                          errors('Erro ao atualizar informações.');
-                      }
-                      pushErrosMessage();
-                      showError(true);
-                      uploading(false);
-                  });
-              },
+                return m.request({
+                    method: 'POST',
+                    url: `/users/${user.id}/upload_image.json`,
+                    data: formData,
+                    config: h.setCsrfToken,
+                    serialize(data) { return data; }
+                }).then((data) => {
+                    fields.uploaded_image(data.uploaded_image);
+                    fields.cover_image(data.cover_image);
+                    uploading(false);
+                }).catch((err) => {
+                    if (_.isArray(err.errors)) {
+                        errorsArray(errorsArray().concat(err.errors));
+                    } else {
+                        errors('Erro ao atualizar informações.');
+                    }
+                    pushErrosMessage();
+                    showError(true);
+                    uploading(false);
+                });
+            },
 
-              updateUser = () => {
-                  const userData = {
-                      current_password: fields.current_password(),
-                      password: fields.password(),
-                      email: fields.email(),
-                      permalink: fields.permalink(),
-                      public_name: fields.public_name(),
-                      facebook_link: fields.facebook_link(),
-                      twitter: fields.twitter(),
-                      about_html: fields.about_html(),
-                      links_attributes: linkAttributes()
-                  };
+            updateUser = () => {
+                const userData = {
+                    current_password: fields.current_password(),
+                    password: fields.password(),
+                    email: fields.email(),
+                    permalink: fields.permalink(),
+                    public_name: fields.public_name(),
+                    facebook_link: fields.facebook_link(),
+                    twitter: fields.twitter(),
+                    about_html: fields.about_html(),
+                    links_attributes: linkAttributes()
+                };
 
-                  loading(true);
-                  uploadImage();
+                loading(true);
+                uploadImage();
 
-                  return m.request({
-                      method: 'PUT',
-                      url: `/users/${user.id}.json`,
-                      data: {
-                          user: userData
-                      },
-                      config: h.setCsrfToken
-                  }).then(() => {
-                      showSuccess(true);
-                      updateFieldsFromUser();
-                      loading(false);
-                      m.redraw();
-                  }).catch((err) => {
-                      if (_.isArray(err.errors)) {
-                          errorsArray(errorsArray().concat(err.errors));
-                      } else {
-                          errors('Erro ao atualizar informações.');
-                      }
+                return m.request({
+                    method: 'PUT',
+                    url: `/users/${user.id}.json`,
+                    data: {
+                        user: userData
+                    },
+                    config: h.setCsrfToken
+                }).then(() => {
+                    showSuccess(true);
+                    updateFieldsFromUser();
+                    loading(false);
+                    m.redraw();
+                }).catch((err) => {
+                    if (_.isArray(err.errors)) {
+                        errorsArray(errorsArray().concat(err.errors));
+                    } else {
+                        errors('Erro ao atualizar informações.');
+                    }
 
-                      pushErrosMessage();
-                      showError(true);
-                      loading(false);
-                      m.redraw();
-                  });
-              },
-              removeLinks = [],
-              addLink = () => fields.links().push({link: ''}),
-              removeLink = (linkId, idx) => () => {
-                  fields.links()[idx]._destroy = true;
-                  return false;
-              },
-              linkAttributes = () =>{
-                  return _.reduce(fields.links(), (memo, item, index) => {
-                      memo[index.toString()] = item;
-                      return memo;
-                  }, {});
-              },
-              validateEmailConfirmation = () => {
-                  if (fields.email() !== fields.email_confirmation()) {
-                      emailHasError(true);
-                  } else {
-                      emailHasError(false);
-                  }
-                  return !emailHasError();
-              },
-              validatePassword = () => {
-                  const pass = String(fields.password());
-                  if (pass.length > 0 && pass.length <= 5) {
-                      passwordHasError(true);
-                  }
+                    pushErrosMessage();
+                    showError(true);
+                    loading(false);
+                    m.redraw();
+                });
+            },
+            removeLinks = [],
+            addLink = () => fields.links().push({ link: '' }),
+            removeLink = (linkId, idx) => () => {
+                fields.links()[idx]._destroy = true;
+                return false;
+            },
+            linkAttributes = () => _.reduce(fields.links(), (memo, item, index) => {
+                memo[index.toString()] = item;
+                return memo;
+            }, {}),
+            validateEmailConfirmation = () => {
+                if (fields.email() !== fields.email_confirmation()) {
+                    emailHasError(true);
+                } else {
+                    emailHasError(false);
+                }
+                return !emailHasError();
+            },
+            validatePassword = () => {
+                const pass = String(fields.password());
+                if (pass.length > 0 && pass.length <= 5) {
+                    passwordHasError(true);
+                }
 
-                  return !passwordHasError();
-              },
-              setDeleteForm = (el, isInit) => {
-                  if (!isInit) {
-                      deleteUser = () => el.submit();
-                  }
-              },
-              deleteAccount = () => {
-                  if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
-                      deleteUser();
-                  };
+                return !passwordHasError();
+            },
+            setDeleteForm = (el, isInit) => {
+                if (!isInit) {
+                    deleteUser = () => el.submit();
+                }
+            },
+            deleteAccount = () => {
+                if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
+                    deleteUser();
+                }
 
-                  return false;
-              },
-              onSubmit = (e) => {
-                  e.preventDefault();
-                  if (!validateEmailConfirmation()) {
-                      errors('Confirmação de email está incorreta.');
-                      showError(true);
-                  } else if (!validatePassword()) {
-                      errors('Nova senha está incorreta.');
-                      showError(true);
-                  } else {
-                      updateUser();
-                  }
-                  return false;
-              };
+                return false;
+            },
+            onSubmit = (e) => {
+                e.preventDefault();
+                if (!validateEmailConfirmation()) {
+                    errors('Confirmação de email está incorreta.');
+                    showError(true);
+                } else if (!validatePassword()) {
+                    errors('Nova senha está incorreta.');
+                    showError(true);
+                } else {
+                    updateUser();
+                }
+                return false;
+            };
         // Temporary fix for the menu selection bug. Should be fixed/removed as soon as we route all tabs from mithril.
         setTimeout(m.redraw, 0);
 
@@ -202,7 +200,7 @@ const userAboutEdit = {
     },
     view(ctrl, args) {
         const user = args.user || {},
-              fields = ctrl.fields;
+            fields = ctrl.fields;
 
         return m('#about-tab.content', [
             (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
@@ -212,7 +210,7 @@ const userAboutEdit = {
                 message: m.trust(ctrl.errors()),
                 error: true
             }) : ''),
-            m('form.simple_form.w-form', { onsubmit: ctrl.onSubmit } , [
+            m('form.simple_form.w-form', { onsubmit: ctrl.onSubmit }, [
                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                 m('input[name="_method"][type="hidden"][value="patch"]'),
                 m(`input[name="authenticity_token"][type="hidden"][value=${h.authenticityToken()}]`),
@@ -237,7 +235,7 @@ const userAboutEdit = {
                                                 m('.w-row',
                                                     [
                                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
-                                                            m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]',{
+                                                            m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]', {
                                                                 name: 'user[permalink]',
                                                                 value: fields.permalink(),
                                                                 onchange: m.withAttr('value', fields.permalink)
@@ -295,27 +293,27 @@ const userAboutEdit = {
                                                         onchange: m.withAttr('value', fields.email_confirmation)
                                                     })
                                                 ]),
-                                                ctrl.emailHasError() ? m(inlineError, {message: 'Confirmação de email está incorreta.'}) : ''
-                                            ]) ]),
+                                                ctrl.emailHasError() ? m(inlineError, { message: 'Confirmação de email está incorreta.' }) : ''
+                                            ])]),
                                     m('.w-row.u-marginbottom-30.card.card-terciary', [
-                                            m('.w-col.w-col-5.w-sub-col',
-                                                [
-                                                    m('label.field-label.fontweight-semibold',
+                                        m('.w-col.w-col-5.w-sub-col',
+                                            [
+                                                m('label.field-label.fontweight-semibold',
                                                       '  Nome no perfil público'
                                                     ),
-                                                    m('label.field-label.fontsize-smallest.fontcolor-secondary',
+                                                m('label.field-label.fontsize-smallest.fontcolor-secondary',
                                                       '  Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a realização de um apoio ou públicação de um projeto.'
                                                     )
-                                                ]
+                                            ]
                                             ),
-                                            m('.w-col.w-col-7',
+                                        m('.w-col.w-col-7',
                                                 m('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
                                                     name: 'user[public_name]',
                                                     value: fields.public_name(),
                                                     onchange: m.withAttr('value', fields.public_name)
                                                 })
                                             )
-                                        ]
+                                    ]
                                     ),
                                     m('.w-form',
                                         [
@@ -363,9 +361,9 @@ const userAboutEdit = {
                                                             [
                                                                 m('label.field-label'),
                                                                 m('span.hint',
-                                                                  user.profile_cover_image ? m('img', {src: fields.cover_image()}) : ''
+                                                                  user.profile_cover_image ? m('img', { src: fields.cover_image() }) : ''
                                                                 ),
-                                                                m('input.file.optional.w-input.text-field[id="user_cover_image"][type="file"]', {name: 'user[cover_image]'})
+                                                                m('input.file.optional.w-input.text-field[id="user_cover_image"][type="file"]', { name: 'user[cover_image]' })
                                                             ]
                                                         )
                                                     )
@@ -450,29 +448,29 @@ const userAboutEdit = {
                                                 m('.w-col.w-col-7',
                                                     [
                                                         m('.w-row',
-                                                          [fields.links() && fields.links().length <= 0 ? '' : m('.link', _.map(fields.links(),
+                                                            [fields.links() && fields.links().length <= 0 ? '' : m('.link', _.map(fields.links(),
                                                                 (link, idx) => {
                                                                     const toRemove = link._destroy;
 
                                                                     return m('div', {
-                                                                            key: idx,
-                                                                            class: toRemove ? 'w-hidden' : 'none'
-                                                                        } , [
-                                                                            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
+                                                                        key: idx,
+                                                                        class: toRemove ? 'w-hidden' : 'none'
+                                                                    }, [
+                                                                        m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                                                                                 m(`input.string.w-input.text-field.w-input.text-field][type="text"][value="${link.link}"]`, {
                                                                                     class: link.link === '' ? 'positive' : 'optional',
                                                                                     name: `user[links_attributes][${idx}][link]`,
-                                                                                    onchange: m.withAttr('value', (val) => fields.links()[idx].link = val)
+                                                                                    onchange: m.withAttr('value', val => fields.links()[idx].link = val)
                                                                                 })
                                                                             ),
-                                                                            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
-                                                                                [
-                                                                                    m('a.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
-                                                                                        onclick: ctrl.removeLink(link.id, idx)
-                                                                                    })
-                                                                                ]
+                                                                        m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
+                                                                            [
+                                                                                m('a.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
+                                                                                    onclick: ctrl.removeLink(link.id, idx)
+                                                                                })
+                                                                            ]
                                                                             )
-                                                                        ]
+                                                                    ]
                                                                     );
                                                                 }
                                                             ))
@@ -493,7 +491,7 @@ const userAboutEdit = {
                                             ]
                                         )
                                      ),
-                                    ( args.hidePasswordChange ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
+                                    (args.hidePasswordChange ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                       m('.w-row.u-marginbottom-10', [
                                           m('.fontsize-base.fontweight-semibold',
                                             'Alterar minha senha'
@@ -522,13 +520,13 @@ const userAboutEdit = {
                                                       onblur: ctrl.validatePassword,
                                                       onchange: m.withAttr('value', fields.password)
                                                   }),
-                                                  !ctrl.passwordHasError() ? '' : m(inlineError, {message: 'A sua nova senha deve ter no mínimo 6 caracteres.'})
+                                                  !ctrl.passwordHasError() ? '' : m(inlineError, { message: 'A sua nova senha deve ter no mínimo 6 caracteres.' })
                                               ])
                                           ]),
 
                                       ])
                                                                       )),
-                                    ( args.hideDisableAcc ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
+                                    (args.hideDisableAcc ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                       m('.w-row.u-marginbottom-10', [
                                           m('.fontweight-semibold.fontsize-smaller',
                                             'Desativar minha conta'
@@ -536,12 +534,12 @@ const userAboutEdit = {
                                           m('.fontsize-smallest',
                                             'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'
                                            ),
-                                          m(`a.alt-link.fontsize-smaller[href=\'/pt/users/${user.id}\'][rel=\'nofollow\']`,{
+                                          m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}'][rel='nofollow']`, {
                                               onclick: ctrl.deleteAccount
                                           },
                                             'Desativar minha conta no Catarse'
                                            ),
-                                          m('form.w-hidden', {action: `/pt/users/${user.id}`, method: 'post', config: ctrl.setDeleteForm}, [
+                                          m('form.w-hidden', { action: `/pt/users/${user.id}`, method: 'post', config: ctrl.setDeleteForm }, [
                                               m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                                               m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')
                                           ])
@@ -570,7 +568,7 @@ const userAboutEdit = {
                     )
                 )
             ])
-            ]
+        ]
         );
     }
 };

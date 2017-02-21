@@ -29,7 +29,7 @@ const adminResetPassword = {
         };
 
         const l = m.prop(false),
-            load = () => m.request(_.extend({}, {data: data}, builder.requestOptions)),
+            load = () => m.request(_.extend({}, { data }, builder.requestOptions)),
             newPassword = m.prop(''),
             error_message = m.prop('');
 
@@ -54,21 +54,21 @@ const adminResetPassword = {
         };
 
         const unload = (el, isinit, context) => {
-            context.onunload = function() {
+            context.onunload = function () {
                 complete(false);
                 error(false);
             };
         };
 
         return {
-            complete: complete,
-            error: error,
-            error_message: error_message,
-            l: l,
-            newPassword: newPassword,
-            submit: submit,
+            complete,
+            error,
+            error_message,
+            l,
+            newPassword,
+            submit,
             toggler: h.toggleProp(false, true),
-            unload: unload
+            unload
         };
     },
     view(ctrl, args) {
@@ -86,11 +86,11 @@ const adminResetPassword = {
                     onsubmit: ctrl.submit
                 }, (!ctrl.complete()) ? [
                     m('label', data.innerLabel),
-                    m('input.w-input.text-field[type="text"][name="' + data.property + '"][placeholder="' + data.placeholder + '"]', {
+                    m(`input.w-input.text-field[type="text"][name="${data.property}"][placeholder="${data.placeholder}"]`, {
                         onchange: m.withAttr('value', ctrl.newPassword),
                         value: ctrl.newPassword()
                     }),
-                    m('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')
+                    m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
                 ] : (!ctrl.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', 'Senha alterada com sucesso.')
