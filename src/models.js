@@ -63,5 +63,7 @@ models.state.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
 models.recommendedProjects.pageSize(3);
+models.bank.pageSize(400);
+
 
 export default models;
