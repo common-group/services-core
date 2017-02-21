@@ -7,7 +7,6 @@ import userCreated from '../c/user-created';
 import userAboutEdit from '../c/user-about-edit';
 import userPrivateContributed from '../c/user-private-contributed';
 import userSettings from '../c/user-settings';
-import userBilling from '../c/user-billing';
 import userNotifications from '../c/user-notifications';
 import menu from '../root/menu';
 
@@ -37,10 +36,6 @@ const usersEdit = {
                     '#notifications': m(userNotifications, {
                         userId,
                         user
-                    }),
-                    '#billing': m(userBilling, {
-                        userId,
-                        user
                     })
                 };
 
@@ -59,7 +54,7 @@ const usersEdit = {
         return {
             displayTabContent: displayTabContent,
             hash: hash,
-            userDetails: userDetails,
+            userDetails: userDetails
         };
     },
 
@@ -93,9 +88,6 @@ const usersEdit = {
                             ),
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
                                 'Notificações'
-                            ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#billing' ? '.selected' : '')}[data-target='#dashboard_billing'][href='#billing'][id='dashboard_billing_link']`,
-                                'Banco e cartões'
                             ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/pt/users/${user.id}']`, {
                                     config: m.route,

@@ -10,7 +10,6 @@ import popNotification from './pop-notification';
 const userBilling = {
     controller(args) {
         models.bank.pageSize(false);
-        let deleteFormSubmit;
         const user = args.user,
             bankAccount = m.prop({}),
             fields = {
@@ -30,7 +29,6 @@ const userBilling = {
             bankInput = m.prop(''),
             bankCode = m.prop('-1'),
             banks = m.prop(),
-            creditCards = m.prop(),
             handleError = () => {
                 error(true);
                 loader(false);
@@ -88,14 +86,6 @@ const userBilling = {
             // We create a hidden form with the correct input values set
             // Then we submit it when the remove card button is clicked
             // The card id is set on the go, with the help of a closure.
-            toDeleteCard = m.prop(-1),
-            deleteCard = (id) => () => {
-                toDeleteCard(id);
-                // We must redraw here to update the action output of the hidden form on the DOM.
-                m.redraw(true);
-                deleteFormSubmit();
-                return false;
-            },
             updateUserData = (user_id) => {
                 let userData = {
                     owner_name: fields.owner_name(),
@@ -136,11 +126,6 @@ const userBilling = {
                 updateUserData(userId);
 
                 return false;
-            },
-            setCardDeletionForm = (el, isInit) => {
-                if (!isInit) {
-                    deleteFormSubmit = () => el.submit();
-                }
             };
 
         userVM.getUserBankAccount(userId).then(data => {
@@ -158,14 +143,9 @@ const userBilling = {
             }
         }).catch(handleError);
 
-        userVM.getUserCreditCards(userId).then(creditCards).catch(handleError);
         banksLoader.load().then(banks).catch(handleError);
 
         return {
-            creditCards: creditCards,
-            deleteCard: deleteCard,
-            toDeleteCard: toDeleteCard,
-            setCardDeletionForm: setCardDeletionForm,
             bankAccount: bankAccount,
             confirmDelete: confirmDelete,
             bankInput: bankInput,
@@ -198,64 +178,6 @@ const userBilling = {
             }) : ''),
             m('.w-row',
                 m('.w-col.w-col-10.w-col-push-1', [
-                    m('.w-form.card.card-terciary.u-marginbottom-20', [
-                        m('.fontsize-base.fontweight-semibold',
-                            'Cartões de crédito'
-                        ),
-                        m('.fontsize-small.u-marginbottom-20', [
-                            'Caso algum projeto que você tenha apoiado ',
-                            m('b',
-                                'com Cartão de Crédito'
-                            ),
-                            ' não seja bem-sucedido, nós efetuaremos o reembolso ',
-                            m('b',
-                                'automaticamente'
-                            ),
-                            ' no cartão utilizado para efetuar o apoio. '
-                        ]),
-                        m('.divider.u-marginbottom-20'),
-                        m('.w-row.w-hidden-tiny.card', [
-                            m('.w-col.w-col-5.w-col-small-5',
-                                m('.fontsize-small.fontweight-semibold',
-                                    'Cartão'
-                                )
-                            ),
-                            m('.w-col.w-col-5.w-col-small-5',
-                                m('.fontweight-semibold.fontsize-small',
-                                    'Operadora'
-                                )
-                            ),
-                            m('.w-col.w-col-2.w-col-small-2')
-                        ]),
-
-                        (_.map(ctrl.creditCards(), (card) => {
-                            return m('.w-row.card', [
-                                m('.w-col.w-col-5.w-col-small-5',
-                                    m('.fontsize-small.fontweight-semibold', [
-                                        'XXXX XXXX XXXX',
-                                        m.trust('&nbsp;'),
-                                        card.last_digits
-                                    ])
-                                ),
-                                m('.w-col.w-col-5.w-col-small-5',
-                                    m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
-                                        card.card_brand.toUpperCase()
-                                    )
-                                ),
-                                m('.w-col.w-col-2.w-col-small-2',
-                                    m(`a.btn.btn-terciary.btn-small[rel=\'nofollow\']`,
-                                        {onclick: ctrl.deleteCard(card.id)},
-                                        'Remover'
-                                    )
-                                )
-                            ]);
-                        })),
-                        m('form.w-hidden', {action: `/pt/users/${user.id}/credit_cards/${ctrl.toDeleteCard()}`, method: 'POST', config: ctrl.setCardDeletionForm}, [
-                            m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
-                            m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),
-                            m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
-                        ])
-                    ]),
                     m(`form.simple_form.refund_bank_account_form`, {onsubmit: ctrl.onSubmit}, [
                         m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'billing\']'),
                         m('.w-form.card.card-terciary', [
