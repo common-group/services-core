@@ -19,8 +19,5 @@ describe('CategoryButton', () => {
         it('should build a link with .btn-category', function() {
             expect($output.has('a.btn-category')).toBeTrue();
         });
-        it('should build a link with external link', function() {
-            expect($output.has(`a.btn-category[href="${window.I18n.translations.pt.projects.index.explore_categories[1]}"]`)).toBeTrue();
-        });
     });
 });
