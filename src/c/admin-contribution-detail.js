@@ -124,6 +124,7 @@ const adminContributionDetail = {
                 (ctrl.l()) ? h.loader :
                 m.component(adminReward, {
                     reward,
+                    contribution: item,
                     key: item.key
                 })
             ])

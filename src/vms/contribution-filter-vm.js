@@ -5,6 +5,7 @@ import h from '../h';
 
 const vm = postgrest.filtersVM({
         full_text_index: '@@',
+        delivery_status: 'eq',
         state: 'eq',
         gateway: 'eq',
         value: 'between',
@@ -17,6 +18,7 @@ const vm = postgrest.filtersVM({
 
 // Set default values
 vm.state('');
+vm.delivery_status('');
 vm.gateway('');
 vm.order({
     id: 'desc'
