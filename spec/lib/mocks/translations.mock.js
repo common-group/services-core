@@ -7,6 +7,11 @@ beforeAll(function() {
   TranslationsFactory({
       pt: {
           projects: {
+              index: {
+                  explore_categories: {
+                      1: 'https://catarse.me'
+                  }
+              },
               faq: {
                   aon: {
                       description: 'fake descriptions',
