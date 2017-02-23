@@ -6,6 +6,7 @@ import models from '../models';
 import h from '../h';
 import popNotification from './pop-notification';
 import UserOwnerBox from './user-owner-box';
+import inlineError from './inline-error';
 
 const userSettings = {
     controller(args) {
@@ -13,17 +14,17 @@ const userSettings = {
         const user = args.user,
               bankAccount = m.prop({}),
               fields = {
-                  owner_document: m.prop(user.owner_document),
-                  country_id: m.prop(user.address.country_id),
-                  street: m.prop(user.address.street),
-                  number: m.prop(user.address.number),
-                  city: m.prop(user.address.city),
-                  zipcode: m.prop(user.address.zipcode),
-                  complement: m.prop(user.address.complement),
-                  neighbourhood: m.prop(user.address.neighbourhood),
-                  state: m.prop(user.address.state),
-                  phonenumber: m.prop(user.address.phonenumber),
-                  name: m.prop(user.name),
+                  owner_document: m.prop(user.owner_document || ''),
+                  country_id: m.prop(user.address.country_id || ''),
+                  street: m.prop(user.address.street || ''),
+                  number: m.prop(user.address.number || ''),
+                  city: m.prop(user.address.city || ''),
+                  zipcode: m.prop(user.address.zipcode || ''),
+                  complement: m.prop(user.address.complement || ''),
+                  neighbourhood: m.prop(user.address.neighbourhood || ''),
+                  state: m.prop(user.address.state || ''),
+                  phonenumber: m.prop(user.address.phonenumber || ''),
+                  name: m.prop(user.name || ''),
                   agency: m.prop(''),
                   bank_id: m.prop(''),
                   agency_digit: m.prop(''),
@@ -32,7 +33,17 @@ const userSettings = {
                   bank_account_id: m.prop(''),
                   state_inscription: m.prop(''),
                   birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
-                  account_type: m.prop(user.account_type || '')
+                  account_type: m.prop(user.account_type || ''),
+                  errors: m.prop([])
+              },
+              fieldHasError = (fieldName) => {
+                  const fieldWithError = _.findWhere(fields.errors(), {
+                      field: fieldName
+                  });
+
+                  return fieldWithError ? m.component(inlineError, {
+                      message: fieldWithError.message
+                  }) : '';
               },
               loading = m.prop(false),
               user_id = args.userId,
@@ -163,14 +174,16 @@ const userSettings = {
               onSubmit = () => {
                   // TODO: this form validation should be abstracted/merged together with others
                   if (!validateDocument()) {
+                      fields.errors().push({field: 'owner_document', message: 'CPF/CNPJ inválido'});
                       error('CPF/CNPJ inválido');
                       showError(true);
+                      console.log(fields.errors())
                   } else {
                       loading(true);
-                      m.redraw();
                       updateUserData(user_id);
                   }
 
+                  m.redraw();
                   return false;
               },
               applyZipcodeMask = _.compose(fields.zipcode, zipcodeMask),
@@ -239,7 +252,8 @@ const userSettings = {
             bankCode,
             popularBanks,
             applyBirthDateMask,
-            loading
+            loading,
+            fieldHasError
         };
     },
     view(ctrl, args) {
@@ -287,7 +301,7 @@ const userSettings = {
                               m('.w-row', [
                                   m('.w-col.w-col-6.w-sub-col', [
                                       m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
-                                        'Nome completo/Razão Social'
+                                        `Nome completo${fields.account_type() == 'pf' ? '' : '/Razão Social'}`
                                        ),
                                       m(`input.string.required.w-input.text-field.positive[id='user_bank_account_attributes_owner_name'][type='text']`, {
                                           value: fields.name(),
@@ -299,14 +313,16 @@ const userSettings = {
                                       m('.w-row', [
                                           m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                'CPF / CNPJ'
+                                                `${fields.account_type() == 'pf' ? 'CPF' : 'CNPJ'}`
                                                ),
                                               m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                                                   value: fields.owner_document(),
+                                                  class: ctrl.fieldHasError('owner_document') ? 'error' : false,
                                                   name: 'user[cpf]',
                                                   onchange: m.withAttr('value', ctrl.applyDocumentMask),
                                                   onkeyup: m.withAttr('value', ctrl.applyDocumentMask)
-                                              })
+                                              }),
+                                              ctrl.fieldHasError('owner_document')
                                           ]),
                                           m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', (fields.account_type() == 'pf' ? [
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
