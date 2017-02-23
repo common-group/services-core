@@ -97,6 +97,15 @@ const footer = {
                                                 m('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start?ref=ctrse_footer\']',
                                                     ' Comece seu projeto'
                                                 ),
+                                                m('a.u-marginbottom-30.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',
+                                                    [
+                                                        'Música no Catarse!',
+                                                        m.trust('&nbsp;'),
+                                                        m('span.badge.badge-success',
+                                                            'Novidade‍'
+                                                        )
+                                                    ]
+                                                ),
                                                 m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']',
                                                     ' Explore projetos'
                                                 ),
