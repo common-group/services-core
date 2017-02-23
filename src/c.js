@@ -24,12 +24,13 @@ import FollowFoundFriends from './root/follow-found-friends';
 import thankYou from './root/thank-you';
 import CheckEmail from './root/check-email';
 import projectEditUserAbout from './root/project-edit-user-about';
-
+import copyTextInput from './c/copy-text-input';
 
 const c = {
     root: {
         AdminUsers: adminUsers,
         AdminContributions: adminContributions,
+        ClipboardCopy: copyTextInput,
         Flex: flex,
         Insights: insights,
         Posts: posts,
