@@ -6,28 +6,25 @@ import $ from 'jquery';
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import CatarseAnalytics from 'CatarseAnalytics';
+import contributionVM from './vms/contribution-vm';
 
 const
     _dataCache : Object = {},
-    hashMatch = (str: string): boolean => { return window.location.hash === str; },
+    hashMatch = (str: string): boolean => window.location.hash === str,
     paramByName = (name: string): string => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
-            regex = new RegExp('[\\?&]' + normalName + '=([^&#]*)'),
+            regex = new RegExp(`[\\?&]${normalName}=([^&#]*)`),
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-  	selfOrEmpty = (obj: any, emptyState: string = ''): any => {
-      return obj ? obj : emptyState;
-  	},
+  	selfOrEmpty = (obj: any, emptyState: string = ''): any => obj || emptyState,
     setMomentifyLocale = (): void => {
         moment.locale('pt', {
-                months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
-                monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
-            });
+            months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
+            monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+        });
     },
-    existy = (x: any): boolean => {
-        return x != null;
-    },
+    existy = (x: any): boolean => x != null,
 
     momentify = (date: string, format: string): string => {
         format = format || 'DD/MM/YYYY';
@@ -40,16 +37,13 @@ const
         }
     },
 
-    storeObject = (sessionKey: string, obj: Object) => {
-        return sessionStorage.setItem(sessionKey, JSON.stringify(obj));
-    },
+    storeObject = (sessionKey: string, obj: Object) => sessionStorage.setItem(sessionKey, JSON.stringify(obj)),
 
     getStoredObject = (sessionKey: string): ?Object => {
         if (sessionStorage.getItem(sessionKey)) {
             return JSON.parse(String(sessionStorage.getItem(sessionKey)));
-        } else {
-            return null;
         }
+        return null;
     },
 
     callStoredAction = (action: string): ?string => {
@@ -58,15 +52,14 @@ const
         if (item) {
             sessionStorage.removeItem(action);
             return item;
-        } else {
-            return null;
         }
+        return null;
     },
 
     discuss = (page: Object, identifier: string) => {
         const d = document,
             s = d.createElement('script');
-        window.disqus_config = function() {
+        window.disqus_config = function () {
             this.page.url = page;
             this.page.identifier = identifier;
         };
@@ -82,14 +75,19 @@ const
     },
 
     validateCnpj = (cnpjStr: string): boolean => {
-        let tamanho, numeros, digitos, soma, pos, resultado;
-        let cnpj = cnpjStr.replace(/[^\d]+/g,'');
+        let tamanho,
+            numeros,
+            digitos,
+            soma,
+            pos,
+            resultado;
+        const cnpj = cnpjStr.replace(/[^\d]+/g, '');
 
         if (cnpj == '') {
             return false;
         }
 
-        if (cnpj.length != 14){
+        if (cnpj.length != 14) {
             return false;
         }
 
@@ -103,13 +101,11 @@ const
             cnpj == '77777777777777' ||
             cnpj == '88888888888888' ||
             cnpj == '99999999999999') {
-
             return false;
-
         }
 
         tamanho = cnpj.length - 2;
-        numeros = cnpj.substring(0,tamanho);
+        numeros = cnpj.substring(0, tamanho);
         digitos = cnpj.substring(tamanho);
         soma = 0;
         pos = tamanho - 7;
@@ -121,11 +117,10 @@ const
             }
         }
         resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (String(resultado) != digitos.charAt(0))
-            return false;
+        if (String(resultado) != digitos.charAt(0)) { return false; }
 
-        tamanho = tamanho + 1;
-        numeros = cnpj.substring(0,tamanho);
+        tamanho += 1;
+        numeros = cnpj.substring(0, tamanho);
         soma = 0;
         pos = tamanho - 7;
         for (let i = tamanho; i >= 1; i--) {
@@ -143,36 +138,37 @@ const
     },
 
     validateCpf = (strCPF: string): boolean => {
-        let sum = 0, remainder;
+        let sum = 0,
+            remainder;
 
         if (strCPF == '00000000000') return false;
 
         for (let i = 1; i <= 9; i++) {
-            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+            sum += parseInt(strCPF.substring(i - 1, i)) * (11 - i);
         }
         remainder = (sum * 10) % 11;
 
-        if ((remainder == 10) || (remainder == 11)){
+        if ((remainder == 10) || (remainder == 11)) {
             remainder = 0;
         }
 
-        if (remainder != parseInt(strCPF.substring(9, 10))){
+        if (remainder != parseInt(strCPF.substring(9, 10))) {
             return false;
         }
 
         sum = 0;
 
-        for (let i = 1; i <= 10; i++){
-            sum = sum + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+        for (let i = 1; i <= 10; i++) {
+            sum += parseInt(strCPF.substring(i - 1, i)) * (12 - i);
         }
 
         remainder = (sum * 10) % 11;
 
-        if ((remainder == 10) || (remainder == 11)){
+        if ((remainder == 10) || (remainder == 11)) {
             remainder = 0;
         }
 
-        if (remainder != parseInt(strCPF.substring(10, 11))){
+        if (remainder != parseInt(strCPF.substring(10, 11))) {
             return false;
         }
 
@@ -191,16 +187,16 @@ const
                 return () => {
                     resetValidations();
 
-                    _.map(fields, field => {
+                    _.map(fields, (field) => {
                         if (field.rule === 'email') {
                             if (!validateEmail(field.prop())) {
-                                validationErrors().push({field: field.prop, message: 'E-mail inválido.'});
+                                validationErrors().push({ field: field.prop, message: 'E-mail inválido.' });
                             }
                         }
 
                         if (field.rule === 'text') {
                             if (field.prop().trim() === '') {
-                                validationErrors().push({field: field.prop, message: 'O campo não pode ser vazio.'});
+                                validationErrors().push({ field: field.prop, message: 'O campo não pode ser vazio.' });
                             }
                         }
                     });
@@ -225,7 +221,7 @@ const
         hours: 'horas',
         seconds: 'segundos'
     },
-    //Object manipulation helpers
+    // Object manipulation helpers
     translatedTime = (time: {unit: ?string, total: ?number}): {unit: string, total: ?number} => {
         const translatedTime = translatedTimeUnits,
             unit = () => {
@@ -240,25 +236,21 @@ const
         };
     },
 
-    //Number formatting helpers
-    generateFormatNumber = (s: string, c: string): Function => {
-        return (number, n, x): ?string => {
-            if (!_.isNumber(number)) {
-                return null;
-            }
+    // Number formatting helpers
+    generateFormatNumber = (s: string, c: string): Function => (number, n, x): ?string => {
+        if (!_.isNumber(number)) {
+            return null;
+        }
 
-            const re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\D' : '$') + ')',
-                num = number.toFixed(Math.max(0, ~~n));
-            return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-        };
+        const re = `\\d(?=(\\d{${x || 3}})+${n > 0 ? '\\D' : '$'})`,
+            num = number.toFixed(Math.max(0, ~~n));
+        return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
     },
     formatNumber = generateFormatNumber('.', ','),
 
     toggleProp = (defaultState: any, alternateState: any): Function => {
         const p = m.prop(defaultState);
-        p.toggle = () => {
-            return p(((p() === alternateState) ? defaultState : alternateState));
-        };
+        p.toggle = () => p(((p() === alternateState) ? defaultState : alternateState));
 
         return p;
     },
@@ -268,53 +260,46 @@ const
     }),
 
     getCurrentProject = (): ?Object => {
-        if (_dataCache.currentProject)
-          return _dataCache.currentProject;
+        if (_dataCache.currentProject) { return _dataCache.currentProject; }
 
         const root = document.getElementById('application'),
-              data = root && root.getAttribute('data-parameters');
+            data = root && root.getAttribute('data-parameters');
         if (data) {
             return _dataCache.currentProject = JSON.parse(data);
-        } else {
-            return null;
         }
+        return null;
     },
 
     getRdToken = (): ?string => {
-        if (_dataCache.rdToken)
-          return _dataCache.rdToken;
+        if (_dataCache.rdToken) { return _dataCache.rdToken; }
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
         return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : null;
     },
 
     getSimilityCustomer = (): ?string => {
-        if (_dataCache.similityCustomer)
-            return _dataCache.similityCustomer;
+        if (_dataCache.similityCustomer) { return _dataCache.similityCustomer; }
 
         const meta = _.first(document.querySelectorAll('[name=simility-customer]'));
         return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : null;
     },
 
     getMailchimpUrl = (): ?string => {
-        if (_dataCache.mailchumUrl)
-          return _dataCache.mailchumUrl;
+        if (_dataCache.mailchumUrl) { return _dataCache.mailchumUrl; }
 
         const meta = _.first(document.querySelectorAll('[name=mailchimp-url]'));
         return meta ? (_dataCache.mailchumUrl = meta.getAttribute('content')) : null;
     },
 
     getUser = (): ?Object => {
-        if (_dataCache.user)
-          return _dataCache.user;
+        if (_dataCache.user) { return _dataCache.user; }
 
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
         if (data) {
             return _dataCache.user = JSON.parse(data);
-        } else {
-            return null;
         }
+        return null;
     },
 
     getUserID = (): ?number => {
@@ -322,28 +307,23 @@ const
         return user == null || user.user_id == null ? null : user.user_id;
     },
 
-    userSignedIn = (): ?boolean => {
-        return !_.isNull(getUserID());
-    },
+    userSignedIn = (): ?boolean => !_.isNull(getUserID()),
 
     getBlogPosts = (): ?Object => {
-        if (_dataCache.blogPosts)
-            return _dataCache.blogPosts;
+        if (_dataCache.blogPosts) { return _dataCache.blogPosts; }
 
-        var posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
+        const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
 
         if (posts) {
             return _dataCache.blogPosts = JSON.parse(posts);
-        } else {
-            return null;
         }
+        return null;
     },
 
     getApiHost = (): ?string => {
-        if (_dataCache.apiHost)
-          return _dataCache.apiHost;
+        if (_dataCache.apiHost) { return _dataCache.apiHost; }
 
-        var el = document.getElementById('api-host');
+        const el = document.getElementById('api-host');
         return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
@@ -352,20 +332,14 @@ const
         return action === act;
     },
 
-    useAvatarOrDefault = (avatarPath: string): string => {
-        return avatarPath || '/assets/catarse_bootstrap/user.jpg';
-    },
+    useAvatarOrDefault = (avatarPath: string): string => avatarPath || '/assets/catarse_bootstrap/user.jpg',
 
-    //Templates
-    loader = (): mNode => {
-        return m('.u-text-center.u-margintop-30 u-marginbottom-30', [
-            m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
-        ]);
-    },
+    // Templates
+    loader = (): mNode => m('.u-text-center.u-margintop-30 u-marginbottom-30', [
+        m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
+    ]),
 
-    newFeatureBadge = (): mNode => {
-        return m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge'));
-    },
+    newFeatureBadge = (): mNode => m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge')),
 
     fbParse = () => {
         const tryParse = () => {
@@ -376,15 +350,13 @@ const
             }
         };
 
-        return window.setTimeout(tryParse, 500); //use timeout to wait async of facebook
+        return window.setTimeout(tryParse, 500); // use timeout to wait async of facebook
     },
 
-    pluralize = (count: number, s: string, p: string): string => {
-        return (count > 1 ? count + p : count + s);
-    },
+    pluralize = (count: number, s: string, p: string): string => (count > 1 ? count + p : count + s),
 
-    strip = (html: string): string =>  {
-        var tmp = document.createElement('div');
+    strip = (html: string): string => {
+        const tmp = document.createElement('div');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
     },
@@ -394,19 +366,15 @@ const
         if (str.length > 0) {
             str = str.replace(/\n\n+/g, '</p><p>');
             str = str.replace(/\n/g, '<br />');
-            str = '<p>' + str + '</p>';
+            str = `<p>${str}</p>`;
         }
         return str;
     },
 
-    rewardSouldOut = (reward: Object): boolean => {
-        return (reward.maximum_contributions > 0 ?
-            (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
-    },
+    rewardSouldOut = (reward: Object): boolean => (reward.maximum_contributions > 0 ?
+            (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false),
 
-    rewardRemaning = (reward: Object): number => {
-        return reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count);
-    },
+    rewardRemaning = (reward: Object): number => reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count),
 
     parseUrl = (href: string): Node => {
         const l = document.createElement('a');
@@ -414,26 +382,22 @@ const
         return l;
     },
 
-    UIHelper = (): Function => {
-        return (el, isInitialized): void => {
-            if (!isInitialized && window.$) {
-                window.UIHelper.setupResponsiveIframes($(el));
-            }
-        };
+    UIHelper = (): Function => (el, isInitialized): void => {
+        if (!isInitialized && window.$ && window.UIHelper) {
+            window.UIHelper.setupResponsiveIframes($(el));
+        }
     },
 
-    toAnchor = (): mConfig => {
-        return (el, isInitialized) => {
-            if (!isInitialized){
-                const hash = window.location.hash.substr(1);
-                if (hash === el.id) {
-                    window.location.hash = '';
-                    setTimeout(function(){
-                        window.location.hash = el.id;
-                    });
-                }
+    toAnchor = (): mConfig => (el, isInitialized) => {
+        if (!isInitialized) {
+            const hash = window.location.hash.substr(1);
+            if (hash === el.id) {
+                window.location.hash = '';
+                setTimeout(() => {
+                    window.location.hash = el.id;
+                });
             }
-        };
+        }
     },
 
     navigateToDevise = () => {
@@ -447,16 +411,17 @@ const
     },
 
     cumulativeOffset = (element: HTMLElement): {top: number, left: number} => {
-        let top = 0, left = 0;
+        let top = 0,
+            left = 0;
         do {
-            top += element.offsetTop  || 0;
+            top += element.offsetTop || 0;
             left += element.offsetLeft || 0;
             element = element.offsetParent;
         } while (element);
 
         return {
-            top: top,
-            left: left
+            top,
+            left
         };
     },
 
@@ -465,25 +430,25 @@ const
         const close = (elm, selector) => {
             const all = document.getElementsByClassName(selector);
             let cur = elm.parentNode;
-            while(cur && !_.contains(all, cur)) {
+            while (cur && !_.contains(all, cur)) {
                 cur = cur.parentNode;
             }
-            if(cur){
+            if (cur) {
                 cur.style.display = 'none';
             }
             return cur;
         };
 
-        let elById = document.getElementById('modal-close');
-        if (_.isElement(elById)){
+        const elById = document.getElementById('modal-close');
+        if (_.isElement(elById)) {
             elById.onclick = (event) => {
                 event.preventDefault();
                 close(elById, 'modal-backdrop');
             };
         }
 
-        let els = document.getElementsByClassName('modal-close');
-        _.map(els, el => {
+        const els = document.getElementsByClassName('modal-close');
+        _.map(els, (el) => {
             if (_.isElement(el)) {
                 el.onclick = (event) => {
                     event.preventDefault();
@@ -494,20 +459,20 @@ const
     },
 
     closeFlash = (): void => {
-        let el = document.getElementsByClassName('icon-close')[0];
-        if (_.isElement(el)){
+        const el = document.getElementsByClassName('icon-close')[0];
+        if (_.isElement(el)) {
             el.onclick = (event) => {
                 event.preventDefault();
                 if (el.parentElement) {
                     el.parentElement.remove();
                 }
             };
-        };
+        }
     },
 
     i18nScope = (scope: Object, obj: Object) => {
         obj = obj || {};
-        return _.extend({}, obj, {scope: scope});
+        return _.extend({}, obj, { scope });
     },
 
     redrawHashChange = (before: any) => {
@@ -537,9 +502,9 @@ const
             duration = 300,
             dFrame = (offset - scrolled) / duration,
             // EaseInOutCubic easing function. We'll abstract all animation funs later.
-            eased = (t) => t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+            eased = t => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
             animation = setInterval(() => {
-                let pos = eased(scrolled / offset) * scrolled;
+                const pos = eased(scrolled / offset) * scrolled;
 
                 window.scrollTo(0, pos);
 
@@ -547,7 +512,7 @@ const
                     clearInterval(animation);
                 }
 
-                scrolled = scrolled + dFrame;
+                scrolled += dFrame;
             }, 1);
     },
     scrollTop = () => window.scrollTo(0, 0),
@@ -573,77 +538,72 @@ const
 
     projectStateTextClass = (state: string): {cssClass: string, text: string} => {
         const statusText = {
-                online: {
-                    cssClass: 'text-success',
-                    text: 'NO AR'
-                },
-                successful: {
-                    cssClass: 'text-success',
-                    text: 'FINANCIADO'
-                },
-                failed: {
-                    cssClass: 'text-error',
-                    text: 'NÃO FINANCIADO'
-                },
-                waiting_funds: {
-                    cssClass: 'text-waiting',
-                    text: 'AGUARDANDO'
-                },
-                rejected: {
-                    cssClass: 'text-error',
-                    text: 'RECUSADO'
-                },
-                draft: {
-                    cssClass: '',
-                    text: 'RASCUNHO'
-                },
-                in_analysis: {
-                    cssClass: '',
-                    text: 'EM ANÁLISE'
-                },
-                approved: {
-                    cssClass: 'text-success',
-                    text: 'APROVADO'
-                }
-            };
+            online: {
+                cssClass: 'text-success',
+                text: 'NO AR'
+            },
+            successful: {
+                cssClass: 'text-success',
+                text: 'FINANCIADO'
+            },
+            failed: {
+                cssClass: 'text-error',
+                text: 'NÃO FINANCIADO'
+            },
+            waiting_funds: {
+                cssClass: 'text-waiting',
+                text: 'AGUARDANDO'
+            },
+            rejected: {
+                cssClass: 'text-error',
+                text: 'RECUSADO'
+            },
+            draft: {
+                cssClass: '',
+                text: 'RASCUNHO'
+            },
+            in_analysis: {
+                cssClass: '',
+                text: 'EM ANÁLISE'
+            },
+            approved: {
+                cssClass: 'text-success',
+                text: 'APROVADO'
+            }
+        };
 
         return statusText[state];
     },
 
-    RDTracker = (eventId: string): mConfig => {
-        return (el, isInitialized) => {
-            if (!isInitialized) {
-                const integrationScript = document.createElement('script');
-                integrationScript.type = 'text/javascript';
-                integrationScript.id = 'RDIntegration';
+    RDTracker = (eventId: string): mConfig => (el, isInitialized) => {
+        if (!isInitialized) {
+            const integrationScript = document.createElement('script');
+            integrationScript.type = 'text/javascript';
+            integrationScript.id = 'RDIntegration';
 
-                if (!document.getElementById(integrationScript.id)){
-                    document.body.appendChild(integrationScript);
-                    integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
-                    integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
-                }
-
-                return false;
+            if (!document.getElementById(integrationScript.id)) {
+                document.body.appendChild(integrationScript);
+                integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
+                integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
             }
-        };
+
+            return false;
+        }
     },
 
     analyticsEvent = (eventObj: Object, fn: Function = Function.prototype): Function => {
         // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
-        if (!eventObj){
+        if (!eventObj) {
             return fn;
         }
 
         return () => {
             try {
-                if (!eventObj.project)
-                  eventObj.project = getCurrentProject();
-                if (!eventObj.user)
-                  eventObj.user = getUser();
+                if (!eventObj.project) { eventObj.project = getCurrentProject(); }
+                if (!eventObj.user) { eventObj.user = getUser(); }
                 CatarseAnalytics.event(eventObj);
             } catch (e) {
-                console.error('[h.analyticsEvent] error:',e);
-
+                console.error('[h.analyticsEvent] error:', e);
             }
             fn();
         };
@@ -654,22 +614,20 @@ const
             return fn;
         }
 
-        const eventKey = _.compact([eventObj.cat,eventObj.act]).join('_');
+        const eventKey = _.compact([eventObj.cat, eventObj.act]).join('_');
         if (!eventKey) {
             throw new Error('Should inform cat or act');
         }
         return () => {
             if (!_analyticsOneTimeEventFired[eventKey]) {
-                //console.log('oneTimeEvent',eventKey);
+                // console.log('oneTimeEvent',eventKey);
                 _analyticsOneTimeEventFired[eventKey] = true;
                 const fireEvent = analyticsEvent(eventObj, fn);
                 fireEvent();
             }
         };
     },
-    monetaryToFloat = (propValue: Function): number => {
-        return parseFloat(propValue().replace('.', '').replace(',', '.'));
-    },
+    monetaryToFloat = (propValue: Function): number => parseFloat(propValue().replace('.', '').replace(',', '.')),
 
     applyMonetaryMask = (number: number): string => {
         let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
@@ -681,66 +639,45 @@ const
         return `${integerPart},${decimalPart}`;
     },
 
-    noNumbersMask = (value: string): string => {
-        return value.replace(/[0-9]/g, '');
+    noNumbersMask = (value: string): string => value.replace(/[0-9]/g, ''),
+
+    numbersOnlyMask = (value: string): string => value.replace(/[^0-9]/g, ''),
+
+    addChar = (position: number, maskChar: string): Function => (char: string): Function => (string: string): string => {
+        if (string.length === position && char !== maskChar) {
+            return (string + maskChar);
+        }
+        return string;
     },
 
-    numbersOnlyMask = (value: string): string => {
-        return value.replace(/[^0-9]/g, '');
-    },
+    readMaskDefinition = (maskCharDefinitions: Object): Function => (maskDefinition: string): Array<any> => _.compact(_.map(maskDefinition, (letter, index) => (letter in maskCharDefinitions ? null : [index, letter]))),
 
-    addChar = (position: number, maskChar: string): Function => {
-        return (char: string): Function => {
-            return (string: string): string => {
-                if (string.length === position && char !== maskChar){
-                    return (string + maskChar);
-                }
-                return string;
-            };
-        };
-    },
+    isCharAllowed = (maskCharDefinitions: Object): Function => (maskDefinition: string): Function => (position: number, newChar: string): boolean => {
+        if (position >= maskDefinition.length) {
+            return false;
+        }
 
-    readMaskDefinition = (maskCharDefinitions: Object): Function => {
-        return (maskDefinition: string): Array<any> => {
-            return _.compact(_.map(maskDefinition, (letter, index) => {
-                return (letter in maskCharDefinitions ? null : [index, letter]);
-            }));
-        };
-    },
-
-    isCharAllowed = (maskCharDefinitions: Object): Function => {
-        return (maskDefinition: string): Function => {
-            return (position: number, newChar: string): boolean=> {
-                if (position >= maskDefinition.length){
-                    return false;
-                }
-
-                const maskChar = maskDefinition.charAt(position);
-                if (maskChar in maskCharDefinitions){
-                    return maskCharDefinitions[maskChar].test(newChar);
-                } else {
-                    return (newChar === maskChar || isCharAllowed(maskCharDefinitions)(maskDefinition)(position + 1, newChar));
-                }
-            };
-        };
+        const maskChar = maskDefinition.charAt(position);
+        if (maskChar in maskCharDefinitions) {
+            return maskCharDefinitions[maskChar].test(newChar);
+        }
+        return (newChar === maskChar || isCharAllowed(maskCharDefinitions)(maskDefinition)(position + 1, newChar));
     },
 
     applyMask = (maskDefinition): Function => {
-        const maskFunctions = _.map(maskDefinition, (maskChar) => addChar(maskChar[0], maskChar[1]));
+        const maskFunctions = _.map(maskDefinition, maskChar => addChar(maskChar[0], maskChar[1]));
         return (string, newChar) => {
-            const addNewCharFunctions = _.map(maskFunctions, (el) => el(newChar));
-            const applyMaskFunctions = _.reduce(addNewCharFunctions, (memo, f) => {
-                return (_.isFunction(memo) ? _.compose(f, memo) : f);
-            });
+            const addNewCharFunctions = _.map(maskFunctions, el => el(newChar));
+            const applyMaskFunctions = _.reduce(addNewCharFunctions, (memo, f) => (_.isFunction(memo) ? _.compose(f, memo) : f));
             return applyMaskFunctions(string);
         };
     },
 
-    //Adapted from https://github.com/diogob/jquery.fixedmask
+    // Adapted from https://github.com/diogob/jquery.fixedmask
     mask = (maskDefinition: RegExp, value: string): string => {
         const maskCharDefinitions = {
-                '9': /\d/,
-                'A': /[a-zA-Z]/
+                '9': /\d/, // String key needed to avoid flowType error
+                A: /[a-zA-Z]/
             },
             readMask = readMaskDefinition(maskCharDefinitions),
             isStrCharAllowed = isCharAllowed(maskCharDefinitions),
@@ -748,41 +685,39 @@ const
             restrictInput = isStrCharAllowed(maskDefinition);
 
         return _.reduce(value, (memo, chr) => {
-            if (restrictInput(memo.length, chr)){
+            if (restrictInput(memo.length, chr)) {
                 memo = applyValueMask(memo, chr) + chr;
             }
             return memo;
         }, '');
     },
 
-      removeStoredObject = (sessionKey: string) => {
-          return sessionStorage.removeItem(sessionKey);
-      },
+    removeStoredObject = (sessionKey: string) => sessionStorage.removeItem(sessionKey),
 
-      currentProject = m.prop(),
-      setProject = (project: Object): void => {
-          currentProject(project);
-      },
-      getProject = (): Object => currentProject,
-        currentReward = m.prop(),
-        setReward = (reward: Object): void => {
-            currentReward(reward);
-        },
-        getReward = () => currentReward,
-        buildLink = (link: string, refStr: string): string =>  `/${link}${refStr ? '?ref=' + refStr : ''}`,
-        analyticsWindowScroll = (eventObj: Object): void => {
-            if (eventObj) {
-                let fired = false;
-                window.addEventListener('scroll', function(e){
-                    //console.log('windowScroll');
-                    if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                        fired = true;
-                        const fireEvent = analyticsEvent(eventObj);
-                        fireEvent();
-                    }
-                });
-            }
-        },
+    currentProject = m.prop(),
+    setProject = (project: Object): void => {
+        currentProject(project);
+    },
+    getProject = (): Object => currentProject,
+    currentReward = m.prop(),
+    setReward = (reward: Object): void => {
+        currentReward(reward);
+    },
+    getReward = () => currentReward,
+    buildLink = (link: string, refStr: string): string => `/${link}${refStr ? `?ref=${refStr}` : ''}`,
+    analyticsWindowScroll = (eventObj: Object): void => {
+        if (eventObj) {
+            let fired = false;
+            window.addEventListener('scroll', (e) => {
+                    // console.log('windowScroll');
+                if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
+                    fired = true;
+                    const fireEvent = analyticsEvent(eventObj);
+                    fireEvent();
+                }
+            });
+        }
+    },
 
     analytics = {
         event: analyticsEvent,
@@ -807,42 +742,38 @@ const
     },
     isProjectPage = (): boolean => {
         const path = window.location.pathname,
-              isOnInsights = path.indexOf('/insights') > -1,
-              isOnEdit = path.indexOf('/edit') > -1,
-              isOnContribution = path.indexOf('/contribution') > -1;
+            isOnInsights = path.indexOf('/insights') > -1,
+            isOnEdit = path.indexOf('/edit') > -1,
+            isOnContribution = path.indexOf('/contribution') > -1;
 
         return !isOnEdit && !isOnInsights && !isOnContribution;
     },
-    setPageTitle = (title: string): mConfig => {
-        return (el, isInitialized) => {
-            const titleEl = document.getElementsByTagName('title')[0],
-                currentTitle = titleEl.innerText;
+    setPageTitle = (title: string): mConfig => (el, isInitialized) => {
+        const titleEl = document.getElementsByTagName('title')[0],
+            currentTitle = titleEl.innerText;
 
-            if (currentTitle !== title) {
-                return titleEl.innerText = title;
-            }
-        };
+        if (currentTitle !== title) {
+            return titleEl.innerText = title;
+        }
     },
     checkReminder = (): void => {
-        let reminder = sessionStorage.getItem('reminder');
+        const reminder = sessionStorage.getItem('reminder');
 
         if (reminder && isHome()) {
             window.location.href = `/projects/${reminder}`;
         }
     },
     rootUrl = (): ?string => {
-        if (_dataCache.rootUrl)
-          return _dataCache.rootUrl;
+        if (_dataCache.rootUrl) { return _dataCache.rootUrl; }
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
 
         return meta ? (_dataCache.rootUrl = meta.getAttribute('content')) : null;
     },
-    redactorConfig = params => {
-        return {
-          source: false,
-          formatting: ['p'],
-          formattingAdd: [
+    redactorConfig = params => ({
+        source: false,
+        formatting: ['p'],
+        formattingAdd: [
             {
                 tag: 'blockquote',
                 title: 'Citar',
@@ -862,53 +793,49 @@ const
                 class: 'fontsize-large',
                 clear: true
             }],
-          lang: 'pt_br',
-          maxHeight: 800,
-          minHeight: 300,
-          convertVideoLinks: true,
-          convertUrlLinks: true,
-          convertImageLinks: false,
+        lang: 'pt_br',
+        maxHeight: 800,
+        minHeight: 300,
+        convertVideoLinks: true,
+        convertUrlLinks: true,
+        convertImageLinks: false,
           // You can specify, which ones plugins you need.
           // If you want to use plugins, you have add plugins to your
           // application.js and application.css files and uncomment the line below:
           // "plugins": ['fontsize', 'fontcolor', 'fontfamily', 'fullscreen', 'textdirection', 'clips'],
-          plugins: ['video'],
-          "imageUpload":"/redactor_rails/pictures?" + params,
-          "imageGetJson":"/redactor_rails/pictures",
-          "path":"/assets/redactor-rails",
-          "css":"style.css"
-        };
-    },
-    setRedactor = (prop) => (el, isInit) => {
+        plugins: ['video'],
+        imageUpload: `/redactor_rails/pictures?${params}`,
+        imageGetJson: '/redactor_rails/pictures',
+        path: '/assets/redactor-rails',
+        css: 'style.css'
+    }),
+    setRedactor = prop => (el, isInit) => {
         if (!isInit) {
             const $editor = window.$(el);
             const csrf_token = authenticityToken();
             const csrf_param = authenticityParam();
             let params = '';
             if (csrf_param && csrf_token) {
-                params = csrf_param + "=" + encodeURIComponent(csrf_token);
+                params = `${csrf_param}=${encodeURIComponent(csrf_token)}`;
             }
             $editor.redactor(redactorConfig(params));
             $editor.redactor('code.set', prop());
             // If we need to get redactor values and send it to js objects we'll have to add
             // a hook on the change.callback.redactor event. e.g.:
-            //$editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
+            // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
             // TODO: workaround to get redactor data
-            window.$('.redactor-editor').on('blur', () => prop($editor.redactor('code.get')) );
+            window.$('.redactor-editor').on('blur', () => prop($editor.redactor('code.get')));
         }
     },
 
-    redactor = (name: string, prop: Function) => {
-        return m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
-            name, config: setRedactor(prop)
-        });
-    },
+    redactor = (name: string, prop: Function) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
+        name, config: setRedactor(prop)
+    }),
 
     setCsrfToken = (xhr: Object) => {
         if (authenticityToken()) {
             xhr.setRequestHeader('X-CSRF-Token', authenticityToken());
         }
-        return;
     },
 
     contributionStatusBadge = (contribution: Object) => {
@@ -927,7 +854,7 @@ const
             )
         };
 
-        return status[contribution.delivery_status];
+        return contributionVM.canBeDelivered(contribution) ? status[contribution.delivery_status] : '';
     };
 
 

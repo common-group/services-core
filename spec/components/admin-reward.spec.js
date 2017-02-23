@@ -9,7 +9,8 @@ describe('adminReward', () => {
         describe("when contribution has no reward", function() {
             beforeAll(() => {
                 $output = mq(adminReward.view(undefined, {
-                    reward: m.prop({})
+                    reward: m.prop({}),
+                    contribution: m.prop({})
                 }));
             });
 
@@ -17,14 +18,15 @@ describe('adminReward', () => {
                 $output.should.contain('Apoio sem recompensa');
             });
         });
-
         describe("when contribution has reward", function() {
-            let reward;
+            let reward, contribution;
 
             beforeAll(() => {
                 reward = m.prop(RewardDetailsMockery()[0]);
+                contribution = m.prop(ContributionAttrMockery()[0])
                 $output = mq(adminReward.view(undefined, {
-                    reward: reward
+                    reward: reward,
+                    contribution: contribution
                 }));
             });
 

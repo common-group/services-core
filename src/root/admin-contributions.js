@@ -22,6 +22,29 @@ const adminContributions = {
                     vm: filterVM.full_text_index,
                     placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
                 }
+            }, { // delivery_status
+                component: filterDropdown,
+                data: {
+                    label: 'Status da entrega',
+                    name: 'delivery_status',
+                    vm: filterVM.delivery_status,
+                    options: [{
+                        value: '',
+                        option: 'Qualquer um'
+                    }, {
+                        value: 'delivered',
+                        option: 'delivered'
+                    }, {
+                        value: 'undelivered',
+                        option: 'undelivered'
+                    }, {
+                        value: 'error',
+                        option: 'error'
+                    }, {
+                        value: 'received',
+                        option: 'received'
+                    }]
+                }
             }, { // state
                 component: filterDropdown,
                 data: {

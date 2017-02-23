@@ -44,22 +44,11 @@ const start = {
             lCategory = () => loader(models.categoryTotals.getRowOptions(categoryvm.parameters())),
             lProject = () => loader(models.projectDetail.getRowOptions(projectvm.parameters())),
             lUser = () => loader(models.userDetail.getRowOptions(uservm.parameters())),
-            selectCategory = category => () => {
-                selectedCategoryIdx(category.id);
-                categoryvm.category_id(category.id);
-                selectedCategory([category]);
-                m.redraw();
-                lCategory().load().then(loadCategoryProjects);
-            },
-            setUser = (user, idx) => {
-                featuredProjects()[idx] = _.extend({}, featuredProjects()[idx], {
-                    userThumb: _.first(user).profile_img_thumbnail
-                });
-            },
-            setProject = (project, idx) => {
-                featuredProjects()[idx] = _.first(project);
-                uservm.id(_.first(project).user.id);
-                lUser().load().then(user => setUser(user, idx));
+            linkToExternal = (category) => {
+                const externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories;
+                return _.isUndefined(externalLinkCategories[category.id])
+                    ? null
+                    : externalLinkCategories[category.id];
             },
             loadCategoryProjects = (category) => {
                 selectedCategory(category);
@@ -75,6 +64,28 @@ const start = {
                         }
                     });
                 }
+            },
+            selectCategory = category => () => {
+                const externalLink = linkToExternal(category);
+                if (externalLink) {
+                    window.location = externalLink;
+                    return;
+                }
+                selectedCategoryIdx(category.id);
+                categoryvm.category_id(category.id);
+                selectedCategory([category]);
+                m.redraw();
+                lCategory().load().then(loadCategoryProjects);
+            },
+            setUser = (user, idx) => {
+                featuredProjects()[idx] = _.extend({}, featuredProjects()[idx], {
+                    userThumb: _.first(user).profile_img_thumbnail
+                });
+            },
+            setProject = (project, idx) => {
+                featuredProjects()[idx] = _.first(project);
+                uservm.id(_.first(project).user.id);
+                lUser().load().then(user => setUser(user, idx));
             },
             projectCategory = m.prop('-1'),
             projectName = m.prop(''),
@@ -100,6 +111,7 @@ const start = {
             selectPane,
             selectedPane,
             featuredProjects,
+            linkToExternal,
             testimonials: startvm.testimonials,
             questions: startvm.questions,
             projectCategory,

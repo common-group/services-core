@@ -4,6 +4,7 @@ import h from '../h';
 const adminReward = {
     view(ctrl, args) {
         const reward = args.reward(),
+            contribution = args.contribution,
             available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
 
         return m('.w-col.w-col-4', [
@@ -17,6 +18,12 @@ const adminReward = {
                 m('br'),
                 `Aguardando confirmação: ${reward.waiting_payment_count}`,
                 m('br'),
+                `Estimativa da Entrega: ${h.momentify(reward.deliver_at)}`,
+                m('br'),
+                m('div', [
+                    'Status da Entrega: ',
+                    h.contributionStatusBadge(contribution),
+                ]),
                 `Descrição: ${reward.description}`
             ] : 'Apoio sem recompensa')
         ]);

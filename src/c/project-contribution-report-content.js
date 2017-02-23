@@ -51,6 +51,8 @@ const projectContributionReportContent = {
     },
     view(ctrl, args) {
         const list = args.list;
+        const isFailed = args.project().state === 'failed';
+
         return m('.w-section.bg-gray.before-footer.section', [
 
             (ctrl.showSuccess() ? m.component(popNotification, {
@@ -67,7 +69,7 @@ const projectContributionReportContent = {
                                 ' apoios'
                             ])
                         ),
-                        m('.w-col.w-col-6', [
+                        m('.w-col.w-col-6', isFailed ? '' : [
                             (!ctrl.selectedAny() ?
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
                                     onclick: ctrl.selectAll
@@ -81,7 +83,7 @@ const projectContributionReportContent = {
                                 )
                             ),
                             (ctrl.selectedAny() ?
-                                m('._w-inline-block', [
+                                m('.w-inline-block', [
                                     m('button.btn.btn-inline.btn-small.btn-terciary.w-button', {
                                         onclick: ctrl.showSelectedMenu.toggle
                                     }, [
