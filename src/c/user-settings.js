@@ -177,7 +177,6 @@ const userSettings = {
                       fields.errors().push({field: 'owner_document', message: 'CPF/CNPJ inválido'});
                       error('CPF/CNPJ inválido');
                       showError(true);
-                      console.log(fields.errors())
                   } else {
                       loading(true);
                       updateUserData(user_id);
@@ -687,7 +686,7 @@ const userSettings = {
                                    )
                               ]),
                           ]),
-                          m('.w-form.card.card-terciary.u-marginbottom-20', [
+                          (args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [
                               m('.fontsize-base.fontweight-semibold',
                                 'Cartões de crédito'
                                ),
@@ -744,11 +743,11 @@ const userSettings = {
                                   m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),
                                   m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                               ])
-                          ]),
+                          ])),
                        )
                      ),
                     m('div',
-                      m('.w-container',
+                      m(`.w-container${(args.useFloatBtn ? '.w-section.save-draft-btn-section' : '')}`,
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-push-4',
                               (ctrl.loading() ? h.loader() :  m('input.btn.btn.btn-large[name=\'commit\'][type=\'submit\'][value=\'Salvar\']') )
