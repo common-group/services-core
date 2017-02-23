@@ -120,9 +120,23 @@ const getCurrentUser = () => {
     return currentUser;
 };
 
-const displayImage = user => user.profile_img_thumbnail || 'https://catarse.me/assets/catarse_bootstrap/user.jpg';
+const displayImage = (user) => {
+    const defaultImg = 'https://catarse.me/assets/catarse_bootstrap/user.jpg';
 
-const displayCover = user => user.profile_cover_image || displayImage(user);
+    if (user) {
+        return user.profile_img_thumbnail || defaultImg;
+    }
+
+    return defaultImg;
+};
+
+const displayCover = (user) => {
+    if (user) {
+        return user.profile_cover_image || displayImage(user);//
+    }
+
+    return displayImage(user);
+};
 
 const getUserRecommendedProjects = (contribution) => {
     const sample3 = _.partial(_.sample, _, 3),

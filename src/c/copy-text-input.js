@@ -36,8 +36,12 @@ const copyTextInput = {
         const setClickHandler = (el, isInitialized) => {
             let copy;
             if (!isInitialized) {
-                const textarea = document.getElementById('copy-textarea');
+                const textarea = el.parentNode.previousSibling.firstChild;
+
+                textarea.innerText = args.value; //This fixes an issue when instantiating multiple copy clipboard components
+
                 el.onclick = () => {
+                    console.log('Will copy this:', textarea);
                     select(textarea);
                     copy = document.execCommand('copy');
                     if (copy) {
@@ -46,6 +50,7 @@ const copyTextInput = {
                     } else {
                         textarea.blur();
                     }
+                    return false;
                 };
             }
         };
@@ -56,11 +61,11 @@ const copyTextInput = {
         };
     },
     view(ctrl, args) {
-        return m('#clipboard.w-row', [
-            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('textarea#copy-textarea.positive.text-field.w-input', {
+        return m('.clipboard.w-row', [
+            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('textarea.copy-textarea.text-field.w-input', {
                 style: 'margin-bottom:0;'
             }, args.value)),
-            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
+            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
                 config: ctrl.setClickHandler
             })),
             ctrl.showSuccess() ? m.component(popNotification, { message: 'Link copiado' }) : ''
