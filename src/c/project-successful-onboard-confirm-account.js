@@ -36,8 +36,7 @@ const projectSuccessfulOnboardConfirmAccount = {
         const projectAccount = args.projectAccount,
             actionStage = ctrl.actionStage,
             currentStage = ctrl.currentStage,
-            personKind = (projectAccount.owner_document.length > 14 ? 'juridical' : 'natural'),
-            juridicalPerson = projectAccount.owner_document.length > 14;
+            juridicalPerson = projectAccount.user_type != 'pf';
 
         return m('.w-container.u-marginbottom-40', [
             m('.u-text-center', [
@@ -48,10 +47,10 @@ const projectSuccessfulOnboardConfirmAccount = {
                     m('.fontsize-base.u-marginbottom-30.card.card-terciary', [
                         m('div', [
                             m('span.fontcolor-secondary', I18n.t('person.label', I18nScope())),
-                            I18n.t(`person.${personKind}.label`, I18nScope())
+                            I18n.t(`person.${projectAccount.user_type}.label`, I18nScope())
                         ]),
                         m('div', [
-                            m('span.fontcolor-secondary', I18n.t(`person.${personKind}.name`, I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t(`person.${projectAccount.user_type}.name`, I18nScope())),
                             projectAccount.owner_name
                         ]),
                         ((projectAccount.state_inscription && juridicalPerson) ? m('div', [
@@ -59,7 +58,7 @@ const projectSuccessfulOnboardConfirmAccount = {
                             projectAccount.state_inscription
                         ]) : ''),
                         m('div', [
-                            m('span.fontcolor-secondary', I18n.t(`person.${personKind}.document`, I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t(`person.${projectAccount.user_type}.document`, I18nScope())),
                             projectAccount.owner_document
                         ]),
                         m('div', [
@@ -72,7 +71,7 @@ const projectSuccessfulOnboardConfirmAccount = {
                         ]),
                         m('div', [
                             m('span.fontcolor-secondary', I18n.t('person.bank.account', I18nScope())),
-                            `${projectAccount.account}-${projectAccount.account_digit}`
+                            `${projectAccount.account}-${projectAccount.account_digit} (${I18n.t('person.bank.account_type.' + projectAccount.account_type, I18nScope())})`
                         ])
                     ])
                 ]),
