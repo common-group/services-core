@@ -59,7 +59,7 @@ const posts = {
             project_id = args.root.getAttribute('data-id'),
             projectDetails = m.prop([]),
             rewardText = (rewardId) => {
-                const reward = _.find(rewardVM.rewards(), r => r.id === rewardId);
+                const reward = _.find(rewardVM.rewards(), r => String(r.id) === String(rewardId));
                 return `Apoiadores da recompensa R$${reward.minimum_value} - ${`${reward.description.substring(0, 70)}...`}`;
             },
             showRecipientes = (post) => {
