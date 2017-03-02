@@ -34,7 +34,8 @@ const userSettings = {
                   state_inscription: m.prop(''),
                   birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
                   account_type: m.prop(user.account_type || ''),
-                  errors: m.prop([])
+                  errors: m.prop([]),
+                  bank_account_type: m.prop('')
               },
               fieldHasError = (fieldName) => {
                   const fieldWithError = _.findWhere(fields.errors(), {
@@ -129,7 +130,8 @@ const userSettings = {
                           agency_digit: fields.agency_digit(),
                           agency: fields.agency(),
                           account: fields.account(),
-                          account_digit: fields.account_digit()
+                          account_digit: fields.account_digit(),
+                          account_type: fields.bank_account_type()
                       }
                   };
 
@@ -214,11 +216,10 @@ const userSettings = {
                 fields.agency(bankAccount().agency);
                 fields.agency_digit(bankAccount().agency_digit);
                 fields.bank_id(bankAccount().bank_id);
+                fields.bank_account_type(bankAccount().account_type);
                 bankCode(bankAccount().bank_id);
             }
         }).catch(handleError);
-
-        console.log(user_id);
 
         banksLoader.load().then(banks).catch(handleError);
         userVM.getUserCreditCards(args.userId).then(creditCards).catch(handleError);
@@ -260,6 +261,8 @@ const userSettings = {
             bankAccount = ctrl.bankAccount(),
             fields = ctrl.fields;
 
+        console.log(fields.bank_account_type());
+
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
                 message: 'As suas informações foram atualizadas'
@@ -290,9 +293,9 @@ const userSettings = {
                                             name: 'user[bank_account_attributes][bank_id]',
                                             onchange: m.withAttr('value', fields.account_type)
                                         }, [
-                                            m('option[value=\'pf\']', 'Pessoa fisica', {selected: fields.account_type() === 'pf'}),
-                                            m('option[value=\'pj\']', 'Pessoa juririca', {selected: fields.account_type() === 'pj'}),
-                                            m('option[value=\'mei\']', 'Pessoa juridica - MEI', {selected: fields.account_type() === 'mei'}),
+                                            m('option[value=\'pf\']', {selected: fields.account_type() === 'pf'}, 'Pessoa fisica'),
+                                            m('option[value=\'pj\']', {selected: fields.account_type() === 'pj'}, 'Pessoa juririca'),
+                                            m('option[value=\'mei\']', {selected: fields.account_type() === 'mei'}, 'Pessoa juridica - MEI'),
                                         ])
                                     ])
                                    ),
@@ -505,9 +508,17 @@ const userSettings = {
                                       m('label.field-label.fontweight-semibold',
                                         'Tipo de conta'
                                        ),
-                                      m('p.fontsize-smaller.u-marginbottom-20',
-                                        'Só aceitamos conta corrente'
-                                       )
+                                      m('.input.select.required.user_bank_account_account_type', [
+                                          m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_account_type\']', {
+                                              name: 'user[bank_account_attributes][account_type]',
+                                              onchange: m.withAttr('value', fields.bank_account_type)
+                                          }, [
+                                              m('option[value=\'conta_corrente\']', {selected: fields.bank_account_type() === 'conta_corrente'}, 'Conta corrente'),
+                                              m('option[value=\'conta_poupanca\']', {Selected: fields.bank_account_type() === 'conta_poupanca'}, 'Conta poupança'),
+                                              m('option[value=\'conta_corrente_conjunta\']', {selected: fields.bank_account_type() === 'conta_corrente_conjunta'}, 'Conta corrente conjunta'),
+                                              m('option[value=\'conta_poupanca_conjunta\']', {Selected: fields.bank_account_type() === 'conta_poupanca_conjunta'}, 'Conta poupança conjunta'),
+                                          ])
+                                      ])
                                   ]),
                                   m('.w-col.w-col-6',
                                     m('.w-row', [
