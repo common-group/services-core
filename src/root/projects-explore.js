@@ -20,7 +20,6 @@ import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
-
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
     controller(args) {
@@ -72,6 +71,8 @@ const projectsExplore = {
             findCategory = id => _.find(categoryCollection(), c => c.id === parseInt(id)),
             category = _.compose(findCategory, categoryId),
             loadCategories = () => models.category.getPageWithToken(filters({}).order({ name: 'asc' }).parameters()).then(categoryCollection),
+            externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories,
+            hasSpecialFooter = (categoryId) => !_.isUndefined(externalLinkCategories[categoryId]),
               // just small fix when have two scored projects only
             checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
               // Fake projects object to be able to render page while loadding (in case of search)
@@ -189,14 +190,19 @@ const projectsExplore = {
             toggleCategories,
             isSearch,
             hasFBAuth,
-            checkForMinScoredProjects
+            checkForMinScoredProjects,
+            categoryId,
+            hasSpecialFooter,
+            externalLinkCategories
         };
     },
     view(ctrl, args) {
-        const projectsCollection = ctrl.projects().collection(),
+        const categoryId = ctrl.categoryId,
+            projectsCollection = ctrl.projects().collection(),
             projectsCount = projectsCollection.length,
             filterKeyName = ctrl.currentFilter().keyName,
-            isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
+            isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends'),
+            hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
         let widowProjects = [];
 
         if (!ctrl.projects().isLoading() && _.isEmpty(projectsCollection) && !ctrl.isSearch()) {
@@ -299,11 +305,18 @@ const projectsExplore = {
 
             m('.w-section.section-large.before-footer.u-margintop-80.bg-gray.divider', [
                 m('.w-container.u-text-center', [
-                    m('img.u-marginbottom-20.icon-hero', { src: 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png' }),
-                    m('h2.fontsize-larger.u-marginbottom-60', 'Lance sua campanha no Catarse!'),
+                    m('img.u-marginbottom-20.icon-hero', {
+                        src: hasSpecialFooter
+                                ? ctrl.externalLinkCategories[categoryId()].icon
+                                : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
+                    }),
+                    m('h2.fontsize-larger.u-marginbottom-60',
+                        hasSpecialFooter ? ctrl.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
-                            m('a.w-button.btn.btn-large', { href: '/start?ref=ctrse_explore' }, 'Aprenda como')
+                            hasSpecialFooter
+                                ? m('a.w-button.btn.btn-large', { href: ctrl.externalLinkCategories[categoryId()].link }, ctrl.externalLinkCategories[categoryId()].cta)
+                                : m('a.w-button.btn.btn-large', { href: '/start?ref=ctrse_explore' }, 'Aprenda como')
                         ])
                     ])
                 ])
