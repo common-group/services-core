@@ -88,10 +88,8 @@ const projectSuccessfulOnboard = {
                         return setStage('finished')();
                     }
 
-                    if (_.isNull(pa.error_reason) && _.isNull(pa.transfer_state)) {
+                    if (_.isNull(pa.transfer_state)) {
                         return setStage('start')();
-                    } else if (!_.isNull(pa.error_reason)) {
-                        return setStage('error_account')();
                     } else if (!_.isNull(pa.transfer_state)) {
                         if (pa.transfer_state == 'transferred') {
                             return setStage('finished')();
@@ -99,16 +97,6 @@ const projectSuccessfulOnboard = {
                         return setStage('pending_transfer')();
                     }
                 }
-
-                return false;
-            },
-
-              // TODO: need to add an error validation to not null
-            addErrorReason = errorProp => () => {
-                const fn = declineAccountLoader(errorProp());
-                fn.load().then(() => {
-                    setStage('error_account')();
-                });
 
                 return false;
             },
@@ -129,7 +117,6 @@ const projectSuccessfulOnboard = {
             setStage,
             nextStage,
             currentComponent,
-            addErrorReason,
             acceptAccount,
             acceptAccountLoader,
             content,
@@ -156,7 +143,6 @@ const projectSuccessfulOnboard = {
                  projectTransfer,
                  projectAccount,
                  setStage: ctrl.setStage,
-                 addErrorReason: ctrl.addErrorReason,
                  acceptAccount: ctrl.acceptAccount,
                  acceptAccountLoader: ctrl.acceptAccountLoader,
                  nextStage: ctrl.nextStage,

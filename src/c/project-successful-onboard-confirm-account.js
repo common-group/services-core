@@ -1,6 +1,6 @@
 /**
  * window.c.ProjectSuccessfulOnboardConfirmAccount component
- * render project account data to confirm or add error
+ * render project account data to confirm or redirect when error
  *
  * Example:
  * m.component(c.ProjectSuccessfulOnboardConfirmAccount, {projectAccount: projectAccount})
@@ -9,7 +9,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
-import projectSuccessfulOnboardConfirmAccountError from './project-successful-onboard-confirm-account-error';
 import projectSuccessfulOnboardConfirmAccountAccept from './project-successful-onboard-confirm-account-accept';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
@@ -17,7 +16,6 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 const projectSuccessfulOnboardConfirmAccount = {
     controller(args) {
         const actionStages = {
-                error: projectSuccessfulOnboardConfirmAccountError,
                 accept: projectSuccessfulOnboardConfirmAccountAccept
             },
             currentStage = m.prop('start'),
@@ -109,13 +107,12 @@ const projectSuccessfulOnboardConfirmAccount = {
                     m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: ctrl.changeToAction('accept') }, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#refuse-account.btn.btn-large.btn-terciary', { href: '#error_account', onclick: ctrl.changeToAction('error') }, 'Não')
+                    m('a#refuse-account.btn.btn-large.btn-terciary', { href: `/projects/${projectAccount.project_id}/edit#user_settings` }, 'Não')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
             ]) : m.component(actionStage(), {
                 projectAccount,
                 changeToAction: ctrl.changeToAction,
-                addErrorReason: args.addErrorReason,
                 acceptAccount: args.acceptAccount,
                 acceptAccountLoader: args.acceptAccountLoader
             })
