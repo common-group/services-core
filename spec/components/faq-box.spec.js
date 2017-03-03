@@ -25,19 +25,6 @@ describe('FaqBox', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            window.I18n.translations = {
-                pt: {
-                    projects: {
-                        faq: {
-                            title: 'faqBox title',
-                            aon: {
-                                description: test.description,
-                                questions: test.questions
-                            }
-                        }
-                    }
-                }
-            };
             $output = (mode = 'aon') => mq(
                 m(faqBox, {
                     mode: mode,

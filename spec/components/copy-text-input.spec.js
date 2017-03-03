@@ -10,7 +10,7 @@ describe('copyTextInput', () => {
         });
 
         it('should render a text field with the set value', () => {
-            expect($output.find('#copy-textarea').length).toEqual(1);
+            expect($output.find('.copy-textarea').length).toEqual(1);
             expect($output.contains(testValue)).toBeTrue();
         });
 

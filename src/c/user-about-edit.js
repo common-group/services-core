@@ -8,7 +8,7 @@ import inlineError from './inline-error';
 const userAboutEdit = {
     controller(args) {
         let deleteUser;
-        const user = args.user,
+        const user = args.user || {},
             fields = {
                 password: m.prop(''),
                 current_password: m.prop(''),
