@@ -24,6 +24,7 @@ import FollowFoundFriends from './root/follow-found-friends';
 import thankYou from './root/thank-you';
 import CheckEmail from './root/check-email';
 import projectEditUserAbout from './root/project-edit-user-about';
+import projectEditUserSettings from './root/project-edit-user-settings';
 import copyTextInput from './c/copy-text-input';
 
 const c = {
@@ -54,7 +55,8 @@ const c = {
         Footer: footer,
         FollowFoundFriends,
         CheckEmail,
-        projectEditUserAbout
+        projectEditUserAbout,
+        projectEditUserSettings
     }
 };
 

@@ -7,9 +7,7 @@ import userCreated from '../c/user-created';
 import userAboutEdit from '../c/user-about-edit';
 import userPrivateContributed from '../c/user-private-contributed';
 import userSettings from '../c/user-settings';
-import userBilling from '../c/user-billing';
 import userNotifications from '../c/user-notifications';
-import menu from '../root/menu';
 
 const usersEdit = {
     controller(args) {
@@ -37,10 +35,6 @@ const usersEdit = {
                     '#notifications': m(userNotifications, {
                         userId,
                         user
-                    }),
-                    '#billing': m(userBilling, {
-                        userId,
-                        user
                     })
                 };
 
@@ -59,7 +53,7 @@ const usersEdit = {
         return {
             displayTabContent,
             hash,
-            userDetails,
+            userDetails
         };
     },
 
@@ -67,9 +61,6 @@ const usersEdit = {
         const user = ctrl.userDetails();
 
         return m('div', [
-            m(menu, {
-                menuTransparency: true
-            }),
             m(userHeader, {
                 user,
                 hideDetails: true
@@ -89,13 +80,10 @@ const usersEdit = {
                               'Perfil Público'
                             ),
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#settings' ? '.selected' : '')}[data-target='#dashboard_settings'][href='#settings'][id='dashboard_settings_link']`,
-                                'Dados e endereço'
+                                'Dados financeiros'
                             ),
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
                                 'Notificações'
-                            ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#billing' ? '.selected' : '')}[data-target='#dashboard_billing'][href='#billing'][id='dashboard_billing_link']`,
-                                'Banco e cartões'
                             ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/pt/users/${user.id}']`, {
                                 config: m.route,

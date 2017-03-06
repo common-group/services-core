@@ -9,6 +9,7 @@ import usersVM from '../vms/user-vm';
 import faqBox from '../c/faq-box';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
+import UserOwnerBox from '../c/user-owner-box';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
@@ -185,22 +186,8 @@ const projectsPayment = {
                                         I18n.t('required', ctrl.scope())
                                     )
                                 ]),
-                                ((user.name && user.owner_document) ?
-                                 m('.card.card-terciary.u-radius.u-marginbottom-40', [
-                                     m('.w-row', [
-                                         m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
-                                             m(`img.thumb.u-margintop-10.u-round[src="${h.useAvatarOrDefault(user.profile_img_thumbnail)}"][width="100"]`)
-                                         ]),
-                                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
-                                             m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
-                                                 'Dados do apoiador ',
-                                                 m(`a.alt-link[href="/not-my-account?project_id=${project.project_id}"]`, 'Não é você?')
-                                             ]), m('.fontsize-base.fontweight-semibold', user.name),
-                                             m('label.field-label', `CPF/CNPJ: ${user.owner_document}`)
-                                         ])
-                                     ])
-                                 ]) : ''),
-                                m('.w-row.u-marginbottom-30', [
+                                ((user.name && user.owner_document) ? m(UserOwnerBox, {user: user, project: project})  : ''),
+                                m('.w-row.u-marginbottom-30',[
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'country\']', [
                                             'País / ',
