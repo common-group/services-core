@@ -36,13 +36,13 @@ const userPrivateContributed = {
             loader(false);
         }).catch(handleError);
 
-        contextVM.project_state(['successful']);
-        successfulPages.firstPage(contextVM.parameters()).then(() => {
+        contextVM.project_state(['failed']);
+        failedPages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
         }).catch(handleError);
 
-        contextVM.project_state(['failed']);
-        failedPages.firstPage(contextVM.parameters()).then(() => {
+        contextVM.project_state(['successful']).state(['paid', 'refunded', 'pending_refund']);
+        successfulPages.firstPage(contextVM.parameters()).then(() => {
             loader(false);
         }).catch(handleError);
 
