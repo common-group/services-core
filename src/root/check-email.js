@@ -32,7 +32,6 @@ const CheckEmail = {
                 window.setTimeout(() => {
                     hideAlert(true);
                     m.redraw(true);
-                    console.log(data);
                 }, 4000);
             })
         };

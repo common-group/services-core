@@ -261,8 +261,6 @@ const userSettings = {
             bankAccount = ctrl.bankAccount(),
             fields = ctrl.fields;
 
-        console.log(fields.bank_account_type());
-
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
                 message: 'As suas informações foram atualizadas'

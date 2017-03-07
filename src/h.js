@@ -346,7 +346,7 @@ const
             try {
                 window.FB.XFBML.parse();
             } catch (e) {
-                console.log(e);
+                //console.log(e);
             }
         };
 
@@ -603,7 +603,7 @@ const
                 if (!eventObj.user) { eventObj.user = getUser(); }
                 CatarseAnalytics.event(eventObj);
             } catch (e) {
-                console.error('[h.analyticsEvent] error:', e);
+                //console.error('[h.analyticsEvent] error:', e);
             }
             fn();
         };
