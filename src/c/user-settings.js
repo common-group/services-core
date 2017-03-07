@@ -52,8 +52,8 @@ const userSettings = {
               countries = m.prop(),
               states = m.prop(),
               loader = m.prop(true),
-              showSuccess = m.prop(false),
-              showError = m.prop(false),
+              showSuccess = h.toggleProp(false, true),
+              showError = h.toggleProp(false, true),
               countriesLoader = postgrest.loader(models.country.getPageOptions()),
               statesLoader = postgrest.loader(models.state.getPageOptions()),
               phoneMask = _.partial(h.mask, '(99) 9999-99999'),
@@ -147,8 +147,9 @@ const userSettings = {
                       config: h.setCsrfToken
                   }).then(() => {
                       loading(false);
-                      showSuccess(true);
-                      m.redraw();
+                      if(!showSuccess()) {
+                          showSuccess.toggle();
+                      }
                   }).catch((err) => {
                       if (_.isArray(err.errors)) {
                           error(err.errors.join('<br>'));
@@ -156,8 +157,12 @@ const userSettings = {
                           error('Erro ao atualizar informações.');
                       }
                       loading(false);
-                      showError(true);
-                      m.redraw();
+                      if(showSuccess()) {
+                          showSuccess.toggle();
+                      }
+                      if(!showError()) {
+                          showError.toggle();
+                      }
                   });
               },
               validateDocument = () => {
@@ -176,9 +181,8 @@ const userSettings = {
                   // TODO: this form validation should be abstracted/merged together with others
                   if (!validateDocument()) {
                       fields.errors().push({field: 'owner_document', message: 'CPF/CNPJ inválido'});
-                      error('CPF/CNPJ inválido');
-                      showError(true);
                   } else {
+                      fields.errors([]);
                       loading(true);
                       updateUserData(user_id);
                   }
@@ -264,10 +268,12 @@ const userSettings = {
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: 'As suas informações foram atualizadas'
+                message: 'As suas informações foram atualizadas',
+                toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
                 message: m.trust(ctrl.error()),
+                toggleOpt: ctrl.showError,
                 error: true
             }) : ''),
             m('form.w-form', {
