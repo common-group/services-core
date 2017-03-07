@@ -1,4 +1,5 @@
 import m from 'mithril';
+import h from '../h';
 import userVM from '../vms/user-vm';
 import userAboutEdit from '../c/user-about-edit';
 
@@ -10,14 +11,14 @@ const projectEditUserAbout = {
     },
 
     view(ctrl, args) {
-        return m(userAboutEdit, {
+        return (ctrl.user() ? m(userAboutEdit, {
             user: ctrl.user(),
             userId: args.user_id,
             useFloatBtn: true,
             hideDisableAcc: true,
             hideCoverImg: true,
             hidePasswordChange: true
-        });
+        }) : m('div', h.loader()) );
     }
 };
 
