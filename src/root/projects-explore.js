@@ -315,7 +315,7 @@ const projectsExplore = {
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             hasSpecialFooter
-                                ? m('a.w-button.btn.btn-large', { href: ctrl.externalLinkCategories[categoryId()].link }, ctrl.externalLinkCategories[categoryId()].cta)
+                                ? m('a.w-button.btn.btn-large', { href: ctrl.externalLinkCategories[categoryId()].link+'?ref=ctrse_explore' }, ctrl.externalLinkCategories[categoryId()].cta)
                                 : m('a.w-button.btn.btn-large', { href: '/start?ref=ctrse_explore' }, 'Aprenda como')
                         ])
                     ])
