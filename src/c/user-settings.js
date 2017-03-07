@@ -166,9 +166,9 @@ const userSettings = {
                         striped = String(document).replace(/[\.|\-|\/]*/g,'');
                   let isValid = false, errorMessage = '';
 
-                  if (document.length > 14) {
+                  if (fields.account_type() != 'pf') {
                       return h.validateCnpj(document);
-                  } else if (document.length > 0) {
+                  } else {
                       return h.validateCpf(striped);
                   }
                   return void(0);
@@ -191,7 +191,7 @@ const userSettings = {
               applyBirthDateMask = _.compose(fields.birth_date, birthDayMask),
               applyPhoneMask = _.compose(fields.phonenumber, phoneMask),
               applyDocumentMask = (value) => {
-                  if(value.length > 14) {
+                  if(fields.account_type() != 'pf') {
                       isCnpj(true);
                       fields.owner_document(documentCompanyMask(value));
                   } else  {
