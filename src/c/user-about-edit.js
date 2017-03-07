@@ -302,7 +302,7 @@ const userAboutEdit = {
                                                       '  Nome no perfil público'
                                                     ),
                                                 m('label.field-label.fontsize-smallest.fontcolor-secondary',
-                                                      '  Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a públicação de um projeto.'
+                                                      'Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a publicação de um projeto.'
                                                     )
                                             ]
                                             ),
