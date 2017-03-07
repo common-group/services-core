@@ -15,7 +15,7 @@ const userSettings = {
               bankAccount = m.prop({}),
               fields = {
                   owner_document: m.prop(user.owner_document || ''),
-                  country_id: m.prop(user.address.country_id || ''),
+                  country_id: m.prop(user.address.country_id || 36),
                   street: m.prop(user.address.street || ''),
                   number: m.prop(user.address.number || ''),
                   city: m.prop(user.address.city || ''),
@@ -218,6 +218,8 @@ const userSettings = {
                 fields.bank_id(bankAccount().bank_id);
                 fields.bank_account_type(bankAccount().account_type);
                 bankCode(bankAccount().bank_id);
+            } else {
+                fields.bank_account_type('conta_corrente');
             }
         }).catch(handleError);
 
