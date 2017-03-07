@@ -7085,12 +7085,12 @@ var userAboutEdit = {
             password: m.prop(''),
             current_password: m.prop(''),
             uploaded_image: m.prop(userVM.displayImage(user)),
-            cover_image: m.prop(user.profile_cover_image),
+            cover_image: m.prop(user.profile_cover_image || ''),
             email: m.prop(''),
-            permalink: m.prop(user.permalink),
-            public_name: m.prop(user.public_name),
-            facebook_link: m.prop(user.facebook_link),
-            twitter: m.prop(user.twitter_username),
+            permalink: m.prop(user.permalink || ''),
+            public_name: m.prop(user.public_name || ''),
+            facebook_link: m.prop(user.facebook_link || ''),
+            twitter: m.prop(user.twitter_username || ''),
             links: m.prop(user.links || []),
             about_html: m.prop(user.about_html || ''),
             email_confirmation: m.prop('')
@@ -7311,7 +7311,7 @@ var userAboutEdit = {
             },
             onblur: ctrl.validateEmailConfirmation,
             onchange: m.withAttr('value', fields.email_confirmation)
-        })]), ctrl.emailHasError() ? m(inlineError, { message: 'Confirmação de email está incorreta.' }) : ''])]), m('.w-row.u-marginbottom-30.card.card-terciary', [m('.w-col.w-col-5.w-sub-col', [m('label.field-label.fontweight-semibold', '  Nome no perfil público'), m('label.field-label.fontsize-smallest.fontcolor-secondary', '  Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a realização de um apoio ou públicação de um projeto.')]), m('.w-col.w-col-7', m('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
+        })]), ctrl.emailHasError() ? m(inlineError, { message: 'Confirmação de email está incorreta.' }) : ''])]), m('.w-row.u-marginbottom-30.card.card-terciary', [m('.w-col.w-col-5.w-sub-col', [m('label.field-label.fontweight-semibold', '  Nome no perfil público'), m('label.field-label.fontsize-smallest.fontcolor-secondary', '  Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a públicação de um projeto.')]), m('.w-col.w-col-7', m('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
             name: 'user[public_name]',
             value: fields.public_name(),
             onchange: m.withAttr('value', fields.public_name)
@@ -10764,14 +10764,14 @@ var projectEditUserAbout = {
         };
     },
     view: function view(ctrl, args) {
-        return m(userAboutEdit, {
+        return ctrl.user() ? m(userAboutEdit, {
             user: ctrl.user(),
             userId: args.user_id,
             useFloatBtn: true,
             hideDisableAcc: true,
             hideCoverImg: true,
             hidePasswordChange: true
-        });
+        }) : m('div', h.loader());
     }
 };
 
