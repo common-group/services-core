@@ -261,7 +261,8 @@ const userSettings = {
     view(ctrl, args) {
         let user = ctrl.user,
             bankAccount = ctrl.bankAccount(),
-            fields = ctrl.fields;
+            fields = ctrl.fields,
+            disableFields = (user.is_admin_role ? false : (!_.isEmpty(user.name) && !_.isEmpty(user.owner_document)));
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
@@ -289,9 +290,10 @@ const userSettings = {
                               m('.w-row', [
                                   m(`.w-col.w-col-6.w-sub-col`,
                                     m('.input.select.required.user_bank_account_bank_id', [
-                                        m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_bank_id\']', {
+                                        m(`select.select.required.w-input.text-field.bank-select.positive${(disableFields ? '.text-field-neutral' : '')}[id='user_bank_account_attributes_bank_id']`, {
                                             name: 'user[bank_account_attributes][bank_id]',
-                                            onchange: m.withAttr('value', fields.account_type)
+                                            onchange: m.withAttr('value', fields.account_type),
+                                            disabled: disableFields
                                         }, [
                                             m('option[value=\'pf\']', {selected: fields.account_type() === 'pf'}, 'Pessoa Física'),
                                             m('option[value=\'pj\']', {selected: fields.account_type() === 'pj'}, 'Pessoa Jurídica'),
@@ -305,10 +307,11 @@ const userSettings = {
                                       m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
                                         `Nome completo${fields.account_type() == 'pf' ? '' : '/Razão Social'}`
                                        ),
-                                      m(`input.string.required.w-input.text-field.positive[id='user_bank_account_attributes_owner_name'][type='text']`, {
+                                      m(`input.string.required.w-input.text-field.positive${(disableFields ? '.text-field-neutral' : '')}[id='user_bank_account_attributes_owner_name'][type='text']`, {
                                           value: fields.name(),
                                           name: 'user[name]',
-                                          onchange: m.withAttr('value', fields.name)
+                                          onchange: m.withAttr('value', fields.name),
+                                          disabled: disableFields
                                       })
                                   ]),
                                   m('.w-col.w-col-6', [
@@ -317,9 +320,10 @@ const userSettings = {
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
                                                 `${fields.account_type() == 'pf' ? 'CPF' : 'CNPJ'}`
                                                ),
-                                              m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
+                                              m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-neutral' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                   value: fields.owner_document(),
                                                   class: ctrl.fieldHasError('owner_document') ? 'error' : false,
+                                                  disabled: disableFields,
                                                   name: 'user[cpf]',
                                                   onchange: m.withAttr('value', ctrl.applyDocumentMask),
                                                   onkeyup: m.withAttr('value', ctrl.applyDocumentMask)
@@ -552,7 +556,7 @@ const userSettings = {
                                }) : '')
                           ]),
                           m('.w-form.card.card-terciary.u-marginbottom-20', [
-                              m('.fontsize-base.fontweight-semibold',
+                              m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                 'Endereço'
                                ),
                               m('.w-row', [
