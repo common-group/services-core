@@ -282,7 +282,7 @@ const userSettings = {
                                 'Dados financeiros'
                                ),
                               m('.fontsize-small.u-marginbottom-20', [
-                                  m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>IMPORTANTE</strong> Nome completo/Razão social e CPF/CNPJ <strong>não poderão ser modificados</strong> após a publicação de um projeto ou a confirmação de um apoio.')
+                                  m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>Importante:</strong> Nome completo/Razão social e CPF/CNPJ não poderão ser modificados após a publicação de um projeto ou a confirmação de um apoio.')
                               ]),
                               m('.divider.u-marginbottom-20'),
                               m('.w-row', [
@@ -332,7 +332,7 @@ const userSettings = {
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
                                                 'Data de nascimento'
                                                ),
-                                              m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
+                                              m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-neutral' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                   value: fields.birth_date(),
                                                   name: 'user[birth_date]',
                                                   disabled: (disableFields && !_.isEmpty(user.birth_date)),
@@ -559,7 +559,7 @@ const userSettings = {
                                 'Endereço'
                                ),
                               m('.fontsize-small.u-marginbottom-20.u-marginbottom-20', [
-                                  'A informação abaixo será utilizada para entrega de recompensas e emissão de nota fiscal (caso aplicável).'
+                                  'Os dados abaixo serão utilizados para envio de recompensas e para emissão de Nota Fiscal, caso aplicável.'
                               ]),
                               m('.w-row', [
                                   m('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [
