@@ -7753,7 +7753,7 @@ var userSettings = {
             onsubmit: ctrl.onSubmit
         }, [m('div', [m('.w-container', m('.w-col.w-col-10.w-col-push-1',
         //( _.isEmpty(fields.name()) && _.isEmpty(fields.owner_document()) ? '' : m(UserOwnerBox, {user: user}) ),
-        m('.w-form.card.card-terciary', [m('.fontsize-base.fontweight-semibold', 'Dados financeiros'), m('.fontsize-small.u-marginbottom-20', ['Essa serão as informações para repasse de recursos captados na plataforma ou reembolsos de apoios realizados via boleto bancários para projetos não-financiados.']), m('.divider.u-marginbottom-20'), m('.w-row', [m('.w-col.w-col-6.w-sub-col', m('.input.select.required.user_bank_account_bank_id', [m('select.select.required.w-input.text-field.bank-select.positive' + (disableFields ? '.text-field-neutral' : '') + '[id=\'user_bank_account_attributes_bank_id\']', {
+        m('.w-form.card.card-terciary', [m('.fontsize-base.fontweight-semibold', 'Dados financeiros'), m('.fontsize-small.u-marginbottom-20', [m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>IMPORTANTE</strong> Nome completo/Razão social e CPF/CNPJ <strong>não poderão ser modificados</strong> após serem salvos.')]), m('.divider.u-marginbottom-20'), m('.w-row', [m('.w-col.w-col-6.w-sub-col', m('.input.select.required.user_bank_account_bank_id', [m('select.select.required.w-input.text-field.bank-select.positive' + (disableFields ? '.text-field-neutral' : '') + '[id=\'user_bank_account_attributes_bank_id\']', {
             name: 'user[bank_account_attributes][bank_id]',
             onchange: m.withAttr('value', fields.account_type),
             disabled: disableFields
@@ -7838,7 +7838,7 @@ var userSettings = {
         })])]))]), bankAccount.bank_account_id ? m('input[id=\'user_bank_account_attributes_id\'][type=\'hidden\']', {
             name: 'user[bank_account_attributes][id]',
             value: fields.bank_account_id()
-        }) : '']), m('.w-form.card.card-terciary.u-marginbottom-20', [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', 'Endereço'), m('.w-row', [m('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [m('label.field-label', 'País'), m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
+        }) : '']), m('.w-form.card.card-terciary.u-marginbottom-20', [m('.fontsize-base.fontweight-semibold', 'Endereço'), m('.fontsize-small.u-marginbottom-20.u-marginbottom-20', ['A informação abaixo será utilizada para entrega de recompensas e emissão de nota fiscal (caso aplicável).']), m('.w-row', [m('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [m('label.field-label', 'País'), m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
             onchange: m.withAttr('value', fields.country_id)
         }, [m('option[value=\'\']'), !_$1.isEmpty(ctrl.countries()) ? _$1.map(ctrl.countries(), function (country) {
             return m('option' + (country.id == fields.country_id() ? '[selected="selected"]' : ''), {
