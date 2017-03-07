@@ -61,7 +61,6 @@ const userSettings = {
               documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
               zipcodeMask = _.partial(h.mask, '99999-999'),
               birthDayMask = _.partial(h.mask, '99/99/9999'),
-              isCnpj = m.prop(false),
               creditCards = m.prop(),
               toDeleteCard = m.prop(-1),
               bankInput = m.prop(''),
@@ -192,10 +191,8 @@ const userSettings = {
               applyPhoneMask = _.compose(fields.phonenumber, phoneMask),
               applyDocumentMask = (value) => {
                   if(fields.account_type() != 'pf') {
-                      isCnpj(true);
                       fields.owner_document(documentCompanyMask(value));
                   } else  {
-                      isCnpj(false);
                       fields.owner_document(documentMask(value));
                   }
 
@@ -262,7 +259,8 @@ const userSettings = {
         let user = ctrl.user,
             bankAccount = ctrl.bankAccount(),
             fields = ctrl.fields,
-            disableFields = (user.is_admin_role ? false : (!_.isEmpty(user.name) && !_.isEmpty(user.owner_document)));
+            hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),
+            disableFields = (user.is_admin_role ? false : (hasContributedOrPublished && !_.isEmpty(user.name) && !_.isEmpty(user.owner_document)));
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
@@ -284,7 +282,7 @@ const userSettings = {
                                 'Dados financeiros'
                                ),
                               m('.fontsize-small.u-marginbottom-20', [
-                                  m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>IMPORTANTE</strong> Nome completo/Razão social e CPF/CNPJ <strong>não poderão ser modificados</strong> após serem salvos.')
+                                  m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>IMPORTANTE</strong> Nome completo/Razão social e CPF/CNPJ <strong>não poderão ser modificados</strong> após a publicação de um projeto ou a confirmação de um apoio.')
                               ]),
                               m('.divider.u-marginbottom-20'),
                               m('.w-row', [
@@ -297,7 +295,7 @@ const userSettings = {
                                         }, [
                                             m('option[value=\'pf\']', {selected: fields.account_type() === 'pf'}, 'Pessoa Física'),
                                             m('option[value=\'pj\']', {selected: fields.account_type() === 'pj'}, 'Pessoa Jurídica'),
-                                            m('option[value=\'mei\']', {selected: fields.account_type() === 'mei'}, 'Pessoa Jurídica - MEI'),
+                                            m('option[value=\'mei\']', {selected: fields.account_type() === 'mei'}, 'Pessoa Jurídica (Micro Empreendedor Individual - MEI)'),
                                         ])
                                     ])
                                    ),
@@ -337,6 +335,7 @@ const userSettings = {
                                               m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                                                   value: fields.birth_date(),
                                                   name: 'user[birth_date]',
+                                                  disabled: (disableFields && !_.isEmpty(user.birth_date)),
                                                   onchange: m.withAttr('value', ctrl.applyBirthDateMask),
                                                   onkeyup: m.withAttr('value', ctrl.applyBirthDateMask)
                                               })
