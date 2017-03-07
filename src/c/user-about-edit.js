@@ -200,7 +200,8 @@ const userAboutEdit = {
     },
     view(ctrl, args) {
         const user = args.user || {},
-            fields = ctrl.fields;
+              fields = ctrl.fields,
+              disableField = user.is_admin_role ? false : (user.total_published_projects >= 1 && !_.isEmpty(user.public_name));
 
         return m('#about-tab.content', [
             (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
@@ -307,10 +308,11 @@ const userAboutEdit = {
                                             ]
                                             ),
                                         m('.w-col.w-col-7',
-                                                m('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
+                                          m(`input.string.optional.w-input.text-field.positive${(disableField ? '.text-field-neutral' : '')}[id="user_public_name"][type="text"]`, {
                                                     name: 'user[public_name]',
                                                     value: fields.public_name(),
-                                                    onchange: m.withAttr('value', fields.public_name)
+                                                    onchange: m.withAttr('value', fields.public_name),
+                                                    disabled: disableField
                                                 })
                                             )
                                     ]
