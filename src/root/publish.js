@@ -71,7 +71,7 @@ const publish = {
                       ]),
                       m('div', [
                           m('span.fontweight-semibold', 'Você não poderá alterar'),
-                          ': a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria do projeto, a meta de arrecadação, prazo escolhido e as recompensas onde existirem apoios já efetuados.',
+                          ': a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria do projeto, a meta de arrecadação,  o prazo (caso já tenha definido), e as recompensas onde existirem apoios já efetuados.',
                           m('br'), m('br'),
                           m('span.fontweight-semibold', 'Você poderá alterar'),
                           ': o vídeo principal da campanha, o conteúdo da descrição, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação'
@@ -117,9 +117,9 @@ const publish = {
                       m('div', [
                           m('span.fontsize-smallest.fontcolor-secondary', '6/9'),
                           ' ',
-                          m('span.fontweight-semibold', 'Regras do repasse e reembolso')
+                          m('span.fontweight-semibold', 'Prazo para repasse')
                       ]),
-                      m('div', m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade<strong>. Após essa confirmação, o Catarse depositará o valor arrecadado, já descontada a taxa, na sua conta em 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. <a href="http://suporte.catarse.me/hc/pt-br/articles/202365507" target="blank">Saiba mais sobre o processo de reembolso</a>'))
+                      m('div', m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em até 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))
                   ]),
                   m('.w-col.w-col-11', [
                       m('div', [
@@ -211,7 +211,7 @@ const publish = {
                           ' ',
                           m('span', { style: { 'font-weight': ' 600' } }, 'Regras do repasse e reembolso'),
                           m('div', [
-                              m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade<strong>. Após essa confirmação, o Catarse depositará o valor arrecadado, já descontada a taxa, na sua conta em 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. <a href="http://suporte.catarse.me/hc/pt-br/articles/202365507" target="blank">Saiba mais sobre o processo de reembolso</a>')
+                              m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após essa confirmação, o Catarse depositará o valor arrecadado, já descontada a taxa, na sua conta em 10 dias úteis. Caso o projeto não atinja 100% da meta dentro do prazo, o Catarse irá reembolsar os apoiadores. <a href="http://suporte.catarse.me/hc/pt-br/articles/202365507" target="blank">Saiba mais sobre o processo de reembolso</a>')
                           ])
                       ]),
                       m('div', '')
