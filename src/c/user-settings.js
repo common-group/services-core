@@ -291,9 +291,9 @@ const userSettings = {
                                             name: 'user[bank_account_attributes][bank_id]',
                                             onchange: m.withAttr('value', fields.account_type)
                                         }, [
-                                            m('option[value=\'pf\']', {selected: fields.account_type() === 'pf'}, 'Pessoa fisica'),
-                                            m('option[value=\'pj\']', {selected: fields.account_type() === 'pj'}, 'Pessoa juririca'),
-                                            m('option[value=\'mei\']', {selected: fields.account_type() === 'mei'}, 'Pessoa juridica - MEI'),
+                                            m('option[value=\'pf\']', {selected: fields.account_type() === 'pf'}, 'Pessoa Física'),
+                                            m('option[value=\'pj\']', {selected: fields.account_type() === 'pj'}, 'Pessoa Jurídica'),
+                                            m('option[value=\'mei\']', {selected: fields.account_type() === 'mei'}, 'Pessoa Jurídica - MEI'),
                                         ])
                                     ])
                                    ),
