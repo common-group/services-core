@@ -284,7 +284,7 @@ const userSettings = {
                                 'Dados financeiros'
                                ),
                               m('.fontsize-small.u-marginbottom-20', [
-                                  'Essa serão as informações para repasse de recursos captados na plataforma ou reembolsos de apoios realizados via boleto bancários para projetos não-financiados.'
+                                  m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>IMPORTANTE</strong> Nome completo/Razão social e CPF/CNPJ <strong>não poderão ser modificados</strong> após serem salvos.')
                               ]),
                               m('.divider.u-marginbottom-20'),
                               m('.w-row', [
@@ -556,9 +556,12 @@ const userSettings = {
                                }) : '')
                           ]),
                           m('.w-form.card.card-terciary.u-marginbottom-20', [
-                              m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                              m('.fontsize-base.fontweight-semibold',
                                 'Endereço'
                                ),
+                              m('.fontsize-small.u-marginbottom-20.u-marginbottom-20', [
+                                  'A informação abaixo será utilizada para entrega de recompensas e emissão de nota fiscal (caso aplicável).'
+                              ]),
                               m('.w-row', [
                                   m('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [
                                       m('label.field-label',
