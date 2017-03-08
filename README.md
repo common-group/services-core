@@ -35,3 +35,34 @@ Currently we are moving our code to ES6 + Flowtype. All new components should be
 ## Troubleshooting
 
 If you can't run `gulp` try to install it with `npm install -g gulp`
+
+## Project Architecture
+
+Gulp compiles the code found inside the /src directory and outputs into the /dist folder as catarse.js and catarse.min.js
+
+There are 3 different folders: /c, /root and /vm. 
+
+/c
+
+Small UI components: self-contained javascript modules that contain specific UI and behavior
+root - Root components are bigger then regular components. They are the main component and the ones that are mounted (directly or by mithril's router). They also own their data, which should flow in one direction to it's children components (kind of like a Flux implementation). In our projects, they are related to endpoints (e.g.: when you hit a /project-permalink endpoint the JS will mount the projectsShow root component)
+
+/root
+
+Core components [need fuller description here...]
+
+/vm
+
+View-models. Component controllers ideally should not deal with nothing more then the ocmponent's user interface behavior. All other type of data manipulation should be handled by a view-model
+
+/c.js
+
+The entry point we use to expose the root components to the application window.c
+
+/h.js
+
+Module containing helper methods used across components. stuff like datetime formatting and other types of tasks that are common to all components
+
+/error.js
+
+Module that implements an error interface to be used across components
