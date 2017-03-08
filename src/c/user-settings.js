@@ -230,6 +230,10 @@ const userSettings = {
         countriesLoader.load().then((data) => countries(_.sortBy(data, 'name_en')));
         statesLoader.load().then(states);
 
+        if(parsedErrors.hasError('country_id')) {
+            parsedErrors.inlineError('country_id', false);
+        }
+
         return {
             handleError,
             applyDocumentMask,
