@@ -164,29 +164,9 @@ const userSettings = {
                       }
                   });
               },
-              validateDocument = () => {
-                  const document = fields.owner_document(),
-                        striped = String(document).replace(/[\.|\-|\/]*/g,'');
-                  let isValid = false, errorMessage = '';
-
-                  if (fields.account_type() != 'pf') {
-                      return h.validateCnpj(document);
-                  } else {
-                      return h.validateCpf(striped);
-                  }
-                  return void(0);
-              },
               onSubmit = () => {
-                  // TODO: this form validation should be abstracted/merged together with others
-                  if (!validateDocument()) {
-                      error('Erro ao atualizar informações.');
-                      parsedErrors('owner_document', 'CPF/CNPJ inválido');
-                      parsedErrors.inlineError("owner_document", true);
-                      showError(true);
-                  } else {
-                      loading(true);
-                      updateUserData(user_id);
-                  }
+                  loading(true);
+                  updateUserData(user_id);
 
                   m.redraw();
                   return false;
