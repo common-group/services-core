@@ -36,17 +36,7 @@ const userSettings = {
                   state_inscription: m.prop(''),
                   birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
                   account_type: m.prop(user.account_type || ''),
-                  errors: m.prop([]),
                   bank_account_type: m.prop('')
-              },
-              fieldHasError = (fieldName) => {
-                  const fieldWithError = _.findWhere(fields.errors(), {
-                      field: fieldName
-                  });
-
-                  return fieldWithError ? m.component(inlineError, {
-                      message: fieldWithError.message
-                  }) : '';
               },
               loading = m.prop(false),
               user_id = args.userId,
@@ -140,6 +130,10 @@ const userSettings = {
                       userData.bank_account_attributes['id'] = fields.bank_account_id().toString();
                   }
 
+                  if(args.publishingProject) {
+                      userData["publishing_project"] = true;
+                  }
+
                   return m.request({
                       method: 'PUT',
                       url: `/users/${user_id}.json`,
@@ -185,11 +179,11 @@ const userSettings = {
               onSubmit = () => {
                   // TODO: this form validation should be abstracted/merged together with others
                   if (!validateDocument()) {
+                      error('Erro ao atualizar informações.');
                       parsedErrors('owner_document', 'CPF/CNPJ inválido');
                       parsedErrors.inlineError("owner_document", true);
                       showError(true);
                   } else {
-                      fields.errors([]);
                       loading(true);
                       updateUserData(user_id);
                   }
@@ -263,7 +257,6 @@ const userSettings = {
             popularBanks,
             applyBirthDateMask,
             loading,
-            fieldHasError,
             parsedErrors
         };
     },
