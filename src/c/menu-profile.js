@@ -95,7 +95,7 @@ const menuProfile = {
                                                 ),
                                                 m('li.lineheight-looser',
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#settings']`,
-                                                        `Dados financeiros`
+                                                        `Dados cadastrais`
                                                     )
                                                 )
                                             ]

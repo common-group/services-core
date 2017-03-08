@@ -2,9 +2,9 @@ import m from 'mithril';
 import h from '../h';
 
 const popNotification = {
-    controller() {
+    controller(args) {
         return {
-            displayNotification: h.toggleProp(true, false)
+            displayNotification: args.toggleOpt || h.toggleProp(true, false)
         };
     },
     view(ctrl, args) {
