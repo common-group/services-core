@@ -7,9 +7,11 @@ import h from '../h';
 import popNotification from './pop-notification';
 import UserOwnerBox from './user-owner-box';
 import inlineError from './inline-error';
+import userSettingsVM from '../vms/user-settings-vm';
 
 const userSettings = {
     controller(args) {
+        let parsedErrors = userSettingsVM.mapRailsErrors(args.rails_errors);
         let deleteFormSubmit;
         const user = args.user,
               bankAccount = m.prop({}),
@@ -34,17 +36,7 @@ const userSettings = {
                   state_inscription: m.prop(''),
                   birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
                   account_type: m.prop(user.account_type || ''),
-                  errors: m.prop([]),
                   bank_account_type: m.prop('')
-              },
-              fieldHasError = (fieldName) => {
-                  const fieldWithError = _.findWhere(fields.errors(), {
-                      field: fieldName
-                  });
-
-                  return fieldWithError ? m.component(inlineError, {
-                      message: fieldWithError.message
-                  }) : '';
               },
               loading = m.prop(false),
               user_id = args.userId,
@@ -138,6 +130,10 @@ const userSettings = {
                       userData.bank_account_attributes['id'] = fields.bank_account_id().toString();
                   }
 
+                  if(args.publishingProject) {
+                      userData["publishing_project"] = true;
+                  }
+
                   return m.request({
                       method: 'PUT',
                       url: `/users/${user_id}.json`,
@@ -146,16 +142,19 @@ const userSettings = {
                       },
                       config: h.setCsrfToken
                   }).then(() => {
+                      if(parsedErrors) {
+                          parsedErrors.resetFieldErrors();
+                      }
                       loading(false);
                       if(!showSuccess()) {
                           showSuccess.toggle();
                       }
                   }).catch((err) => {
-                      if (_.isArray(err.errors)) {
-                          error(err.errors.join('<br>'));
-                      } else {
-                          error('Erro ao atualizar informações.');
+                      if(parsedErrors) {
+                          parsedErrors.resetFieldErrors();
                       }
+                      parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
+                      error('Erro ao atualizar informações.');
                       loading(false);
                       if(showSuccess()) {
                           showSuccess.toggle();
@@ -180,9 +179,11 @@ const userSettings = {
               onSubmit = () => {
                   // TODO: this form validation should be abstracted/merged together with others
                   if (!validateDocument()) {
-                      fields.errors().push({field: 'owner_document', message: 'CPF/CNPJ inválido'});
+                      error('Erro ao atualizar informações.');
+                      parsedErrors('owner_document', 'CPF/CNPJ inválido');
+                      parsedErrors.inlineError("owner_document", true);
+                      showError(true);
                   } else {
-                      fields.errors([]);
                       loading(true);
                       updateUserData(user_id);
                   }
@@ -229,6 +230,10 @@ const userSettings = {
         countriesLoader.load().then((data) => countries(_.sortBy(data, 'name_en')));
         statesLoader.load().then(states);
 
+        if(parsedErrors.hasError('country_id')) {
+            parsedErrors.inlineError('country_id', false);
+        }
+
         return {
             handleError,
             applyDocumentMask,
@@ -256,7 +261,7 @@ const userSettings = {
             popularBanks,
             applyBirthDateMask,
             loading,
-            fieldHasError
+            parsedErrors
         };
     },
     view(ctrl, args) {
@@ -314,9 +319,11 @@ const userSettings = {
                                       m(`input.string.required.w-input.text-field.positive${(disableFields ? '.text-field-neutral' : '')}[id='user_bank_account_attributes_owner_name'][type='text']`, {
                                           value: fields.name(),
                                           name: 'user[name]',
+                                          class: ctrl.parsedErrors.hasError('name') ? 'error' : false,
                                           onchange: m.withAttr('value', fields.name),
                                           disabled: disableFields
-                                      })
+                                      }),
+                                      ctrl.parsedErrors.inlineError("name")
                                   ]),
                                   m('.w-col.w-col-6', [
                                       m('.w-row', [
@@ -326,13 +333,13 @@ const userSettings = {
                                                ),
                                               m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-neutral' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                   value: fields.owner_document(),
-                                                  class: ctrl.fieldHasError('owner_document') ? 'error' : false,
+                                                  class: ctrl.parsedErrors.hasError('owner_document') ? 'error' : false,
                                                   disabled: disableFields,
                                                   name: 'user[cpf]',
                                                   onchange: m.withAttr('value', ctrl.applyDocumentMask),
                                                   onkeyup: m.withAttr('value', ctrl.applyDocumentMask)
                                               }),
-                                              ctrl.fieldHasError('owner_document')
+                                              ctrl.parsedErrors.inlineError("owner_document")
                                           ]),
                                           m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', (fields.account_type() == 'pf' ? [
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
@@ -341,19 +348,23 @@ const userSettings = {
                                               m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-neutral' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                   value: fields.birth_date(),
                                                   name: 'user[birth_date]',
+                                                  class: ctrl.parsedErrors.hasError('birth_date') ? 'error' : false,
                                                   disabled: (disableFields && !_.isEmpty(user.birth_date)),
                                                   onchange: m.withAttr('value', ctrl.applyBirthDateMask),
                                                   onkeyup: m.withAttr('value', ctrl.applyBirthDateMask)
-                                              })
+                                              }),
+                                              ctrl.parsedErrors.inlineError("birth_date")
                                           ] : [
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
                                                 'Inscrição Estadual'
                                                ),
                                               m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                                                   value: fields.state_inscription(),
+                                                  class: ctrl.parsedErrors.hasError('state_inscription') ? 'error' : false,
                                                   name: 'user[state_inscription]',
                                                   onchange: m.withAttr('value', fields.state_inscription)
-                                              })
+                                              }),
+                                              ctrl.parsedErrors.inlineError("state_inscription")
                                           ]))
                                       ])
                                   ])
@@ -367,6 +378,7 @@ const userSettings = {
                                          ),
                                         m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_bank_id\']', {
                                             name: 'user[bank_account_attributes][bank_id]',
+                                            class: ctrl.parsedErrors.hasError('bank_id') ? 'error' : false,
                                             onchange: (e) => {
                                                 m.withAttr('value', ctrl.bankCode)(e);
                                                 ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
@@ -394,7 +406,8 @@ const userSettings = {
                                         ]),
                                         m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_bank_account_attributes_bank_id\']',
                                           ' Selecione um banco'
-                                         )
+                                         ),
+                                        ctrl.parsedErrors.inlineError("bank_id")
                                     ])
                                    ),
                                   (ctrl.showOtherBanksInput() ?
@@ -495,9 +508,11 @@ const userSettings = {
                                              ),
                                             m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_agency\'][type=\'text\']', {
                                                 value: fields.agency(),
+                                                class: ctrl.parsedErrors.hasError('agency') ? 'error' : false,
                                                 name: 'user[bank_account_attributes][agency]',
                                                 onchange: m.withAttr('value', fields.agency)
-                                            })
+                                            }),
+                                            ctrl.parsedErrors.inlineError("agency")
                                         ]),
                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                             m('label.text.optional.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_agency_digit\']',
@@ -505,9 +520,11 @@ const userSettings = {
                                              ),
                                             m('input.string.optional.w-input.text-field.positive[id=\'user_bank_account_attributes_agency_digit\'][type=\'text\']', {
                                                 value: fields.agency_digit(),
+                                                class: ctrl.parsedErrors.hasError('agency_digit') ? 'error' : false,
                                                 name: 'user[bank_account_attributes][agency_digit]',
                                                 onchange: m.withAttr('value', fields.agency_digit)
-                                            })
+                                            }),
+                                            ctrl.parsedErrors.inlineError("agency_digit")
                                         ])
                                     ])
                                    )
@@ -520,13 +537,15 @@ const userSettings = {
                                       m('.input.select.required.user_bank_account_account_type', [
                                           m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_account_type\']', {
                                               name: 'user[bank_account_attributes][account_type]',
+                                              class: ctrl.parsedErrors.hasError('account_type') ? 'error' : false,
                                               onchange: m.withAttr('value', fields.bank_account_type)
                                           }, [
                                               m('option[value=\'conta_corrente\']', {selected: fields.bank_account_type() === 'conta_corrente'}, 'Conta corrente'),
                                               m('option[value=\'conta_poupanca\']', {Selected: fields.bank_account_type() === 'conta_poupanca'}, 'Conta poupança'),
                                               m('option[value=\'conta_corrente_conjunta\']', {selected: fields.bank_account_type() === 'conta_corrente_conjunta'}, 'Conta corrente conjunta'),
                                               m('option[value=\'conta_poupanca_conjunta\']', {Selected: fields.bank_account_type() === 'conta_poupanca_conjunta'}, 'Conta poupança conjunta'),
-                                          ])
+                                          ]),
+                                          ctrl.parsedErrors.inlineError("account_type")
                                       ])
                                   ]),
                                   m('.w-col.w-col-6',
@@ -537,9 +556,11 @@ const userSettings = {
                                              ),
                                             m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account\'][type=\'text\']', {
                                                 value: fields.account(),
+                                                class: ctrl.parsedErrors.hasError('account') ? 'error' : false,
                                                 onchange: m.withAttr('value', fields.account),
                                                 name: 'user[bank_account_attributes][account]'
-                                            })
+                                            }),
+                                            ctrl.parsedErrors.inlineError("account")
                                         ]),
                                         m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                             m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_account_digit\']',
@@ -547,9 +568,11 @@ const userSettings = {
                                              ),
                                             m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account_digit\'][type=\'text\']', {
                                                 value: fields.account_digit(),
+                                                class: ctrl.parsedErrors.hasError('account_digit') ? 'error' : false,
                                                 onchange: m.withAttr('value', fields.account_digit),
                                                 name: 'user[bank_account_attributes][account_digit]'
-                                            })
+                                            }),
+                                            ctrl.parsedErrors.inlineError("account_digit")
                                         ])
                                     ])
                                    )
@@ -573,7 +596,8 @@ const userSettings = {
                                         'País'
                                        ),
                                       m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
-                                          onchange: m.withAttr('value', fields.country_id)
+                                          onchange: m.withAttr('value', fields.country_id),
+                                          class: ctrl.parsedErrors.hasError('country_id') ? 'error' : false
                                       }, [
                                           m('option[value=\'\']'),
                                           (!_.isEmpty(ctrl.countries()) ?
@@ -586,7 +610,8 @@ const userSettings = {
                                            })
                                            :
                                            '')
-                                      ])
+                                      ]),
+                                      ctrl.parsedErrors.inlineError("country_id")
                                   ]),
                                   m('.w-col.w-col-6')
                               ]),
@@ -597,11 +622,10 @@ const userSettings = {
                                        ),
                                       m('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_street\'][name=\'user[address_street]\'][type=\'text\']', {
                                           value: fields.street(),
+                                          class: ctrl.parsedErrors.hasError('street') ? 'error' : false,
                                           onchange: m.withAttr('value', fields.street)
                                       }),
-                                      m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_street\']',
-                                        ' translation missing: pt.simple_form.validation_texts.user.address_street'
-                                       )
+                                      ctrl.parsedErrors.inlineError("street")
                                   ]),
                                   m('.w-col.w-col-6',
                                     m('.w-row', [
@@ -611,11 +635,10 @@ const userSettings = {
                                              ),
                                             m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_number\'][name=\'user[address_number]\'][type=\'tel\']', {
                                                 value: fields.number(),
+                                                class: ctrl.parsedErrors.hasError('number') ? 'error' : false,
                                                 onchange: m.withAttr('value', fields.number)
                                             }),
-                                            m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_number\']',
-                                              ' translation missing: pt.simple_form.validation_texts.user.address_number'
-                                             )
+                                            ctrl.parsedErrors.inlineError("number")
                                         ]),
                                         m('.input.string.optional.user_address_complement.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                             m('label.field-label',
@@ -623,8 +646,10 @@ const userSettings = {
                                              ),
                                             m('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_complement\'][name=\'user[address_complement]\'][type=\'text\']', {
                                                 value: fields.complement(),
+                                                class: ctrl.parsedErrors.hasError('complement') ? 'error' : false,
                                                 onchange: m.withAttr('value', fields.complement)
-                                            })
+                                            }),
+                                            ctrl.parsedErrors.inlineError("complement")
                                         ])
                                     ])
                                    )
@@ -636,8 +661,10 @@ const userSettings = {
                                        ),
                                       m('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_neighbourhood\'][name=\'user[address_neighbourhood]\'][type=\'text\']', {
                                           value: fields.neighbourhood(),
+                                          class: ctrl.parsedErrors.hasError('neighbourhood') ? 'error' : false,
                                           onchange: m.withAttr('value', fields.neighbourhood)
-                                      })
+                                      }),
+                                      ctrl.parsedErrors.inlineError("neighbourhood")
                                   ]),
                                   m('.input.string.optional.user_address_city.w-col.w-col-6', [
                                       m('label.field-label',
@@ -645,11 +672,10 @@ const userSettings = {
                                        ),
                                       m('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_city\'][name=\'user[address_city]\'][type=\'text\']', {
                                           value: fields.city(),
+                                          class: ctrl.parsedErrors.hasError('city') ? 'error' : false,
                                           onchange: m.withAttr('value', fields.city)
                                       }),
-                                      m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_city\']',
-                                        ' translation missing: pt.simple_form.validation_texts.user.address_city'
-                                       )
+                                      ctrl.parsedErrors.inlineError("city")
                                   ])
                               ]),
                               m('.w-row', [
@@ -658,7 +684,7 @@ const userSettings = {
                                         'Estado'
                                        ),
                                       m('select.select.optional.w-input.text-field.w-select.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_state\'][name=\'user[address_state]\']', {
-
+                                          class: ctrl.parsedErrors.hasError('state') ? 'error' : false,
                                           onchange: m.withAttr('value', fields.state)
                                       }, [
                                           m('option[value=\'\']'),
@@ -677,9 +703,7 @@ const userSettings = {
                                             'Outro / Other'
                                            )
                                       ]),
-                                      m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_state\']',
-                                        ' translation missing: pt.simple_form.validation_texts.user.address_state'
-                                       )
+                                      ctrl.parsedErrors.inlineError("state")
                                   ]),
                                   m('.w-col.w-col-6',
                                     m('.w-row', [
@@ -689,11 +713,10 @@ const userSettings = {
                                              ),
                                             m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'99999-999\'][data-required-in-brazil=\'true\'][id=\'user_address_zip_code\'][name=\'user[address_zip_code]\'][type=\'tel\']', {
                                                 value: fields.zipcode(),
+                                                class: ctrl.parsedErrors.hasError('zipcode') ? 'error' : false,
                                                 onchange: m.withAttr('value', fields.zipcode)
                                             }),
-                                            m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_address_zip_code\']',
-                                              ' translation missing: pt.simple_form.validation_texts.user.address_zip_code'
-                                             )
+                                            ctrl.parsedErrors.inlineError("zipcode")
                                         ]),
                                         m('.input.tel.optional.user_phone_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                             m('label.field-label',
@@ -702,8 +725,10 @@ const userSettings = {
                                             m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
                                                 value: fields.phonenumber(),
                                                 onchange: m.withAttr('value', fields.phonenumber),
+                                                class: ctrl.parsedErrors.hasError('phonenumber') ? 'error' : false,
                                                 onkeyup: m.withAttr('value', (value) => ctrl.applyPhoneMask(value))
-                                            })
+                                            }),
+                                            ctrl.parsedErrors.inlineError("phonenumber")
                                         ])
                                     ])
                                    )
