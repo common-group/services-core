@@ -62,6 +62,7 @@ const mapRailsErrors = (rails_errors) => {
     extractAndSetErrorMsg("account", ["user.bank_account.account", "bank_account.account"]);
     extractAndSetErrorMsg("account_digit", ["user.bank_account.account_digit", "bank_account.account_digit"]);
     extractAndSetErrorMsg("bank_account_type", ["user.bank_account.account_type", "bank_account.account_type"]);
+    extractAndSetErrorMsg("bank_id", ["user.bank_account.bank", "bank_account.bank"]);
     extractAndSetErrorMsg("birth_date", ["user.birth_date", "birth_date"]);
     extractAndSetErrorMsg("account_type", ["user.account_type", "account_type"]);
 
