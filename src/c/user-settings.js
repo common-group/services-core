@@ -119,8 +119,8 @@ const userSettings = {
                       userData.bank_account_attributes['id'] = fields.bank_account_id().toString();
                   }
 
-                  if(args.publishingProject) {
-                      userData["publishing_project"] = true;
+                  if(args.publishingUserSettings) {
+                      userData["publishing_user_settings"] = true;
                   }
 
                   if(args.publishingProject || (!_.isEmpty(fields.account()) || !_.isEmpty(fields.account_digit()) || (!_.isEmpty(bankCode()) && bankCode() != '-1') || !_.isEmpty(fields.agency())) ) {

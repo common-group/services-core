@@ -18,7 +18,7 @@ const projectEditUserSettings = {
             hideCreditCards: true,
             useFloatBtn: true,
             rails_errors: args.rails_errors,
-            publishingProject: true
+            publishingUserSettings: true
         }) : m('div', h.loader()) );
     }
 };
