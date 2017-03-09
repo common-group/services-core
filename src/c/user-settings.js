@@ -112,8 +112,19 @@ const userSettings = {
                       cpf: fields.owner_document(),
                       name: fields.name(),
                       account_type: fields.account_type(),
-                      birth_date: fields.birth_date(),
-                      bank_account_attributes: {
+                      birth_date: fields.birth_date()
+                  };
+
+                  if((fields.bank_account_id())){
+                      userData.bank_account_attributes['id'] = fields.bank_account_id().toString();
+                  }
+
+                  if(args.publishingProject) {
+                      userData["publishing_project"] = true;
+                  }
+
+                  if(args.publishingProject || (!_.isEmpty(fields.account()) || !_.isEmpty(fields.account_digit()) || (!_.isEmpty(bankCode()) && bankCode() != '-1') || !_.isEmpty(fields.agency())) ) {
+                      userData["bank_account_attributes"] = {
                           owner_name: fields.name(),
                           owner_document: fields.owner_document(),
                           bank_id: bankCode(),
@@ -123,15 +134,7 @@ const userSettings = {
                           account: fields.account(),
                           account_digit: fields.account_digit(),
                           account_type: fields.bank_account_type()
-                      }
-                  };
-
-                  if((fields.bank_account_id())){
-                      userData.bank_account_attributes['id'] = fields.bank_account_id().toString();
-                  }
-
-                  if(args.publishingProject) {
-                      userData["publishing_project"] = true;
+                      };
                   }
 
                   return m.request({
