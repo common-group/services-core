@@ -526,7 +526,7 @@ const userSettings = {
                                               m('option[value=\'conta_corrente\']', {selected: fields.bank_account_type() === 'conta_corrente'}, 'Conta corrente'),
                                               m('option[value=\'conta_poupanca\']', {Selected: fields.bank_account_type() === 'conta_poupanca'}, 'Conta poupança'),
                                               m('option[value=\'conta_corrente_conjunta\']', {selected: fields.bank_account_type() === 'conta_corrente_conjunta'}, 'Conta corrente conjunta'),
-                                              m('option[value=\'conta_poupanca_conjunta\']', {Selected: fields.bank_account_type() === 'conta_poupanca_conjunta'}, 'Conta poupança conjunta'),
+                                              m('option[value=\'conta_poupanca_conjunta\']', {selected: fields.bank_account_type() === 'conta_poupanca_conjunta'}, 'Conta poupança conjunta'),
                                           ]),
                                           ctrl.parsedErrors.inlineError("account_type")
                                       ])
