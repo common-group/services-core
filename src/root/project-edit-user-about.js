@@ -17,7 +17,9 @@ const projectEditUserAbout = {
             useFloatBtn: true,
             hideDisableAcc: true,
             hideCoverImg: true,
-            hidePasswordChange: true
+            hidePasswordChange: true,
+            rails_errors: args.rails_errors,
+            publishingUserAbout: true
         }) : m('div', h.loader()) );
     }
 };
