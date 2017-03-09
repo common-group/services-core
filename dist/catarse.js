@@ -7813,7 +7813,7 @@ var userSettings = {
                 userData["publishing_user_settings"] = true;
             }
 
-            if (args.publishingProject || !_$1.isEmpty(fields.account()) || !_$1.isEmpty(fields.account_digit()) || !_$1.isEmpty(bankCode()) && bankCode() != '-1' || !_$1.isEmpty(fields.agency())) {
+            if (args.publishingUserSettings || !_$1.isEmpty(fields.account()) || !_$1.isEmpty(fields.account_digit()) || !_$1.isEmpty(bankCode()) && bankCode() != '-1' || !_$1.isEmpty(fields.agency())) {
                 userData["bank_account_attributes"] = {
                     owner_name: fields.name(),
                     owner_document: fields.owner_document(),
