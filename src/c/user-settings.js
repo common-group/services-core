@@ -123,7 +123,7 @@ const userSettings = {
                       userData["publishing_user_settings"] = true;
                   }
 
-                  if(args.publishingProject || (!_.isEmpty(fields.account()) || !_.isEmpty(fields.account_digit()) || (!_.isEmpty(bankCode()) && bankCode() != '-1') || !_.isEmpty(fields.agency())) ) {
+                  if(args.publishingUserSettings || (!_.isEmpty(fields.account()) || !_.isEmpty(fields.account_digit()) || (!_.isEmpty(bankCode()) && bankCode() != '-1') || !_.isEmpty(fields.agency())) ) {
                       userData["bank_account_attributes"] = {
                           owner_name: fields.name(),
                           owner_document: fields.owner_document(),
