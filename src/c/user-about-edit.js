@@ -53,34 +53,39 @@ const userAboutEdit = {
                     userCoverImageEl = window.document.getElementById('user_cover_image'),
                     formData = new FormData();
 
-                formData.append('uploaded_image', userUploadedImageEl.files[0]);
-                if (!args.hideCoverImg) {
-                    formData.append('cover_image', userCoverImageEl.files[0]);
+                if(userUploadedImageEl.files[0] || (!args.hideCoverImg && userCoverImageEl.files[0])) {
+
+                    formData.append('uploaded_image', userUploadedImageEl.files[0]);
+                    if (!args.hideCoverImg) {
+                        formData.append('cover_image', userCoverImageEl.files[0]);
+                    }
+
+                    uploading(true);
+                    m.redraw();
+
+                    return m.request({
+                        method: 'POST',
+                        url: `/users/${user.id}/upload_image.json`,
+                        data: formData,
+                        config: h.setCsrfToken,
+                        serialize(data) { return data; }
+                    }).then((data) => {
+                        fields.uploaded_image(data.uploaded_image);
+                        fields.cover_image(data.cover_image);
+                        uploading(false);
+                    }).catch((err) => {
+                        if (_.isArray(err.errors)) {
+                            errorsArray(errorsArray().concat(err.errors));
+                        } else {
+                            errors('Erro ao atualizar informações.');
+                        }
+                        pushErrosMessage();
+                        showError(true);
+                        uploading(false);
+                    });
                 }
 
-                uploading(true);
-                m.redraw();
-
-                return m.request({
-                    method: 'POST',
-                    url: `/users/${user.id}/upload_image.json`,
-                    data: formData,
-                    config: h.setCsrfToken,
-                    serialize(data) { return data; }
-                }).then((data) => {
-                    fields.uploaded_image(data.uploaded_image);
-                    fields.cover_image(data.cover_image);
-                    uploading(false);
-                }).catch((err) => {
-                    if (_.isArray(err.errors)) {
-                        errorsArray(errorsArray().concat(err.errors));
-                    } else {
-                        errors('Erro ao atualizar informações.');
-                    }
-                    pushErrosMessage();
-                    showError(true);
-                    uploading(false);
-                });
+                return void(0);
             },
 
             updateUser = () => {
