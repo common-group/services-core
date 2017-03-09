@@ -56,6 +56,8 @@ const
         return null;
     },
 
+    capitalize = (string: string): ?string => string.charAt(0).toUpperCase() + string.slice(1),
+
     discuss = (page: Object, identifier: string) => {
         const d = document,
             s = d.createElement('script');
@@ -676,7 +678,7 @@ const
     // Adapted from https://github.com/diogob/jquery.fixedmask
     mask = (maskDefinition: RegExp, value: string): string => {
         const maskCharDefinitions = {
-                '9': /\d/, // String key needed to avoid flowType error
+                9: /\d/, // String key needed to avoid flowType error
                 A: /[a-zA-Z]/
             },
             readMask = readMaskDefinition(maskCharDefinitions),
@@ -904,6 +906,7 @@ export default {
     callStoredAction,
     UIHelper,
     toAnchor,
+    capitalize,
     paramByName,
     i18nScope,
     RDTracker,
