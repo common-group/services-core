@@ -6,6 +6,7 @@ import h from '../h';
 import projectDataTable from './project-data-table';
 import projectDataChart from './project-data-chart';
 import UserFollowBtn from './user-follow-btn';
+import userVM from '../vms/user-vm';
 
 const projectContributions = {
     controller(args) {
@@ -153,7 +154,7 @@ const projectContributions = {
                                 lbl: contribution.user_id,
                                 project: args.project()
                             })
-                        }, (contribution.data.public_name || contribution.data.name)),
+                        }, userVM.displayName(contribution.data)),
                         m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${h.selfOrEmpty(contribution.data.city)}, ${h.selfOrEmpty(contribution.data.state)}`),
                         m('.fontsize-smaller', [
                             m('span.fontweight-semibold', contribution.data.total_contributed_projects), ' apoiados  |  ',

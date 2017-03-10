@@ -10,6 +10,7 @@ import m from 'mithril';
 import h from '../h';
 import _ from 'underscore';
 import UserFollowBtn from '../c/user-follow-btn';
+import userVM from '../vms/user-vm';
 
 const UserFollowCard = {
     controller(args) {
@@ -26,7 +27,7 @@ const UserFollowCard = {
               [
                   m(`img.thumb.u-marginbottom-10.u-round[src='${profile_img}']`),
                   m('.fontsize-base.fontweight-semibold.lineheight-tight',
-                m('a.link-hidden', { href: `/users/${friend.friend_id}` }, (friend.public_name || friend.name))
+                m('a.link-hidden', { href: `/users/${friend.friend_id}` }, userVM.displayName(friend))
               ),
                   m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
                 (_.isNull(friend.city) ? '' :

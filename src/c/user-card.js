@@ -30,7 +30,7 @@ const userCard = {
                 ),
                 m('.w-col.w-col-8.w-col-small-8.w-col-tiny-8', [
                     m('.fontsize-small.fontweight-semibold.lineheight-tighter[itemprop=\'name\']',
-                      m(`a.link-hidden[href="/users/${user.id}"]`, (user.public_name || user.name))
+                      m(`a.link-hidden[href="/users/${user.id}"]`, userVM.displayName(user))
                     ),
                     m('.fontsize-smallest.lineheight-looser[itemprop=\'address\']',
                         user.address_city

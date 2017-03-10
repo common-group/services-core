@@ -5,6 +5,7 @@ import projectHighlight from './project-highlight';
 import projectSidebar from './project-sidebar';
 import userContributionDetail from './user-contribution-detail';
 import contributionVM from '../vms/contribution-vm';
+import userVM from '../vms/user-vm';
 
 const projectHeader = {
     controller(args) {
@@ -33,7 +34,7 @@ const projectHeader = {
                     m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
                     m('h2.fontsize-base.lineheight-looser[itemprop="author"]', [
                         'por ',
-                        (project().user ? project().user.public_name : (project().owner_public_name ? project().owner_name : ''))
+                        (project().user ? userVM.displayName(project().user) : (project().owner_public_name ? project().owner_name : ''))
                     ]),
                     !_.isEmpty(ctrl.projectContributions()) ? m('.card.card-terciary.u-radius.u-margintop-20',
                         [

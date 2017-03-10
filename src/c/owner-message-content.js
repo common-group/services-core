@@ -8,6 +8,7 @@ import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
+import userVM from '../vms/user-vm';
 
 const ownerMessageContent = {
     controller(args) {
@@ -20,7 +21,7 @@ const ownerMessageContent = {
                 name: '',
                 email: ''
             },
-            from_name = m.prop(user.public_name),
+            from_name = m.prop(userVM.displayName(user)),
             from_email = m.prop(user.email),
             content = m.prop('');
 

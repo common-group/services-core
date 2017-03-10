@@ -211,8 +211,7 @@ const userAboutEdit = {
     },
     view(ctrl, args) {
         const user = args.user || {},
-              fields = ctrl.fields,
-              disableField = user.is_admin_role ? false : (user.total_published_projects >= 1 && !_.isEmpty(user.public_name));
+              fields = ctrl.fields;
 
         return m('#about-tab.content', [
             (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
@@ -314,17 +313,16 @@ const userAboutEdit = {
                                         '  Nome no perfil público'
                                        ),
                                       m('label.field-label.fontsize-smallest.fontcolor-secondary',
-                                        'Esse é o nome que os usuários irão ver no seu perfil. Não poderá ser alterado após a publicação de um projeto.'
+                                        'Esse é o nome que os usuários irão ver no seu perfil.'
                                        )
                                   ]
                                  ),
                                 m('.w-col.w-col-7',
-                                  m(`input.string.optional.w-input.text-field.positive${(disableField ? '.text-field-neutral' : '')}[id="user_public_name"][type="text"]`, {
+                                  m(`input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]`, {
                                       name: 'user[public_name]',
                                       class: ctrl.parsedErrors.hasError('public_name') ? 'error' : false,
                                       value: fields.public_name(),
-                                      onchange: m.withAttr('value', fields.public_name),
-                                      disabled: disableField
+                                      onchange: m.withAttr('value', fields.public_name)
                                   }),
                                   ctrl.parsedErrors.inlineError("public_name")
                                  )
