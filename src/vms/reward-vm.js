@@ -41,6 +41,7 @@ const getSelectedReward = () => {
 };
 
 const selectReward = reward => () => {
+    console.log('Will select reward: ', reward);
     if (rewardVM.selectedReward() !== reward) {
         rewardVM.selectedReward(reward);
 

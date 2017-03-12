@@ -18,20 +18,7 @@ const projectRewardList = {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value}`);
             } else {
                 vm.error('');
-
-                // THIS CHECK IS ONLY NECESSARY IF WHEN WE START ROUTING DIRECTLY TO THE /contributions/edit page
-                // if (!h.getUser()) {
-                //     h.storeObject(storeKey, {value: valueFloat, reward: vm.selectedReward()});
-
-                //     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
-                // } else {
-                // vm.contributionValue(valueFloat);
-                // h.navigateTo(`/projects/${projectVM.currentproject().project_id}/contributions/new?reward_id=${vm.selectedReward().id}`);
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}`);
-                // m.route(`/projects/${projectVM.currentproject().project_id}/payment`, {
-                //    project_user_id: projectVM.currentProject().user_id
-                // });
-                // }
             }
 
             return false;
@@ -127,7 +114,7 @@ const projectRewardList = {
                                     })
                                 )
                             ]),
-                            m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
+                            m('button.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
                             ctrl.error().length > 0 ? m('.text-error', [
                                 m('br'),
                                 m('span.fa.fa-exclamation-triangle'),
