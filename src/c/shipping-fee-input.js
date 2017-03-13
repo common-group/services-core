@@ -1,0 +1,60 @@
+import m from 'mithril';
+import _ from 'underscore';
+
+const shippingFeeInput = {
+    controller(args) {
+        const fee = args.fee,
+            feeIndex = args.feeIndex,
+            index = args.index,
+            states = args.states;
+        return {
+            fee,
+            feeIndex,
+            index,
+            states
+        };
+    },
+    view(ctrl) {
+        const fee = ctrl.fee,
+            feeIndex = ctrl.feeIndex,
+            index = ctrl.index,
+            states = ctrl.states;
+
+        return m('div', [
+            m('.u-marginbottom-10.w-row', [
+                m('.w-col.w-col-6',
+                    m(`select.fontsize-smallest.text-field-neutral.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
+                        name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
+                        value: fee.destination
+                    }, [
+                        (_.map(states(), state =>
+                            m(`option[value='${state.acronym}']`,
+                                state.name
+                            )))
+                    ])
+                ),
+                m('.w-col.w-col-1'),
+                m('.w-col.w-col-4',
+                    m('.w-row', [
+                        m('.no-hover.positive.prefix.text-field.w-col.w-col-3',
+                            m('.fontcolor-secondary.fontsize-mini.u-text-center',
+                                'R$'
+                            )
+                        ),
+                        m('.w-col.w-col-9',
+                            m("input.positive.postfix.text-field.w-input[type='text']", {
+                                value: fee.value,
+                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][value]`
+                            })
+                        )
+                    ])
+                ),
+                m('.w-col.w-col-1',
+                    m("a.btn.btn-no-border.btn-small.btn-terciary.fa.fa-1.fa-trash[href='#']")
+                )
+            ]), m('.divider.u-marginbottom-10')
+        ]);
+    }
+};
+
+export default shippingFeeInput;

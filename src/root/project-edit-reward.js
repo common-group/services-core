@@ -8,7 +8,14 @@ const projectEditReward = {
     controller(args) {
         const rewards = m.prop([]),
             newRewards = m.prop([]),
-            newReward = { minimum_value: null, deliver_at: null, description: null, limited: m.prop(false), maximum_contributions: null, new: true };
+            newReward = {
+                minimum_value: null,
+                deliver_at: null,
+                description: null,
+                limited: m.prop(false),
+                maximum_contributions: null,
+                new: true
+            };
         rewardVM.fetchRewards(args.project_id).then(() => {
             _.map(rewardVM.rewards(), (reward) => {
                 const limited = reward.maximum_contributions !== null;
@@ -55,10 +62,10 @@ const projectEditReward = {
                                                                             m('.clipboard.w-row', [
                                                                                 m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                                                                                     m('textarea.copy-textarea.text-field.w-input', {
-                                                                                        style: {
-                                                                                            'margin-bottom': '0'
-                                                                                        }
-                                                                                    },
+                                                                                            style: {
+                                                                                                'margin-bottom': '0'
+                                                                                            }
+                                                                                        },
                                                                                         `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id}`
                                                                                     )
                                                                                 ),
@@ -83,10 +90,10 @@ const projectEditReward = {
                                                                         ),
                                                                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                                                                             m("a.show_reward_form[href='javascript:void(0);']", {
-                                                                                onclick: () => {
-                                                                                    reward.edit.toggle();
-                                                                                }
-                                                                            },
+                                                                                    onclick: () => {
+                                                                                        reward.edit.toggle();
+                                                                                    }
+                                                                                },
                                                                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                                                                             )
                                                                         )
@@ -101,7 +108,10 @@ const projectEditReward = {
                                                             )
                                                         ]) : ''),
                                                     (reward.edit() ?
-                                                      m(editRewardCard, { reward, index }) : '')
+                                                        m(editRewardCard, {
+                                                            reward,
+                                                            index
+                                                        }) : '')
                                                 ])
                                             ),
                                             m(`input.ui-sortable-handle[id='project_rewards_attributes_${index}_id'][type='hidden']`, {
@@ -111,10 +121,14 @@ const projectEditReward = {
                                         ]))
                                     ]),
                                     (_.map(ctrl.newRewards(), reward => reward)),
-                                    m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']",
-                                        { onclick: () => ctrl.newRewards().push(
-                                        m(editRewardCard, { reward: ctrl.newReward, index: h.getRandomInt(999999999, 9999999999) })
-                                      ) },
+                                    m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']", {
+                                            onclick: () => ctrl.newRewards().push(
+                                                m(editRewardCard, {
+                                                    reward: ctrl.newReward,
+                                                    index: h.getRandomInt(999999999, 9999999999)
+                                                })
+                                            )
+                                        },
                                         '+ Adicionar recompensa'
                                     ),
                                     m('.w-section.save-draft-btn-section',
