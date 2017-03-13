@@ -113,7 +113,7 @@ const projectEditReward = {
                                     (_.map(ctrl.newRewards(), reward => reward)),
                                     m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']",
                                         { onclick: () => ctrl.newRewards().push(
-                                        m(editRewardCard, { reward: ctrl.newReward, index: 99849289389 })
+                                        m(editRewardCard, { reward: ctrl.newReward, index: h.getRandomInt(999999999, 9999999999) })
                                       ) },
                                         '+ Adicionar recompensa'
                                     ),
