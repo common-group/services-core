@@ -14,8 +14,6 @@ const projectsContribution = {
         );
 
         const submitContribution = () => {
-            console.log('WILL SUBMIT');
-            rewardVM.contributionValue('100');
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
 
             if (valueFloat < rewardVM.selectedReward().minimum_value) {

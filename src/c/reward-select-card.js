@@ -5,7 +5,9 @@ import rewardVM from '../vms/reward-vm';
 
 const rewardSelectCard = {
     controller(args) {
+        const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
         const isSelected = currentReward => currentReward.id === rewardVM.selectedReward().id;
+        const queryRewardId = h.getParams('reward_id');
         let reward = args.reward;
 
         if (_.isEmpty(reward)) {
@@ -16,13 +18,18 @@ const rewardSelectCard = {
             };
         }
 
+        if (reward.id === Number(queryRewardId)) {
+            rewardVM.selectReward(reward).call();
+        }
+
         return {
             reward,
             isSelected,
+            setInput,
             selectReward: rewardVM.selectReward,
             erro: rewardVM.error,
             applyMask: rewardVM.applyMask,
-            // submitContribuiton: rewardVM.submitContribution
+            contributionValue: rewardVM.contributionValue
         };
     },
     view(ctrl) {
@@ -48,7 +55,17 @@ const rewardSelectCard = {
                                 )
                             ),
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                                m(`input.user-reward-value.back-reward-input-reward[autocomplete="off"][min="${reward.minimum_value}"][placeholder="${reward.minimum_value}"][type="tel"]`)
+                                m('input.user-reward-value.back-reward-input-reward',
+                                    {
+                                        autocomplete: 'off',
+                                        min: reward.minimum_value,
+                                        placeholder: reward.minimum_value,
+                                        type: 'tel',
+                                        config: ctrl.setInput,
+                                        onkeyup: m.withAttr('value', ctrl.applyMask),
+                                        value: ctrl.contributionValue()
+                                    }
+                                )
                             )
                         ]),
                         m('.fontsize-smaller.text-error.u-marginbottom-20.w-hidden', [
