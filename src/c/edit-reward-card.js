@@ -12,6 +12,8 @@ const editRewardCard = {
             reward = args.reward,
             newFees = m.prop([]),
             otherFeeValue = m.prop(),
+            minimumValue = m.prop(args.reward.minimum_value),
+            maximumContributions = m.prop(args.reward.maximum_contributions),
             internationalFeeValue = m.prop(),
             newFee = {
                 value: null,
@@ -25,7 +27,7 @@ const editRewardCard = {
             }),
             statesLoader = postgrest.loader(models.state.getPageOptions());
 
-        feesFilter.reward_id(args.reward.id);
+        feesFilter.reward_id(args.reward.id || 0);
         const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
         statesLoader.load().then((data) => {
             states().push({
@@ -53,6 +55,8 @@ const editRewardCard = {
         return {
             otherFeeValue,
             internationalFeeValue,
+            minimumValue,
+            maximumContributions,
             newFee,
             newFees,
             shipping_options,
@@ -97,7 +101,8 @@ const editRewardCard = {
                                     m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                         m(`input.string.tel.required.w-input.text-field.project-edit-reward.positive.postfix[aria-required='true'][autocomplete='off'][required='required'][type='tel'][id='project_rewards_attributes_${index}_minimum_value']`, {
                                             name: `project[rewards_attributes][${index}][minimum_value]`,
-                                            value: reward.minimum_value
+                                            value: ctrl.minimumValue(),
+                                            onchange: m.withAttr('value', ctrl.minimumValue)
                                         })
                                     )
                                 ]),
@@ -149,8 +154,8 @@ const editRewardCard = {
                         ),
                         m('.w-row', [
                             m(`textarea.text.required.w-input.text-field.positive.height-medium[aria-required='true'][placeholder='Descreva sua recompensa'][required='required'][id='project_rewards_attributes_${index}_description']`, {
-                                name: `project[rewards_attributes][${index}][description]`
-                            },
+                                    name: `project[rewards_attributes][${index}][description]`
+                                },
                                 reward.description),
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                                 'Informe uma descrição para a recompensa'
@@ -176,7 +181,8 @@ const editRewardCard = {
                                 m('.w-col.w-col-7.reward_maximum_contributions',
                                     m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
                                         name: `project[rewards_attributes][${index}][maximum_contributions]`,
-                                        value: reward.maximum_contributions
+                                        value: ctrl.maximumContributions(),
+                                        onchange: m.withAttr('value', ctrl.maximumContributions)
                                     })
                                 ) :
                                 '')
@@ -191,7 +197,7 @@ const editRewardCard = {
                             m('.w-col.w-col-9', [
                                 m(`select.positive.text-field.w-select[id='project_rewards_attributes_${index}_shipping_options']`, {
                                     name: `project[rewards_attributes][${index}][shipping_options]`,
-                                    value: ctrl.shipping_options(),
+                                    value: ctrl.shipping_options() || 'free',
                                     onchange: m.withAttr('value', ctrl.shipping_options)
                                 }, [
                                     m('option[value=\'international\']',
@@ -211,38 +217,38 @@ const editRewardCard = {
                                 ((ctrl.shipping_options() === 'national' || ctrl.shipping_options() === 'international') ?
                                     m('.card.card-terciary', [
                                         (ctrl.shipping_options() === 'international' ? [
-                                            m('.u-marginbottom-10.w-row', [
-                                                m('input[type=\'hidden\']', {
-                                                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][destination]`,
-                                                    value: 'international'
-                                                }),
-                                                m('.w-col.w-col-6',
-                                                  m('label.field-label.fontsize-smallest',
-                                                      'Internacional'
-                                                  )
-                                              ),
-                                                m('.w-col.w-col-1'),
-                                                m('.w-col.w-col-4',
-                                                  m('.w-row', [
-                                                      m('.no-hover.positive.prefix.text-field.w-col.w-col-3',
-                                                          m('.fontcolor-secondary.fontsize-mini.u-text-center',
-                                                              'R$'
-                                                          )
-                                                      ),
-                                                      m('.w-col.w-col-9',
-                                                          m("input.positive.postfix.text-field.w-input[type='text']", {
-                                                              value: ctrl.internationalFeeValue(),
-                                                              name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][value]`,
-                                                              onchange: m.withAttr('value', ctrl.internationalFeeValue)
-                                                          })
-                                                      )
+                                                m('.u-marginbottom-10.w-row', [
+                                                    m('input[type=\'hidden\']', {
+                                                        name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][destination]`,
+                                                        value: 'international'
+                                                    }),
+                                                    m('.w-col.w-col-6',
+                                                        m('label.field-label.fontsize-smallest',
+                                                            'Internacional'
+                                                        )
+                                                    ),
+                                                    m('.w-col.w-col-1'),
+                                                    m('.w-col.w-col-4',
+                                                        m('.w-row', [
+                                                            m('.no-hover.positive.prefix.text-field.w-col.w-col-3',
+                                                                m('.fontcolor-secondary.fontsize-mini.u-text-center',
+                                                                    'R$'
+                                                                )
+                                                            ),
+                                                            m('.w-col.w-col-9',
+                                                                m("input.positive.postfix.text-field.w-input[type='text']", {
+                                                                    value: ctrl.internationalFeeValue(),
+                                                                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][value]`,
+                                                                    onchange: m.withAttr('value', ctrl.internationalFeeValue)
+                                                                })
+                                                            )
 
-                                                  ])
-                                              ),
-                                                m('.w-col.w-col-1')
-                                            ]),,
-                                            m('.divider.u-marginbottom-10')
-                                        ] :
+                                                        ])
+                                                    ),
+                                                    m('.w-col.w-col-1')
+                                                ]), ,
+                                                m('.divider.u-marginbottom-10')
+                                            ] :
                                             ''),
                                         m('.u-marginbottom-10.w-row', [
                                             m('input[type=\'hidden\']', {
@@ -278,23 +284,23 @@ const editRewardCard = {
 
                                         // state fees
                                         (
-                                        _.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
-                                            fee,
-                                            index,
-                                            feeIndex: (feeIndex + 2),
-                                            states: ctrl.states
-                                        }),
+                                            _.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
+                                                    fee,
+                                                    index,
+                                                    feeIndex: (feeIndex + 2),
+                                                    states: ctrl.states
+                                                }),
 
-                                            m(`input[type='hidden'][id='project_rewards_shipping_fees_attributes_${feeIndex + 2}_id']`, {
-                                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex + 2}][id]`,
-                                                value: fee.id
-                                            })
-                                        ])),
+                                                m(`input[type='hidden'][id='project_rewards_shipping_fees_attributes_${feeIndex + 2}_id']`, {
+                                                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex + 2}][id]`,
+                                                    value: fee.id
+                                                })
+                                            ])),
                                         (_.map(ctrl.newFees(), fee => fee)),
                                         m('.u-margintop-20',
                                             m("a.alt-link[href='#']", {
-                                                onclick: () => {
-                                                    ctrl.newFees().push(
+                                                    onclick: () => {
+                                                        ctrl.newFees().push(
                                                             m(shippingFeeInput, {
                                                                 fee: ctrl.newFee,
                                                                 index,
@@ -302,24 +308,32 @@ const editRewardCard = {
                                                                 states: ctrl.states
                                                             })
                                                         );
-                                                    return false;
-                                                }
-                                            },
+                                                        return false;
+                                                    }
+                                                },
                                                 'Adicionar destino'
                                             )
                                         )
                                     ]) : '')
                             ])
                         ]),
-                        m('.w-row.u-margintop-30',
+                        m('.w-row.u-margintop-30', [
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                                 m("input.w-button.btn-terciary.btn.btn-small.reward-close-button[type='submit'][value='Fechar']", {
                                     onclick: () => {
                                         reward.edit.toggle();
                                     }
                                 })
-                            )
-                        )
+                            ),
+                            m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
+                                m(`input[id='project_rewards_attributes_${index}__destroy'][type='hidden'][value='false']`, {
+                                    name: `project[rewards_attributes][${index}][_destroy]`
+                                }),
+                                m("a.remove_fields.existing[data-confirm='Tem certeza?'][href='#']",
+                                    m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
+                                )
+                            ])
+                        ])
                     ])
                 )
             )

@@ -54,9 +54,13 @@ const shippingFeeInput = {
                         )
                     ])
                 ),
-                m('.w-col.w-col-1',
-                    m("a.btn.btn-no-border.btn-small.btn-terciary.fa.fa-1.fa-trash[href='#']")
-                )
+                m('.w-col.w-col-1', [
+                    m(`input[id='project_rewards_shipping_fees_attributes_${index}__destroy'][type='hidden'][value='false']`, {
+                        name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][_destroy]`
+                    }),
+                    m("a.remove_fields.existing.btn.btn-no-border.btn-small.btn-terciary.fa.fa-1.fa-trash[data-confirm='Tem certeza?'][href='#']")
+                ])
+
             ]), m('.divider.u-marginbottom-10')
         ]);
     }
