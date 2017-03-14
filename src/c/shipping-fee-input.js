@@ -5,18 +5,21 @@ const shippingFeeInput = {
     controller(args) {
         const fee = args.fee,
             feeIndex = args.feeIndex,
+            feeValue = m.prop(fee.value),
+            feeDestination = m.prop(fee.destination),
             index = args.index,
             states = args.states;
         return {
             fee,
+            feeValue,
+            feeDestination,
             feeIndex,
             index,
             states
         };
     },
     view(ctrl) {
-        const fee = ctrl.fee,
-            feeIndex = ctrl.feeIndex,
+        const feeIndex = ctrl.feeIndex,
             index = ctrl.index,
             states = ctrl.states;
 
@@ -25,7 +28,8 @@ const shippingFeeInput = {
                 m('.w-col.w-col-6',
                     m(`select.fontsize-smallest.text-field-neutral.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
                         name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
-                        value: fee.destination
+                        value: ctrl.feeDestination(),
+                        onchange: m.withAttr('value', ctrl.feeDestination)
                     }, [
                         (_.map(states(), state =>
                             m(`option[value='${state.acronym}']`,
@@ -43,8 +47,9 @@ const shippingFeeInput = {
                         ),
                         m('.w-col.w-col-9',
                             m("input.positive.postfix.text-field.w-input[type='text']", {
-                                value: fee.value,
-                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][value]`
+                                value: ctrl.feeValue(),
+                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][value]`,
+                                onchange: m.withAttr('value', ctrl.feeValue)
                             })
                         )
                     ])
