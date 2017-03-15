@@ -680,7 +680,7 @@ const
     // Adapted from https://github.com/diogob/jquery.fixedmask
     mask = (maskDefinition: RegExp, value: string): string => {
         const maskCharDefinitions = {
-                9: /\d/, // String key needed to avoid flowType error
+                '9': /\d/, // String key needed to avoid flowType error
                 A: /[a-zA-Z]/
             },
             readMask = readMaskDefinition(maskCharDefinitions),
