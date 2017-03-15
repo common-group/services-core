@@ -101,7 +101,7 @@ const projectEditReward = {
                                                                     m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
                                                                         `${reward.paid_count} apoiadores`
                                                                     ),
-                                                                    m.trust(reward.description),
+                                                                    reward.description,
                                                                     m('p'),
                                                                     reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''
                                                                 ])
