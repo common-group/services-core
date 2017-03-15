@@ -109,7 +109,7 @@ const projectCard = {
                             },
                             project.project_name)
                         ]),
-                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${project.owner_public_name}`),
+                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${(_.isEmpty(project.owner_public_name) ? project.owner_name : project.owner_public_name)}`),
                         m(ctrl.css().headline, [
                             m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)

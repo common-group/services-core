@@ -48,7 +48,7 @@ const start = {
                 const externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories;
                 return _.isUndefined(externalLinkCategories[category.id])
                     ? null
-                    : externalLinkCategories[category.id].link;
+                    : externalLinkCategories[category.id].link + '?ref=ctrse_start';
             },
             loadCategoryProjects = (category) => {
                 selectedCategory(category);

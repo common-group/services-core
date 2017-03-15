@@ -120,6 +120,11 @@ const getCurrentUser = () => {
     return currentUser;
 };
 
+const displayName = (user) => {
+    let u = user || {name: 'no name'};
+    return _.isEmpty(u.public_name) ? u.name : u.public_name;
+};
+
 const displayImage = (user) => {
     const defaultImg = 'https://catarse.me/assets/catarse_bootstrap/user.jpg';
 
@@ -214,6 +219,7 @@ const userVM = {
     getPublicUserContributedProjects,
     displayImage,
     displayCover,
+    displayName,
     fetchUser,
     getCurrentUser
 };

@@ -22,7 +22,7 @@ const userHeader = {
                           )
                         )),
                         m('.fontsize-larger.fontweight-semibold.u-marginbottom-20',
-                        (user.public_name || user.name)
+                        userVM.displayName(user)
                        ),
                       (hideDetails ? '' :
                        m('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base',

@@ -4,6 +4,7 @@ import h from '../h';
 import ownerMessageContent from './owner-message-content';
 import modalBox from './modal-box';
 import UserFollowBtn from './user-follow-btn';
+import userVM from '../vms/user-vm';
 
 const projectUserCard = {
     controller(args) {
@@ -48,7 +49,7 @@ const projectUserCard = {
                             onclick: () => {
                                 m.route(`/users/${userDetail.id}`, { user_id: userDetail.id });
                                 h.analytics.event({ cat: 'project_view', act: 'project_creator_link', lbl: userDetail.id, project: project() });
-                            } }, (userDetail.public_name || userDetail.name))
+                            } }, userVM.displayName(userDetail))
                     ]),
                     m('.fontsize-smallest', [
                         h.pluralize(userDetail.total_published_projects, ' criado', ' criados'),
