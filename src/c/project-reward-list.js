@@ -119,8 +119,7 @@ const projectRewardList = {
                         onsubmit: ctrl.submitContribution
                     }, [
                         m('.divider.u-marginbottom-20'),
-                        reward.shipping_options && reward.shipping_options !== 'free'
-                            ? m('div',
+                        ctrl.hasShippingOptions(reward) ? m('div',
                                 [
                                     m('.fontcolor-secondary.u-marginbottom-10',
                                         'Local de entrega'

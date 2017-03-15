@@ -7,7 +7,9 @@ const rewardSelectCard = {
     controller(args) {
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
         const isSelected = currentReward => currentReward.id === rewardVM.selectedReward().id;
+        const hasShippingOptions = reward => !_.isNull(reward.shipping_options) && !reward.shipping_options === 'free';
         const queryRewardId = h.getParams('reward_id');
+
         let reward = args.reward;
 
         if (_.isEmpty(reward)) {
@@ -26,6 +28,7 @@ const rewardSelectCard = {
             reward,
             isSelected,
             setInput,
+            hasShippingOptions,
             selectReward: rewardVM.selectReward,
             erro: rewardVM.error,
             applyMask: rewardVM.applyMask,
@@ -47,7 +50,29 @@ const rewardSelectCard = {
                     `R$ ${h.formatNumber(reward.minimum_value)} ou mais`
                 ),
                 !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
-                    m('.w-col.w-col-8.w-col-small-8.w-col-tiny-8.w-sub-col-middle.w-clearfix', [
+                    ctrl.hasShippingOptions(reward) ?
+                        m('.w-sub-col.w-col.w-col-4',
+                            [
+                                m('.fontcolor-secondary.u-marginbottom-10',
+                                    'Local de entrega'
+                                ),
+                                m('select.positive.text-field.w-select',
+                                    [
+                                        m('option[value="national"]',
+                                            'Somente Brasil'
+                                        ),
+                                        m('option[value="international"]',
+                                            'Qualquer Lugar do Mundo'
+                                        )
+                                    ]
+                                )
+                            ]
+                        ) : '',
+                    m('.w-col.w-sub-col-middle.w-clearfix', {
+                        class: ctrl.hasShippingOptions(reward)
+                                ? 'w-col-8 w-col-small-8 w-col-tiny-8'
+                                : 'w-col-4 w-col-small-4 w-col-tiny-4'
+                    }, [
                         m('.w-row', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                 m('.back-reward-input-reward.placeholder',
