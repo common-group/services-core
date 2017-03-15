@@ -47,6 +47,7 @@ const models = {
     userFollower: postgrest.model('user_followers'),
     creatorSuggestion: postgrest.model('creator_suggestions'),
     userContribution: postgrest.model('user_contributions'),
+    shippingFee: postgrest.model('shipping_fees'),
     deleteProject: postgrest.model('rpc/delete_project'),
     cancelProject: postgrest.model('rpc/cancel_project')
 };

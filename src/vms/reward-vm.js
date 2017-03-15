@@ -50,8 +50,22 @@ const selectReward = reward => () => {
 
 const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
+const getFees = (reward) => {
+    const feesFilter = postgrest.filtersVM({
+        reward_id: 'eq'
+    });
+
+    feesFilter.reward_id(reward.id || 0);
+    const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
+    return feesLoader;
+};
+
+const getStates = () => postgrest.loader(models.state.getPageOptions());
+
 const rewardVM = {
     error,
+    getStates,
+    getFees,
     rewards,
     applyMask,
     noReward,
