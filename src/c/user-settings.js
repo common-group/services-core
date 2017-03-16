@@ -282,7 +282,7 @@ const userSettings = {
                               m('.w-row', [
                                   m(`.w-col.w-col-6.w-sub-col`,
                                     m('.input.select.required.user_bank_account_bank_id', [
-                                        m(`select.select.required.w-input.text-field.bank-select.positive${(disableFields ? '.text-field-neutral' : '')}[id='user_bank_account_attributes_bank_id']`, {
+                                        m(`select.select.required.w-input.text-field.bank-select.positive${(disableFields ? '.text-field-disabled' : '')}[id='user_bank_account_attributes_bank_id']`, {
                                             name: 'user[bank_account_attributes][bank_id]',
                                             onchange: m.withAttr('value', fields.account_type),
                                             disabled: disableFields
@@ -299,7 +299,7 @@ const userSettings = {
                                       m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
                                         `Nome completo${fields.account_type() == 'pf' ? '' : '/Razão Social'}`
                                        ),
-                                      m(`input.string.required.w-input.text-field.positive${(disableFields ? '.text-field-neutral' : '')}[id='user_bank_account_attributes_owner_name'][type='text']`, {
+                                      m(`input.string.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[id='user_bank_account_attributes_owner_name'][type='text']`, {
                                           value: fields.name(),
                                           name: 'user[name]',
                                           class: ctrl.parsedErrors.hasError('name') ? 'error' : false,
@@ -314,7 +314,7 @@ const userSettings = {
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
                                                 `${fields.account_type() == 'pf' ? 'CPF' : 'CNPJ'}`
                                                ),
-                                              m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-neutral' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
+                                              m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                   value: fields.owner_document(),
                                                   class: ctrl.parsedErrors.hasError('owner_document') ? 'error' : false,
                                                   disabled: disableFields,
@@ -328,7 +328,7 @@ const userSettings = {
                                               m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
                                                 'Data de nascimento'
                                                ),
-                                              m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-neutral' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
+                                              m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                   value: fields.birth_date(),
                                                   name: 'user[birth_date]',
                                                   class: ctrl.parsedErrors.hasError('birth_date') ? 'error' : false,
