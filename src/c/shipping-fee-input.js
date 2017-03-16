@@ -26,7 +26,7 @@ const shippingFeeInput = {
         return m('div', [
             m('.u-marginbottom-10.w-row', [
                 m('.w-col.w-col-6',
-                    m(`select.fontsize-smallest.text-field-neutral.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
+                    m(`select.fontsize-smallest.text-field-light.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
                         name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
                         value: ctrl.feeDestination(),
                         onchange: m.withAttr('value', ctrl.feeDestination)
