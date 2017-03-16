@@ -57,14 +57,9 @@ const rewardSelectCard = {
                                     'Local de entrega'
                                 ),
                                 m('select.positive.text-field.w-select',
-                                    [
-                                        m('option[value="national"]',
-                                            'Somente Brasil'
-                                        ),
-                                        m('option[value="international"]',
-                                            'Qualquer Lugar do Mundo'
-                                        )
-                                    ]
+                                    _.map(ctrl.states(), state => m(`option${state.acronym == fields.state() ? '[selected="selected"]' : ''}`, {
+                                        value: state.acronym
+                                    }, state.name))
                                 )
                             ]
                         ) : '',

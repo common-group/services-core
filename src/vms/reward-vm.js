@@ -37,17 +37,19 @@ const getSelectedReward = () => {
 
         return selectedReward;
     }
+
     return false;
 };
 
 const selectReward = reward => () => {
-    console.log('Will select reward: ', reward);
-    if (rewardVM.selectedReward() !== reward) {
-        rewardVM.selectedReward(reward);
+    if (selectedReward() !== reward) {
+        selectedReward(reward);
 
         contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
     }
 };
+
+const selectDestination = m.prop('');
 
 const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
@@ -74,13 +76,15 @@ const rewardVM = {
     applyMask,
     noReward,
     fetchRewards,
+    selectDestination,
     selectReward,
     getSelectedReward,
     selectedReward,
     contributionValue,
     rewardsLoader,
     getValue: contributionValue,
-    setValue: contributionValue
+    setValue: contributionValue,
+    selectedDestination: selectDestination
 };
 
 export default rewardVM;

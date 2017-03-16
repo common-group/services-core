@@ -1,16 +1,20 @@
 import m from 'mithril';
 import _ from 'underscore';
+import postgrest from 'mithril-postgrest';
 import I18n from 'i18n-js';
 import h from '../h';
+import models from '../models';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_list');
 
 const projectRewardList = {
-    controller(args) {
+    controller() {
         const storeKey = 'selectedReward',
-            vm = rewardVM;
+            vm = rewardVM,
+            statesLoader = postgrest.loader(models.state.getPageOptions()),
+            states = m.prop([]);
 
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : false;
 
@@ -21,13 +25,27 @@ const projectRewardList = {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value}`);
             } else {
                 vm.error('');
-                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}`);
+                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}&contribution%5Bshipping_options%5D%5Bdestination%5D=${vm.selectedDestination()}`);
             }
 
             return false;
         };
 
         const hasShippingOptions = reward => !_.isNull(reward.shipping_options) && !reward.shipping_options === 'free';
+
+        const locationOptions = (reward) => {
+            const options = m.prop([]),
+                mapStates = _.map(states(), state => ({ value: state.acronym, name: state.name }));
+
+            console.log(reward)
+            if (reward.shipping_options === 'national') {
+                options(mapStates);
+            } else if (reward.shipping_options === 'international') {
+                options(_.union([{ value: 'international', name: 'Outside Brazil' }], mapStates));
+            }
+
+            return options();
+        };
 
         if (h.getStoredObject(storeKey)) {
             const {
@@ -41,15 +59,19 @@ const projectRewardList = {
             submitContribution();
         }
 
+        statesLoader.load().then(states);
+
         return {
-            applyMask: vm.applyMask,
-            error: vm.error,
+            locationOptions,
+            setInput,
             submitContribution,
             hasShippingOptions,
+            applyMask: vm.applyMask,
+            error: vm.error,
             openedReward: vm.selectedReward,
             selectReward: vm.selectReward,
+            selectDestination: vm.selectDestination,
             contributionValue: vm.contributionValue,
-            setInput
         };
     },
     view(ctrl, args) {
@@ -119,20 +141,16 @@ const projectRewardList = {
                         onsubmit: ctrl.submitContribution
                     }, [
                         m('.divider.u-marginbottom-20'),
-                        ctrl.hasShippingOptions(reward) ? m('div',
+                        true ? m('div',
+                        // ctrl.hasShippingOptions(reward) ? m('div',
                                 [
                                     m('.fontcolor-secondary.u-marginbottom-10',
                                         'Local de entrega'
                                     ),
-                                    m('select.positive.text-field.w-select',
-                                        [
-                                            m('option[value="national"]',
-                                                'Somente Brasil'
-                                            ),
-                                            m('option[value="international"]',
-                                                'Qualquer Lugar do Mundo'
-                                            )
-                                        ]
+                                    m('select.positive.text-field.w-select', {
+                                        onchange: m.withAttr('value', ctrl.selectedDestination)
+                                    },
+                                        _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, option.name))
                                     )
                                 ]
                             ) : '',
