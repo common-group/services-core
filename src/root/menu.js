@@ -10,49 +10,61 @@ const menu = {
             menuCss = () => {
                 let dynamicClasses;
 
-                return `${args.menuTransparency ? 'overlayer' : ''} ${args.withAlert ? 'with-global-alert' : ''}`;
+                return `${args.menuTransparency ? 'overlayer' : ''} ${(args.withAlert || args.withFixedAlert) ? 'with-global-alert' : ''}`;
+            },
+            homeAttrs = () => {
+                if (args.absoluteHome) {
+                    return {
+                        href: h.rootUrl()
+                    };
+                }
+                return {
+                    config: m.route
+                };
             };
 
         return {
-            user: user,
-            menuCss: menuCss
+            user,
+            menuCss,
+            homeAttrs
         };
     },
     view(ctrl, args) {
-        return m('header.main-header.w-section',{
+        return m('header.main-header', {
             class: ctrl.menuCss()
-        },
-            [
-                m('.w-clearfix',
+        }, [
+            m('.w-row', [
+                m('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8',
                     [
-                        m('a.header-logo.w-nav-brand[href=\'/?ref=ctrse_header\'][title=\'Catarse\']',
-                            {config: m.route},
+                        m('a.header-logo.w-inline-block[href=\'/?ref=ctrse_header\'][title=\'Catarse\']',
+                            ctrl.homeAttrs(),
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
-                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']',{config: m.route}, 'Comece seu projeto'),
-                        m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']',{config: m.route},'Explore'),
-                        m.component(menuSearch),
-                        ctrl.user ? m.component(menuProfile, {user: ctrl.user}) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
-                        m('a.w-nav-link.w-hidden-small.w-hidden-tiny.header-link.w-nav-link.u-right[href=\'http://blog.catarse.me?ref=ctrse_header\'][target=\'_blank\']',
-                            {style: 'float: right;'},
-                            'Blog'
-                        )
+                        args.menuShort ? '' : m('div#menu-components', [
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m.route }, 'Comece seu projeto'),
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m.route }, 'Explore'),
+                            m.component(menuSearch)
+                        ])
                     ]
                 ),
-                m('.w-hidden-main.w-hidden-medium.header-controls-mobile',
-                    [
-                        m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
-                            {onclick: () => m.route('/start')},
-                            'Comece seu projeto'
-                        ),
-                        m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
-                            {onclick: () => m.route('/explore')},
-                            'Explore'
-                        )
-                    ]
-                )
-            ]
-        );
+                m('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
+                    ctrl.user ? m.component(menuProfile, { user: ctrl.user }) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
+                ])
+
+            ]),
+            args.menuShort ? '' : m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
+                [
+                    m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
+                        { onclick: () => m.route('/start') },
+                        'Comece seu projeto'
+                    ),
+                    m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
+                        { onclick: () => m.route('/explore') },
+                        'Explore'
+                    )
+                ]
+            )
+        ]);
     }
 };
 

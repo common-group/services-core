@@ -11,6 +11,7 @@ describe('ProjectHeader', () => {
             $output = mq(m.component(projectHeader, {
                 project: projectDetail,
                 userDetails: m.prop([]),
+                projectContributions: m.prop([]),
                 rewardDetails: rewardDetails
             }));
         });

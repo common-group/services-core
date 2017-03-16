@@ -6,51 +6,54 @@ import h from '../h';
 import userVM from '../vms/user-vm';
 import projectCard from './project-card';
 import inlineError from './inline-error';
+import loadMoreBtn from './load-more-btn';
 
 const userContributed = {
     controller(args) {
         const contributedProjects = m.prop(),
-              user_id = args.userId,
-              pages = postgrest.paginationVM(models.project),
-              error = m.prop(false),
-              loader = m.prop(true),
-              contextVM = postgrest.filtersVM({
-                  project_id: 'in'
-              });
+            user_id = args.userId,
+            pages = postgrest.paginationVM(models.project),
+            error = m.prop(false),
+            loader = m.prop(true),
+            contextVM = postgrest.filtersVM({
+                project_id: 'in'
+            });
 
-        userVM.getUserContributedProjects(user_id, null).then((data) => {
+        userVM.getPublicUserContributedProjects(user_id, null).then((data) => {
             contributedProjects(data);
-            contextVM.project_id(_.pluck(contributedProjects(), 'project_id')).order({
-              online_date: 'desc'
-          });
+            if (!_.isEmpty(contributedProjects())) {
+                contextVM.project_id(_.pluck(contributedProjects(), 'project_id')).order({
+                    online_date: 'desc'
+                });
 
-            models.project.pageSize(9);
-            pages.firstPage(contextVM.parameters()).then(() => {
+                models.project.pageSize(9);
+                pages.firstPage(contextVM.parameters()).then(() => {
+                    loader(false);
+                });
+            } else {
                 loader(false);
-            });
-        }).catch(err => {
-                error(true);
-                loader(false);
-                m.redraw();
-            });
+            }
+        }).catch((err) => {
+            error(true);
+            loader(false);
+            m.redraw();
+        });
 
         return {
             projects: pages,
-            error: error,
-            loader: loader
+            error,
+            loader
         };
     },
     view(ctrl, args) {
-        let projects_collection = ctrl.projects.collection();
-        return (ctrl.error() ? m.component(inlineError, {message: 'Erro ao carregar os projetos.'}) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
-                  [
-                  (!_.isEmpty(projects_collection) ? _.map(projects_collection, (project) => {
-                      return m.component(projectCard, {
-                            project: project,
-                            ref: 'user_contributed',
-                            showFriends: false
-                        });
-                  }) :
+        const projects_collection = ctrl.projects.collection();
+        return (ctrl.error() ? m.component(inlineError, { message: 'Erro ao carregar os projetos.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
+            [
+                  (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m.component(projectCard, {
+                      project,
+                      ref: 'user_contributed',
+                      showFriends: false
+                  })) :
                     m('.w-container',
                         m('.u-margintop-30.u-text-center.w-row',
                             [
@@ -80,13 +83,9 @@ const userContributed = {
 
                   (!_.isEmpty(projects_collection) ?
                   m('.w-row.u-marginbottom-40.u-margintop-30', [
-                      m('.w-col.w-col-2.w-col-push-5', [!ctrl.projects.isLoading() ?
-                                                        ctrl.projects.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                                            onclick: ctrl.projects.nextPage
-                                                        }, 'Carregar mais') : h.loader(),
-                                                       ])
+                      m(loadMoreBtn, { collection: ctrl.projects, cssClass: '.w-col-push-5' })
                   ]) : '')
-                ]
+            ]
               ))
               ;
     }

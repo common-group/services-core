@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var $ = require('gulp-load-plugins')();
 var concat = require('gulp-concat');
 var argv = require('yargs').argv;
 var multiEntry = require('rollup-plugin-multi-entry').default;
@@ -14,9 +15,23 @@ var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
 var Server = require('karma').Server;
+var flow = require('gulp-flowtype');
+var rollupFlow = require('rollup-plugin-flow');
 
 var sources = ['src/c.js', 'src/h.js', 'src/models.js', 'src/root/**/*.js','src/c/**/*.js','src/**/*.js'];
 var tests = ['spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'];
+
+var rollupGlobals = {
+    underscore: '_',
+    moment: 'moment',
+    mithril: 'm',
+    jquery: '$',
+    'chartjs': 'Chart',
+    'replaceDiacritics': 'replaceDiacritics',
+    'mithril-postgrest': 'postgrest',
+    'i18n-js': 'I18n',
+    'CatarseAnalytics': 'CatarseAnalytics'
+};
 
 gulp.task('bundle-tests', function(done){
     rollup({
@@ -24,19 +39,16 @@ gulp.task('bundle-tests', function(done){
       sourceMap: true,
       format: 'iife',
       moduleName: 'catarseSpecs',
-      plugins: [babel({
-          exclude: 'node_modules/**',
-          "presets": [ "es2015-rollup" ]
-      }), multiEntry()],
-      globals: {
-          underscore: '_',
-          moment: 'moment',
-          mithril: 'm',
-          'chartjs': 'Chart',
-          'replaceDiacritics': 'replaceDiacritics',
-          'mithril-postgrest': 'postgrest',
-          'i18n-js': 'I18n'
-      }
+      plugins: [
+          rollupFlow(),
+          babel({
+              exclude: 'node_modules/**',
+              "presets": [ "es2015-rollup" ]
+          }),
+          multiEntry()
+      ],
+      globals: rollupGlobals,
+      external: Object.keys(rollupGlobals)
     })
     .pipe(source('spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/**/*.js'))
     .pipe(buffer())
@@ -58,6 +70,16 @@ gulp.task('karma', ['bundle-tests'],function(done) {
   }, done).start();
 });
 
+gulp.task('typeTest', function(done){
+    return gulp.src('./src/**/*.js')
+    .pipe(flow({
+        all: false,
+        weak: false,
+        declarations: './declarations',
+        killFlow: false,
+        abort: true
+    }));
+});
 
 gulp.task('lint', function(){
   gulp.src(sources)
@@ -74,20 +96,14 @@ gulp.task('dist', function(done){
         moduleName: 'c',
         sourceMap: true,
         plugins: [
+            rollupFlow(),
             babel({
               exclude: 'node_modules/**',
               "presets": [ "es2015-rollup" ]
             })
         ],
-        globals: {
-            underscore: '_',
-            moment: 'moment',
-            mithril: 'm',
-            'chartjs': 'Chart',
-            'replaceDiacritics': 'replaceDiacritics',
-            'mithril-postgrest': 'postgrest',
-            'i18n-js': 'I18n'
-        }
+        globals: rollupGlobals,
+        external: Object.keys(rollupGlobals)
     })
     .pipe(source('src/**/*.js'))
     .pipe(buffer())
@@ -95,7 +111,7 @@ gulp.task('dist', function(done){
     .pipe(sourcemaps.write())
     .pipe(rename('catarse.js'))
     .pipe(gulp.dest('dist'))
-    .pipe(uglify())
+    .pipe($.if(!argv.fast, uglify()))
     .pipe(rename('catarse.min.js'))
     .pipe(gulp.dest('dist'))
     .on('end', done);
@@ -108,5 +124,5 @@ gulp.task('watch', function(){
 });
 
 gulp.task('default', ['watch']);
-gulp.task('test', ['bundle-tests', 'karma', 'clean-tests']);
-gulp.task('build', ['lint', 'test', 'dist']);
+gulp.task('test', ['typeTest', 'bundle-tests', 'karma', 'clean-tests']);
+gulp.task('build', ['lint', 'typeTest', 'test', 'dist']);

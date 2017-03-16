@@ -3,17 +3,15 @@ import _ from 'underscore';
 
 const dropdown = {
     view(ctrl, args) {
-        let opts = (_.isFunction(args.options) ? args.options() : args.options);
+        const opts = (_.isFunction(args.options) ? args.options() : args.options);
 
         return m(
             `select${args.classes}[id="${args.id}"]`,
             {
-                onchange: m.withAttr('value', args.valueProp),
+                onchange: (e) => { args.valueProp(e.target.value); args.onchange(); },
                 value: args.valueProp()
             },
-            _.map(opts, function(data) {
-                return m('option[value="' + data.value + '"]', data.option);
-            })
+            _.map(opts, data => m(`option[value="${data.value}"]`, data.option))
         );
     }
 };

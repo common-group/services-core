@@ -24,24 +24,21 @@ const projectRow = {
                                     m(`a.btn.btn-no-border.btn-small.btn-terciary[href="/connect-facebook?ref=${ref}"]`, 'Encontrar amigos')
                                 ]) : ''),
                                 m((showFriends ? '.w-col.w-col-6' : '.w-col.w-col-12'),
-                                    m(`a.btn.btn-small.btn-terciary[href="/explore?ref=${ref}&filter=${collection.hash}"]`,{
+                                    m(`a.btn.btn-small.btn-terciary[href="/explore?ref=${ref}&filter=${collection.hash}"]`, {
                                         config: m.route
-                                    },'Ver todos'))
+                                    }, 'Ver todos'))
                             ])
                         ])
                     ]) : '',
-                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), (project) => {
-                        return m.component(projectCard, {
-                            project: project,
-                            ref: ref,
-                            showFriends: showFriends
-                        });
-                    }))
+                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m.component(projectCard, {
+                        project,
+                        ref,
+                        showFriends
+                    })))
                 ])
             ]);
-        } else {
-            return m('div');
         }
+        return m('div');
     }
 };
 

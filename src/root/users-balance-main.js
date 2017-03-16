@@ -15,60 +15,58 @@ import userBalanceTransactions from '../c/user-balance-transactions';
 
 const userBalanceMain = {
     controller(args) {
-        const userIdVM = postgrest.filtersVM({user_id: 'eq'});
+        const userIdVM = postgrest.filtersVM({ user_id: 'eq' });
 
         userIdVM.user_id(args.user_id);
 
         // Handles with user balance request data
         const balanceManager = (() => {
-            const collection = m.prop([{amount: 0, user_id: args.user_id}]),
-                  load = () => {
-                      models.balance.getRowWithToken(userIdVM.parameters()).then(collection);
-                  };
+                const collection = m.prop([{ amount: 0, user_id: args.user_id }]),
+                    load = () => {
+                        models.balance.getRowWithToken(userIdVM.parameters()).then(collection);
+                    };
 
-            return {
-                collection: collection,
-                load: load
-            };
-        })(),
+                return {
+                    collection,
+                    load
+                };
+            })(),
 
               // Handles with user balance transactions list data
-              balanceTransactionManager = (() => {
-                  const listVM = postgrest.paginationVM(
+            balanceTransactionManager = (() => {
+                const listVM = postgrest.paginationVM(
                       models.balanceTransaction, 'created_at.desc'),
-                        load = () => {
-                            listVM.firstPage(userIdVM.parameters());
-                        };
+                    load = () => {
+                        listVM.firstPage(userIdVM.parameters());
+                    };
 
-                  return {
-                      load: load,
-                      list: listVM
-                  };
-              })(),
+                return {
+                    load,
+                    list: listVM
+                };
+            })(),
 
               // Handles with bank account to check
-              bankAccountManager = (() => {
-                  const collection = m.prop([]),
-                        loader = (() => {
-                            return postgrest.loaderWithToken(
+            bankAccountManager = (() => {
+                const collection = m.prop([]),
+                    loader = (() => postgrest.loaderWithToken(
                                 models.bankAccount.getRowOptions(
-                                    userIdVM.parameters()));
-                        })(),
-                        load = () => {
-                            loader.load().then(collection);
-                        };
+                                    userIdVM.parameters())))(),
+                    load = () => {
+                        loader.load().then(collection);
+                    };
 
-                  return {
-                      collection: collection,
-                      load: load,
-                      loader: loader
-                  };
-              })();
+                return {
+                    collection,
+                    load,
+                    loader
+                };
+            })();
 
         return {
-            bankAccountManager: bankAccountManager,
-            balanceManager: balanceManager,
-            balanceTransactionManager: balanceTransactionManager
+            bankAccountManager,
+            balanceManager,
+            balanceTransactionManager
         };
     },
     view(ctrl, args) {

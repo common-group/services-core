@@ -22,20 +22,18 @@ const projectMode = {
             modeImgSrc = (mode === 'aon') ? '/assets/aon-badge.png' : '/assets/flex-badge.png',
             modeTitle = (mode === 'aon') ? 'Campanha Tudo-ou-nada ' : 'Campanha Flexível ',
             goal = (_.isNull(project.goal) ? 'não definida' : h.formatNumber(project.goal)),
-            buildTooltip = (el) => {
-                return m.component(tooltip, {
-                    el: el,
-                    text: (mode === 'aon') ? `Somente receberá os recursos se atingir ou ultrapassar a meta até o dia ${h.momentify(project.zone_expires_at, 'DD/MM/YYYY')}.` : 'O realizador receberá todos os recursos quando encerrar a campanha, mesmo que não tenha atingido esta meta.',
-                    width: 280
-                });
-            };
+            buildTooltip = el => m.component(tooltip, {
+                el,
+                text: (mode === 'aon') ? `Somente receberá os recursos se atingir ou ultrapassar a meta até o dia ${h.momentify(project.zone_expires_at, 'DD/MM/YYYY')}.` : 'O realizador receberá todos os recursos quando encerrar a campanha, mesmo que não tenha atingido esta meta.',
+                width: 280
+            });
 
         return m(`#${mode}.w-row`, [
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [
                 !_.isEmpty(project) ? m(`img[src="${modeImgSrc}"][width='30']`) : ''
             ]),
             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
-                m('.fontsize-base.fontweight-semibold', 'Meta R$ ' + h.selfOrEmpty(goal, '--')),
+                m('.fontsize-base.fontweight-semibold', `Meta R$ ${h.selfOrEmpty(goal, '--')}`),
                 m('.w-inline-block.fontsize-smallest._w-inline-block', [
                     !_.isEmpty(project) ? modeTitle : '',
                     buildTooltip('span.w-inline-block.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')

@@ -23,24 +23,23 @@ const landingSignup = {
             email = m.prop(''),
             error = m.prop(false),
             submit = () => {
-                if (h.validateEmail(email())){
+                if (h.validateEmail(email())) {
                     return true;
-                } else {
-                    error(true);
-                    return false;
                 }
+                error(true);
+                return false;
             };
         return {
-            email: email,
-            submit: submit,
-            error: error
+            email,
+            submit,
+            error
         };
     },
     view(ctrl, args) {
-        let errorClasses = (!ctrl.error) ? '.positive.error' : '';
-        return m('form.w-form[id="email-form"][method="post"][action="' + args.builder.customAction + '"]',{
+        const errorClasses = (!ctrl.error) ? '.positive.error' : '';
+        return m(`form.w-form[id="email-form"][method="post"][action="${args.builder.customAction}"]`, {
             onsubmit: ctrl.submit
-        },[
+        }, [
             m('.w-col.w-col-5', [
                 m(`input${errorClasses}.w-input.text-field.medium[name="EMAIL"][placeholder="Digite seu email"][type="text"]`, {
                     config: h.RDTracker('landing-flex'),

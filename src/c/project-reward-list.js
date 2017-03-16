@@ -26,7 +26,7 @@ const projectRewardList = {
                 //     return h.navigateToDevise('/' + projectVM.currentProject().permalink);
                 // } else {
                 // vm.contributionValue(valueFloat);
-                //h.navigateTo(`/projects/${projectVM.currentproject().project_id}/contributions/new?reward_id=${vm.selectedReward().id}`);
+                // h.navigateTo(`/projects/${projectVM.currentproject().project_id}/contributions/new?reward_id=${vm.selectedReward().id}`);
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}`);
                 // m.route(`/projects/${projectVM.currentproject().project_id}/payment`, {
                 //    project_user_id: projectVM.currentProject().user_id
@@ -52,36 +52,38 @@ const projectRewardList = {
         return {
             applyMask: vm.applyMask,
             error: vm.error,
-            submitContribution: submitContribution,
+            submitContribution,
             openedReward: vm.selectedReward,
             selectReward: vm.selectReward,
             contributionValue: vm.contributionValue,
-            setInput: setInput
+            setInput
         };
     },
     view(ctrl, args) {
-        //FIXME: MISSING ADJUSTS
+        // FIXME: MISSING ADJUSTS
         // - add draft admin modifications
         const project = args.project() || {
             open_for_contributions: false
         };
-        return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), (reward) => {
-
-            return m('div[class="' + (h.rewardSouldOut(reward) ? 'card-gone' : 'card-reward ' + (project.open_for_contributions ? 'clickable' : '')) + ' card card-secondary u-marginbottom-10"]', {
-                onclick: h.analytics.event({
-                    cat: 'contribution_create',
-                    act: 'contribution_reward_click',
-                    lbl: reward.minimum_value,
-                    project: project,
-                    extraData: {
-                        reward_id: reward.id,
-                        reward_value: reward.minimum_value
-                    }
-                }, ctrl.selectReward(reward))
-            }, [
-                m('.u-marginbottom-20', [
-                    m('.fontsize-base.fontweight-semibold', 'Para R$ ' + h.formatNumber(reward.minimum_value) + ' ou mais'),
-                    m('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), (reward.maximum_contributions > 0 ? [
+        return m('#rewards.u-marginbottom-30', _.map(args.rewardDetails(), reward => m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
+            onclick: h.analytics.event({
+                cat: 'contribution_create',
+                act: 'contribution_reward_click',
+                lbl: reward.minimum_value,
+                project,
+                extraData: {
+                    reward_id: reward.id,
+                    reward_value: reward.minimum_value
+                }
+            }, ctrl.selectReward(reward))
+        }, [
+            reward.minimum_value >= 100 ? m('.tag-circle-installment', [
+                m('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'),
+                m('.fontsize-mini.lineheight-tightest', 's/ juros')
+            ]) : '',
+            m('.u-marginbottom-20', [
+                m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais`),
+                m('.fontsize-smaller.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), (reward.maximum_contributions > 0 ? [
                         (reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [
                             m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))
                         ]) : ''), (h.rewardSouldOut(reward) ? m('.u-margintop-10', [
@@ -89,13 +91,13 @@ const projectRewardList = {
                         ]) : m('.u-margintop-10', [
                             m('span.badge.badge-attention.fontsize-smaller', [
                                 m('span.fontweight-bold', 'Limitada'),
-                                ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' disponíveis)'
+                                project.open_for_contributions ? ` (${h.rewardRemaning(reward)} de ${reward.maximum_contributions} disponíveis)` : ''
                             ])
                         ]))
-                    ] : ''),
-                ]),
+                ] : ''),
+            ]),
 
-                m('.fontsize-smaller.u-margintop-20', m.trust(h.simpleFormat(h.strip(reward.description)))),
+            m('.fontsize-smaller.u-margintop-20', m.trust(h.simpleFormat(h.strip(reward.description)))),
                 (!_.isEmpty(reward.deliver_at) ?
                     m('.fontsize-smaller', [
                         m('b', 'Estimativa de Entrega: '),
@@ -137,8 +139,7 @@ const projectRewardList = {
                     //     m('.project-reward-box-select-text.u-text-center', 'Selecione essa recompensa')
                     // ])
                 ] : '')
-            ]);
-        }));
+        ])));
     }
 };
 

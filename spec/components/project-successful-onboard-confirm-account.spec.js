@@ -28,12 +28,5 @@ describe('Project Successful Onboard Account Confirmation', () => {
             current.click('#confirm-account');
             expect(current.find('#successful-onboard-form').length).toEqual(1);
         });
-
-        it('should get back to action start when close is clicked', () => {
-            let current = $output();
-
-            current.click('#refuse-account');
-            expect(current.find('#successful-onboard-error').length).toEqual(1);
-        });
     });
 });

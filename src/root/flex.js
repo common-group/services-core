@@ -36,11 +36,11 @@ const Flex = {
         projectsLoader.load().then(_.compose(projects, sample3));
 
         return {
-            addDisqus: addDisqus,
-            builder: builder,
-            statsLoader: statsLoader,
-            stats: stats,
-            projectsLoader: projectsLoader,
+            addDisqus,
+            builder,
+            statsLoader,
+            stats,
+            projectsLoader,
             projects: {
                 loader: projectsLoader,
                 collection: projects
@@ -48,7 +48,7 @@ const Flex = {
         };
     },
     view(ctrl, args) {
-        let stats = _.first(ctrl.stats());
+        const stats = _.first(ctrl.stats());
 
         return [
             m('.w-section.hero-full.hero-zelo', [
@@ -110,7 +110,7 @@ const Flex = {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-editable.fontsize-larger.u-margintop-40.u-margin-bottom-40.u-text-center', 'Conheça alguns dos primeiros projetos flex'),
-                        ctrl.projectsLoader() ? h.loader() : m.component(projectRow, {collection: ctrl.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40'})
+                        ctrl.projectsLoader() ? h.loader() : m.component(projectRow, { collection: ctrl.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40' })
                     ])
                 ]),
                 m('.w-section.divider'),
@@ -168,7 +168,7 @@ const Flex = {
                                 m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')
                             ]),
                             m('.w-col.w-col-4', [
-                                m('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milhões'), m('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')
+                                m('.fontsize-jumbo.text-success.lineheight-loose', `${stats.total_contributed.toString().slice(0, 2)} milhões`), m('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')
                             ])
                         ])
                     ])
@@ -183,13 +183,13 @@ const Flex = {
                                     m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                         m('div', [
                                             m('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'),
-                                            m('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')
+                                            m(`a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=${encodeURIComponent('Conheça o novo Catarse Flex!')}"][target="_blank"]`, 'Compartilhar')
                                         ])
                                     ]),
                                     m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                         m('div', [
                                             m('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'),
-                                            m('a.w-button.btn.btn-large.btn-tweet[href="http://twitter.com/?status=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')
+                                            m(`a.w-button.btn.btn-large.btn-tweet[href="https://twitter.com/intent/tweet?text=${encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!')}https://www.catarse.me/flex?ref=twitter"][target="_blank"]`, 'Tuitar')
                                         ])
                                     ])
                                 ])
@@ -199,8 +199,8 @@ const Flex = {
                     ])
                 ]), m('.w-section.section-large.bg-greenlime', [
                     m('.w-container', [
-                        m('#participe-do-debate.u-text-center', {config: h.toAnchor()}, [
-                            m('h1.fontsize-largest.fontcolor-negative','Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
+                        m('#participe-do-debate.u-text-center', { config: h.toAnchor() }, [
+                            m('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
                         ]),
                         m('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
                             config: ctrl.addDisqus

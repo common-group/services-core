@@ -45,24 +45,22 @@ const adminUserDetail = {
         const actions = ctrl.actions,
             item = args.item,
             details = args.details,
-            addOptions = (builder, id) => {
-                return _.extend({}, builder, {
-                    requestOptions: {
-                        url: (`/users/${id}/new_password`),
-                        method: 'POST'
-                    }
-                });
-            };
+            addOptions = (builder, id) => _.extend({}, builder, {
+                requestOptions: {
+                    url: (`/users/${id}/new_password`),
+                    method: 'POST'
+                }
+            });
 
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
             m('.w-row.u-marginbottom-30', [
                 m.component(adminResetPassword, {
                     data: addOptions(actions.reset, item.id),
-                    item: item
+                    item
                 }),
                 (item.deactivated_at) ?
-                    m.component(adminInputAction, {data: actions.reactivate, item: item}) : ''
+                    m.component(adminInputAction, { data: actions.reactivate, item }) : ''
             ]),
             m('.w-row.card.card-terciary.u-radius', [
                 m.component(adminNotificationHistory, {

@@ -1,6 +1,6 @@
 /**
  * window.c.ProjectSuccessfulOnboardConfirmAccount component
- * render project account data to confirm or add error
+ * render project account data to confirm or redirect when error
  *
  * Example:
  * m.component(c.ProjectSuccessfulOnboardConfirmAccount, {projectAccount: projectAccount})
@@ -9,7 +9,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
-import projectSuccessfulOnboardConfirmAccountError from './project-successful-onboard-confirm-account-error';
 import projectSuccessfulOnboardConfirmAccountAccept from './project-successful-onboard-confirm-account-accept';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
@@ -17,31 +16,27 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_ac
 const projectSuccessfulOnboardConfirmAccount = {
     controller(args) {
         const actionStages = {
-                  'error': projectSuccessfulOnboardConfirmAccountError,
-                  'accept': projectSuccessfulOnboardConfirmAccountAccept
-              },
-              currentStage = m.prop('start'),
-              actionStage = () => actionStages[currentStage()],
-              changeToAction = (stage) => {
-                  return () => {
-                      currentStage(stage);
+                accept: projectSuccessfulOnboardConfirmAccountAccept
+            },
+            currentStage = m.prop('start'),
+            actionStage = () => actionStages[currentStage()],
+            changeToAction = stage => () => {
+                currentStage(stage);
 
-                      return false;
-                  };
-              };
+                return false;
+            };
 
         return {
-            changeToAction: changeToAction,
-            actionStage: actionStage,
-            currentStage: currentStage
+            changeToAction,
+            actionStage,
+            currentStage
         };
     },
     view(ctrl, args) {
         const projectAccount = args.projectAccount,
-              actionStage = ctrl.actionStage,
-              currentStage = ctrl.currentStage,
-              personKind = (projectAccount.owner_document.length > 14 ? 'juridical' : 'natural'),
-              juridicalPerson = projectAccount.owner_document.length > 14;
+            actionStage = ctrl.actionStage,
+            currentStage = ctrl.currentStage,
+            juridicalPerson = projectAccount.user_type != 'pf';
 
         return m('.w-container.u-marginbottom-40', [
             m('.u-text-center', [
@@ -52,18 +47,18 @@ const projectSuccessfulOnboardConfirmAccount = {
                     m('.fontsize-base.u-marginbottom-30.card.card-terciary', [
                         m('div', [
                             m('span.fontcolor-secondary', I18n.t('person.label', I18nScope())),
-                            I18n.t(`person.${personKind}.label`, I18nScope())
+                            I18n.t(`person.${projectAccount.user_type}.label`, I18nScope())
                         ]),
                         m('div', [
-                            m('span.fontcolor-secondary', I18n.t(`person.${personKind}.name`, I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t(`person.${projectAccount.user_type}.name`, I18nScope())),
                             projectAccount.owner_name
                         ]),
                         ((projectAccount.state_inscription && juridicalPerson) ? m('div', [
-                            m('span.fontcolor-secondary', I18n.t(`person.state_inscription`, I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t('person.state_inscription', I18nScope())),
                             projectAccount.state_inscription
                         ]) : ''),
                         m('div', [
-                            m('span.fontcolor-secondary', I18n.t(`person.${personKind}.document`, I18nScope())),
+                            m('span.fontcolor-secondary', I18n.t(`person.${projectAccount.user_type}.document`, I18nScope())),
                             projectAccount.owner_document
                         ]),
                         m('div', [
@@ -76,7 +71,7 @@ const projectSuccessfulOnboardConfirmAccount = {
                         ]),
                         m('div', [
                             m('span.fontcolor-secondary', I18n.t('person.bank.account', I18nScope())),
-                            `${projectAccount.account}-${projectAccount.account_digit}`
+                            `${projectAccount.account}-${projectAccount.account_digit} (${I18n.t('person.bank.account_type.' + projectAccount.account_type, I18nScope())})`
                         ])
                     ])
                 ]),
@@ -108,16 +103,15 @@ const projectSuccessfulOnboardConfirmAccount = {
             (currentStage() === 'start') ? m('#confirmation-dialog.w-row.bank-transfer-answer', [
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny'),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#confirm-account.btn.btn-large', {href: '#confirm_account', onclick: ctrl.changeToAction('accept')}, 'Sim')
+                    m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: ctrl.changeToAction('accept') }, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#refuse-account.btn.btn-large.btn-terciary', {href: '#error_account', onclick: ctrl.changeToAction('error')}, 'Não')
+                    m('a#refuse-account.btn.btn-large.btn-terciary', { href: `/projects/${projectAccount.project_id}/edit#user_settings` }, 'Não')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
             ]) : m.component(actionStage(), {
-                projectAccount: projectAccount,
+                projectAccount,
                 changeToAction: ctrl.changeToAction,
-                addErrorReason: args.addErrorReason,
                 acceptAccount: args.acceptAccount,
                 acceptAccountLoader: args.acceptAccountLoader
             })

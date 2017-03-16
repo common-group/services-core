@@ -11,13 +11,16 @@ const models = {
     balanceTransaction: postgrest.model('balance_transactions'),
     balanceTransfer: postgrest.model('balance_transfers'),
     user: postgrest.model('users'),
+    userCreditCard: postgrest.model('user_credit_cards'),
     bankAccount: postgrest.model('bank_accounts'),
+    bank: postgrest.model('banks'),
     rewardDetail: postgrest.model('reward_details'),
     projectReminder: postgrest.model('project_reminders'),
     projectReport: postgrest.model('project_reports'),
     contributions: postgrest.model('contributions'),
     directMessage: postgrest.model('direct_messages'),
     teamTotal: postgrest.model('team_totals'),
+    recommendedProjects: postgrest.model('recommended_projects'),
     projectAccount: postgrest.model('project_accounts'),
     projectAccountError: postgrest.model('project_account_errors'),
     projectContribution: postgrest.model('project_contributions'),
@@ -44,7 +47,7 @@ const models = {
     userFollower: postgrest.model('user_followers'),
     creatorSuggestion: postgrest.model('creator_suggestions'),
     userContribution: postgrest.model('user_contributions'),
-    inviteProjectEmail: postgrest.model('rpc/invite_project_email'),
+    shippingFee: postgrest.model('shipping_fees'),
     deleteProject: postgrest.model('rpc/delete_project'),
     cancelProject: postgrest.model('rpc/cancel_project')
 };
@@ -60,5 +63,8 @@ models.country.pageSize(false);
 models.state.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
+models.recommendedProjects.pageSize(3);
+models.bank.pageSize(400);
+
 
 export default models;

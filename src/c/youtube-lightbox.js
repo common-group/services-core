@@ -46,15 +46,15 @@ const youtubeLightbox = {
                         modestBranding: 0
                     },
                     events: {
-                        'onStateChange': (state) => (state.data === 0) ? closeVideo() : false
+                        onStateChange: state => (state.data === 0) ? closeVideo() : false
                     }
                 });
             };
 
         return {
-            showLightbox: showLightbox,
-            setYoutube: setYoutube,
-            closeVideo: closeVideo
+            showLightbox,
+            setYoutube,
+            closeVideo
         };
     },
     view(ctrl, args) {
@@ -72,14 +72,14 @@ const youtubeLightbox = {
                             m('.w-lightbox-frame', [
                                 m('figure.w-lightbox-figure', [
                                     m('img.w-lightbox-img.w-lightbox-image[src=\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22940%22%20height=%22528%22/%3E\']'),
-                                    m('#ytvideo.embedly-embed.w-lightbox-embed', {config: ctrl.setYoutube})
+                                    m('#ytvideo.embedly-embed.w-lightbox-embed', { config: ctrl.setYoutube })
                                 ])
                             ])
                         ]),
                         m('.w-lightbox-spinner.w-lightbox-hide'),
                         m('.w-lightbox-control.w-lightbox-left.w-lightbox-inactive'),
                         m('.w-lightbox-control.w-lightbox-right.w-lightbox-inactive'),
-                        m('#youtube-close.w-lightbox-control.w-lightbox-close', {onclick: ctrl.closeVideo})
+                        m('#youtube-close.w-lightbox-control.w-lightbox-close', { onclick: ctrl.closeVideo })
                     ]),
                     m('.w-lightbox-strip')
                 ])

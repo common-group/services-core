@@ -16,11 +16,11 @@ describe('ProjectCancelButton', () => {
         });
 
         it('should build a link with .btn-cancel', function() {
-            expect($output.has('a.btn-cancel')).toBeTrue();
+            expect($output.has('button.btn-cancel')).toBeTrue();
         });
 
         it('should open project cancel modal when clicked', () => {
-            $output.click('a.btn-cancel');
+            $output.click('button.btn-cancel');
             $output.should.have('.cancel-project-modal');
         });
     });

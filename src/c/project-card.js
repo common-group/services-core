@@ -2,7 +2,6 @@ import m from 'mithril';
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
-import models from '../models';
 import projectVM from '../vms/project-vm';
 import projectFriends from './project-friends';
 
@@ -17,39 +16,39 @@ const projectCard = {
 
         const css = () => {
             const cssClasses = {
-                'small': {
-                      wrapper: '.w-col.w-col-4',
-                      innerWrapper: '.card-project.card.u-radius',
-                      thumb: '.card-project-thumb',
-                      descriptionWrapper: '',
-                      description: '.card-project-description.alt',
-                      title: '.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base',
-                      author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                      headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
-                      city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
-                  },
-                'medium': {
-                      wrapper: '.w-col.w-col-6',
-                      innerWrapper: '.card-project.card.u-radius',
-                      thumb: '.card-project-thumb.medium',
-                      descriptionWrapper: '',
-                      description: '.card-project-description.alt',
-                      title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                      author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                      headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
-                      city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
-                  },
-                'big': {
-                      wrapper: '.card.u-radius.card-project',
-                      innerWrapper: '.w-row',
-                      thumb: '.w-col.w-col-8.w-col-medium-6.card-project-thumb.big',
-                      descriptionWrapper: '.w-col.w-col-4.w-col-medium-6',
-                      description: '.card-project-description.big',
-                      title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                      author: '.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
-                      headline: '.fontcolor-secondary.fontsize-smaller',
-                      city: '.w-hidden'
-                  }
+                small: {
+                    wrapper: '.w-col.w-col-4',
+                    innerWrapper: '.card-project.card.u-radius',
+                    thumb: '.card-project-thumb',
+                    descriptionWrapper: '',
+                    description: '.card-project-description.alt',
+                    title: '.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base',
+                    author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                    headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
+                    city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
+                },
+                medium: {
+                    wrapper: '.w-col.w-col-6',
+                    innerWrapper: '.card-project.card.u-radius',
+                    thumb: '.card-project-thumb.medium',
+                    descriptionWrapper: '',
+                    description: '.card-project-description.alt',
+                    title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
+                    author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                    headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
+                    city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
+                },
+                big: {
+                    wrapper: '.card.u-radius.card-project',
+                    innerWrapper: '.w-row',
+                    thumb: '.w-col.w-col-8.w-col-medium-6.card-project-thumb.big',
+                    descriptionWrapper: '.w-col.w-col-4.w-col-medium-6',
+                    description: '.card-project-description.big',
+                    title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
+                    author: '.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
+                    headline: '.fontcolor-secondary.fontsize-smaller',
+                    city: '.w-hidden'
+                }
             };
 
             return cssClasses[type];
@@ -58,17 +57,36 @@ const projectCard = {
         const cardMeter = () => {
             const failed = () => ((project.state === 'failed') || (project.state === 'waiting_funds')) ? 'card-secondary' : '';
 
-            return `.card-project-meter.${project.mode}.${project.state}.${progress}.${failed()}`;
-
+            return `.card-project-meter.${project.mode}.${project.state}.${progress > 100 ? 'complete' : 'incomplete'}.${failed()}`;
         };
 
+        const isFinished = project => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
+
+        const cardCopy = (project) => {
+            if (project.expires_at) {
+                return isFinished(project) ? [
+                    m('.fontsize-smaller.fontweight-loose', 'Encerrado'),
+                    m('.fontsize-smallest.lineheight-tightest', h.momentify(project.expires_at))
+                ] : [
+                    m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
+                    m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
+                ];
+            }
+            return [
+                m('.fontsize-smallest.lineheight-tight', ['Iniciado há', m('br'), `${elapsedTextObj.total} ${elapsedTextObj.unit}`])
+            ];
+        };
+
+
         return {
-            css: css,
-            type: type,
-            progress: progress,
-            remainingTextObj: remainingTextObj,
-            elapsedTextObj: elapsedTextObj,
-            cardMeter: cardMeter
+            cardCopy,
+            css,
+            type,
+            progress,
+            remainingTextObj,
+            elapsedTextObj,
+            isFinished,
+            cardMeter
         };
     },
     view(ctrl, args) {
@@ -76,26 +94,26 @@ const projectCard = {
 
         return m(ctrl.css().wrapper, [
             m(ctrl.css().innerWrapper, [
-                m(`a${ctrl.css().thumb}[href="/${project.permalink}"]`, {
+                m(`a${ctrl.css().thumb}[href="/${project.permalink}?ref=${args.ref}"]`, {
                     onclick: projectVM.routeToProject(project, args.ref),
                     style: {
                         'background-image': `url(${project.project_img})`,
-                        'display': 'block'
+                        display: 'block'
                     }
                 }),
                 m(ctrl.css().descriptionWrapper, [
                     m(ctrl.css().description, [
                         m(ctrl.css().title, [
-                            m(`a.link-hidden[href="/${project.permalink}"]`,{
+                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
                             },
                             project.project_name)
                         ]),
-                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${project.owner_name}`),
+                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${(_.isEmpty(project.owner_public_name) ? project.owner_name : project.owner_public_name)}`),
                         m(ctrl.css().headline, [
-                            m(`a.link-hidden[href="/${project.permalink}"]`,{
+                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
-                            },project.headline)
+                            }, project.headline)
                         ])
                     ]),
                     m(ctrl.css().city, [
@@ -105,9 +123,9 @@ const projectCard = {
                         ])
                     ]),
                     m(ctrl.cardMeter(), [
-                        (_.contains(['successful', 'failed', 'waiting_funds'], project.state)) ?
+                        (ctrl.isFinished(project)) ?
                             m('div',
-                                project.state === 'successful' && ctrl.progress < 100 ? I18n.t(`display_status.flex_successful`, I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
+                                project.state === 'successful' && ctrl.progress < 100 ? I18n.t('display_status.flex_successful', I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
                             ) :
                         m('.meter', [
                             m('.meter-fill', {
@@ -120,26 +138,21 @@ const projectCard = {
                     m('.card-project-stats', [
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
-                                m('.fontsize-base.fontweight-semibold', `${Math.ceil(project.progress)}%`)
+                                m('.fontsize-base.fontweight-semibold', `${Math.floor(project.progress)}%`)
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
                                 m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
                                 m('.fontsize-smallest.lineheight-tightest', 'Levantados')
                             ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', project.expires_at ? [
-                                m('.fontsize-smaller.fontweight-semibold', `${ctrl.remainingTextObj.total} ${ctrl.remainingTextObj.unit}`),
-                                m('.fontsize-smallest.lineheight-tightest', (ctrl.remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
-                            ] : [
-                                m('.fontsize-smallest.lineheight-tight', ['Iniciado há',m('br'),`${ctrl.elapsedTextObj.total} ${ctrl.elapsedTextObj.unit}`])
-                            ]),
+                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', ctrl.cardCopy(project)),
                         ])
                     ]),
                 ]),
                 (args.showFriends && ctrl.type === 'big' ?
-                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, {project: project})]) : '')
+                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, { project })]) : '')
             ]),
             (args.showFriends && ctrl.type !== 'big' ?
-              m.component(projectFriends, {project: project}) : '')
+              m.component(projectFriends, { project }) : '')
         ]);
     }
 };

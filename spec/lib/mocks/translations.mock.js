@@ -7,11 +7,26 @@ beforeAll(function() {
   TranslationsFactory({
       pt: {
           projects: {
+              index: {
+                  explore_categories: {
+                      10: {
+                          link: 'external_link'
+                      }
+                  }
+              },
               faq: {
                   aon: {
-                      description: 'fake descriptions',
+                      description: 'faqBox description',
                       questions: {
                           1: {
+                              question: 'question_1',
+                              answer: 'answer_1'
+                          },
+                          2: {
+                              question: 'question_1',
+                              answer: 'answer_1'
+                          },
+                          3: {
                               question: 'question_1',
                               answer: 'answer_1'
                           }

@@ -5,7 +5,7 @@ const homeVM = () => {
         banners = i18nStart.banners;
 
     return {
-        banners: banners
+        banners
     };
 };
 
