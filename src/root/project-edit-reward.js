@@ -14,7 +14,7 @@ const projectEditReward = {
                 description: null,
                 limited: h.toggleProp(false, true),
                 maximum_contributions: null,
-                new: true
+                newReward: true
             };
         rewardVM.fetchRewards(args.project_id).then(() => {
             _.map(rewardVM.rewards(), (reward) => {
