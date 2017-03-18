@@ -8,10 +8,11 @@ import rewardVM from '../vms/reward-vm';
 const editRewardCard = {
     controller(args) {
         const shipping_options = m.prop(args.reward.shipping_options),
+            showHelp = h.toggleProp(false, true),
             reward = args.reward,
             otherFeeValue = m.prop(),
             internationalFeeValue = m.prop(),
-            minimumValue = m.prop(args.reward.minimum_value),
+            minimumValue = m.prop(args.reward.minimum_value || 0),
             maximumContributions = m.prop(args.reward.maximum_contributions),
             index = args.index,
             states = m.prop([]),
@@ -48,6 +49,7 @@ const editRewardCard = {
         });
 
         return {
+            showHelp,
             otherFeeValue,
             internationalFeeValue,
             minimumValue,
@@ -71,11 +73,12 @@ const editRewardCard = {
                 m('.fontweight-semibold.fontsize-smallest.u-marginbottom-10', [
                     'Editar recompensa',
                     m.trust('&nbsp;'),
-                    m("a.link-edit.fa.fa-question-circle[href='javascript:void(0);']")
+                    m("a.link-edit.fa.fa-question-circle[href='javascript:void(0);']", { onclick: () => ctrl.showHelp.toggle() })
                 ]),
-                m('.fontsize-smallest.fontcolor-secondary.reward-explanation.w-hidden.u-marginbottom-20',
+                (ctrl.showHelp() ?
+                m('.fontsize-smallest.fontcolor-secondary.reward-explanation.u-marginbottom-20',
                     'Descreva o valor da recompensa e coloque uma previsão de data de entrega real para os apoiadores. Você também pode limitar uma recompensa e quando o limite é atingido ela aparece como ESGOTADA. Se quiser mudar a ordem que as recompensas aparecem em seu projeto, basta fazer isso arrastando-as para cima ou para baixo.'
-                )
+                ) : '')
             ]),
             m('.w-col.w-col-7',
                 m('.card',
@@ -122,10 +125,12 @@ const editRewardCard = {
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
                                                 name: `project[rewards_attributes][${index}][deliver_at(2i)]`
                                             }, [
-                                                _.map(moment.monthsShort(), (month, monthIndex) =>
-                                                    m(`option[value='${monthIndex + 1}']${moment(reward.deliver_at).format('MMM') === month ? "[selected='selected']" : ''}`,
+                                                _.map(moment.monthsShort(), (month, monthIndex) => {
+                                                    const selectedMonth = reward.deliver_at ? moment(reward.deliver_at).format('MMM') : moment.monthsShort()[moment().month()];
+                                                    return m(`option[value='${monthIndex + 1}']${selectedMonth === month ? "[selected='selected']" : ''}`,
                                                         h.capitalize(month)
-                                                    )
+                                                    );
+                                                }
                                                 )
                                             ]),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
@@ -314,13 +319,14 @@ const editRewardCard = {
                             ])
                         ]),
                         m('.w-row.u-margintop-30', [
+                            (reward.newReward ? '' :
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                                 m("input.w-button.btn-terciary.btn.btn-small.reward-close-button[type='submit'][value='Fechar']", {
                                     onclick: () => {
                                         reward.edit.toggle();
                                     }
                                 })
-                            ),
+                            )),
                             m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                                 m(`input[id='project_rewards_attributes_${index}__destroy'][type='hidden'][value='false']`, {
                                     name: `project[rewards_attributes][${index}][_destroy]`
