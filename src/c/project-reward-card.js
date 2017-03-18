@@ -1,86 +1,11 @@
 import m from 'mithril';
-import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
-import I18n from 'i18n-js';
-import h from '../h';
-import models from '../models';
-import rewardVM from '../vms/reward-vm';
-import projectVM from '../vms/project-vm';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.reward_list');
-
-const projectRewardList = {
+const projectRewardCard = {
     controller() {
-        const storeKey = 'selectedReward',
-            vm = rewardVM,
-            statesLoader = postgrest.loader(models.state.getPageOptions()),
-            states = m.prop([]),
-            descriptionExtended = m.prop(0),
-            toggleDescriptionExtended = (rewardId) => {
-                if (descriptionExtended() === rewardId) {
-                    descriptionExtended(0);
-                } else {
-                    descriptionExtended(rewardId);
-                }
 
-                return false;
-            };
-
-        const setInput = (el, isInitialized) => !isInitialized ? el.focus() : false;
-
-        const submitContribution = () => {
-            const valueFloat = h.monetaryToFloat(vm.contributionValue);
-
-            if (valueFloat < vm.selectedReward().minimum_value) {
-                vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value}`);
-            } else {
-                vm.error('');
-                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}&contribution%5Bshipping_options%5D%5Bdestination%5D=${vm.selectedDestination()}`);
-            }
-
-            return false;
-        };
-
-        const hasShippingOptions = reward => !_.isNull(reward.shipping_options) && !reward.shipping_options === 'free';
-        const isRewardOpened = reward => vm.selectedReward().id === reward.id;
-        const isRewardDescriptionExtended = reward => descriptionExtended() === reward.id;
-        if (h.getStoredObject(storeKey)) {
-            const {
-                value,
-                reward
-            } = h.getStoredObject(storeKey);
-
-            h.removeStoredObject(storeKey);
-            vm.selectedReward(reward);
-            vm.contributionValue(h.applyMonetaryMask(`${value},00`));
-            submitContribution();
-        }
-
-        statesLoader.load().then(states);
-
-        return {
-            locationOptions: vm.locationOptions,
-            setInput,
-            submitContribution,
-            hasShippingOptions,
-            toggleDescriptionExtended,
-            applyMask: vm.applyMask,
-            error: vm.error,
-            isRewardOpened,
-            isRewardDescriptionExtended,
-            selectReward: vm.selectReward,
-            selectDestination: vm.selectDestination,
-            contributionValue: vm.contributionValue
-        };
     },
     view(ctrl, args) {
-        // FIXME: MISSING ADJUSTS
-        // - add draft admin modifications
-        // - move the cards to it's own component
-        const project = args.project() || {
-            open_for_contributions: false
-        };
-        return m('#rewards.reward.u-marginbottom-30', _.map(args.rewardDetails(), reward => m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
+        return m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
             onclick: h.analytics.event({
                 cat: 'contribution_create',
                 act: 'contribution_reward_click',
@@ -104,12 +29,10 @@ const projectRewardList = {
                 class: ctrl.isRewardOpened(reward) ? `opened ${ctrl.isRewardDescriptionExtended(reward) ? 'extended' : ''}` : ''
             }, m.trust(h.simpleFormat(h.strip(reward.description)))),
             ctrl.isRewardOpened(reward) ? m('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
-                onclick: () => ctrl.toggleDescriptionExtended(reward.id)
+                onclick: () => ctrl.descriptionExtended(reward.id)
             }, [
-                ctrl.isRewardDescriptionExtended(reward) ? 'menos ' : 'mais ',
-                m('span.fa.fa-angle-down', {
-                    class: ctrl.isRewardDescriptionExtended(reward) ? 'reversed' : ''
-                })
+                'mais',
+                m('span.fa.fa-angle-down')
             ]) : '',
             m('.u-marginbottom-20.w-row', [
                 m('.w-col.w-col-6', !_.isEmpty(reward.deliver_at) ? [
@@ -153,18 +76,19 @@ const projectRewardList = {
                         onsubmit: ctrl.submitContribution
                     }, [
                         m('.divider.u-marginbottom-20'),
-                        ctrl.hasShippingOptions(reward) ? m('div',
-                            [
-                                m('.fontcolor-secondary.u-marginbottom-10',
-                                    'Local de entrega'
-                                ),
-                                m('select.positive.text-field.w-select', {
-                                    onchange: m.withAttr('value', ctrl.selectedDestination)
-                                },
-                                    _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, option.name))
-                                )
-                            ]
-                        ) : '',
+                        true ? m('div',
+                        // ctrl.hasShippingOptions(reward) ? m('div',
+                                [
+                                    m('.fontcolor-secondary.u-marginbottom-10',
+                                        'Local de entrega'
+                                    ),
+                                    m('select.positive.text-field.w-select', {
+                                        onchange: m.withAttr('value', ctrl.selectedDestination)
+                                    },
+                                        _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, option.name))
+                                    )
+                                ]
+                            ) : '',
                         m('.fontcolor-secondary.u-marginbottom-10',
                             'Valor do apoio'
                         ),
@@ -191,8 +115,6 @@ const projectRewardList = {
                     ])
                 ]) : '',
             ] : ''
-        ])));
+        ]);
     }
-};
-
-export default projectRewardList;
+}

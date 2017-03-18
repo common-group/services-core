@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -15,7 +16,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsPayment = {
-    controller(args) {
+    controller() {
         const project = projectVM.getCurrentProject(),
             mode = project.mode,
             projectUserId = project.user.id,
@@ -32,26 +33,7 @@ const projectsPayment = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
-        if (_.contains([41679, 40191, 40271, 38768, 42815, 43002, 42129, 41867, 39655], project.project_id)) {
-            (window.$zopim && window.$zopim.livechat) || (function (d, s) {
-                var z = window.$zopim = function (c) { z._.push(c); },
-                    $ = z.s = d.createElement(s),
-                    e = d.getElementsByTagName(s)[0]; z.set = function (o) { z.set._.push(o); }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8'); $.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm'; z.t = +new Date(); $.type = 'text/javascript'; e.parentNode.insertBefore($, e);
-            }(document, 'script'));
-            setTimeout(function t() {
-                const c = window.$zopim && window.$zopim.livechat;
-                if (c) {
-                    const u = h.getUser();
-                    if (u) {
-                        c.setEmail(u.email);
-                        c.setName(u.name);
-                    }
-                    window.zE && window.zE.hide();
-                } else {
-                    setTimeout(t, 1000);
-                }
-            }, 1000);
-        }
+        const hasShippingOptions = currentReward => !_.isNull(currentReward.shipping_options) && !currentReward.shipping_options === 'free';
 
         const validateForm = () => {
             if (vm.validate()) {
@@ -109,6 +91,8 @@ const projectsPayment = {
             return h.navigateToDevise();
         }
 
+        console.log('Started');
+
         vm.similityExecute(contribution().id);
 
         return {
@@ -129,7 +113,9 @@ const projectsPayment = {
             isCnpj,
             vm,
             user,
-            project
+            project,
+            hasShippingOptions,
+            toggleDescription: h.toggleProp(false, true)
         };
     },
     view(ctrl, args) {
@@ -168,6 +154,7 @@ const projectsPayment = {
                     ])
                 ])
             ),
+
             m('.w-container',
                 m('.w-row', [
                     m('.w-col.w-col-8', [!_.isEmpty(ctrl.vm.fields.errors()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
@@ -186,8 +173,8 @@ const projectsPayment = {
                                         I18n.t('required', ctrl.scope())
                                     )
                                 ]),
-                                ((user.name && user.owner_document) ? m(UserOwnerBox, {user: user, project: project})  : ''),
-                                m('.w-row.u-marginbottom-30',[
+                                user.name && user.owner_document ? m(UserOwnerBox, { user, project }) : '',
+                                m('.w-row.u-marginbottom-30', [
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'country\']', [
                                             'País / ',
@@ -267,16 +254,15 @@ const projectsPayment = {
                                     I18n.t('fields.street', ctrl.scope())
                                 ),
                                 m('input.w-input.text-field[id=\'street\']', {
+                                    type: 'text',
                                     onfocus: ctrl.vm.resetFieldError('street'),
                                     class: ctrl.fieldHasError('street') ? 'error' : false,
-                                    type: 'text',
                                     onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.street)),
                                     value: ctrl.vm.fields.street(),
                                     placeholder: 'Rua Da Minha Casa'
                                 }),
                                 ctrl.fieldHasError('street'),
-
-                                m('.w-row', (ctrl.vm.isInternational() ? '' : [
+                                m('.w-row', ctrl.vm.isInternational() ? '' : [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'number\']',
                                             I18n.t('fields.street_number', ctrl.scope())
@@ -305,7 +291,7 @@ const projectsPayment = {
                                         }),
                                         ctrl.fieldHasError('addressComplement')
                                     ]),
-                                    m('.w-col.w-col-4', (ctrl.vm.isInternational() ? '' : [
+                                    m('.w-col.w-col-4', ctrl.vm.isInternational() ? '' : [
                                         m('label.field-label.fontweight-semibold[for=\'neighbourhood\']',
                                             I18n.t('fields.neighbourhood', ctrl.scope())
                                         ),
@@ -318,8 +304,8 @@ const projectsPayment = {
                                             placeholder: 'São José'
                                         }),
                                         ctrl.fieldHasError('neighbourhood')
-                                    ]))
-                                ])),
+                                    ])
+                                ]),
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
@@ -420,7 +406,9 @@ const projectsPayment = {
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
                                     I18n.t('selected_reward.reward', ctrl.scope())
                                 ),
-                                m('.fontsize-smallest',
+                                m('.fontsize-smallest.reward-description.opened', {
+                                    class: ctrl.toggleDescription() ? 'extended' : ''
+                                },
                                     ctrl.reward().description
                                     ? ctrl.reward().description
                                     : m.trust(I18n.t('selected_reward.review_without_reward_html',
@@ -428,9 +416,32 @@ const projectsPayment = {
                                             _.extend({ value: Number(ctrl.value).toFixed() })
                                         )
                                     ))
-                                )
-
-                            ])
+                                ),
+                                m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                                    onclick: ctrl.toggleDescription.toggle
+                                }, [
+                                    ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                                    m('span.fa.fa-angle-down', {
+                                        class: ctrl.toggleDescription() ? 'reversed' : ''
+                                    })
+                                ])
+                            ]),
+                            !_.isEmpty(ctrl.reward().deliver_at) ? [
+                                m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
+                                    m('span.fontweight-semibold',
+                                        'Entrega prevista: '
+                                    ),
+                                    h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')
+                                ]),
+                            ] : '',
+                            ctrl.hasShippingOptions(ctrl.reward()) ? [
+                                m('.fontcolor-secondary.fontsize-smallest', [
+                                    m('span.fontweight-semibold',
+                                        'Forma de envio: '
+                                    ),
+                                    I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, I18nScope())
+                                ])
+                            ] : ''
                         ]),
                         m.component(faqBox, {
                             mode: ctrl.mode,

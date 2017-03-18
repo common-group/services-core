@@ -6,6 +6,7 @@ import h from '../h';
 
 const error = m.prop(''),
     rewards = m.prop([]),
+    states = m.prop([]),
     noReward = {
         id: -1,
         description: 'Obrigado. Eu só quero ajudar o projeto.',
@@ -17,13 +18,13 @@ const error = m.prop(''),
         project_id: 'eq'
     });
 
-const rewardsLoader = (project_id) => {
-    vm.project_id(project_id);
+const rewardsLoader = (projectId) => {
+    vm.project_id(projectId);
 
     return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
 };
 
-const fetchRewards = project_id => rewardsLoader(project_id).load().then(rewards);
+const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
 
 const getSelectedReward = () => {
     const root = document.getElementById('application'),
@@ -31,8 +32,8 @@ const getSelectedReward = () => {
 
     if (data) {
         const contribution = JSON.parse(data);
-        const reward = selectedReward(contribution.reward);
 
+        selectedReward(contribution.reward);
         m.redraw(true);
 
         return selectedReward;
@@ -63,7 +64,24 @@ const getFees = (reward) => {
     return feesLoader;
 };
 
-const getStates = () => postgrest.loader(models.state.getPageOptions());
+const statesLoader = postgrest.loader(models.state.getPageOptions());
+const getStates = () => {
+    statesLoader.load().then(states);
+    return states;
+};
+
+const locationOptions = (reward) => {
+    const options = m.prop([]),
+        mapStates = _.map(states(), state => ({ value: state.acronym, name: state.name }));
+
+    if (reward.shipping_options === 'national') {
+        options(mapStates);
+    } else if (reward.shipping_options === 'international') {
+        options(_.union([{ value: 'international', name: 'Outside Brazil' }], mapStates));
+    }
+
+    return options();
+};
 
 const canEdit = (reward, project_state) => project_state === 'draft' || reward.paid_count <= 0;
 
@@ -82,6 +100,7 @@ const rewardVM = {
     selectedReward,
     contributionValue,
     rewardsLoader,
+    locationOptions,
     getValue: contributionValue,
     setValue: contributionValue,
     selectedDestination: selectDestination

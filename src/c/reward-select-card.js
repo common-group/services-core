@@ -29,10 +29,12 @@ const rewardSelectCard = {
             isSelected,
             setInput,
             hasShippingOptions,
+            states: rewardVM.getStates(),
             selectReward: rewardVM.selectReward,
             erro: rewardVM.error,
             applyMask: rewardVM.applyMask,
-            contributionValue: rewardVM.contributionValue
+            contributionValue: rewardVM.contributionValue,
+            selectDestination: rewardVM.selectDestination,
         };
     },
     view(ctrl) {
@@ -57,7 +59,8 @@ const rewardSelectCard = {
                                     'Local de entrega'
                                 ),
                                 m('select.positive.text-field.w-select',
-                                    _.map(ctrl.states(), state => m(`option${state.acronym == fields.state() ? '[selected="selected"]' : ''}`, {
+                                    _.map(ctrl.states(), state => m(`option`, {
+                                        onchange: m.withAttr('value', ctrl.selectedDestination),
                                         value: state.acronym
                                     }, state.name))
                                 )
@@ -65,17 +68,18 @@ const rewardSelectCard = {
                         ) : '',
                     m('.w-col.w-sub-col-middle.w-clearfix', {
                         class: ctrl.hasShippingOptions(reward)
-                                ? 'w-col-8 w-col-small-8 w-col-tiny-8'
-                                : 'w-col-4 w-col-small-4 w-col-tiny-4'
+                                ? 'w-col-4 w-col-small-4 w-col-tiny-4'
+                                : 'w-col-8 w-col-small-8 w-col-tiny-8'
                     }, [
-                        m('.w-row', [
+                        m('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'),
+                        m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                                m('.back-reward-input-reward.placeholder',
+                                m('.back-reward-input-reward.medium.placeholder',
                                     'R$'
                                 )
                             ),
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                                m('input.user-reward-value.back-reward-input-reward',
+                                m('input.back-reward-input-reward.medium.w-input',
                                     {
                                         autocomplete: 'off',
                                         min: reward.minimum_value,
@@ -94,7 +98,7 @@ const rewardSelectCard = {
                         ])
                     ]),
                     m('.submit-form.w-col.w-col-4.w-col-small-4.w-col-tiny-4',
-                        m('button.btn.btn-large', { onclick: ctrl.submitContribution }, [
+                        m('button.btn.btn-medium.u-margintop-30', { onclick: ctrl.submitContribution }, [
                             'Continuar  ',
                             m('span.fa.fa-chevron-right')
                         ])
