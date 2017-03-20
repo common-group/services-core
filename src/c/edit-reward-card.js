@@ -13,6 +13,7 @@ const editRewardCard = {
             otherFeeValue = m.prop(),
             internationalFeeValue = m.prop(),
             minimumValue = m.prop(args.reward.minimum_value || 0),
+            description = m.prop(args.reward.description || ''),
             maximumContributions = m.prop(args.reward.maximum_contributions),
             index = args.index,
             states = m.prop([]),
@@ -53,6 +54,7 @@ const editRewardCard = {
             otherFeeValue,
             internationalFeeValue,
             minimumValue,
+            description,
             maximumContributions,
             newFee,
             newFees,
@@ -154,9 +156,12 @@ const editRewardCard = {
                         ),
                         m('.w-row', [
                             m(`textarea.text.required.w-input.text-field.positive.height-medium[aria-required='true'][placeholder='Descreva sua recompensa'][required='required'][id='project_rewards_attributes_${index}_description']`, {
-                                name: `project[rewards_attributes][${index}][description]`
+                                name: `project[rewards_attributes][${index}][description]`,
+                                onchange: m.withAttr('value', ctrl.description)
                             },
-                                reward.description),
+                                ctrl.description()
+
+                            ),
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                                 'Informe uma descrição para a recompensa'
                             )
