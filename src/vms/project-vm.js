@@ -7,9 +7,10 @@ import rewardVM from './reward-vm';
 import userVM from './user-vm';
 
 const currentProject = m.prop(),
-    userDetails = m.prop(),
-    projectContributions = m.prop([]),
-    vm = postgrest.filtersVM({ project_id: 'eq' });
+      userDetails = m.prop(),
+      projectContributions = m.prop([]),
+      vm = postgrest.filtersVM({ project_id: 'eq' }),
+      idVM = h.idVM;
 
 const setProject = project_user_id => (data) => {
     currentProject(_.first(data));
@@ -99,6 +100,13 @@ const setProjectPageTitle = () => {
     }
 };
 
+const fetchProject = (project_id, handlePromise = true, customProp = currentProject) => {
+    idVM.id(project_id);
+
+    const lproject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
+
+    return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
+};
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -107,7 +115,8 @@ const projectVM = {
     rewardDetails: rewardVM.rewards,
     routeToProject,
     setProjectPageTitle,
-    init
+    init,
+    fetchProject,
 };
 
 export default projectVM;
