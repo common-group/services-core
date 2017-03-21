@@ -26,6 +26,7 @@ import CheckEmail from './root/check-email';
 import projectEditUserAbout from './root/project-edit-user-about';
 import projectEditReward from './root/project-edit-reward';
 import projectEditUserSettings from './root/project-edit-user-settings';
+import projectEditBasic from './root/project-edit-basic';
 import copyTextInput from './c/copy-text-input';
 
 const c = {
@@ -58,7 +59,8 @@ const c = {
         CheckEmail,
         projectEditUserAbout,
         projectEditUserSettings,
-        projectEditReward
+        projectEditReward,
+        projectEditBasic
     }
 };
 
