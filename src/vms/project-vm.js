@@ -107,6 +107,17 @@ const fetchProject = (project_id, handlePromise = true, customProp = currentProj
 
     return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
 };
+
+const updateProject = (project_id, projectData) => {
+    return m.request({
+        method: 'PUT',
+        url: `/projects/${project_id}.json`,
+        data: { project: projectData },
+        config: h.setCsrfToken
+    });
+}
+
+
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -117,6 +128,7 @@ const projectVM = {
     setProjectPageTitle,
     init,
     fetchProject,
+    updateProject
 };
 
 export default projectVM;
