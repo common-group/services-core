@@ -32,7 +32,7 @@ const editRewardCard = {
         statesLoader.load().then((data) => {
             states(data);
             states().unshift({
-                acronym: null,
+                acronym: '',
                 name: 'Estado'
             });
         });
@@ -45,8 +45,8 @@ const editRewardCard = {
             internationalFee = _.findWhere(fees(), {
                 destination: 'international'
             });
-            otherFeeValue(otherFee ? otherFee.value : null);
-            internationalFeeValue(internationalFee ? internationalFee.value : null);
+            otherFeeValue(otherFee ? otherFee.value : 0);
+            internationalFeeValue(internationalFee ? internationalFee.value : 0);
         });
 
         return {
