@@ -20,6 +20,7 @@ const projectBasicsEdit = {
                   ["city_id", ["city"]]
               ],
               loading = m.prop(false),
+              cities = m.prop(),
               categories = m.prop([]),
               onSubmit = (event) => {
                   loading(true);
@@ -45,7 +46,8 @@ const projectBasicsEdit = {
             vm,
             onSubmit,
             loading,
-            categories
+            categories,
+            cities
         };
     },
     view(ctrl, args) {
@@ -160,11 +162,12 @@ const projectBasicsEdit = {
                                 label_hint: I18n.t('city_hint', I18nScope()),
                                 children: [
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
-                                        value: vm.fields.city_id(),
-                                        onchange: m.withAttr('value', vm.fields.city_id)
-                                    })
+                                        value: vm.fields.city_name(),
                                         class: vm.e.hasError('city_id') ? 'error' : '',
+                                        onkeyup: vm.generateSearchCity(ctrl.cities)
+                                    }),
                                     vm.e.inlineError('city_id'),
+                                    ctrl.cities()
                                 ]
                             })
                         ])

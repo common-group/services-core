@@ -5,6 +5,8 @@ import postgrest from 'mithril-postgrest';
 import projectVM from './project-vm';
 import h from '../h';
 import generateErrorInstance from '../error';
+import replaceDiacritics from 'replaceDiacritics';
+
 const e = generateErrorInstance();
 
 const fields = {
@@ -16,7 +18,8 @@ const fields = {
     name: m.prop(''),
     permalink: m.prop(''),
     category_id: m.prop(''),
-    city_id: m.prop('')
+    city_id: m.prop(''),
+    city_name: m.prop('')
 };
 
 const fillFields = (data) => {
@@ -29,6 +32,9 @@ const fillFields = (data) => {
     fields.permalink(data.permalink);
     fields.category_id(data.category_id);
     fields.city_id(data.city_id||'');
+    if(data.address.city) {
+        fields.city_name(`${data.address.city} - ${data.address.state}`);
+    }
 };
 
 const updateProject = (project_id) => {
@@ -41,11 +47,10 @@ const updateProject = (project_id) => {
         name: fields.name(),
         permalink: fields.permalink(),
         category_id: fields.category_id(),
-        city_id: fields.city_id
-    };
+        city_id: fields.city_id };
 
     return projectVM.updateProject(project_id, projectData);
-}
+};
 
 const loadCategoriesOptionsTo = (prop, selected) => {
     const filters = postgrest.filtersVM;
@@ -85,6 +90,42 @@ const mapRailsErrors = (rails_errors, errors_fields) => {
     });
 };
 
+const generateSearchCity = (prop) => {
+    const filters = postgrest.filtersVM({
+        search_index: '@@'
+    }).order({name: 'asc'});
+
+    const genSelectClickCity = (city, citiesProp) => {
+        return () => {
+            fields.city_name(`${city.name} - ${city.acronym}`);
+            fields.city_id(city.id);
+            citiesProp('');
+        };
+    };
+
+    return (event) => {
+        const value = event.currentTarget.value;
+        filters.search_index(replaceDiacritics(value));
+        fields.city_name(value);
+
+        models.city.getPage(filters.parameters()).then((data) => {
+            const map = _.map(data, (item) => {
+                return m('.table-row.fontsize-smallest.fontcolor-secondary', [
+                    m('.city-select.fontsize-smallest.link-hidden-light', {
+                        onclick: genSelectClickCity(item, prop)
+                    }, `${item.name} - ${item.acronym}`)
+                ]);
+            });
+
+            console.log(map);
+            prop(m('.table-outer.search-pre-result', map));
+        }).catch((err) => {
+            console.log(err);
+        });
+    };
+};
+
+
 const projectBasicsVM = {
     fields,
     fillFields,
@@ -92,6 +133,7 @@ const projectBasicsVM = {
     loadCategoriesOptionsTo,
     mapRailsErrors,
     e,
+    generateSearchCity
 };
 
 export default projectBasicsVM;
