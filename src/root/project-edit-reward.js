@@ -8,6 +8,7 @@ const projectEditReward = {
     controller(args) {
         const rewards = m.prop([]),
             newRewards = m.prop([]),
+            availableCount = reward => reward.maximum_contributions - reward.paid_count,
             newReward = {
                 minimum_value: null,
                 deliver_at: null,
@@ -28,6 +29,7 @@ const projectEditReward = {
         });
         return {
             rewards,
+            availableCount,
             newRewards,
             newReward
         };
@@ -88,6 +90,7 @@ const projectEditReward = {
                                                                                 `Para R$ ${reward.minimum_value} ou mais`
                                                                             )
                                                                         ),
+                                                                        (rewardVM.canEdit(reward, args.project_state) ?
                                                                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                                                                             m("a.show_reward_form[href='javascript:void(0);']", {
                                                                                 onclick: () => {
@@ -96,13 +99,31 @@ const projectEditReward = {
                                                                             },
                                                                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                                                                             )
-                                                                        )
+                                                                        ) : '')
                                                                     ]),
                                                                     m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
                                                                         `${reward.paid_count} apoiadores`
                                                                     ),
                                                                     reward.description,
                                                                     m('p'),
+
+
+                                                                    (reward.limited() ? (ctrl.availableCount(reward) <= 0) ?
+                                                                        m('.u-margintop-10',
+                                                                            m('span.badge.badge-gone.fontsize-smaller',
+                                                                                'Esgotada'
+                                                                            )
+                                                                        ) :
+                                                                        m('.u-margintop-10',
+                                                                            m('span.badge.badge-attention.fontsize-smaller', [
+                                                                                m('span.fontweight-bold',
+                                                                                    'Limitada '
+                                                                                ),
+                                                                                ` (${ctrl.availableCount(reward)} de ${reward.maximum_contributions} disponíveis)`
+                                                                            ])
+                                                                        ) : ''),
+
+
                                                                     reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''
                                                                 ])
                                                             )

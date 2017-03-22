@@ -62,8 +62,11 @@ const getFees = (reward) => {
 
 const getStates = () => postgrest.loader(models.state.getPageOptions());
 
+const canEdit = (reward, project_state) => project_state === 'draft' || reward.paid_count <= 0;
+
 const rewardVM = {
     error,
+    canEdit,
     getStates,
     getFees,
     rewards,
