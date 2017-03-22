@@ -1,10 +1,6 @@
 import m from 'mithril';
-import _ from 'underscore';
-import models from '../models';
-import postgrest from 'mithril-postgrest';
 import projectVM from './project-vm';
 import railsErrorsVM from './rails-errors-vm';
-import h from '../h';
 import generateErrorInstance from '../error';
 
 const e = generateErrorInstance();
