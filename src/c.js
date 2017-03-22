@@ -28,6 +28,7 @@ import projectEditReward from './root/project-edit-reward';
 import projectEditUserSettings from './root/project-edit-user-settings';
 import projectEditBasic from './root/project-edit-basic';
 import projectEditDescription from './root/project-edit-description';
+import projectEditBudget from './root/project-edit-budget';
 import copyTextInput from './c/copy-text-input';
 
 const c = {
@@ -62,7 +63,8 @@ const c = {
         projectEditUserSettings,
         projectEditReward,
         projectEditBasic,
-        projectEditDescription
+        projectEditDescription,
+        projectEditBudget,
     }
 };
 
