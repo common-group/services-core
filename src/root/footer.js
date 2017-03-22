@@ -92,20 +92,32 @@ const footer = {
                                         m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn',
                                             [
                                                 m('.footer-full-signature-text.fontsize-small',
-                                                    'Navegue'
+                                                    'Faça uma campanha'
                                                 ),
                                                 m('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start?ref=ctrse_footer\']',
                                                     ' Comece seu projeto'
                                                 ),
-                                                m('a.u-marginbottom-30.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',
+                                                m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',
                                                     [
-                                                        'Música no Catarse!',
+                                                        'Música no Catarse',
                                                         m.trust('&nbsp;'),
                                                         m('span.badge.badge-success',
-                                                            'Novidade‍'
+                                                            'Novidade'
                                                         )
                                                     ]
                                                 ),
+                                                m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']',
+                                                    [
+                                                        'Publicações Independentes',
+                                                        m.trust('&nbsp;'),
+                                                        m('span.badge.badge-success',
+                                                            'Novidade'
+                                                        )
+                                                    ]
+                                                ),
+                                                m('.footer-full-signature-text.fontsize-small',
+                                                    'Apoie projetos no Catarse'
+                                                ),                                           
                                                 m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']',
                                                     ' Explore projetos'
                                                 ),
