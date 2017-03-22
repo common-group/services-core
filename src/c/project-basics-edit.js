@@ -3,6 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 import I18n from 'i18n-js';
 import userVM from '../vms/user-vm';
+import railsErrorsVM from '../vms/rails-errors-vm';
 import projectBasicsVM from '../vms/project-basics-vm';
 import popNotification from './pop-notification';
 import inlineError from './inline-error';
@@ -33,7 +34,7 @@ const projectBasicsEdit = {
                       if(showError()) { showError.toggle(); }
                   }).catch((err) => {
                       if(err.errors_json) {
-                          vm.mapRailsErrors(err.errors_json, mapErrors);
+                          railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
                       }
                       loading(false);
                       if(showSuccess()) { showSuccess.toggle(); }
@@ -42,7 +43,7 @@ const projectBasicsEdit = {
                   return false;
               };
         if(args.rails_errors) {
-            vm.mapRailsErrors(args.rails_errors, mapErrors);
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
         }
         vm.fillFields(args.project);
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());

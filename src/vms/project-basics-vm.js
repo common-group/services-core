@@ -67,29 +67,6 @@ const loadCategoriesOptionsTo = (prop, selected) => {
     });
 };
 
-const mapRailsErrors = (rails_errors, errors_fields) => {
-    let parsedErrors;
-    try {
-        parsedErrors = JSON.parse(rails_errors);
-    } catch(err) {
-        parsedErrors = {};
-    }
-    const extractAndSetErrorMsg = (label, fieldArray) => {
-        const value = _.first(_.compact(_.map(fieldArray, (field) => {
-            return _.first(parsedErrors[field]);
-        })));
-
-        if(value) {
-            e(label, value);
-            e.inlineError(label, true);
-        }
-    };
-
-    _.each(errors_fields, (item, i) => {
-        extractAndSetErrorMsg(item[0], item[1]);
-    });
-};
-
 const generateSearchCity = (prop) => {
     const filters = postgrest.filtersVM({
         search_index: '@@'
@@ -130,7 +107,6 @@ const projectBasicsVM = {
     fillFields,
     updateProject,
     loadCategoriesOptionsTo,
-    mapRailsErrors,
     e,
     generateSearchCity
 };
