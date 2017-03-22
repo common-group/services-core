@@ -49,7 +49,8 @@ const models = {
     userContribution: postgrest.model('user_contributions'),
     shippingFee: postgrest.model('shipping_fees'),
     deleteProject: postgrest.model('rpc/delete_project'),
-    cancelProject: postgrest.model('rpc/cancel_project')
+    cancelProject: postgrest.model('rpc/cancel_project'),
+    city: postgrest.model('cities')
 };
 
 models.teamMember.pageSize(40);
@@ -65,6 +66,7 @@ models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
 models.recommendedProjects.pageSize(3);
 models.bank.pageSize(400);
+models.city.pageSize(200);
 
 
 export default models;
