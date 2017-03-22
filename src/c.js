@@ -29,6 +29,7 @@ import projectEditUserSettings from './root/project-edit-user-settings';
 import projectEditBasic from './root/project-edit-basic';
 import projectEditDescription from './root/project-edit-description';
 import projectEditBudget from './root/project-edit-budget';
+import projectEditVideo from './root/project-edit-video';
 import copyTextInput from './c/copy-text-input';
 
 const c = {
@@ -65,6 +66,7 @@ const c = {
         projectEditBasic,
         projectEditDescription,
         projectEditBudget,
+        projectEditVideo
     }
 };
 
