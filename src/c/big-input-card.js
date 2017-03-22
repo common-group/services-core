@@ -2,7 +2,7 @@ import m from 'mithril';
 
 const bigInputCard = {
     view(ctrl, args) {
-        const cardClass = 'w-row.u-marginbottom-30.card.card-terciary.padding-redactor-description.text.optional.project_about_html.field_with_hint';
+        const cardClass = '.w-row.u-marginbottom-30.card.card-terciary.padding-redactor-description.text.optional.project_about_html.field_with_hint';
 
         return m(cardClass, [
             m('div', [
