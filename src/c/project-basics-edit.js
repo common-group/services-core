@@ -13,19 +13,31 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_basics');
 const projectBasicsEdit = {
     controller(args) {
         const vm = projectBasicsVM,
+              mapErrors = [
+                  ["name", ["name"]],
+                  ["permalink", ["permalink"]],
+                  ["category_id", ["category"]],
+                  ["city_id", ["city"]]
+              ],
               loading = m.prop(false),
               categories = m.prop([]),
               onSubmit = (event) => {
-                  event.preventDefault();
                   loading(true);
                   vm.updateProject(args.projectId).then((data) => {
                       console.log(data);
                       loading(false);
+                      vm.e.resetFieldErrors();
                   }).catch((err) => {
-                      console.log(err);
+                      if(err.errors_json) {
+                          vm.mapRailsErrors(err.errors_json, mapErrors);
+                      }
                       loading(false);
                   });
+                  return false;
               };
+        if(args.rails_errors) {
+            vm.mapRailsErrors(args.rails_errors, mapErrors);
+        }
         vm.fillFields(args.project);
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
 
@@ -95,8 +107,10 @@ const projectBasicsEdit = {
                                 children: [
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"][maxlength="50"]', {
                                         value: vm.fields.name(),
+                                        class: vm.e.hasError('name') ? 'error' : '',
                                         onchange: m.withAttr('value', vm.fields.name)
-                                    })
+                                    }),
+                                    vm.e.inlineError('name')
                                 ]
                             }),
                             m(inputCard, {
@@ -105,8 +119,10 @@ const projectBasicsEdit = {
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.public_tags(),
+                                        class: vm.e.hasError('public_tags') ? 'error' : '',
                                         onchange: m.withAttr('value', vm.fields.public_tags)
-                                    })
+                                    }),
+                                    vm.e.inlineError('public_tags')
                                 ]
                             }),
                             m(inputCard, {
@@ -119,8 +135,10 @@ const projectBasicsEdit = {
                                         m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6', [
                                             m('input.string.required.w-input.text-field.postfix.positive.medium[type="text"]', {
                                                 value: vm.fields.permalink(),
+                                                class: vm.e.hasError('permalink') ? 'error' : '',
                                                 onchange: m.withAttr('value', vm.fields.permalink)
-                                            })
+                                            }),
+                                            vm.e.inlineError('permalink')
                                         ])
                                     ])
                                 ]
@@ -131,8 +149,10 @@ const projectBasicsEdit = {
                                 children: [
                                     m('select.required.w-input.text-field.w-select.positive.medium', {
                                         value: vm.fields.category_id(),
+                                        class: vm.e.hasError('category_id') ? 'error' : '',
                                         onchange: m.withAttr('value', vm.fields.category_id)
-                                    }, ctrl.categories())
+                                    }, ctrl.categories()),
+                                    vm.e.inlineError('category_id')
                                 ]
                             }),
                             m(inputCard, {
@@ -143,6 +163,8 @@ const projectBasicsEdit = {
                                         value: vm.fields.city_id(),
                                         onchange: m.withAttr('value', vm.fields.city_id)
                                     })
+                                        class: vm.e.hasError('city_id') ? 'error' : '',
+                                    vm.e.inlineError('city_id'),
                                 ]
                             })
                         ])

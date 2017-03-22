@@ -4,6 +4,8 @@ import models from '../models';
 import postgrest from 'mithril-postgrest';
 import projectVM from './project-vm';
 import h from '../h';
+import generateErrorInstance from '../error';
+const e = generateErrorInstance();
 
 const fields = {
     tracker_snippet_html: m.prop(''),
@@ -60,11 +62,36 @@ const loadCategoriesOptionsTo = (prop, selected) => {
     });
 };
 
+const mapRailsErrors = (rails_errors, errors_fields) => {
+    let parsedErrors;
+    try {
+        parsedErrors = JSON.parse(rails_errors);
+    } catch(err) {
+        parsedErrors = {};
+    }
+    const extractAndSetErrorMsg = (label, fieldArray) => {
+        const value = _.first(_.compact(_.map(fieldArray, (field) => {
+            return _.first(parsedErrors[field]);
+        })));
+
+        if(value) {
+            e(label, value);
+            e.inlineError(label, true);
+        }
+    };
+
+    _.each(errors_fields, (item, i) => {
+        extractAndSetErrorMsg(item[0], item[1]);
+    });
+};
+
 const projectBasicsVM = {
     fields,
     fillFields,
     updateProject,
-    loadCategoriesOptionsTo
+    loadCategoriesOptionsTo,
+    mapRailsErrors,
+    e,
 };
 
 export default projectBasicsVM;
