@@ -12,15 +12,16 @@ const projectsShow = {
     controller(args) {
         const { project_id, project_user_id } = args;
 
-        h.analytics.event({ cat: 'project_view', act: 'project_page_view', project: { id: project_id, user_id: project_user_id } });
-        h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll', project: { id: project_id, user_id: project_user_id } });
-
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
         } else {
             projectVM.getCurrentProject();
         }
-
+        try{
+            h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll', project: project_id?{ id: project_id, user_id: project_user_id }:null });
+            h.analytics.event({ cat: 'project_view', act: 'project_page_view', project: project_id?{ id: project_id, user_id: project_user_id }:null }).call();
+        }catch(e){console.error(e);}
+    
         return projectVM;
     },
     view(ctrl, args) {
