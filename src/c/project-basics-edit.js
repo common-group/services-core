@@ -22,17 +22,22 @@ const projectBasicsEdit = {
               loading = m.prop(false),
               cities = m.prop(),
               categories = m.prop([]),
+              showSuccess = h.toggleProp(false, true),
+              showError = h.toggleProp(false, true),
               onSubmit = (event) => {
                   loading(true);
                   vm.updateProject(args.projectId).then((data) => {
-                      console.log(data);
                       loading(false);
                       vm.e.resetFieldErrors();
+                      if(!showSuccess()) { showSuccess.toggle(); }
+                      if(showError()) { showError.toggle(); }
                   }).catch((err) => {
                       if(err.errors_json) {
                           vm.mapRailsErrors(err.errors_json, mapErrors);
                       }
                       loading(false);
+                      if(showSuccess()) { showSuccess.toggle(); }
+                      if(!showError()) { showError.toggle(); }
                   });
                   return false;
               };
@@ -47,12 +52,24 @@ const projectBasicsEdit = {
             onSubmit,
             loading,
             categories,
-            cities
+            cities,
+            showSuccess,
+            showError
         };
     },
     view(ctrl, args) {
         const vm = ctrl.vm;
         return m('#basics-tab', [
+            (ctrl.showSuccess() ? m.component(popNotification, {
+                message: I18n.t('shared.successful_update'),
+                toggleOpt: ctrl.showSuccess
+            }) : ''),
+            (ctrl.showError() ? m.component(popNotification, {
+                message: I18n.t('shared.failed_update'),
+                toggleOpt: ctrl.showError,
+                error: true
+            }) : ''),
+
             //add pop notifications here
             m('form.w-form', { onsubmit: ctrl.onSubmit }, [
                 m('.w-container', [

@@ -117,10 +117,9 @@ const generateSearchCity = (prop) => {
                 ]);
             });
 
-            console.log(map);
             prop(m('.table-outer.search-pre-result', map));
         }).catch((err) => {
-            console.log(err);
+            prop('');
         });
     };
 };
