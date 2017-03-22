@@ -2,7 +2,9 @@ import m from 'mithril';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import h from '../h';
-import e from '../error';
+import generateErrorInstance from '../error';
+
+const e = generateErrorInstance();
 
 const fields = {
     password: m.prop(''),
