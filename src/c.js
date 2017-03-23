@@ -31,6 +31,7 @@ import projectEditDescription from './root/project-edit-description';
 import projectEditBudget from './root/project-edit-budget';
 import projectEditVideo from './root/project-edit-video';
 import projectEditGoal from './root/project-edit-goal';
+import projectEditCard from './root/project-edit-card';
 import copyTextInput from './c/copy-text-input';
 
 const c = {
@@ -68,7 +69,8 @@ const c = {
         projectEditDescription,
         projectEditBudget,
         projectEditVideo,
-        projectEditGoal
+        projectEditGoal,
+        projectEditCard
     }
 };
 
