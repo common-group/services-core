@@ -8,6 +8,7 @@ import projectDescriptionVM from '../vms/project-description-vm';
 import popNotification from './pop-notification';
 import inlineError from './inline-error';
 import bigInputCard from './big-input-card';
+import projectEditSaveBtn from './project-edit-save-btn';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_description');
 
@@ -86,19 +87,7 @@ const projectDescriptionEdit = {
                         ])
                     ])
                 ]),
-                m('.w-container.w-section.save-draft-btn-section', [
-                    m('.w-row', [
-                        m('.w-col.w-col-4.w-col-push-4',
-                          (ctrl.loading() ? h.loader() : [
-                              m('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'),
-                              m('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
-                                  onclick: ctrl.onSubmit
-                              })
-                          ])
-                         ),
-                        m('.w-col.w-col-4')
-                    ])
-                ])
+                m(projectEditSaveBtn, {loading: ctrl.loading, onSubmit: ctrl.onSubmit})
             ])
 
         ]);
