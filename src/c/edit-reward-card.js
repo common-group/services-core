@@ -1,9 +1,12 @@
 import m from 'mithril';
 import moment from 'moment';
+import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import shippingFeeInput from '../c/shipping-fee-input';
 import rewardVM from '../vms/reward-vm';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const editRewardCard = {
     controller(args) {
@@ -205,18 +208,10 @@ const editRewardCard = {
                                     value: ctrl.shipping_options() || 'free',
                                     onchange: m.withAttr('value', ctrl.shipping_options)
                                 }, [
-                                    m('option[value=\'international\']',
-                                        'Frete Nacional e Internacional'
-                                    ),
-                                    m('option[value=\'national\']',
-                                        'Frete Nacional'
-                                    ),
-                                    m('option[value=\'free\']',
-                                        'Sem frete envolvido'
-                                    ),
-                                    m('option[value=\'presential\']',
-                                        'Retirada presencial'
-                                    )
+                                    _.map(['international', 'national', 'free', 'presential'], option =>
+                                        m(`option[value='${option}']`,
+                                            I18n.t(`shipping_options.${option}`, I18nScope())
+                                        ))
                                 ]),
 
                                 ((ctrl.shipping_options() === 'national' || ctrl.shipping_options() === 'international') ?
