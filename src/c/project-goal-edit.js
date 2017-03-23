@@ -21,6 +21,7 @@ const projectGoalEdit = {
               showError = h.toggleProp(false, true),
               showModeDiff = h.toggleProp(false, true),
               showTaxesDiff = h.toggleProp(false, true),
+              applyGoalMask = _.compose(vm.fields.goal, h.applyMonetaryMask),
               loading = m.prop(false),
               onSubmit = (event) => {
                   loading(true);
@@ -52,6 +53,7 @@ const projectGoalEdit = {
             showModeDiff,
             showTaxesDiff,
             vm,
+            applyGoalMask,
             loading
         };
     },
@@ -127,7 +129,8 @@ const projectGoalEdit = {
                                                           m('input.string.optional.w-input.text-field.postfix.positive.medium[autocomplete="off"][id="project-goal-input"][name="project[goal]"][type="tel"]', {
                                                               class: vm.e.hasError('goal') ? 'error' : false,
                                                               value: vm.fields.goal(),
-                                                              onchange: m.withAttr('value', vm.fields.goal)
+                                                              maxlength: 14,
+                                                              onkeyup: m.withAttr('value', ctrl.applyGoalMask)
                                                           }),
                                                       ]),
                                                   ])
