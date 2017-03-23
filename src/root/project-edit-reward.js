@@ -1,8 +1,11 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import editRewardCard from '../c/edit-reward-card';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const projectEditReward = {
     controller(args) {
@@ -124,7 +127,9 @@ const projectEditReward = {
                                                                         ) : ''),
 
 
-                                                                    reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''
+                                                                    (reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''),
+                                                                    m('.fontsize-smallest', m('b', 'Forma de envio: '), I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
+
                                                                 ])
                                                             )
                                                         ]) : ''),
