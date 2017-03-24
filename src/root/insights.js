@@ -28,6 +28,7 @@ const insights = {
             displayModal = h.toggleProp(false, true),
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
+            visitorsPerDay = m.prop([]),
             loader = postgrest.loaderWithToken,
             setProjectId = () => {
                 try {
@@ -47,6 +48,10 @@ const insights = {
 
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
         l.load().then(projectDetails);
+
+        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
+        lVisitorsPerDay.load().then(visitorsPerDay);
+
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
@@ -106,12 +111,14 @@ const insights = {
             lContributionsPerRef,
             lContributionsPerLocation,
             lContributionsPerDay,
+            lVisitorsPerDay,
             displayModal,
             filtersVM,
             projectDetails,
             contributionsPerDay,
             contributionsPerLocationTable,
-            contributionsPerRefTable
+            contributionsPerRefTable,
+            visitorsPerDay
         };
     },
     view(ctrl) {
@@ -168,6 +175,21 @@ const insights = {
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
                         m.component(projectDataStats, { project: m.prop(project) }),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', {
+                                style: {
+                                    'min-height': '300px'
+                                }
+                            }, [
+                                !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
+                                    collection: ctrl.visitorsPerDay,
+                                    label: I18n.t('visitors_per_day_label', I18nScope()),
+                                    dataKey: 'visitors',
+                                    xAxis: item => h.momentify(item.day),
+                                    emptyState: I18n.t('visitors_per_day_empty', I18nScope())
+                                }) : h.loader()
+                            ]),
+                        ]),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {
