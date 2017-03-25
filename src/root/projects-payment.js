@@ -33,7 +33,7 @@ const projectsPayment = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
-        const hasShippingOptions = currentReward => !_.isNull(currentReward.shipping_options) && !currentReward.shipping_options === 'free';
+        const shippingFee = () => _.findWhere(rewardVM.fees(), { id: contribution().shipping_fee_id });
 
         const validateForm = () => {
             if (vm.validate()) {
@@ -91,8 +91,7 @@ const projectsPayment = {
             return h.navigateToDevise();
         }
 
-        console.log('Started');
-
+        rewardVM.getFees(reward()).then(rewardVM.fees);
         vm.similityExecute(contribution().id);
 
         return {
@@ -114,11 +113,11 @@ const projectsPayment = {
             vm,
             user,
             project,
-            hasShippingOptions,
+            shippingFee,
             toggleDescription: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const user = ctrl.user(),
             project = ctrl.project;
 
@@ -434,12 +433,13 @@ const projectsPayment = {
                                     h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')
                                 ]),
                             ] : '',
-                            ctrl.hasShippingOptions(ctrl.reward()) ? [
+                            ctrl.shippingFee() ? [
                                 m('.fontcolor-secondary.fontsize-smallest', [
                                     m('span.fontweight-semibold',
                                         'Forma de envio: '
                                     ),
-                                    I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, I18nScope())
+                                    I18n.t(`shipping_options.${ctrl.shippingFee().option}`, I18nScope()),
+                                    ctrl.shippingFee().option !== 'others' ? ctrl.shippingFee().destination : ''
                                 ])
                             ] : ''
                         ]),
