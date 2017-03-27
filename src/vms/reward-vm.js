@@ -15,7 +15,6 @@ const error = m.prop(''),
     },
     contributionValue = m.prop(`${noReward.minimum_value},00`),
     selectedReward = m.prop(noReward),
-    selectDestination = m.prop(''),
     vm = postgrest.filtersVM({
         project_id: 'eq'
     });
@@ -71,7 +70,7 @@ const getStates = () => {
     return states;
 };
 
-const locationOptions = (reward) => {
+const locationOptions = (reward, destination) => {
     const options = m.prop([]),
         mapStates = _.map(states(), (state) => {
             let fee;
@@ -106,9 +105,9 @@ const locationOptions = (reward) => {
         }], mapStates));
     }
 
-    const destination = _.first(options()) ? _.first(options()).id : null;
-
-    selectDestination(destination);
+    if (!destination()) {
+        destination(_.first(options()).value);
+    }
 
     return options();
 };
@@ -139,8 +138,7 @@ const rewardVM = {
     shippingFeeForCurrentReward,
     statesLoader,
     getValue: contributionValue,
-    setValue: contributionValue,
-    selectedDestination: selectDestination
+    setValue: contributionValue
 };
 
 export default rewardVM;

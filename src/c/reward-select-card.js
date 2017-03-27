@@ -80,7 +80,7 @@ const rewardSelectCard = {
                         m('select.positive.text-field.w-select', {
                             onchange: m.withAttr('value', ctrl.selectedDestination)
                         },
-                            _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
+                            _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
                         )
                     ]) : '',
                     m('.w-col.w-sub-col-middle.w-clearfix', {
