@@ -28,6 +28,7 @@ const insights = {
             displayModal = h.toggleProp(false, true),
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
+            visitorsTotal = m.prop(0),
             visitorsPerDay = m.prop([]),
             loader = postgrest.loaderWithToken,
             setProjectId = () => {
@@ -49,9 +50,15 @@ const insights = {
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
         l.load().then(projectDetails);
 
-        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
-        lVisitorsPerDay.load().then(visitorsPerDay);
+        const processVisitors = (data) => {
+            if(!_.isEmpty(data)) {
+                visitorsPerDay(data);
+                visitorsTotal(_.first(data).total);
+            }
+        };
 
+        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
+        lVisitorsPerDay.load().then(processVisitors);
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
@@ -118,7 +125,8 @@ const insights = {
             contributionsPerDay,
             contributionsPerLocationTable,
             contributionsPerRefTable,
-            visitorsPerDay
+            visitorsPerDay,
+            visitorsTotal
         };
     },
     view(ctrl) {
@@ -174,7 +182,7 @@ const insights = {
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
-                        m.component(projectDataStats, { project: m.prop(project) }),
+                        m.component(projectDataStats, { project: m.prop(project), visitorsTotal: ctrl.visitorsTotal }),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {
