@@ -24,12 +24,13 @@ const projectRewardList = {
 
                 return false;
             };
+        const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
 
         const setInput = (el, isInitialized) => (!isInitialized ? el.focus() : false);
 
         const submitContribution = () => {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
-            const shippingFee = vm.shippingFeeForCurrentReward(selectedDestination);
+            const shippingFee = hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
             if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
@@ -40,8 +41,6 @@ const projectRewardList = {
 
             return false;
         };
-
-        const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
         const isRewardOpened = reward => vm.selectedReward().id === reward.id;
         const isRewardDescriptionExtended = reward => descriptionExtended() === reward.id;
         if (h.getStoredObject(storeKey)) {

@@ -55,8 +55,8 @@ const getSelectedReward = () => {
 
 const selectReward = reward => () => {
     if (selectedReward() !== reward) {
+        error('');
         selectedReward(reward);
-
         contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
         getFees(reward).then(fees);
     }
@@ -106,16 +106,25 @@ const locationOptions = (reward, destination) => {
     }
 
     if (!destination()) {
-        destination(_.first(options()).value);
+        const firstOption = _.first(options());
+        if (firstOption) {
+            destination(firstOption.value);
+        }
     }
 
     return options();
 };
 
 const shippingFeeForCurrentReward = (selectedDestination) => {
-    const currentFee = _.findWhere(fees(), {
+    let currentFee = _.findWhere(fees(), {
         destination: selectedDestination()
     });
+
+    if (!currentFee && _.findWhere(states(), { acronym: selectedDestination() })) {
+        currentFee = _.findWhere(fees(), {
+            destination: 'others'
+        });
+    }
 
     return currentFee;
 };
