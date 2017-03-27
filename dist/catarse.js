@@ -60,7 +60,8 @@ var models = {
     userContribution: postgrest$1.model('user_contributions'),
     shippingFee: postgrest$1.model('shipping_fees'),
     deleteProject: postgrest$1.model('rpc/delete_project'),
-    cancelProject: postgrest$1.model('rpc/cancel_project')
+    cancelProject: postgrest$1.model('rpc/cancel_project'),
+    city: postgrest$1.model('cities')
 };
 
 models.teamMember.pageSize(40);
@@ -76,6 +77,7 @@ models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
 models.recommendedProjects.pageSize(3);
 models.bank.pageSize(400);
+models.city.pageSize(200);
 
 var currentContribution = m.prop({});
 
@@ -2783,7 +2785,7 @@ var projectFiltersVM = function projectFiltersVM() {
     };
 };
 
-var idVM$1 = h.idVM;
+var idVM$2 = h.idVM;
 var currentUser = m.prop({});
 var createdVM = postgrest$1.filtersVM({ project_user_id: 'eq' });
 
@@ -2894,9 +2896,9 @@ var fetchUser = function fetchUser(user_id) {
     var handlePromise = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var customProp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : currentUser;
 
-    idVM$1.id(user_id);
+    idVM$2.id(user_id);
 
-    var lUser = postgrest$1.loaderWithToken(models.userDetail.getRowOptions(idVM$1.parameters()));
+    var lUser = postgrest$1.loaderWithToken(models.userDetail.getRowOptions(idVM$2.parameters()));
 
     return !handlePromise ? lUser.load() : lUser.load().then(_$1.compose(customProp, _$1.first));
 };
@@ -3003,6 +3005,7 @@ var currentProject$1 = m.prop();
 var userDetails = m.prop();
 var projectContributions = m.prop([]);
 var vm$2 = postgrest$1.filtersVM({ project_id: 'eq' });
+var idVM$1 = h.idVM;
 
 var setProject$1 = function setProject$1(project_user_id) {
     return function (data) {
@@ -3077,6 +3080,26 @@ var setProjectPageTitle = function setProjectPageTitle() {
     }
 };
 
+var fetchProject = function fetchProject(project_id) {
+    var handlePromise = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var customProp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : currentProject$1;
+
+    idVM$1.id(project_id);
+
+    var lproject = postgrest$1.loaderWithToken(models.projectDetail.getRowOptions(idVM$1.parameters()));
+
+    return !handlePromise ? lproject.load() : lproject.load().then(_$1.compose(customProp, _$1.first));
+};
+
+var updateProject = function updateProject(project_id, projectData) {
+    return m.request({
+        method: 'PUT',
+        url: '/projects/' + project_id + '.json',
+        data: { project: projectData },
+        config: h.setCsrfToken
+    });
+};
+
 var projectVM = {
     userDetails: userDetails,
     getCurrentProject: getCurrentProject$1,
@@ -3085,7 +3108,9 @@ var projectVM = {
     rewardDetails: rewardVM.rewards,
     routeToProject: routeToProject,
     setProjectPageTitle: setProjectPageTitle,
-    init: init
+    init: init,
+    fetchProject: fetchProject,
+    updateProject: updateProject
 };
 
 var projectFriends = {
@@ -3205,19 +3230,21 @@ var projectCard = {
         };
     },
     view: function view(ctrl, args) {
-        var project = args.project;
+        var project = args.project,
+            projectOwnerName = project.user ? project.user.public_name || project.user.name : project.owner_public_name || project.owner_name,
+            projectAddress = project.address ? project.address.city + ' - ' + project.address.state_acronym : project.city_name + ' - ' + project.state_acronym;
 
         return m(ctrl.css().wrapper, [m(ctrl.css().innerWrapper, [m('a' + ctrl.css().thumb + '[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
             onclick: projectVM.routeToProject(project, args.ref),
             style: {
-                'background-image': 'url(' + project.project_img + ')',
+                'background-image': 'url(' + (project.project_img || project.large_image) + ')',
                 display: 'block'
             }
         }), m(ctrl.css().descriptionWrapper, [m(ctrl.css().description, [m(ctrl.css().title, [m('a.link-hidden[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
             onclick: projectVM.routeToProject(project, args.ref)
-        }, project.project_name)]), m(ctrl.css().author, I18n$1.t('by', I18nScope$1()) + ' ' + (_$1.isEmpty(project.owner_public_name) ? project.owner_name : project.owner_public_name)), m(ctrl.css().headline, [m('a.link-hidden[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
+        }, project.project_name || project.name)]), m(ctrl.css().author, I18n$1.t('by', I18nScope$1()) + ' ' + projectOwnerName), m(ctrl.css().headline, [m('a.link-hidden[href="/' + project.permalink + '?ref=' + args.ref + '"]', {
             onclick: projectVM.routeToProject(project, args.ref)
-        }, project.headline)])]), m(ctrl.css().city, [m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), ' ' + (project.city_name ? project.city_name : '') + ', ' + (project.state_acronym ? project.state_acronym : '')])]), m(ctrl.cardMeter(), [ctrl.isFinished(project) ? m('div', project.state === 'successful' && ctrl.progress < 100 ? I18n$1.t('display_status.flex_successful', I18nScope$1()) : I18n$1.t('display_status.' + project.state, I18nScope$1())) : m('.meter', [m('.meter-fill', {
+        }, project.headline)])]), m(ctrl.css().city, [m('.fontsize-smallest.fontcolor-secondary', [m('span.fa.fa-map-marker.fa-1', ' '), projectAddress])]), m(ctrl.cardMeter(), [ctrl.isFinished(project) ? m('div', project.state === 'successful' && ctrl.progress < 100 ? I18n$1.t('display_status.flex_successful', I18nScope$1()) : I18n$1.t('display_status.' + project.state, I18nScope$1())) : m('.meter', [m('.meter-fill', {
             style: {
                 width: (ctrl.progress > 100 ? 100 : ctrl.progress) + '%'
             }
@@ -7381,87 +7408,93 @@ var usersShow = {
 
 // TODO: Define error pattern that comes from server-side and allow the lib
 // to define what fields are coming with errors from the back-end
-var fields$1 = m.prop([]);
-var submissionError = m.prop(false);
-var submissionErrorMsg = m.prop('');
-var fieldIdxValue = function fieldIdxValue(fieldName, idx, initialValue) {
-    return _$1.reduce(fields$1(), function (memo, field) {
-        return field[0] === fieldName ? field[idx] : memo;
-    }, initialValue);
-};
+var generateErrorInstance = function generateErrorInstance() {
+    var fields = m.prop([]);
+    var submissionError = m.prop(false);
+    var submissionErrorMsg = m.prop('');
+    var fieldIdxValue = function fieldIdxValue(fieldName, idx, initialValue) {
+        return _$1.reduce(fields(), function (memo, field) {
+            return field[0] === fieldName ? field[idx] : memo;
+        }, initialValue);
+    };
 
-var setError = function setError(fieldName, flag) {
-    var updated = _$1.map(fields$1(), function (field) {
-        return field[0] === fieldName ? [field[0], field[1], flag] : field;
-    });
-
-    fields$1(updated);
-};
-
-var hasError$1 = function hasError$1(fieldName) {
-    return fieldIdxValue(fieldName, 2, false);
-};
-
-var getErrorMsg = function getErrorMsg(fieldName) {
-    return fieldIdxValue(fieldName, 1, '');
-};
-
-var e$1 = function e$1(fieldOrArray) {
-    var errorMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-    if (Array.isArray(fieldOrArray)) {
-        _$1.map(fieldOrArray, function (field) {
-            field.push(false);
-            console.log('Will push: ', field);
-            return fields$1().push(field);
+    var setError = function setError(fieldName, flag) {
+        var updated = _$1.map(fields(), function (field) {
+            return field[0] === fieldName ? [field[0], field[1], flag] : field;
         });
-    } else {
-        fields$1().push([fieldOrArray, errorMessage, false]);
-    }
-};
 
-e$1.fields = fields$1;
-e$1.setSubmissionError = submissionErrorMsg;
-e$1.hasSubmissionError = function () {
-    return submissionError() === true;
-};
-e$1.displaySubmissionError = function () {
-    if (submissionError()) {
-        return m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(submissionErrorMsg())));
-    }
+        fields(updated);
+    };
 
-    return null;
-};
-e$1.submissionError = function (flag) {
-    if (_$1.isUndefined(flag)) {
-        return e$1.displaySubmissionError();
-    }
+    var hasError = function hasError(fieldName) {
+        return fieldIdxValue(fieldName, 2, false);
+    };
 
-    submissionError(flag);
-};
+    var getErrorMsg = function getErrorMsg(fieldName) {
+        return fieldIdxValue(fieldName, 1, '');
+    };
 
-e$1.hasError = hasError$1;
-e$1.inlineError = function (field, flag) {
-    if (_$1.isUndefined(flag)) {
-        if (hasError$1(field)) {
-            return m(inlineError, { message: getErrorMsg(field) });
+    var e = function e(fieldOrArray) {
+        var errorMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+        if (Array.isArray(fieldOrArray)) {
+            _$1.map(fieldOrArray, function (field) {
+                field.push(false);
+                console.log('Will push: ', field);
+                return fields().push(field);
+            });
+        } else {
+            fields().push([fieldOrArray, errorMessage, false]);
+        }
+    };
+
+    e.fields = fields;
+    e.setSubmissionError = submissionErrorMsg;
+    e.hasSubmissionError = function () {
+        return submissionError() === true;
+    };
+    e.displaySubmissionError = function () {
+        if (submissionError()) {
+            return m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(submissionErrorMsg())));
         }
 
         return null;
-    }
-    setError(field, flag);
+    };
+    e.submissionError = function (flag) {
+        if (_$1.isUndefined(flag)) {
+            return e.displaySubmissionError();
+        }
+
+        submissionError(flag);
+    };
+
+    e.hasError = hasError;
+    e.inlineError = function (field, flag) {
+        if (_$1.isUndefined(flag)) {
+            if (hasError(field)) {
+                return m(inlineError, { message: getErrorMsg(field) });
+            }
+
+            return null;
+        }
+        setError(field, flag);
+    };
+
+    e.resetFieldErrors = function () {
+        return _$1.map(fields(), function (field) {
+            return field[2] = false;
+        });
+    };
+
+    e.resetErrors = function () {
+        e.resetFieldErrors();
+        submissionError(false);
+    };
+
+    return e;
 };
 
-e$1.resetFieldErrors = function () {
-    return _$1.map(fields$1(), function (field) {
-        return field[2] = false;
-    });
-};
-
-e$1.resetErrors = function () {
-    e$1.resetFieldErrors();
-    submissionError(false);
-};
+var e$1 = generateErrorInstance();
 
 var fields = {
     password: m.prop(''),
@@ -7923,7 +7956,9 @@ var UserOwnerBox = {
     }
 };
 
-var fields$2 = {
+var e$2 = generateErrorInstance();
+
+var fields$1 = {
     owner_document: m.prop(''),
     country_id: m.prop(''),
     street: m.prop(''),
@@ -7951,7 +7986,7 @@ var mapRailsErrors$1 = function mapRailsErrors$1(rails_errors) {
     var parsedErrors = void 0;
     try {
         parsedErrors = JSON.parse(rails_errors);
-    } catch (e$1) {
+    } catch (e$2) {
         parsedErrors = {};
     }
     var extractAndSetErrorMsg = function extractAndSetErrorMsg(label, fieldArray) {
@@ -7960,8 +7995,8 @@ var mapRailsErrors$1 = function mapRailsErrors$1(rails_errors) {
         })));
 
         if (value) {
-            e$1(label, value);
-            e$1.inlineError(label, true);
+            e$2(label, value);
+            e$2.inlineError(label, true);
         }
     };
 
@@ -7985,11 +8020,11 @@ var mapRailsErrors$1 = function mapRailsErrors$1(rails_errors) {
     extractAndSetErrorMsg("birth_date", ["user.birth_date", "birth_date"]);
     extractAndSetErrorMsg("account_type", ["user.account_type", "account_type"]);
 
-    return e$1;
+    return e$2;
 };
 
 var userSettingsVM = {
-    fields: fields$2,
+    fields: fields$1,
     mapRailsErrors: mapRailsErrors$1
 };
 
@@ -11559,6 +11594,992 @@ var projectEditUserSettings = {
     }
 };
 
+var mapRailsErrors$2 = function mapRailsErrors$2(rails_errors, errors_fields, e) {
+    var parsedErrors = void 0;
+    try {
+        parsedErrors = JSON.parse(rails_errors);
+    } catch (err) {
+        parsedErrors = {};
+    }
+    var extractAndSetErrorMsg = function extractAndSetErrorMsg(label, fieldArray) {
+        var value = _$1.first(_$1.compact(_$1.map(fieldArray, function (field) {
+            return _$1.first(parsedErrors[field]);
+        })));
+
+        if (value) {
+            e(label, value);
+            e.inlineError(label, true);
+        }
+    };
+
+    _$1.each(errors_fields, function (item, i) {
+        extractAndSetErrorMsg(item[0], item[1]);
+    });
+};
+
+var railsErrorsVM = {
+    mapRailsErrors: mapRailsErrors$2
+};
+
+var e$3 = generateErrorInstance();
+
+var fields$2 = {
+    tracker_snippet_html: m.prop(''),
+    user_id: m.prop(''),
+    public_tags: m.prop(''),
+    admin_tags: m.prop(''),
+    service_fee: m.prop(''),
+    name: m.prop(''),
+    permalink: m.prop(''),
+    category_id: m.prop(''),
+    city_id: m.prop(''),
+    city_name: m.prop('')
+};
+
+var fillFields = function fillFields(data) {
+    fields$2.tracker_snippet_html(data.tracker_snippet_html || '');
+    fields$2.user_id(data.user_id);
+    fields$2.admin_tags(data.admin_tag_list || '');
+    fields$2.public_tags(data.tag_list || '');
+    fields$2.service_fee(data.service_fee);
+    fields$2.name(data.name);
+    fields$2.permalink(data.permalink);
+    fields$2.category_id(data.category_id);
+    fields$2.city_id(data.city_id || '');
+    if (data.address.city) {
+        fields$2.city_name(data.address.city + ' - ' + data.address.state);
+    }
+};
+
+var updateProject$1 = function updateProject$1(project_id) {
+    var projectData = {
+        tracker_snippet_html: fields$2.tracker_snippet_html(),
+        user_id: fields$2.user_id(),
+        all_tags: fields$2.admin_tags(),
+        all_public_tags: fields$2.public_tags(),
+        service_fee: fields$2.service_fee(),
+        name: fields$2.name(),
+        permalink: fields$2.permalink(),
+        category_id: fields$2.category_id(),
+        city_id: fields$2.city_id };
+
+    return projectVM.updateProject(project_id, projectData);
+};
+
+var loadCategoriesOptionsTo = function loadCategoriesOptionsTo(prop, selected) {
+    var filters = postgrest$1.filtersVM;
+    models.category.getPage(filters({}).order({
+        name: 'asc'
+    }).parameters()).then(function (data) {
+        var mapped = _$1.map(data, function (item, index) {
+            return m('option[value=\'' + item.id + '\']', {
+                selected: selected == item.id
+            }, item.name);
+        });
+
+        prop(mapped);
+    });
+};
+
+var generateSearchCity = function generateSearchCity(prop) {
+    var filters = postgrest$1.filtersVM({
+        search_index: '@@'
+    }).order({ name: 'asc' });
+
+    var genSelectClickCity = function genSelectClickCity(city, citiesProp) {
+        return function () {
+            fields$2.city_name(city.name + ' - ' + city.acronym);
+            fields$2.city_id(city.id);
+            citiesProp('');
+        };
+    };
+
+    return function (event) {
+        var value = event.currentTarget.value;
+        filters.search_index(replaceDiacritics(value));
+        fields$2.city_name(value);
+
+        models.city.getPage(filters.parameters()).then(function (data) {
+            var map = _$1.map(data, function (item) {
+                return m('.table-row.fontsize-smallest.fontcolor-secondary', [m('.city-select.fontsize-smallest.link-hidden-light', {
+                    onclick: genSelectClickCity(item, prop)
+                }, item.name + ' - ' + item.acronym)]);
+            });
+
+            prop(m('.table-outer.search-pre-result', map));
+        }).catch(function (err) {
+            prop('');
+        });
+    };
+};
+
+var projectBasicsVM = {
+    fields: fields$2,
+    fillFields: fillFields,
+    updateProject: updateProject$1,
+    loadCategoriesOptionsTo: loadCategoriesOptionsTo,
+    e: e$3,
+    generateSearchCity: generateSearchCity
+};
+
+var inputCard = {
+    view: function view(ctrl, args) {
+        var cardClass = args.cardClass || '.w-row.u-marginbottom-30.card.card-terciary';
+
+        return m(cardClass, [m('.w-col.w-col-5.w-sub-col', [m('label.field-label.fontweight-semibold', args.label), args.label_hint ? m('label.hint.fontsize-smallest.fontcolor-secondary', args.label_hint) : '']), m('.w-col.w-col-7.w-sub-col', args.children)]);
+    }
+};
+
+var projectEditSaveBtn = {
+    view: function view(ctrl, args) {
+        return m('.w-section.save-draft-btn-section', [m('.w-row', [m('.w-col.w-col-4.w-col-push-4', args.loading() ? h.loader() : [m('input[id="anchor"][name="anchor"][type="hidden"][value="about_me"]'), m('input.btn.btn.btn-large[name="commit"][type="submit"][value="Salvar"]', {
+            onclick: args.onSubmit
+        })]), m('.w-col.w-col-4')])]);
+    }
+};
+
+var I18nScope$30 = _$1.partial(h.i18nScope, 'projects.dashboard_basics');
+
+var projectBasicsEdit = {
+    controller: function controller(args) {
+        var vm = projectBasicsVM,
+            mapErrors = [["name", ["name"]], ["permalink", ["permalink"]], ["category_id", ["category"]], ["city_id", ["city"]]],
+            loading = m.prop(false),
+            cities = m.prop(),
+            categories = m.prop([]),
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            onSubmit = function onSubmit(event) {
+            loading(true);
+            vm.updateProject(args.projectId).then(function (data) {
+                loading(false);
+                vm.e.resetFieldErrors();
+                if (!showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (showError()) {
+                    showError.toggle();
+                }
+            }).catch(function (err) {
+                if (err.errors_json) {
+                    railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                }
+                loading(false);
+                if (showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (!showError()) {
+                    showError.toggle();
+                }
+            });
+            return false;
+        };
+        if (args.rails_errors) {
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        }
+        vm.fillFields(args.project);
+        vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
+
+        return {
+            vm: vm,
+            onSubmit: onSubmit,
+            loading: loading,
+            categories: categories,
+            cities: cities,
+            showSuccess: showSuccess,
+            showError: showError
+        };
+    },
+    view: function view(ctrl, args) {
+        var _m;
+
+        var vm = ctrl.vm;
+        return m('#basics-tab', [ctrl.showSuccess() ? m.component(popNotification, {
+            message: I18n$1.t('shared.successful_update'),
+            toggleOpt: ctrl.showSuccess
+        }) : '', ctrl.showError() ? m.component(popNotification, {
+            message: I18n$1.t('shared.failed_update'),
+            toggleOpt: ctrl.showError,
+            error: true
+        }) : '',
+
+        //add pop notifications here
+        m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [
+        // admin fields
+        args.user.is_admin ? m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(inputCard, {
+            label: I18n$1.t('tracker_snippet_html', I18nScope$30()),
+            children: [m('textarea.text.optional.w-input.text-field.positive.medium', {
+                value: vm.fields.tracker_snippet_html(),
+                onchange: m.withAttr('value', vm.fields.tracker_snippet_html)
+            })]
+        }), m(inputCard, {
+            label: I18n$1.t('user_id', I18nScope$30()),
+            children: [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
+                value: vm.fields.user_id(),
+                onchange: m.withAttr('value', vm.fields.user_id)
+            })]
+        }), m(inputCard, (_m = {
+            label: 'Admin Tags'
+        }, defineProperty(_m, 'label', I18n$1.t('admin_tags', I18nScope$30())), defineProperty(_m, 'label_hint', I18n$1.t('admin_tags_hint', I18nScope$30())), defineProperty(_m, 'children', [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
+            value: vm.fields.admin_tags(),
+            onchange: m.withAttr('value', vm.fields.admin_tags)
+        })]), _m)), m(inputCard, {
+            label: I18n$1.t('service_fee', I18nScope$30()),
+            children: [m('input.string.optional.w-input.text-field.positive.medium[type="number"]', {
+                value: vm.fields.service_fee(),
+                onchange: m.withAttr('value', vm.fields.service_fee)
+            })]
+        })])]) : '', m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(inputCard, {
+            label: I18n$1.t('name', I18nScope$30()),
+            label_hint: I18n$1.t('name_hint', I18nScope$30()),
+            children: [m('input.string.required.w-input.text-field.positive.medium[type="text"][maxlength="50"]', {
+                value: vm.fields.name(),
+                class: vm.e.hasError('name') ? 'error' : '',
+                onchange: m.withAttr('value', vm.fields.name)
+            }), vm.e.inlineError('name')]
+        }), m(inputCard, {
+            label: I18n$1.t('tags', I18nScope$30()),
+            label_hint: I18n$1.t('tags_hint', I18nScope$30()),
+            children: [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
+                value: vm.fields.public_tags(),
+                class: vm.e.hasError('public_tags') ? 'error' : '',
+                onchange: m.withAttr('value', vm.fields.public_tags)
+            }), vm.e.inlineError('public_tags')]
+        }), m(inputCard, {
+            label: I18n$1.t('permalink', I18nScope$30()),
+            label_hint: I18n$1.t('permalink_hint', I18nScope$30()),
+            children: [m('.w-row', [m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', m('.fontcolor-secondary.u-text-center.fontcolor-secondary.u-text-center.fontsize-smallest', 'www.catarse.me/')), m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6', [m('input.string.required.w-input.text-field.postfix.positive.medium[type="text"]', {
+                value: vm.fields.permalink(),
+                class: vm.e.hasError('permalink') ? 'error' : '',
+                onchange: m.withAttr('value', vm.fields.permalink)
+            }), vm.e.inlineError('permalink')])])]
+        }), m(inputCard, {
+            label: I18n$1.t('category', I18nScope$30()),
+            label_hint: I18n$1.t('category_hint', I18nScope$30()),
+            children: [m('select.required.w-input.text-field.w-select.positive.medium', {
+                value: vm.fields.category_id(),
+                class: vm.e.hasError('category_id') ? 'error' : '',
+                onchange: m.withAttr('value', vm.fields.category_id)
+            }, ctrl.categories()), vm.e.inlineError('category_id')]
+        }), m(inputCard, {
+            label: I18n$1.t('city', I18nScope$30()),
+            label_hint: I18n$1.t('city_hint', I18nScope$30()),
+            children: [m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
+                value: vm.fields.city_name(),
+                class: vm.e.hasError('city_id') ? 'error' : '',
+                onkeyup: vm.generateSearchCity(ctrl.cities)
+            }), vm.e.inlineError('city_id'), ctrl.cities()]
+        })])])]), m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })])]);
+    }
+};
+
+var projectEditBasic = {
+    controller: function controller(args) {
+        return {
+            user: userVM.fetchUser(args.user_id),
+            project: projectVM.fetchProject(args.project_id)
+        };
+    },
+    view: function view(ctrl, args) {
+        return ctrl.user() && ctrl.project() ? m(projectBasicsEdit, {
+            user: ctrl.user(),
+            userId: args.user_id,
+            projectId: args.project_id,
+            project: ctrl.project(),
+            rails_errors: args.rails_errors
+        }) : m('div', h.loader());
+    }
+};
+
+var e$4 = generateErrorInstance();
+
+var fields$3 = {
+    about_html: m.prop('')
+};
+
+var fillFields$1 = function fillFields$1(data) {
+    fields$3.about_html(data.about_html || '');
+};
+
+var updateProject$2 = function updateProject$2(project_id) {
+    var projectData = {
+        about_html: fields$3.about_html()
+    };
+
+    return projectVM.updateProject(project_id, projectData);
+};
+
+var projectDescriptionVM = {
+    fields: fields$3,
+    fillFields: fillFields$1,
+    updateProject: updateProject$2,
+    e: e$4
+};
+
+var bigInputCard = {
+    view: function view(ctrl, args) {
+        var cardClass = '.w-row.u-marginbottom-30.card.card-terciary.padding-redactor-description.text.optional.project_about_html.field_with_hint';
+
+        return m(cardClass, [m('div', [m('label.field-label.fontweight-semibold.fontsize-base', args.label), args.label_hint ? m('label.hint.fontsize-smallest.fontcolor-secondary', args.label_hint) : '']), m('div', args.children)]);
+    }
+};
+
+var I18nScope$31 = _$1.partial(h.i18nScope, 'projects.dashboard_description');
+
+var projectDescriptionEdit = {
+    controller: function controller(args) {
+        var vm = projectDescriptionVM,
+            mapErrors = [["about_html", ["about_html"]]],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            loading = m.prop(false),
+            onSubmit = function onSubmit(event) {
+            loading(true);
+            vm.updateProject(args.projectId).then(function (data) {
+                loading(false);
+                vm.e.resetFieldErrors();
+                if (!showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (showError()) {
+                    showError.toggle();
+                }
+            }).catch(function (err) {
+                if (err.errors_json) {
+                    railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                }
+                loading(false);
+                if (showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (!showError()) {
+                    showError.toggle();
+                }
+            });
+            return false;
+        };
+
+        if (args.rails_errors) {
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        }
+        vm.fillFields(args.project);
+
+        return {
+            onSubmit: onSubmit,
+            showSuccess: showSuccess,
+            showError: showError,
+            vm: vm,
+            loading: loading
+        };
+    },
+    view: function view(ctrl, args) {
+        var vm = ctrl.vm;
+        return m('#description-tab', [ctrl.showSuccess() ? m.component(popNotification, {
+            message: I18n$1.t('shared.successful_update'),
+            toggleOpt: ctrl.showSuccess
+        }) : '', ctrl.showError() ? m.component(popNotification, {
+            message: I18n$1.t('shared.failed_update'),
+            toggleOpt: ctrl.showError,
+            error: true
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('description_alert', I18nScope$31()))])]), m(bigInputCard, {
+            label: I18n$1.t('description_label', I18nScope$31()),
+            label_hint: I18n$1.t('description_hint', I18nScope$31()),
+            children: [m('.preview-container', {
+                class: vm.e.hasError('about_html') ? 'error' : false
+            }, h.redactor('project[about_html]', vm.fields.about_html)), vm.e.inlineError('about_html')]
+        })])])]), m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })])]);
+    }
+};
+
+var projectEditDescription = {
+    controller: function controller(args) {
+        return {
+            user: userVM.fetchUser(args.user_id),
+            project: projectVM.fetchProject(args.project_id)
+        };
+    },
+    view: function view(ctrl, args) {
+        return ctrl.user() && ctrl.project() ? m(projectDescriptionEdit, {
+            user: ctrl.user(),
+            userId: args.user_id,
+            projectId: args.project_id,
+            project: ctrl.project(),
+            rails_errors: args.rails_errors
+        }) : m('div', h.loader());
+    }
+};
+
+var e$5 = generateErrorInstance();
+
+var fields$4 = {
+    budget: m.prop('')
+};
+
+var fillFields$2 = function fillFields$2(data) {
+    fields$4.budget(data.budget || '');
+};
+
+var updateProject$3 = function updateProject$3(project_id) {
+    var projectData = {
+        budget: fields$4.budget()
+    };
+
+    return projectVM.updateProject(project_id, projectData);
+};
+
+var projectBudgetVM = {
+    fields: fields$4,
+    fillFields: fillFields$2,
+    updateProject: updateProject$3,
+    e: e$5
+};
+
+var I18nScope$32 = _$1.partial(h.i18nScope, 'projects.dashboard_budget');
+
+var projectBudgetEdit = {
+    controller: function controller(args) {
+        var vm = projectBudgetVM,
+            mapErrors = [["budget", ["budget"]]],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            loading = m.prop(false),
+            onSubmit = function onSubmit(event) {
+            loading(true);
+            vm.updateProject(args.projectId).then(function (data) {
+                loading(false);
+                vm.e.resetFieldErrors();
+                if (!showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (showError()) {
+                    showError.toggle();
+                }
+            }).catch(function (err) {
+                if (err.errors_json) {
+                    railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                }
+                loading(false);
+                if (showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (!showError()) {
+                    showError.toggle();
+                }
+            });
+            return false;
+        };
+
+        if (args.rails_errors) {
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        }
+        vm.fillFields(args.project);
+
+        return {
+            onSubmit: onSubmit,
+            showSuccess: showSuccess,
+            showError: showError,
+            vm: vm,
+            loading: loading
+        };
+    },
+    view: function view(ctrl, args) {
+        var vm = ctrl.vm;
+        return m('#budget-tab', [ctrl.showSuccess() ? m.component(popNotification, {
+            message: I18n$1.t('shared.successful_update'),
+            toggleOpt: ctrl.showSuccess
+        }) : '', ctrl.showError() ? m.component(popNotification, {
+            message: I18n$1.t('shared.failed_update'),
+            toggleOpt: ctrl.showError,
+            error: true
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('budget_alert', I18nScope$32()))])]), m(bigInputCard, {
+            label: I18n$1.t('budget_label', I18nScope$32()),
+            children: [m('.preview-container', {
+                class: vm.e.hasError('budget') ? 'error' : false
+            }, h.redactor('project[budget]', vm.fields.budget)), vm.e.inlineError('budget')]
+        })])])]), m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })])]);
+    }
+};
+
+var projectEditBudget = {
+    controller: function controller(args) {
+        return {
+            user: userVM.fetchUser(args.user_id),
+            project: projectVM.fetchProject(args.project_id)
+        };
+    },
+    view: function view(ctrl, args) {
+        return ctrl.user() && ctrl.project() ? m(projectBudgetEdit, {
+            user: ctrl.user(),
+            userId: args.user_id,
+            projectId: args.project_id,
+            project: ctrl.project(),
+            rails_errors: args.rails_errors
+        }) : m('div', h.loader());
+    }
+};
+
+var e$6 = generateErrorInstance();
+
+var fields$5 = {
+    video_url: m.prop('')
+};
+
+var fillFields$3 = function fillFields$3(data) {
+    fields$5.video_url(data.video_url || '');
+};
+
+var updateProject$4 = function updateProject$4(project_id) {
+    var projectData = {
+        video_url: fields$5.video_url()
+    };
+
+    return projectVM.updateProject(project_id, projectData);
+};
+
+var projectVideoVM = {
+    fields: fields$5,
+    fillFields: fillFields$3,
+    updateProject: updateProject$4,
+    e: e$6
+};
+
+var I18nScope$33 = _$1.partial(h.i18nScope, 'projects.dashboard_video');
+
+var projectBudgetEdit$2 = {
+    controller: function controller(args) {
+        var vm = projectVideoVM,
+            mapErrors = [["video_url", ["video_url"]]],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            loading = m.prop(false),
+            onSubmit = function onSubmit(event) {
+            loading(true);
+            vm.updateProject(args.projectId).then(function (data) {
+                loading(false);
+                vm.e.resetFieldErrors();
+                if (!showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (showError()) {
+                    showError.toggle();
+                }
+            }).catch(function (err) {
+                if (err.errors_json) {
+                    railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                }
+                loading(false);
+                if (showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (!showError()) {
+                    showError.toggle();
+                }
+            });
+            return false;
+        };
+
+        if (args.rails_errors) {
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        }
+        vm.fillFields(args.project);
+
+        return {
+            onSubmit: onSubmit,
+            showSuccess: showSuccess,
+            showError: showError,
+            vm: vm,
+            loading: loading
+        };
+    },
+    view: function view(ctrl, args) {
+        var vm = ctrl.vm;
+        return m('#video-tab', [ctrl.showSuccess() ? m.component(popNotification, {
+            message: I18n$1.t('shared.successful_update'),
+            toggleOpt: ctrl.showSuccess
+        }) : '', ctrl.showError() ? m.component(popNotification, {
+            message: I18n$1.t('shared.failed_update'),
+            toggleOpt: ctrl.showError,
+            error: true
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('video_alert', I18nScope$33()))])]), m(inputCard, {
+            label: I18n$1.t('video_label', I18nScope$33()),
+            label_hint: I18n$1.t('video_hint', I18nScope$33()),
+            children: [m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
+                value: vm.fields.video_url(),
+                class: vm.e.hasError('video_url') ? 'error' : '',
+                onchange: m.withAttr('value', vm.fields.video_url)
+            }), vm.e.inlineError('video_url')]
+        })])])]), m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })])]);
+    }
+};
+
+var projectEditVideo = {
+    controller: function controller(args) {
+        return {
+            user: userVM.fetchUser(args.user_id),
+            project: projectVM.fetchProject(args.project_id)
+        };
+    },
+    view: function view(ctrl, args) {
+        return ctrl.user() && ctrl.project() ? m(projectBudgetEdit$2, {
+            user: ctrl.user(),
+            userId: args.user_id,
+            projectId: args.project_id,
+            project: ctrl.project(),
+            rails_errors: args.rails_errors
+        }) : m('div', h.loader());
+    }
+};
+
+var e$7 = generateErrorInstance();
+
+var fields$6 = {
+    mode: m.prop(''),
+    online_days: m.prop(''),
+    goal: m.prop('')
+};
+
+var fillFields$4 = function fillFields$4(data) {
+    fields$6.mode(data.mode || 'aon');
+    fields$6.online_days(data.online_days || '');
+    fields$6.goal(data.goal);
+};
+
+var updateProject$5 = function updateProject$5(project_id) {
+    var projectData = {
+        mode: fields$6.mode(),
+        online_days: fields$6.online_days(),
+        goal: fields$6.goal()
+    };
+
+    return projectVM.updateProject(project_id, projectData);
+};
+
+var genClickChangeMode = function genClickChangeMode(mode) {
+    return function () {
+        fields$6.mode(mode);
+        fields$6.online_days('');
+        if (mode == 'flex') {
+            e$7.inlineError('online_days', false);
+        }
+    };
+};
+
+var projectGoalVM = {
+    fields: fields$6,
+    fillFields: fillFields$4,
+    updateProject: updateProject$5,
+    e: e$7,
+    genClickChangeMode: genClickChangeMode
+};
+
+var bigCard = {
+    view: function view(ctrl, args) {
+        var cardClass = '.card.medium.card-terciary.u-marginbottom-30';
+
+        return m(cardClass, [m('div.u-marginbottom-30', [m('label.fontweight-semibold.fontsize-base', args.label), args.label_hint ? m('.fontsize-small', args.label_hint) : '']), m('div', args.children)]);
+    }
+};
+
+var I18nScope$34 = _$1.partial(h.i18nScope, 'projects.dashboard_goal');
+
+var projectGoalEdit = {
+    controller: function controller(args) {
+        var vm = projectGoalVM,
+            mapErrors = [["mode", ["mode"]], ["goal", ["goal"]], ["online_days", ["online_days"]]],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            showModeDiff = h.toggleProp(false, true),
+            showTaxesDiff = h.toggleProp(false, true),
+            applyGoalMask = _$1.compose(vm.fields.goal, h.applyMonetaryMask),
+            loading = m.prop(false),
+            onSubmit = function onSubmit(event) {
+            loading(true);
+            vm.updateProject(args.projectId).then(function (data) {
+                loading(false);
+                vm.e.resetFieldErrors();
+                if (!showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (showError()) {
+                    showError.toggle();
+                }
+            }).catch(function (err) {
+                if (err.errors_json) {
+                    railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                }
+                loading(false);
+                if (showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (!showError()) {
+                    showError.toggle();
+                }
+            });
+            return false;
+        };
+
+        if (args.rails_errors) {
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        }
+        vm.fillFields(args.project);
+
+        return {
+            onSubmit: onSubmit,
+            showSuccess: showSuccess,
+            showError: showError,
+            showModeDiff: showModeDiff,
+            showTaxesDiff: showTaxesDiff,
+            vm: vm,
+            applyGoalMask: applyGoalMask,
+            loading: loading
+        };
+    },
+    view: function view(ctrl, args) {
+        var vm = ctrl.vm;
+        return m('#goal-tab', [ctrl.showSuccess() ? m.component(popNotification, {
+            message: I18n$1.t('shared.successful_update'),
+            toggleOpt: ctrl.showSuccess
+        }) : '', ctrl.showError() ? m.component(popNotification, {
+            message: I18n$1.t('shared.failed_update'),
+            toggleOpt: ctrl.showError,
+            error: true
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(bigCard, {
+            label: I18n$1.t('mode_label', I18nScope$34()),
+            label_hint: I18n$1.t('mode_hint', I18nScope$34()),
+            children: [m('.flex-row.u-marginbottom-30', [m('a.choose-mode.choose-aon.w-inline-block.btn-select.flex-column.u-text-center[data-mode="aon"][href="javascript:void(0);"]', {
+                onclick: vm.genClickChangeMode('aon'),
+                class: vm.fields.mode() == 'aon' ? 'selected' : false
+            }, [m('img[alt="Badge aon"][src="/assets/catarse_bootstrap/badge-aon.png"]')]), m('a.choose-mode.choose-flex.w-inline-block.btn-select.flex-column.u-text-center[data-mode="flex"][href="javascript:void(0);"]', {
+                onclick: vm.genClickChangeMode('flex'),
+                class: vm.fields.mode() == 'flex' ? 'selected' : false
+            }, [m('img[alt="Badge flex"][src="/assets/catarse_bootstrap/badge-flex.png"]')])]), m('.u-text-center.fontsize-smaller', [m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javscript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, ['Veja a diferença entre os modelos ', m('span.fa.fa-chevron-down')])]), ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [m('.flex-row', [m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('aon_diff_html', I18nScope$34()))), m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('flex_diff_html', I18nScope$34())))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$34())), m.trust(I18n$1.t('mode_diff_ebook', I18nScope$34()))])]) : '']
+        }), m(bigCard, {
+            label: I18n$1.t('goal_label', I18nScope$34()),
+            label_hint: I18n$1.t('goal_hint', I18nScope$34()),
+            children: [m('.w-row.u-marginbottom-30', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.w-row', [m('.w-col.w-col-4.w-col-small-6.w-col-tiny-6.text-field.prefix.no-hover.medium.prefix-permalink', [m('.fontcolor-secondary.u-text-center.fontsize-base.lineheight-tightest', 'R$')]), m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6.label-hide', [m('.input.tel.optional.project_goal', [m('label.field-label'), m('input.string.optional.w-input.text-field.postfix.positive.medium[autocomplete="off"][id="project-goal-input"][name="project[goal]"][type="tel"]', {
+                class: vm.e.hasError('goal') ? 'error' : false,
+                value: vm.fields.goal(),
+                maxlength: 14,
+                onkeyup: m.withAttr('value', ctrl.applyGoalMask)
+            })])])]), m('.u-text-center', vm.e.inlineError('goal'))]), m('.w-col.w-col-2')]), m('.u-text-center.fontsize-smaller.fontweight-semibold', [m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
+                onclick: ctrl.showTaxesDiff.toggle
+            }, [I18n$1.t('goal_taxes_link', I18nScope$34()), m('span.fa.fa-chevron-down')])]), ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [m('.u-marginbottom-30', [m('.fontsize-small.fontweight-semibold', I18n$1.t('goal_taxes_label', I18nScope$34())), m('.fontsize-smaller', I18n$1.t('goal_' + vm.fields.mode() + '_taxes_hint', I18nScope$34()))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$34())), m.trust(I18n$1.t('goal_taxes_watch_video_html', I18nScope$34()))])]) : '']
+        }), m(bigCard, {
+            label: I18n$1.t('online_days_label', I18nScope$34()),
+            label_hint: m.trust(I18n$1.t('online_days_' + vm.fields.mode() + '_hint', I18nScope$34())),
+            children: vm.fields.mode() == 'aon' ? [m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.w-row', [m('.w-col.w-col-8.label-hide', [m('.input.integer.optional.disabled.project_online_days', [m("label.field-label"), m('input.numeric.integer.optional.disabled.w-input.text-field.postfix.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
+                onchange: m.withAttr('value', vm.fields.online_days),
+                class: vm.e.hasError('online_days') ? 'error' : false
+            })])]), m('.w-col.w-col-4', [m('.text-field.medium.prefix-permalink.u-text-center', [m('', 'dias')])])]), vm.e.inlineError('online_days')])])] : [m('.flex-row', [m('a.choose-time.choose-unlimited.w-inline-block.btn-select.flex-column.u-text-center', {
+                class: _$1.isEmpty(vm.fields.online_days().toString()) ? 'selected' : '',
+                onclick: function onclick() {
+                    vm.fields.online_days('');
+                }
+            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_open', I18nScope$34())), m('.w-hidden-tiny', I18n$1.t('online_days_open_hint', I18nScope$34()))]), m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
+                class: _$1.isEmpty(vm.fields.online_days().toString()) ? '' : 'selected'
+            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_closed', I18nScope$34())), m('.w-hidden-tiny.u-marginbottom-30', I18n$1.t('online_days_closed_hint', I18nScope$34())), m('.w-row', [m('.w-col.w-col-6.label-hide', [m('.input.integer.optional.project_online_days', [m('label.field-label'), m('input.numeric.integer.optional.w-input.text-field.field.w-input.text-field.medium.prefix[id="project_online_days"][name="project[online_days]"][type="number"]', {
+                onchange: m.withAttr('value', vm.fields.online_days),
+                value: vm.fields.online_days(),
+                class: vm.e.hasError('online_days') ? 'error' : false
+            })]), vm.e.inlineError('online_days')]), m('.w-col.w-col-6', [m('.text-field.medium.prefix-permalink', [m('', 'dias')])])])])])]
+        })])])]), m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })])]);
+    }
+};
+
+var projectEditGoal = {
+    controller: function controller(args) {
+        return {
+            user: userVM.fetchUser(args.user_id),
+            project: projectVM.fetchProject(args.project_id)
+        };
+    },
+    view: function view(ctrl, args) {
+        return ctrl.user() && ctrl.project() ? m(projectGoalEdit, {
+            user: ctrl.user(),
+            userId: args.user_id,
+            projectId: args.project_id,
+            project: ctrl.project(),
+            rails_errors: args.rails_errors
+        }) : m('div', h.loader());
+    }
+};
+
+var e$8 = generateErrorInstance();
+var currentProject$2 = m.prop({});
+
+var fields$7 = {
+    headline: m.prop(''),
+    uploaded_image: m.prop(''),
+    upload_files: m.prop(undefined)
+};
+
+var fillFields$5 = function fillFields$5(data) {
+    fields$7.headline(data.headline || '');
+    currentProject$2(data);
+};
+
+var reloadCurrentProject = function reloadCurrentProject() {
+    if (currentProject$2().id) {
+        projectVM.fetchProject(currentProject$2().id, false).then(function (data) {
+            currentProject$2(_.first(data));
+            m.redraw();
+        });
+    }
+};
+
+var prepareForUpload = function prepareForUpload(event) {
+    var formData = new FormData();
+    if (event.target.files[0]) {
+        formData.append('uploaded_image', event.target.files[0]);
+    }
+    fields$7.upload_files(formData);
+};
+
+var uploadImage = function uploadImage(project_id) {
+    if (_.isUndefined(fields$7.upload_files)) {
+        var deferred = m.deferred();
+        deferred.resolve({});
+        return deferred.promise;
+    } else {
+        return m.request({
+            method: 'POST',
+            url: '/projects/' + project_id + '/upload_image.json',
+            data: fields$7.upload_files(),
+            config: h.setCsrfToken,
+            serialize: function serialize(data) {
+                return data;
+            }
+        });
+    }
+};
+
+var updateProject$6 = function updateProject$6(project_id) {
+    var projectData = {
+        headline: fields$7.headline()
+    };
+
+    return projectVM.updateProject(project_id, projectData);
+};
+
+var projectCardVM = {
+    fields: fields$7,
+    fillFields: fillFields$5,
+    updateProject: updateProject$6,
+    e: e$8,
+    prepareForUpload: prepareForUpload,
+    uploadImage: uploadImage,
+    currentProject: currentProject$2,
+    reloadCurrentProject: reloadCurrentProject
+};
+
+var I18nScope$35 = _$1.partial(h.i18nScope, 'projects.dashboard_card');
+
+var projectCardEdit = {
+    controller: function controller(args) {
+        var vm = projectCardVM,
+            mapErrors = [["uploaded_image", ["uploaded_image"]], ["headline", ["headline"]]],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            loading = m.prop(false),
+            onSubmit = function onSubmit(event) {
+            loading(true);
+            m.redraw();
+            vm.uploadImage(args.projectId).then(function (uploaded) {
+                vm.updateProject(args.projectId).then(function (data) {
+                    loading(false);
+                    vm.e.resetFieldErrors();
+                    if (!showSuccess()) {
+                        showSuccess.toggle();
+                    }
+                    if (showError()) {
+                        showError.toggle();
+                    }
+                    vm.reloadCurrentProject();
+                }).catch(function (err) {
+                    if (err.errors_json) {
+                        railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                    }
+                    loading(false);
+                    if (showSuccess()) {
+                        showSuccess.toggle();
+                    }
+                    if (!showError()) {
+                        showError.toggle();
+                    }
+                });
+            }).catch(function (uploaderr) {
+                if (uploaderr.errors_json) {
+                    railsErrorsVM.mapRailsErrors(uploaderr.errors_json, mapErrors, vm.e);
+                }
+                loading(false);
+                if (showSuccess()) {
+                    showSuccess.toggle();
+                }
+                if (!showError()) {
+                    showError.toggle();
+                }
+            });
+            return false;
+        };
+
+        if (args.rails_errors) {
+            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        }
+        vm.fillFields(args.project);
+
+        return {
+            onSubmit: onSubmit,
+            showSuccess: showSuccess,
+            showError: showError,
+            vm: vm,
+            loading: loading
+        };
+    },
+    view: function view(ctrl, args) {
+        var vm = ctrl.vm;
+        return m('#card-tab', [ctrl.showSuccess() ? m.component(popNotification, {
+            message: I18n$1.t('shared.successful_update'),
+            toggleOpt: ctrl.showSuccess
+        }) : '', ctrl.showError() ? m.component(popNotification, {
+            message: I18n$1.t('shared.failed_update'),
+            toggleOpt: ctrl.showError,
+            error: true
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-8', [m(inputCard, {
+            label: I18n$1.t('uploaded_image_label', I18nScope$35()),
+            label_hint: I18n$1.t('uploaded_image_hint', I18nScope$35()),
+            children: [m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[uploaded_image]"][type="file"]', {
+                class: vm.e.hasError('uploaded_image') ? 'error' : false,
+                onchange: vm.prepareForUpload
+            }), vm.e.inlineError('uploaded_image')]
+        }), m(inputCard, {
+            label: I18n$1.t('headline_label', I18nScope$35()),
+            label_hint: I18n$1.t('headline_label_hint', I18nScope$35()),
+            children: [m('textarea.text.optional.w-input.text-field.positive[id="project_headline"][maxlength="100"][name="project[headline]"][rows="3"]', {
+                onchange: m.withAttr('value', vm.fields.headline),
+                class: vm.e.hasError('headline') ? 'error' : false
+            }, vm.fields.headline()), vm.e.inlineError('headline')]
+        })]), m(projectCard, { project: vm.currentProject(), type: 'small' })])])]), m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })])]);
+    }
+};
+
+var projectEditCard = {
+    controller: function controller(args) {
+        return {
+            user: userVM.fetchUser(args.user_id),
+            project: projectVM.fetchProject(args.project_id)
+        };
+    },
+    view: function view(ctrl, args) {
+        return ctrl.user() && ctrl.project() ? m(projectCardEdit, {
+            user: ctrl.user(),
+            userId: args.user_id,
+            projectId: args.project_id,
+            project: ctrl.project(),
+            rails_errors: args.rails_errors
+        }) : m('div', h.loader());
+    }
+};
+
 var c = {
     root: {
         AdminUsers: adminUsers,
@@ -11590,11 +12611,17 @@ var c = {
         CheckEmail: CheckEmail,
         projectEditUserAbout: projectEditUserAbout,
         projectEditUserSettings: projectEditUserSettings,
-        projectEditReward: projectEditReward
+        projectEditReward: projectEditReward,
+        projectEditBasic: projectEditBasic,
+        projectEditDescription: projectEditDescription,
+        projectEditBudget: projectEditBudget,
+        projectEditVideo: projectEditVideo,
+        projectEditGoal: projectEditGoal,
+        projectEditCard: projectEditCard
     }
 };
 
 return c;
 
 }(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
