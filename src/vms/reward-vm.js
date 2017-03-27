@@ -129,7 +129,10 @@ const shippingFeeForCurrentReward = (selectedDestination) => {
     return currentFee;
 };
 
+const canEdit = (reward, projectState) => projectState === 'draft' || reward.paid_count <= 0;
+
 const rewardVM = {
+    canEdit,
     error,
     getStates,
     getFees,
