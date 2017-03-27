@@ -112,7 +112,6 @@ const projectContributionReportContent = {
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                 onclick: () => ctrl.displayDeliverModal.toggle()
-                                                // onclick: () => ctrl.updateStatus('delivered')
                                             },
                                                 'Enviada'
                                             ),
