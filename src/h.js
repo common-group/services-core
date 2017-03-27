@@ -860,7 +860,7 @@ const
 
         return contributionVM.canBeDelivered(contribution) ? status[contribution.delivery_status] : '';
     },
-    getParams = (searchKey) => {
+    getParams = (searchKey: string) => {
         const query = window.location.href;
         const queryParams = (/^[?#]/.test(query) ? query.slice(1) : query).split('?');
 

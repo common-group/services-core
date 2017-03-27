@@ -15,7 +15,6 @@ const error = m.prop(''),
     },
     contributionValue = m.prop(`${noReward.minimum_value},00`),
     selectedReward = m.prop(noReward),
-    selectDestination = m.prop(''),
     vm = postgrest.filtersVM({
         project_id: 'eq'
     });
@@ -56,8 +55,8 @@ const getSelectedReward = () => {
 
 const selectReward = reward => () => {
     if (selectedReward() !== reward) {
+        error('');
         selectedReward(reward);
-
         contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
         getFees(reward).then(fees);
     }
@@ -71,7 +70,7 @@ const getStates = () => {
     return states;
 };
 
-const locationOptions = (reward) => {
+const locationOptions = (reward, destination) => {
     const options = m.prop([]),
         mapStates = _.map(states(), (state) => {
             let fee;
@@ -106,17 +105,26 @@ const locationOptions = (reward) => {
         }], mapStates));
     }
 
-    const destination = _.first(options()) ? _.first(options()).id : null;
-
-    selectDestination(destination);
+    if (!destination()) {
+        const firstOption = _.first(options());
+        if (firstOption) {
+            destination(firstOption.value);
+        }
+    }
 
     return options();
 };
 
 const shippingFeeForCurrentReward = (selectedDestination) => {
-    const currentFee = _.findWhere(fees(), {
+    let currentFee = _.findWhere(fees(), {
         destination: selectedDestination()
     });
+
+    if (!currentFee && _.findWhere(states(), { acronym: selectedDestination() })) {
+        currentFee = _.findWhere(fees(), {
+            destination: 'others'
+        });
+    }
 
     return currentFee;
 };
@@ -139,8 +147,7 @@ const rewardVM = {
     shippingFeeForCurrentReward,
     statesLoader,
     getValue: contributionValue,
-    setValue: contributionValue,
-    selectedDestination: selectDestination
+    setValue: contributionValue
 };
 
 export default rewardVM;

@@ -7,7 +7,7 @@ import models from '../models';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.reward_list');
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectRewardList = {
     controller() {
@@ -24,12 +24,13 @@ const projectRewardList = {
 
                 return false;
             };
+        const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
 
         const setInput = (el, isInitialized) => (!isInitialized ? el.focus() : false);
 
         const submitContribution = () => {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
-            const shippingFee = vm.shippingFeeForCurrentReward(selectedDestination);
+            const shippingFee = hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
             if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
@@ -40,8 +41,6 @@ const projectRewardList = {
 
             return false;
         };
-
-        const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
         const isRewardOpened = reward => vm.selectedReward().id === reward.id;
         const isRewardDescriptionExtended = reward => descriptionExtended() === reward.id;
         if (h.getStoredObject(storeKey)) {
@@ -160,7 +159,7 @@ const projectRewardList = {
                                 onchange: m.withAttr('value', ctrl.selectedDestination),
                                 value: ctrl.selectedDestination()
                             },
-                                _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
+                                _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`,{selected: option.value === ctrl.selectedDestination()},`${option.name} +R$${option.fee}`))
                             )
                         ]) : '',
                         m('.fontcolor-secondary.u-marginbottom-10',
@@ -168,9 +167,7 @@ const projectRewardList = {
                         ),
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                                m('.back-reward-input-reward.placeholder',
-                                    'R$'
-                                )
+                                m('.back-reward-input-reward.placeholder', 'R$')
                             ),
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                 m('input.w-input.back-reward-input-reward[type="tel"]', {

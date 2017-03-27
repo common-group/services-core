@@ -12,9 +12,9 @@ const rewardSelectCard = {
         const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
         const queryRewardId = h.getParams('reward_id');
 
-        const submitContribution = () => {
+        const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
-            const shippingFee = rewardVM.shippingFeeForCurrentReward(selectedDestination);
+            const shippingFee = hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
             if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
@@ -80,7 +80,7 @@ const rewardSelectCard = {
                         m('select.positive.text-field.w-select', {
                             onchange: m.withAttr('value', ctrl.selectedDestination)
                         },
-                            _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
+                            _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
                         )
                     ]) : '',
                     m('.w-col.w-sub-col-middle.w-clearfix', {
