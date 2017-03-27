@@ -859,6 +859,18 @@ const
         };
 
         return contributionVM.canBeDelivered(contribution) ? status[contribution.delivery_status] : '';
+    },
+    getParams = (searchKey: string) => {
+        const query = window.location.href;
+        const queryParams = (/^[?#]/.test(query) ? query.slice(1) : query).split('?');
+
+        return queryParams.length > 1 ? queryParams[1]
+            .split('&')
+            .reduce((params, param) => {
+                const [key, value] = param.split('=');
+                params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+                return params;
+            }, {})[searchKey] : null;
     };
 
 
@@ -888,6 +900,7 @@ export default {
     getApiHost,
     getMailchimpUrl,
     getCurrentProject,
+    getParams,
     toggleProp,
     loader,
     newFeatureBadge,

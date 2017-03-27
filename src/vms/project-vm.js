@@ -7,9 +7,10 @@ import rewardVM from './reward-vm';
 import userVM from './user-vm';
 
 const currentProject = m.prop(),
-    userDetails = m.prop(),
-    projectContributions = m.prop([]),
-    vm = postgrest.filtersVM({ project_id: 'eq' });
+      userDetails = m.prop(),
+      projectContributions = m.prop([]),
+      vm = postgrest.filtersVM({ project_id: 'eq' }),
+      idVM = h.idVM;
 
 const setProject = project_user_id => (data) => {
     currentProject(_.first(data));
@@ -27,27 +28,6 @@ const init = (project_id, project_user_id) => {
     const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
 
     fetchParallelData(project_id, project_user_id);
-
-    /* try {
-        if(project_id && _.contains([29706], project_id)) {
-            (window.$zopim && window.$zopim.livechat)||(function(d,s){var z=window.$zopim=function(c){z._.push(c)},$=z.s=d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set._.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');$.src='//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm';z.t=+new Date;$.type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
-            setTimeout(function t(){
-                const c = window.$zopim && window.$zopim.livechat;
-                if(c) {
-                    const u = h.getUser();
-                    if(u) {
-                        c.setEmail(u.email);
-                        c.setName(u.name);
-                    }
-                    window.zE && window.zE.hide();
-                } else {
-                    setTimeout(t, 1000);
-                }
-            }, 1000);
-        }
-    } catch(e) {
-        console.error(e);
-    }*/
 
     return lProject.load().then(setProject(project_user_id));
 };
@@ -99,6 +79,24 @@ const setProjectPageTitle = () => {
     }
 };
 
+const fetchProject = (project_id, handlePromise = true, customProp = currentProject) => {
+    idVM.id(project_id);
+
+    const lproject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
+
+    return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
+};
+
+const updateProject = (project_id, projectData) => {
+    return m.request({
+        method: 'PUT',
+        url: `/projects/${project_id}.json`,
+        data: { project: projectData },
+        config: h.setCsrfToken
+    });
+}
+
+
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -107,7 +105,9 @@ const projectVM = {
     rewardDetails: rewardVM.rewards,
     routeToProject,
     setProjectPageTitle,
-    init
+    init,
+    fetchProject,
+    updateProject
 };
 
 export default projectVM;
