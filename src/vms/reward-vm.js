@@ -6,6 +6,8 @@ import h from '../h';
 
 const error = m.prop(''),
     rewards = m.prop([]),
+    states = m.prop([]),
+    fees = m.prop([]),
     noReward = {
         id: -1,
         description: 'Obrigado. Eu só quero ajudar o projeto.',
@@ -13,17 +15,28 @@ const error = m.prop(''),
     },
     contributionValue = m.prop(`${noReward.minimum_value},00`),
     selectedReward = m.prop(noReward),
+    selectDestination = m.prop(''),
     vm = postgrest.filtersVM({
         project_id: 'eq'
     });
 
-const rewardsLoader = (project_id) => {
-    vm.project_id(project_id);
+const rewardsLoader = (projectId) => {
+    vm.project_id(projectId);
 
     return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
 };
 
-const fetchRewards = project_id => rewardsLoader(project_id).load().then(rewards);
+const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
+
+const getFees = (reward) => {
+    const feesFilter = postgrest.filtersVM({
+        reward_id: 'eq'
+    });
+
+    feesFilter.reward_id(reward.id);
+    const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
+    return feesLoader.load();
+};
 
 const getSelectedReward = () => {
     const root = document.getElementById('application'),
@@ -31,44 +44,88 @@ const getSelectedReward = () => {
 
     if (data) {
         const contribution = JSON.parse(data);
-        const reward = selectedReward(contribution.reward);
 
+        selectedReward(contribution.reward);
         m.redraw(true);
 
         return selectedReward;
     }
+
     return false;
 };
 
 const selectReward = reward => () => {
-    if (rewardVM.selectedReward() !== reward) {
-        rewardVM.selectedReward(reward);
+    if (selectedReward() !== reward) {
+        selectedReward(reward);
 
         contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
+        getFees(reward).then(fees);
     }
 };
 
 const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
-const getFees = (reward) => {
-    const feesFilter = postgrest.filtersVM({
-        reward_id: 'eq'
-    });
-
-    feesFilter.reward_id(reward.id || 0);
-    const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
-    return feesLoader;
+const statesLoader = postgrest.loader(models.state.getPageOptions());
+const getStates = () => {
+    statesLoader.load().then(states);
+    return states;
 };
 
-const getStates = () => postgrest.loader(models.state.getPageOptions());
+const locationOptions = (reward) => {
+    const options = m.prop([]),
+        mapStates = _.map(states(), (state) => {
+            let fee;
+            const feeState = _.findWhere(fees(), {
+                destination: state.acronym
+            });
+            const feeOthers = _.findWhere(fees(), {
+                destination: 'others'
+            });
+            if (feeState) {
+                fee = feeState.value;
+            } else if (feeOthers) {
+                fee = feeOthers.value;
+            }
 
-const canEdit = (reward, project_state) => project_state === 'draft' || reward.paid_count <= 0;
+            return {
+                name: state.name,
+                value: state.acronym,
+                fee
+            };
+        });
+    if (reward.shipping_options === 'national') {
+        options(mapStates);
+    } else if (reward.shipping_options === 'international') {
+        const fee = _.where(fees(), {
+            destination: 'international'
+        });
+        options(_.union([{
+            value: 'international',
+            name: 'Outside Brazil',
+            fee
+        }], mapStates));
+    }
+
+    const destination = _.first(options()) ? _.first(options()).id : null;
+
+    selectDestination(destination);
+
+    return options();
+};
+
+const shippingFeeForCurrentReward = (selectedDestination) => {
+    const currentFee = _.findWhere(fees(), {
+        destination: selectedDestination()
+    });
+
+    return currentFee;
+};
 
 const rewardVM = {
     error,
-    canEdit,
     getStates,
     getFees,
+    fees,
     rewards,
     applyMask,
     noReward,
@@ -78,8 +135,12 @@ const rewardVM = {
     selectedReward,
     contributionValue,
     rewardsLoader,
+    locationOptions,
+    shippingFeeForCurrentReward,
+    statesLoader,
     getValue: contributionValue,
-    setValue: contributionValue
+    setValue: contributionValue,
+    selectedDestination: selectDestination
 };
 
 export default rewardVM;
