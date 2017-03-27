@@ -1,10 +1,13 @@
 import m from 'mithril';
 import _ from 'underscore';
 import rewardVM from '../vms/reward-vm';
+import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
 import projectHeaderTitle from '../c/project-header-title';
 import rewardSelectCard from '../c/reward-select-card';
 import h from '../h';
+import faqBox from '../c/faq-box';
+
 
 const projectsContribution = {
     controller() {
@@ -54,14 +57,20 @@ const projectsContribution = {
                         m('.w-form.back-reward-form',
                             m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/pt/projects/${project().id}/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]`,
                                 { onsubmit: ctrl.submitContribution }
-                            ,[
+                            , [
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                                 m('input[type="hidden"][value="10"]',
                                 { name: 'contribution[value]' }),
                                 _.map(ctrl.rewards(), reward => m(rewardSelectCard, { reward }))
                             ])
                         )
-                    )
+                    ),
+                    m('.w-col.w-col-4', m.component(faqBox, {
+                        mode: project().mode,
+                        vm: paymentVM(project().mode),
+                        faq: paymentVM(project().mode).faq(),
+                        projectUserId: project().user.id
+                    }))
                 ])))
             ] : '');
     }
