@@ -1,6 +1,8 @@
 import m from 'mithril';
 import _ from 'underscore';
-import e from '../../src/error';
+import generateErrorInstance from '../../src/error';
+
+const e = generateErrorInstance();
 
 describe("error handler lib", () => {
     const submissionErrorMsg = 'submission error message';
