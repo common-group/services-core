@@ -212,14 +212,16 @@ const projectGoalEdit = {
                                                             class: vm.e.hasError('online_days') ? 'error' : false
                                                         })
                                                     ]),
-                                                    vm.e.inlineError('online_days')
                                                 ]),
                                                 m('.w-col.w-col-6', [
-                                                    m('.text-field.medium.prefix-permalink', [
+                                                    m('.text-field.medium.prefix-permalink', {
+                                                        class: vm.e.hasError('online_days') ? 'error' : false
+                                                    }, [
                                                         m('', 'dias')
                                                     ])
                                                 ])
-                                            ])
+                                            ]),
+                                            m('.w-row', vm.e.inlineError('online_days'))
                                         ])
                                     ])
                                 ])
