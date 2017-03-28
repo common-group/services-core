@@ -194,10 +194,11 @@ const projectGoalEdit = {
                                             onclick: () => { vm.fields.online_days(''); }
                                         }, [
                                             m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n.t('online_days_open', I18nScope())),
-                                            m('.w-hidden-tiny', I18n.t('online_days_open_hint', I18nScope()))
+                                            m('.w-hidden-tiny', I18n.t('online_days_open_hint', I18nScope())),
                                         ]),
                                         m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
-                                            class: _.isEmpty(vm.fields.online_days().toString()) ? '' : 'selected'
+                                            class: _.isEmpty(vm.fields.online_days().toString()) ? '' : 'selected',
+                                            onclick: () => { vm.fields.online_days(1); }
                                         }, [
                                             m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n.t('online_days_closed', I18nScope())),
                                             m('.w-hidden-tiny.u-marginbottom-30', I18n.t('online_days_closed_hint', I18nScope())),
