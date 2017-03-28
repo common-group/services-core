@@ -95,9 +95,11 @@ const locationOptions = (reward, destination) => {
     if (reward.shipping_options === 'national') {
         options(mapStates);
     } else if (reward.shipping_options === 'international') {
-        const fee = _.where(fees(), {
+        let fee;
+        const feeInternational = _.findWhere(fees(), {
             destination: 'international'
         });
+        if(feeInternational) { fee = feeInternational.value; }
         options(_.union([{
             value: 'international',
             name: 'Outside Brazil',

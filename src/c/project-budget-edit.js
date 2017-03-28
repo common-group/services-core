@@ -21,6 +21,7 @@ const projectBudgetEdit = {
               loading = m.prop(false),
               onSubmit = (event) => {
                   loading(true);
+                  m.redraw();
                   vm.updateProject(args.projectId).then((data) => {
                       loading(false);
                       vm.e.resetFieldErrors();
@@ -73,6 +74,7 @@ const projectBudgetEdit = {
 		                            ])
 	                          ]),
                             m(bigInputCard, {
+                                cardStyle: { display: 'block' },
                                 label: I18n.t('budget_label', I18nScope()),
                                 children: [
                                     m('.preview-container', {
