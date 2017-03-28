@@ -39,7 +39,8 @@ const rewardSelectCard = {
             reward = {
                 id: '',
                 description: 'Obrigado. Eu só quero ajudar o projeto.',
-                minimum_value: 10
+                minimum_value: 10,
+                shipping_options: null
             };
         }
 

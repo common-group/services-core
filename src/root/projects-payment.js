@@ -433,7 +433,7 @@ const projectsPayment = {
                                     h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')
                                 ]),
                             ] : '',
-                            ctrl.shippingFee() ? [
+                            ctrl.reward() && ctrl.shippingFee() ? [
                                 m('.fontcolor-secondary.fontsize-smallest', [
                                     m('span.fontweight-semibold',
                                         'Forma de envio: '
