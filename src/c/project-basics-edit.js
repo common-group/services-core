@@ -152,7 +152,9 @@ const projectBasicsEdit = {
                                 label_hint: I18n.t('permalink_hint', I18nScope()),
                                 children: [
                                     m('.w-row',[
-                                        m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink',
+                                        m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', {
+                                            class: vm.e.hasError('permalink') ? 'error' : ''
+                                        },
                                           m('.fontcolor-secondary.u-text-center.fontcolor-secondary.u-text-center.fontsize-smallest', 'www.catarse.me/')),
                                         m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6', [
                                             m('input.string.required.w-input.text-field.postfix.positive.medium[type="text"]', {
@@ -160,9 +162,9 @@ const projectBasicsEdit = {
                                                 class: vm.e.hasError('permalink') ? 'error' : '',
                                                 onchange: m.withAttr('value', vm.fields.permalink)
                                             }),
-                                            vm.e.inlineError('permalink')
-                                        ])
-                                    ])
+                                        ]),
+                                    ]),
+                                    m('.w-row', vm.e.inlineError('permalink'))
                                 ]
                             }),
                             m(inputCard, {
