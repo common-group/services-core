@@ -74,6 +74,7 @@ const projectBudgetEdit = {
 		                            ])
 	                          ]),
                             m(bigInputCard, {
+                                cardStyle: { display: 'block' },
                                 label: I18n.t('budget_label', I18nScope()),
                                 children: [
                                     m('.preview-container', {
