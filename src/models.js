@@ -29,6 +29,7 @@ const models = {
     projectContributionsPerDay: postgrest.model('project_contributions_per_day'),
     projectContributionsPerLocation: postgrest.model('project_contributions_per_location'),
     projectContributionsPerRef: postgrest.model('project_contributions_per_ref'),
+    projectVisitorsPerDay: postgrest.model('project_visitors_per_day'),
     projectTransfer: postgrest.model('project_transfers'),
     project: postgrest.model('projects'),
     projectSearch: postgrest.model('rpc/project_search'),
