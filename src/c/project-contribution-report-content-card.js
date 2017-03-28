@@ -74,11 +74,11 @@ const projectContributionReportContentCard = {
                     m('.w-inline-block',
                         m('.w-checkbox.w-clearfix',
                             (contribution.delivery_status !== 'received' && project.state !== 'failed' ?
-                            m('input.w-checkbox-input[type=\'checkbox\']', {
-                                checked: ctrl.checked(contribution),
-                                value: contribution.id,
-                                onclick: () => ctrl.selectContribution(contribution)
-                            }) : '')
+                                m('input.w-checkbox-input[type=\'checkbox\']', {
+                                    checked: ctrl.checked(contribution),
+                                    value: contribution.id,
+                                    onclick: () => ctrl.selectContribution(contribution)
+                                }) : '')
                         )
                     )
                 ),

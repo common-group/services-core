@@ -4,13 +4,17 @@ import h from '../h';
 import popNotification from './pop-notification';
 import projectContributionReportContentCard from './project-contribution-report-content-card';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
+import modalBox from '../c/modal-box';
+import deliverContributionModalContent from '../c/deliver-contribution-modal-content';
 
 const projectContributionReportContent = {
     controller(args) {
         const showSelectedMenu = h.toggleProp(false, true),
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
+            displayDeliverModal = h.toggleProp(false, true),
             selectedContributions = m.prop([]),
+            deliveryMessage = m.prop(''),
             selectAll = () => {
                 projectsContributionReportVM.getAllContributions(args.filterVM).then((data) => {
                     const exceptReceived = _.filter(data, contrib => contrib.delivery_status !== 'received');
@@ -25,10 +29,14 @@ const projectContributionReportContent = {
             updateStatus = (status) => {
                 const data = {
                     contributions: selectedContributions(),
+                    message: deliveryMessage(),
                     delivery_status: status
                 };
                 projectsContributionReportVM.updateStatus(data).then(() => {
                     showSuccess(true);
+                    if (status === 'delivered') {
+                        displayDeliverModal.toggle();
+                    }
                     showSelectedMenu.toggle();
                     // update status so we don't have to reload the page
                     _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
@@ -43,6 +51,8 @@ const projectContributionReportContent = {
             showSuccess,
             selectAll,
             unselectAll,
+            deliveryMessage,
+            displayDeliverModal,
             updateStatus,
             showSelectedMenu,
             selectedAny,
@@ -54,6 +64,11 @@ const projectContributionReportContent = {
         const isFailed = args.project().state === 'failed';
 
         return m('.w-section.bg-gray.before-footer.section', [
+              (ctrl.displayDeliverModal() ? m.component(modalBox, {
+                  displayModal: ctrl.displayDeliverModal,
+                  hideCloseButton: false,
+                  content: [deliverContributionModalContent, { project: args.project, displayModal: ctrl.displayDeliverModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+              }) : ''),
 
             (ctrl.showSuccess() ? m.component(popNotification, {
                 message: 'As informações foram atualizadas'
@@ -96,7 +111,7 @@ const projectContributionReportContent = {
                                     (ctrl.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.updateStatus('delivered')
+                                                onclick: () => ctrl.displayDeliverModal.toggle()
                                             },
                                                 'Enviada'
                                             ),
