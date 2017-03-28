@@ -26,6 +26,13 @@ const rewardSelectCard = {
             return false;
         };
 
+        const selectDestination = (destination) => {
+            selectedDestination(destination);
+            const shippingFee = Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value);
+            const rewardMinValue = Number(rewardVM.selectedReward().minimum_value);
+            rewardVM.applyMask(shippingFee + rewardMinValue + ',00');
+        };
+
         let reward = args.reward;
 
         if (_.isEmpty(reward)) {
@@ -47,14 +54,14 @@ const rewardSelectCard = {
             setInput,
             hasShippingOptions,
             submitContribution,
+            selectDestination,
             selectedDestination,
             locationOptions: rewardVM.locationOptions,
             states: rewardVM.getStates(),
             selectReward: rewardVM.selectReward,
             error: rewardVM.error,
             applyMask: rewardVM.applyMask,
-            contributionValue: rewardVM.contributionValue,
-            selectDestination: rewardVM.selectDestination
+            contributionValue: rewardVM.contributionValue
         };
     },
     view(ctrl) {
@@ -78,15 +85,15 @@ const rewardSelectCard = {
                             'Local de entrega'
                         ),
                         m('select.positive.text-field.w-select', {
-                            onchange: m.withAttr('value', ctrl.selectedDestination)
+                            onchange: m.withAttr('value', ctrl.selectDestination)
                         },
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
                         )
                     ]) : '',
-                    m('.w-col.w-sub-col-middle.w-clearfix', {
+                    m('.w-sub-col.w-col.w-clearfix', {
                         class: ctrl.hasShippingOptions(reward) ?
-                            'w-col-4 w-col-small-4 w-col-tiny-4' :
-                            'w-col-8 w-col-small-8 w-col-tiny-8'
+                            'w-col-4' :
+                            'w-col-8'
                     }, [
                         m('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'),
                         m('.w-row.u-marginbottom-20', [
@@ -112,7 +119,7 @@ const rewardSelectCard = {
                             ' O valor do apoio está incorreto'
                         ])
                     ]),
-                    m('.submit-form.w-col.w-col-4.w-col-small-4.w-col-tiny-4',
+                    m('.submit-form.w-col.w-col-4',
                         m('button.btn.btn-medium.u-margintop-30', {
                             onclick: ctrl.submitContribution
                         }, [

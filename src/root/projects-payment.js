@@ -438,8 +438,7 @@ const projectsPayment = {
                                     m('span.fontweight-semibold',
                                         'Forma de envio: '
                                     ),
-                                    I18n.t(`shipping_options.${ctrl.shippingFee().option}`, I18nScope()),
-                                    ctrl.shippingFee().option !== 'others' ? ctrl.shippingFee().destination : ''
+                                    I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {scope: 'projects.contributions'})
                                 ])
                             ] : ''
                         ]),
