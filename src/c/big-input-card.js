@@ -12,6 +12,6 @@ const bigInputCard = {
             m('div', args.children)
         ]);
     }
-}
+};
 
 export default bigInputCard;
