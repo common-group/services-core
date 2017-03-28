@@ -21,6 +21,7 @@ const projectBudgetEdit = {
               loading = m.prop(false),
               onSubmit = (event) => {
                   loading(true);
+                  m.redraw();
                   vm.updateProject(args.projectId).then((data) => {
                       loading(false);
                       vm.e.resetFieldErrors();
