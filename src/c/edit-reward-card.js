@@ -60,7 +60,7 @@ const editRewardCard = {
             fees
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const reward = ctrl.reward,
             index = ctrl.index,
             fees = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international');
@@ -116,12 +116,10 @@ const editRewardCard = {
                                     m('.w-col.w-col-12',
                                         m('.w-row', [
                                             m(`input[id='project_rewards_attributes_${index}_deliver_at_3i'][type='hidden'][value='1']`, {
-                                                name: `project[rewards_attributes][${index}][deliver_at(3i)]`,
-                                                disabled: !args.canEdit
+                                                name: `project[rewards_attributes][${index}][deliver_at(3i)]`
                                             }),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
-                                                name: `project[rewards_attributes][${index}][deliver_at(2i)]`,
-                                                disabled: !args.canEdit
+                                                name: `project[rewards_attributes][${index}][deliver_at(2i)]`
                                             }, [
                                                 _.map(moment.monthsShort(), (month, monthIndex) =>
                                                     m(`option[value='${monthIndex + 1}']${moment(reward.deliver_at).format('MMM') === month ? "[selected='selected']" : ''}`,
@@ -130,8 +128,7 @@ const editRewardCard = {
                                                 )
                                             ]),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
-                                                name: `project[rewards_attributes][${index}][deliver_at(1i)]`,
-                                                disabled: !args.canEdit
+                                                name: `project[rewards_attributes][${index}][deliver_at(1i)]`
                                             }, [
                                                 _.map(_.range(moment().year(), moment().year() + 6), year =>
                                                     m(`option[value='${year}']${moment(reward.deliver_at).format('YYYY') === String(year) ? "[selected='selected']" : ''}`,
@@ -158,34 +155,8 @@ const editRewardCard = {
                                 'Informe uma descrição para a recompensa'
                             )
                         ]),
-                        m('.w-row', [
-                            m('.w-col.w-col-5',
-                                m('.w-checkbox', [
-                                    m('.w-checkbox-input',
-                                        m('input.limit_reward[type=\'checkbox\'][id=\'limit_reward\']', {
-                                            checked: reward.limited(),
-                                            onclick: () => {
-                                                reward.limited.toggle();
-                                            }
-                                        })
-                                    ),
-                                    m('label.w-form-label',
-                                        'Limitar recompensa'
-                                    )
-                                ])
-                            ),
-                            (reward.limited() ?
-                                m('.w-col.w-col-7.reward_maximum_contributions',
-                                    m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
-                                        name: `project[rewards_attributes][${index}][maximum_contributions]`,
-                                        value: ctrl.maximumContributions(),
-                                        onchange: m.withAttr('value', ctrl.maximumContributions)
-                                    })
-                                ) :
-                                '')
-                        ]),
 
-                        m('.u-marginbottom-60.w-row', [
+                        m('.u-marginbottom-30.w-row', [
                             m('.w-col.w-col-3',
                                 m("label.fontsize-smaller[for='field-2']",
                                     'Tipo de entrega'
@@ -299,13 +270,13 @@ const editRewardCard = {
                                             m("a.alt-link[href='#']", {
                                                 onclick: () => {
                                                     ctrl.newFees().push(
-                                                            m(shippingFeeInput, {
-                                                                fee: ctrl.newFee,
-                                                                index,
-                                                                feeIndex: h.getRandomInt(999999999, 9999999999),
-                                                                states: ctrl.states
-                                                            })
-                                                        );
+                                                        m(shippingFeeInput, {
+                                                            fee: ctrl.newFee,
+                                                            index,
+                                                            feeIndex: h.getRandomInt(999999999, 9999999999),
+                                                            states: ctrl.states
+                                                        })
+                                                    );
                                                     return false;
                                                 }
                                             },
@@ -314,6 +285,32 @@ const editRewardCard = {
                                         )
                                     ]) : '')
                             ])
+                        ]),
+                        m('.w-row.u-marginbottom-20', [
+                            m('.w-col.w-col-5',
+                                m('.w-checkbox', [
+                                    m('.w-checkbox-input',
+                                        m('input.limit_reward[type=\'checkbox\'][id=\'limit_reward\']', {
+                                            checked: reward.limited(),
+                                            onclick: () => {
+                                                reward.limited.toggle();
+                                            }
+                                        })
+                                    ),
+                                    m('label.w-form-label',
+                                        'Limitar recompensa'
+                                    )
+                                ])
+                            ),
+                            (reward.limited() ?
+                                m('.w-col.w-col-7.reward_maximum_contributions',
+                                    m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
+                                        name: `project[rewards_attributes][${index}][maximum_contributions]`,
+                                        value: ctrl.maximumContributions(),
+                                        onchange: m.withAttr('value', ctrl.maximumContributions)
+                                    })
+                                ) :
+                                '')
                         ]),
                         m('.w-row.u-margintop-30', [
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
