@@ -128,7 +128,7 @@ const projectEditReward = {
 
 
                                                                     (reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''),
-                                                                    m('.fontsize-smallest', m('b', 'Forma de envio: '), I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
+                                                                    m('.fontsize-smallest', m('b', 'Envio: '), I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
 
                                                                 ])
                                                             )
