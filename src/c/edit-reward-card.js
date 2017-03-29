@@ -1,9 +1,9 @@
-import m from 'mithril'
-import moment from 'moment'
-import _ from 'underscore'
-import h from '../h'
-import shippingFeeInput from '../c/shipping-fee-input'
-import rewardVM from '../vms/reward-vm'
+import m from 'mithril';
+import moment from 'moment';
+import _ from 'underscore';
+import h from '../h';
+import shippingFeeInput from '../c/shipping-fee-input';
+import rewardVM from '../vms/reward-vm';
 
 const editRewardCard = {
     controller(args) {
@@ -21,30 +21,30 @@ const editRewardCard = {
             newFee = {
                 value: null,
                 destination: null
-            }
+            };
 
         let otherFee,
-            internationalFee
+            internationalFee;
 
         statesLoader.load().then((data) => {
-            states(data)
+            states(data);
             states().unshift({
                 acronym: null,
                 name: 'Estado'
-            })
-        })
+            });
+        });
 
         rewardVM.getFees(args.reward).then((data) => {
-            fees(data)
+            fees(data);
             otherFee = _.findWhere(fees(), {
                 destination: 'others'
-            })
+            });
             internationalFee = _.findWhere(fees(), {
                 destination: 'international'
-            })
-            otherFeeValue(otherFee ? otherFee.value : null)
-            internationalFeeValue(internationalFee ? internationalFee.value : null)
-        })
+            });
+            otherFeeValue(otherFee ? otherFee.value : null);
+            internationalFeeValue(internationalFee ? internationalFee.value : null);
+        });
 
         return {
             otherFeeValue,
@@ -58,12 +58,12 @@ const editRewardCard = {
             reward,
             index,
             fees
-        }
+        };
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const reward = ctrl.reward,
             index = ctrl.index,
-            fees = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international')
+            fees = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international');
 
         return m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.w-col.w-col-5.w-sub-col', [
@@ -116,10 +116,12 @@ const editRewardCard = {
                                     m('.w-col.w-col-12',
                                         m('.w-row', [
                                             m(`input[id='project_rewards_attributes_${index}_deliver_at_3i'][type='hidden'][value='1']`, {
-                                                name: `project[rewards_attributes][${index}][deliver_at(3i)]`
+                                                name: `project[rewards_attributes][${index}][deliver_at(3i)]`,
+                                                disabled: !args.canEdit
                                             }),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
-                                                name: `project[rewards_attributes][${index}][deliver_at(2i)]`
+                                                name: `project[rewards_attributes][${index}][deliver_at(2i)]`,
+                                                disabled: !args.canEdit
                                             }, [
                                                 _.map(moment.monthsShort(), (month, monthIndex) =>
                                                     m(`option[value='${monthIndex + 1}']${moment(reward.deliver_at).format('MMM') === month ? "[selected='selected']" : ''}`,
@@ -128,7 +130,8 @@ const editRewardCard = {
                                                 )
                                             ]),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
-                                                name: `project[rewards_attributes][${index}][deliver_at(1i)]`
+                                                name: `project[rewards_attributes][${index}][deliver_at(1i)]`,
+                                                disabled: !args.canEdit
                                             }, [
                                                 _.map(_.range(moment().year(), moment().year() + 6), year =>
                                                     m(`option[value='${year}']${moment(reward.deliver_at).format('YYYY') === String(year) ? "[selected='selected']" : ''}`,
@@ -148,15 +151,41 @@ const editRewardCard = {
                         ),
                         m('.w-row', [
                             m(`textarea.text.required.w-input.text-field.positive.height-medium[aria-required='true'][placeholder='Descreva sua recompensa'][required='required'][id='project_rewards_attributes_${index}_description']`, {
-                                    name: `project[rewards_attributes][${index}][description]`
-                                },
+                                name: `project[rewards_attributes][${index}][description]`
+                            },
                                 reward.description),
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                                 'Informe uma descrição para a recompensa'
                             )
                         ]),
+                        m('.w-row', [
+                            m('.w-col.w-col-5',
+                                m('.w-checkbox', [
+                                    m('.w-checkbox-input',
+                                        m('input.limit_reward[type=\'checkbox\'][id=\'limit_reward\']', {
+                                            checked: reward.limited(),
+                                            onclick: () => {
+                                                reward.limited.toggle();
+                                            }
+                                        })
+                                    ),
+                                    m('label.w-form-label',
+                                        'Limitar recompensa'
+                                    )
+                                ])
+                            ),
+                            (reward.limited() ?
+                                m('.w-col.w-col-7.reward_maximum_contributions',
+                                    m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
+                                        name: `project[rewards_attributes][${index}][maximum_contributions]`,
+                                        value: ctrl.maximumContributions(),
+                                        onchange: m.withAttr('value', ctrl.maximumContributions)
+                                    })
+                                ) :
+                                '')
+                        ]),
 
-                        m('.u-marginbottom-30.w-row', [
+                        m('.u-marginbottom-60.w-row', [
                             m('.w-col.w-col-3',
                                 m("label.fontsize-smaller[for='field-2']",
                                     'Tipo de entrega'
@@ -186,18 +215,18 @@ const editRewardCard = {
                                     m('.card.card-terciary', [
                                         (ctrl.shipping_options() === 'international' ? [
                                                 // international fee
-                                                m('.u-marginbottom-10.w-row', [
-                                                    m('input[type=\'hidden\']', {
-                                                        name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][destination]`,
-                                                        value: 'international'
-                                                    }),
-                                                    m('.w-col.w-col-6',
+                                            m('.u-marginbottom-10.w-row', [
+                                                m('input[type=\'hidden\']', {
+                                                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][destination]`,
+                                                    value: 'international'
+                                                }),
+                                                m('.w-col.w-col-6',
                                                         m('label.field-label.fontsize-smallest',
                                                             'Internacional'
                                                         )
                                                     ),
-                                                    m('.w-col.w-col-1'),
-                                                    m('.w-col.w-col-4',
+                                                m('.w-col.w-col-1'),
+                                                m('.w-col.w-col-4',
                                                         m('.w-row', [
                                                             m('.no-hover.positive.prefix.text-field.w-col.w-col-3',
                                                                 m('.fontcolor-secondary.fontsize-mini.u-text-center',
@@ -214,10 +243,10 @@ const editRewardCard = {
 
                                                         ])
                                                     ),
-                                                    m('.w-col.w-col-1')
-                                                ]), ,
-                                                m('.divider.u-marginbottom-10')
-                                            ] :
+                                                m('.w-col.w-col-1')
+                                            ]), ,
+                                            m('.divider.u-marginbottom-10')
+                                        ] :
                                             ''),
                                         // other states fee
                                         m('.u-marginbottom-10.w-row', [
@@ -254,11 +283,11 @@ const editRewardCard = {
 
                                         // state fees
                                         (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
-                                                fee,
-                                                index,
-                                                feeIndex: (feeIndex + 2),
-                                                states: ctrl.states
-                                            }),
+                                            fee,
+                                            index,
+                                            feeIndex: (feeIndex + 2),
+                                            states: ctrl.states
+                                        }),
 
                                             m(`input[type='hidden'][id='project_rewards_shipping_fees_attributes_${feeIndex + 2}_id']`, {
                                                 name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex + 2}][id]`,
@@ -270,13 +299,13 @@ const editRewardCard = {
                                             m("a.alt-link[href='#']", {
                                                 onclick: () => {
                                                     ctrl.newFees().push(
-                                                        m(shippingFeeInput, {
-                                                            fee: ctrl.newFee,
-                                                            index,
-                                                            feeIndex: h.getRandomInt(999999999, 9999999999),
-                                                            states: ctrl.states
-                                                        })
-                                                    )
+                                                            m(shippingFeeInput, {
+                                                                fee: ctrl.newFee,
+                                                                index,
+                                                                feeIndex: h.getRandomInt(999999999, 9999999999),
+                                                                states: ctrl.states
+                                                            })
+                                                        );
                                                     return false;
                                                 }
                                             },
@@ -286,37 +315,11 @@ const editRewardCard = {
                                     ]) : '')
                             ])
                         ]),
-                        m('.w-row.u-marginbottom-20', [
-                            m('.w-col.w-col-5',
-                                m('.w-checkbox', [
-                                    m('.w-checkbox-input',
-                                        m('input.limit_reward[type=\'checkbox\'][id=\'limit_reward\']', {
-                                            checked: reward.limited(),
-                                            onclick: () => {
-                                                reward.limited.toggle();
-                                            }
-                                        })
-                                    ),
-                                    m('label.w-form-label',
-                                        'Limitar recompensa'
-                                    )
-                                ])
-                            ),
-                            (reward.limited() ?
-                                m('.w-col.w-col-7.reward_maximum_contributions',
-                                    m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
-                                        name: `project[rewards_attributes][${index}][maximum_contributions]`,
-                                        value: ctrl.maximumContributions(),
-                                        onchange: m.withAttr('value', ctrl.maximumContributions)
-                                    })
-                                ) :
-                                '')
-                        ]),
                         m('.w-row.u-margintop-30', [
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                                 m("input.w-button.btn-terciary.btn.btn-small.reward-close-button[type='submit'][value='Fechar']", {
                                     onclick: () => {
-                                        reward.edit.toggle()
+                                        reward.edit.toggle();
                                     }
                                 })
                             ),
@@ -332,8 +335,8 @@ const editRewardCard = {
                     ])
                 )
             )
-        ])
+        ]);
     }
-}
+};
 
-export default editRewardCard
+export default editRewardCard;
