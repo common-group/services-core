@@ -31,6 +31,7 @@ const projectsContribution = {
         projectVM.getCurrentProject();
 
         return {
+            paymentVM: paymentVM(projectVM.currentProject().mode),
             project: projectVM.currentProject,
             submitContribution,
             rewards
@@ -67,8 +68,8 @@ const projectsContribution = {
                     ),
                     m('.w-col.w-col-4', m.component(faqBox, {
                         mode: project().mode,
-                        vm: paymentVM(project().mode),
-                        faq: paymentVM(project().mode).faq(),
+                        vm: ctrl.paymentVM,
+                        faq: ctrl.paymentVM.faq(),
                         projectUserId: project().user.id
                     }))
                 ])))

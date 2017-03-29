@@ -28,6 +28,14 @@ const projectRewardList = {
 
         const setInput = (el, isInitialized) => (!isInitialized ? el.focus() : false);
 
+        const selectDestination = (destination) => {
+            selectedDestination(destination);
+
+            const shippingFee = Number(vm.shippingFeeForCurrentReward(selectedDestination).value);
+            const rewardMinValue = Number(vm.selectedReward().minimum_value);
+            vm.applyMask(shippingFee + rewardMinValue + ',00');
+        };
+
         const submitContribution = () => {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
             const shippingFee = hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
@@ -64,6 +72,7 @@ const projectRewardList = {
             toggleDescriptionExtended,
             isRewardOpened,
             isRewardDescriptionExtended,
+            selectDestination,
             selectedDestination,
             error: vm.error,
             applyMask: vm.applyMask,
@@ -156,7 +165,7 @@ const projectRewardList = {
                                 'Local de entrega'
                             ),
                             m('select.positive.text-field.w-select', {
-                                onchange: m.withAttr('value', ctrl.selectedDestination),
+                                onchange: m.withAttr('value', ctrl.selectDestination),
                                 value: ctrl.selectedDestination()
                             },
                                 _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`,{selected: option.value === ctrl.selectedDestination()},`${option.name} +R$${option.fee}`))
