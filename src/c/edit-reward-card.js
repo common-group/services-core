@@ -155,34 +155,8 @@ const editRewardCard = {
                                 'Informe uma descrição para a recompensa'
                             )
                         ]),
-                        m('.w-row', [
-                            m('.w-col.w-col-5',
-                                m('.w-checkbox', [
-                                    m('.w-checkbox-input',
-                                        m('input.limit_reward[type=\'checkbox\'][id=\'limit_reward\']', {
-                                            checked: reward.limited(),
-                                            onclick: () => {
-                                                reward.limited.toggle()
-                                            }
-                                        })
-                                    ),
-                                    m('label.w-form-label',
-                                        'Limitar recompensa'
-                                    )
-                                ])
-                            ),
-                            (reward.limited() ?
-                                m('.w-col.w-col-7.reward_maximum_contributions',
-                                    m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
-                                        name: `project[rewards_attributes][${index}][maximum_contributions]`,
-                                        value: ctrl.maximumContributions(),
-                                        onchange: m.withAttr('value', ctrl.maximumContributions)
-                                    })
-                                ) :
-                                '')
-                        ]),
 
-                        m('.u-marginbottom-60.w-row', [
+                        m('.u-marginbottom-30.w-row', [
                             m('.w-col.w-col-3',
                                 m("label.fontsize-smaller[for='field-2']",
                                     'Tipo de entrega'
@@ -294,23 +268,49 @@ const editRewardCard = {
                                         (_.map(ctrl.newFees(), fee => fee)),
                                         m('.u-margintop-20',
                                             m("a.alt-link[href='#']", {
-                                                    onclick: () => {
-                                                        ctrl.newFees().push(
-                                                            m(shippingFeeInput, {
-                                                                fee: ctrl.newFee,
-                                                                index,
-                                                                feeIndex: h.getRandomInt(999999999, 9999999999),
-                                                                states: ctrl.states
-                                                            })
-                                                        )
-                                                        return false
-                                                    }
-                                                },
+                                                onclick: () => {
+                                                    ctrl.newFees().push(
+                                                        m(shippingFeeInput, {
+                                                            fee: ctrl.newFee,
+                                                            index,
+                                                            feeIndex: h.getRandomInt(999999999, 9999999999),
+                                                            states: ctrl.states
+                                                        })
+                                                    )
+                                                    return false;
+                                                }
+                                            },
                                                 'Adicionar destino'
                                             )
                                         )
                                     ]) : '')
                             ])
+                        ]),
+                        m('.w-row.u-marginbottom-20', [
+                            m('.w-col.w-col-5',
+                                m('.w-checkbox', [
+                                    m('.w-checkbox-input',
+                                        m('input.limit_reward[type=\'checkbox\'][id=\'limit_reward\']', {
+                                            checked: reward.limited(),
+                                            onclick: () => {
+                                                reward.limited.toggle();
+                                            }
+                                        })
+                                    ),
+                                    m('label.w-form-label',
+                                        'Limitar recompensa'
+                                    )
+                                ])
+                            ),
+                            (reward.limited() ?
+                                m('.w-col.w-col-7.reward_maximum_contributions',
+                                    m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
+                                        name: `project[rewards_attributes][${index}][maximum_contributions]`,
+                                        value: ctrl.maximumContributions(),
+                                        onchange: m.withAttr('value', ctrl.maximumContributions)
+                                    })
+                                ) :
+                                '')
                         ]),
                         m('.w-row.u-margintop-30', [
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',

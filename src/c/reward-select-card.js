@@ -16,7 +16,9 @@ const rewardSelectCard = {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
             const shippingFee = hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
-            if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
+            if (!selectedDestination()) {
+                rewardVM.error('Por favor, selecione uma opção de frete válida.');
+            } else if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
             } else {
                 rewardVM.error('');
@@ -28,9 +30,11 @@ const rewardSelectCard = {
 
         const selectDestination = (destination) => {
             selectedDestination(destination);
-            const shippingFee = Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value);
+            const shippingFee = rewardVM.shippingFeeForCurrentReward(selectedDestination)
+                ? Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value)
+                : 0;
             const rewardMinValue = Number(rewardVM.selectedReward().minimum_value);
-            rewardVM.applyMask(shippingFee + rewardMinValue + ',00');
+            rewardVM.applyMask(`${shippingFee + rewardMinValue},00`);
         };
 
         let reward = args.reward;
@@ -88,7 +92,12 @@ const rewardSelectCard = {
                         m('select.positive.text-field.w-select', {
                             onchange: m.withAttr('value', ctrl.selectDestination)
                         },
-                            _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`, `${option.name} +R$${option.fee}`))
+                            _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
+                                option => m(`option[value="${option.value}"]`, [
+                                    `${option.name} `,
+                                    option.fee ? `+R$${option.fee}` : null
+                                ])
+                            )
                         )
                     ]) : '',
                     m('.w-sub-col.w-col.w-clearfix', {

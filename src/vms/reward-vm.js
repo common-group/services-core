@@ -99,7 +99,7 @@ const locationOptions = (reward, destination) => {
         const feeInternational = _.findWhere(fees(), {
             destination: 'international'
         });
-        if(feeInternational) { fee = feeInternational.value; }
+        if (feeInternational) { fee = feeInternational.value; }
         options(_.union([{
             value: 'international',
             name: 'Outside Brazil',
@@ -107,12 +107,12 @@ const locationOptions = (reward, destination) => {
         }], mapStates));
     }
 
-    if (!destination()) {
-        const firstOption = _.first(options());
-        if (firstOption) {
-            destination(firstOption.value);
-        }
-    }
+    options(
+        _.union(
+            [{ value: '', name: 'Selecione Opção', fee: 0 }],
+            options()
+        )
+    );
 
     return options();
 };

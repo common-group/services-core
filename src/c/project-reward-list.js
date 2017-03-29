@@ -31,7 +31,9 @@ const projectRewardList = {
         const selectDestination = (destination) => {
             selectedDestination(destination);
 
-            const shippingFee = Number(vm.shippingFeeForCurrentReward(selectedDestination).value);
+            const shippingFee = vm.shippingFeeForCurrentReward(selectedDestination)
+                ? Number(vm.shippingFeeForCurrentReward(selectedDestination).value)
+                : 0;
             const rewardMinValue = Number(vm.selectedReward().minimum_value);
             vm.applyMask(shippingFee + rewardMinValue + ',00');
         };
@@ -40,7 +42,9 @@ const projectRewardList = {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
             const shippingFee = hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
-            if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
+            if (!selectedDestination()) {
+                vm.error('Por favor, selecione uma opção de frete válida.');
+            } else if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
             } else {
                 vm.error('');
@@ -168,7 +172,16 @@ const projectRewardList = {
                                 onchange: m.withAttr('value', ctrl.selectDestination),
                                 value: ctrl.selectedDestination()
                             },
-                                _.map(ctrl.locationOptions(reward, ctrl.selectedDestination), option => m(`option[value="${option.value}"]`,{selected: option.value === ctrl.selectedDestination()},`${option.name} +R$${option.fee}`))
+                                _.map(
+                                    ctrl.locationOptions(reward, ctrl.selectedDestination),
+                                    option => m(`option[value="${option.value}"]`,
+                                        { selected: option.value === ctrl.selectedDestination() },
+                                        [
+                                            `${option.name} `,
+                                            option.fee ? `+R$${option.fee}` : null
+                                        ]
+                                    )
+                                )
                             )
                         ]) : '',
                         m('.fontcolor-secondary.u-marginbottom-10',
