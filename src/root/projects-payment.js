@@ -436,7 +436,7 @@ const projectsPayment = {
                             ctrl.reward() && ctrl.shippingFee() ? [
                                 m('.fontcolor-secondary.fontsize-smallest', [
                                     m('span.fontweight-semibold',
-                                        'Forma de envio: '
+                                        'Envio: '
                                     ),
                                     I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {scope: 'projects.contributions'})
                                 ])

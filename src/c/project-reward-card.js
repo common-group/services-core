@@ -48,7 +48,7 @@ const projectRewardCard = {
                 m('.w-col.w-col-6', ctrl.hasShippingOptions(reward) ? [
                     m('.fontcolor-secondary.fontsize-smallest',
                         m('span',
-                            'Forma de envio:'
+                            'Envio:'
                         )
                     ),
                     m('.fontsize-smallest',
