@@ -35,7 +35,9 @@ const editRewardCard = {
         });
 
         rewardVM.getFees(args.reward).then((data) => {
-            fees(data);
+            if (!args.reward.newReward) {
+                fees(data);
+            }
             otherFee = _.findWhere(fees(), {
                 destination: 'others'
             });
