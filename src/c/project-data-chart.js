@@ -31,7 +31,7 @@ const projectDataChart = {
                     const ctx = element.getContext('2d');
 
                     new Chart(ctx).Line({
-                        labels: _.map(source, item => args.xAxis(item)),
+                        labels: args.xAxis ? _.map(source, item => args.xAxis(item)) : [],
                         datasets: mountDataset()
                     });
                 }
