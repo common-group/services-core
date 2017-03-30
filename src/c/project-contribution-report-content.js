@@ -6,6 +6,7 @@ import projectContributionReportContentCard from './project-contribution-report-
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 import modalBox from '../c/modal-box';
 import deliverContributionModalContent from '../c/deliver-contribution-modal-content';
+import errorContributionModalContent from '../c/error-contribution-modal-content';
 
 const projectContributionReportContent = {
     controller(args) {
@@ -13,6 +14,7 @@ const projectContributionReportContent = {
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
             displayDeliverModal = h.toggleProp(false, true),
+            displayErrorModal = h.toggleProp(false, true),
             selectedContributions = m.prop([]),
             deliveryMessage = m.prop(''),
             selectAll = () => {
@@ -36,12 +38,14 @@ const projectContributionReportContent = {
                     showSuccess(true);
                     if (status === 'delivered') {
                         displayDeliverModal.toggle();
+                    } else if (status === 'error') {
+                        displayErrorModal.toggle();
                     }
                     showSelectedMenu.toggle();
                     // update status so we don't have to reload the page
                     _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
                           item => item.delivery_status = status);
-                }).catch((err) => {
+                }).catch(() => {
                     m.redraw();
                 });
                 return false;
@@ -53,6 +57,7 @@ const projectContributionReportContent = {
             unselectAll,
             deliveryMessage,
             displayDeliverModal,
+            displayErrorModal,
             updateStatus,
             showSelectedMenu,
             selectedAny,
@@ -64,6 +69,11 @@ const projectContributionReportContent = {
         const isFailed = args.project().state === 'failed';
 
         return m('.w-section.bg-gray.before-footer.section', [
+              (ctrl.displayErrorModal() ? m.component(modalBox, {
+                  displayModal: ctrl.displayErrorModal,
+                  hideCloseButton: false,
+                  content: [errorContributionModalContent, { project: args.project, displayModal: ctrl.displayErrorModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+              }) : ''),
               (ctrl.displayDeliverModal() ? m.component(modalBox, {
                   displayModal: ctrl.displayDeliverModal,
                   hideCloseButton: false,
@@ -116,7 +126,7 @@ const projectContributionReportContent = {
                                                 'Enviada'
                                             ),
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.updateStatus('error')
+                                                onclick: () => ctrl.displayErrorModal.toggle()
                                             },
                                                 'Erro no envio'
                                             )
