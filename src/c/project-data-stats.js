@@ -32,7 +32,7 @@ const projectDataStats = {
                     m('.fontsize-large.fontweight-semibold',[
                         m('span.fa.fa-clock-o'),
                         (_.isNull(project.expires_at) ?
-                            ` Iniciado à ${elapsedTextObj.total} ${elapsedTextObj.unit}`
+                            ` Iniciado há ${elapsedTextObj.total} ${elapsedTextObj.unit}`
                             :
                             ` ${remainingTextObj.total} ${remainingTextObj.unit} ${(remainingTextObj.total > 1 ? 'restantes' : 'restante')}`
                         )
