@@ -1,8 +1,11 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const rewardSelectCard = {
     controller(args) {
@@ -144,9 +147,17 @@ const rewardSelectCard = {
                     ` ${ctrl.error()}`
                 ]) : '',
                 m('.back-reward-reward-description', [
-                    m('.fontsize-smaller.u-marginbottom-10', reward.description), !reward.deliver_at ? '' : m('.fontsize-smallest.fontcolor-secondary',
-                        `Estimativa de entrega: ${h.momentify(reward.deliver_at, 'MMM/YYYY')}`
-                    )
+                    m('.fontsize-smaller.u-marginbottom-10', reward.description),
+                    m('.u-marginbottom-20.w-row', [
+                        !reward.deliver_at ? '' : m('.w-col.w-col-6', [
+                            m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
+                            m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
+                        ]),
+                        !ctrl.hasShippingOptions(reward) ? '' : m('.w-col.w-col-6', [
+                            m('.fontsize-smallest.fontcolor-secondary', 'Forma de envior:'),
+                            m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
+                        ])
+                    ])
                 ])
             ])
         );
