@@ -193,7 +193,7 @@ const insights = {
                                     collection: ctrl.visitorsPerDay,
                                     label: I18n.t('visitors_per_day_label', I18nScope()),
                                     dataKey: 'visitors',
-                                    //xAxis: item => h.momentify(item.day),
+                                    xAxis: item => h.momentify(item.day),
                                     emptyState: I18n.t('visitors_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
