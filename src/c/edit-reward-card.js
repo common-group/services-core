@@ -9,22 +9,34 @@ const editRewardCard = {
     controller(args) {
         const shipping_options = m.prop(args.reward.shipping_options),
             reward = args.reward,
-            otherFeeValue = m.prop(),
-            internationalFeeValue = m.prop(),
             minimumValue = m.prop(args.reward.minimum_value),
             maximumContributions = m.prop(args.reward.maximum_contributions),
             index = args.index,
             states = m.prop([]),
             fees = m.prop(),
-            newFees = m.prop([]),
             statesLoader = rewardVM.statesLoader,
+            updateOptions = () => {
+                if ((shipping_options() === 'national' || shipping_options() === 'national') && !_.contains(_.pluck(fees(), 'destination'), 'others')) {
+                    fees().unshift({
+                        value: 0,
+                        destination: 'others'
+                    });
+                    fees(fees());
+                }
+                if (shipping_options() === 'international') {
+                    if (!_.contains(_.pluck(fees(), 'destination'), 'international')) {
+                        fees().unshift({
+                            value: 0,
+                            destination: 'international'
+                        });
+                        fees(fees());
+                    }
+                }
+            },
             newFee = {
                 value: null,
                 destination: null
             };
-
-        let otherFee,
-            internationalFee;
 
         statesLoader.load().then((data) => {
             states(data);
@@ -32,29 +44,20 @@ const editRewardCard = {
                 acronym: null,
                 name: 'Estado'
             });
-        });
 
-        rewardVM.getFees(args.reward).then((data) => {
-            if (!args.reward.newReward) {
-                fees(data);
-            }
-            otherFee = _.findWhere(fees(), {
-                destination: 'others'
+            rewardVM.getFees(args.reward).then((feeData) => {
+                if (!args.reward.newReward) {
+                    fees(feeData);
+                }
+                updateOptions();
             });
-            internationalFee = _.findWhere(fees(), {
-                destination: 'international'
-            });
-            otherFeeValue(otherFee ? otherFee.value : null);
-            internationalFeeValue(internationalFee ? internationalFee.value : null);
         });
 
         return {
-            otherFeeValue,
-            internationalFeeValue,
             minimumValue,
             maximumContributions,
             newFee,
-            newFees,
+            updateOptions,
             shipping_options,
             states,
             reward,
@@ -65,7 +68,7 @@ const editRewardCard = {
     view(ctrl) {
         const reward = ctrl.reward,
             index = ctrl.index,
-            fees = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international');
+            fees = ctrl.fees();
 
         return m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.w-col.w-col-5.w-sub-col', [
@@ -168,7 +171,10 @@ const editRewardCard = {
                                 m(`select.positive.text-field.w-select[id='project_rewards_attributes_${index}_shipping_options']`, {
                                     name: `project[rewards_attributes][${index}][shipping_options]`,
                                     value: ctrl.shipping_options() || 'free',
-                                    onchange: m.withAttr('value', ctrl.shipping_options)
+                                    onchange: (e) => {
+                                        ctrl.shipping_options(e.target.value);
+                                        ctrl.updateOptions();
+                                    }
                                 }, [
                                     m('option[value=\'international\']',
                                         'Frete Nacional e Internacional'
@@ -186,99 +192,21 @@ const editRewardCard = {
 
                                 ((ctrl.shipping_options() === 'national' || ctrl.shipping_options() === 'international') ?
                                     m('.card.card-terciary', [
-                                        (ctrl.shipping_options() === 'international' ? [
-                                                // international fee
-                                            m('.u-marginbottom-10.w-row', [
-                                                m('input[type=\'hidden\']', {
-                                                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][destination]`,
-                                                    value: 'international'
-                                                }),
-                                                m('.w-col.w-col-6',
-                                                        m('label.field-label.fontsize-smallest',
-                                                            'Internacional'
-                                                        )
-                                                    ),
-                                                m('.w-col.w-col-1'),
-                                                m('.w-col.w-col-4',
-                                                        m('.w-row', [
-                                                            m('.no-hover.positive.prefix.text-field.w-col.w-col-3',
-                                                                m('.fontcolor-secondary.fontsize-mini.u-text-center',
-                                                                    'R$'
-                                                                )
-                                                            ),
-                                                            m('.w-col.w-col-9',
-                                                                m("input.positive.postfix.text-field.w-input[type='text']", {
-                                                                    value: ctrl.internationalFeeValue(),
-                                                                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][0][value]`,
-                                                                    onchange: m.withAttr('value', ctrl.internationalFeeValue)
-                                                                })
-                                                            )
-
-                                                        ])
-                                                    ),
-                                                m('.w-col.w-col-1')
-                                            ]), ,
-                                            m('.divider.u-marginbottom-10')
-                                        ] :
-                                            ''),
-                                        // other states fee
-                                        m('.u-marginbottom-10.w-row', [
-                                            m('input[type=\'hidden\']', {
-                                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][1][destination]`,
-                                                value: 'others'
-                                            }),
-                                            m('.w-col.w-col-6',
-                                                m('label.field-label.fontsize-smallest',
-                                                    ((fees.length + ctrl.newFees().length) > 0 ? 'Resto do Brasil' : 'Todos os estados do Brasil')
-                                                )
-                                            ),
-                                            m('.w-col.w-col-1'),
-                                            m('.w-col.w-col-4',
-                                                m('.w-row', [
-                                                    m('.no-hover.positive.prefix.text-field.w-col.w-col-3',
-                                                        m('.fontcolor-secondary.fontsize-mini.u-text-center',
-                                                            'R$'
-                                                        )
-                                                    ),
-                                                    m('.w-col.w-col-9',
-                                                        m("input.positive.postfix.text-field.w-input[type='text']", {
-                                                            value: ctrl.otherFeeValue(),
-                                                            name: `project[rewards_attributes][${index}][shipping_fees_attributes][1][value]`,
-                                                            onchange: m.withAttr('value', ctrl.otherFeeValue)
-                                                        })
-                                                    )
-
-                                                ])
-                                            ),
-                                            m('.w-col.w-col-1')
-                                        ]),
-                                        m('.divider.u-marginbottom-10'),
 
                                         // state fees
                                         (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
                                             fee,
+                                            fees: ctrl.fees,
                                             index,
-                                            feeIndex: (feeIndex + 2),
+                                            feeIndex,
                                             states: ctrl.states
                                         }),
 
-                                            m(`input[type='hidden'][id='project_rewards_shipping_fees_attributes_${feeIndex + 2}_id']`, {
-                                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex + 2}][id]`,
-                                                value: fee.id
-                                            })
                                         ])),
-                                        (_.map(ctrl.newFees(), fee => fee)),
                                         m('.u-margintop-20',
                                             m("a.alt-link[href='#']", {
                                                 onclick: () => {
-                                                    ctrl.newFees().push(
-                                                        m(shippingFeeInput, {
-                                                            fee: ctrl.newFee,
-                                                            index,
-                                                            feeIndex: h.getRandomInt(999999999, 9999999999),
-                                                            states: ctrl.states
-                                                        })
-                                                    );
+                                                    ctrl.fees().push(ctrl.newFee);
                                                     return false;
                                                 }
                                             },
