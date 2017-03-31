@@ -2197,12 +2197,32 @@ var adminTransactionHistory = {
 };
 
 var adminReward = {
+    controller: function controller(args) {
+        var l = void 0;
+        var loadShippingFee = function loadShippingFee() {
+            var shippingFee = m.prop({});
+
+            if (args.contribution.shipping_fee_id) {
+                var options = models.shippingFee.getRowOptions(h.idVM.id(args.contribution.shipping_fee_id).parameters());
+
+                l = postgrest$1.loaderWithToken(options);
+                l.load().then(_.compose(shippingFee, _.first));
+            }
+
+            return shippingFee;
+        };
+
+        return {
+            shippingFee: loadShippingFee()
+        };
+    },
     view: function view(ctrl, args) {
         var reward = args.reward(),
             contribution = args.contribution,
-            available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count);
+            available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count),
+            shippingFee = ctrl.shippingFee();
 
-        return m('.w-col.w-col-4', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Recompensa'), m('.fontsize-smallest.lineheight-looser', reward.id ? ['ID: ' + reward.id, m('br'), 'Valor m\xEDnimo: R$' + h.formatNumber(reward.minimum_value, 2, 3), m('br'), m.trust('Dispon\xEDveis: ' + available + ' / ' + (reward.maximum_contributions || '&infin;')), m('br'), 'Aguardando confirma\xE7\xE3o: ' + reward.waiting_payment_count, m('br'), 'Estimativa da Entrega: ' + h.momentify(reward.deliver_at), m('br'), m('div', ['Status da Entrega: ', h.contributionStatusBadge(contribution)]), 'Descri\xE7\xE3o: ' + reward.description] : 'Apoio sem recompensa')]);
+        return m('.w-col.w-col-4', [m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Recompensa'), m('.fontsize-smallest.lineheight-looser', reward.id ? ['ID: ' + reward.id, m('br'), 'Local de entrega: ' + (shippingFee.destination ? shippingFee.destination + ' R$ ' + shippingFee.value : 'Nenhum'), m('br'), 'Envio: ' + I18n.t('shared.shipping_options.' + reward.shipping_options), m('br'), 'Valor m\xEDnimo: R$' + h.formatNumber(reward.minimum_value, 2, 3), m('br'), m.trust('Dispon\xEDveis: ' + available + ' / ' + (reward.maximum_contributions || '&infin;')), m('br'), 'Aguardando confirma\xE7\xE3o: ' + reward.waiting_payment_count, m('br'), 'Estimativa da Entrega: ' + h.momentify(reward.deliver_at), m('br'), m('div', ['Status da Entrega: ', h.contributionStatusBadge(contribution)]), 'Descri\xE7\xE3o: ' + reward.description] : 'Apoio sem recompensa')]);
     }
 };
 
@@ -4456,7 +4476,9 @@ var insights = {
             collection: ctrl.visitorsPerDay,
             label: I18n$1.t('visitors_per_day_label', I18nScope$2()),
             dataKey: 'visitors',
-            //xAxis: item => h.momentify(item.day),
+            xAxis: function xAxis(item) {
+                return h.momentify(item.day);
+            },
             emptyState: I18n$1.t('visitors_per_day_empty', I18nScope$2())
         }) : h.loader()])]), m('.w-row', [m('.w-col.w-col-12.u-text-center', {
             style: {
@@ -4944,12 +4966,33 @@ var deliverContributionModalContent = {
     }
 };
 
+/**
+ * window.c.errorContributionModalContent component
+ * Render deliver error contribution modal
+ *
+ */
+var errorContributionModalContent = {
+    view: function view(ctrl, args) {
+        return m('div', m('.modal-dialog-header', m('.fontsize-large.u-text-center', [m('span.fa.fa-exclamation-triangle', ''), ' Ops. Erro no envio!'])), m('.modal-dialog-content', [m('p.fontsize-small.u-marginbottom-30', [m('span.fontweight-semibold', 'Voc\xEA selecionou ' + args.amount + ' apoios.'), ' Após sua confirmação, os apoiadores que efetuaram esses apoios ao seu projeto serão notificados de que houve um problema com o envio de suas recompensas.']), m('.w-form', [m('form', [m('.fontsize-smaller', 'Se quiser adicionar alguma informação nessa mensagem, use o espaço abaixo (ex: você pode pedir confirmação de endereço de entrega ou explicar motivos do erro)'), m("textarea.height-mini.text-field.w-input[placeholder='Digite sua mensagem (opcional)']", {
+            value: args.message(),
+            onchange: m.withAttr('value', args.message)
+        })])]), m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.fontsize-small.fontweight-semibold.u-marginbottom-20.u-text-center', 'Você confirma que houve um erro no envio das recompensas dos apoios selecionados?')), m('.w-col.w-col-1')]), m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-5', m('a.btn.btn-medium.w-button', {
+            onclick: function onclick() {
+                return args.updateStatus('error');
+            }
+        }, 'Sim!')), m('.w-col.w-col-5', m('a.btn.btn-medium.btn-terciary.w-button', {
+            onclick: args.displayModal.toggle
+        }, 'Voltar')), m('.w-col.w-col-1')])]));
+    }
+};
+
 var projectContributionReportContent = {
     controller: function controller(args) {
         var showSelectedMenu = h.toggleProp(false, true),
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
             displayDeliverModal = h.toggleProp(false, true),
+            displayErrorModal = h.toggleProp(false, true),
             selectedContributions = m.prop([]),
             deliveryMessage = m.prop(''),
             selectAll = function selectAll() {
@@ -4977,6 +5020,8 @@ var projectContributionReportContent = {
                 showSuccess(true);
                 if (status === 'delivered') {
                     displayDeliverModal.toggle();
+                } else if (status === 'error') {
+                    displayErrorModal.toggle();
                 }
                 showSelectedMenu.toggle();
                 // update status so we don't have to reload the page
@@ -4985,7 +5030,7 @@ var projectContributionReportContent = {
                 }), function (item) {
                     return item.delivery_status = status;
                 });
-            }).catch(function (err) {
+            }).catch(function () {
                 m.redraw();
             });
             return false;
@@ -4997,6 +5042,7 @@ var projectContributionReportContent = {
             unselectAll: unselectAll,
             deliveryMessage: deliveryMessage,
             displayDeliverModal: displayDeliverModal,
+            displayErrorModal: displayErrorModal,
             updateStatus: updateStatus,
             showSelectedMenu: showSelectedMenu,
             selectedAny: selectedAny,
@@ -5007,7 +5053,11 @@ var projectContributionReportContent = {
         var list = args.list;
         var isFailed = args.project().state === 'failed';
 
-        return m('.w-section.bg-gray.before-footer.section', [ctrl.displayDeliverModal() ? m.component(modalBox, {
+        return m('.w-section.bg-gray.before-footer.section', [ctrl.displayErrorModal() ? m.component(modalBox, {
+            displayModal: ctrl.displayErrorModal,
+            hideCloseButton: false,
+            content: [errorContributionModalContent, { project: args.project, displayModal: ctrl.displayErrorModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+        }) : '', ctrl.displayDeliverModal() ? m.component(modalBox, {
             displayModal: ctrl.displayDeliverModal,
             hideCloseButton: false,
             content: [deliverContributionModalContent, { project: args.project, displayModal: ctrl.displayDeliverModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
@@ -5025,7 +5075,7 @@ var projectContributionReportContent = {
             }
         }, 'Enviada'), m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
             onclick: function onclick() {
-                return ctrl.updateStatus('error');
+                return ctrl.displayErrorModal.toggle();
             }
         }, 'Erro no envio')]) : '']) : '']), m('.w-clearfix.w-col.w-col-4', m('a.alt-link.fontsize-small.lineheight-looser.u-right[href="/projects/' + args.project().project_id + '/download_reports"]', [m('span.fa.fa-download', ''), ' Baixar relatórios']))])),
 
@@ -7588,6 +7638,8 @@ var paymentVM = function paymentVM() {
     };
 };
 
+var I18nScope$16 = _$1.partial(h.i18nScope, 'projects.contributions');
+
 var rewardSelectCard = {
     controller: function controller(args) {
         var setInput = function setInput(el, isInitialized) {
@@ -7682,11 +7734,11 @@ var rewardSelectCard = {
             value: ctrl.contributionValue()
         }))]), m('.fontsize-smaller.text-error.u-marginbottom-20.w-hidden', [m('span.fa.fa-exclamation-triangle'), ' O valor do apoio está incorreto'])]), m('.submit-form.w-col.w-col-4', m('button.btn.btn-medium.u-margintop-30', {
             onclick: ctrl.submitContribution
-        }, ['Continuar  ', m('span.fa.fa-chevron-right')]))]), ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [m('br'), m('span.fa.fa-exclamation-triangle'), ' ' + ctrl.error()]) : '', m('.back-reward-reward-description', [m('.fontsize-smaller.u-marginbottom-10', reward.description), !reward.deliver_at ? '' : m('.fontsize-smallest.fontcolor-secondary', 'Estimativa de entrega: ' + h.momentify(reward.deliver_at, 'MMM/YYYY'))])]));
+        }, ['Continuar  ', m('span.fa.fa-chevron-right')]))]), ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [m('br'), m('span.fa.fa-exclamation-triangle'), ' ' + ctrl.error()]) : '', m('.back-reward-reward-description', [m('.fontsize-smaller.u-marginbottom-10', reward.description), m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))]), !ctrl.hasShippingOptions(reward) ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Forma de envior:'), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$16()))])])])]));
     }
 };
 
-var I18nScope$16 = _.partial(h.i18nScope, 'projects.faq');
+var I18nScope$17 = _.partial(h.i18nScope, 'projects.faq');
 
 var faqBox = {
     controller: function controller(args) {
@@ -7709,8 +7761,8 @@ var faqBox = {
             var updatedQuestions = {};
             _.each(questions, function (quest, idx) {
                 _.extend(updatedQuestions, defineProperty({}, idx + 1, {
-                    question: I18n$1.t(tKey() + '.questions.' + idx + '.question', I18nScope$16()),
-                    answer: I18n$1.t(tKey() + '.questions.' + idx + '.answer', I18nScope$16({ userLink: '/users/' + user().id,
+                    question: I18n$1.t(tKey() + '.questions.' + idx + '.question', I18nScope$17()),
+                    answer: I18n$1.t(tKey() + '.questions.' + idx + '.answer', I18nScope$17({ userLink: '/users/' + user().id,
                         userName: user().name
                     }))
                 }));
@@ -7732,7 +7784,7 @@ var faqBox = {
     view: function view(ctrl, args) {
         return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius', [m('.w-row.u-marginbottom-30', [m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('img[width=\'30\']', {
             src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
-        })), m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary', I18n$1.t(ctrl.tKey() + '.description', I18nScope$16())))]), m('.u-marginbottom-20.fontsize-small.fontweight-semibold', I18n$1.t('' + (args.vm.isInternational() ? 'international_title' : 'title'), I18nScope$16())), m('ul.w-list-unstyled', _.map(ctrl.scopedQuestions(), function (question, idx) {
+        })), m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary', I18n$1.t(ctrl.tKey() + '.description', I18nScope$17())))]), m('.u-marginbottom-20.fontsize-small.fontweight-semibold', I18n$1.t('' + (args.vm.isInternational() ? 'international_title' : 'title'), I18nScope$17())), m('ul.w-list-unstyled', _.map(ctrl.scopedQuestions(), function (question, idx) {
             return [m('li#faq_question_' + idx + '.fontsize-smaller.alt-link.list-question', {
                 onclick: ctrl.selectQuestion(idx)
             }, m('span', [m('span.faq-box-arrow'), ' ' + question.question])), m('li.list-answer', {
@@ -8459,7 +8511,7 @@ var userAboutEdit = {
     }
 };
 
-var I18nScope$17 = _$1.partial(h.i18nScope, 'payment.state');
+var I18nScope$18 = _$1.partial(h.i18nScope, 'payment.state');
 
 var userContributedBox = {
     controller: function controller() {
@@ -8481,7 +8533,7 @@ var userContributedBox = {
             title = args.title;
 
         return !_$1.isEmpty(collection) ? m('.section-one-column.u-marginbottom-30', [m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', title), m('.w-row.w-hidden-small.w-hidden-tiny.card.card-secondary', [m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', 'Projetos que apoiei')), m('.w-col.w-col-2', m('.fontsize-small.fontweight-semibold', 'Valor do apoio')), m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', 'Status do apoio')), m('.w-col.w-col-4', m('.fontsize-small.fontweight-semibold', 'Recompensa'))]), _$1.map(collection, function (contribution) {
-            return m('.w-row.card', [m('.w-col.w-col-3', m('.w-row', [m('.w-col.w-col-4.u-marginbottom-10', m('a[href=\'/' + contribution.permalink + '\']', m('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), m('.w-col.w-col-8', m('.fontsize-small.fontweight-semibold', m('a.alt-link[href=\'/' + contribution.permalink + '\']', contribution.project_name)))])), m('.w-col.w-col-2.u-marginbottom-10', m('.fontsize-base.inline-block', [m('span.w-hidden-main.w-hidden-medium.fontweight-semibold', 'Valor do apoio'), ' R$ ' + contribution.value])), m('.w-col.w-col-3.u-marginbottom-10', [m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', 'Status'), m('.fontsize-smaller.fontweight-semibold', [m('.lineheight-tighter'), m('span.fa.fa-circle.fontsize-smallest.' + (contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'), m.trust('&nbsp;')), I18n$1.t(contribution.state, I18nScope$17({
+            return m('.w-row.card', [m('.w-col.w-col-3', m('.w-row', [m('.w-col.w-col-4.u-marginbottom-10', m('a[href=\'/' + contribution.permalink + '\']', m('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), m('.w-col.w-col-8', m('.fontsize-small.fontweight-semibold', m('a.alt-link[href=\'/' + contribution.permalink + '\']', contribution.project_name)))])), m('.w-col.w-col-2.u-marginbottom-10', m('.fontsize-base.inline-block', [m('span.w-hidden-main.w-hidden-medium.fontweight-semibold', 'Valor do apoio'), ' R$ ' + contribution.value])), m('.w-col.w-col-3.u-marginbottom-10', [m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', 'Status'), m('.fontsize-smaller.fontweight-semibold', [m('.lineheight-tighter'), m('span.fa.fa-circle.fontsize-smallest.' + (contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'), m.trust('&nbsp;')), I18n$1.t(contribution.state, I18nScope$18({
                 date: h.momentify(contribution[contribution.state + '_at'])
             }))]), m('.fontsize-smallest', contribution.installments > 1 ? contribution.installments + ' x R$ ' + contribution.installment_value + ' ' : '', contribution.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito'), contributionVM.canShowReceipt(contribution) ? m('a.btn.btn-inline.btn-small.u-margintop-10.btn-terciary[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/receipt\'][target=\'__blank\']', 'Ver recibo') : '', contributionVM.canShowSlip(contribution) ? m('a.btn.btn-inline.btn-small.u-margintop-10[href=\'' + contribution.gateway_data.boleto_url + '\'][target=\'__blank\']', 'Imprimir boleto') : '', contributionVM.canGenerateSlip(contribution) ? m('a.btn.btn-inline.btn-small.u-margintop-10[href=\'https://www.catarse.me/pt/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/second_slip\'][target=\'__blank\']', 'Gerar 2a via') : '', m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']' + (contribution.anonymous ? '[checked=\'checked\']' : '') + '[value=\'1\']', {
                 onclick: function onclick() {
@@ -9178,7 +9230,7 @@ var usersEdit = {
     }
 };
 
-var I18nScope$20 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+var I18nScope$21 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 
 var paymentSlip = {
     controller: function controller(args) {
@@ -9719,7 +9771,7 @@ var creditCardInput = {
     }
 };
 
-var I18nScope$21 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$22 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$3 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var paymentCreditCard = {
@@ -9865,7 +9917,7 @@ var paymentCreditCard = {
         };
 
         var scope = function scope(attr) {
-            return vm.isInternational() ? I18nIntScope$3(attr) : I18nScope$21(attr);
+            return vm.isInternational() ? I18nIntScope$3(attr) : I18nScope$22(attr);
         };
 
         vm.getInstallments(args.contribution_id).then(function () {
@@ -9984,14 +10036,14 @@ var paymentCreditCard = {
     }
 };
 
-var I18nScope$19 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$20 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$2 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var paymentForm = {
     controller: function controller(args) {
         var isSlip = m.prop(false),
             scope = function scope() {
-            return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$19();
+            return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$20();
         };
 
         var scrollTo = function scrollTo(el, isInit) {
@@ -10022,7 +10074,7 @@ var paymentForm = {
     }
 };
 
-var I18nScope$18 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$19 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$1 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var projectsPayment = {
@@ -10098,7 +10150,7 @@ var projectsPayment = {
         };
 
         var scope = function scope(attr) {
-            return vm.isInternational() ? I18nIntScope$1(attr) : I18nScope$18(attr);
+            return vm.isInternational() ? I18nIntScope$1(attr) : I18nScope$19(attr);
         };
 
         if (_$1.isNull(currentUserID)) {
@@ -10337,7 +10389,7 @@ var projectsReward = {
     }
 };
 
-var I18nScope$22 = _$1.partial(h.i18nScope, 'projects.publish');
+var I18nScope$23 = _$1.partial(h.i18nScope, 'projects.publish');
 
 var publish = {
     controller: function controller(args) {
@@ -10402,7 +10454,7 @@ var publish = {
         return [!ctrl.l() && !ctrl.accountL() ? [project.is_owner_or_admin ? m.component(projectDashboardMenu, {
             project: m.prop(project),
             hidePublish: true
-        }) : '', m('.w-section.section-product.' + project.mode), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [m('.u-text-center', [m('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), m('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), m('.w-col.w-col-3')])])]), m('.divider'), m('.w-section.section-one-column.bg-gray.section.before-footer', [m('.w-container', [m('.card.medium.u-marginbottom-60.card-terciary', [m('.w-row', [m('.w-col.w-col-6.w-clearfix', [m('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), m('.w-col.w-col-6', [m('.u-marginbottom-30.fontsize-base', [m('div', [m('span.fontweight-semibold', 'Título: '), project.name]), m('div', [m('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n$1.t(project.mode, I18nScope$22())]), m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + h.formatNumber(project.goal, 2, 3)]), project.online_days !== null ? m('div', [m('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', m('div', [m('span.fontweight-semibold', 'Responsável: '), account.owner_name]), m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), m('.u-text-center', [m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', [m('.divider.u-marginbottom-10'), m('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), m('.w-col.w-col-1')])])]), m('.card.medium.u-radius.u-marginbottom-60', [m('.u-text-center.u-marginbottom-60', [m('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), m('.w-col.w-col-2')])]), _$1.map(project.mode === 'flex' ? flexTerms(project) : terms(project), function (term, index) {
+        }) : '', m('.w-section.section-product.' + project.mode), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [m('.u-text-center', [m('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), m('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), m('.w-col.w-col-3')])])]), m('.divider'), m('.w-section.section-one-column.bg-gray.section.before-footer', [m('.w-container', [m('.card.medium.u-marginbottom-60.card-terciary', [m('.w-row', [m('.w-col.w-col-6.w-clearfix', [m('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), m('.w-col.w-col-6', [m('.u-marginbottom-30.fontsize-base', [m('div', [m('span.fontweight-semibold', 'Título: '), project.name]), m('div', [m('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n$1.t(project.mode, I18nScope$23())]), m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + h.formatNumber(project.goal, 2, 3)]), project.online_days !== null ? m('div', [m('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', m('div', [m('span.fontweight-semibold', 'Responsável: '), account.owner_name]), m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), m('.u-text-center', [m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', [m('.divider.u-marginbottom-10'), m('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), m('.w-col.w-col-1')])])]), m('.card.medium.u-radius.u-marginbottom-60', [m('.u-text-center.u-marginbottom-60', [m('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), m('.w-col.w-col-2')])]), _$1.map(project.mode === 'flex' ? flexTerms(project) : terms(project), function (term, index) {
             return m('.u-marginbottom-30.fontsize-base' + (index === 0 ? '' : '.w-hidden.publish-rules'), [m('.w-row[id=\'rule-' + index + '\']', [m('.w-col.w-col-1.u-text-center', [m('div', [m((project.mode === 'flex' ? ctrl.flexAcceptTerm() : ctrl.acceptTerm())[index] ? 'a.w-inline-block.checkbox-big[href=\'#rule-' + (index + 1) + '\']' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg[href=\'#rule-' + (index + 1) + '\']', { onclick: function onclick() {
                     return ctrl.showNextTerm(index, project.mode === 'flex' ? ctrl.flexAcceptTerm : ctrl.acceptTerm);
                 } })])]), term])]);
@@ -10523,7 +10575,7 @@ var youtubeLightbox = {
     }
 };
 
-var I18nScope$23 = _$1.partial(h.i18nScope, 'pages.start');
+var I18nScope$24 = _$1.partial(h.i18nScope, 'pages.start');
 
 var start = {
     controller: function controller() {
@@ -10660,35 +10712,35 @@ var start = {
             });
         };
 
-        return m('#start', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$23())) }, [m('.w-section.hero-full.hero-start', [m('.w-container.u-text-center', [m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n$1.t('slogan', I18nScope$23())), m('.w-row.u-marginbottom-40', [m('.w-col.w-col-4.w-col-push-4', [m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
+        return m('#start', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$24())) }, [m('.w-section.hero-full.hero-start', [m('.w-container.u-text-center', [m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n$1.t('slogan', I18nScope$24())), m('.w-row.u-marginbottom-40', [m('.w-col.w-col-4.w-col-push-4', [m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
             config: h.scrollTo(),
             onclick: h.analytics.event({ cat: 'project_start', act: 'start_btnstart_click' })
-        }, I18n$1.t('submit', I18nScope$23()))])]), m('.w-row', _$1.isEmpty(stats) ? '' : [m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.people', I18nScope$23()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), m('p.fontsize-small.start-stats', I18n$1.t('header.money', I18nScope$23()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.success', I18nScope$23()))])])])]), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1.u-text-center', [m('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n$1.t('page-title', I18nScope$23())), m('.fontsize-small', I18n$1.t('page-subtitle', I18nScope$23()))])]), m('.w-clearfix.how-row', [m('.w-hidden-small.w-hidden-tiny.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$23())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$23()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$23())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$23()))])]), m('.how-col-02'), m('.how-col-03', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.5', I18nScope$23())), m('.fontsize-base', I18n$1.t('banner.6', I18nScope$23())), m('.fontweight-semibold.fontsize-large.u-margintop-30', I18n$1.t('banner.7', I18nScope$23())), m('.fontsize-base', I18n$1.t('banner.8', I18nScope$23()))]), m('.w-hidden-main.w-hidden-medium.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$23())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$23()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$23())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$23()))])])])])]), m('.w-section.divider'), m('.w-section.section-large', [m('.w-container.u-text-center.u-marginbottom-60', [m('div', [m('span.fontsize-largest.fontweight-semibold', I18n$1.t('features.title', I18nScope$23()))]), m('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n$1.t('features.subtitle', I18nScope$23())), m('.w-hidden-main.w-hidden-medium.u-margintop-30', [m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_1', I18nScope$23())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_2', I18nScope$23())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_3', I18nScope$23())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_4', I18nScope$23())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_5', I18nScope$23())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_6', I18nScope$23()))])]), m('.w-container', [m('.w-tabs.w-hidden-small.w-hidden-tiny', [m('.w-tab-menu.w-col.w-col-4', _$1.map(ctrl.paneImages, function (pane, idx) {
+        }, I18n$1.t('submit', I18nScope$24()))])]), m('.w-row', _$1.isEmpty(stats) ? '' : [m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.people', I18nScope$24()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), m('p.fontsize-small.start-stats', I18n$1.t('header.money', I18nScope$24()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.success', I18nScope$24()))])])])]), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1.u-text-center', [m('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n$1.t('page-title', I18nScope$24())), m('.fontsize-small', I18n$1.t('page-subtitle', I18nScope$24()))])]), m('.w-clearfix.how-row', [m('.w-hidden-small.w-hidden-tiny.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$24())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$24()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$24())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$24()))])]), m('.how-col-02'), m('.how-col-03', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.5', I18nScope$24())), m('.fontsize-base', I18n$1.t('banner.6', I18nScope$24())), m('.fontweight-semibold.fontsize-large.u-margintop-30', I18n$1.t('banner.7', I18nScope$24())), m('.fontsize-base', I18n$1.t('banner.8', I18nScope$24()))]), m('.w-hidden-main.w-hidden-medium.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$24())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$24()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$24())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$24()))])])])])]), m('.w-section.divider'), m('.w-section.section-large', [m('.w-container.u-text-center.u-marginbottom-60', [m('div', [m('span.fontsize-largest.fontweight-semibold', I18n$1.t('features.title', I18nScope$24()))]), m('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n$1.t('features.subtitle', I18nScope$24())), m('.w-hidden-main.w-hidden-medium.u-margintop-30', [m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_1', I18nScope$24())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_2', I18nScope$24())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_3', I18nScope$24())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_4', I18nScope$24())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_5', I18nScope$24())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_6', I18nScope$24()))])]), m('.w-container', [m('.w-tabs.w-hidden-small.w-hidden-tiny', [m('.w-tab-menu.w-col.w-col-4', _$1.map(ctrl.paneImages, function (pane, idx) {
             return m('btn.w-tab-link.w-inline-block.tab-list-item' + (idx === ctrl.selectedPane() ? '.selected' : ''), {
                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_solution_click', lbl: pane.label }, ctrl.selectPane(idx))
             }, pane.label);
         })), m('.w-tab-content.w-col.w-col-8', _$1.map(ctrl.paneImages, function (pane, idx) {
             return m('.w-tab-pane', [m('img[src="' + pane.src + '"].pane-image' + (idx === ctrl.selectedPane() ? '.selected' : ''))]);
-        }))])])]), m('.w-section.section-large.card-terciary', m('.w-container', [m('.u-text-center.u-marginbottom-40', [m('div', m('span.fontsize-largest.fontweight-semibold', I18n$1.t('mode.title', I18nScope$23()))), m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.fontsize-large.u-marginbottom-20', I18n$1.t('mode.subtitle', I18nScope$23()))), m('.w-col.w-col-1')])]), m('div', m('.flex-row.u-marginbottom-40', [m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', [I18n$1.t('mode.aon.info', I18nScope$23()), m.trust('&nbsp;')]), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.aon.info_2', I18nScope$23()))]), m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', I18n$1.t('mode.flex.info', I18nScope$23())), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.flex.info_2', I18nScope$23()))])])), m('.u-text-center.u-marginbottom-30', [m('.fontsize-large.fontweight-semibold', I18n$1.t('mode.tax_info', I18nScope$23())), m('.fontsize-smallest.fontcolor-secondary', [I18n$1.t('mode.failed_info', I18nScope$23()), m.trust(I18n$1.t('mode.more_link', I18nScope$23()))])])])), m('.w-section.section-large.bg-blue-one', [m('.w-container.u-text-center', [m('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [I18n$1.t('video.title', I18nScope$23()), m('br'), I18n$1.t('video.subtitle', I18nScope$23())]), m.component(youtubeLightbox, {
-            src: I18n$1.t('video.src', I18nScope$23()),
+        }))])])]), m('.w-section.section-large.card-terciary', m('.w-container', [m('.u-text-center.u-marginbottom-40', [m('div', m('span.fontsize-largest.fontweight-semibold', I18n$1.t('mode.title', I18nScope$24()))), m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.fontsize-large.u-marginbottom-20', I18n$1.t('mode.subtitle', I18nScope$24()))), m('.w-col.w-col-1')])]), m('div', m('.flex-row.u-marginbottom-40', [m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', [I18n$1.t('mode.aon.info', I18nScope$24()), m.trust('&nbsp;')]), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.aon.info_2', I18nScope$24()))]), m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', I18n$1.t('mode.flex.info', I18nScope$24())), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.flex.info_2', I18nScope$24()))])])), m('.u-text-center.u-marginbottom-30', [m('.fontsize-large.fontweight-semibold', I18n$1.t('mode.tax_info', I18nScope$24())), m('.fontsize-smallest.fontcolor-secondary', [I18n$1.t('mode.failed_info', I18nScope$24()), m.trust(I18n$1.t('mode.more_link', I18nScope$24()))])])])), m('.w-section.section-large.bg-blue-one', [m('.w-container.u-text-center', [m('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [I18n$1.t('video.title', I18nScope$24()), m('br'), I18n$1.t('video.subtitle', I18nScope$24())]), m.component(youtubeLightbox, {
+            src: I18n$1.t('video.src', I18nScope$24()),
             onclick: h.analytics.event({ cat: 'project_start', act: 'start_video_play' })
-        })])]), m('.w-hidden-small.w-hidden-tiny.section-categories', [m('.w-container', [m('.u-text-center', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n$1.t('categories.title', I18nScope$23()))])])]), m('.w-tabs', [m('.w-tab-menu.u-text-center', _$1.map(ctrl.categories(), function (category) {
+        })])]), m('.w-hidden-small.w-hidden-tiny.section-categories', [m('.w-container', [m('.u-text-center', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n$1.t('categories.title', I18nScope$24()))])])]), m('.w-tabs', [m('.w-tab-menu.u-text-center', _$1.map(ctrl.categories(), function (category) {
             return m('a.w-tab-link.w-inline-block.btn-category.small.btn-inline' + (ctrl.selectedCategoryIdx() === category.id ? '.w--current' : ''), {
                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_category_click', lbl: category.name }, ctrl.selectCategory(category))
             }, [m('div', category.name)]);
         })), m('.w-tab-content.u-margintop-40', [m('.w-tab-pane.w--tab-active', [m('.w-row', ctrl.selectedCategoryIdx() !== -1 ? _$1.map(ctrl.selectedCategory(), function (category) {
             return [m('.w-col.w-col-5', [m('.fontsize-jumbo.u-marginbottom-20', category.name), m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
                 config: h.scrollTo()
-            }, I18n$1.t('submit', I18nScope$23()))]), m('.w-col.w-col-7', [m('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...')), m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_$1.isEmpty(ctrl.featuredProjects()) ? _$1.map(ctrl.featuredProjects(), function (project) {
-                return !_$1.isUndefined(project) ? m('.w-row.u-marginbottom-10', [m('.w-col.w-col-1', [m('img.user-avatar[src="' + h.useAvatarOrDefault(project.userThumb) + '"]')]), m('.w-col.w-col-11', [m('.fontsize-base.fontweight-semibold', project.user.name), m('.fontsize-smallest', [I18n$1.t('categories.pledged', I18nScope$23({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })), m('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : m('.fontsize-base', I18n$1.t('categories.loading_featured', I18nScope$23()));
+            }, I18n$1.t('submit', I18nScope$24()))]), m('.w-col.w-col-7', [m('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...')), m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_$1.isEmpty(ctrl.featuredProjects()) ? _$1.map(ctrl.featuredProjects(), function (project) {
+                return !_$1.isUndefined(project) ? m('.w-row.u-marginbottom-10', [m('.w-col.w-col-1', [m('img.user-avatar[src="' + h.useAvatarOrDefault(project.userThumb) + '"]')]), m('.w-col.w-col-11', [m('.fontsize-base.fontweight-semibold', project.user.name), m('.fontsize-smallest', [I18n$1.t('categories.pledged', I18nScope$24({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })), m('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : m('.fontsize-base', I18n$1.t('categories.loading_featured', I18nScope$24()));
             }) : ''])];
         }) : '')])])])])]), m.component(slider, {
             slides: testimonials(),
-            title: I18n$1.t('testimonials_title', I18nScope$23()),
+            title: I18n$1.t('testimonials_title', I18nScope$24()),
             slideClass: 'slide-testimonials-content',
             wrapperClass: 'slide-testimonials',
             onchange: h.analytics.event({ cat: 'project_start', act: 'start_testimonials_change' })
-        }), m('.w-section.divider.u-margintop-30'), m('.w-container', [m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n$1.t('qa_title', I18nScope$23())), m('.w-row.u-marginbottom-60', [m('.w-col.w-col-6', _$1.map(ctrl.questions.col_1, function (question) {
+        }), m('.w-section.divider.u-margintop-30'), m('.w-container', [m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n$1.t('qa_title', I18nScope$24())), m('.w-row.u-marginbottom-60', [m('.w-col.w-col-6', _$1.map(ctrl.questions.col_1, function (question) {
             return m.component(landingQA, {
                 question: question.question,
                 answer: question.answer,
@@ -10705,7 +10757,7 @@ var start = {
                 h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_submit' })(e);
                 return ctrl.validateProjectForm();
             }
-        }, [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n$1.t('form.title', I18nScope$23())), m('input[name="utf8"][type="hidden"][value="✓"]'), m('input[name="authenticity_token"][type="hidden"][value="' + h.authenticityToken() + '"]'), m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
+        }, [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n$1.t('form.title', I18nScope$24())), m('input[name="utf8"][type="hidden"][value="✓"]'), m('input[name="authenticity_token"][type="hidden"][value="' + h.authenticityToken() + '"]'), m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
             name: 'project[name]',
             class: ctrl.projectNameError() ? 'error' : '',
             onfocus: function onfocus() {
@@ -10725,9 +10777,9 @@ var start = {
                 h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'category' })(e);
                 m.withAttr('value', ctrl.projectCategory)(e);
             }
-        }, [m('option[value="-1"]', I18n$1.t('form.select_default', I18nScope$23())), _$1.map(ctrl.categories(), function (category) {
+        }, [m('option[value="-1"]', I18n$1.t('form.select_default', I18nScope$24())), _$1.map(ctrl.categories(), function (category) {
             return m('option[value="' + category.id + '"]', { selected: ctrl.projectCategory() === category.id }, category.name);
-        })])]), m('.w-col.w-col-2'), m('.w-row.u-marginbottom-20', [m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [m('input[type="submit"][value="' + I18n$1.t('form.submit', I18nScope$23()) + '"].w-button.btn.btn-large')])]), m('.w-row.u-marginbottom-80', ctrl.projectNameError() || ctrl.projectCategoryError() ? m.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')])])])]);
+        })])]), m('.w-col.w-col-2'), m('.w-row.u-marginbottom-20', [m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [m('input[type="submit"][value="' + I18n$1.t('form.submit', I18nScope$24()) + '"].w-button.btn.btn-large')])]), m('.w-row.u-marginbottom-80', ctrl.projectNameError() || ctrl.projectCategoryError() ? m.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')])])])]);
     }
 };
 
@@ -10795,7 +10847,7 @@ var team = {
  *     balance: {user_id: 123, amount: 123} // userBalance struct
  * })
  */
-var I18nScope$25 = _$1.partial(h.i18nScope, 'users.balance');
+var I18nScope$26 = _$1.partial(h.i18nScope, 'users.balance');
 
 var userBalanceRequestModelContent = {
     controller: function controller(args) {
@@ -10827,7 +10879,7 @@ var userBalanceRequestModelContent = {
         var balance = args.balance;
 
         return ctrl.loadBankA() ? h.loader() : m('div', _$1.map(ctrl.bankAccounts(), function (item) {
-            return [m('.modal-dialog-header', [m('.fontsize-large.u-text-center', I18n$1.t('withdraw', I18nScope$25()))]), ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m('p.fontsize-large', I18n$1.t('sucess_message', I18nScope$25()))]) : m('.modal-dialog-content', [m('.fontsize-base.u-marginbottom-20', [m('span.fontweight-semibold', 'Valor:'), m.trust('&nbsp;'), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))]), m('.fontsize-base.u-marginbottom-10', [m('span', { style: { 'font-weight': ' 600' } }, I18n$1.t('bank.account', I18nScope$25()))]), m('.fontsize-small.u-marginbottom-10', [m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.name', I18nScope$25())), m.trust('&nbsp;'), item.owner_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.cpf_cnpj', I18nScope$25())), m.trust('&nbsp;'), item.owner_document]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.bank_name', I18nScope$25())), m.trust('&nbsp;'), item.bank_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.agency', I18nScope$25())), m.trust('&nbsp;'), item.agency + '-' + item.agency_digit]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.account', I18nScope$25())), m.trust('&nbsp;'), item.account + '-' + item.account_digit])])]), !ctrl.displayDone() ? m('.modal-dialog-nav-bottom', [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [ctrl.requestLoader() ? h.loader() : m('a.btn.btn-large.btn-request-fund[href="js:void(0);"]', { onclick: ctrl.requestFund }, 'Solicitar saque')]), m('.w-col.w-col-3')])]) : ''];
+            return [m('.modal-dialog-header', [m('.fontsize-large.u-text-center', I18n$1.t('withdraw', I18nScope$26()))]), ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m('p.fontsize-large', I18n$1.t('sucess_message', I18nScope$26()))]) : m('.modal-dialog-content', [m('.fontsize-base.u-marginbottom-20', [m('span.fontweight-semibold', 'Valor:'), m.trust('&nbsp;'), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))]), m('.fontsize-base.u-marginbottom-10', [m('span', { style: { 'font-weight': ' 600' } }, I18n$1.t('bank.account', I18nScope$26()))]), m('.fontsize-small.u-marginbottom-10', [m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.name', I18nScope$26())), m.trust('&nbsp;'), item.owner_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.cpf_cnpj', I18nScope$26())), m.trust('&nbsp;'), item.owner_document]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.bank_name', I18nScope$26())), m.trust('&nbsp;'), item.bank_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.agency', I18nScope$26())), m.trust('&nbsp;'), item.agency + '-' + item.agency_digit]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.account', I18nScope$26())), m.trust('&nbsp;'), item.account + '-' + item.account_digit])])]), !ctrl.displayDone() ? m('.modal-dialog-nav-bottom', [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [ctrl.requestLoader() ? h.loader() : m('a.btn.btn-large.btn-request-fund[href="js:void(0);"]', { onclick: ctrl.requestFund }, 'Solicitar saque')]), m('.w-col.w-col-3')])]) : ''];
         }));
     }
 };
@@ -10841,7 +10893,7 @@ var userBalanceRequestModelContent = {
  *     user_id: 123,
  * })
  */
-var I18nScope$24 = _$1.partial(h.i18nScope, 'users.balance');
+var I18nScope$25 = _$1.partial(h.i18nScope, 'users.balance');
 
 var userBalance = {
     controller: function controller(args) {
@@ -10859,11 +10911,11 @@ var userBalance = {
         return m('.w-section.section.user-balance-section', [ctrl.displayModal() ? m.component(modalBox, {
             displayModal: ctrl.displayModal,
             content: balanceRequestModalC
-        }) : '', m('.w-container', [m('.w-row', [m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m('.fontsize-larger', [I18n.t('totals', I18nScope$24()), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m('.w-col.w-col-4', [m('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 ? 'btn-inactive' : '') + '"][href="js:void(0);"]', { onclick: balance.amount > 0 ? ctrl.displayModal.toggle : 'js:void(0);' }, I18n.t('withdraw_cta', I18nScope$24()))])])])]);
+        }) : '', m('.w-container', [m('.w-row', [m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m('.fontsize-larger', [I18n.t('totals', I18nScope$25()), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m('.w-col.w-col-4', [m('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 ? 'btn-inactive' : '') + '"][href="js:void(0);"]', { onclick: balance.amount > 0 ? ctrl.displayModal.toggle : 'js:void(0);' }, I18n.t('withdraw_cta', I18nScope$25()))])])])]);
     }
 };
 
-var I18nScope$26 = _.partial(h.i18nScope, 'users.balance');
+var I18nScope$27 = _.partial(h.i18nScope, 'users.balance');
 
 var userBalanceTrasactionRow = {
     controller: function controller(args) {
@@ -10881,7 +10933,7 @@ var userBalanceTrasactionRow = {
         var item = args.item,
             createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 
-        return m('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m('.w-clearfix.card.card-clickable', [m('.w-row', [m('.w-col.w-col-2.w-col-tiny-2', [m('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m('.w-col.w-col-10.w-col-tiny-10', [m('.w-row', [m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$26())), m.trust('&nbsp;'), m('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$26())), m.trust('&nbsp;'), m('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$26())), m.trust('&nbsp;'), m('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m('.card', _.map(item.source, function (transaction) {
+        return m('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m('.w-clearfix.card.card-clickable', [m('.w-row', [m('.w-col.w-col-2.w-col-tiny-2', [m('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m('.w-col.w-col-10.w-col-tiny-10', [m('.w-row', [m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$27())), m.trust('&nbsp;'), m('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$27())), m.trust('&nbsp;'), m('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$27())), m.trust('&nbsp;'), m('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m('.card', _.map(item.source, function (transaction) {
             var pos = transaction.amount >= 0;
 
             return m('div', [m('.w-row.fontsize-small.u-marginbottom-10', [m('.w-col.w-col-2', [m('.text-' + (pos ? 'success' : 'error'), (pos ? '+' : '-') + ' R$ ' + h.formatNumber(Math.abs(transaction.amount), 2, 3))]), m('.w-col.w-col-10', [m('div', transaction.event_name + ' ' + transaction.origin_object.name)])]), m('.divider.u-marginbottom-10')]);
@@ -11288,7 +11340,7 @@ var FollowFoundFriends = {
     }
 };
 
-var I18nScope$27 = _$1.partial(h.i18nScope, 'projects.contributions');
+var I18nScope$28 = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var thankYou = {
     controller: function controller(args) {
@@ -11319,12 +11371,12 @@ var thankYou = {
         };
     },
     view: function view(ctrl, args) {
-        return m('#thank-you', { config: ctrl.setEvents }, [m('.page-header.u-marginbottom-30', m('.w-container', m('.w-row', m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-20.u-text-center', m('img.big.thumb.u-round[src=\'' + args.contribution.project.user_thumb + '\']')), m('#thank-you.u-text-center', !ctrl.isSlip ? [m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', I18n$1.t('thank_you.thank_you', I18nScope$27())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you.thank_you_text_html', I18nScope$27({
+        return m('#thank-you', { config: ctrl.setEvents }, [m('.page-header.u-marginbottom-30', m('.w-container', m('.w-row', m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-20.u-text-center', m('img.big.thumb.u-round[src=\'' + args.contribution.project.user_thumb + '\']')), m('#thank-you.u-text-center', !ctrl.isSlip ? [m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', I18n$1.t('thank_you.thank_you', I18nScope$28())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you.thank_you_text_html', I18nScope$28({
             total: args.contribution.project.total_contributions,
             email: args.contribution.contribution_email,
             link2: '/pt/users/' + h.getUser().user_id + '/edit#contributions',
             link_email: '/pt/users/' + h.getUser().user_id + '/edit#about_me'
-        })))), m('.fontsize-base.fontweight-semibold.u-marginbottom-20', 'Compartilhe com seus amigos e ajude esse projeto a bater a meta!')] : [m('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$27())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$27({
+        })))), m('.fontsize-base.fontweight-semibold.u-marginbottom-20', 'Compartilhe com seus amigos e ajude esse projeto a bater a meta!')] : [m('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$28())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$28({
             email: args.contribution.contribution_email,
             link_email: '/pt/users/' + h.getUser().user_id + '/edit#about_me'
         }))))]), ctrl.isSlip ? '' : m('.w-row', [m('.w-hidden-small.w-hidden-tiny', [m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
@@ -11349,14 +11401,14 @@ var thankYou = {
             height: '905px',
             frameborder: '0',
             style: 'overflow: hidden;'
-        }))) : [m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', I18n$1.t('thank_you.project_recommendations', I18nScope$27())), m.component(projectRow, {
+        }))) : [m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', I18n$1.t('thank_you.project_recommendations', I18nScope$28())), m.component(projectRow, {
             collection: ctrl.recommendedProjects,
             ref: 'ctrse_thankyou_r'
         })]))]);
     }
 };
 
-var I18nScope$28 = _$1.partial(h.i18nScope, 'users.edit.email_confirmation');
+var I18nScope$29 = _$1.partial(h.i18nScope, 'users.edit.email_confirmation');
 
 var CheckEmail = {
     controller: function controller(args) {
@@ -11394,7 +11446,7 @@ var CheckEmail = {
         if (user) {
             var userCreatedRecently = moment().isBefore(moment(user.created_at).add(2, 'days'));
 
-            return user && !userCreatedRecently && !user.email_active && !ctrl.hideAlert() ? m('.card-alert.section.u-text-center', { style: args.menuTransparency ? { 'padding-top': '100px' } : {} }, [m('.w-container', ctrl.confirmedEmail() ? [m('.fontsize-large.fontweight-semibold', I18n$1.t('confirmed_title', I18nScope$28())), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('confirmed_sub', I18nScope$28()))] : [m('.fontsize-large.fontweight-semibold', _$1.isNull(user.name) ? 'Olá' : I18n$1.t('hello', I18nScope$28({ name: user.name }))), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('hello_sub', I18nScope$28())), m('.fontsize-base.u-marginbottom-10', I18n$1.t('hello_email', I18nScope$28({ email: user.email }))), m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-3', [m('a.btn.btn-medium.btn-terciary.w-button[href="javacript:void(0);"]', {
+            return user && !userCreatedRecently && !user.email_active && !ctrl.hideAlert() ? m('.card-alert.section.u-text-center', { style: args.menuTransparency ? { 'padding-top': '100px' } : {} }, [m('.w-container', ctrl.confirmedEmail() ? [m('.fontsize-large.fontweight-semibold', I18n$1.t('confirmed_title', I18nScope$29())), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('confirmed_sub', I18nScope$29()))] : [m('.fontsize-large.fontweight-semibold', _$1.isNull(user.name) ? 'Olá' : I18n$1.t('hello', I18nScope$29({ name: user.name }))), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('hello_sub', I18nScope$29())), m('.fontsize-base.u-marginbottom-10', I18n$1.t('hello_email', I18nScope$29({ email: user.email }))), m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-3', [m('a.btn.btn-medium.btn-terciary.w-button[href="javacript:void(0);"]', {
                 onclick: ctrl.checkEmail
             }, 'Sim!')]), m('.w-col.w-col-3', [m('a.btn.btn-medium.w-button[href="/users/' + user.id + '/edit#about_me"]', 'Editar o email')]), m('.w-col.w-col-3')])])]) : m('div');
         }
@@ -11613,7 +11665,7 @@ var editRewardCard = {
     }
 };
 
-var I18nScope$29 = _$1.partial(h.i18nScope, 'projects.reward_fields');
+var I18nScope$30 = _$1.partial(h.i18nScope, 'projects.reward_fields');
 
 var projectEditReward = {
     controller: function controller(args) {
@@ -11658,7 +11710,7 @@ var projectEditReward = {
                 onclick: function onclick() {
                     reward.edit.toggle();
                 }
-            }, m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border'))) : '']), m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold', reward.paid_count + ' apoiadores'), reward.description, m('p'), reward.limited() ? ctrl.availableCount(reward) <= 0 ? m('.u-margintop-10', m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')) : m('.u-margintop-10', m('span.badge.badge-attention.fontsize-smaller', [m('span.fontweight-bold', 'Limitada '), ' (' + ctrl.availableCount(reward) + ' de ' + reward.maximum_contributions + ' dispon\xEDveis)'])) : '', reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', m('.fontsize-smallest', m('b', 'Envio: '), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$29()))]))]) : '', reward.edit() ? m(editRewardCard, {
+            }, m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border'))) : '']), m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold', reward.paid_count + ' apoiadores'), reward.description, m('p'), reward.limited() ? ctrl.availableCount(reward) <= 0 ? m('.u-margintop-10', m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')) : m('.u-margintop-10', m('span.badge.badge-attention.fontsize-smaller', [m('span.fontweight-bold', 'Limitada '), ' (' + ctrl.availableCount(reward) + ' de ' + reward.maximum_contributions + ' dispon\xEDveis)'])) : '', reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', m('.fontsize-smallest', m('b', 'Envio: '), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$30()))]))]) : '', reward.edit() ? m(editRewardCard, {
                 canEdit: rewardVM.canEdit(reward, args.project_state),
                 reward: reward,
                 index: index
@@ -11842,7 +11894,7 @@ var projectEditSaveBtn = {
     }
 };
 
-var I18nScope$30 = _$1.partial(h.i18nScope, 'projects.dashboard_basics');
+var I18nScope$31 = _$1.partial(h.i18nScope, 'projects.dashboard_basics');
 
 var projectBasicsEdit = {
     controller: function controller(args) {
@@ -11912,47 +11964,47 @@ var projectBasicsEdit = {
         m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [
         // admin fields
         args.user.is_admin ? m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(inputCard, {
-            label: I18n$1.t('tracker_snippet_html', I18nScope$30()),
+            label: I18n$1.t('tracker_snippet_html', I18nScope$31()),
             children: [m('textarea.text.optional.w-input.text-field.positive.medium', {
                 value: vm.fields.tracker_snippet_html(),
                 onchange: m.withAttr('value', vm.fields.tracker_snippet_html)
             })]
         }), m(inputCard, {
-            label: I18n$1.t('user_id', I18nScope$30()),
+            label: I18n$1.t('user_id', I18nScope$31()),
             children: [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.user_id(),
                 onchange: m.withAttr('value', vm.fields.user_id)
             })]
         }), m(inputCard, (_m = {
             label: 'Admin Tags'
-        }, defineProperty(_m, 'label', I18n$1.t('admin_tags', I18nScope$30())), defineProperty(_m, 'label_hint', I18n$1.t('admin_tags_hint', I18nScope$30())), defineProperty(_m, 'children', [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
+        }, defineProperty(_m, 'label', I18n$1.t('admin_tags', I18nScope$31())), defineProperty(_m, 'label_hint', I18n$1.t('admin_tags_hint', I18nScope$31())), defineProperty(_m, 'children', [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
             value: vm.fields.admin_tags(),
             onchange: m.withAttr('value', vm.fields.admin_tags)
         })]), _m)), m(inputCard, {
-            label: I18n$1.t('service_fee', I18nScope$30()),
+            label: I18n$1.t('service_fee', I18nScope$31()),
             children: [m('input.string.optional.w-input.text-field.positive.medium[type="number"]', {
                 value: vm.fields.service_fee(),
                 onchange: m.withAttr('value', vm.fields.service_fee)
             })]
         })])]) : '', m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(inputCard, {
-            label: I18n$1.t('name', I18nScope$30()),
-            label_hint: I18n$1.t('name_hint', I18nScope$30()),
+            label: I18n$1.t('name', I18nScope$31()),
+            label_hint: I18n$1.t('name_hint', I18nScope$31()),
             children: [m('input.string.required.w-input.text-field.positive.medium[type="text"][maxlength="50"]', {
                 value: vm.fields.name(),
                 class: vm.e.hasError('name') ? 'error' : '',
                 onchange: m.withAttr('value', vm.fields.name)
             }), vm.e.inlineError('name')]
         }), m(inputCard, {
-            label: I18n$1.t('tags', I18nScope$30()),
-            label_hint: I18n$1.t('tags_hint', I18nScope$30()),
+            label: I18n$1.t('tags', I18nScope$31()),
+            label_hint: I18n$1.t('tags_hint', I18nScope$31()),
             children: [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.public_tags(),
                 class: vm.e.hasError('public_tags') ? 'error' : '',
                 onchange: m.withAttr('value', vm.fields.public_tags)
             }), vm.e.inlineError('public_tags')]
         }), m(inputCard, {
-            label: I18n$1.t('permalink', I18nScope$30()),
-            label_hint: I18n$1.t('permalink_hint', I18nScope$30()),
+            label: I18n$1.t('permalink', I18nScope$31()),
+            label_hint: I18n$1.t('permalink_hint', I18nScope$31()),
             children: [m('.w-row', [m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', {
                 class: vm.e.hasError('permalink') ? 'error' : ''
             }, m('.fontcolor-secondary.u-text-center.fontcolor-secondary.u-text-center.fontsize-smallest', 'www.catarse.me/')), m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6', [m('input.string.required.w-input.text-field.postfix.positive.medium[type="text"]', {
@@ -11961,16 +12013,16 @@ var projectBasicsEdit = {
                 onchange: m.withAttr('value', vm.fields.permalink)
             })])]), m('.w-row', vm.e.inlineError('permalink'))]
         }), m(inputCard, {
-            label: I18n$1.t('category', I18nScope$30()),
-            label_hint: I18n$1.t('category_hint', I18nScope$30()),
+            label: I18n$1.t('category', I18nScope$31()),
+            label_hint: I18n$1.t('category_hint', I18nScope$31()),
             children: [m('select.required.w-input.text-field.w-select.positive.medium', {
                 value: vm.fields.category_id(),
                 class: vm.e.hasError('category_id') ? 'error' : '',
                 onchange: m.withAttr('value', vm.fields.category_id)
             }, ctrl.categories()), vm.e.inlineError('category_id')]
         }), m(inputCard, {
-            label: I18n$1.t('city', I18nScope$30()),
-            label_hint: I18n$1.t('city_hint', I18nScope$30()),
+            label: I18n$1.t('city', I18nScope$31()),
+            label_hint: I18n$1.t('city_hint', I18nScope$31()),
             children: [m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.city_name(),
                 class: vm.e.hasError('city_id') ? 'error' : '',
@@ -12031,7 +12083,7 @@ var bigInputCard = {
     }
 };
 
-var I18nScope$31 = _$1.partial(h.i18nScope, 'projects.dashboard_description');
+var I18nScope$32 = _$1.partial(h.i18nScope, 'projects.dashboard_description');
 
 var projectDescriptionEdit = {
     controller: function controller(args) {
@@ -12089,9 +12141,9 @@ var projectDescriptionEdit = {
             message: I18n$1.t('shared.failed_update'),
             toggleOpt: ctrl.showError,
             error: true
-        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('description_alert', I18nScope$31()))])]), m(bigInputCard, {
-            label: I18n$1.t('description_label', I18nScope$31()),
-            label_hint: I18n$1.t('description_hint', I18nScope$31()),
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('description_alert', I18nScope$32()))])]), m(bigInputCard, {
+            label: I18n$1.t('description_label', I18nScope$32()),
+            label_hint: I18n$1.t('description_hint', I18nScope$32()),
             children: [m('.preview-container', {
                 class: vm.e.hasError('about_html') ? 'error' : false
             }, h.redactor('project[about_html]', vm.fields.about_html)), vm.e.inlineError('about_html')]
@@ -12142,7 +12194,7 @@ var projectBudgetVM = {
     e: e$5
 };
 
-var I18nScope$32 = _$1.partial(h.i18nScope, 'projects.dashboard_budget');
+var I18nScope$33 = _$1.partial(h.i18nScope, 'projects.dashboard_budget');
 
 var projectBudgetEdit = {
     controller: function controller(args) {
@@ -12200,9 +12252,9 @@ var projectBudgetEdit = {
             message: I18n$1.t('shared.failed_update'),
             toggleOpt: ctrl.showError,
             error: true
-        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('budget_alert', I18nScope$32()))])]), m(bigInputCard, {
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('budget_alert', I18nScope$33()))])]), m(bigInputCard, {
             cardStyle: { display: 'block' },
-            label: I18n$1.t('budget_label', I18nScope$32()),
+            label: I18n$1.t('budget_label', I18nScope$33()),
             children: [m('.preview-container', {
                 class: vm.e.hasError('budget') ? 'error' : false
             }, h.redactor('project[budget]', vm.fields.budget)), vm.e.inlineError('budget')]
@@ -12253,7 +12305,7 @@ var projectVideoVM = {
     e: e$6
 };
 
-var I18nScope$33 = _$1.partial(h.i18nScope, 'projects.dashboard_video');
+var I18nScope$34 = _$1.partial(h.i18nScope, 'projects.dashboard_video');
 
 var projectBudgetEdit$2 = {
     controller: function controller(args) {
@@ -12310,9 +12362,9 @@ var projectBudgetEdit$2 = {
             message: I18n$1.t('shared.failed_update'),
             toggleOpt: ctrl.showError,
             error: true
-        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('video_alert', I18nScope$33()))])]), m(inputCard, {
-            label: I18n$1.t('video_label', I18nScope$33()),
-            label_hint: I18n$1.t('video_hint', I18nScope$33()),
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('video_alert', I18nScope$34()))])]), m(inputCard, {
+            label: I18n$1.t('video_label', I18nScope$34()),
+            label_hint: I18n$1.t('video_hint', I18nScope$34()),
             children: [m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.video_url(),
                 class: vm.e.hasError('video_url') ? 'error' : '',
@@ -12390,7 +12442,7 @@ var bigCard = {
     }
 };
 
-var I18nScope$34 = _$1.partial(h.i18nScope, 'projects.dashboard_goal');
+var I18nScope$35 = _$1.partial(h.i18nScope, 'projects.dashboard_goal');
 
 var projectGoalEdit = {
     controller: function controller(args) {
@@ -12455,18 +12507,18 @@ var projectGoalEdit = {
             toggleOpt: ctrl.showError,
             error: true
         }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(bigCard, {
-            label: I18n$1.t('mode_label', I18nScope$34()),
-            label_hint: I18n$1.t('mode_hint', I18nScope$34()),
+            label: I18n$1.t('mode_label', I18nScope$35()),
+            label_hint: I18n$1.t('mode_hint', I18nScope$35()),
             children: [m('.flex-row.u-marginbottom-30', [m('a.choose-mode.choose-aon.w-inline-block.btn-select.flex-column.u-text-center[data-mode="aon"][href="javascript:void(0);"]', {
                 onclick: vm.genClickChangeMode('aon'),
                 class: vm.fields.mode() == 'aon' ? 'selected' : false
             }, [m('img[alt="Badge aon"][src="/assets/catarse_bootstrap/badge-aon.png"]')]), m('a.choose-mode.choose-flex.w-inline-block.btn-select.flex-column.u-text-center[data-mode="flex"][href="javascript:void(0);"]', {
                 onclick: vm.genClickChangeMode('flex'),
                 class: vm.fields.mode() == 'flex' ? 'selected' : false
-            }, [m('img[alt="Badge flex"][src="/assets/catarse_bootstrap/badge-flex.png"]')])]), m('.u-text-center.fontsize-smaller', [m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javscript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, ['Veja a diferença entre os modelos ', m('span.fa.fa-chevron-down')])]), ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [m('.flex-row', [m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('aon_diff_html', I18nScope$34()))), m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('flex_diff_html', I18nScope$34())))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$34())), m.trust(I18n$1.t('mode_diff_ebook', I18nScope$34()))])]) : '']
+            }, [m('img[alt="Badge flex"][src="/assets/catarse_bootstrap/badge-flex.png"]')])]), m('.u-text-center.fontsize-smaller', [m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javscript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, ['Veja a diferença entre os modelos ', m('span.fa.fa-chevron-down')])]), ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [m('.flex-row', [m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('aon_diff_html', I18nScope$35()))), m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('flex_diff_html', I18nScope$35())))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$35())), m.trust(I18n$1.t('mode_diff_ebook', I18nScope$35()))])]) : '']
         }), m(bigCard, {
-            label: I18n$1.t('goal_label', I18nScope$34()),
-            label_hint: I18n$1.t('goal_hint', I18nScope$34()),
+            label: I18n$1.t('goal_label', I18nScope$35()),
+            label_hint: I18n$1.t('goal_hint', I18nScope$35()),
             children: [m('.w-row.u-marginbottom-30', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.w-row', [m('.w-col.w-col-4.w-col-small-6.w-col-tiny-6.text-field.prefix.no-hover.medium.prefix-permalink', [m('.fontcolor-secondary.u-text-center.fontsize-base.lineheight-tightest', 'R$')]), m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6.label-hide', [m('.input.tel.optional.project_goal', [m('label.field-label'), m('input.string.optional.w-input.text-field.postfix.positive.medium[autocomplete="off"][id="project-goal-input"][name="project[goal]"][type="tel"]', {
                 class: vm.e.hasError('goal') ? 'error' : false,
                 value: vm.fields.goal(),
@@ -12474,10 +12526,10 @@ var projectGoalEdit = {
                 onkeyup: m.withAttr('value', ctrl.applyGoalMask)
             })])])]), m('.u-text-center', vm.e.inlineError('goal'))]), m('.w-col.w-col-2')]), m('.u-text-center.fontsize-smaller.fontweight-semibold', [m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
                 onclick: ctrl.showTaxesDiff.toggle
-            }, [I18n$1.t('goal_taxes_link', I18nScope$34()), m('span.fa.fa-chevron-down')])]), ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [m('.u-marginbottom-30', [m('.fontsize-small.fontweight-semibold', I18n$1.t('goal_taxes_label', I18nScope$34())), m('.fontsize-smaller', I18n$1.t('goal_' + vm.fields.mode() + '_taxes_hint', I18nScope$34()))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$34())), m.trust(I18n$1.t('goal_taxes_watch_video_html', I18nScope$34()))])]) : '']
+            }, [I18n$1.t('goal_taxes_link', I18nScope$35()), m('span.fa.fa-chevron-down')])]), ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [m('.u-marginbottom-30', [m('.fontsize-small.fontweight-semibold', I18n$1.t('goal_taxes_label', I18nScope$35())), m('.fontsize-smaller', I18n$1.t('goal_' + vm.fields.mode() + '_taxes_hint', I18nScope$35()))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$35())), m.trust(I18n$1.t('goal_taxes_watch_video_html', I18nScope$35()))])]) : '']
         }), m(bigCard, {
-            label: I18n$1.t('online_days_label', I18nScope$34()),
-            label_hint: m.trust(I18n$1.t('online_days_' + vm.fields.mode() + '_hint', I18nScope$34())),
+            label: I18n$1.t('online_days_label', I18nScope$35()),
+            label_hint: m.trust(I18n$1.t('online_days_' + vm.fields.mode() + '_hint', I18nScope$35())),
             children: vm.fields.mode() == 'aon' ? [m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.w-row', [m('.w-col.w-col-8.label-hide', [m('.input.integer.optional.disabled.project_online_days', [m("label.field-label"), m('input.numeric.integer.optional.disabled.w-input.text-field.postfix.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
                 onchange: m.withAttr('value', vm.fields.online_days),
                 class: vm.e.hasError('online_days') ? 'error' : false
@@ -12486,12 +12538,12 @@ var projectGoalEdit = {
                 onclick: function onclick() {
                     vm.fields.online_days('');
                 }
-            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_open', I18nScope$34())), m('.w-hidden-tiny', I18n$1.t('online_days_open_hint', I18nScope$34()))]), m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
+            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_open', I18nScope$35())), m('.w-hidden-tiny', I18n$1.t('online_days_open_hint', I18nScope$35()))]), m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
                 class: _$1.isEmpty(vm.fields.online_days().toString()) ? '' : 'selected',
                 onclick: function onclick() {
                     vm.fields.online_days(1);
                 }
-            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_closed', I18nScope$34())), m('.w-hidden-tiny.u-marginbottom-30', I18n$1.t('online_days_closed_hint', I18nScope$34())), m('.w-row', [m('.w-col.w-col-6.label-hide', [m('.input.integer.optional.project_online_days', [m('label.field-label'), m('input.numeric.integer.optional.w-input.text-field.field.w-input.text-field.medium.prefix[id="project_online_days"][name="project[online_days]"][type="number"]', {
+            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_closed', I18nScope$35())), m('.w-hidden-tiny.u-marginbottom-30', I18n$1.t('online_days_closed_hint', I18nScope$35())), m('.w-row', [m('.w-col.w-col-6.label-hide', [m('.input.integer.optional.project_online_days', [m('label.field-label'), m('input.numeric.integer.optional.w-input.text-field.field.w-input.text-field.medium.prefix[id="project_online_days"][name="project[online_days]"][type="number"]', {
                 onchange: m.withAttr('value', vm.fields.online_days),
                 value: vm.fields.online_days(),
                 class: vm.e.hasError('online_days') ? 'error' : false
@@ -12588,7 +12640,7 @@ var projectCardVM = {
     reloadCurrentProject: reloadCurrentProject
 };
 
-var I18nScope$35 = _$1.partial(h.i18nScope, 'projects.dashboard_card');
+var I18nScope$36 = _$1.partial(h.i18nScope, 'projects.dashboard_card');
 
 var projectCardEdit = {
     controller: function controller(args) {
@@ -12661,15 +12713,15 @@ var projectCardEdit = {
             toggleOpt: ctrl.showError,
             error: true
         }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-8', [m(inputCard, {
-            label: I18n$1.t('uploaded_image_label', I18nScope$35()),
-            label_hint: I18n$1.t('uploaded_image_hint', I18nScope$35()),
+            label: I18n$1.t('uploaded_image_label', I18nScope$36()),
+            label_hint: I18n$1.t('uploaded_image_hint', I18nScope$36()),
             children: [m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[uploaded_image]"][type="file"]', {
                 class: vm.e.hasError('uploaded_image') ? 'error' : false,
                 onchange: vm.prepareForUpload
             }), vm.e.inlineError('uploaded_image')]
         }), m(inputCard, {
-            label: I18n$1.t('headline_label', I18nScope$35()),
-            label_hint: I18n$1.t('headline_label_hint', I18nScope$35()),
+            label: I18n$1.t('headline_label', I18nScope$36()),
+            label_hint: I18n$1.t('headline_label_hint', I18nScope$36()),
             children: [m('textarea.text.optional.w-input.text-field.positive[id="project_headline"][maxlength="100"][name="project[headline]"][rows="3"]', {
                 onchange: m.withAttr('value', vm.fields.headline),
                 class: vm.e.hasError('headline') ? 'error' : false
@@ -12740,4 +12792,4 @@ var c = {
 return c;
 
 }(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
