@@ -16,26 +16,23 @@ const editRewardCard = {
             fees = m.prop(),
             statesLoader = rewardVM.statesLoader,
             updateOptions = () => {
-                if ((shipping_options() === 'national' || shipping_options() === 'national') && !_.contains(_.pluck(fees(), 'destination'), 'others')) {
-                    fees().unshift({
-                        value: 0,
-                        destination: 'others'
-                    });
-                    fees(fees());
+                if ((shipping_options() === 'national' || shipping_options() === 'international')) {
+                    if (!_.contains(_.pluck(fees(), 'destination'), 'others')) {
+                        fees().push({
+                            value: 0,
+                            destination: 'others'
+                        });
+                    }
+                    fees(_.reject(fees(), fee => fee.destination === 'international'));
                 }
                 if (shipping_options() === 'international') {
                     if (!_.contains(_.pluck(fees(), 'destination'), 'international')) {
-                        fees().unshift({
+                        fees().push({
                             value: 0,
                             destination: 'international'
                         });
-                        fees(fees());
                     }
                 }
-            },
-            newFee = {
-                value: null,
-                destination: null
             };
 
         statesLoader.load().then((data) => {
@@ -56,7 +53,6 @@ const editRewardCard = {
         return {
             minimumValue,
             maximumContributions,
-            newFee,
             updateOptions,
             shipping_options,
             states,
@@ -68,6 +64,7 @@ const editRewardCard = {
     view(ctrl) {
         const reward = ctrl.reward,
             index = ctrl.index,
+            newFee = { value: null, destination: null },
             fees = ctrl.fees();
 
         return m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
@@ -206,7 +203,7 @@ const editRewardCard = {
                                         m('.u-margintop-20',
                                             m("a.alt-link[href='#']", {
                                                 onclick: () => {
-                                                    ctrl.fees().push(ctrl.newFee);
+                                                    ctrl.fees().push(newFee);
                                                     return false;
                                                 }
                                             },
