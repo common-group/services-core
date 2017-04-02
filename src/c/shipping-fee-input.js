@@ -17,7 +17,6 @@ const shippingFeeInput = {
                 const feeToUpdateIndex = _.indexOf(fees(), fee);
                 fee.destination = feeDestination();
                 fees()[feeToUpdateIndex] = fee;
-                fees(fees());
             };
 
         return {

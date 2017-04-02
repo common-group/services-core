@@ -13,7 +13,7 @@ const editRewardCard = {
             maximumContributions = m.prop(args.reward.maximum_contributions),
             index = args.index,
             states = m.prop([]),
-            fees = m.prop(),
+            fees = m.prop([]),
             statesLoader = rewardVM.statesLoader,
             updateOptions = () => {
                 if ((shipping_options() === 'national' || shipping_options() === 'international')) {
@@ -42,12 +42,10 @@ const editRewardCard = {
                 name: 'Estado'
             });
 
-            rewardVM.getFees(args.reward).then((feeData) => {
-                if (!args.reward.newReward) {
-                    fees(feeData);
-                }
-                updateOptions();
-            });
+            if (!args.reward.newReward) {
+                rewardVM.getFees(args.reward).then(fees);
+            }
+            updateOptions();
         });
 
         return {
