@@ -135,6 +135,8 @@ const canEdit = (reward, projectState) => projectState === 'draft' || (projectSt
 
 const canAdd = projectState => projectState === 'draft' || projectState === 'online';
 
+const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free' || reward.shipping_options === 'presential');
+
 const rewardVM = {
     canEdit,
     canAdd,
@@ -155,7 +157,8 @@ const rewardVM = {
     shippingFeeForCurrentReward,
     statesLoader,
     getValue: contributionValue,
-    setValue: contributionValue
+    setValue: contributionValue,
+    hasShippingOptions
 };
 
 export default rewardVM;

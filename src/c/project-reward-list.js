@@ -24,7 +24,6 @@ const projectRewardList = {
 
                 return false;
             };
-        const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
 
         const setInput = (el, isInitialized) => (!isInitialized ? el.focus() : false);
 
@@ -40,9 +39,9 @@ const projectRewardList = {
 
         const submitContribution = () => {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
-            const shippingFee = hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
+            const shippingFee = rewardVM.hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
-            if (!selectedDestination() || hasShippingOptions(vm.selectedReward())) {
+            if (!selectedDestination() || rewardVM.hasShippingOptions(vm.selectedReward())) {
                 vm.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
@@ -72,7 +71,6 @@ const projectRewardList = {
         return {
             setInput,
             submitContribution,
-            hasShippingOptions,
             toggleDescriptionExtended,
             isRewardOpened,
             isRewardDescriptionExtended,
@@ -133,7 +131,7 @@ const projectRewardList = {
                         h.momentify(reward.deliver_at, 'MMM/YYYY')
                     )
                 ] : ''),
-                m('.w-col.w-col-6', ctrl.hasShippingOptions(reward) ? [
+                m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) ? [
                     m('.fontcolor-secondary.fontsize-smallest',
                         m('span',
                             'Envio:'
@@ -164,7 +162,7 @@ const projectRewardList = {
                         onsubmit: ctrl.submitContribution
                     }, [
                         m('.divider.u-marginbottom-20'),
-                        ctrl.hasShippingOptions(reward) ? m('div', [
+                        rewardVM.hasShippingOptions(reward) ? m('div', [
                             m('.fontcolor-secondary.u-marginbottom-10',
                                 'Local de entrega'
                             ),

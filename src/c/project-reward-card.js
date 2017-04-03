@@ -1,4 +1,5 @@
 import m from 'mithril';
+import rewardVM from '../vms/reward-vm';
 
 const projectRewardCard = {
     controller() {
@@ -45,7 +46,7 @@ const projectRewardCard = {
                         h.momentify(reward.deliver_at, 'MMM/YYYY')
                     )
                 ] : ''),
-                m('.w-col.w-col-6', ctrl.hasShippingOptions(reward) ? [
+                m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) ? [
                     m('.fontcolor-secondary.fontsize-smallest',
                         m('span',
                             'Envio:'
@@ -76,19 +77,16 @@ const projectRewardCard = {
                         onsubmit: ctrl.submitContribution
                     }, [
                         m('.divider.u-marginbottom-20'),
-                        true ? m('div',
-                        // ctrl.hasShippingOptions(reward) ? m('div',
-                                [
-                                    m('.fontcolor-secondary.u-marginbottom-10',
-                                        'Local de entrega'
-                                    ),
-                                    m('select.positive.text-field.w-select', {
-                                        onchange: m.withAttr('value', ctrl.selectedDestination)
-                                    },
-                                        _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, option.name))
-                                    )
-                                ]
-                            ) : '',
+                        (rewardVM.hasShippingOptions(reward) ? m('div', [
+                            m('.fontcolor-secondary.u-marginbottom-10',
+                              'Local de entrega'
+                             ),
+                            m('select.positive.text-field.w-select', {
+                                onchange: m.withAttr('value', ctrl.selectedDestination)
+                            },
+                              _.map(ctrl.locationOptions(reward), option => m(`option[value="${option.value}"]`, option.name))
+                             )
+                        ]) : ''),
                         m('.fontcolor-secondary.u-marginbottom-10',
                             'Valor do apoio'
                         ),
