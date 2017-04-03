@@ -18,8 +18,32 @@ const projectEditReward = {
                 edit: m.prop(true),
                 limited: h.toggleProp(false, true),
                 maximum_contributions: null,
-                newReward: true
+                newReward: true,
+                row_order: null
             };
+
+        const updateRewardSortPosition = (rewardId, position) => m.request({
+            method: 'POST',
+            url: `/pt/projects/${args.project_id}/rewards/${rewardId}/sort`,
+            headers: {
+                accept: 'application/json, text/javascript, */*; q=0.01'
+            },
+            data: {
+                'reward[row_order_position]': String(position)
+            }
+        });
+
+        const setSorting = (el, isInit) => {
+            if (!isInit && window.$) {
+                window.$(el).sortable({
+                    update: (event, ui) => {
+                        const rewardId = ui.item[0].id;
+                        updateRewardSortPosition(rewardId, ui.item.index());
+                    }
+                });
+            }
+        };
+
         rewardVM.fetchRewards(args.project_id).then(() => {
             _.map(rewardVM.rewards(), (reward) => {
                 const limited = reward.maximum_contributions !== null;
@@ -37,7 +61,8 @@ const projectEditReward = {
         return {
             rewards,
             availableCount,
-            newReward
+            newReward,
+            setSorting
         };
     },
 
@@ -55,8 +80,10 @@ const projectEditReward = {
                                 m("input[id='anchor'][name='anchor'][type='hidden'][value='reward']"),
                                 m("[id='dashboard-rewards']", [
 
-                                    m(".ui-sortable[id='rewards']", [
-                                        _.map(ctrl.rewards(), (reward, index) => m('div', [m('.nested-fields.ui-sortable-handle',
+                                    ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
+                                        config: ctrl.setSorting
+                                    }, [
+                                        _.map(_.sortBy(ctrl.rewards(), reward => reward.row_order), (reward, index) => m(`div[id=${reward.id}]`, [m('.nested-fields',
                                                 m('.reward-card', [
                                                     (!reward.edit() ?
                                                         m(dashboardRewardCard, {
