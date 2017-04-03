@@ -19,7 +19,7 @@ const rewardSelectCard = {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
             const shippingFee = hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
-            if (!selectedDestination()) {
+            if (!selectedDestination() && hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
