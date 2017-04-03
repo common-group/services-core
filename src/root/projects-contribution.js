@@ -62,7 +62,7 @@ const projectsContribution = {
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                                 m('input[type="hidden"][value="10"]',
                                 { name: 'contribution[value]' }),
-                                _.map(ctrl.rewards(), reward => m(rewardSelectCard, { reward }))
+                                _.map(_.sortBy(ctrl.rewards(), reward => reward.row_order), reward => m(rewardSelectCard, { reward }))
                             ])
                         )
                     ),

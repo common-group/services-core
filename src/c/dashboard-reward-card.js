@@ -16,7 +16,7 @@ const dashboardRewardCard = {
     },
     view(ctrl, args) {
         const reward = args.reward;
-        return m(`.w-row.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable[data-update_url='/pt/projects/${args.project_id}/rewards/${reward.id}/sort']`, [
+        return m('.w-row.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.w-sub-col.w-col.w-col-5', [
                 m('span.fontcolor-secondary.fontsize-smallest',
                     'Link para apoio direto'
