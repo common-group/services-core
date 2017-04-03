@@ -33,9 +33,11 @@ const shippingFeeInput = {
         };
     },
     view(ctrl) {
+        console.log(ctrl.fees());
         const feeIndex = ctrl.feeIndex,
             index = ctrl.index,
             deleted = ctrl.deleted,
+            othersCount = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international').length,
             states = ctrl.states;
 
         return m(`div${deleted() ? '.w-hidden' : ''}`, [
@@ -50,7 +52,7 @@ const shippingFeeInput = {
                                 value: 'others'
                             }),
                             m('label.field-label.fontsize-smallest',
-                                (ctrl.fees().length > 0 ? 'Resto do Brasil' : 'Todos os estados do Brasil')
+                                (othersCount > 0 ? 'Resto do Brasil' : 'Todos os estados do Brasil')
                             )
                         ] :
 
