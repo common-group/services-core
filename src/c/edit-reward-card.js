@@ -12,6 +12,7 @@ const editRewardCard = {
             minimumValue = m.prop(args.reward.minimum_value),
             maximumContributions = m.prop(args.reward.maximum_contributions),
             index = args.index,
+            showTips = h.toggleProp(false, true),
             states = m.prop([]),
             fees = m.prop([]),
             statesLoader = rewardVM.statesLoader,
@@ -52,6 +53,7 @@ const editRewardCard = {
             minimumValue,
             maximumContributions,
             updateOptions,
+            showTips,
             shipping_options,
             states,
             reward,
@@ -70,11 +72,12 @@ const editRewardCard = {
                 m('.fontweight-semibold.fontsize-smallest.u-marginbottom-10', [
                     'Editar recompensa',
                     m.trust('&nbsp;'),
-                    m("a.link-edit.fa.fa-question-circle[href='javascript:void(0);']")
+                    m('a.link-edit.fa.fa-question-circle', { onclick: () => ctrl.showTips.toggle() })
                 ]),
-                m('.fontsize-smallest.fontcolor-secondary.reward-explanation.w-hidden.u-marginbottom-20',
+                (ctrl.showTips() ?
+                m('.fontsize-smallest.fontcolor-secondary.reward-explanation.u-marginbottom-20',
                     'Descreva o valor da recompensa e coloque uma previsão de data de entrega real para os apoiadores. Você também pode limitar uma recompensa e quando o limite é atingido ela aparece como ESGOTADA. Se quiser mudar a ordem que as recompensas aparecem em seu projeto, basta fazer isso arrastando-as para cima ou para baixo.'
-                )
+                ) : '')
             ]),
             m('.w-col.w-col-7',
                 m('.card',
