@@ -33,7 +33,6 @@ const shippingFeeInput = {
         };
     },
     view(ctrl) {
-        console.log(ctrl.fees());
         const feeIndex = ctrl.feeIndex,
             index = ctrl.index,
             deleted = ctrl.deleted,
