@@ -121,10 +121,12 @@ const editRewardCard = {
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
                                                 name: `project[rewards_attributes][${index}][deliver_at(2i)]`
                                             }, [
-                                                _.map(moment.monthsShort(), (month, monthIndex) =>
-                                                    m(`option[value='${monthIndex + 1}']${moment(reward.deliver_at).format('MMM') === month ? "[selected='selected']" : ''}`,
-                                                        h.capitalize(month)
-                                                    )
+                                                _.map(moment.monthsShort(), (month, monthIndex) => {
+                                                    const selectedMonth = reward.deliver_at ? moment(reward.deliver_at).format('MMM') : moment().format('MMM');
+                                                    return m(`option[value='${monthIndex + 1}']${selectedMonth === month ? "[selected='selected']" : ''}`,
+                                                          h.capitalize(month)
+                                                      );
+                                                }
                                                 )
                                             ]),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
@@ -238,13 +240,14 @@ const editRewardCard = {
                                 '')
                         ]),
                         m('.w-row.u-margintop-30', [
+                            (reward.newReward ? '' :
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                                 m("input.w-button.btn-terciary.btn.btn-small.reward-close-button[type='submit'][value='Fechar']", {
                                     onclick: () => {
                                         reward.edit.toggle();
                                     }
                                 })
-                            ),
+                            )),
                             m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                                 m(`input[id='project_rewards_attributes_${index}__destroy'][type='hidden'][value='false']`, {
                                     name: `project[rewards_attributes][${index}][_destroy]`
