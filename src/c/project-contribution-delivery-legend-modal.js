@@ -9,11 +9,11 @@ const ProjectContributionDeliveryLegendModal = {
                     'Status da entrega')
             ]),
             m('.modal-dialog-content', [
-                m('.fontsize-small.u-marginbottom-30',
+                m('.fontsize-smaller.u-marginbottom-30',
                     'Todo apoio tem, por padrão, o status de entrega \'Não enviada\'. Para ajudar no seu controle da entrega de recompensas, você pode alterar esses status e filtrar a pesquisa de apoios com os seguintes rótulos:'
                 ),
                 m('.u-marginbottom-20', [
-                    m('.fontsize-small.fontweight-semibold', [
+                    m('.fontsize-smaller.fontweight-semibold', [
                         'Não enviada',
                         m.trust('&nbsp;')
                     ]),
@@ -22,7 +22,7 @@ const ProjectContributionDeliveryLegendModal = {
                     )
                 ]),
                 m('div',
-                    m('span.fontsize-small.badge.badge-success',
+                    m('span.fontsize-smaller.badge.badge-success',
                         'Enviada'
                     )
                 ),
@@ -33,7 +33,7 @@ const ProjectContributionDeliveryLegendModal = {
                 ),
                 m('.u-marginbottom-20', [
                     m('div',
-                        m('span.fontsize-small.badge.badge-attention',
+                        m('span.fontsize-smaller.badge.badge-attention',
                             'Erro no envio'
                         )
                     ),
@@ -43,7 +43,7 @@ const ProjectContributionDeliveryLegendModal = {
                 ]),
                 m('.u-marginbottom-20', [
                     m('div',
-                        m('span.fontsize-small.badge.badge-success', [
+                        m('span.fontsize-smaller.badge.badge-success', [
                             m('span.fa.fa-check-circle',
                                 ''
                             ),
@@ -54,6 +54,10 @@ const ProjectContributionDeliveryLegendModal = {
                         'O apoiador marcou a recompensa como \'Recebida\' no seu painel de controle \o/'
                     )
                 ])
+            ]),
+            m('.divider.u-marginbottom-10'),
+            m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-30', [
+                'Obs: mesmo que a recompensa não seja física (como uma cópia digital, por exemplo), você pode mesmo assim usar o sistema acima!'
             ])
         ]);
     }
