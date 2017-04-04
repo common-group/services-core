@@ -154,7 +154,7 @@ const rewardSelectCard = {
                             m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
                         ]),
                         !ctrl.hasShippingOptions(reward) ? '' : m('.w-col.w-col-6', [
-                            m('.fontsize-smallest.fontcolor-secondary', 'Forma de envior:'),
+                            m('.fontsize-smallest.fontcolor-secondary', 'Forma de envio:'),
                             m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
                         ])
                     ])
