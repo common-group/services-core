@@ -40,24 +40,30 @@ const rewardSelectCard = {
             rewardVM.applyMask(`${shippingFee + rewardMinValue},00`);
         };
 
-        let reward = args.reward;
+        const normalReward = (reward) => {
+            if (_.isEmpty(reward)) {
+                return {
+                    id: '',
+                    description: 'Obrigado. Eu só quero ajudar o projeto.',
+                    minimum_value: 10,
+                    shipping_options: null,
+                    row_order: -999999
+                };
+            }
 
-        if (_.isEmpty(reward)) {
-            reward = {
-                id: '',
-                description: 'Obrigado. Eu só quero ajudar o projeto.',
-                minimum_value: 10,
-                shipping_options: null
-            };
-        }
+            if (reward.id === Number(queryRewardId)) {
+                rewardVM.selectReward(reward).call();
+            }
 
-        if (reward.id === Number(queryRewardId)) {
-            rewardVM.selectReward(reward).call();
-        }
+            return reward;
+        };
+
+
+
         rewardVM.getStates();
 
         return {
-            reward,
+            normalReward,
             isSelected,
             setInput,
             hasShippingOptions,
@@ -72,8 +78,8 @@ const rewardSelectCard = {
             contributionValue: rewardVM.contributionValue
         };
     },
-    view(ctrl) {
-        const reward = ctrl.reward;
+    view(ctrl, args) {
+        const reward = ctrl.normalReward(args.reward);
 
         return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
             class: ctrl.isSelected(reward) ? 'selected' : '',

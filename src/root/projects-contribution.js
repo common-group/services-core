@@ -12,7 +12,13 @@ import faqBox from '../c/faq-box';
 const projectsContribution = {
     controller() {
         const rewards = () => _.union(
-            [{}],
+            [{
+                id: null,
+                description: 'Obrigado. Eu só quero ajudar o projeto.',
+                minimum_value: 10,
+                shipping_options: null,
+                row_order: -9999999
+            }],
             projectVM.rewardDetails()
         );
 
@@ -28,18 +34,18 @@ const projectsContribution = {
 
             return false;
         };
+
         projectVM.getCurrentProject();
 
         return {
             paymentVM: paymentVM(projectVM.currentProject().mode),
             project: projectVM.currentProject,
             submitContribution,
-            rewards
+            sortedRewards: () => _.sortBy(rewards(), reward => Number(reward.row_order))
         };
     },
     view(ctrl) {
-        const project = ctrl.project,
-              sortedRewards = (_.sortBy(ctrl.rewards(), reward => reward.row_order));
+        const project = ctrl.project;
 
         return m('#contribution-new',
             project && !_.isUndefined(project()) ? [
@@ -61,9 +67,7 @@ const projectsContribution = {
                                 { onsubmit: ctrl.submitContribution }
                             , [
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
-                                m('input[type="hidden"][value="10"]',
-                                { name: 'contribution[value]' }),
-                                _.map(sortedRewards, reward => m(rewardSelectCard, { reward }))
+                                _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, { reward }))
                             ])
                         )
                     ),
