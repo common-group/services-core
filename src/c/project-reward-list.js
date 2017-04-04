@@ -1,9 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
 import I18n from 'i18n-js';
 import h from '../h';
-import models from '../models';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
@@ -90,7 +88,7 @@ const projectRewardList = {
         const project = args.project() || {
             open_for_contributions: false
         };
-        return m('#rewards.reward.u-marginbottom-30', _.map(_.sortBy(args.rewardDetails(), reward => reward.row_order), reward => m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
+        return m('#rewards.reward.u-marginbottom-30', _.map(_.sortBy(args.rewardDetails(), reward => Number(reward.row_order)), reward => m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
             onclick: h.analytics.event({
                 cat: 'contribution_create',
                 act: 'contribution_reward_click',

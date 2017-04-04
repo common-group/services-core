@@ -83,7 +83,7 @@ const projectEditReward = {
                                     ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
                                         config: ctrl.setSorting
                                     }, [
-                                        _.map(_.sortBy(ctrl.rewards(), reward => reward.row_order), (reward, index) => m(`div[id=${reward.id}]`, [m('.nested-fields',
+                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward.row_order)), (reward, index) => m(`div[id=${reward.id}]`, [m('.nested-fields',
                                                 m('.reward-card', [
                                                     (!reward.edit() ?
                                                         m(dashboardRewardCard, {
