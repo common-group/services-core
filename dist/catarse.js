@@ -7737,7 +7737,7 @@ var rewardSelectCard = {
             value: ctrl.contributionValue()
         }))]), m('.fontsize-smaller.text-error.u-marginbottom-20.w-hidden', [m('span.fa.fa-exclamation-triangle'), ' O valor do apoio está incorreto'])]), m('.submit-form.w-col.w-col-4', m('button.btn.btn-medium.u-margintop-30', {
             onclick: ctrl.submitContribution
-        }, ['Continuar  ', m('span.fa.fa-chevron-right')]))]), ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [m('br'), m('span.fa.fa-exclamation-triangle'), ' ' + ctrl.error()]) : '', m('.back-reward-reward-description', [m('.fontsize-smaller.u-marginbottom-10', reward.description), m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))]), !ctrl.hasShippingOptions(reward) ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Forma de envio:'), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$16()))])])])]));
+        }, ['Continuar  ', m('span.fa.fa-chevron-right')]))]), ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [m('br'), m('span.fa.fa-exclamation-triangle'), ' ' + ctrl.error()]) : '', m('.back-reward-reward-description', [m('.fontsize-smaller.u-marginbottom-10', reward.description), m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))]), !ctrl.hasShippingOptions(reward) ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Envio:'), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$16()))])])])]));
     }
 };
 
@@ -11730,12 +11730,12 @@ var projectEditReward = {
         var updateRewardSortPosition = function updateRewardSortPosition(rewardId, position) {
             return m.request({
                 method: 'POST',
-                url: '/pt/projects/' + args.project_id + '/rewards/' + rewardId + '/sort',
-                headers: {
-                    accept: 'application/json, text/javascript, */*; q=0.01'
-                },
-                data: {
-                    'reward[row_order_position]': String(position)
+                url: '/pt/projects/' + args.project_id + '/rewards/' + rewardId + '/sort?reward[row_order_position]=' + position,
+                config: function config(xhr) {
+                    if (h.authenticityToken()) {
+                        xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+                        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    }
                 }
             });
         };
