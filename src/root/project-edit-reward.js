@@ -19,7 +19,7 @@ const projectEditReward = {
                 limited: h.toggleProp(false, true),
                 maximum_contributions: null,
                 newReward: true,
-                row_order: null
+                row_order: 999999999 + (rewards().length * 20)// we need large and spaced apart numbers
             };
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
