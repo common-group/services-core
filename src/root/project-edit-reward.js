@@ -24,13 +24,13 @@ const projectEditReward = {
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
             method: 'POST',
-            url: `/pt/projects/${args.project_id}/rewards/${rewardId}/sort`,
-            headers: {
-                accept: 'application/json, text/javascript, */*; q=0.01'
+            url: `/pt/projects/${args.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
+            config: (xhr) => {
+                if (h.authenticityToken()) {
+                    xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+                    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                }
             },
-            data: {
-                'reward[row_order_position]': String(position)
-            }
         });
 
         const setSorting = (el, isInit) => {
