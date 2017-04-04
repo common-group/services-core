@@ -98,7 +98,7 @@ const rewardSelectCard = {
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
                                 option => m(`option[value="${option.value}"]`, [
                                     `${option.name} `,
-                                    option.fee ? `+R$${option.fee}` : null
+                                    option.fee ? `+R$${option.fee}` : `+R$0`
                                 ])
                             )
                         )

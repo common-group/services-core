@@ -176,7 +176,7 @@ const projectRewardList = {
                                         { selected: option.value === ctrl.selectedDestination() },
                                         [
                                             `${option.name} `,
-                                            option.fee ? `+R$${option.fee}` : null
+                                            option.fee ? `+R$${option.fee}` : `+R$0`
                                         ]
                                     )
                                 )
