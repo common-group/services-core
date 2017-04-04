@@ -38,7 +38,8 @@ const projectsContribution = {
         };
     },
     view(ctrl) {
-        const project = ctrl.project;
+        const project = ctrl.project,
+              sortedRewards = (_.sortBy(ctrl.rewards(), reward => reward.row_order));
 
         return m('#contribution-new',
             project && !_.isUndefined(project()) ? [
@@ -62,7 +63,7 @@ const projectsContribution = {
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                                 m('input[type="hidden"][value="10"]',
                                 { name: 'contribution[value]' }),
-                                _.map(_.sortBy(ctrl.rewards(), reward => reward.row_order), reward => m(rewardSelectCard, { reward }))
+                                _.map(sortedRewards, reward => m(rewardSelectCard, { reward }))
                             ])
                         )
                     ),
