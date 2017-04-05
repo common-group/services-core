@@ -32,7 +32,7 @@ const projectRewardList = {
                 ? Number(vm.shippingFeeForCurrentReward(selectedDestination).value)
                 : 0;
             const rewardMinValue = Number(vm.selectedReward().minimum_value);
-            vm.applyMask(shippingFee + rewardMinValue + ',00');
+            vm.applyMask(`${shippingFee + rewardMinValue},00`);
         };
 
         const submitContribution = () => {
@@ -129,7 +129,7 @@ const projectRewardList = {
                         h.momentify(reward.deliver_at, 'MMM/YYYY')
                     )
                 ] : ''),
-                m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) ? [
+                m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) || reward.shipping_options === 'presential' ? [
                     m('.fontcolor-secondary.fontsize-smallest',
                         m('span',
                             'Envio:'

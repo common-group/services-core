@@ -12,14 +12,13 @@ const rewardSelectCard = {
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
         const isSelected = currentReward => currentReward.id === rewardVM.selectedReward().id;
         const selectedDestination = m.prop('');
-        const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free');
         const queryRewardId = h.getParams('reward_id');
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
-            const shippingFee = hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
+            const shippingFee = rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
-            if (!selectedDestination() && hasShippingOptions(rewardVM.selectedReward())) {
+            if (!selectedDestination() && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
@@ -59,14 +58,12 @@ const rewardSelectCard = {
         };
 
 
-
         rewardVM.getStates();
 
         return {
             normalReward,
             isSelected,
             setInput,
-            hasShippingOptions,
             submitContribution,
             selectDestination,
             selectedDestination,
@@ -93,7 +90,7 @@ const rewardSelectCard = {
                 m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`,
                     `R$ ${h.formatNumber(reward.minimum_value)} ou mais`
                 ), !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
-                    ctrl.hasShippingOptions(reward) ?
+                    rewardVM.hasShippingOptions(reward) ?
                     m('.w-sub-col.w-col.w-col-4', [
                         m('.fontcolor-secondary.u-marginbottom-10',
                             'Local de entrega'
@@ -110,7 +107,7 @@ const rewardSelectCard = {
                         )
                     ]) : '',
                     m('.w-sub-col.w-col.w-clearfix', {
-                        class: ctrl.hasShippingOptions(reward) ?
+                        class: rewardVM.hasShippingOptions(reward) ?
                             'w-col-4' :
                             'w-col-8'
                     }, [
@@ -159,7 +156,7 @@ const rewardSelectCard = {
                             m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
                             m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
                         ]),
-                        !ctrl.hasShippingOptions(reward) ? '' : m('.w-col.w-col-6', [
+                        (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
                             m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
                         ])
