@@ -42,7 +42,7 @@ const rewardSelectCard = {
         const normalReward = (reward) => {
             if (_.isEmpty(reward)) {
                 return {
-                    id: '',
+                    id: null,
                     description: 'Obrigado. Eu só quero ajudar o projeto.',
                     minimum_value: 10,
                     shipping_options: null,

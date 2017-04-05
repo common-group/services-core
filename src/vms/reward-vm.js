@@ -58,7 +58,9 @@ const selectReward = reward => () => {
         error('');
         selectedReward(reward);
         contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
-        getFees(reward).then(fees);
+        if(reward.id) {
+            getFees(reward).then(fees);
+        }
     }
 };
 
