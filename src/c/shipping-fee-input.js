@@ -95,7 +95,7 @@ const shippingFeeInput = {
                             m("input.positive.postfix.text-field.w-input[type='text']", {
                                 value: ctrl.feeValue(),
                                 name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][value]`,
-                                onchange: m.withAttr('value', ctrl.feeValue)
+                                oninput: m.withAttr('value', ctrl.feeValue)
                             })
                         )
                     ])
