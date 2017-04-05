@@ -50,13 +50,13 @@ const rewardSelectCard = {
                 };
             }
 
-            if (reward.id === Number(queryRewardId)) {
-                rewardVM.selectReward(reward).call();
-            }
-
             return reward;
         };
 
+
+        if (args.reward.id === Number(queryRewardId)) {
+            rewardVM.selectReward(args.reward).call();
+        }
 
         rewardVM.getStates();
 
