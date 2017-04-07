@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
+import userVM from '../vms/user-vm';
 import editRewardCard from '../c/edit-reward-card';
 import dashboardRewardCard from '../c/dashboard-reward-card';
 
@@ -60,6 +61,7 @@ const projectEditReward = {
         });
         return {
             rewards,
+            user: userVM.fetchUser(args.user_id),
             availableCount,
             newReward,
             setSorting
@@ -88,11 +90,11 @@ const projectEditReward = {
                                                     (!reward.edit() ?
                                                         m(dashboardRewardCard, {
                                                             reward,
+                                                            user: ctrl.user(),
                                                             project_id: args.project_id,
                                                             project_state: args.project_state,
                                                         }) :
                                                         m(editRewardCard, {
-                                                            canEdit: rewardVM.canEdit(reward, args.project_state),
                                                             reward,
                                                             index
                                                         }))

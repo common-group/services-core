@@ -53,7 +53,7 @@ const dashboardRewardCard = {
                                 `Para R$ ${reward.minimum_value} ou mais`
                             )
                         ),
-                        (rewardVM.canEdit(reward, args.project_state) ?
+                        (rewardVM.canEdit(reward, args.project_state, args.user) ?
                             m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                                 m("a.show_reward_form[href='javascript:void(0);']", {
                                     onclick: () => {
