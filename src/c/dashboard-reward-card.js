@@ -67,10 +67,7 @@ const dashboardRewardCard = {
                     m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
                         `${reward.paid_count} apoiadores`
                     ),
-                    reward.description,
-                    m('p'),
-
-
+                    m.trust(h.simpleFormat(h.strip(reward.description))),
                     (reward.limited() ? (ctrl.availableCount(reward) <= 0) ?
                         m('.u-margintop-10',
                             m('span.badge.badge-gone.fontsize-smaller',
