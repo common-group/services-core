@@ -189,9 +189,12 @@ const insights = {
                                     'min-height': '300px'
                                 }
                             }, [
+                                m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
+                                    I18n.t('visitors_per_day_label', I18nScope()),
+                                    h.newFeatureBadge()
+                                ]),
                                 !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
                                     collection: ctrl.visitorsPerDay,
-                                    label: I18n.t('visitors_per_day_label', I18nScope()),
                                     dataKey: 'visitors',
                                     xAxis: item => h.momentify(item.day),
                                     emptyState: I18n.t('visitors_per_day_empty', I18nScope())
@@ -233,7 +236,7 @@ const insights = {
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
                                         I18n.t('ref_origin_title', I18nScope()),
-                                        h.newFeatureBadge(),
+                                        ' ',
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
                                     !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {
