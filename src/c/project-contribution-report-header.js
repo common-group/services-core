@@ -1,6 +1,10 @@
 import m from 'mithril';
+import I18n from 'i18n-js';
 import _ from 'underscore';
+import h from '../h';
 import FilterMain from '../c/filter-main';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_contribution_reports');
 
 const projectContributionReportHeader = {
     view(ctrl, args) {
@@ -23,15 +27,18 @@ const projectContributionReportHeader = {
 
         return m('.w-section.dashboard-header',
             m('.w-container', [
-                m('.w-row', [
-                    m('.w-col.w-col-3'),
-                    m('.w-col.w-col-6',
-                        m('.fontsize-larger.fontweight-semibold.lineheight-looser.u-marginbottom-30.u-text-center',
-                            'Relatório de apoios'
-                        )
-                    ),
-                    m('.w-col.w-col-3')
-                ]),
+                m('.w-container',
+                    m('.w-row',
+                        m('.w-col.w-col-8.w-col-push-2.u-marginbottom-30.u-text-center', [
+                            m('.fontweight-semibold.fontsize-larger.lineheight-looser',
+                                I18n.t('title', I18nScope())
+                            ),
+                            m('.fontsize-base',
+                                I18n.t('subtitle_html', I18nScope())
+                            )
+                        ])
+                    )
+                ),
                 m('.w-form', [
                     m('form', {
                         onsubmit: args.submit
