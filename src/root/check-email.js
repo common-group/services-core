@@ -53,7 +53,7 @@ const CheckEmail = {
                     m('.w-row', [
                         m('.w-col.w-col-3'),
                         m('.w-col.w-col-3', [
-                            m('a.btn.btn-medium.btn-terciary.w-button[href="javacript:void(0);"]', {
+                            m('button.btn.btn-medium.btn-terciary.w-button', {
                                 onclick: ctrl.checkEmail
                             }, 'Sim!')
                         ]),
