@@ -13,6 +13,7 @@ const projectContributionReportContent = {
         const showSelectedMenu = h.toggleProp(false, true),
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
+            loading = m.prop(false),
             displayDeliverModal = h.toggleProp(false, true),
             displayErrorModal = h.toggleProp(false, true),
             selectedContributions = m.prop([]),
@@ -34,14 +35,17 @@ const projectContributionReportContent = {
                     message: deliveryMessage(),
                     delivery_status: status
                 };
+                if (status === 'delivered') {
+                    displayDeliverModal.toggle();
+                } else if (status === 'error') {
+                    displayErrorModal.toggle();
+                }
+                loading(true);
+                showSelectedMenu.toggle();
+                m.redraw();
                 projectsContributionReportVM.updateStatus(data).then(() => {
+                    loading(false);
                     showSuccess(true);
-                    if (status === 'delivered') {
-                        displayDeliverModal.toggle();
-                    } else if (status === 'error') {
-                        displayErrorModal.toggle();
-                    }
-                    showSelectedMenu.toggle();
                     // update status so we don't have to reload the page
                     _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
                           item => item.delivery_status = status);
@@ -59,6 +63,7 @@ const projectContributionReportContent = {
             displayDeliverModal,
             displayErrorModal,
             updateStatus,
+            loading,
             showSelectedMenu,
             selectedAny,
             selectedContributions
@@ -68,7 +73,7 @@ const projectContributionReportContent = {
         const list = args.list;
         const isFailed = args.project().state === 'failed';
 
-        return m('.w-section.bg-gray.before-footer.section', [
+        return m('.w-section.bg-gray.before-footer.section', ctrl.loading() ? h.loader() : [
               (ctrl.displayErrorModal() ? m.component(modalBox, {
                   displayModal: ctrl.displayErrorModal,
                   hideCloseButton: false,
@@ -144,21 +149,6 @@ const projectContributionReportContent = {
                     ])
                 ),
 
-                // TODO: ordering filter template
-                // m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
-                // m(".w-form", [
-                // m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
-                // m(".fontsize-smallest.fontcolor-secondary", "Ordenar por:"),
-                // m("select.w-select.text-field.positive.fontsize-smallest[id='field-9'][name='field-9']", [
-                // m("option[value='']", "Data (recentes para antigos)"),
-                // m("option[value='']", "Data (antigos para recentes)"),
-                // m("option[value='']", "Valor (maior para menor)"),
-                // m("option[value='First']", "Valor (menor para maior)")
-                // ])
-                // ])
-                // ])
-                // ])*/
-                // ]),
                 _.map(list.collection(), (item) => {
                     const contribution = m.prop(item);
                     return m.component(projectContributionReportContentCard, {
