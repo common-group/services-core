@@ -31,8 +31,7 @@ const projectContributionReportHeader = {
                     m('.w-row',
                         m('.w-col.w-col-8.w-col-push-2.u-marginbottom-30.u-text-center', [
                             m('.fontweight-semibold.fontsize-larger.lineheight-looser',
-                            { style: 'margin-right: -60px;' }, // Remove inline style together with new feature badge
-                                I18n.t('title', I18nScope()), ' ', h.newFeatureBadge()
+                                I18n.t('title', I18nScope())
                             ),
                             m('.fontsize-base',
                                 I18n.t('subtitle_html', I18nScope())
