@@ -15,36 +15,37 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_basics');
 const projectBasicsEdit = {
     controller(args) {
         const vm = projectBasicsVM,
-              mapErrors = [
-                  ["name", ["name"]],
-                  ["permalink", ["permalink"]],
-                  ["category_id", ["category"]],
-                  ["city_id", ["city"]]
-              ],
-              loading = m.prop(false),
-              cities = m.prop(),
-              categories = m.prop([]),
-              showSuccess = h.toggleProp(false, true),
-              showError = h.toggleProp(false, true),
-              onSubmit = (event) => {
-                  loading(true);
-                  m.redraw();
-                  vm.updateProject(args.projectId).then((data) => {
-                      loading(false);
-                      vm.e.resetFieldErrors();
-                      if(!showSuccess()) { showSuccess.toggle(); }
-                      if(showError()) { showError.toggle(); }
-                  }).catch((err) => {
-                      if(err.errors_json) {
-                          railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
-                      }
-                      loading(false);
-                      if(showSuccess()) { showSuccess.toggle(); }
-                      if(!showError()) { showError.toggle(); }
-                  });
-                  return false;
-              };
-        if(args.rails_errors) {
+            mapErrors = [
+                  ['name', ['name']],
+                  ['public_tags', ['public_tags']],
+                  ['permalink', ['permalink']],
+                  ['category_id', ['category']],
+                  ['city_id', ['city']]
+            ],
+            loading = m.prop(false),
+            cities = m.prop(),
+            categories = m.prop([]),
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            onSubmit = (event) => {
+                loading(true);
+                m.redraw();
+                vm.updateProject(args.projectId).then((data) => {
+                    loading(false);
+                    vm.e.resetFieldErrors();
+                    if (!showSuccess()) { showSuccess.toggle(); }
+                    if (showError()) { showError.toggle(); }
+                }).catch((err) => {
+                    if (err.errors_json) {
+                        railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                    }
+                    loading(false);
+                    if (showSuccess()) { showSuccess.toggle(); }
+                    if (!showError()) { showError.toggle(); }
+                });
+                return false;
+            };
+        if (args.rails_errors) {
             railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
         }
         vm.fillFields(args.project);
@@ -73,7 +74,7 @@ const projectBasicsEdit = {
                 error: true
             }) : ''),
 
-            //add pop notifications here
+            // add pop notifications here
             m('form.w-form', { onsubmit: ctrl.onSubmit }, [
                 m('.w-container', [
                     // admin fields
@@ -151,7 +152,7 @@ const projectBasicsEdit = {
                                 label: I18n.t('permalink', I18nScope()),
                                 label_hint: I18n.t('permalink_hint', I18nScope()),
                                 children: [
-                                    m('.w-row',[
+                                    m('.w-row', [
                                         m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', {
                                             class: vm.e.hasError('permalink') ? 'error' : ''
                                         },
@@ -195,7 +196,7 @@ const projectBasicsEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, {loading: ctrl.loading, onSubmit: ctrl.onSubmit})
+                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
             ])
         ]);
     }
