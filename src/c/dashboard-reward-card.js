@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
+import copyTextInput from './copy-text-input';
 import rewardVM from '../vms/reward-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
@@ -23,22 +24,11 @@ const dashboardRewardCard = {
                 ),
                 m('.u-marginbottom-20.w-row',
                     m('.w-col.w-col-12',
-                        m('.mithril-copy-link',
-                            m('.clipboard.w-row', [
-                                m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
-                                    m('textarea.copy-textarea.text-field.w-input', {
-                                        style: {
-                                            'margin-bottom': '0'
-                                        }
-                                    },
-                                        `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id}`
-                                    )
-                                ),
-                                m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
-                                    m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button')
-                                )
-                            ])
-                        )
+                        m.component(copyTextInput,
+                            {
+                                value: `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id}`
+                            }
+                        ),
                     )
                 ),
                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-20',

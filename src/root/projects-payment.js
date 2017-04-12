@@ -87,6 +87,8 @@ const projectsPayment = {
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
 
+        const isLongDescription = reward => reward.description.length > 110;
+
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
@@ -114,6 +116,7 @@ const projectsPayment = {
             user,
             project,
             shippingFee,
+            isLongDescription,
             toggleDescription: h.toggleProp(false, true)
         };
     },
@@ -406,7 +409,9 @@ const projectsPayment = {
                                     I18n.t('selected_reward.reward', ctrl.scope())
                                 ),
                                 m('.fontsize-smallest.reward-description.opened', {
-                                    class: ctrl.toggleDescription() ? 'extended' : ''
+                                    class: ctrl.isLongDescription(ctrl.reward())
+                                           ? ctrl.toggleDescription() ? 'extended' : ''
+                                           : 'extended'
                                 },
                                     ctrl.reward().description
                                     ? ctrl.reward().description
@@ -416,14 +421,14 @@ const projectsPayment = {
                                         )
                                     ))
                                 ),
-                                m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                                ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
                                     onclick: ctrl.toggleDescription.toggle
                                 }, [
                                     ctrl.toggleDescription() ? 'menos ' : 'mais ',
                                     m('span.fa.fa-angle-down', {
                                         class: ctrl.toggleDescription() ? 'reversed' : ''
                                     })
-                                ])
+                                ]) : ''
                             ]),
                             !_.isEmpty(ctrl.reward().deliver_at) ? [
                                 m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
