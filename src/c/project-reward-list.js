@@ -52,6 +52,7 @@ const projectRewardList = {
         };
         const isRewardOpened = reward => vm.selectedReward().id === reward.id;
         const isRewardDescriptionExtended = reward => descriptionExtended() === reward.id;
+        const isLongDescription = reward => reward.description.length > 110;
         if (h.getStoredObject(storeKey)) {
             const {
                 value,
@@ -71,6 +72,7 @@ const projectRewardList = {
             submitContribution,
             toggleDescriptionExtended,
             isRewardOpened,
+            isLongDescription,
             isRewardDescriptionExtended,
             selectDestination,
             selectedDestination,
@@ -110,9 +112,13 @@ const projectRewardList = {
             ]),
 
             m('.fontsize-smaller.u-margintop-20.reward-description', {
-                class: ctrl.isRewardOpened(reward) ? `opened ${ctrl.isRewardDescriptionExtended(reward) ? 'extended' : ''}` : ''
+                class: ctrl.isLongDescription(reward)
+                         ? ctrl.isRewardOpened(reward)
+                            ? `opened ${ctrl.isRewardDescriptionExtended(reward) ? 'extended' : ''}`
+                            : ''
+                         : 'opened extended'
             }, m.trust(h.simpleFormat(h.strip(reward.description)))),
-            ctrl.isRewardOpened(reward) ? m('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
+            ctrl.isLongDescription(reward) && ctrl.isRewardOpened(reward) ? m('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
                 onclick: () => ctrl.toggleDescriptionExtended(reward.id)
             }, [
                 ctrl.isRewardDescriptionExtended(reward) ? 'menos ' : 'mais ',
