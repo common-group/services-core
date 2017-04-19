@@ -110,8 +110,11 @@ const projectRewardList = {
             m('.u-marginbottom-20', [
                 m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais`)
             ]),
+            m('.fontsize-smaller.fontweight-semibold',
+                    reward.title
+                ),
 
-            m('.fontsize-smaller.u-margintop-20.reward-description', {
+            m(`.fontsize-smaller.reward-description${h.rewardSouldOut(reward) ? '' : '.fontcolor-secondary'}`, {
                 class: ctrl.isLongDescription(reward)
                          ? ctrl.isRewardOpened(reward)
                             ? `opened ${ctrl.isRewardDescriptionExtended(reward) ? 'extended' : ''}`

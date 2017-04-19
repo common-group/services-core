@@ -16,7 +16,9 @@ const rewardSelectCard = {
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
-            const shippingFee = rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
+            const shippingFee = rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : {
+                value: 0
+            };
 
             if (!selectedDestination() && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
@@ -32,9 +34,9 @@ const rewardSelectCard = {
 
         const selectDestination = (destination) => {
             selectedDestination(destination);
-            const shippingFee = rewardVM.shippingFeeForCurrentReward(selectedDestination)
-                ? Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value)
-                : 0;
+            const shippingFee = rewardVM.shippingFeeForCurrentReward(selectedDestination) ?
+                Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value) :
+                0;
             const rewardMinValue = Number(rewardVM.selectedReward().minimum_value);
             rewardVM.applyMask(`${shippingFee + rewardMinValue},00`);
         };
@@ -79,9 +81,9 @@ const rewardSelectCard = {
         const reward = ctrl.normalReward(args.reward);
 
         return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
-            class: ctrl.isSelected(reward) ? 'selected' : '',
-            onclick: ctrl.selectReward(reward)
-        },
+                class: ctrl.isSelected(reward) ? 'selected' : '',
+                onclick: ctrl.selectReward(reward)
+            },
             m(`label[for="contribution_reward_id_${reward.id}"]`, [
                 m(`input.radio_buttons.optional.w-input.text-field.w-radio-input.back-reward-radio-button[id="contribution_reward_id_${reward.id}"][type="radio"][value="${reward.id}"]`, {
                     checked: ctrl.isSelected(reward),
@@ -89,6 +91,8 @@ const rewardSelectCard = {
                 }),
                 m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`,
                     `R$ ${h.formatNumber(reward.minimum_value)} ou mais`
+                ), m('.fontsize-smaller.fontweight-semibold',
+                    reward.title
                 ), !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
                     rewardVM.hasShippingOptions(reward) ?
                     m('.w-sub-col.w-col.w-col-4', [
@@ -96,8 +100,8 @@ const rewardSelectCard = {
                             'Local de entrega'
                         ),
                         m('select.positive.text-field.w-select', {
-                            onchange: m.withAttr('value', ctrl.selectDestination)
-                        },
+                                onchange: m.withAttr('value', ctrl.selectDestination)
+                            },
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
                                 option => m(`option[value="${option.value}"]`, [
                                     `${option.name} `,
@@ -108,8 +112,7 @@ const rewardSelectCard = {
                     ]) : '',
                     m('.w-sub-col.w-col.w-clearfix', {
                         class: rewardVM.hasShippingOptions(reward) ?
-                            'w-col-4' :
-                            'w-col-8'
+                            'w-col-4' : 'w-col-8'
                     }, [
                         m('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'),
                         m('.w-row.u-marginbottom-20', [
@@ -151,8 +154,7 @@ const rewardSelectCard = {
                 ]) : '',
                 m('.back-reward-reward-description', [
                     m('.fontsize-smaller.u-marginbottom-10', reward.description),
-                    m('.u-marginbottom-20.w-row', [
-                        !reward.deliver_at ? '' : m('.w-col.w-col-6', [
+                    m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
                             m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
                         ]),
