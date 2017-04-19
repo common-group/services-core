@@ -81,9 +81,9 @@ const rewardSelectCard = {
         const reward = ctrl.normalReward(args.reward);
 
         return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
-                class: ctrl.isSelected(reward) ? 'selected' : '',
-                onclick: ctrl.selectReward(reward)
-            },
+            class: ctrl.isSelected(reward) ? 'selected' : '',
+            onclick: ctrl.selectReward(reward)
+        },
             m(`label[for="contribution_reward_id_${reward.id}"]`, [
                 m(`input.radio_buttons.optional.w-input.text-field.w-radio-input.back-reward-radio-button[id="contribution_reward_id_${reward.id}"][type="radio"][value="${reward.id}"]`, {
                     checked: ctrl.isSelected(reward),
@@ -91,8 +91,6 @@ const rewardSelectCard = {
                 }),
                 m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`,
                     `R$ ${h.formatNumber(reward.minimum_value)} ou mais`
-                ), m('.fontsize-smaller.fontweight-semibold',
-                    reward.title
                 ), !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
                     rewardVM.hasShippingOptions(reward) ?
                     m('.w-sub-col.w-col.w-col-4', [
@@ -100,8 +98,8 @@ const rewardSelectCard = {
                             'Local de entrega'
                         ),
                         m('select.positive.text-field.w-select', {
-                                onchange: m.withAttr('value', ctrl.selectDestination)
-                            },
+                            onchange: m.withAttr('value', ctrl.selectDestination)
+                        },
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
                                 option => m(`option[value="${option.value}"]`, [
                                     `${option.name} `,
@@ -152,12 +150,15 @@ const rewardSelectCard = {
                     m('span.fa.fa-exclamation-triangle'),
                     ` ${ctrl.error()}`
                 ]) : '',
+                m('.fontsize-smaller.fontweight-semibold',
+                    reward.title
+                ),
                 m('.back-reward-reward-description', [
-                    m('.fontsize-smaller.u-marginbottom-10', reward.description),
+                    m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description),
                     m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [
-                            m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
-                            m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
-                        ]),
+                        m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
+                        m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
+                    ]),
                         (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
                             m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
