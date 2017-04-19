@@ -60,7 +60,7 @@ const posts = {
             projectDetails = m.prop([]),
             rewardText = (rewardId) => {
                 const reward = _.find(rewardVM.rewards(), r => String(r.id) === String(rewardId));
-                return `Apoiadores da recompensa R$${reward.minimum_value} - ${`${reward.description.substring(0, 70)}...`}`;
+                return `Apoiadores da recompensa R$${reward.minimum_value} - ${reward.title ? reward.title : `${reward.description.substring(0, 70)}...`}`;
             },
             showRecipientes = (post) => {
                 if (post.recipients === 'public') {
