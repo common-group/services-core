@@ -24,11 +24,9 @@ const dashboardRewardCard = {
                 ),
                 m('.u-marginbottom-20.w-row',
                     m('.w-col.w-col-12',
-                        m.component(copyTextInput,
-                            {
-                                value: `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id}`
-                            }
-                        ),
+                        m.component(copyTextInput, {
+                            value: `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id}`
+                        }),
                     )
                 ),
                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-20',
@@ -46,10 +44,10 @@ const dashboardRewardCard = {
                         (rewardVM.canEdit(reward, args.project_state, args.user) ?
                             m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                                 m("a.show_reward_form[href='javascript:void(0);']", {
-                                    onclick: () => {
-                                        reward.edit.toggle();
-                                    }
-                                },
+                                        onclick: () => {
+                                            reward.edit.toggle();
+                                        }
+                                    },
                                     m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                                 )
                             ) : '')
@@ -57,7 +55,12 @@ const dashboardRewardCard = {
                     m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
                         `${reward.paid_count} apoiadores`
                     ),
-                    m.trust(h.simpleFormat(h.strip(reward.description))),
+                    m('.fontsize-small.fontweight-semibold',
+                        reward.title
+                    ),
+                    m('.fontsize-small.fontcolor-secondary',
+                        m.trust(h.simpleFormat(h.strip(reward.description))),
+                    ),
                     (reward.limited() ? (ctrl.availableCount(reward) <= 0) ?
                         m('.u-margintop-10',
                             m('span.badge.badge-gone.fontsize-smaller',
