@@ -10,6 +10,7 @@ const editRewardCard = {
         const shipping_options = m.prop(args.reward.shipping_options),
             reward = args.reward,
             minimumValue = m.prop(args.reward.minimum_value),
+            title = m.prop(args.reward.title),
             maximumContributions = m.prop(args.reward.maximum_contributions),
             index = args.index,
             showTips = h.toggleProp(false, true),
@@ -50,6 +51,7 @@ const editRewardCard = {
 
         return {
             minimumValue,
+            title,
             maximumContributions,
             updateOptions,
             showTips,
@@ -86,6 +88,20 @@ const editRewardCard = {
             m('.w-col.w-col-7',
                 m('.card',
                     m('.w-form', [
+                        m('.w-row', [
+                            m('.w-col.w-col-5',
+                                m('label.fontsize-smaller',
+                                    'Título:'
+                                )
+                            ),
+                            m('.w-col.w-col-7',
+                                m(`input.w-input.text-field.positive[aria-required='true'][autocomplete='off'][required='required'][type='tel'][id='project_rewards_attributes_${index}_title']`, {
+                                    name: `project[rewards_attributes][${index}][title]`,
+                                    value: ctrl.title(),
+                                    onchange: m.withAttr('value', ctrl.title)
+                                })
+                            )
+                        ]),
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-5',
                                 m('label.fontsize-smaller',
@@ -156,8 +172,8 @@ const editRewardCard = {
                         ),
                         m('.w-row', [
                             m(`textarea.text.required.w-input.text-field.positive.height-medium[aria-required='true'][placeholder='Descreva sua recompensa'][required='required'][id='project_rewards_attributes_${index}_description']`, {
-                                    name: `project[rewards_attributes][${index}][description]`
-                                },
+                                name: `project[rewards_attributes][${index}][description]`
+                            },
                                 reward.description),
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                                 'Informe uma descrição para a recompensa'
@@ -198,21 +214,21 @@ const editRewardCard = {
 
                                         // state fees
                                         (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
-                                                fee,
-                                                fees: ctrl.fees,
-                                                index,
-                                                feeIndex,
-                                                states: ctrl.states
-                                            }),
+                                            fee,
+                                            fees: ctrl.fees,
+                                            index,
+                                            feeIndex,
+                                            states: ctrl.states
+                                        }),
 
                                         ])),
                                         m('.u-margintop-20',
                                             m("a.alt-link[href='#']", {
-                                                    onclick: () => {
-                                                        ctrl.fees().push(newFee);
-                                                        return false;
-                                                    }
-                                                },
+                                                onclick: () => {
+                                                    ctrl.fees().push(newFee);
+                                                    return false;
+                                                }
+                                            },
                                                 'Adicionar destino'
                                             )
                                         )

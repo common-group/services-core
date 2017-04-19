@@ -123,6 +123,7 @@ const projectsPayment = {
     view(ctrl) {
         const user = ctrl.user(),
             project = ctrl.project;
+        console.log(ctrl.reward());
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
@@ -408,7 +409,10 @@ const projectsPayment = {
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
                                     I18n.t('selected_reward.reward', ctrl.scope())
                                 ),
-                                m('.fontsize-smallest.reward-description.opened', {
+                                m('.fontsize-smallest.fontweight-semibold',
+                                    ctrl.reward().title
+                                ),
+                                m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
                                     class: ctrl.isLongDescription(ctrl.reward())
                                            ? ctrl.toggleDescription() ? 'extended' : ''
                                            : 'extended'
@@ -443,7 +447,7 @@ const projectsPayment = {
                                     m('span.fontweight-semibold',
                                         'Envio: '
                                     ),
-                                    I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {scope: 'projects.contributions'})
+                                    I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, { scope: 'projects.contributions' })
                                 ])
                             ] : ''
                         ]),

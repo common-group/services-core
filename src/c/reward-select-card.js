@@ -16,7 +16,9 @@ const rewardSelectCard = {
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
-            const shippingFee = rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
+            const shippingFee = rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : {
+                value: 0
+            };
 
             if (!selectedDestination() && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
@@ -32,9 +34,9 @@ const rewardSelectCard = {
 
         const selectDestination = (destination) => {
             selectedDestination(destination);
-            const shippingFee = rewardVM.shippingFeeForCurrentReward(selectedDestination)
-                ? Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value)
-                : 0;
+            const shippingFee = rewardVM.shippingFeeForCurrentReward(selectedDestination) ?
+                Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value) :
+                0;
             const rewardMinValue = Number(rewardVM.selectedReward().minimum_value);
             rewardVM.applyMask(`${shippingFee + rewardMinValue},00`);
         };
@@ -108,8 +110,7 @@ const rewardSelectCard = {
                     ]) : '',
                     m('.w-sub-col.w-col.w-clearfix', {
                         class: rewardVM.hasShippingOptions(reward) ?
-                            'w-col-4' :
-                            'w-col-8'
+                            'w-col-4' : 'w-col-8'
                     }, [
                         m('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'),
                         m('.w-row.u-marginbottom-20', [
@@ -149,13 +150,15 @@ const rewardSelectCard = {
                     m('span.fa.fa-exclamation-triangle'),
                     ` ${ctrl.error()}`
                 ]) : '',
+                m('.fontsize-smaller.fontweight-semibold',
+                    reward.title
+                ),
                 m('.back-reward-reward-description', [
-                    m('.fontsize-smaller.u-marginbottom-10', reward.description),
-                    m('.u-marginbottom-20.w-row', [
-                        !reward.deliver_at ? '' : m('.w-col.w-col-6', [
-                            m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
-                            m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
-                        ]),
+                    m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description),
+                    m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [
+                        m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
+                        m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
+                    ]),
                         (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
                             m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))

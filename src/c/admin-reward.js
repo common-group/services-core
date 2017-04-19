@@ -9,7 +9,7 @@ const adminReward = {
         const loadShippingFee = () => {
             const shippingFee = m.prop({});
 
-            if(args.contribution.shipping_fee_id) {
+            if (args.contribution.shipping_fee_id) {
                 const options = models.shippingFee.getRowOptions(
                     h.idVM.id(
                         args.contribution.shipping_fee_id
@@ -25,23 +25,22 @@ const adminReward = {
         return {
             shippingFee: loadShippingFee()
         };
-
     },
 
     view(ctrl, args) {
         const reward = args.reward(),
-              contribution = args.contribution,
-              available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count),
-              shippingFee = ctrl.shippingFee();
+            contribution = args.contribution,
+            available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count),
+            shippingFee = ctrl.shippingFee();
 
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Recompensa'),
             m('.fontsize-smallest.lineheight-looser', reward.id ? [
                 `ID: ${reward.id}`,
                 m('br'),
-                `Local de entrega: ${(shippingFee.destination ? shippingFee.destination + ' R$ ' + shippingFee.value : 'Nenhum')}`,
+                `Local de entrega: ${(shippingFee.destination ? `${shippingFee.destination} R$ ${shippingFee.value}` : 'Nenhum')}`,
                 m('br'),
-                `Envio: ${I18n.t('shared.shipping_options.'+reward.shipping_options)}`,
+                `Envio: ${I18n.t(`shared.shipping_options.${reward.shipping_options}`)}`,
                 m('br'),
                 `Valor mínimo: R$${h.formatNumber(reward.minimum_value, 2, 3)}`,
                 m('br'),
@@ -55,6 +54,9 @@ const adminReward = {
                     'Status da Entrega: ',
                     h.contributionStatusBadge(contribution),
                 ]),
+                (reward.title ? [`Título: ${reward.title}`,
+                    m('br')
+                ] : ''),
                 `Descrição: ${reward.description}`
             ] : 'Apoio sem recompensa')
         ]);
