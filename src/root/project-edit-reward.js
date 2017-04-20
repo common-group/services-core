@@ -13,6 +13,7 @@ const projectEditReward = {
             newReward = {
                 id: null,
                 minimum_value: null,
+                title: null,
                 deliver_at: null,
                 description: null,
                 paid_count: 0,
