@@ -87,7 +87,7 @@ const projectsPayment = {
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
 
-        const isLongDescription = reward => reward.description.length > 110;
+        const isLongDescription = reward => reward.description && reward.description.length > 110;
 
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
