@@ -95,7 +95,7 @@ const editRewardCard = {
                                 )
                             ),
                             m('.w-col.w-col-7',
-                                m(`input.w-input.text-field.positive[aria-required='true'][autocomplete='off'][required='required'][type='tel'][id='project_rewards_attributes_${index}_title']`, {
+                                m(`input.w-input.text-field.positive[aria-required='true'][autocomplete='off'][type='tel'][id='project_rewards_attributes_${index}_title']`, {
                                     name: `project[rewards_attributes][${index}][title]`,
                                     value: ctrl.title(),
                                     onchange: m.withAttr('value', ctrl.title)
