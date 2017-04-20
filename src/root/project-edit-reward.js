@@ -5,11 +5,43 @@ import rewardVM from '../vms/reward-vm';
 import userVM from '../vms/user-vm';
 import editRewardCard from '../c/edit-reward-card';
 import dashboardRewardCard from '../c/dashboard-reward-card';
+import popNotification from '../c/pop-notification';
 
 const projectEditReward = {
     controller(args) {
         const rewards = m.prop([]),
+            loading = m.prop(false),
+            error = m.prop(false),
+            errors = m.prop([]),
+            showSuccess = m.prop(false),
             availableCount = reward => reward.maximum_contributions - reward.paid_count,
+            updateRewardData = () => {
+                const data = $('#reward_form').serialize();
+                loading(true);
+                // m.request won't serialize params properly here
+                return $.ajax({
+                    type: 'PATCH',
+                    url: `/pt/projects/${args.project_id}'`,
+                    data,
+                    dataType: 'JSON'
+                }).done(() => {
+                    error(false);
+                    showSuccess(true);
+                }).fail((json) => {
+                    error(true);
+                    showSuccess(false);
+                    const messages = JSON.parse(json.responseText).errors.join('</br>');
+                    errors(messages);
+                }).always(() => {
+                    loading(false);
+                    m.redraw();
+                });
+            },
+            onSubmit = () => {
+                updateRewardData();
+
+                return false;
+            },
             newReward = {
                 id: null,
                 minimum_value: null,
@@ -21,7 +53,7 @@ const projectEditReward = {
                 limited: h.toggleProp(false, true),
                 maximum_contributions: null,
                 newReward: true,
-                row_order: 999999999 + (rewards().length * 20)// we need large and spaced apart numbers
+                row_order: 999999999 + (rewards().length * 20) // we need large and spaced apart numbers
             };
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
@@ -61,7 +93,12 @@ const projectEditReward = {
             }
         });
         return {
+            loading,
+            error,
+            errors,
+            showSuccess,
             rewards,
+            onSubmit,
             user: userVM.fetchUser(args.user_id),
             availableCount,
             newReward,
@@ -72,10 +109,20 @@ const projectEditReward = {
     view(ctrl, args) {
         return m("[id='dashboard-rewards-tab']",
             m('.w-section.section',
-                m('.w-container',
+                m('.w-container', [
+                    ctrl.loading() ? h.loader() : '',
+                    (ctrl.showSuccess() ? m.component(popNotification, {
+                        message: 'Recompensas salvas com sucesso'
+                    }) : ''),
+                    (ctrl.error() ? m.component(popNotification, {
+                        message: ctrl.errors(),
+                        error: true
+                    }) : ''),
                     m('.w-row',
                         m('.w-col.w-col-10.w-col-push-1',
-                            m(`form.simple_form.project-form.w-form[action='/pt/projects/${args.project_id}'][method='post'][novalidate='novalidate'][id='edit_project_${args.project_id}']`, [
+                            m('form.simple_form.project-form.w-form[id=\'reward_form\']', {
+                                onsubmit: ctrl.onSubmit
+                            }, [
                                 m("input[name='utf8'][type='hidden'][value='✓']"),
                                 m("input[name='_method'][type='hidden'][value='patch']"),
                                 m(`input[name="authenticity_token"][type="hidden"][value=${h.authenticityToken()}]`),
@@ -128,7 +175,7 @@ const projectEditReward = {
                             ])
                         )
                     )
-                )
+                ])
             )
         );
     }
