@@ -119,6 +119,28 @@ const locationOptions = (reward, destination) => {
     return options();
 };
 
+const shippingFeeById = feeId => _.findWhere(fees(), {
+    id: feeId
+});
+
+const getOtherNationalStates = () => _.reject(
+    states(),
+    state => !_.isUndefined(_.findWhere(fees(), { destination: state.acronym }))
+);
+
+const feeDestination = (reward, feeId) => {
+    const fee = shippingFeeById(feeId) || {};
+    const feeState = _.findWhere(states(), { acronym: fee.destination });
+
+    if (feeState) {
+        return feeState.acronym;
+    } else if (reward.shipping_options === 'national' && fee.destination === 'others') {
+        return _.pluck(getOtherNationalStates(fees), 'acronym').join(', ');
+    }
+
+    return fee.destination;
+};
+
 const shippingFeeForCurrentReward = (selectedDestination) => {
     let currentFee = _.findWhere(fees(), {
         destination: selectedDestination()
@@ -157,7 +179,9 @@ const rewardVM = {
     rewardsLoader,
     locationOptions,
     shippingFeeForCurrentReward,
+    shippingFeeById,
     statesLoader,
+    feeDestination,
     getValue: contributionValue,
     setValue: contributionValue,
     hasShippingOptions
