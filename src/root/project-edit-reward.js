@@ -5,6 +5,7 @@ import rewardVM from '../vms/reward-vm';
 import userVM from '../vms/user-vm';
 import editRewardCard from '../c/edit-reward-card';
 import dashboardRewardCard from '../c/dashboard-reward-card';
+import projectEditSaveBtn from '../c/project-edit-save-btn';
 import popNotification from '../c/pop-notification';
 
 const projectEditReward = {
@@ -110,7 +111,6 @@ const projectEditReward = {
         return m("[id='dashboard-rewards-tab']",
             m('.w-section.section',
                 m('.w-container', [
-                    ctrl.loading() ? h.loader() : '',
                     (ctrl.showSuccess() ? m.component(popNotification, {
                         message: 'Recompensas salvas com sucesso'
                     }) : ''),
@@ -155,27 +155,26 @@ const projectEditReward = {
                                         ]))
                                     ]),
 
-                                    (rewardVM.canAdd(args.project_state) ? [
-                                        m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']", {
-                                            onclick: () => ctrl.rewards().push(ctrl.newReward)
-                                        },
-                                            '+ Adicionar recompensa'
-                                        ),
-                                        m('.w-section.save-draft-btn-section',
-                                            m('.w-container',
-                                                m('.w-row',
-                                                    m('.w-col.w-col-4.w-col-push-4',
-                                                        m("input.btn.btn.btn-medium[name='commit'][type='submit'][value='Salvar']")
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    ] : '')
                                 ])
                             ])
                         )
                     )
-                ])
+                ]),
+
+                (rewardVM.canAdd(args.project_state) ? [
+                    m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']", {
+                            onclick: () => ctrl.rewards().push(ctrl.newReward)
+                        },
+                        '+ Adicionar recompensa'
+                    ),
+
+                    m(projectEditSaveBtn, {
+                        loading: ctrl.loading,
+                        onSubmit: ctrl.onSubmit
+                    })
+                ] : '')
+
+
             )
         );
     }
