@@ -10176,7 +10176,7 @@ var projectsPayment = {
         };
 
         var isLongDescription = function isLongDescription(reward) {
-            return reward.description.length > 110;
+            return reward.description && reward.description.length > 110;
         };
 
         if (_$1.isNull(currentUserID)) {
