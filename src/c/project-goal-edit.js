@@ -175,6 +175,7 @@ const projectGoalEdit = {
                                                         m("label.field-label"),
                                                         m('input.numeric.integer.optional.disabled.w-input.text-field.postfix.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
                                                             onchange: m.withAttr('value', vm.fields.online_days),
+                                                            value: vm.fields.online_days(),
                                                             class: vm.e.hasError('online_days') ? 'error' : false
                                                         })
                                                     ])
