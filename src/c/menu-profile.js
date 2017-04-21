@@ -2,13 +2,16 @@ import m from 'mithril';
 import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
+import models from '../models';
 
 const menuProfile = {
     controller(args) {
         const contributedProjects = m.prop(),
-            latestProjects = m.prop([]),
-            userDetails = m.prop({}),
-            user_id = args.user.user_id;
+              latestProjects = m.prop([]),
+              userDetails = m.prop({}),
+              user_id = args.user.user_id,
+              userBalance = m.prop(''),
+              userIdVM = postgrest.filtersVM({ user_id: 'eq' });
 
         const userName = () => {
             const name = userVM.displayName(userDetails());
@@ -21,12 +24,21 @@ const menuProfile = {
 
         userVM.fetchUser(user_id, true, userDetails);
 
+        userIdVM.user_id(user_id);
+        models.balance.getRowWithToken(userIdVM.parameters()).then((result) => {
+            const data = _.first(result);
+            if (data.amount) {
+                userBalance(`R$ ${data.amount}`);
+            }
+        });
+
         return {
             contributedProjects,
             latestProjects,
             userDetails,
             userName,
-            toggleMenu: h.toggleProp(false, true)
+            toggleMenu: h.toggleProp(false, true),
+            userBalance
         };
     },
     view(ctrl, args) {
@@ -62,6 +74,11 @@ const menuProfile = {
                                                 m('li.lineheight-looser',
                                                   m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#projects']`,
                                                     'Projetos criados'
+                                                   )
+                                                 ),
+                                                m('li.lineheight-looser',
+                                                  m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#balance']`,
+                                                    `Saldo ${ctrl.userBalance()}`
                                                    )
                                                  ),
                                                 m('li.w-hidden-main.w-hidden-medium.lineheight-looser',
