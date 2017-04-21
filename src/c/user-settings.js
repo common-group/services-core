@@ -376,13 +376,13 @@ const userSettings = {
                                                     selected: fields.bank_id() === ''
                                                 }),
                                                 (_.map(ctrl.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
-                                                        selected: fields.bank_id() == bank.id
-                                                    },
+                                                    selected: fields.bank_id() == bank.id
+                                                },
                                                     `${bank.code} . ${bank.name}`) : ''))),
                                                 (fields.bank_id() === '' || _.find(ctrl.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
                                                     m(`option[value='${fields.bank_id()}']`, {
-                                                            selected: true
-                                                        },
+                                                        selected: true
+                                                    },
                                                         `${bankAccount.bank_code} . ${bankAccount.bank_name}`
                                                     )
                                                 ),
@@ -435,10 +435,10 @@ const userSettings = {
                                         m('.w-row[id=\'bank_search_list\']',
                                             m('.w-col.w-col-12',
                                                 m('.select-bank-list[data-ix=\'height-0-on-load\']', {
-                                                        style: {
-                                                            height: '395px'
-                                                        }
-                                                    },
+                                                    style: {
+                                                        height: '395px'
+                                                    }
+                                                },
                                                     m('.card.card-terciary', [
                                                         m('.fontsize-small.fontweight-semibold.u-marginbottom-10.u-text-center',
                                                             'Selecione o seu banco abaixo'
@@ -460,21 +460,21 @@ const userSettings = {
                                                                 _.map(ctrl.banks(), bank => m('.w-row.card.fontsize-smallest', [
                                                                     m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                                                         m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
-                                                                                onclick: () => {
-                                                                                    ctrl.bankInput(bank.code);
-                                                                                    ctrl.showOtherBanks.toggle();
-                                                                                }
-                                                                            },
+                                                                            onclick: () => {
+                                                                                ctrl.bankInput(bank.code);
+                                                                                ctrl.showOtherBanks.toggle();
+                                                                            }
+                                                                        },
                                                                             bank.code
                                                                         )
                                                                     ),
                                                                     m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                                                         m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
-                                                                                onclick: () => {
-                                                                                    ctrl.bankInput(bank.code);
-                                                                                    ctrl.showOtherBanks.toggle();
-                                                                                }
-                                                                            },
+                                                                            onclick: () => {
+                                                                                ctrl.bankInput(bank.code);
+                                                                                ctrl.showOtherBanks.toggle();
+                                                                            }
+                                                                        },
                                                                             `${bank.code} . ${bank.name}`
                                                                         )
                                                                     )
@@ -594,8 +594,8 @@ const userSettings = {
                                             m('option[value=\'\']'),
                                             (!_.isEmpty(ctrl.countries()) ?
                                                 _.map(ctrl.countries(), country => m(`option${country.id == fields.country_id() ? '[selected="selected"]' : ''}`, {
-                                                        value: country.id
-                                                    },
+                                                    value: country.id
+                                                },
                                                     country.name_en
                                                 )) :
                                                 '')
@@ -679,8 +679,8 @@ const userSettings = {
                                             m('option[value=\'\']'),
                                             (!_.isEmpty(ctrl.states()) ?
                                                 _.map(ctrl.states(), state => m(`option[value='${state.acronym}']${state.acronym == fields.state() ? '[selected="selected"]' : ''}`, {
-                                                        value: state.acronym
-                                                    },
+                                                    value: state.acronym
+                                                },
                                                     state.name
                                                 ))
 
@@ -766,8 +766,8 @@ const userSettings = {
                                     ),
                                     m('.w-col.w-col-2.w-col-small-2',
                                         m('a.btn.btn-terciary.btn-small[rel=\'nofollow\']', {
-                                                onclick: ctrl.deleteCard(card.id)
-                                            },
+                                            onclick: ctrl.deleteCard(card.id)
+                                        },
                                             'Remover'
                                         )
                                     )

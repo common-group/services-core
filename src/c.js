@@ -13,6 +13,7 @@ import projectsShow from './root/projects-show';
 import projectsContribution from './root/projects-contribution';
 import usersShow from './root/users-show';
 import usersEdit from './root/users-edit';
+import projectEdit from './root/project-edit';
 import projectsPayment from './root/projects-payment';
 import projectsReward from './root/projects-reward';
 import publish from './root/publish';
@@ -52,6 +53,7 @@ const c = {
         ProjectsShow: projectsShow,
         UsersShow: usersShow,
         UsersEdit: usersEdit,
+        ProjectEdit: projectEdit,
         ProjectsContribution: projectsContribution,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,
