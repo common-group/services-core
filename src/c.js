@@ -18,7 +18,6 @@ import projectsReward from './root/projects-reward';
 import publish from './root/publish';
 import start from './root/start';
 import team from './root/team';
-import usersBalanceMain from './root/users-balance-main';
 import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
@@ -59,7 +58,6 @@ const c = {
         Publish: publish,
         Start: start,
         Team: team,
-        UsersBalance: usersBalanceMain,
         Menu: menu,
         Footer: footer,
         FollowFoundFriends,
