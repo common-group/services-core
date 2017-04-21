@@ -34,7 +34,7 @@ const menuProfile = {
 
         return m('.w-dropdown.user-profile',
             [
-                m('a.w-dropdown-toggle.dropdown-toggle[href=\'javascript:void()\'][id=\'user-menu\']',
+                m('a.w-dropdown-toggle.dropdown-toggle[href=\'javascript:void(0);\'][id=\'user-menu\']',
                     {
                         onclick: ctrl.toggleMenu.toggle
                     },
