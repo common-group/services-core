@@ -20,14 +20,17 @@ const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 
 const projectEdit = {
     controller(args) {
-        const { project_id } = args;
+        const { project_id } = args,
+            rails_errors = m.prop('');
 
         projectVM.getCurrentProject();
+        const projectState = projectVM.currentProject().project_state;
 
         const project_user_id = projectVM.currentProject().user_id,
             hash = m.prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
+                        rails_errors: rails_errors(),
                         project_id,
                         user_id: project_user_id
                     },
@@ -51,7 +54,7 @@ const projectEdit = {
                         '#reward': m(projectEditTab, {
                             title: I18n.t('reward_html', I18nScope()),
                             subtitle: I18n.t('reward_subtitle', I18nScope()),
-                            content: m(projectEditReward, _.extend({ project_state: projectVM.currentProject().project_state }, c_opts))
+                            content: m(projectEditReward, _.extend({ project_state: projectState }, c_opts))
                         }),
                         '#user_settings': m(projectEditTab, {
                             title: I18n.t('user_settings', I18nScope()),
@@ -92,18 +95,21 @@ const projectEdit = {
 
         h.redrawHashChange();
         return {
+            rails_errors,
             projectVM,
             displayTabContent,
             hash
         };
     },
     view(ctrl, args) {
-        const project = ctrl.projectVM.currentProject;
+        const project = ctrl.projectVM.currentProject,
+            rails_errors = ctrl.rails_errors;
 
         return m('.project-dashboard-edit', [
             ctrl.displayTabContent(),
             (project() ? m.component(projectDashboardMenu, {
-                project
+                project,
+                rails_errors
             }) : '')
         ]);
     }
