@@ -26,10 +26,8 @@ const menuProfile = {
 
         userIdVM.user_id(user_id);
         models.balance.getRowWithToken(userIdVM.parameters()).then((result) => {
-            const data = _.first(result);
-            if (data.amount) {
-                userBalance(`R$ ${data.amount}`);
-            }
+            const data = _.first(result) || {amount: 0, user_id: user_id};
+            userBalance(`R$ ${data.amount}`);
         });
 
         return {
