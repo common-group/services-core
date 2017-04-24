@@ -19,7 +19,7 @@ const projectEditCard = {
             projectId: args.project_id,
             project: ctrl.project(),
             rails_errors: args.rails_errors
-        }) : m('div', h.loader()) );
+        }) : m('div', h.loader()));
     }
 };
 

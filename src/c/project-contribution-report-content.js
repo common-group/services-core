@@ -139,7 +139,7 @@ const projectContributionReportContent = {
                                 ]) : '')
                         ]),
                         m('.w-clearfix.w-col.w-col-4',
-                            m(`a.alt-link.fontsize-small.lineheight-looser.u-right[href="/projects/${args.project().project_id}/download_reports"]`, [
+                            m('a.alt-link.fontsize-small.lineheight-looser.u-right', { onclick: () => args.showDownloads(true) }, [
                                 m('span.fa.fa-download',
                                     ''
                                 ),
