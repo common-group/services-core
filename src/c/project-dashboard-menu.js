@@ -112,23 +112,23 @@ const projectDashboardMenu = {
                         ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
-                                    m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics` + '"]', railsErrorsVM.errorsFor('basics'), I18n.t(`${project.mode}.basics_tab`, linksScope())),
-                                    m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal` + '"]', railsErrorsVM.errorsFor('goal'), I18n.t(`${project.mode}.goal_tab`, linksScope())),
+                                    m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), I18n.t(`${project.mode}.basics_tab`, linksScope())),
+                                    m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), I18n.t(`${project.mode}.goal_tab`, linksScope())),
                                 ] : ''),
-                                m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description` + '"]', railsErrorsVM.errorsFor('description'), I18n.t(`${project.mode}.description_tab`, linksScope())),
-                                m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video` + '"]', [railsErrorsVM.errorsFor('video'),
+                                m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description"]`, railsErrorsVM.errorsFor('description'), I18n.t(`${project.mode}.description_tab`, linksScope())),
+                                m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
                                 ]),
-                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget` + '"]', railsErrorsVM.errorsFor('budget'), I18n.t(`${project.mode}.budget_tab`, linksScope())),
-                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card` + '"]', railsErrorsVM.errorsFor('card'), I18n.t(`${project.mode}.card_tab`, linksScope())),
-                                m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward` + '"]', [railsErrorsVM.errorsFor('reward'),
+                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t(`${project.mode}.budget_tab`, linksScope())),
+                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t(`${project.mode}.card_tab`, linksScope())),
+                                m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
                                 ]),
-                                m(`a#dashboard_user_about_link[class="${editLinkClass('#user_about')}"][href="${editRoute}#user_about` + '"]', railsErrorsVM.errorsFor('user_about'), I18n.t(`${project.mode}.about_you_tab`, linksScope())),
+                                m(`a#dashboard_user_about_link[class="${editLinkClass('#user_about')}"][href="${editRoute}#user_about"]`, railsErrorsVM.errorsFor('user_about'), I18n.t(`${project.mode}.about_you_tab`, linksScope())),
                                 ((project.is_published || project.state === 'draft') || project.is_admin_role ? [
-                                    m(`a#dashboard_user_settings_link[class="${editLinkClass('#user_settings')}"][href="${editRoute}#user_settings` + '"]', railsErrorsVM.errorsFor('user_settings'), I18n.t(`${project.mode}.account_tab`, linksScope())),
+                                    m(`a#dashboard_user_settings_link[class="${editLinkClass('#user_settings')}"][href="${editRoute}#user_settings"]`, railsErrorsVM.errorsFor('user_settings'), I18n.t(`${project.mode}.account_tab`, linksScope())),
                                 ] : ''), (!project.is_published ? [
-                                    m(`a#dashboard_preview_link[class="${editLinkClass('#preview')}"][href="${editRoute}#preview` + '"]', [
+                                    m(`a#dashboard_preview_link[class="${editLinkClass('#preview')}"][href="${editRoute}#preview"]`, [
                                         m('span.fa.fa-fw.fa-eye.fa-lg'), I18n.t(`${project.mode}.preview_tab`, linksScope())
                                     ]),
                                 ] : '')
@@ -154,7 +154,7 @@ const projectDashboardMenu = {
                         ] : [
                             ((project.mode === 'flex' && project.is_published) ? [
                                 m('.btn-send-draft-fixed',
-                                    (_.isNull(project.expires_at) ? m(`a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/${project.project_id}/edit#announce_expiration"]`, I18n.t('announce_expiration', I18nScope())) : ''))
+                                    (_.isNull(project.expires_at) ? m(`a.w-button.btn.btn-medium.btn-secondary-dark[href="${editRoute}#announce_expiration"]`, I18n.t('announce_expiration', I18nScope())) : ''))
                             ] : '')
                         ])
                     ]),
