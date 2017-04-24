@@ -127,15 +127,81 @@ const projectsPayment = {
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
                 m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
-                    m('.fontsize-smaller.fontweight-semibold',
+                    m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
                         I18n.t('selected_reward.value', ctrl.scope())
                     ),
-                    m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href=\'#\']'),
-                    m('.w-clearfix.u-marginbottom-20',
-                        m('.fontsize-larger.text-success.u-left',
-                            `R$ ${Number(ctrl.value).toFixed()}`
+                    m('.w-clearfix',
+                        [
+                            m('.fontsize-larger.text-success.u-left',
+                                `R$ ${Number(ctrl.value).toFixed()}`
+                            ),
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                'Editar'
+                            )
+                        ]
+                    ),
+                    m('.divider.u-marginbottom-10.u-margintop-10'),
+                    m('.back-payment-info-reward', [
+                        m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
+                            I18n.t('selected_reward.reward', ctrl.scope())
+                        ),
+                        m('.fontsize-smallest.fontweight-semibold',
+                            ctrl.reward().title
+                        ),
+                        m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+                            class: ctrl.isLongDescription(ctrl.reward())
+                                       ? ctrl.toggleDescription() ? 'extended' : ''
+                                       : 'extended'
+                        }, ctrl.reward().description
+                                ? ctrl.reward().description
+                                : m.trust(
+                                    I18n.t('selected_reward.review_without_reward_html',
+                                        ctrl.scope(
+                                            _.extend({ value: Number(ctrl.value).toFixed() })
+                                        )
+                                    )
+                                )
+                        ),
+                        ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                            onclick: ctrl.toggleDescription.toggle
+                        }, [
+                            ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                            m('span.fa.fa-angle-down', {
+                                class: ctrl.toggleDescription() ? 'reversed' : ''
+                            })
+                        ]) : '',
+                        ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10',
+                            [
+                                m('span.fontweight-semibold',
+                                    'Entrega prevista:'
+                                ),
+                                ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
+                            ]
+                        ) : '',
+                        (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential')
+                            ? m('.fontcolor-secondary.fontsize-smallest', [
+                                m('span.fontweight-semibold',
+                                    'Forma de envio: '
+                                ),
+                                I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, { scope: 'projects.contributions' })
+                            ])
+                            : '',
+                        m('div',
+                            // ctrl.contribution().shipping_fee_id ? [
+                            //     m('.divider.u-marginbottom-10.u-margintop-10'),
+                            //     m('.fontsize-smaller.fontweight-semibold',
+                            //         'Destino da recompensa:'
+                            //     ),
+                            //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                            //         'Editar'
+                            //     ),
+                            //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
+                            //         `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
+                            //     ),
+                            //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
+                            // ] : ''
                         )
-                    )
+                    ])
                 ])
             ),
 
@@ -437,19 +503,19 @@ const projectsPayment = {
                                         ])
                                         : '',
                                     m('div',
-                                        ctrl.contribution().shipping_fee_id ? [
-                                            m('.divider.u-marginbottom-10.u-margintop-10'),
-                                            m('.fontsize-smaller.fontweight-semibold',
-                                                'Destino da recompensa:'
-                                            ),
-                                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                                                'Editar'
-                                            ),
-                                            m('.fontsize-smaller', { style: 'padding-right: 42px;' },
-                                                `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
-                                            ),
-                                            m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
-                                        ] : ''
+                                        // ctrl.contribution().shipping_fee_id ? [
+                                        //     m('.divider.u-marginbottom-10.u-margintop-10'),
+                                        //     m('.fontsize-smaller.fontweight-semibold',
+                                        //         'Destino da recompensa:'
+                                        //     ),
+                                        //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                        //         'Editar'
+                                        //     ),
+                                        //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
+                                        //         `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
+                                        //     ),
+                                        //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
+                                        // ] : ''
                                     )
                                 ]),
                         ]),
