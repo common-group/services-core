@@ -13,6 +13,7 @@ const projectEditReward = {
         const rewards = m.prop([]),
             loading = m.prop(false),
             error = m.prop(false),
+            project_state = args.project_state,
             errors = m.prop([]),
             showSuccess = m.prop(false),
             availableCount = reward => reward.maximum_contributions - reward.paid_count,
@@ -93,8 +94,10 @@ const projectEditReward = {
                 rewards().push(newReward);
             }
         });
+
         return {
             loading,
+            project_state,
             error,
             errors,
             showSuccess,
@@ -140,7 +143,7 @@ const projectEditReward = {
                                                             reward,
                                                             user: ctrl.user(),
                                                             project_id: args.project_id,
-                                                            project_state: args.project_state,
+                                                            project_state: ctrl.project_state,
                                                         }) :
                                                         m(editRewardCard, {
                                                             reward,
@@ -161,10 +164,10 @@ const projectEditReward = {
                     )
                 ]),
 
-                (rewardVM.canAdd(args.project_state) ? [
-                    m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']", {
-                            onclick: () => ctrl.rewards().push(ctrl.newReward)
-                        },
+                (rewardVM.canAdd(ctrl.project_state) ? [
+                    m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
+                        onclick: () => ctrl.rewards().push(ctrl.newReward)
+                    },
                         '+ Adicionar recompensa'
                     ),
 
