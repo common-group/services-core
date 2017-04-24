@@ -43,9 +43,10 @@ const projectAnnounceExpiration = {
                                                             m('label.hint.fontsize-smallest.fontcolor-secondary')
                                                         ]),
                                                         m('div',
-                                                            m("input.numeric.numeric.optional.w-input.text-field.positive.medium[id='flexible_project_online_days'][name='flexible_project[online_days]'][step='any'][type='number']",
+                                                            m("input.numeric.numeric.optional.w-input.text-field.positive.medium[id='flexible_project_online_days'][step='any'][type='number']",
 
                                                                 {
+                                                                    name: 'flexible_project[online_days]',
                                                                     value: days(),
                                                                     onchange: m.withAttr('value', ctrl.days)
                                                                 }
