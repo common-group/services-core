@@ -27,35 +27,31 @@ const projectAnnounceExpiration = {
                             m('.w-col.w-col-1'),
                             m('.w-col.w-col-10',
                                 m('.card-big.card.card-terciary.u-radius', [
-                                    m('.w-row.u-marginbottom-30', [
-                                        m('.w-col.w-col-6._w-sub-col',
+                                    m('.u-marginbottom-30.w-row', [
+                                        m('.w-sub-col.w-col.w-col-6',
                                             m('.fontsize-small.u-marginbottom-10', [
                                                 'Em quantos dias, contados a partir de agora, você quer encerrar a sua arrecadação?',
-                                                m('br')
+                                                m('br'),
+                                                m('span.fontsize-smaller.fontweight-semibold',
+                                                    '(mínimo de 2 dias)'
+                                                )
                                             ])
                                         ),
                                         m('.w-col.w-col-6',
                                             m('.w-row', [
                                                 m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6',
-                                                    m('.input.numeric.optional.flexible_project_online_days', [
-                                                        m('div', [
-                                                            m('label.field-label.fontweight-semibold.fontsize-base'),
-                                                            m('label.hint.fontsize-smallest.fontcolor-secondary')
-                                                        ]),
-                                                        m('div',
-                                                            m("input.numeric.numeric.optional.w-input.text-field.positive.medium[id='flexible_project_online_days'][step='any'][type='number']",
 
-                                                                {
-                                                                    name: 'flexible_project[online_days]',
-                                                                    value: days(),
-                                                                    onchange: m.withAttr('value', ctrl.days)
-                                                                }
-                                                            )
-                                                        )
-                                                    ])
+                                                    m("input.numeric.numeric.optional.w-input.text-field.positive.medium[id='flexible_project_online_days'][step='any'][type='number']",
+                                                        {
+                                                            name: 'flexible_project[online_days]',
+                                                            value: days(),
+                                                            onchange: m.withAttr('value', ctrl.days)
+                                                        }
+                                                    )
+
                                                 ),
-                                                m('.w-col.w-col-4.w-col-small-6.w-col-tiny-6.text-field.postfix.no-hover.medium.prefix-permalink',
-                                                    m('.fontcolor-secondary.u-text-center.fontsize-base.lineheight-tightest',
+                                                m('.medium.no-hover.postfix.prefix-permalink.text-field.w-col.w-col-4.w-col-small-6.w-col-tiny-6',
+                                                    m('.fontcolor-secondary.fontsize-base.lineheight-tightest.u-text-center',
                                                         'Dias'
                                                     )
                                                 )

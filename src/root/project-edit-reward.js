@@ -159,25 +159,24 @@ const projectEditReward = {
                                     ]),
 
                                 ])
-                            ])
+                            ]),
+                            (rewardVM.canAdd(ctrl.project_state) ? [
+                                m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
+                                    onclick: () => ctrl.rewards().push(ctrl.newReward)
+                                },
+                                    '+ Adicionar recompensa'
+                                )
+
+                            ] : '')
                         )
                     )
                 ]),
-
                 (rewardVM.canAdd(ctrl.project_state) ? [
-                    m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                        onclick: () => ctrl.rewards().push(ctrl.newReward)
-                    },
-                        '+ Adicionar recompensa'
-                    ),
-
                     m(projectEditSaveBtn, {
                         loading: ctrl.loading,
                         onSubmit: ctrl.onSubmit
                     })
                 ] : '')
-
-
             )
         );
     }
