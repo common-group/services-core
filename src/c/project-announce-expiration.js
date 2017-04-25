@@ -28,7 +28,7 @@ const projectAnnounceExpiration = {
                             m('.w-col.w-col-10',
                                 m('.card-big.card.card-terciary.u-radius', [
                                     m('.u-marginbottom-30.w-row', [
-                                        m('._w-sub-col.w-col.w-col-6',
+                                        m('.w-sub-col.w-col.w-col-6',
                                             m('.fontsize-small.u-marginbottom-10', [
                                                 'Em quantos dias, contados a partir de agora, você quer encerrar a sua arrecadação?',
                                                 m('br'),
