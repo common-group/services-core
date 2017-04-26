@@ -162,6 +162,7 @@ const projectEditReward = {
                                                             project_state: ctrl.project_state,
                                                         }) :
                                                         m(editRewardCard, {
+                                                            project_id: args.project_id,
                                                             error,
                                                             reward,
                                                             index
