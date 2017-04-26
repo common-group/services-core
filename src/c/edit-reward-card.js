@@ -16,6 +16,21 @@ const editRewardCard = {
                 deliverAt: m.prop(reward.deliver_at),
                 maximumContributions: m.prop(reward.maximum_contributions)
             },
+            destroyed = m.prop(false),
+            confirmDelete = () => {
+                const r = confirm('Você tem certeza?');
+                if (r) {
+                    return m.request({
+                        method: 'DELETE',
+                        url: `/projects/${args.project_id}/rewards/${reward.id}`,
+                        config: h.setCsrfToken
+                    }).then(() => {
+                        destroyed(true);
+                        m.redraw();
+                    });
+                }
+                return false;
+            },
             descriptionError = m.prop(false),
             minimumValueError = m.prop(false),
             deliverAtError = m.prop(false),
@@ -81,8 +96,10 @@ const editRewardCard = {
             minimumValueError,
             deliverAtError,
             descriptionError,
+            confirmDelete,
             updateOptions,
             showTips,
+            destroyed,
             states,
             reward,
             index,
@@ -103,7 +120,7 @@ const editRewardCard = {
                 )
             );
 
-        return m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
+        return ctrl.destroyed() ? m('div', '') : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.w-col.w-col-5.w-sub-col', [
                 m('.fontweight-semibold.fontsize-smallest.u-marginbottom-10', [
                     'Editar recompensa',
@@ -320,7 +337,7 @@ const editRewardCard = {
                                 m(`input[id='project_rewards_attributes_${index}__destroy'][type='hidden'][value='false']`, {
                                     name: `project[rewards_attributes][${index}][_destroy]`
                                 }),
-                                m("a.remove_fields.existing[data-confirm='Tem certeza?'][href='#']",
+                                m('a.remove_fields.existing', { onclick: ctrl.confirmDelete },
                                     m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
                                 )
                             ])
