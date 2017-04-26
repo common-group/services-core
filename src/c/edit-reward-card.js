@@ -76,7 +76,7 @@ const editRewardCard = {
                 descriptionError(false);
                 minimumValueError(false);
                 deliverAtError(false);
-                if (moment(fields.deliverAt()).isBefore(moment().date(-1))) {
+                if (reward.newReward && moment(fields.deliverAt()).isBefore(moment().date(-1))) {
                     args.error(true);
                     deliverAtError(true);
                 }
