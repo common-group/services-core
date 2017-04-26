@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import moment from 'moment';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import userVM from '../vms/user-vm';
@@ -29,6 +30,8 @@ const projectEditReward = {
                 }).done(() => {
                     error(false);
                     showSuccess(true);
+                    loadRewards();
+                    m.redraw();
                 }).fail((json) => {
                     error(true);
                     showSuccess(false);
@@ -40,15 +43,24 @@ const projectEditReward = {
                 });
             },
             onSubmit = () => {
-                updateRewardData();
+                error(false);
+                errors('Erro ao salvar informações. Confira os dados informados.');
+                _.map(rewards(), (reward) => {
+                    if (reward().validate) {
+                        reward().validate();
+                    }
+                });
+                if (!error()) {
+                    updateRewardData();
+                }
 
                 return false;
             },
-            newReward = {
+            newReward = () => ({
                 id: null,
                 minimum_value: null,
                 title: null,
-                deliver_at: null,
+                deliver_at: moment().date(1).format(),
                 description: null,
                 paid_count: 0,
                 edit: m.prop(true),
@@ -56,7 +68,7 @@ const projectEditReward = {
                 maximum_contributions: null,
                 newReward: true,
                 row_order: 999999999 + (rewards().length * 20) // we need large and spaced apart numbers
-            };
+            });
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
             method: 'POST',
@@ -80,20 +92,23 @@ const projectEditReward = {
             }
         };
 
-        rewardVM.fetchRewards(args.project_id).then(() => {
+        const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
+            rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
                 const limited = reward.maximum_contributions !== null;
                 _.extend(reward, {
                     edit: h.toggleProp(false, true),
                     limited: h.toggleProp(limited, !limited)
                 });
-                rewards().push(reward);
+                rewards().push(m.prop(reward));
             });
 
             if (rewardVM.rewards().length === 0) {
-                rewards().push(newReward);
+                rewards().push(m.prop(newReward()));
             }
         });
+
+        loadRewards();
 
         return {
             loading,
@@ -111,6 +126,7 @@ const projectEditReward = {
     },
 
     view(ctrl, args) {
+        const error = ctrl.error;
         return m("[id='dashboard-rewards-tab']",
             m('.w-section.section',
                 m('.w-container', [
@@ -136,16 +152,17 @@ const projectEditReward = {
                                     ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
                                         config: ctrl.setSorting
                                     }, [
-                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward.row_order)), (reward, index) => m(`div[id=${reward.id}]`, [m('.nested-fields',
+                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward().row_order)), (reward, index) => m(`div[id=${reward().id}]`, [m('.nested-fields',
                                                 m('.reward-card', [
-                                                    (!reward.edit() ?
+                                                    (!reward().edit() ?
                                                         m(dashboardRewardCard, {
-                                                            reward,
+                                                            reward: reward(),
                                                             user: ctrl.user(),
                                                             project_id: args.project_id,
                                                             project_state: ctrl.project_state,
                                                         }) :
                                                         m(editRewardCard, {
+                                                            error,
                                                             reward,
                                                             index
                                                         }))
@@ -153,7 +170,7 @@ const projectEditReward = {
                                             ),
                                             m(`input.ui-sortable-handle[id='project_rewards_attributes_${index}_id'][type='hidden']`, {
                                                 name: `project[rewards_attributes][${index}][id]`,
-                                                value: reward.id
+                                                value: reward().id
                                             })
                                         ]))
                                     ]),
@@ -162,7 +179,7 @@ const projectEditReward = {
                             ]),
                             (rewardVM.canAdd(ctrl.project_state) ? [
                                 m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                    onclick: () => ctrl.rewards().push(ctrl.newReward)
+                                    onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
                                 },
                                     '+ Adicionar recompensa'
                                 )
