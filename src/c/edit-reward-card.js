@@ -3,37 +3,37 @@ import moment from 'moment';
 import _ from 'underscore';
 import h from '../h';
 import shippingFeeInput from '../c/shipping-fee-input';
-import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
 
 const editRewardCard = {
     controller(args) {
-        projectVM.getCurrentProject();
         const reward = args.reward(),
-            shipping_options = m.prop(reward.shipping_options),
-            minimumValue = m.prop(reward.minimum_value),
-            description = m.prop(reward.description),
-            deliverAt = m.prop(reward.deliver_at),
+            fields = {
+                title: m.prop(reward.title),
+                shipping_options: m.prop(reward.shipping_options),
+                minimumValue: m.prop(reward.minimum_value),
+                description: m.prop(reward.description),
+                deliverAt: m.prop(reward.deliver_at),
+                maximumContributions: m.prop(reward.maximum_contributions)
+            },
             descriptionError = m.prop(false),
             minimumValueError = m.prop(false),
             deliverAtError = m.prop(false),
-            title = m.prop(reward.title),
-            maximumContributions = m.prop(reward.maximum_contributions),
             index = args.index,
             showTips = h.toggleProp(false, true),
             states = m.prop([]),
             fees = m.prop([]),
             statesLoader = rewardVM.statesLoader,
             updateOptions = () => {
-                if (((shipping_options() === 'national' || shipping_options() === 'international') && !_.contains(_.pluck(fees(), 'destination'), 'others'))) {
+                if (((fields.shipping_options() === 'national' || fields.shipping_options() === 'international') && !_.contains(_.pluck(fees(), 'destination'), 'others'))) {
                     fees().push({
                         value: 0,
                         destination: 'others'
                     });
                 }
-                if (shipping_options() === 'national') {
+                if (fields.shipping_options() === 'national') {
                     fees(_.reject(fees(), fee => fee.destination === 'international'));
-                } else if (shipping_options() === 'international' && !_.contains(_.pluck(fees(), 'destination'), 'international')) {
+                } else if (fields.shipping_options() === 'international' && !_.contains(_.pluck(fees(), 'destination'), 'international')) {
                     fees().push({
                         value: 0,
                         destination: 'international'
@@ -61,15 +61,15 @@ const editRewardCard = {
                 descriptionError(false);
                 minimumValueError(false);
                 deliverAtError(false);
-                if (moment(deliverAt()).isBefore(projectVM.currentProject().expires_at)) {
+                if (moment(fields.deliverAt()).isBefore(moment().date(-1))) {
                     args.error(true);
                     deliverAtError(true);
                 }
-                if (_.isEmpty(description())) {
+                if (_.isEmpty(fields.description())) {
                     args.error(true);
                     descriptionError(true);
                 }
-                if (!minimumValue() || parseInt(minimumValue()) < 10) {
+                if (!fields.minimumValue() || parseInt(fields.minimumValue()) < 10) {
                     args.error(true);
                     minimumValueError(true);
                 }
@@ -77,17 +77,12 @@ const editRewardCard = {
         });
 
         return {
-            minimumValue,
+            fields,
             minimumValueError,
             deliverAtError,
             descriptionError,
-            description,
-            deliverAt,
-            title,
-            maximumContributions,
             updateOptions,
             showTips,
-            shipping_options,
             states,
             reward,
             index,
@@ -103,10 +98,10 @@ const editRewardCard = {
             fees = ctrl.fees(),
             reward = args.reward(),
             inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
-            m('span',
-                message
-            )
-        );
+                m('span',
+                    message
+                )
+            );
 
         return m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.w-col.w-col-5.w-sub-col', [
@@ -134,8 +129,8 @@ const editRewardCard = {
                             m('.w-col.w-col-7',
                                 m(`input.w-input.text-field.positive[aria-required='true'][autocomplete='off'][type='tel'][id='project_rewards_attributes_${index}_title']`, {
                                     name: `project[rewards_attributes][${index}][title]`,
-                                    value: ctrl.title(),
-                                    onchange: m.withAttr('value', ctrl.title)
+                                    value: ctrl.fields.title(),
+                                    onchange: m.withAttr('value', ctrl.fields.title)
                                 })
                             )
                         ]),
@@ -157,8 +152,8 @@ const editRewardCard = {
                                             name: `project[rewards_attributes][${index}][minimum_value]`,
 
                                             class: ctrl.minimumValueError() ? 'error' : false,
-                                            value: ctrl.minimumValue(),
-                                            onchange: m.withAttr('value', ctrl.minimumValue)
+                                            value: ctrl.fields.minimumValue(),
+                                            onchange: m.withAttr('value', ctrl.fields.minimumValue)
                                         })
                                     )
                                 ]),
@@ -185,24 +180,25 @@ const editRewardCard = {
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
                                                 name: `project[rewards_attributes][${index}][deliver_at(2i)]`,
                                                 onchange: (e) => {
-                                                    ctrl.deliverAt(moment(ctrl.deliverAt()).month(parseInt(e.target.value) - 1).format());
+                                                    ctrl.fields.deliverAt(moment(ctrl.fields.deliverAt()).month(parseInt(e.target.value) - 1).format());
                                                 }
                                             }, [
-                                                _.map(moment.monthsShort(), (month, monthIndex) => {
-                                                    const selectedMonth = moment(ctrl.deliverAt()).format('MMM');
-                                                    return m(`option[value='${monthIndex + 1}']${selectedMonth === month ? "[selected='selected']" : ''}`,
-                                                        h.capitalize(month)
-                                                    );
-                                                })
+                                                _.map(moment.monthsShort(), (month, monthIndex) => m(`option[value='${monthIndex + 1}']`, {
+                                                    selected: moment(ctrl.fields.deliverAt()).format('M') == monthIndex + 1
+                                                },
+                                                    h.capitalize(month)
+                                                ))
                                             ]),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
                                                 name: `project[rewards_attributes][${index}][deliver_at(1i)]`,
                                                 onchange: (e) => {
-                                                    ctrl.deliverAt(moment(reward.deliverAt).year(parseInt(e.target.value)).format());
+                                                    ctrl.fields.deliverAt(moment(reward.deliverAt).year(parseInt(e.target.value)).format());
                                                 }
                                             }, [
                                                 _.map(_.range(moment().year(), moment().year() + 6), year =>
-                                                    m(`option[value='${year}']${moment(ctrl.deliverAt()).format('YYYY') === String(year) ? "[selected='selected']" : ''}`,
+                                                    m(`option[value='${year}']`, {
+                                                        selected: moment(ctrl.fields.deliverAt()).format('YYYY') === String(year)
+                                                    },
                                                         year
                                                     )
                                                 )
@@ -210,7 +206,7 @@ const editRewardCard = {
                                         ])
                                     )
                                 ),
-                                ctrl.deliverAtError() ? inlineError('Data de entrega deve ser posterior a data de finalização do projeto.') : '',
+                                ctrl.deliverAtError() ? inlineError('Data de entrega não pode ser no passado.') : '',
                             )
                         ]),
                         m('.w-row',
@@ -221,9 +217,9 @@ const editRewardCard = {
                         m('.w-row', [
                             m(`textarea.text.required.w-input.text-field.positive.height-medium[aria-required='true'][placeholder='Descreva sua recompensa'][required='required'][id='project_rewards_attributes_${index}_description']`, {
                                 name: `project[rewards_attributes][${index}][description]`,
-                                value: ctrl.description(),
+                                value: ctrl.fields.description(),
                                 class: ctrl.descriptionError() ? 'error' : false,
-                                onchange: m.withAttr('value', ctrl.description)
+                                onchange: m.withAttr('value', ctrl.fields.description)
                             }),
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                                 'Descrição não pode ficar em branco'
@@ -239,9 +235,9 @@ const editRewardCard = {
                             m('.w-col.w-col-9', [
                                 m(`select.positive.text-field.w-select[id='project_rewards_attributes_${index}_shipping_options']`, {
                                     name: `project[rewards_attributes][${index}][shipping_options]`,
-                                    value: ctrl.shipping_options() || 'free',
+                                    value: ctrl.fields.shipping_options() || 'free',
                                     onchange: (e) => {
-                                        ctrl.shipping_options(e.target.value);
+                                        ctrl.fields.shipping_options(e.target.value);
                                         ctrl.updateOptions();
                                     }
                                 }, [
@@ -259,7 +255,7 @@ const editRewardCard = {
                                     )
                                 ]),
 
-                                ((ctrl.shipping_options() === 'national' || ctrl.shipping_options() === 'international') ?
+                                ((ctrl.fields.shipping_options() === 'national' || ctrl.fields.shipping_options() === 'international') ?
                                     m('.card.card-terciary', [
 
                                         // state fees
@@ -305,8 +301,8 @@ const editRewardCard = {
                                 m('.w-col.w-col-7.reward_maximum_contributions',
                                     m(`input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder='Quantidade disponível'][type='tel'][id='project_rewards_attributes_${index}_maximum_contributions']`, {
                                         name: `project[rewards_attributes][${index}][maximum_contributions]`,
-                                        value: ctrl.maximumContributions(),
-                                        onchange: m.withAttr('value', ctrl.maximumContributions)
+                                        value: ctrl.fields.maximumContributions(),
+                                        onchange: m.withAttr('value', ctrl.fields.maximumContributions)
                                     })
                                 ) :
                                 '')
