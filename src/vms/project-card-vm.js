@@ -18,7 +18,7 @@ const fillFields = (data) => {
 };
 
 const reloadCurrentProject = () => {
-    if(currentProject().id) {
+    if (currentProject().id) {
         projectVM.fetchProject(currentProject().id, false).then((data) => {
             currentProject(_.first(data));
             m.redraw();
@@ -27,27 +27,26 @@ const reloadCurrentProject = () => {
 };
 
 const prepareForUpload = (event) => {
-    let formData = new FormData();
-    if(event.target.files[0]) {
+    const formData = new FormData();
+    if (event.target.files[0]) {
         formData.append('uploaded_image', event.target.files[0]);
     }
     fields.upload_files(formData);
 };
 
 const uploadImage = (project_id) => {
-    if(_.isUndefined(fields.upload_files)){
+    if (_.isUndefined(fields.upload_files())) {
         const deferred = m.deferred();
         deferred.resolve({});
         return deferred.promise;
-    } else {
-        return m.request({
-            method: 'POST',
-            url: `/projects/${project_id}/upload_image.json`,
-            data: fields.upload_files(),
-            config: h.setCsrfToken,
-            serialize(data) { return data; }
-        });
     }
+    return m.request({
+        method: 'POST',
+        url: `/projects/${project_id}/upload_image.json`,
+        data: fields.upload_files(),
+        config: h.setCsrfToken,
+        serialize(data) { return data; }
+    });
 };
 
 const updateProject = (project_id) => {
