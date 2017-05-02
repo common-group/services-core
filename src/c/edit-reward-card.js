@@ -196,6 +196,7 @@ const editRewardCard = {
                                             }),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
                                                 name: `project[rewards_attributes][${index}][deliver_at(2i)]`,
+                                                class: ctrl.deliverAtError() ? 'error' : false,
                                                 onchange: (e) => {
                                                     ctrl.fields.deliverAt(moment(ctrl.fields.deliverAt()).month(parseInt(e.target.value) - 1).format());
                                                 }
@@ -208,6 +209,7 @@ const editRewardCard = {
                                             ]),
                                             m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
                                                 name: `project[rewards_attributes][${index}][deliver_at(1i)]`,
+                                                class: ctrl.deliverAtError() ? 'error' : false,
                                                 onchange: (e) => {
                                                     ctrl.fields.deliverAt(moment(reward.deliverAt).year(parseInt(e.target.value)).format());
                                                 }
