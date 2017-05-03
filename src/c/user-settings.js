@@ -9,10 +9,11 @@ import UserOwnerBox from './user-owner-box';
 import inlineError from './inline-error';
 import projectEditSaveBtn from './project-edit-save-btn';
 import userSettingsVM from '../vms/user-settings-vm';
+import railsErrorsVM from '../vms/rails-errors-vm';
 
 const userSettings = {
     controller(args) {
-        let parsedErrors = userSettingsVM.mapRailsErrors(args.rails_errors);
+        let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = args.user,
             bankAccount = m.prop({}),

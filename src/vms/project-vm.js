@@ -7,10 +7,10 @@ import rewardVM from './reward-vm';
 import userVM from './user-vm';
 
 const currentProject = m.prop(),
-      userDetails = m.prop(),
-      projectContributions = m.prop([]),
-      vm = postgrest.filtersVM({ project_id: 'eq' }),
-      idVM = h.idVM;
+    userDetails = m.prop(),
+    projectContributions = m.prop([]),
+    vm = postgrest.filtersVM({ project_id: 'eq' }),
+    idVM = h.idVM;
 
 const setProject = project_user_id => (data) => {
     currentProject(_.first(data));
@@ -87,14 +87,12 @@ const fetchProject = (project_id, handlePromise = true, customProp = currentProj
     return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
 };
 
-const updateProject = (project_id, projectData) => {
-    return m.request({
-        method: 'PUT',
-        url: `/projects/${project_id}.json`,
-        data: { project: projectData },
-        config: h.setCsrfToken
-    });
-}
+const updateProject = (project_id, projectData) => m.request({
+    method: 'PUT',
+    url: `/projects/${project_id}.json`,
+    data: { project: projectData },
+    config: h.setCsrfToken
+});
 
 
 const projectVM = {

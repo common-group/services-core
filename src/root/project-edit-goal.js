@@ -17,9 +17,8 @@ const projectEditGoal = {
             user: ctrl.user(),
             userId: args.user_id,
             projectId: args.project_id,
-            project: ctrl.project(),
-            rails_errors: args.rails_errors
-        }) : m('div', h.loader()) );
+            project: ctrl.project()
+        }) : m('div', h.loader()));
     }
 };
 

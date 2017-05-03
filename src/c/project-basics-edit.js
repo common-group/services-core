@@ -45,8 +45,8 @@ const projectBasicsEdit = {
                 });
                 return false;
             };
-        if (args.rails_errors) {
-            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        if (railsErrorsVM.railsErrors()) {
+            railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());

@@ -13,38 +13,38 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 const projectGoalEdit = {
     controller(args) {
         const vm = projectGoalVM,
-              mapErrors = [
-                  ["mode", ["mode"]],
-                  ["goal", ["goal"]],
-                  ["online_days", ["online_days"]]
-              ],
-              showSuccess = h.toggleProp(false, true),
-              showError = h.toggleProp(false, true),
-              showModeDiff = h.toggleProp(false, true),
-              showTaxesDiff = h.toggleProp(false, true),
-              applyGoalMask = _.compose(vm.fields.goal, h.applyMonetaryMask),
-              loading = m.prop(false),
-              onSubmit = (event) => {
-                  loading(true);
-                  m.redraw();
-                  vm.updateProject(args.projectId).then((data) => {
-                      loading(false);
-                      vm.e.resetFieldErrors();
-                      if(!showSuccess()) { showSuccess.toggle(); }
-                      if(showError()) { showError.toggle(); }
-                  }).catch((err) => {
-                      if(err.errors_json) {
-                          railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
-                      }
-                      loading(false);
-                      if(showSuccess()) { showSuccess.toggle(); }
-                      if(!showError()) { showError.toggle(); }
-                  });
-                  return false;
-              };
+            mapErrors = [
+                  ['mode', ['mode']],
+                  ['goal', ['goal']],
+                  ['online_days', ['online_days']]
+            ],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            showModeDiff = h.toggleProp(false, true),
+            showTaxesDiff = h.toggleProp(false, true),
+            applyGoalMask = _.compose(vm.fields.goal, h.applyMonetaryMask),
+            loading = m.prop(false),
+            onSubmit = (event) => {
+                loading(true);
+                m.redraw();
+                vm.updateProject(args.projectId).then((data) => {
+                    loading(false);
+                    vm.e.resetFieldErrors();
+                    if (!showSuccess()) { showSuccess.toggle(); }
+                    if (showError()) { showError.toggle(); }
+                }).catch((err) => {
+                    if (err.errors_json) {
+                        railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                    }
+                    loading(false);
+                    if (showSuccess()) { showSuccess.toggle(); }
+                    if (!showError()) { showError.toggle(); }
+                });
+                return false;
+            };
 
-        if(args.rails_errors) {
-            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        if (railsErrorsVM.railsErrors()) {
+            railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
 
@@ -125,17 +125,17 @@ const projectGoalEdit = {
                                                     m('.fontcolor-secondary.u-text-center.fontsize-base.lineheight-tightest', 'R$')
                                                 ]),
                                                 m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6.label-hide',
-                                                  [
-                                                      m('.input.tel.optional.project_goal', [
-                                                          m('label.field-label'),
-                                                          m('input.string.optional.w-input.text-field.postfix.positive.medium[autocomplete="off"][id="project-goal-input"][name="project[goal]"][type="tel"]', {
-                                                              class: vm.e.hasError('goal') ? 'error' : false,
-                                                              value: vm.fields.goal(),
-                                                              maxlength: 14,
-                                                              onkeyup: m.withAttr('value', ctrl.applyGoalMask)
-                                                          }),
-                                                      ]),
-                                                  ])
+                                                    [
+                                                        m('.input.tel.optional.project_goal', [
+                                                            m('label.field-label'),
+                                                            m('input.string.optional.w-input.text-field.postfix.positive.medium[autocomplete="off"][id="project-goal-input"][name="project[goal]"][type="tel"]', {
+                                                                class: vm.e.hasError('goal') ? 'error' : false,
+                                                                value: vm.fields.goal(),
+                                                                maxlength: 14,
+                                                                onkeyup: m.withAttr('value', ctrl.applyGoalMask)
+                                                            }),
+                                                        ]),
+                                                    ])
                                             ]),
                                             m('.u-text-center', vm.e.inlineError('goal'))
                                         ]),
@@ -162,7 +162,7 @@ const projectGoalEdit = {
                                     ]) : ''),
                                 ]
                             }),
-                            m(bigCard,{
+                            m(bigCard, {
                                 label: I18n.t('online_days_label', I18nScope()),
                                 label_hint: m.trust(I18n.t(`online_days_${vm.fields.mode()}_hint`, I18nScope())),
                                 children: (vm.fields.mode() == 'aon' ? [
@@ -172,7 +172,7 @@ const projectGoalEdit = {
                                             m('.w-row', [
                                                 m('.w-col.w-col-8.label-hide', [
                                                     m('.input.integer.optional.disabled.project_online_days', [
-                                                        m("label.field-label"),
+                                                        m('label.field-label'),
                                                         m('input.numeric.integer.optional.disabled.w-input.text-field.postfix.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
                                                             onchange: m.withAttr('value', vm.fields.online_days),
                                                             value: vm.fields.online_days(),
@@ -203,7 +203,7 @@ const projectGoalEdit = {
                                         }, [
                                             m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n.t('online_days_closed', I18nScope())),
                                             m('.w-hidden-tiny.u-marginbottom-30', I18n.t('online_days_closed_hint', I18nScope())),
-                                            m('.w-row',[
+                                            m('.w-row', [
                                                 m('.w-col.w-col-6.label-hide', [
                                                     m('.input.integer.optional.project_online_days', [
                                                         m('label.field-label'),
@@ -230,7 +230,7 @@ const projectGoalEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, {loading: ctrl.loading, onSubmit: ctrl.onSubmit})
+                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
             ])
 
         ]);

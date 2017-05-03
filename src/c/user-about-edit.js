@@ -3,13 +3,14 @@ import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import userAboutVM from '../vms/user-about-vm';
+import railsErrorsVM from '../vms/rails-errors-vm';
 import popNotification from './pop-notification';
 import inlineError from './inline-error';
 import projectEditSaveBtn from './project-edit-save-btn';
 
 const userAboutEdit = {
     controller(args) {
-        let parsedErrors = userAboutVM.mapRailsErrors(args.rails_errors);
+        let parsedErrors = userAboutVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteUser;
         const user = args.user || {},
             fields = {
@@ -89,7 +90,7 @@ const userAboutEdit = {
                     });
                 }
 
-                return void(0);
+                return void (0);
             },
 
             updateUser = () => {
@@ -235,15 +236,15 @@ const userAboutEdit = {
                     m('.w-container',
                         m('.w-row',
                             m('.w-col.w-col-10.w-col-push-1', [!user.is_admin ? '' : m('.w-row.u-marginbottom-30.card.card-terciary', [
-                                    m('.w-col.w-col-5.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold',
+                                m('.w-col.w-col-5.w-sub-col', [
+                                    m('label.field-label.fontweight-semibold',
                                             'Endereço do seu perfil'
                                         ),
-                                        m('label.field-label.fontsize-smallest.fontcolor-secondary',
+                                    m('label.field-label.fontsize-smallest.fontcolor-secondary',
                                             'Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!    '
                                         )
-                                    ]),
-                                    m('.w-col.w-col-7',
+                                ]),
+                                m('.w-col.w-col-7',
                                         m('.w-row', [
                                             m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
                                                 m('input.string.optional.w-input.text-field.text-field.positive.prefix[id="user_permalink"][type="text"]', {
@@ -257,7 +258,7 @@ const userAboutEdit = {
                                             )
                                         ])
                                     )
-                                ]),
+                            ]),
                                 m('.w-row.u-marginbottom-30.card.card-terciary', [
                                     m('.fontsize-base.fontweight-semibold',
                                         'Email'
@@ -270,10 +271,10 @@ const userAboutEdit = {
                                             user.email
                                         ),
                                         m('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', {
-                                                onclick: () => {
-                                                    ctrl.showEmailForm.toggle();
-                                                }
-                                            },
+                                            onclick: () => {
+                                                ctrl.showEmailForm.toggle();
+                                            }
+                                        },
                                             'Alterar email'
                                         )
                                     ]),
@@ -462,8 +463,8 @@ const userAboutEdit = {
                                             m('.w-row', [
                                                 m('.w-col.w-col-6.w-col-push-6',
                                                     m('a.btn.btn-small.btn-terciary', {
-                                                            onclick: ctrl.addLink
-                                                        },
+                                                        onclick: ctrl.addLink
+                                                    },
                                                         m('span.translation_missing', 'Add Link')
                                                     )
                                                 )
@@ -516,8 +517,8 @@ const userAboutEdit = {
                                             'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'
                                         ),
                                         m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}'][rel='nofollow']`, {
-                                                onclick: ctrl.deleteAccount
-                                            },
+                                            onclick: ctrl.deleteAccount
+                                        },
                                             'Desativar minha conta no Catarse'
                                         ),
                                         m('form.w-hidden', {
