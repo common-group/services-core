@@ -27,7 +27,7 @@ const errorsFor = (group) => {
     return m('span.fa.fa-check-circle.fa-fw.fa-lg.text-success');
 };
 
-const mapRailsErrors = (rails_errors, errors_fields, e) => {
+const mapRailsErrors = (rails_errors, errorsFields, e) => {
     let parsedErrors;
     try {
         parsedErrors = JSON.parse(rails_errors);
@@ -43,13 +43,14 @@ const mapRailsErrors = (rails_errors, errors_fields, e) => {
         }
     };
 
-    _.each(errors_fields, (item, i) => {
+    _.each(errorsFields, (item, i) => {
         extractAndSetErrorMsg(item[0], item[1]);
     });
 };
 
 const railsErrorsVM = {
     errorsFor,
+    railsErrors,
     setRailsErrors,
     mapRailsErrors
 };

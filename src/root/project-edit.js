@@ -22,8 +22,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 
 const projectEdit = {
     controller(args) {
-        const { project_id } = args,
-            rails_errors = m.prop('');
+        const { project_id } = args;
 
         projectVM.getCurrentProject();
         const projectState = projectVM.currentProject().project_state;
@@ -32,7 +31,6 @@ const projectEdit = {
             hash = m.prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
-                        rails_errors: rails_errors(),
                         project_id,
                         user_id: project_user_id
                     },
@@ -102,21 +100,18 @@ const projectEdit = {
 
         h.redrawHashChange();
         return {
-            rails_errors,
             projectVM,
             displayTabContent,
             hash
         };
     },
     view(ctrl, args) {
-        const project = ctrl.projectVM.currentProject,
-            rails_errors = ctrl.rails_errors;
+        const project = ctrl.projectVM.currentProject;
 
         return m('.project-dashboard-edit', [
             ctrl.displayTabContent(),
             (project() ? m.component(projectDashboardMenu, {
-                project,
-                rails_errors
+                project
             }) : '')
         ]);
     }
