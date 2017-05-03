@@ -35,6 +35,7 @@ const projectRewardList = {
             vm.applyMask(`${shippingFee + rewardMinValue},00`);
         };
 
+        // @TODO: move submit, fee & value logic to VM
         const submitContribution = () => {
             const valueFloat = h.monetaryToFloat(vm.contributionValue);
             const shippingFee = rewardVM.hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
@@ -45,7 +46,8 @@ const projectRewardList = {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
             } else {
                 vm.error('');
-                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
+                const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
+                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
             }
 
             return false;

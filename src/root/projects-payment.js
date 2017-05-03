@@ -133,7 +133,7 @@ const projectsPayment = {
                     m('.w-clearfix',
                         [
                             m('.fontsize-larger.text-success.u-left',
-                                `R$ ${Number(ctrl.value).toFixed()}`
+                                `R$ ${h.applyMonetaryMask(Number(ctrl.value))}`
                             ),
                             m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                                 'Editar'
@@ -185,22 +185,7 @@ const projectsPayment = {
                                 ),
                                 I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, { scope: 'projects.contributions' })
                             ])
-                            : '',
-                        m('div',
-                            // ctrl.contribution().shipping_fee_id ? [
-                            //     m('.divider.u-marginbottom-10.u-margintop-10'),
-                            //     m('.fontsize-smaller.fontweight-semibold',
-                            //         'Destino da recompensa:'
-                            //     ),
-                            //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                            //         'Editar'
-                            //     ),
-                            //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
-                            //         `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
-                            //     ),
-                            //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
-                            // ] : ''
-                        )
+                            : ''
                     ])
                 ])
             ),
@@ -449,7 +434,7 @@ const projectsPayment = {
                                 m('.w-clearfix',
                                     [
                                         m('.fontsize-larger.text-success.u-left',
-                                            `R$ ${Number(ctrl.value).toFixed()}`
+                                            `R$ ${h.applyMonetaryMask(Number(ctrl.value))}`
                                         ),
                                         m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                                             'Editar'
