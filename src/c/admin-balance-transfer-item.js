@@ -18,7 +18,18 @@ const adminBalanceTransferItem = {
         return m('.w-row', [
             m('.w-col.w-col-1.w-col-tiny-1', [
                 m('.w-checkbox.w-clearfix', [
-                    m('input.w-checkbox-input[type=\'checkbox\']', {})
+                    m('input.w-checkbox-input[type=\'checkbox\']', {
+                        disabled: (item.state != 'pending'),
+                        checked: args.listWrapper.isSelected(item.id),
+                        onchange: (event) => {
+                            if(event.currentTarget.checked) {
+                                args.listWrapper.selectItem(_.extend({}, item, {user: user}));
+                            } else {
+                                args.listWrapper.unSelectItem(_.extend({}, item, {user: user}));
+                            }
+                            args.alertClassToggle.toggle();
+                        }
+                    })
                 ]),
             ]),
             m('.w-col.w-col-3', 
@@ -35,7 +46,7 @@ const adminBalanceTransferItem = {
               ] : h.loader() )
              ),
             m('.w-col.w-col-2', [
-                m('span.fontsize-small', `R$ ${h.applyMonetaryMask(item.amount)}`)
+                m('span.fontsize-small', `R$ ${h.formatNumber(item.amount, 2, 3)}`)
             ]),
             m('.w-col.w-col-2.w-hidden-small.w-hidden-tiny', [
                 m('', [
