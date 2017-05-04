@@ -1,12 +1,10 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from '../h';
 import I18n from 'i18n-js';
-import userVM from '../vms/user-vm';
+import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectDescriptionVM from '../vms/project-description-vm';
 import popNotification from './pop-notification';
-import inlineError from './inline-error';
 import bigInputCard from './big-input-card';
 import projectEditSaveBtn from './project-edit-save-btn';
 
@@ -29,6 +27,7 @@ const projectDescriptionEdit = {
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
                     if (showError()) { showError.toggle(); }
+                    railsErrorsVM.validatePublish();
                 }).catch((err) => {
                     if (err.errors_json) {
                         railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);

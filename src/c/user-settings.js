@@ -100,7 +100,7 @@ const userSettings = {
                     deleteFormSubmit = () => el.submit();
                 }
             },
-            updateUserData = (user_id) => {
+            updateUserData = () => {
                 const userData = {
                     country_id: fields.country_id(),
                     address_street: fields.street(),
@@ -154,6 +154,7 @@ const userSettings = {
                     if (!showSuccess()) {
                         showSuccess.toggle();
                     }
+                    railsErrorsVM.validatePublish();
                 }).catch((err) => {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
@@ -171,9 +172,8 @@ const userSettings = {
             },
             onSubmit = () => {
                 loading(true);
-                updateUserData(user_id);
-
                 m.redraw();
+                updateUserData();
                 return false;
             },
             applyZipcodeMask = _.compose(fields.zipcode, zipcodeMask),

@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import m from 'mithril';
+import h from '../h';
 
 const railsErrors = m.prop('');
 const setRailsErrors = errors => railsErrors(errors);
@@ -48,8 +49,25 @@ const mapRailsErrors = (rails_errors, errorsFields, e) => {
     });
 };
 
+const validatePublish = () => {
+    const currentProject = h.getCurrentProject();
+    if (_.isEmpty(railsErrors())) { return false; }
+    m.request({
+        method: 'GET',
+        url: `/projects/${currentProject.project_id}/validate_publish`,
+        config: h.setCsrfToken
+    }).then(() => { setRailsErrors(''); }).catch((err) => {
+        if (err) {
+            setRailsErrors(err.errors_json);
+        }
+        m.redraw();
+    });
+    return false;
+};
+
 const railsErrorsVM = {
     errorsFor,
+    validatePublish,
     railsErrors,
     setRailsErrors,
     mapRailsErrors

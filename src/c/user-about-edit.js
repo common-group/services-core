@@ -111,6 +111,7 @@ const userAboutEdit = {
                 }
 
                 loading(true);
+                m.redraw();
                 uploadImage();
 
                 return m.request({
@@ -125,6 +126,7 @@ const userAboutEdit = {
                     updateFieldsFromUser();
                     loading(false);
                     m.redraw();
+                    railsErrorsVM.validatePublish();
                 }).catch((err) => {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
