@@ -4,16 +4,28 @@ import h from '../h';
 
 const adminItem = {
     controller(args) {
+        const displayDetailBox =  h.toggleProp(false, true),
+              alertClassToggle =  h.toggleProp(false, true);
+
+        if(args.listWrapper && _.isFunction(args.listWrapper.isSelected) && args.listWrapper.isSelected(args.item.id)) {
+            alertClassToggle(true);
+        }
+
         return {
-            displayDetailBox: h.toggleProp(false, true)
+            displayDetailBox,
+            alertClassToggle
         };
     },
     view(ctrl, args) {
         const item = args.item;
 
-        return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', [
+        return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', {
+            class: (ctrl.alertClassToggle() ? 'card-alert' : '' )
+        },[
             m.component(args.listItem, {
                 item,
+                listWrapper: args.listWrapper,
+                alertClassToggle: ctrl.alertClassToggle,
                 key: args.key
             }),
             m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
