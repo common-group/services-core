@@ -8,7 +8,7 @@ import filterMain from '../c/filter-main';
 import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
 
-const adminBalanceTransfers = {
+const adminBalanceTranfers = {
     controller(args) {
         const listVM = balanceTransferListVM,
               filterVM = balanceTransferFilterVM,
@@ -22,6 +22,15 @@ const adminBalanceTransfers = {
                       }
                   }
               ],
+              seletectedItemsIDs = m.prop([]),
+              generateSeletecItem = (item_id) => {
+                  seletectedItemsIDs().push(item_id);
+                  console.log('select', seletectedItemsIDs());
+              },
+              generateUnselectItem = (item_id) => {
+                  seletectedItemsIDs(_.without(seletectedItemsIDs(), item_id));
+                  console.log('unselect', seletectedItemsIDs());
+              },
               submit = () => {
                   error(false);
                   listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
@@ -36,6 +45,9 @@ const adminBalanceTransfers = {
             filterBuilder,
             listVM: {
                 list: listVM,
+                seletectedItemsIDs,
+                generateSeletecItem,
+                generateUnselectItem,
                 error
             },
             data: {
@@ -45,7 +57,7 @@ const adminBalanceTransfers = {
         };
     },
     view(ctrl, args) {
-        return [
+        return m('', [
             m(adminFilter, {
                 filterBuilder: ctrl.filterBuilder,
                 submit: ctrl.submit
@@ -55,8 +67,8 @@ const adminBalanceTransfers = {
                 listItem: adminBalanceTransferItem,
                 listDetail: adminBalanceTransferItemDetail
             })
-        ];
+        ]);
     }
 };
 
-export default adminBalanceTransfers;
+export default adminBalanceTranfers;
