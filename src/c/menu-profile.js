@@ -132,6 +132,11 @@ const menuProfile = {
                                                     )
                                                 ),
                                                 m('li.lineheight-looser',
+                                                  m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/balance-transfers\']',
+                                                    'Saques'
+                                                   )
+                                                 ),
+                                                m('li.lineheight-looser',
                                                     m('a.alt-link.fontsize-smaller[href=\'/pt/admin/financials\']',
                                                         'Rel. Financeiros'
                                                     )
