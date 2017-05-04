@@ -1,5 +1,6 @@
 import adminUsers from './root/admin-users';
 import adminContributions from './root/admin-contributions';
+import adminBalanceTransfers from './root/admin-balance-transfers';
 import flex from './root/flex';
 import insights from './root/insights';
 import posts from './root/posts';
@@ -39,6 +40,7 @@ const c = {
     root: {
         AdminUsers: adminUsers,
         AdminContributions: adminContributions,
+        AdminBalanceTransfers: adminBalanceTransfers,
         ClipboardCopy: copyTextInput,
         Flex: flex,
         Insights: insights,
