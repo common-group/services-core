@@ -25,7 +25,15 @@ const adminList = {
                         m('.w-col.w-col-9', [
                             m('.fontsize-base',
                                 list.isLoading() ?
-                                `Carregando ${label.toLowerCase()}...` : [m('span.fontweight-semibold', list.total()), ` ${label.toLowerCase()} encontrados`]
+                              `Carregando ${label.toLowerCase()}...` : [
+                                  m('.w-row', [
+                                      m('.w-col.w-col-3', [
+                                          m('fontweight-semibold', list.total()),
+                                          ` ${label.toLowerCase()} encontrados`
+                                      ]),
+                                      (args.vm && _.isFunction(args.vm.selectedAny) && args.vm.selectedAny() ? m('.w-col-9.w-col', args.vm.selectedInputActions()) : '')
+                                  ])
+                              ]
                             )
                         ])
                     ]),
@@ -33,6 +41,7 @@ const adminList = {
                         list.collection().map(item => m.component(adminItem, {
                             listItem: args.listItem,
                             listDetail: args.listDetail,
+                            listWrapper: args.vm,
                             item,
                             key: item.id
                         })),
