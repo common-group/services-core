@@ -49,6 +49,7 @@ const mapRailsErrors = (rails_errors, errorsFields, e) => {
     });
 };
 
+// @FIXME: fix places where we call this
 const validatePublish = () => {
     const currentProject = h.getCurrentProject();
     if (_.isEmpty(railsErrors())) { return false; }
