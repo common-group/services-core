@@ -21,11 +21,13 @@ const projectBudgetEdit = {
             loading = m.prop(false),
             onSubmit = (event) => {
                 loading(true);
+                m.redraw();
                 vm.updateProject(args.projectId).then((data) => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
                     if (showError()) { showError.toggle(); }
+                    railsErrorsVM.validatePublish();
                 }).catch((err) => {
                     if (err.errors_json) {
                         railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
