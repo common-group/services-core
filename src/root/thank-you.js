@@ -12,7 +12,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const thankYou = {
     controller(args) {
         const recommendedProjects = userVM.getUserRecommendedProjects(),
-            isSlip = !_.isEmpty(args.contribution.slip_url);
+            isSlip = args.contribution && !_.isEmpty(args.contribution.slip_url);
 
         const setEvents = (el, isInitialized) => {
             if (!isInitialized) {

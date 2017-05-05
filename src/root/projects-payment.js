@@ -122,7 +122,9 @@ const projectsPayment = {
     },
     view(ctrl) {
         const user = ctrl.user(),
-            project = ctrl.project;
+              project = ctrl.project,
+              formatedValue = h.formatNumber(Number(ctrl.value), 2, 3);
+        console.log(formatedValue);
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
@@ -133,7 +135,7 @@ const projectsPayment = {
                     m('.w-clearfix',
                         [
                             m('.fontsize-larger.text-success.u-left',
-                                `R$ ${h.applyMonetaryMask(Number(ctrl.value))}`
+                                `R$ ${formatedValue}`
                             ),
                             m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                                 'Editar'
@@ -157,7 +159,7 @@ const projectsPayment = {
                                 : m.trust(
                                     I18n.t('selected_reward.review_without_reward_html',
                                         ctrl.scope(
-                                            _.extend({ value: Number(ctrl.value).toFixed() })
+                                            _.extend({ value: formatedValue })
                                         )
                                     )
                                 )
@@ -434,7 +436,7 @@ const projectsPayment = {
                                 m('.w-clearfix',
                                     [
                                         m('.fontsize-larger.text-success.u-left',
-                                            `R$ ${h.applyMonetaryMask(Number(ctrl.value))}`
+                                            `R$ ${formatedValue}`
                                         ),
                                         m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                                             'Editar'
