@@ -111,7 +111,7 @@ const adminBalanceTranfers = {
                                       return m('.divider.fontsize-smallest.lineheight-looser', [
                                           m('.w-row.fontweight-semibold', [
                                               m('.w-col.w-col-4', [
-                                                  m('', item.user.name),
+                                                  m('', item.user_name),
                                               ]),
                                               m('.w-col.w-col-4', [
                                                   m('span', `R$ ${h.formatNumber(item.amount, 2, 3)}`)
