@@ -107,7 +107,6 @@ const userBalanceRequestModelContent = {
         };
     },
     view(ctrl, args) {
-        console.log(args);
         const balance = args.balance;
 
         return (ctrl.loadBankA() ? h.loader() : m('div', _.map(ctrl.bankAccounts(), item => [
