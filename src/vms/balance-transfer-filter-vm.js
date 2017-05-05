@@ -2,18 +2,34 @@ import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
+import models from '../models';
 
 const vm = postgrest.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     transfer_id: 'eq',
-    created_at: 'eq',
-    authorized_at: 'eq'
+    created_date: 'eq',
+    transferred_date: 'eq'
 });
+
+const paramToString = (p) => {
+    return (p || '').toString().trim();
+};
 
 vm.state('');
 vm.transfer_id('');
-vm.created_at('');
-vm.authorized_at('');
+vm.created_date('');
+vm.transferred_date('');
+
+vm.created_date.toFilter = () => {
+    const filter = paramToString(vm.created_date());
+    return filter && h.momentFromString(filter).format('YYYY-MM-DD');
+};
+
+vm.transferred_date.toFilter = () => {
+    const filter = paramToString(vm.transferred_date());
+    return filter && h.momentFromString(filter).format('YYYY-MM-DD');
+};
+
 
 export default vm;
