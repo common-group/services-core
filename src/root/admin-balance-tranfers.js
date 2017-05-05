@@ -176,6 +176,34 @@ const adminBalanceTranfers = {
                       listVM.firstPage();
                       m.redraw();
                   });
+              },
+              unSelectAll = () => {
+                  selectedItemsIDs([]);
+                  redrawProp(true);
+                  m.redraw();
+              },
+              selectAll = () => {
+                  selectAllLoading(true);
+                  m.redraw();
+                  filterVM.getAllBalanceTransfers(filterVM).then((data) => {
+                      _.map(_.where(data, {state: 'pending'}), selectItem);
+                      selectAllLoading(false);
+                      m.redraw();
+                  });
+              },
+              inputActions = () => {
+                  return m('', [
+                      m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: selectAll }, (selectAllLoading() ? 'carregando...' : `Selecionar todos (${selectedItemsIDs().length})`)),
+                      (selectedItemsIDs().length > 1 ? m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: unSelectAll }, `Desmarcar todos (${selectedItemsIDs().length})`) : ''),
+                      (selectedAny() ?
+                       m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
+                           onclick: displayApprovalModal.toggle
+                       }, `Aprovar (${selectedItemsIDs().length})`) : ''),
+                      (selectedAny() ?
+                       m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
+                           onclick: displayRejectModal.toggle
+                       }, `Rejeitar (${selectedItemsIDs().length})`) : '')
+                  ]);
               };
 
         return {
@@ -187,13 +215,15 @@ const adminBalanceTranfers = {
             filterVM,
             filterBuilder,
             listVM: {
+                hasInputAction: true,
+                inputActions,
                 list: listVM,
                 selectedItemsIDs,
                 selectItem,
                 unSelectItem,
                 selectedAny,
-                selectedInputActions,
                 isSelected,
+                redrawProp,
                 error
             },
             data: {
