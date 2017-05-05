@@ -31,5 +31,13 @@ vm.transferred_date.toFilter = () => {
     return filter && h.momentFromString(filter).format('YYYY-MM-DD');
 };
 
+vm.getAllBalanceTransfers = (filterVM) => {
+    models.balanceTransfer.pageSize(false);
+    const allTransfers = postgrest.loaderWithToken(
+        models.balanceTransfer.getPageOptions(filterVM.parameters())
+    ).load();
+    models.balanceTransfer.pageSize(9);
+    return allTransfers;
+};
 
 export default vm;
