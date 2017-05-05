@@ -7,10 +7,6 @@ const adminItem = {
         const displayDetailBox =  h.toggleProp(false, true),
               alertClassToggle =  h.toggleProp(false, true);
 
-        if(args.listWrapper && _.isFunction(args.listWrapper.isSelected) && args.listWrapper.isSelected(args.item.id)) {
-            alertClassToggle(true);
-        }
-
         return {
             displayDetailBox,
             alertClassToggle
@@ -18,6 +14,17 @@ const adminItem = {
     },
     view(ctrl, args) {
         const item = args.item;
+
+        if(args.listWrapper) {
+
+            if(_.isFunction(args.listWrapper.redrawProp)) {
+                args.listWrapper.redrawProp();
+            }
+
+            if( _.isFunction(args.listWrapper.isSelected) && args.listWrapper.isSelected(item.id)) {
+                ctrl.alertClassToggle(true);
+            }
+        }
 
         return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', {
             class: (ctrl.alertClassToggle() ? 'card-alert' : '' )
