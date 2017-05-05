@@ -7891,7 +7891,7 @@ var rewardSelectCard = {
     view: function view(ctrl, args) {
         var reward = ctrl.normalReward(args.reward);
 
-        return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
+        return h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
             class: ctrl.isSelected(reward) ? 'selected' : '',
             onclick: ctrl.selectReward(reward)
         }, m('label[for="contribution_reward_id_' + reward.id + '"]', [m('input.radio_buttons.optional.w-input.text-field.w-radio-input.back-reward-radio-button[id="contribution_reward_id_' + reward.id + '"][type="radio"][value="' + reward.id + '"]', {
