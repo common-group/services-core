@@ -96,7 +96,7 @@ const projectGoalEdit = {
                                         ])
                                     ]),
                                     m('.u-text-center.fontsize-smaller', [
-                                        m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javscript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, [
+                                        m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, [
                                             'Veja a diferença entre os modelos ',
                                             m('span.fa.fa-chevron-down')
                                         ])
