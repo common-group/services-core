@@ -28,7 +28,7 @@ const adminList = {
                               `Carregando ${label.toLowerCase()}...` : [
                                   m('.w-row', [
                                       m('.w-col.w-col-3', [
-                                          m('fontweight-semibold', list.total()),
+                                          m('.fontweight-semibold', list.total()),
                                           ` ${label.toLowerCase()} encontrados`
                                       ]),
                                       (args.vm && _.isFunction(args.vm.selectedAny) && args.vm.selectedAny() ? m('.w-col-9.w-col', args.vm.selectedInputActions()) : '')
