@@ -81,7 +81,7 @@ const rewardSelectCard = {
     view(ctrl, args) {
         const reward = ctrl.normalReward(args.reward);
 
-        return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
+        return (h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
             class: ctrl.isSelected(reward) ? 'selected' : '',
             onclick: ctrl.selectReward(reward)
         },
@@ -167,7 +167,7 @@ const rewardSelectCard = {
                     ])
                 ])
             ])
-        );
+                                                  ));
     }
 };
 
