@@ -8,8 +8,9 @@ import models from '../models';
 const adminBalanceTransferItemDetail = {
     controller(args) {
         const userBankAccount = m.prop(undefined),
-              metadata = args.item.last_transition_metadata || {},
-              metaBank = metadata.bank_account,
+              metadata = args.item.last_transition_metadata || {transfer_data: {}},
+              transferData = metadata.transfer_data || {},
+              metaBank = transferData.bank_account,
               userBalance = m.prop({}),
               transitionBankAccount = m.prop({}),
               transactionsListVM = postgrest.paginationVM(
@@ -59,11 +60,11 @@ const adminBalanceTransferItemDetail = {
                     m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20', 'Dados bancários'),
                     m('.fontsize-smallest.lineheight-looser', [
                         m('span.fontweight-semibold', 'Banco:'),
-                        `${bankAccount.bank_code} ${(bankAccount.bank_name ? '- ' + bankAccount.bank_name : '' )}`,m('br'),
+                        `${bankAccount.bank_code} - ${(bankAccount.bank_name ? bankAccount.bank_name : '' )}`,m('br'),
                         m('span.fontweight-semibold', 'Agencia:'),
-                        ` ${bankAccount.agency} - ${bankAccount.agency_digit}`,m('br'),
+                        ` ${bankAccount.agency} - ${bankAccount.agency_digit ? bankAccount.agency_digit : ''}`,m('br'),
                         m('span.fontweight-semibold', "Conta:"),
-                        ` ${bankAccount.account} - ${bankAccount.account_digit}`,m('br'),
+                        ` ${bankAccount.account} - ${bankAccount.account_digit ? bankAccount.account_digit : ''}`,m('br'),
                         m('span.fontweight-semibold', 'Nome:'),
                         bankAccount.owner_name, m('br'),
                         m('span.fontweight-semibold', 'CPF:'),
@@ -71,7 +72,7 @@ const adminBalanceTransferItemDetail = {
                     ])
                 ] : h.loader())),
                 m('.w-col.w-col-8', [
-                    m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20', `Extrato ( saldo em conta: R$ ${userBalance.amount} )`),
+                    m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20', `Extrato ( saldo em conta: R$ ${h.formatNumber(userBalance.amount, 2, 3)} )`),
                     _.map(collection, (item, intex) => {
                         return m('.divider.fontsize-smallest.lineheight-looser', [
                             m('.w-row.fontweight-semibold', [
