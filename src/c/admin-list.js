@@ -31,7 +31,7 @@ const adminList = {
                                           m('.fontweight-semibold', list.total()),
                                           ` ${label.toLowerCase()} encontrados`
                                       ]),
-                                      (args.vm && _.isFunction(args.vm.selectedAny) && args.vm.selectedAny() ? m('.w-col-9.w-col', args.vm.selectedInputActions()) : '')
+                                      (args.vm && args.vm.hasInputAction ? m('.w-col-9.w-col', args.vm.inputActions()) : '')
                                   ])
                               ]
                             )
