@@ -6,6 +6,7 @@ import adminList from '../c/admin-list';
 import adminFilter from '../c/admin-filter';
 import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
+import filterDateField from '../c/filter-date-field';
 import modalBox from '../c/modal-box';
 import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
@@ -27,7 +28,7 @@ const adminBalanceTranfers = {
                   {
                       component: filterDropdown,
                       data: {
-                          label: 'state',
+                          label: 'Status',
                           name: 'state',
                           vm: filterVM.state,
                           options: [{
@@ -56,11 +57,29 @@ const adminBalanceTranfers = {
                               option: 'Erro no gateway'
                           }]
                       }
+                  },
+                  {
+                      component: filterDateField,
+                      data: {
+                          label: 'Data da solicitação',
+                          vm: filterVM.created_date
+                      }
+
+                  },
+                  {
+                      component: filterDateField,
+                      data: {
+                          label: 'Data da confirmação',
+                          vm: filterVM.transferred_date
+                      }
+
                   }
               ],
               selectedItemsIDs = m.prop([]),
               displayApprovalModal = h.toggleProp(false, true),
               displayRejectModal = h.toggleProp(false, true),
+              selectAllLoading = m.prop(false),
+              redrawProp = m.prop(false),
               isSelected = (item_id) => {
                   return _.find(selectedItemsIDs(), (i) => {
                       return i.id == item_id;
@@ -69,6 +88,7 @@ const adminBalanceTranfers = {
               selectItem = (item) => {
                   if (!_.find(selectedItemsIDs(), (i) => { return i.id == item.id; })) {
                       selectedItemsIDs().push(item);
+                      redrawProp(true);
                   }
                   selectedAny(true);
               },
@@ -80,16 +100,6 @@ const adminBalanceTranfers = {
                   if(_.isEmpty(newIDs)) {
                       selectedAny(false);
                   }
-              },
-              selectedInputActions = () => {
-                  return m('', [
-                      m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                          onclick: displayApprovalModal.toggle
-                      }, 'Aprovar'),
-                      m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                          onclick: displayRejectModal.toggle
-                      }, 'Rejeitar')
-                  ]);
               },
               submit = () => {
                   error(false);
