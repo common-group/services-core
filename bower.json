@@ -21,7 +21,7 @@
     "tests"
   ],
   "dependencies": {
-    "mithril": "https://github.com/lhorie/mithril.js.git#0.2.4",
+    "mithril": "https://github.com/MithrilJS/mithril.js.git#0.2.4",
     "mithril-postgrest": "2.0.0",
     "moment": "~2.10.3",
     "replace-diacritics": "https://raw.githubusercontent.com/yvg/js-replace-diacritics/master/replace-diacritics.js",
