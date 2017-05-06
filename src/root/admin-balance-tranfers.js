@@ -89,7 +89,6 @@ const adminBalanceTranfers = {
               selectItem = (item) => {
                   if (!_.find(selectedItemsIDs(), (i) => { return i.id == item.id; })) {
                       selectedItemsIDs().push(item);
-                      redrawProp(true);
                   }
                   selectedAny(true);
               },
@@ -193,8 +192,7 @@ const adminBalanceTranfers = {
               },
               unSelectAll = () => {
                   selectedItemsIDs([]);
-                  redrawProp(true);
-                  m.redraw();
+                  selectedAny(false);
               },
               selectAll = () => {
                   selectAllLoading(true);
@@ -207,16 +205,29 @@ const adminBalanceTranfers = {
               },
               inputActions = () => {
                   return m('', [
-                      m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: selectAll }, (selectAllLoading() ? 'carregando...' : `Selecionar todos (${selectedItemsIDs().length})`)),
+                      m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: selectAll }, (selectAllLoading() ? 'carregando...' : `Selecionar todos`)),
                       (selectedItemsIDs().length > 1 ? m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: unSelectAll }, `Desmarcar todos (${selectedItemsIDs().length})`) : ''),
                       (selectedAny() ?
-                       m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                           onclick: displayApprovalModal.toggle
-                       }, `Aprovar (${selectedItemsIDs().length})`) : ''),
-                      (selectedAny() ?
-                       m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                           onclick: displayRejectModal.toggle
-                       }, `Rejeitar (${selectedItemsIDs().length})`) : '')
+                       m('.w-inline-block', [
+                           m('button.btn.btn-inline.btn-small.btn-terciary.w-button', {
+                               onclick: actionMenuToggle.toggle
+                           }, [
+                               `Marcar como (${selectedItemsIDs().length})`,
+                           ]),
+                           (actionMenuToggle() ?
+                            m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
+                                m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
+                                    onclick: event => displayApprovalModal.toggle()
+                                },
+                                  'Aprovada'
+                                 ),
+                                m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
+                                    onclick: event => displayRejectModal.toggle()
+                                },
+                                  'Recusada'
+                                 )
+                            ]) : '')
+                       ]) : '')
                   ]);
               };
 
@@ -257,6 +268,7 @@ const adminBalanceTranfers = {
                 content: ctrl.generateWrapperModal({
                     modalTitle: 'Aprovar saques',
                     ctaText: 'Aprovar',
+                    displayModal: ctrl.displayApprovalModal,
                     onClickCallback: ctrl.approveSelectedIDs
                 })
             }) : '' ),
@@ -265,6 +277,7 @@ const adminBalanceTranfers = {
                 content: ctrl.generateWrapperModal({
                     modalTitle: 'Rejeitar saques',
                     ctaText: 'Rejeitar',
+                    displayModal: ctrl.displayRejectModal,
                     onClickCallback: ctrl.rejectSelectedIDs
                 })
             }) : '' ),

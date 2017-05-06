@@ -16,7 +16,6 @@ const adminBalanceTransferItem = {
                             } else {
                                 args.listWrapper.unSelectItem(item);
                             }
-                            args.alertClassToggle.toggle();
                         }
                     })
                 ]),
