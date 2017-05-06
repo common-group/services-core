@@ -14,8 +14,9 @@ const adminList = {
     },
     view(ctrl, args) {
         const list = args.vm.list,
-            error = args.vm.error,
-            label = args.label || '';
+              error = args.vm.error,
+              label = args.label || '',
+              itemComponent = args.itemComponent || adminItem;
 
         return m('.w-section.section', [
             m('.w-container',
@@ -38,7 +39,7 @@ const adminList = {
                         ])
                     ]),
                     m('#admin-contributions-list.w-container', [
-                        list.collection().map(item => m.component(adminItem, {
+                        list.collection().map(item => m.component(itemComponent, {
                             listItem: args.listItem,
                             listDetail: args.listDetail,
                             listWrapper: args.vm,
