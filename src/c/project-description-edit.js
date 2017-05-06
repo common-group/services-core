@@ -1,12 +1,10 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from '../h';
 import I18n from 'i18n-js';
-import userVM from '../vms/user-vm';
+import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectDescriptionVM from '../vms/project-description-vm';
 import popNotification from './pop-notification';
-import inlineError from './inline-error';
 import bigInputCard from './big-input-card';
 import projectEditSaveBtn from './project-edit-save-btn';
 
@@ -15,33 +13,34 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_description');
 const projectDescriptionEdit = {
     controller(args) {
         const vm = projectDescriptionVM,
-              mapErrors = [
-                  ["about_html", ["about_html"]],
-              ],
-              showSuccess = h.toggleProp(false, true),
-              showError = h.toggleProp(false, true),
-              loading = m.prop(false),
-              onSubmit = (event) => {
-                  loading(true);
-                  m.redraw();
-                  vm.updateProject(args.projectId).then((data) => {
-                      loading(false);
-                      vm.e.resetFieldErrors();
-                      if(!showSuccess()) { showSuccess.toggle(); }
-                      if(showError()) { showError.toggle(); }
-                  }).catch((err) => {
-                      if(err.errors_json) {
-                          railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
-                      }
-                      loading(false);
-                      if(showSuccess()) { showSuccess.toggle(); }
-                      if(!showError()) { showError.toggle(); }
-                  });
-                  return false;
-              };
+            mapErrors = [
+                  ['about_html', ['about_html']],
+            ],
+            showSuccess = h.toggleProp(false, true),
+            showError = h.toggleProp(false, true),
+            loading = m.prop(false),
+            onSubmit = (event) => {
+                loading(true);
+                m.redraw();
+                vm.updateProject(args.projectId).then((data) => {
+                    loading(false);
+                    vm.e.resetFieldErrors();
+                    if (!showSuccess()) { showSuccess.toggle(); }
+                    if (showError()) { showError.toggle(); }
+                    railsErrorsVM.validatePublish();
+                }).catch((err) => {
+                    if (err.errors_json) {
+                        railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                    }
+                    loading(false);
+                    if (showSuccess()) { showSuccess.toggle(); }
+                    if (!showError()) { showError.toggle(); }
+                });
+                return false;
+            };
 
-        if(args.rails_errors) {
-            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        if (railsErrorsVM.railsErrors()) {
+            railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
 
@@ -72,7 +71,7 @@ const projectDescriptionEdit = {
                         m('.w-col.w-col-10.w-col-push-1', [
                             m('.u-marginbottom-60.u-text-center', [
 		                            m('.w-inline-block.card.fontsize-small.u-radius', [
-                                    m.trust(I18n.t('description_alert', I18nScope()))
+                                m.trust(I18n.t('description_alert', I18nScope()))
 		                            ])
 	                          ]),
                             m(bigInputCard, {
@@ -88,7 +87,7 @@ const projectDescriptionEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, {loading: ctrl.loading, onSubmit: ctrl.onSubmit})
+                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
             ])
 
         ]);

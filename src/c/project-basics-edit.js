@@ -35,6 +35,7 @@ const projectBasicsEdit = {
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
                     if (showError()) { showError.toggle(); }
+                    railsErrorsVM.validatePublish();
                 }).catch((err) => {
                     if (err.errors_json) {
                         railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
@@ -45,8 +46,8 @@ const projectBasicsEdit = {
                 });
                 return false;
             };
-        if (args.rails_errors) {
-            railsErrorsVM.mapRailsErrors(args.rails_errors, mapErrors, vm.e);
+        if (railsErrorsVM.railsErrors()) {
+            railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());

@@ -38,7 +38,6 @@ const projectDashboardMenu = {
                 }).catch((err) => {
                     validating(false);
                     railsErrorsVM.setRailsErrors(err.errors_json);
-                    args.rails_errors(err.errors_json);
                     m.redraw();
                 });
             },

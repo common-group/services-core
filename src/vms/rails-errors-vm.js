@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import m from 'mithril';
+import h from '../h';
 
 const railsErrors = m.prop('');
 const setRailsErrors = errors => railsErrors(errors);
@@ -27,7 +28,7 @@ const errorsFor = (group) => {
     return m('span.fa.fa-check-circle.fa-fw.fa-lg.text-success');
 };
 
-const mapRailsErrors = (rails_errors, errors_fields, e) => {
+const mapRailsErrors = (rails_errors, errorsFields, e) => {
     let parsedErrors;
     try {
         parsedErrors = JSON.parse(rails_errors);
@@ -43,13 +44,32 @@ const mapRailsErrors = (rails_errors, errors_fields, e) => {
         }
     };
 
-    _.each(errors_fields, (item, i) => {
+    _.each(errorsFields, (item, i) => {
         extractAndSetErrorMsg(item[0], item[1]);
     });
 };
 
+// @FIXME: fix places where we call this
+const validatePublish = () => {
+    const currentProject = h.getCurrentProject();
+    if (_.isEmpty(railsErrors())) { return false; }
+    m.request({
+        method: 'GET',
+        url: `/projects/${currentProject.project_id}/validate_publish`,
+        config: h.setCsrfToken
+    }).then(() => { setRailsErrors(''); }).catch((err) => {
+        if (err) {
+            setRailsErrors(err.errors_json);
+        }
+        m.redraw();
+    });
+    return false;
+};
+
 const railsErrorsVM = {
     errorsFor,
+    validatePublish,
+    railsErrors,
     setRailsErrors,
     mapRailsErrors
 };

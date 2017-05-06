@@ -122,7 +122,9 @@ const projectsPayment = {
     },
     view(ctrl) {
         const user = ctrl.user(),
-            project = ctrl.project;
+              project = ctrl.project,
+              formatedValue = h.formatNumber(Number(ctrl.value), 2, 3);
+        console.log(formatedValue);
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
@@ -133,7 +135,7 @@ const projectsPayment = {
                     m('.w-clearfix',
                         [
                             m('.fontsize-larger.text-success.u-left',
-                                `R$ ${Number(ctrl.value).toFixed()}`
+                                `R$ ${formatedValue}`
                             ),
                             m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                                 'Editar'
@@ -157,7 +159,7 @@ const projectsPayment = {
                                 : m.trust(
                                     I18n.t('selected_reward.review_without_reward_html',
                                         ctrl.scope(
-                                            _.extend({ value: Number(ctrl.value).toFixed() })
+                                            _.extend({ value: formatedValue })
                                         )
                                     )
                                 )
@@ -185,22 +187,7 @@ const projectsPayment = {
                                 ),
                                 I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, { scope: 'projects.contributions' })
                             ])
-                            : '',
-                        m('div',
-                            // ctrl.contribution().shipping_fee_id ? [
-                            //     m('.divider.u-marginbottom-10.u-margintop-10'),
-                            //     m('.fontsize-smaller.fontweight-semibold',
-                            //         'Destino da recompensa:'
-                            //     ),
-                            //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                            //         'Editar'
-                            //     ),
-                            //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
-                            //         `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
-                            //     ),
-                            //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
-                            // ] : ''
-                        )
+                            : ''
                     ])
                 ])
             ),
@@ -449,7 +436,7 @@ const projectsPayment = {
                                 m('.w-clearfix',
                                     [
                                         m('.fontsize-larger.text-success.u-left',
-                                            `R$ ${Number(ctrl.value).toFixed()}`
+                                            `R$ ${formatedValue}`
                                         ),
                                         m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                                             'Editar'

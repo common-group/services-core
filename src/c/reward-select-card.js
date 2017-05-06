@@ -26,7 +26,8 @@ const rewardSelectCard = {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
             } else {
                 rewardVM.error('');
-                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
+                const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
+                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
             }
 
             return false;
@@ -80,7 +81,7 @@ const rewardSelectCard = {
     view(ctrl, args) {
         const reward = ctrl.normalReward(args.reward);
 
-        return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
+        return (h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
             class: ctrl.isSelected(reward) ? 'selected' : '',
             onclick: ctrl.selectReward(reward)
         },
@@ -166,7 +167,7 @@ const rewardSelectCard = {
                     ])
                 ])
             ])
-        );
+                                                  ));
     }
 };
 

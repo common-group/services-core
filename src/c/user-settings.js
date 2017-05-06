@@ -9,10 +9,11 @@ import UserOwnerBox from './user-owner-box';
 import inlineError from './inline-error';
 import projectEditSaveBtn from './project-edit-save-btn';
 import userSettingsVM from '../vms/user-settings-vm';
+import railsErrorsVM from '../vms/rails-errors-vm';
 
 const userSettings = {
     controller(args) {
-        let parsedErrors = userSettingsVM.mapRailsErrors(args.rails_errors);
+        let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = args.user,
             fields = {
@@ -60,7 +61,7 @@ const userSettings = {
                     deleteFormSubmit = () => el.submit();
                 }
             },
-            updateUserData = (user_id) => {
+            updateUserData = () => {
                 const userData = {
                     country_id: fields.country_id(),
                     address_street: fields.street(),
@@ -96,6 +97,7 @@ const userSettings = {
                     if (!showSuccess()) {
                         showSuccess.toggle();
                     }
+                    railsErrorsVM.validatePublish();
                 }).catch((err) => {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
@@ -113,9 +115,8 @@ const userSettings = {
             },
             onSubmit = () => {
                 loading(true);
-                updateUserData(user_id);
-
                 m.redraw();
+                updateUserData();
                 return false;
             },
             applyZipcodeMask = _.compose(fields.zipcode, zipcodeMask),
