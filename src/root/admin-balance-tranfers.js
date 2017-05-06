@@ -80,6 +80,7 @@ const adminBalanceTranfers = {
               displayRejectModal = h.toggleProp(false, true),
               selectAllLoading = m.prop(false),
               redrawProp = m.prop(false),
+              actionMenuToggle = h.toggleProp(false, true),
               isSelected = (item_id) => {
                   return _.find(selectedItemsIDs(), (i) => {
                       return i.id == item_id;
@@ -134,19 +135,22 @@ const adminBalanceTranfers = {
                                               ]),
                                           ])
                                       ]);
-                                  })
-                              ]),
-                              m('.modal-dialog-nav-bottom', [
+                                  }),
                                   m('.w-row', [
-                                      m('.w-col.w-col-4.w-col-push-4',
-                                        m('button.btn.btn-large.btn-terciary', {
+                                      m('.w-col.w-col-1'),
+                                      m('.w-col.w-col-5',
+                                        m('a.btn.btn-medium.w-button', {
                                             onclick: args.onClickCallback
-                                        },
-                                          args.ctaText
-                                         )
+                                        }, args.ctaText)
                                        ),
+                                      m('.w-col.w-col-5',
+                                        m('a.btn.btn-medium.btn-terciary.w-button', {
+                                            onclick: args.displayModal.toggle
+                                        }, 'Voltar')
+                                       ),
+                                      m('.w-col.w-col-1')
                                   ])
-                              ]),
+                              ])
                           ]);
                       }
                   };
