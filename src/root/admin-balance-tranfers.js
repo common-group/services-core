@@ -77,6 +77,7 @@ const adminBalanceTranfers = {
               ],
               selectedItemsIDs = m.prop([]),
               displayApprovalModal = h.toggleProp(false, true),
+              displayManualModal = h.toggleProp(false, true),
               displayRejectModal = h.toggleProp(false, true),
               selectAllLoading = m.prop(false),
               redrawProp = m.prop(false),
@@ -156,6 +157,23 @@ const adminBalanceTranfers = {
 
                   return [wrapper, customAttrs];
               },
+              manualTransferSelectedIDs = () => {
+                  m.request({
+                      method: 'POST',
+                      url: '/admin/balance_transfers/batch_manual',
+                      data: {
+                          transfer_ids: _.uniq(_.map(selectedItemsIDs(), (s) => {
+                              return s.id;
+                          }))
+                      },
+                      config: h.setCsrfToken
+                  }).then((data) => {
+                      selectedItemsIDs([]);
+                      listVM.firstPage(filterVM.parameters());
+                      displayManualModal(false);
+                      m.redraw();
+                  });
+              },
               approveSelectedIDs = () => {
                   m.request({
                       method: 'POST',
@@ -168,7 +186,7 @@ const adminBalanceTranfers = {
                       config: h.setCsrfToken
                   }).then((data) => {
                       selectedItemsIDs([]);
-                      listVM.firstPage();
+                      listVM.firstPage(filterVM.parameters());
                       displayApprovalModal(false);
                       m.redraw();
                   });
@@ -218,14 +236,13 @@ const adminBalanceTranfers = {
                             m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                 m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
                                     onclick: event => displayApprovalModal.toggle()
-                                },
-                                  'Aprovada'
-                                 ),
+                                }, 'Aprovada'),
+                                m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
+                                    onclick: event => displayManualModal.toggle()
+                                }, 'Transferencia manual'),
                                 m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
                                     onclick: event => displayRejectModal.toggle()
-                                },
-                                  'Recusada'
-                                 )
+                                }, 'Recusada')
                             ]) : '')
                        ]) : '')
                   ]);
@@ -234,8 +251,10 @@ const adminBalanceTranfers = {
         return {
             displayApprovalModal,
             displayRejectModal,
+            displayManualModal,
             generateWrapperModal,
             approveSelectedIDs,
+            manualTransferSelectedIDs,
             rejectSelectedIDs,
             filterVM,
             filterBuilder,
@@ -270,6 +289,15 @@ const adminBalanceTranfers = {
                     ctaText: 'Aprovar',
                     displayModal: ctrl.displayApprovalModal,
                     onClickCallback: ctrl.approveSelectedIDs
+                })
+            }) : '' ),
+            (ctrl.displayManualModal() ? m(modalBox, {
+                displayModal: ctrl.displayManualModal,
+                content: ctrl.generateWrapperModal({
+                    modalTitle: 'Transferencia manual de saques',
+                    ctaText: 'Aprovar',
+                    displayModal: ctrl.displayManualModal,
+                    onClickCallback: ctrl.manualTransferSelectedIDs
                 })
             }) : '' ),
             (ctrl.displayRejectModal() ? m(modalBox, {
