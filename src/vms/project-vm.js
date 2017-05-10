@@ -37,12 +37,12 @@ const resetData = () => {
     rewardVM.rewards([]);
 };
 
-const fetchParallelData = (project_id, project_user_id) => {
-    if (project_user_id) {
-        userVM.fetchUser(project_user_id, true, userDetails);
+const fetchParallelData = (projectId, projectUserId) => {
+    if (projectUserId) {
+        userVM.fetchUser(projectUserId, true, userDetails);
     }
 
-    rewardVM.fetchRewards(project_id);
+    rewardVM.fetchRewards(projectId);
 };
 
 const getCurrentProject = () => {
@@ -50,11 +50,11 @@ const getCurrentProject = () => {
         data = root && root.getAttribute('data-parameters');
 
     if (data) {
-        const { project_id, project_user_id } = currentProject(JSON.parse(data));
+        const { projectId, projectUserId } = currentProject(JSON.parse(data));
 
         m.redraw(true);
 
-        init(project_id, project_user_id);
+        init(projectId, projectUserId);
 
         return currentProject();
     }
@@ -79,17 +79,17 @@ const setProjectPageTitle = () => {
     }
 };
 
-const fetchProject = (project_id, handlePromise = true, customProp = currentProject) => {
-    idVM.id(project_id);
+const fetchProject = (projectId, handlePromise = true, customProp = currentProject) => {
+    idVM.id(projectId);
 
     const lproject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
 
     return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
 };
 
-const updateProject = (project_id, projectData) => m.request({
+const updateProject = (projectId, projectData) => m.request({
     method: 'PUT',
-    url: `/projects/${project_id}.json`,
+    url: `/projects/${projectId}.json`,
     data: { project: projectData },
     config: h.setCsrfToken
 });

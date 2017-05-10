@@ -1,12 +1,12 @@
 import m from 'mithril';
+import postgrest from 'mithril-postgrest';
+import models from '../models';
 import _ from 'underscore';
 import h from '../h';
 import I18n from 'i18n-js';
-import userVM from '../vms/user-vm';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectBasicsVM from '../vms/project-basics-vm';
 import popNotification from './pop-notification';
-import inlineError from './inline-error';
 import inputCard from './input-card';
 import projectEditSaveBtn from './project-edit-save-btn';
 
@@ -27,23 +27,30 @@ const projectBasicsEdit = {
             categories = m.prop([]),
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            onSubmit = (event) => {
+            selectedTags = m.prop([]),
+            editTag = m.prop(''),
+            lastTime = m.prop(0),
+            tagOptions = m.prop([]),
+            isEditingTags = m.prop(false),
+            tagEditingLoading = m.prop(false),
+            onSubmit = () => {
                 loading(true);
                 m.redraw();
-                vm.updateProject(args.projectId).then((data) => {
+                vm.fields.public_tags(selectedTags().join(','));
+                vm.updateProject(args.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
-                    if (!showSuccess()) { showSuccess.toggle(); }
-                    if (showError()) { showError.toggle(); }
-                    railsErrorsVM.validatePublish();
+                    showSuccess(true);
+                    showError(false);
                 }).catch((err) => {
                     if (err.errors_json) {
                         railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
                     }
                     loading(false);
-                    if (showSuccess()) { showSuccess.toggle(); }
-                    if (!showError()) { showError.toggle(); }
+                    showSuccess(false);
+                    showError(true);
                 });
+
                 return false;
             };
         if (railsErrorsVM.railsErrors()) {
@@ -52,6 +59,45 @@ const projectBasicsEdit = {
         vm.fillFields(args.project);
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
 
+        const tagFilter = postgrest.filtersVM({
+            slug: '@@'
+        });
+
+        const triggerTagSearch = (tagString) => {
+            editTag(tagString);
+            m.redraw();
+
+            const elapsedTime = new Date() - lastTime();
+            if (tagString.length >= 3 && (elapsedTime > 350)) {
+                tagEditingLoading(true);
+                m.redraw();
+                models
+                    .publicTags
+                    .getPage(tagFilter.slug(tagString).parameters())
+                    .then((data) => {
+                        tagOptions(data);
+                        tagEditingLoading(false);
+                        lastTime(new Date());
+                        m.redraw();
+                    });
+            }
+        };
+
+        const addTag = tag => () => {
+            selectedTags().push(tag);
+            isEditingTags(false);
+            editTag('');
+            return false;
+        };
+
+        const removeTag = tagToRemove => () => {
+            const updatedTags = _.reject(selectedTags(), tag => tag === tagToRemove);
+
+            selectedTags(updatedTags);
+
+            return false;
+        };
+
         return {
             vm,
             onSubmit,
@@ -59,7 +105,15 @@ const projectBasicsEdit = {
             categories,
             cities,
             showSuccess,
-            showError
+            showError,
+            tagOptions,
+            editTag,
+            addTag,
+            removeTag,
+            isEditingTags,
+            triggerTagSearch,
+            selectedTags,
+            tagEditingLoading
         };
     },
     view(ctrl, args) {
@@ -101,7 +155,6 @@ const projectBasicsEdit = {
                                   ]
                               }),
                               m(inputCard, {
-                                  label: 'Admin Tags',
                                   label: I18n.t('admin_tags', I18nScope()),
                                   label_hint: I18n.t('admin_tags_hint', I18nScope()),
                                   children: [
@@ -142,11 +195,31 @@ const projectBasicsEdit = {
                                 label_hint: I18n.t('tags_hint', I18nScope()),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        value: vm.fields.public_tags(),
+                                        // value: vm.fields.public_tags(),
+                                        value: ctrl.editTag(),
+                                        onfocus: () => ctrl.isEditingTags(true),
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
-                                        onchange: m.withAttr('value', vm.fields.public_tags)
+                                        onkeyup: m.withAttr('value', ctrl.triggerTagSearch)
                                     }),
-                                    vm.e.inlineError('public_tags')
+                                    ctrl.isEditingTags() ? m('.options-list.table-outer',
+                                        ctrl.tagEditingLoading()
+                                            ? m('.fontsize-smaller.fontcolor-secondary', 'carregando...')
+                                            : _.map(ctrl.tagOptions(), tag => m('.dropdown-link',
+                                                { onclick: ctrl.addTag(tag) },
+                                                m('.fontsize-smaller',
+                                                    tag.name
+                                                )
+                                            ))
+                                    ) : '',
+                                    vm.e.inlineError('public_tags'),
+                                    m('div.tag-choices',
+                                        _.map(ctrl.selectedTags(), choice => m('.tag-div',
+                                            m('div', [
+                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: ctrl.removeTag(choice) }),
+                                                ` ${choice.name}`
+                                            ]))
+                                        )
+                                    )
                                 ]
                             }),
                             m(inputCard, {
@@ -197,7 +270,7 @@ const projectBasicsEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, {loading: ctrl.loading, onSubmit: ctrl.onSubmit})
             ])
         ]);
     }
