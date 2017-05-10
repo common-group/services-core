@@ -36,7 +36,7 @@ const projectBasicsEdit = {
             onSubmit = () => {
                 loading(true);
                 m.redraw();
-                vm.fields.public_tags(selectedTags().join(','));
+                vm.fields.public_tags(_.pluck(selectedTags(), 'name').join(','));
                 vm.updateProject(args.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
@@ -57,6 +57,7 @@ const projectBasicsEdit = {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
+        selectedTags(_.map(vm.fields.public_tags().split(','), name => ({name})));
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
 
         const tagFilter = postgrest.filtersVM({
