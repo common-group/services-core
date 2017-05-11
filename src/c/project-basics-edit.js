@@ -1,9 +1,9 @@
 import m from 'mithril';
+import _ from 'underscore';
+import I18n from 'i18n-js';
 import postgrest from 'mithril-postgrest';
 import models from '../models';
-import _ from 'underscore';
 import h from '../h';
-import I18n from 'i18n-js';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectBasicsVM from '../vms/project-basics-vm';
 import popNotification from './pop-notification';
@@ -36,7 +36,8 @@ const projectBasicsEdit = {
             onSubmit = () => {
                 loading(true);
                 m.redraw();
-                vm.fields.public_tags(_.pluck(selectedTags(), 'name').join(','));
+                const tagString = _.pluck(selectedTags(), 'name').join(',');
+                vm.fields.public_tags(tagString.substr(0, tagString.length - 1));
                 vm.updateProject(args.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
@@ -57,7 +58,11 @@ const projectBasicsEdit = {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
-        selectedTags(_.map(vm.fields.public_tags().split(','), name => ({name})));
+
+        if (vm.fields.public_tags()) {
+            selectedTags(_.map(vm.fields.public_tags().split(','), name => ({ name })));
+        }
+
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
 
         const tagFilter = postgrest.filtersVM({
@@ -74,7 +79,7 @@ const projectBasicsEdit = {
                 m.redraw();
                 models
                     .publicTags
-                    .getPage(tagFilter.slug(tagString).parameters())
+                    .getPage(tagFilter.slug(h.slugify(tagString)).parameters())
                     .then((data) => {
                         tagOptions(data);
                         tagEditingLoading(false);
@@ -119,6 +124,7 @@ const projectBasicsEdit = {
     },
     view(ctrl, args) {
         const vm = ctrl.vm;
+
         return m('#basics-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
                 message: I18n.t('shared.successful_update'),
@@ -194,6 +200,7 @@ const projectBasicsEdit = {
                             m(inputCard, {
                                 label: I18n.t('tags', I18nScope()),
                                 label_hint: I18n.t('tags_hint', I18nScope()),
+                                onclick: () => ctrl.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                                         // value: vm.fields.public_tags(),
