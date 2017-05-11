@@ -26,6 +26,8 @@ const
     },
     existy = (x: any): boolean => x != null,
 
+    slugify = (str: string): string => str.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,''),
+
     momentify = (date: string, format: string): string => {
         format = format || 'DD/MM/YYYY';
         return date ? moment(date).locale('pt').format(format) : 'no date';
@@ -887,6 +889,7 @@ export default {
     cumulativeOffset,
     discuss,
     existy,
+    slugify,
     validateEmail,
     validateCpf,
     validateCnpj,
