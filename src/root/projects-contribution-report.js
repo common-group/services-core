@@ -226,7 +226,7 @@ const projectContributionReport = {
         const list = ctrl.listVM;
 
         if (!ctrl.lProject()) {
-            return [
+            return m('', [
                 m.component(projectDashboardMenu, {
                     project: m.prop(_.first(ctrl.project()))
                 }),
@@ -250,9 +250,9 @@ const projectContributionReport = {
                         filterVM: ctrl.filterVM,
                         project: m.prop(_.first(ctrl.project()))
                     })]
-            ];
+            ]);
         }
-        return h.loader();
+        return m('', h.loader());
     }
 };
 
