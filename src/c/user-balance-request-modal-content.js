@@ -12,6 +12,7 @@ import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
+import userVM from '../vms/user-vm';
 import UserOwnerBox from './user-owner-box';
 import userBankForm from './user-bank-form';
 import userSettingsVM from '../vms/user-settings-vm';
@@ -30,9 +31,11 @@ const userBalanceRequestModelContent = {
             account_digit: m.prop(''),
             bank_account_id: m.prop(''),
             bank_account_type: m.prop('')
-        },
+        };
 
-              bankInput = m.prop(''),
+        let bankAccounts = m.prop([]);
+
+        const bankInput = m.prop(''),
               bankCode = m.prop('-1'),
               vm = postgrest.filtersVM({ user_id: 'eq' }),
               balance = args.balance,
@@ -41,6 +44,7 @@ const userBalanceRequestModelContent = {
               requestLoader = postgrest.loaderWithToken(loaderOpts),
               loading = m.prop(false),
               displayDone = h.toggleProp(false, true),
+              displayConfirmation = h.toggleProp(false, true),
               updateUserData = (user_id) => {
                   const userData = {};
                   userData.bank_account_attributes = {
@@ -69,9 +73,10 @@ const userBalanceRequestModelContent = {
                           parsedErrors.resetFieldErrors();
                       }
 
+                      userVM.getUserBankAccount(user_id).then(bankAccounts);
                       loading(false);
+                      displayConfirmation(true);
                       m.redraw();
-                      requestFund();
                   }).catch((err) => {
                       if (parsedErrors) {
                           parsedErrors.resetFieldErrors();
@@ -85,18 +90,19 @@ const userBalanceRequestModelContent = {
                   requestLoader.load().then((data) => {
                       args.balanceManager.load();
                       args.balanceTransactionManager.load();
+                      displayConfirmation(false);
                       displayDone.toggle();
+                      m.redraw();
                   });
               };
-
-        args.bankAccountManager.load();
 
         return {
             loading,
             requestLoader,
             requestFund,
-            bankAccounts: args.bankAccountManager.collection,
+            bankAccounts,
             displayDone,
+            displayConfirmation,
             loadBankA: args.bankAccountManager.loader,
             updateUserData,
             requestFund,
@@ -107,39 +113,104 @@ const userBalanceRequestModelContent = {
         };
     },
     view(ctrl, args) {
-        const balance = args.balance;
+        const balance = args.balance,
+              fields = ctrl.fields,
+              user = args.user;
 
-        return (ctrl.loadBankA() ? h.loader() : m('div', _.map(ctrl.bankAccounts(), item => [
+        return (m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center', I18n.t('withdraw', I18nScope()))
             ]),
-                (ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
-                    m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
-                    m('p.fontsize-large', I18n.t('success_message', I18nScope()))
-                ]) : m('.modal-dialog-content', [
-                    m('.fontsize-base.u-marginbottom-20', [
-                        m('span.fontweight-semibold', 'Valor:'),
-                        m.trust('&nbsp;'),
-                        m('span.text-success', `R$ ${h.formatNumber(balance.amount, 2, 3)}`)
-                    ]),
-                    m(UserOwnerBox, {user: args.user, hideAvatar: true}),
-                    m(userBankForm, {user: args.user, parsedErrors: ctrl.parsedErrors, fields: ctrl.fields, bankCode: ctrl.bankCode, bankInput: ctrl.bankInput })
-                ])),
-                (!ctrl.displayDone() ?
-                 m('.modal-dialog-nav-bottom', { style: 'position: relative;'}, [
-                     m('.w-row', [
-                         m('.w-col.w-col-3'),
-                         m('.w-col.w-col-6', [
-                             (ctrl.requestLoader() || ctrl.loading() ?
-                              h.loader()
-                              : m('a.btn.btn-large.btn-request-fund[href="js:void(0);"]',
-                                  { onclick: () => ctrl.updateUserData(args.user.id) },
-                                  'Solicitar saque'))
-                         ]),
-                         m('.w-col.w-col-3')
+            (ctrl.displayConfirmation() ? m('.modal-dialog-content.u-text-center', (
+                ctrl.loadBankA() ? h.loader() : _.map(ctrl.bankAccounts(), item => [
+                 m('.fontsize-base.u-marginbottom-20', [
+                     m('span.fontweight-semibold', 'Valor:'),
+                     m.trust('&nbsp;'),
+                     m('span.text-success', `R$ ${h.formatNumber(balance.amount, 2, 3)}`)
+                 ]),
+                 m('.fontsize-base.u-marginbottom-10', [
+                     m('span', { style: { 'font-weight': ' 600' } }, I18n.t('bank.account', I18nScope()))
+                 ]),
+                 m('.fontsize-small.u-marginbottom-10', [
+                     m('div', [
+                         m('span.fontcolor-secondary', I18n.t('bank.name', I18nScope())),
+                         m.trust('&nbsp;'),
+                         item.owner_name
+                     ]),
+                     m('div', [
+                         m('span.fontcolor-secondary', I18n.t('bank.cpf_cnpj', I18nScope())),
+                         m.trust('&nbsp;'),
+                         item.owner_document
+                     ]),
+                     m('div', [
+                         m('span.fontcolor-secondary', I18n.t('bank.bank_name', I18nScope())),
+                         m.trust('&nbsp;'),
+                         item.bank_name
+                     ]),
+                     m('div', [
+                         m('span.fontcolor-secondary', I18n.t('bank.agency', I18nScope())),
+                         m.trust('&nbsp;'),
+                         `${item.agency}-${item.agency_digit}`
+                     ]),
+                     m('div', [
+                         m('span.fontcolor-secondary', I18n.t('bank.account', I18nScope())),
+                         m.trust('&nbsp;'),
+                         `${item.account}-${item.account_digit}`
                      ])
-                 ]) : '')
-        ])));
+                 ])
+                ])
+            )) : (
+                ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
+                 m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
+                 m('p.fontsize-large', I18n.t('success_message', I18nScope()))
+             ]) : m('.modal-dialog-content', [
+                 m('.fontsize-base.u-marginbottom-20', [
+                     m('span.fontweight-semibold', 'Valor:'),
+                     m.trust('&nbsp;'),
+                     m('span.text-success', `R$ ${h.formatNumber(balance.amount, 2, 3)}`)
+                 ]),
+                 m(UserOwnerBox, {user: args.user, hideAvatar: true}),
+                 m(userBankForm, {user: args.user, parsedErrors: ctrl.parsedErrors, fields: ctrl.fields, bankCode: ctrl.bankCode, bankInput: ctrl.bankInput })
+             ]))),
+            (ctrl.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative'}, [
+                m('.w-row', [
+                    m('.w-col.w-col-1'),
+                    m('.w-col.w-col-5',
+                        (ctrl.requestLoader() || ctrl.loading() ?
+                         h.loader()
+                         : [
+                             m('a.btn.btn-medium.btn-request-fund[href="js:void(0);"]',
+                               { onclick: () => ctrl.requestFund() },
+                               'Confirmar'),
+                         ])
+                    ),
+                    m('.w-col.w-col-5',
+                      (ctrl.requestLoader() || ctrl.loading() ?
+                       ''
+                       : [
+                           m('a.btn.btn-medium.btn-terciary.w-button', {
+                               onclick: ctrl.displayConfirmation.toggle
+                           }, 'Voltar')
+                       ])
+                     ),
+                    m('.w-col.w-col-1')
+                ])
+            ]) : ''),
+            (!ctrl.displayConfirmation() && !ctrl.displayDone() ?
+             m('.modal-dialog-nav-bottom', { style: 'position: relative;'}, [
+                 m('.w-row', [
+                     m('.w-col.w-col-3'),
+                     m('.w-col.w-col-6', [
+                         (ctrl.requestLoader() || ctrl.loading() ?
+                          h.loader()
+                          : m('a.btn.btn-large.btn-request-fund[href="js:void(0);"]',
+                              { onclick: () => ctrl.updateUserData(args.user.id) },
+                              'Solicitar saque'))
+                     ]),
+                     m('.w-col.w-col-3')
+                 ])
+             ]) : '')
+        ]));
     }
 };
 
