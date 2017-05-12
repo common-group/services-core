@@ -169,7 +169,7 @@ const projectContributionReport = {
             }
             ];
 
-        filterVM.project_id(args.root.getAttribute('data-id'));
+        filterVM.project_id(args.project_id);
 
         const lReward = postgrest.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: `eq.${filterVM.project_id()}`

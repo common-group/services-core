@@ -56,7 +56,7 @@ const posts = {
                 }
                 return false;
             },
-            project_id = args.root.getAttribute('data-id'),
+            project_id = args.project_id,
             projectDetails = m.prop([]),
             rewardText = (rewardId) => {
                 const reward = _.find(rewardVM.rewards(), r => String(r.id) === String(rewardId));
