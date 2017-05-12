@@ -3,6 +3,8 @@ import adminContributions from './root/admin-contributions';
 import flex from './root/flex';
 import insights from './root/insights';
 import posts from './root/posts';
+import surveys from './root/surveys';
+import surveyCreate from './root/survey-create';
 import jobs from './root/jobs';
 import liveStatistics from './root/live-statistics';
 import projectsContributionReport from './root/projects-contribution-report';
@@ -44,6 +46,7 @@ const c = {
         Flex: flex,
         Insights: insights,
         Posts: posts,
+        Surveys: surveys,
         Jobs: jobs,
         LiveStatistics: liveStatistics,
         ProjectsContributionReport: projectsContributionReport,
@@ -54,6 +57,7 @@ const c = {
         UsersShow: usersShow,
         UsersEdit: usersEdit,
         ProjectEdit: projectEdit,
+        SurveyCreate: surveyCreate,
         ProjectsContribution: projectsContribution,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,
