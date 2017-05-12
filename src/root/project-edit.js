@@ -109,6 +109,7 @@ const projectEdit = {
         const project = ctrl.projectVM.currentProject;
 
         return m('.project-dashboard-edit', [
+            m(`.w-section.section-product.${project().mode}`),
             ctrl.displayTabContent(),
             (project() ? m.component(projectDashboardMenu, {
                 project

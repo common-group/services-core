@@ -141,7 +141,7 @@ const posts = {
                 reward_id: ctrl.fields.reward_id(),
                 rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id()) : null
             }) : [
-
+                m(`.w-section.section-product.${project.mode}`),
                 (ctrl.showSuccess() ? m.component(popNotification, {
                     message: 'Mensagem enviada com sucesso'
                 }) : ''),

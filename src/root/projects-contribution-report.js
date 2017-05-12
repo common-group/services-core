@@ -234,6 +234,7 @@ const projectContributionReport = {
                     project: m.prop(_.first(ctrl.project())),
                     rewards: ctrl.rewards()
                 }) : [
+                    m(`.w-section.section-product.${_.first(ctrl.project()).mode}`),
                     m.component(projectContributionReportHeader, {
                         submit: ctrl.submit,
                         filterBuilder: ctrl.filterBuilder,
