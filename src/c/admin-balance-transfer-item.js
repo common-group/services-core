@@ -36,7 +36,7 @@ const adminBalanceTransferItem = {
             ]),
             m('.w-col.w-col-2.w-hidden-small.w-hidden-tiny', [
                 m('', [
-                    m('span.badge.card-error', item.state)
+                    m('span', item.state)
                 ])
             ]),
             m('.w-col.w-col-2', [

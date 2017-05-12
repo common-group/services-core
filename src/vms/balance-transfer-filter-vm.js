@@ -9,7 +9,8 @@ const vm = postgrest.filtersVM({
     state: 'eq',
     transfer_id: 'eq',
     created_date: 'eq',
-    transferred_date: 'eq'
+    transferred_date: 'eq',
+    amount: 'between'
 });
 
 const paramToString = (p) => {

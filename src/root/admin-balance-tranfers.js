@@ -7,6 +7,7 @@ import adminFilter from '../c/admin-filter';
 import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 import filterDateField from '../c/filter-date-field';
+import filterNumberRange from '../c/filter-number-range';
 import modalBox from '../c/modal-box';
 import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
@@ -73,6 +74,14 @@ const adminBalanceTranfers = {
                           vm: filterVM.transferred_date
                       }
 
+                  },
+                  {
+                      component: filterNumberRange,
+                      data: {
+                          label: 'Valores entre',
+                          first: filterVM.amount.gte,
+                          last: filterVM.amount.lte
+                      }
                   }
               ],
               selectedItemsIDs = m.prop([]),
