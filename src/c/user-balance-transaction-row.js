@@ -63,7 +63,11 @@ const userBalanceTrasactionRow = {
                                  m(`.text-${(pos ? 'success' : 'error')}`, `${pos ? '+' : '-'} R$ ${h.formatNumber(Math.abs(transaction.amount), 2, 3)}`)
                              ]),
                              m('.w-col.w-col-10', [
-                                 m('div', `${transaction.event_name} ${transaction.origin_object.name}`)
+                                 m('div', I18n.t(`event_names.${transaction.event_name}`, I18nScope({
+                                     service_fee: transaction.origin_objects.service_fee ? (transaction.origin_objects.service_fee*100.0) : '',
+                                     project_name: transaction.origin_objects.project_name,
+                                     contributitor_name: transaction.origin_objects.contributor_name
+                                 })))
                              ])
                          ]),
                          m('.divider.u-marginbottom-10')
