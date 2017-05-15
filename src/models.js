@@ -11,6 +11,7 @@ const models = {
     balanceTransaction: postgrest.model('balance_transactions'),
     balanceTransfer: postgrest.model('balance_transfers'),
     user: postgrest.model('users'),
+    survey: postgrest.model('surveys'),
     userCreditCard: postgrest.model('user_credit_cards'),
     bankAccount: postgrest.model('bank_accounts'),
     bank: postgrest.model('banks'),

@@ -14,6 +14,7 @@ import projectsHome from './root/projects-home';
 import projectsShow from './root/projects-show';
 import projectsContribution from './root/projects-contribution';
 import usersShow from './root/users-show';
+import surveysShow from './root/surveys-show';
 import usersEdit from './root/users-edit';
 import projectEdit from './root/project-edit';
 import projectsPayment from './root/projects-payment';
@@ -55,6 +56,7 @@ const c = {
         ProjectsHome: projectsHome,
         ProjectsShow: projectsShow,
         UsersShow: usersShow,
+        SurveysShow: surveysShow,
         UsersEdit: usersEdit,
         ProjectEdit: projectEdit,
         SurveyCreate: surveyCreate,
