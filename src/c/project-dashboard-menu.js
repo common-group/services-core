@@ -12,6 +12,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
+import railsErrorsVM from '../vms/rails-errors-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
@@ -20,8 +21,26 @@ const projectDashboardMenu = {
     controller(args) {
         const body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
+            validating = m.prop(false),
             showPublish = h.toggleProp(true, false),
             bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed'),
+            validatePublish = () => {
+                validating(true);
+                m.redraw();
+                m.request({
+                    method: 'GET',
+                    url: `/projects/${args.project().project_id}/validate_publish`,
+                    config: h.setCsrfToken
+                }).then(() => {
+                    validating(false);
+                    window.location.href = (`/projects/${args.project().project_id}/publish`);
+                    m.redraw();
+                }).catch((err) => {
+                    validating(false);
+                    railsErrorsVM.setRailsErrors(err.errors_json);
+                    m.redraw();
+                });
+            },
             projectThumb = (project) => {
                 if (_.isEmpty(project.large_image)) {
                     if (_.isEmpty(project.thumb_image)) {
@@ -42,6 +61,8 @@ const projectDashboardMenu = {
 
         return {
             body,
+            validating,
+            validatePublish,
             editLinksToggle,
             showPublish,
             bodyToggleForNav,
@@ -52,7 +73,7 @@ const projectDashboardMenu = {
         const project = args.project(),
             projectRoute = `/projects/${project.project_id}`,
             editRoute = `${projectRoute}/edit`,
-            editLinkClass = `dashboard-nav-link-left ${project.is_published ? 'indent' : ''}`;
+            editLinkClass = hash => `dashboard-nav-link-left ${project.is_published ? 'indent' : ''} ${h.hashMatch(hash) ? 'selected' : ''}`;
         const optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
 
         ctrl.body.className = ctrl.bodyToggleForNav();
@@ -76,9 +97,9 @@ const projectDashboardMenu = {
                             m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
                                 m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
                                 I18n.t('posts_tab', I18nScope()),
-                                project.posts_count > 0
-                                ? m('span.badge', project.posts_count)
-                                : m('span.badge.badge-attention', 'Nenhuma')
+                                project.posts_count > 0 ?
+                                m('span.badge', project.posts_count) :
+                                m('span.badge.badge-attention', 'Nenhuma')
                             ])
                         ] : '')
                     ]),
@@ -90,44 +111,49 @@ const projectDashboardMenu = {
                         ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
-                                    m(`a#basics_link[class="${editLinkClass}"][href="${editRoute}#basics` + '"]', I18n.t(`${project.mode}.basics_tab`, linksScope())),
-                                    m(`a#goal_link[class="${editLinkClass}"][href="${editRoute}#goal` + '"]', I18n.t(`${project.mode}.goal_tab`, linksScope())),
+                                    m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), I18n.t('basics_tab', linksScope())),
+                                    m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), I18n.t('goal_tab', linksScope())),
                                 ] : ''),
-                                m(`a#description_link[class="${editLinkClass}"][href="${editRoute}#description` + '"]', I18n.t(`${project.mode}.description_tab`, linksScope())),
-                                m(`a#video_link[class="${editLinkClass}"][href="${editRoute}#video` + '"]', [
+                                m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description"]`, railsErrorsVM.errorsFor('description'), I18n.t('description_tab', linksScope())),
+                                m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
                                 ]),
-                                m(`a#budget_link[class="${editLinkClass}"][href="${editRoute}#budget` + '"]', I18n.t(`${project.mode}.budget_tab`, linksScope())),
-                                m(`a#card_link[class="${editLinkClass}"][href="${editRoute}#card` + '"]', I18n.t(`${project.mode}.card_tab`, linksScope())),
-                                m(`a#dashboard_reward_link[class="${editLinkClass}"][href="${editRoute}#reward` + '"]', [
+                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope())),
+                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t('card_tab', linksScope())),
+                                m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
                                 ]),
-                                m(`a#dashboard_user_about_link[class="${editLinkClass}"][href="${editRoute}#user_about` + '"]', I18n.t(`${project.mode}.about_you_tab`, linksScope())),
+                                m(`a#dashboard_user_about_link[class="${editLinkClass('#user_about')}"][href="${editRoute}#user_about"]`, railsErrorsVM.errorsFor('user_about'), I18n.t('about_you_tab', linksScope())),
                                 ((project.is_published || project.state === 'draft') || project.is_admin_role ? [
-                                    m(`a#dashboard_user_settings_link[class="${editLinkClass}"][href="${editRoute}#user_settings` + '"]', I18n.t(`${project.mode}.account_tab`, linksScope())),
+                                    m(`a#dashboard_user_settings_link[class="${editLinkClass('#user_settings')}"][href="${editRoute}#user_settings"]`, railsErrorsVM.errorsFor('user_settings'), I18n.t('account_tab', linksScope())),
                                 ] : ''), (!project.is_published ? [
-                                    m(`a#dashboard_preview_link[class="${editLinkClass}"][href="${editRoute}#preview` + '"]', [
-                                        m('span.fa.fa-fw.fa-eye.fa-lg'), I18n.t(`${project.mode}.preview_tab`, linksScope())
+                                    m(`a#dashboard_preview_link[class="${editLinkClass('#preview')}"][href="${editRoute}#preview"]`, [
+                                        m('span.fa.fa-fw.fa-eye.fa-lg'), I18n.t('preview_tab', linksScope())
                                     ]),
                                 ] : '')
                             ])
                         ]) : ''),
                         ((!project.is_published && ctrl.showPublish()) ? [
-                            m('.btn-send-draft-fixed',
-                              (project.mode === 'aon' ? [
-                                  (project.state === 'draft' ? m(`a.btn.btn-medium[href="/projects/${project.project_id}/validate_publish"]`, [
-                                      I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
-                                  ]) : '')
-                              ] : [
-                                  (project.state === 'draft' ? m(`a.btn.btn-medium[href="/flexible_projects/${project.project_id}/validate_publish"]`, [
-                                      I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
-                                  ]) : '')
-                              ])
-                             )
+                            (ctrl.validating() ? h.loader() :
+                                m('.btn-send-draft-fixed',
+                                    (project.mode === 'aon' ? [
+                                        (project.state === 'draft' ? m('button.btn.btn-medium', {
+                                            onclick: ctrl.validatePublish
+                                        }, [
+                                            I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                        ]) : '')
+                                    ] : [
+                                        (project.state === 'draft' ? m('button.btn.btn-medium', {
+                                            onclick: ctrl.validatePublish
+                                        }, [
+                                            I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                        ]) : '')
+                                    ]))
+                            )
                         ] : [
                             ((project.mode === 'flex' && project.is_published) ? [
                                 m('.btn-send-draft-fixed',
-                                  (_.isNull(project.expires_at) ? m(`a.w-button.btn.btn-medium.btn-secondary-dark[href="/projects/${project.project_id}/edit#announce_expiration"]`, I18n.t('announce_expiration', I18nScope())) : ''))
+                                    (_.isNull(project.expires_at) ? m(`a.w-button.btn.btn-medium.btn-secondary-dark[href="${editRoute}#announce_expiration"]`, I18n.t('announce_expiration', I18nScope())) : ''))
                             ] : '')
                         ])
                     ]),

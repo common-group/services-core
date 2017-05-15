@@ -4,13 +4,20 @@ import h from '../h';
 import popNotification from './pop-notification';
 import projectContributionReportContentCard from './project-contribution-report-content-card';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
+import modalBox from '../c/modal-box';
+import deliverContributionModalContent from '../c/deliver-contribution-modal-content';
+import errorContributionModalContent from '../c/error-contribution-modal-content';
 
 const projectContributionReportContent = {
     controller(args) {
         const showSelectedMenu = h.toggleProp(false, true),
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
+            loading = m.prop(false),
+            displayDeliverModal = h.toggleProp(false, true),
+            displayErrorModal = h.toggleProp(false, true),
             selectedContributions = m.prop([]),
+            deliveryMessage = m.prop(''),
             selectAll = () => {
                 projectsContributionReportVM.getAllContributions(args.filterVM).then((data) => {
                     const exceptReceived = _.filter(data, contrib => contrib.delivery_status !== 'received');
@@ -25,15 +32,24 @@ const projectContributionReportContent = {
             updateStatus = (status) => {
                 const data = {
                     contributions: selectedContributions(),
+                    message: deliveryMessage(),
                     delivery_status: status
                 };
+                if (status === 'delivered') {
+                    displayDeliverModal.toggle();
+                } else if (status === 'error') {
+                    displayErrorModal.toggle();
+                }
+                loading(true);
+                showSelectedMenu.toggle();
+                m.redraw();
                 projectsContributionReportVM.updateStatus(data).then(() => {
+                    loading(false);
                     showSuccess(true);
-                    showSelectedMenu.toggle();
                     // update status so we don't have to reload the page
                     _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
                           item => item.delivery_status = status);
-                }).catch((err) => {
+                }).catch(() => {
                     m.redraw();
                 });
                 return false;
@@ -43,7 +59,11 @@ const projectContributionReportContent = {
             showSuccess,
             selectAll,
             unselectAll,
+            deliveryMessage,
+            displayDeliverModal,
+            displayErrorModal,
             updateStatus,
+            loading,
             showSelectedMenu,
             selectedAny,
             selectedContributions
@@ -53,7 +73,17 @@ const projectContributionReportContent = {
         const list = args.list;
         const isFailed = args.project().state === 'failed';
 
-        return m('.w-section.bg-gray.before-footer.section', [
+        return m('.w-section.bg-gray.before-footer.section', ctrl.loading() ? h.loader() : [
+              (ctrl.displayErrorModal() ? m.component(modalBox, {
+                  displayModal: ctrl.displayErrorModal,
+                  hideCloseButton: false,
+                  content: [errorContributionModalContent, { project: args.project, displayModal: ctrl.displayErrorModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+              }) : ''),
+              (ctrl.displayDeliverModal() ? m.component(modalBox, {
+                  displayModal: ctrl.displayDeliverModal,
+                  hideCloseButton: false,
+                  content: [deliverContributionModalContent, { project: args.project, displayModal: ctrl.displayDeliverModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+              }) : ''),
 
             (ctrl.showSuccess() ? m.component(popNotification, {
                 message: 'As informações foram atualizadas'
@@ -96,12 +126,12 @@ const projectContributionReportContent = {
                                     (ctrl.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.updateStatus('delivered')
+                                                onclick: () => ctrl.displayDeliverModal.toggle()
                                             },
                                                 'Enviada'
                                             ),
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.updateStatus('error')
+                                                onclick: () => ctrl.displayErrorModal.toggle()
                                             },
                                                 'Erro no envio'
                                             )
@@ -109,7 +139,7 @@ const projectContributionReportContent = {
                                 ]) : '')
                         ]),
                         m('.w-clearfix.w-col.w-col-4',
-                            m(`a.alt-link.fontsize-small.lineheight-looser.u-right[href="/projects/${args.project().project_id}/download_reports"]`, [
+                            m('a.alt-link.fontsize-small.lineheight-looser.u-right', { onclick: () => args.showDownloads(true) }, [
                                 m('span.fa.fa-download',
                                     ''
                                 ),
@@ -119,21 +149,6 @@ const projectContributionReportContent = {
                     ])
                 ),
 
-                // TODO: ordering filter template
-                // m(".w-col.w-col-3.w-col-small-6.w-col-tiny-6", [
-                // m(".w-form", [
-                // m("form[data-name='Email Form 5'][id='email-form-5'][name='email-form-5']", [
-                // m(".fontsize-smallest.fontcolor-secondary", "Ordenar por:"),
-                // m("select.w-select.text-field.positive.fontsize-smallest[id='field-9'][name='field-9']", [
-                // m("option[value='']", "Data (recentes para antigos)"),
-                // m("option[value='']", "Data (antigos para recentes)"),
-                // m("option[value='']", "Valor (maior para menor)"),
-                // m("option[value='First']", "Valor (menor para maior)")
-                // ])
-                // ])
-                // ])
-                // ])*/
-                // ]),
                 _.map(list.collection(), (item) => {
                     const contribution = m.prop(item);
                     return m.component(projectContributionReportContentCard, {

@@ -6,6 +6,8 @@ import h from '../h';
 
 const error = m.prop(''),
     rewards = m.prop([]),
+    states = m.prop([]),
+    fees = m.prop([]),
     noReward = {
         id: -1,
         description: 'Obrigado. Eu só quero ajudar o projeto.',
@@ -17,13 +19,23 @@ const error = m.prop(''),
         project_id: 'eq'
     });
 
-const rewardsLoader = (project_id) => {
-    vm.project_id(project_id);
+const rewardsLoader = (projectId) => {
+    vm.project_id(projectId);
 
     return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
 };
 
-const fetchRewards = project_id => rewardsLoader(project_id).load().then(rewards);
+const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
+
+const getFees = (reward) => {
+    const feesFilter = postgrest.filtersVM({
+        reward_id: 'eq'
+    });
+
+    feesFilter.reward_id(reward.id);
+    const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
+    return feesLoader.load();
+};
 
 const getSelectedReward = () => {
     const root = document.getElementById('application'),
@@ -31,41 +43,131 @@ const getSelectedReward = () => {
 
     if (data) {
         const contribution = JSON.parse(data);
-        const reward = selectedReward(contribution.reward);
 
+        selectedReward(contribution.reward);
         m.redraw(true);
 
         return selectedReward;
     }
+
     return false;
 };
 
 const selectReward = reward => () => {
-    if (rewardVM.selectedReward() !== reward) {
-        rewardVM.selectedReward(reward);
-
+    if (selectedReward() !== reward) {
+        error('');
+        selectedReward(reward);
         contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
+        if (reward.id) {
+            getFees(reward).then(fees);
+        }
     }
 };
 
 const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
-const getFees = (reward) => {
-    const feesFilter = postgrest.filtersVM({
-        reward_id: 'eq'
-    });
-
-    feesFilter.reward_id(reward.id || 0);
-    const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
-    return feesLoader;
+const statesLoader = postgrest.loader(models.state.getPageOptions());
+const getStates = () => {
+    statesLoader.load().then(states);
+    return states;
 };
 
-const getStates = () => postgrest.loader(models.state.getPageOptions());
+const locationOptions = (reward, destination) => {
+    const options = m.prop([]),
+        mapStates = _.map(states(), (state) => {
+            let fee;
+            const feeState = _.findWhere(fees(), {
+                destination: state.acronym
+            });
+            const feeOthers = _.findWhere(fees(), {
+                destination: 'others'
+            });
+            if (feeState) {
+                fee = feeState.value;
+            } else if (feeOthers) {
+                fee = feeOthers.value;
+            }
+
+            return {
+                name: state.name,
+                value: state.acronym,
+                fee
+            };
+        });
+    if (reward.shipping_options === 'national') {
+        options(mapStates);
+    } else if (reward.shipping_options === 'international') {
+        let fee;
+        const feeInternational = _.findWhere(fees(), {
+            destination: 'international'
+        });
+        if (feeInternational) { fee = feeInternational.value; }
+        options(_.union([{
+            value: 'international',
+            name: 'Outside Brazil',
+            fee
+        }], mapStates));
+    }
+
+    options(
+        _.union(
+            [{ value: '', name: 'Selecione Opção', fee: 0 }],
+            options()
+        )
+    );
+
+    return options();
+};
+
+const shippingFeeById = feeId => _.findWhere(fees(), {
+    id: feeId
+});
+
+const getOtherNationalStates = () => _.reject(
+    states(),
+    state => !_.isUndefined(_.findWhere(fees(), { destination: state.acronym }))
+);
+
+const feeDestination = (reward, feeId) => {
+    const fee = shippingFeeById(feeId) || {};
+    const feeState = _.findWhere(states(), { acronym: fee.destination });
+
+    if (feeState) {
+        return feeState.acronym;
+    } else if (reward.shipping_options === 'national' && fee.destination === 'others') {
+        return _.pluck(getOtherNationalStates(fees), 'acronym').join(', ');
+    }
+
+    return fee.destination;
+};
+
+const shippingFeeForCurrentReward = (selectedDestination) => {
+    let currentFee = _.findWhere(fees(), {
+        destination: selectedDestination()
+    });
+
+    if (!currentFee && _.findWhere(states(), { acronym: selectedDestination() })) {
+        currentFee = _.findWhere(fees(), {
+            destination: 'others'
+        });
+    }
+
+    return currentFee;
+};
+
+const canEdit = (reward, projectState, user) => user.is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count <= 0 && reward.waiting_payment_count <= 0));
+
+const canAdd = projectState => projectState === 'draft' || projectState === 'online';
+
+const hasShippingOptions = reward => !(_.isNull(reward.shipping_options) || reward.shipping_options === 'free' || reward.shipping_options === 'presential');
 
 const rewardVM = {
+    canEdit,
+    canAdd,
     error,
     getStates,
     getFees,
+    fees,
     rewards,
     applyMask,
     noReward,
@@ -75,8 +177,14 @@ const rewardVM = {
     selectedReward,
     contributionValue,
     rewardsLoader,
+    locationOptions,
+    shippingFeeForCurrentReward,
+    shippingFeeById,
+    statesLoader,
+    feeDestination,
     getValue: contributionValue,
-    setValue: contributionValue
+    setValue: contributionValue,
+    hasShippingOptions
 };
 
 export default rewardVM;

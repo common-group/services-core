@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -15,7 +16,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsPayment = {
-    controller(args) {
+    controller() {
         const project = projectVM.getCurrentProject(),
             mode = project.mode,
             projectUserId = project.user.id,
@@ -32,26 +33,7 @@ const projectsPayment = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
-        if (_.contains([41679, 40191, 40271, 38768, 42815, 43002, 42129, 41867, 39655], project.project_id)) {
-            (window.$zopim && window.$zopim.livechat) || (function (d, s) {
-                var z = window.$zopim = function (c) { z._.push(c); },
-                    $ = z.s = d.createElement(s),
-                    e = d.getElementsByTagName(s)[0]; z.set = function (o) { z.set._.push(o); }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8'); $.src = '//v2.zopim.com/?2qPtIfZX0Exh5Szx5JUoUxWKqrTQI5Tm'; z.t = +new Date(); $.type = 'text/javascript'; e.parentNode.insertBefore($, e);
-            }(document, 'script'));
-            setTimeout(function t() {
-                const c = window.$zopim && window.$zopim.livechat;
-                if (c) {
-                    const u = h.getUser();
-                    if (u) {
-                        c.setEmail(u.email);
-                        c.setName(u.name);
-                    }
-                    window.zE && window.zE.hide();
-                } else {
-                    setTimeout(t, 1000);
-                }
-            }, 1000);
-        }
+        const shippingFee = () => _.findWhere(rewardVM.fees(), { id: contribution().shipping_fee_id });
 
         const validateForm = () => {
             if (vm.validate()) {
@@ -105,10 +87,13 @@ const projectsPayment = {
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
 
+        const isLongDescription = reward => reward.description && reward.description.length > 110;
+
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
-
+        rewardVM.getStates();
+        rewardVM.getFees(reward()).then(rewardVM.fees);
         vm.similityExecute(contribution().id);
 
         return {
@@ -129,45 +114,84 @@ const projectsPayment = {
             isCnpj,
             vm,
             user,
-            project
+            project,
+            shippingFee,
+            isLongDescription,
+            toggleDescription: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const user = ctrl.user(),
-            project = ctrl.project;
+              project = ctrl.project,
+              formatedValue = h.formatNumber(Number(ctrl.value), 2, 3);
+        console.log(formatedValue);
 
         return m('#project-payment.w-section.w-clearfix.section', [
             m('.w-col',
                 m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
-                    m('.fontsize-smaller.fontweight-semibold',
+                    m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
                         I18n.t('selected_reward.value', ctrl.scope())
                     ),
-                    m('a.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary[href=\'#\']'),
-                    m('.w-clearfix.u-marginbottom-20',
-                        m('.fontsize-larger.text-success.u-left',
-                            `R$ ${Number(ctrl.value).toFixed()}`
-                        )
+                    m('.w-clearfix',
+                        [
+                            m('.fontsize-larger.text-success.u-left',
+                                `R$ ${formatedValue}`
+                            ),
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                'Editar'
+                            )
+                        ]
                     ),
-                    m('.w-clearfix.back-payment-info-reward', {
-                        style: {
-                            display: 'none'
-                        }
-                    }, [
+                    m('.divider.u-marginbottom-10.u-margintop-10'),
+                    m('.back-payment-info-reward', [
                         m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
                             I18n.t('selected_reward.reward', ctrl.scope())
                         ),
-                        m('.fontsize-smallest',
-                            ctrl.reward().description
-                            ? ctrl.reward().description
-                            : m.trust(I18n.t('selected_reward.review_without_reward_html',
-                                ctrl.scope(_.extend({ value: Number(ctrl.value).toFixed() }))
-                            ))
+                        m('.fontsize-smallest.fontweight-semibold',
+                            ctrl.reward().title
                         ),
-                        m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${project.project_id}/contributions/new"]`,
-                            I18n.t('selected_reward.edit', ctrl.scope()))
+                        m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+                            class: ctrl.isLongDescription(ctrl.reward())
+                                       ? ctrl.toggleDescription() ? 'extended' : ''
+                                       : 'extended'
+                        }, ctrl.reward().description
+                                ? ctrl.reward().description
+                                : m.trust(
+                                    I18n.t('selected_reward.review_without_reward_html',
+                                        ctrl.scope(
+                                            _.extend({ value: formatedValue })
+                                        )
+                                    )
+                                )
+                        ),
+                        ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                            onclick: ctrl.toggleDescription.toggle
+                        }, [
+                            ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                            m('span.fa.fa-angle-down', {
+                                class: ctrl.toggleDescription() ? 'reversed' : ''
+                            })
+                        ]) : '',
+                        ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10',
+                            [
+                                m('span.fontweight-semibold',
+                                    'Entrega prevista:'
+                                ),
+                                ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
+                            ]
+                        ) : '',
+                        (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential')
+                            ? m('.fontcolor-secondary.fontsize-smallest', [
+                                m('span.fontweight-semibold',
+                                    'Forma de envio: '
+                                ),
+                                I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, { scope: 'projects.contributions' })
+                            ])
+                            : ''
                     ])
                 ])
             ),
+
             m('.w-container',
                 m('.w-row', [
                     m('.w-col.w-col-8', [!_.isEmpty(ctrl.vm.fields.errors()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
@@ -186,8 +210,8 @@ const projectsPayment = {
                                         I18n.t('required', ctrl.scope())
                                     )
                                 ]),
-                                ((user.name && user.owner_document) ? m(UserOwnerBox, {user: user, project: project})  : ''),
-                                m('.w-row.u-marginbottom-30',[
+                                user.name && user.owner_document ? m(UserOwnerBox, { user, project }) : '',
+                                m('.w-row.u-marginbottom-30', [
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'country\']', [
                                             'País / ',
@@ -267,16 +291,15 @@ const projectsPayment = {
                                     I18n.t('fields.street', ctrl.scope())
                                 ),
                                 m('input.w-input.text-field[id=\'street\']', {
+                                    type: 'text',
                                     onfocus: ctrl.vm.resetFieldError('street'),
                                     class: ctrl.fieldHasError('street') ? 'error' : false,
-                                    type: 'text',
                                     onchange: ctrl.addressChange(m.withAttr('value', ctrl.vm.fields.street)),
                                     value: ctrl.vm.fields.street(),
                                     placeholder: 'Rua Da Minha Casa'
                                 }),
                                 ctrl.fieldHasError('street'),
-
-                                m('.w-row', (ctrl.vm.isInternational() ? '' : [
+                                m('.w-row', ctrl.vm.isInternational() ? '' : [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'number\']',
                                             I18n.t('fields.street_number', ctrl.scope())
@@ -305,7 +328,7 @@ const projectsPayment = {
                                         }),
                                         ctrl.fieldHasError('addressComplement')
                                     ]),
-                                    m('.w-col.w-col-4', (ctrl.vm.isInternational() ? '' : [
+                                    m('.w-col.w-col-4', ctrl.vm.isInternational() ? '' : [
                                         m('label.field-label.fontweight-semibold[for=\'neighbourhood\']',
                                             I18n.t('fields.neighbourhood', ctrl.scope())
                                         ),
@@ -318,8 +341,8 @@ const projectsPayment = {
                                             placeholder: 'São José'
                                         }),
                                         ctrl.fieldHasError('neighbourhood')
-                                    ]))
-                                ])),
+                                    ])
+                                ]),
                                 m('.w-row', [
                                     m('.w-col.w-col-4.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'zip-code\']',
@@ -405,32 +428,83 @@ const projectsPayment = {
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
-                        m('.w-hidden-small.w-hidden-tiny.card.u-radius.u-marginbottom-20', [
-                            m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                                I18n.t('selected_reward.value', ctrl.scope())
-                            ),
-                            m('.w-clearfix.u-marginbottom-20', [
-                                m('.fontsize-larger.text-success.u-left',
-                                    `R$ ${Number(ctrl.value).toFixed()}`
+                        m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny',
+                            [
+                                m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
+                                    I18n.t('selected_reward.value', ctrl.scope())
                                 ),
-                                m(`a.fontsize-small.link-hidden.u-right.fontweight-semibold[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                                    I18n.t('selected_reward.edit', ctrl.scope()))
-                            ]),
-                            m('.back-payment-info-reward', [
-                                m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                    I18n.t('selected_reward.reward', ctrl.scope())
-                                ),
-                                m('.fontsize-smallest',
-                                    ctrl.reward().description
-                                    ? ctrl.reward().description
-                                    : m.trust(I18n.t('selected_reward.review_without_reward_html',
-                                        ctrl.scope(
-                                            _.extend({ value: Number(ctrl.value).toFixed() })
+                                m('.w-clearfix',
+                                    [
+                                        m('.fontsize-larger.text-success.u-left',
+                                            `R$ ${formatedValue}`
+                                        ),
+                                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                            'Editar'
                                         )
-                                    ))
-                                )
-
-                            ])
+                                    ]
+                                ),
+                                m('.divider.u-marginbottom-10.u-margintop-10'),
+                                m('.back-payment-info-reward', [
+                                    m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
+                                        I18n.t('selected_reward.reward', ctrl.scope())
+                                    ),
+                                    m('.fontsize-smallest.fontweight-semibold',
+                                        ctrl.reward().title
+                                    ),
+                                    m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+                                        class: ctrl.isLongDescription(ctrl.reward())
+                                                   ? ctrl.toggleDescription() ? 'extended' : ''
+                                                   : 'extended'
+                                    }, ctrl.reward().description
+                                            ? ctrl.reward().description
+                                            : m.trust(
+                                                I18n.t('selected_reward.review_without_reward_html',
+                                                    ctrl.scope(
+                                                        _.extend({ value: Number(ctrl.value).toFixed() })
+                                                    )
+                                                )
+                                            )
+                                    ),
+                                    ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                                        onclick: ctrl.toggleDescription.toggle
+                                    }, [
+                                        ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                                        m('span.fa.fa-angle-down', {
+                                            class: ctrl.toggleDescription() ? 'reversed' : ''
+                                        })
+                                    ]) : '',
+                                    ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10',
+                                        [
+                                            m('span.fontweight-semibold',
+                                                'Entrega prevista:'
+                                            ),
+                                            ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
+                                        ]
+                                    ) : '',
+                                    (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential')
+                                        ? m('.fontcolor-secondary.fontsize-smallest', [
+                                            m('span.fontweight-semibold',
+                                                'Forma de envio: '
+                                            ),
+                                            I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, { scope: 'projects.contributions' })
+                                        ])
+                                        : '',
+                                    m('div',
+                                        // ctrl.contribution().shipping_fee_id ? [
+                                        //     m('.divider.u-marginbottom-10.u-margintop-10'),
+                                        //     m('.fontsize-smaller.fontweight-semibold',
+                                        //         'Destino da recompensa:'
+                                        //     ),
+                                        //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                        //         'Editar'
+                                        //     ),
+                                        //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
+                                        //         `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
+                                        //     ),
+                                        //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
+                                        // ] : ''
+                                    )
+                                ]),
                         ]),
                         m.component(faqBox, {
                             mode: ctrl.mode,

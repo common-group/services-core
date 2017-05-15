@@ -9,6 +9,7 @@ import projectContributionReportContent from '../c/project-contribution-report-c
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 import FilterMain from '../c/filter-main';
 import FilterDropdown from '../c/filter-dropdown';
+import downloadReports from '../c/download-reports';
 import InfoProjectContributionLegend from '../c/info-project-contribution-legend';
 import ProjectContributionStateLegendModal from '../c/project-contribution-state-legend-modal';
 import ProjectContributionDeliveryLegendModal from '../c/project-contribution-delivery-legend-modal';
@@ -21,6 +22,7 @@ const projectContributionReport = {
             filterVM = projectsContributionReportVM,
             project = m.prop([{}]),
             rewards = m.prop([]),
+            showDownloads = m.prop(false),
             contributionStateOptions = m.prop([]),
             reloadSelectOptions = (projectState) => {
                 let opts = [{
@@ -187,7 +189,7 @@ const projectContributionReport = {
             if (!lReward()) {
                 options = _.map(rewards(), r => ({
                     value: r.id,
-                    option: `R$ ${h.formatNumber(r.minimum_value, 2, 3)} - ${r.description.substring(0, 20)}`
+                    option: `R$ ${h.formatNumber(r.minimum_value, 2, 3)} - ${(r.title ? r.title : r.description).substring(0, 20)}`
                 }));
             }
 
@@ -213,10 +215,10 @@ const projectContributionReport = {
             filterVM,
             filterBuilder,
             submit,
-            lReward,
             lProject,
             rewards,
             project,
+            showDownloads,
             mapRewardsToOptions
         };
     },
@@ -228,20 +230,25 @@ const projectContributionReport = {
                 m.component(projectDashboardMenu, {
                     project: m.prop(_.first(ctrl.project()))
                 }),
-                m.component(projectContributionReportHeader, {
-                    submit: ctrl.submit,
-                    filterBuilder: ctrl.filterBuilder,
-                    form: ctrl.filterVM.formDescriber,
-                    mapRewardsToOptions: ctrl.mapRewardsToOptions,
-                    filterVM: ctrl.filterVM
-                }),
-                m('.divider.u-margintop-30'),
-                m.component(projectContributionReportContent, {
-                    submit: ctrl.submit,
-                    list,
-                    filterVM: ctrl.filterVM,
-                    project: m.prop(_.first(ctrl.project()))
-                })
+                ctrl.showDownloads() ? m(downloadReports, {
+                    project: m.prop(_.first(ctrl.project())),
+                    rewards: ctrl.rewards()
+                }) : [
+                    m.component(projectContributionReportHeader, {
+                        submit: ctrl.submit,
+                        filterBuilder: ctrl.filterBuilder,
+                        form: ctrl.filterVM.formDescriber,
+                        mapRewardsToOptions: ctrl.mapRewardsToOptions,
+                        filterVM: ctrl.filterVM
+                    }),
+                    m('.divider.u-margintop-30'),
+                    m.component(projectContributionReportContent, {
+                        submit: ctrl.submit,
+                        list,
+                        showDownloads: ctrl.showDownloads,
+                        filterVM: ctrl.filterVM,
+                        project: m.prop(_.first(ctrl.project()))
+                    })]
             ];
         }
         return h.loader();

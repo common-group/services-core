@@ -28,6 +28,8 @@ const insights = {
             displayModal = h.toggleProp(false, true),
             projectDetails = m.prop([]),
             contributionsPerDay = m.prop([]),
+            visitorsTotal = m.prop(0),
+            visitorsPerDay = m.prop([]),
             loader = postgrest.loaderWithToken,
             setProjectId = () => {
                 try {
@@ -47,6 +49,16 @@ const insights = {
 
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
         l.load().then(projectDetails);
+
+        const processVisitors = (data) => {
+            if(!_.isEmpty(data)) {
+                visitorsPerDay(data);
+                visitorsTotal(_.first(data).total);
+            }
+        };
+
+        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
+        lVisitorsPerDay.load().then(processVisitors);
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
@@ -106,12 +118,15 @@ const insights = {
             lContributionsPerRef,
             lContributionsPerLocation,
             lContributionsPerDay,
+            lVisitorsPerDay,
             displayModal,
             filtersVM,
             projectDetails,
             contributionsPerDay,
             contributionsPerLocationTable,
-            contributionsPerRefTable
+            contributionsPerRefTable,
+            visitorsPerDay,
+            visitorsTotal
         };
     },
     view(ctrl) {
@@ -153,7 +168,7 @@ const insights = {
                         }) : ''),
                         m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`, [
                             project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
-                                I18n.t('finish_explanation', I18nScope()),
+                                m.trust(I18n.t('finish_explanation', I18nScope())),
                                 m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/213783503-tudo-sobre-Prazo-da-campanha"][target="_blank"]', I18n.t('know_more', I18nScope()))
                             ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))
                         ])
@@ -167,7 +182,25 @@ const insights = {
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
-                        m.component(projectDataStats, { project: m.prop(project) }),
+                        m.component(projectDataStats, { project: m.prop(project), visitorsTotal: ctrl.visitorsTotal }),
+                        m('.w-row', [
+                            m('.w-col.w-col-12.u-text-center', {
+                                style: {
+                                    'min-height': '300px'
+                                }
+                            }, [
+                                m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
+                                    I18n.t('visitors_per_day_label', I18nScope()),
+                                    h.newFeatureBadge()
+                                ]),
+                                !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
+                                    collection: ctrl.visitorsPerDay,
+                                    dataKey: 'visitors',
+                                    xAxis: item => h.momentify(item.day),
+                                    emptyState: I18n.t('visitors_per_day_empty', I18nScope())
+                                }) : h.loader()
+                            ]),
+                        ]),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {
@@ -203,7 +236,7 @@ const insights = {
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
                                         I18n.t('ref_origin_title', I18nScope()),
-                                        h.newFeatureBadge(),
+                                        ' ',
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
                                     !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {

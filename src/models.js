@@ -29,9 +29,11 @@ const models = {
     projectContributionsPerDay: postgrest.model('project_contributions_per_day'),
     projectContributionsPerLocation: postgrest.model('project_contributions_per_location'),
     projectContributionsPerRef: postgrest.model('project_contributions_per_ref'),
+    projectVisitorsPerDay: postgrest.model('project_visitors_per_day'),
     projectTransfer: postgrest.model('project_transfers'),
     project: postgrest.model('projects'),
     projectSearch: postgrest.model('rpc/project_search'),
+    publicTags: postgrest.model('public_tags'),
     category: postgrest.model('categories'),
     categoryTotals: postgrest.model('category_totals'),
     categoryFollower: postgrest.model('category_followers'),
@@ -42,6 +44,7 @@ const models = {
     finishedProject: postgrest.model('finished_projects'),
     userFriend: postgrest.model('user_friends'),
     userFollow: postgrest.model('user_follows'),
+    followAllCreators: postgrest.model('rpc/follow_all_creators'),
     followAllFriends: postgrest.model('rpc/follow_all_friends'),
     contributor: postgrest.model('contributors'),
     userFollower: postgrest.model('user_followers'),
@@ -49,11 +52,13 @@ const models = {
     userContribution: postgrest.model('user_contributions'),
     shippingFee: postgrest.model('shipping_fees'),
     deleteProject: postgrest.model('rpc/delete_project'),
-    cancelProject: postgrest.model('rpc/cancel_project')
+    cancelProject: postgrest.model('rpc/cancel_project'),
+    city: postgrest.model('cities')
 };
 
 models.teamMember.pageSize(40);
 models.rewardDetail.pageSize(false);
+models.shippingFee.pageSize(false);
 models.project.pageSize(30);
 models.category.pageSize(50);
 models.contributionActivity.pageSize(40);
@@ -61,10 +66,12 @@ models.successfulProject.pageSize(9);
 models.finishedProject.pageSize(9);
 models.country.pageSize(false);
 models.state.pageSize(false);
+models.publicTags.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
 models.recommendedProjects.pageSize(3);
 models.bank.pageSize(400);
+models.city.pageSize(200);
 
 
 export default models;

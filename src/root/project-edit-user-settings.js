@@ -17,9 +17,8 @@ const projectEditUserSettings = {
             userId: args.user_id,
             hideCreditCards: true,
             useFloatBtn: true,
-            rails_errors: args.rails_errors,
             publishingUserSettings: true
-        }) : m('div', h.loader()) );
+        }) : m('div', h.loader()));
     }
 };
 

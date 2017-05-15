@@ -62,7 +62,7 @@ const projectsHome = {
             const customStyle = `background-image: url(${slide.image});`;
             const content = m('.w-container.u-text-center', [
                 m('.w-row.u-marginbottom-40', [
-                    m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', slide.title),
+                    m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', m.trust(slide.title)),
                     m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
                 ]),
                 m('a.btn.btn-large.u-marginbottom-10.btn-inline', { href: slide.link }, slide.cta)

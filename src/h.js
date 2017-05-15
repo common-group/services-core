@@ -26,6 +26,8 @@ const
     },
     existy = (x: any): boolean => x != null,
 
+    slugify = (str: string): string => str.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,''),
+
     momentify = (date: string, format: string): string => {
         format = format || 'DD/MM/YYYY';
         return date ? moment(date).locale('pt').format(format) : 'no date';
@@ -859,6 +861,18 @@ const
         };
 
         return contributionVM.canBeDelivered(contribution) ? status[contribution.delivery_status] : '';
+    },
+    getParams = (searchKey: string) => {
+        const query = window.location.href;
+        const queryParams = (/^[?#]/.test(query) ? query.slice(1) : query).split('?');
+
+        return queryParams.length > 1 ? queryParams[1]
+            .split('&')
+            .reduce((params, param) => {
+                const [key, value] = param.split('=');
+                params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+                return params;
+            }, {})[searchKey] : null;
     };
 
 
@@ -875,6 +889,7 @@ export default {
     cumulativeOffset,
     discuss,
     existy,
+    slugify,
     validateEmail,
     validateCpf,
     validateCnpj,
@@ -888,6 +903,7 @@ export default {
     getApiHost,
     getMailchimpUrl,
     getCurrentProject,
+    getParams,
     toggleProp,
     loader,
     newFeatureBadge,

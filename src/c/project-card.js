@@ -90,14 +90,20 @@ const projectCard = {
         };
     },
     view(ctrl, args) {
-        const project = args.project;
+        const project = args.project,
+              projectOwnerName = (project.user ? (
+                  project.user.public_name||project.user.name
+              ) : (project.owner_public_name || project.owner_name)),
+              projectAddress = (project.address ? (
+                  `${project.address.city} - ${project.address.state_acronym}`
+              ) : (`${project.city_name} - ${project.state_acronym}`));
 
         return m(ctrl.css().wrapper, [
             m(ctrl.css().innerWrapper, [
                 m(`a${ctrl.css().thumb}[href="/${project.permalink}?ref=${args.ref}"]`, {
                     onclick: projectVM.routeToProject(project, args.ref),
                     style: {
-                        'background-image': `url(${project.project_img})`,
+                        'background-image': `url(${project.project_img||project.large_image})`,
                         display: 'block'
                     }
                 }),
@@ -107,9 +113,9 @@ const projectCard = {
                             m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
                             },
-                            project.project_name)
+                            project.project_name||project.name)
                         ]),
-                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${(_.isEmpty(project.owner_public_name) ? project.owner_name : project.owner_public_name)}`),
+                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${projectOwnerName}`),
                         m(ctrl.css().headline, [
                             m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
@@ -119,7 +125,7 @@ const projectCard = {
                     m(ctrl.css().city, [
                         m('.fontsize-smallest.fontcolor-secondary', [
                             m('span.fa.fa-map-marker.fa-1', ' '),
-                            ` ${project.city_name ? project.city_name : ''}, ${project.state_acronym ? project.state_acronym : ''}`
+                            projectAddress
                         ])
                     ]),
                     m(ctrl.cardMeter(), [

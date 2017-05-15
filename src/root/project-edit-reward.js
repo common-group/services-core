@@ -1,45 +1,147 @@
 import m from 'mithril';
 import _ from 'underscore';
+import moment from 'moment';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
+import userVM from '../vms/user-vm';
 import editRewardCard from '../c/edit-reward-card';
+import dashboardRewardCard from '../c/dashboard-reward-card';
+import projectEditSaveBtn from '../c/project-edit-save-btn';
+import popNotification from '../c/pop-notification';
 
 const projectEditReward = {
     controller(args) {
         const rewards = m.prop([]),
-            newRewards = m.prop([]),
-            newReward = {
+            loading = m.prop(false),
+            error = m.prop(false),
+            project_state = args.project_state,
+            errors = m.prop([]),
+            showSuccess = m.prop(false),
+            availableCount = reward => reward.maximum_contributions - reward.paid_count,
+            updateRewardData = () => {
+                const data = $('#reward_form').serialize();
+                loading(true);
+                // m.request won't serialize params properly here
+                return $.ajax({
+                    type: 'PATCH',
+                    url: `/pt/projects/${args.project_id}'`,
+                    data,
+                    dataType: 'JSON'
+                }).done(() => {
+                    error(false);
+                    showSuccess(true);
+                    loadRewards();
+                    m.redraw();
+                }).fail((json) => {
+                    error(true);
+                    showSuccess(false);
+                    const messages = JSON.parse(json.responseText).errors.join('</br>');
+                    errors(messages);
+                }).always(() => {
+                    loading(false);
+                    m.redraw();
+                });
+            },
+            onSubmit = () => {
+                error(false);
+                errors('Erro ao salvar informações. Confira os dados informados.');
+                _.map(rewards(), (reward) => {
+                    if (reward().validate) {
+                        reward().validate();
+                    }
+                });
+                if (!error()) {
+                    updateRewardData();
+                }
+
+                return false;
+            },
+            newReward = () => ({
+                id: null,
                 minimum_value: null,
-                deliver_at: null,
+                title: null,
+                deliver_at: moment().date(1).format(),
                 description: null,
+                paid_count: 0,
+                edit: m.prop(true),
                 limited: h.toggleProp(false, true),
                 maximum_contributions: null,
-                new: true
-            };
-        rewardVM.fetchRewards(args.project_id).then(() => {
+                newReward: true,
+                row_order: 999999999 + (rewards().length * 20) // we need large and spaced apart numbers
+            });
+
+        const updateRewardSortPosition = (rewardId, position) => m.request({
+            method: 'POST',
+            url: `/pt/projects/${args.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
+            config: (xhr) => {
+                if (h.authenticityToken()) {
+                    xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+                    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                }
+            },
+        });
+
+        const setSorting = (el, isInit) => {
+            if (!isInit && window.$) {
+                window.$(el).sortable({
+                    update: (event, ui) => {
+                        const rewardId = ui.item[0].id;
+                        updateRewardSortPosition(rewardId, ui.item.index());
+                    }
+                });
+            }
+        };
+
+        const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
+            rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
                 const limited = reward.maximum_contributions !== null;
                 _.extend(reward, {
                     edit: h.toggleProp(false, true),
                     limited: h.toggleProp(limited, !limited)
                 });
-                rewards().push(reward);
+                rewards().push(m.prop(reward));
             });
+
+            if (rewardVM.rewards().length === 0) {
+                rewards().push(m.prop(newReward()));
+            }
         });
+
+        loadRewards();
+
         return {
+            loading,
+            project_state,
+            error,
+            errors,
+            showSuccess,
             rewards,
-            newRewards,
-            newReward
+            onSubmit,
+            user: userVM.fetchUser(args.user_id),
+            availableCount,
+            newReward,
+            setSorting
         };
     },
 
     view(ctrl, args) {
+        const error = ctrl.error;
         return m("[id='dashboard-rewards-tab']",
             m('.w-section.section',
-                m('.w-container',
+                m('.w-container', [
+                    (ctrl.showSuccess() ? m.component(popNotification, {
+                        message: 'Recompensas salvas com sucesso'
+                    }) : ''),
+                    (ctrl.error() ? m.component(popNotification, {
+                        message: ctrl.errors(),
+                        error: true
+                    }) : ''),
                     m('.w-row',
                         m('.w-col.w-col-10.w-col-push-1',
-                            m(`form.simple_form.project-form.w-form[action='/pt/projects/${args.project_id}'][method='post'][novalidate='novalidate'][id='edit_project_${args.project_id}']`, [
+                            m('form.simple_form.project-form.w-form[id=\'reward_form\']', {
+                                onsubmit: ctrl.onSubmit
+                            }, [
                                 m("input[name='utf8'][type='hidden'][value='✓']"),
                                 m("input[name='_method'][type='hidden'][value='patch']"),
                                 m(`input[name="authenticity_token"][type="hidden"][value=${h.authenticityToken()}]`),
@@ -47,104 +149,52 @@ const projectEditReward = {
                                 m("input[id='anchor'][name='anchor'][type='hidden'][value='reward']"),
                                 m("[id='dashboard-rewards']", [
 
-                                    m(".ui-sortable[id='rewards']", [
-                                        _.map(ctrl.rewards(), (reward, index) => m('div', [m('.nested-fields.ui-sortable-handle',
+                                    ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
+                                        config: ctrl.setSorting
+                                    }, [
+                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward().row_order)), (reward, index) => m(`div[id=${reward().id}]`, [m('.nested-fields',
                                                 m('.reward-card', [
-                                                    (!reward.edit() ?
-                                                        m(`.w-row.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable[data-update_url='/pt/projects/${args.project_id}/rewards/${reward.id}/sort']`, [
-                                                            m('.w-sub-col.w-col.w-col-5', [
-                                                                m('span.fontcolor-secondary.fontsize-smallest',
-                                                                    'Link para apoio direto'
-                                                                ),
-                                                                m('.u-marginbottom-20.w-row',
-                                                                    m('.w-col.w-col-12',
-                                                                        m('.mithril-copy-link',
-                                                                            m('.clipboard.w-row', [
-                                                                                m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
-                                                                                    m('textarea.copy-textarea.text-field.w-input', {
-                                                                                        style: {
-                                                                                            'margin-bottom': '0'
-                                                                                        }
-                                                                                    },
-                                                                                        `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id}`
-                                                                                    )
-                                                                                ),
-                                                                                m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
-                                                                                    m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button')
-                                                                                )
-                                                                            ])
-                                                                        )
-                                                                    )
-                                                                ),
-                                                                m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-20',
-                                                                    'O link acima leva para a página de contribuição com essa recompensa já selecionada.'
-                                                                )
-                                                            ]),
-                                                            m('.w-col.w-col-7',
-                                                                m('.card', [
-                                                                    m('.w-row', [
-                                                                        m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11',
-                                                                            m('.fontsize-base.fontweight-semibold',
-                                                                                `Para R$ ${reward.minimum_value} ou mais`
-                                                                            )
-                                                                        ),
-                                                                        m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
-                                                                            m("a.show_reward_form[href='javascript:void(0);']", {
-                                                                                onclick: () => {
-                                                                                    reward.edit.toggle();
-                                                                                }
-                                                                            },
-                                                                                m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
-                                                                            )
-                                                                        )
-                                                                    ]),
-                                                                    m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
-                                                                        `${reward.paid_count} apoiadores`
-                                                                    ),
-                                                                    reward.description,
-                                                                    m('p'),
-                                                                    reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''
-                                                                ])
-                                                            )
-                                                        ]) : ''),
-                                                    (reward.edit() ?
+                                                    (!reward().edit() ?
+                                                        m(dashboardRewardCard, {
+                                                            reward: reward(),
+                                                            user: ctrl.user(),
+                                                            project_id: args.project_id,
+                                                            project_state: ctrl.project_state,
+                                                        }) :
                                                         m(editRewardCard, {
+                                                            project_id: args.project_id,
+                                                            error,
                                                             reward,
                                                             index
-                                                        }) : '')
+                                                        }))
                                                 ])
                                             ),
                                             m(`input.ui-sortable-handle[id='project_rewards_attributes_${index}_id'][type='hidden']`, {
                                                 name: `project[rewards_attributes][${index}][id]`,
-                                                value: reward.id
+                                                value: reward().id
                                             })
                                         ]))
                                     ]),
-                                    (_.map(ctrl.newRewards(), reward => reward)),
-                                    m("a.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields[href='#']", {
-                                        onclick: () => ctrl.newRewards().push(
-                                                m(editRewardCard, {
-                                                    reward: ctrl.newReward,
-                                                    index: h.getRandomInt(999999999, 9999999999)
-                                                })
-                                            )
-                                    },
-                                        '+ Adicionar recompensa'
-                                    ),
-                                    m('.w-section.save-draft-btn-section',
-                                        m('.w-container',
-                                            m('.w-row',
-                                                m('.w-col.w-col-4.w-col-push-4',
-                                                    m("input.btn.btn.btn-medium[name='commit'][type='submit'][value='Salvar']")
-                                                )
-                                            )
-                                        )
-                                    )
+
                                 ])
-                            ])
+                            ]),
+                            (rewardVM.canAdd(ctrl.project_state) ? [
+                                m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
+                                    onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
+                                },
+                                    '+ Adicionar recompensa'
+                                )
+
+                            ] : '')
                         )
                     )
-                )
+                ]),
+                (rewardVM.canAdd(ctrl.project_state) ? [
+                    m(projectEditSaveBtn, {
+                        loading: ctrl.loading,
+                        onSubmit: ctrl.onSubmit
+                    })
+                ] : '')
             )
         );
     }

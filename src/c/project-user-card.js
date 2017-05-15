@@ -41,7 +41,7 @@ const projectUserCard = {
                 }) : ''),
             m('.w-row', [
                 m('.w-col.w-col-4', [
-                    m(`img.thumb.u-marginbottom-30.u-round[width="100"][itemprop="image"][src="${userDetail.profile_img_thumbnail}"]`)
+                    m(`img.thumb.u-marginbottom-30.u-round[width="100"][itemprop="image"][src="${userVM.displayImage(userDetail)}"]`)
                 ]),
                 m('.w-col.w-col-8', [
                     m('.fontsize-small.link-hidden.fontweight-semibold.u-marginbottom-10.lineheight-tight[itemprop="name"]', [

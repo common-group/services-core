@@ -18,9 +18,8 @@ const projectEditUserAbout = {
             hideDisableAcc: true,
             hideCoverImg: true,
             hidePasswordChange: true,
-            rails_errors: args.rails_errors,
             publishingUserAbout: true
-        }) : m('div', h.loader()) );
+        }) : m('div', h.loader()));
     }
 };
 
