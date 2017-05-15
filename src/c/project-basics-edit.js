@@ -65,13 +65,42 @@ const projectBasicsEdit = {
 
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
 
+        const addTag = tag => () => {
+            selectedTags().push(tag);
+            isEditingTags(false);
+            editTag('');
+            tagOptions([]);
+            return false;
+        };
+
+        const removeTag = tagToRemove => () => {
+            const updatedTags = _.reject(selectedTags(), tag => tag === tagToRemove);
+
+            selectedTags(updatedTags);
+
+            return false;
+        };
+
         const tagFilter = postgrest.filtersVM({
             slug: '@@'
         });
+        const tagSearchRequest = m.prop();
+        const triggerTagSearch = (e) => {
+            const currentTagMatch = _.findWhere(tagOptions(), { slug: h.slugify(e.target.value) });
+            if (e.keyCode === 188) {
+                if (currentTagMatch) {
+                    addTag(currentTagMatch).call();
+                    m.redraw();
+                }
 
-        const triggerTagSearch = (tagString) => {
+                return false;
+            }
+
+            const tagString = e.target.value;
+            isEditingTags(true);
+            tagOptions([])
             editTag(tagString);
-            m.redraw();
+            m.redraw(true);
 
             const elapsedTime = new Date() - lastTime();
             if (tagString.length >= 3 && (elapsedTime > 350)) {
@@ -86,20 +115,9 @@ const projectBasicsEdit = {
                         lastTime(new Date());
                         m.redraw();
                     });
+            } else {
+                tagOptions([]);
             }
-        };
-
-        const addTag = tag => () => {
-            selectedTags().push(tag);
-            isEditingTags(false);
-            editTag('');
-            return false;
-        };
-
-        const removeTag = tagToRemove => () => {
-            const updatedTags = _.reject(selectedTags(), tag => tag === tagToRemove);
-
-            selectedTags(updatedTags);
 
             return false;
         };
@@ -205,19 +223,18 @@ const projectBasicsEdit = {
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                                         // value: vm.fields.public_tags(),
                                         value: ctrl.editTag(),
-                                        onfocus: () => ctrl.isEditingTags(true),
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
-                                        onkeyup: m.withAttr('value', ctrl.triggerTagSearch)
+                                        onkeyup: ctrl.triggerTagSearch
                                     }),
                                     ctrl.isEditingTags() ? m('.options-list.table-outer',
-                                        ctrl.tagEditingLoading()
-                                            ? m('.fontsize-smaller.fontcolor-secondary', 'carregando...')
-                                            : _.map(ctrl.tagOptions(), tag => m('.dropdown-link',
-                                                { onclick: ctrl.addTag(tag) },
-                                                m('.fontsize-smaller',
-                                                    tag.name
-                                                )
-                                            ))
+                                         ctrl.tagEditingLoading()
+                                            ? m('.dropdown-link', m('.fontsize-smallest', 'Carregando...'))
+                                            : ctrl.tagOptions().length
+                                                ? _.map(ctrl.tagOptions(), tag => m('.dropdown-link',
+                                                    { onclick: ctrl.addTag(tag) },
+                                                    m('.fontsize-smaller', tag.name)
+                                                ))
+                                                : m('.dropdown-link', m('.fontsize-smallest', 'Nenhuma tag relacionada...'))
                                     ) : '',
                                     vm.e.inlineError('public_tags'),
                                     m('div.tag-choices',
