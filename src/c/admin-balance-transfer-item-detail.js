@@ -13,7 +13,26 @@ const adminBalanceTransferItemDetail = {
               transferData = metadata.transfer_data || {},
               metaBank = transferData.bank_account,
               userBalance = m.prop({}),
-              transitionBankAccount = m.prop({});
+              transitionBankAccount = m.prop({}),
+              fields = {
+                  admin_notes: m.prop(args.item.admin_notes)
+              },
+              loadingNotes = m.prop(false),
+              submitNotes = () => {
+                  loadingNotes(true);
+                  m.request({
+                      method: 'PUT',
+                      url: `/admin/balance_transfers/${args.item.id}`,
+                      data: {
+                          balance_transfer: {
+                              admin_notes: fields.admin_notes()
+                          }
+                      },
+                      config: h.setCsrfToken
+                  }).then((data) => {
+                      loadingNotes(false);
+                  });
+              };
 
         if(!_.isUndefined(metaBank)) {
             if(metaBank.conta) {
@@ -39,7 +58,10 @@ const adminBalanceTransferItemDetail = {
             metaBank,
             userBankAccount,
             transitionBankAccount,
-            userBalance
+            userBalance,
+            fields,
+            submitNotes,
+            loadingNotes
         };
     },
 
@@ -49,7 +71,8 @@ const adminBalanceTransferItemDetail = {
         return m('#admin-balance-transfer-item-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
             m('.w-row.card.card-terciary.u-radius',[
-                m('.w-col.w-col-4', (bankAccount ? [
+                m('.w-col.w-col-4', [
+                    (bankAccount ? [
                     m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20', 'Dados bancários'),
                     m('.fontsize-smallest.lineheight-looser', [
                         m('span.fontweight-semibold', 'Banco:'),
@@ -63,7 +86,19 @@ const adminBalanceTransferItemDetail = {
                         m('span.fontweight-semibold', 'CPF:'),
                         bankAccount.owner_document
                     ])
-                ] : h.loader())),
+                    ] : h.loader()),
+                    (ctrl.loadingNotes() ? h.loader() : m('', [
+                        m('textarea.text-field.height-mini.w-input', {
+                            value: ctrl.fields.admin_notes(),
+                            onkeydown: m.withAttr('value', ctrl.fields.admin_notes)
+                        }),
+                        m('.u-text-center',
+                          m('button.btn.btn-terciary', {
+                              onclick: ctrl.submitNotes
+                          }, I18n.t('shared.save_text'))
+                         )
+                    ]))
+                ]),
                 m(adminUserBalanceTransactionsList, {user_id: args.item.user_id})
             ])
         ]);
