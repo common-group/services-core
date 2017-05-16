@@ -78,7 +78,7 @@ const adminUserBalanceTransactionsList = {
                 m('.w-col.w-col-3.w-col-push-4', [
                     ctrl.transactionsListVM.isLoading() ?
                         h.loader() :
-                        m('button#load-more.btn.btn-medium.btn-terciary.fontsize-smallest', {
+                        m('button#load-more.btn.btn-terciary', {
                             onclick: ctrl.transactionsListVM.nextPage
                         }, I18n.t('shared.load_more'))
                 ])
