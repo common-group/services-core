@@ -84,28 +84,29 @@ const projectBasicsEdit = {
         const tagFilter = postgrest.filtersVM({
             slug: '@@'
         });
-        const tagSearchRequest = m.prop();
+
         const triggerTagSearch = (e) => {
-            const currentTagMatch = _.findWhere(tagOptions(), { slug: h.slugify(e.target.value) });
+            const tagString = e.target.value;
+            editTag(tagString);
+            isEditingTags(true);
+            tagOptions([]);
+            m.redraw();
+
+            const currentTagMatch = _.findWhere(tagOptions(), { slug: h.slugify(tagString) });
             if (e.keyCode === 188) {
                 if (currentTagMatch) {
                     addTag(currentTagMatch).call();
-                    m.redraw();
+                } else {
+                    addTag({ name: tagString.substr(0, tagString.length - 1).toLowerCase() }).call();
                 }
 
                 return false;
             }
 
-            const tagString = e.target.value;
-            isEditingTags(true);
-            tagOptions([])
-            editTag(tagString);
-            m.redraw(true);
-
             const elapsedTime = new Date() - lastTime();
-            if (tagString.length >= 3 && (elapsedTime > 350)) {
+            if (tagString.length >= 2 && (elapsedTime > 350)) {
                 tagEditingLoading(true);
-                m.redraw();
+
                 models
                     .publicTags
                     .getPage(tagFilter.slug(h.slugify(tagString)).parameters())
@@ -221,7 +222,6 @@ const projectBasicsEdit = {
                                 onclick: () => ctrl.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        // value: vm.fields.public_tags(),
                                         value: ctrl.editTag(),
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
                                         onkeyup: ctrl.triggerTagSearch
