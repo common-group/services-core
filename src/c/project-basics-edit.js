@@ -85,12 +85,15 @@ const projectBasicsEdit = {
             slug: '@@'
         });
 
+        const searchTags = tagString => models
+                .publicTags
+                .getPage(tagFilter.slug(tagString).parameters());
+        let timer;
         const triggerTagSearch = (e) => {
             const tagString = e.target.value;
             editTag(tagString);
             isEditingTags(true);
             tagOptions([]);
-            m.redraw();
 
             const currentTagMatch = _.findWhere(tagOptions(), { slug: h.slugify(tagString) });
             if (e.keyCode === 188) {
@@ -99,28 +102,23 @@ const projectBasicsEdit = {
                 } else {
                     addTag({ name: tagString.substr(0, tagString.length - 1).toLowerCase() }).call();
                 }
-
-                return false;
             }
 
-            const elapsedTime = new Date() - lastTime();
-            if (tagString.length >= 2 && (elapsedTime > 350)) {
-                tagEditingLoading(true);
-
-                models
-                    .publicTags
-                    .getPage(tagFilter.slug(h.slugify(tagString)).parameters())
-                    .then((data) => {
-                        tagOptions(data);
-                        tagEditingLoading(false);
-                        lastTime(new Date());
-                        m.redraw();
-                    });
-            } else {
-                tagOptions([]);
+            if (timer) {
+                window.clearTimeout(timer);
             }
 
-            return false;
+            tagEditingLoading(true);
+            timer = setTimeout(() => {
+                if (tagString.length >= 2) {
+                    searchTags(tagString)
+                        .then((data) => {
+                            tagOptions(data);
+                            tagEditingLoading(false);
+                            m.redraw();
+                        });
+                }
+            }, 350);
         };
 
         return {
