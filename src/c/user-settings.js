@@ -11,6 +11,8 @@ import projectEditSaveBtn from './project-edit-save-btn';
 import userSettingsVM from '../vms/user-settings-vm';
 import railsErrorsVM from '../vms/rails-errors-vm';
 
+const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
+
 const userSettings = {
     controller(args) {
         let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
@@ -174,7 +176,7 @@ const userSettings = {
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: 'As suas informações foram atualizadas',
+                message: I18n.t('update_success_msg', I18nScope()),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
@@ -191,10 +193,10 @@ const userSettings = {
                             // ( _.isEmpty(fields.name()) && _.isEmpty(fields.owner_document()) ? '' : m(UserOwnerBox, {user: user}) ),
                             m('.w-form.card.card-terciary', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    'Dados financeiros'
+                                  I18n.t('legal_title', I18nScope())
                                 ),
                                 m('.fontsize-small.u-marginbottom-20', [
-                                    m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>Importante:</strong> Nome completo/Razão social e CPF/CNPJ não poderão ser modificados após a publicação de um projeto ou a confirmação de um apoio.')
+                                    m.trust(I18n.t('legal_subtitle', I18nScope()))
                                 ]),
                                 m('.divider.u-marginbottom-20'),
                                 m('.w-row', [
@@ -207,13 +209,13 @@ const userSettings = {
                                             }, [
                                                 m('option[value=\'pf\']', {
                                                     selected: fields.account_type() === 'pf'
-                                                }, 'Pessoa Física'),
+                                                }, I18n.t('account_types.pf', I18nScope())),
                                                 m('option[value=\'pj\']', {
                                                     selected: fields.account_type() === 'pj'
-                                                }, 'Pessoa Jurídica'),
+                                                }, I18n.t('account_types.pj', I18nScope())),
                                                 m('option[value=\'mei\']', {
                                                     selected: fields.account_type() === 'mei'
-                                                }, 'Pessoa Jurídica (Micro Empreendedor Individual - MEI)'),
+                                                }, I18n.t('account_types.mei', I18nScope())),
                                             ])
                                         ])
                                     ),
@@ -221,7 +223,10 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
                                         m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
-                                            `Nome completo${fields.account_type() == 'pf' ? '' : '/Razão Social'}`
+                                          I18n.t(
+                                              (fields.account_type() == 'pf' ? 'pf_label_name' : 'pj_label_name'),
+                                              I18nScope()
+                                          )
                                         ),
                                         m(`input.string.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[id='user_bank_account_attributes_owner_name'][type='text']`, {
                                             value: fields.name(),
@@ -236,7 +241,7 @@ const userSettings = {
                                         m('.w-row', [
                                             m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                    `${fields.account_type() == 'pf' ? 'CPF' : 'CNPJ'}`
+                                                  I18n.t((fields.account_type() == 'pf' ? 'pf_label_document' : 'pj_label_document'), I18nScope())
                                                 ),
                                                 m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                     value: fields.owner_document(),
@@ -250,7 +255,7 @@ const userSettings = {
                                             ]),
                                             m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', (fields.account_type() == 'pf' ? [
                                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                    'Data de nascimento'
+                                                  I18n.t('label_birth_date', I18nScope())
                                                 ),
                                                 m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                     value: fields.birth_date(),
@@ -263,7 +268,7 @@ const userSettings = {
                                                 ctrl.parsedErrors.inlineError('birth_date')
                                             ] : [
                                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                    'Inscrição Estadual'
+                                                  I18n.t('label_state_inscription', I18nScope())
                                                 ),
                                                 m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                                                     value: fields.state_inscription(),
@@ -277,19 +282,18 @@ const userSettings = {
                                     ])
 
                                 ]),
-                                //m(userBankForm, {})
                             ]),
                             m('.w-form.card.card-terciary.u-marginbottom-20', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    'Endereço'
+                                  I18n.t('address_title', I18nScope())
                                 ),
                                 m('.fontsize-small.u-marginbottom-20.u-marginbottom-20', [
-                                    'Os dados abaixo serão utilizados para envio de recompensas e para emissão de Nota Fiscal, caso aplicável.'
+                                    I18n.t('address_subtitle', I18nScope())
                                 ]),
                                 m('.w-row', [
                                     m('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'País'
+                                          I18n.t('label_country', I18nScope())
                                         ),
                                         m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
                                             onchange: m.withAttr('value', fields.country_id),
@@ -311,7 +315,7 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.input.string.optional.user_address_street.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'Endereço'
+                                          I18n.t('label_address_street', I18nScope())
                                         ),
                                         m('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_street\'][name=\'user[address_street]\'][type=\'text\']', {
                                             value: fields.street(),
@@ -324,7 +328,7 @@ const userSettings = {
                                         m('.w-row', [
                                             m('.input.tel.optional.user_address_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                 m('label.field-label',
-                                                    'Número'
+                                                  I18n.t('label_address_number', I18nScope())
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_number\'][name=\'user[address_number]\'][type=\'tel\']', {
                                                     value: fields.number(),
@@ -335,7 +339,7 @@ const userSettings = {
                                             ]),
                                             m('.input.string.optional.user_address_complement.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                                 m('label.field-label',
-                                                    'Complemento'
+                                                  I18n.t('label_address_complement', I18nScope())
                                                 ),
                                                 m('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_complement\'][name=\'user[address_complement]\'][type=\'text\']', {
                                                     value: fields.complement(),
@@ -350,7 +354,7 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.input.string.optional.user_address_neighbourhood.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'Bairro'
+                                          I18n.t('label_address_neighbourhood', I18nScope())
                                         ),
                                         m('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_neighbourhood\'][name=\'user[address_neighbourhood]\'][type=\'text\']', {
                                             value: fields.neighbourhood(),
@@ -361,7 +365,7 @@ const userSettings = {
                                     ]),
                                     m('.input.string.optional.user_address_city.w-col.w-col-6', [
                                         m('label.field-label',
-                                            'Cidade'
+                                          I18n.t('label_address_city', I18nScope())
                                         ),
                                         m('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_city\'][name=\'user[address_city]\'][type=\'text\']', {
                                             value: fields.city(),
@@ -374,7 +378,7 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.input.select.optional.user_address_state.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'Estado'
+                                          I18n.t('label_address_state', I18nScope())
                                         ),
                                         m('select.select.optional.w-input.text-field.w-select.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_state\'][name=\'user[address_state]\']', {
                                             class: ctrl.parsedErrors.hasError('state') ? 'error' : false,
@@ -391,7 +395,7 @@ const userSettings = {
                                                 :
                                                 ''),
                                             m('option[value=\'outro / other\']',
-                                                'Outro / Other'
+                                              I18n.t('label_other_option', I18nScope())
                                             )
                                         ]),
                                         ctrl.parsedErrors.inlineError('state')
@@ -400,7 +404,7 @@ const userSettings = {
                                         m('.w-row', [
                                             m('.input.tel.optional.user_address_zip_code.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                 m('label.field-label',
-                                                    'CEP'
+                                                  I18n.t('label_address_zipcode', I18nScope())
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'99999-999\'][data-required-in-brazil=\'true\'][id=\'user_address_zip_code\'][name=\'user[address_zip_code]\'][type=\'tel\']', {
                                                     value: fields.zipcode(),
@@ -411,7 +415,7 @@ const userSettings = {
                                             ]),
                                             m('.input.tel.optional.user_phone_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                                 m('label.field-label',
-                                                    'Telefone'
+                                                  I18n.t('label_address_phone', I18nScope())
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
                                                     value: fields.phonenumber(),
@@ -427,29 +431,23 @@ const userSettings = {
                             ]),
                             (args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    'Cartões de crédito'
+                                  I18n.t('credit_cards.title', I18nScope())
                                 ),
-                                m('.fontsize-small.u-marginbottom-20', [
-                                    'Caso algum projeto que você tenha apoiado ',
-                                    m('b',
-                                        'com Cartão de Crédito'
-                                    ),
-                                    ' não seja bem-sucedido, nós efetuaremos o reembolso ',
-                                    m('b',
-                                        'automaticamente'
-                                    ),
-                                    ' no cartão utilizado para efetuar o apoio. '
-                                ]),
+                                m('.fontsize-small.u-marginbottom-20',
+                                  m.trust(
+                                      I18n.t('credit_cards.subtitle', I18nScope())
+                                  )
+                                ),
                                 m('.divider.u-marginbottom-20'),
                                 m('.w-row.w-hidden-tiny.card', [
                                     m('.w-col.w-col-5.w-col-small-5',
                                         m('.fontsize-small.fontweight-semibold',
-                                            'Cartão'
+                                          I18n.t('credit_cards.card_label', I18nScope())
                                         )
                                     ),
                                     m('.w-col.w-col-5.w-col-small-5',
                                         m('.fontweight-semibold.fontsize-small',
-                                            'Operadora'
+                                          I18n.t('credit_cards.provider_label', I18nScope())
                                         )
                                     ),
                                     m('.w-col.w-col-2.w-col-small-2')
@@ -472,7 +470,7 @@ const userSettings = {
                                         m('a.btn.btn-terciary.btn-small[rel=\'nofollow\']', {
                                             onclick: ctrl.deleteCard(card.id)
                                         },
-                                            'Remover'
+                                          I18n.t('credit_cards.remove_label', I18nScope())
                                         )
                                     )
                                 ]))),
