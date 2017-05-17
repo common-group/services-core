@@ -25,6 +25,15 @@ const rewardsLoader = (projectId) => {
     return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
 };
 
+const rewardLoader = (rewardId) => {
+    const rewardvm = postgrest.filtersVM({
+        id: 'eq'
+    });
+    rewardvm.id(rewardId);
+
+    return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
+};
+
 const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
 
 const getFees = (reward) => {
@@ -167,6 +176,7 @@ const rewardVM = {
     error,
     getStates,
     getFees,
+    rewardLoader,
     fees,
     rewards,
     applyMask,

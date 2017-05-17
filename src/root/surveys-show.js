@@ -1,43 +1,100 @@
 import m from 'mithril';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
+import I18n from 'i18n-js';
 import models from '../models';
 import h from '../h';
 import userVM from '../vms/user-vm';
-import userHeader from '../c/user-header';
-import userCreated from '../c/user-created';
-import userContributed from '../c/user-contributed';
-import userAbout from '../c/user-about';
+import projectVM from '../vms/project-vm';
+import rewardVM from '../vms/reward-vm';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const surveysShow = {
     controller(args) {
-        const { survey_id } = args;
-        const survey = m.prop();
-        const vm = postgrest.filtersVM({
-            survey_id: 'eq'
+        const {
+            survey_id,
+            contribution_id
+        } = args,
+            contributionId = m.route.param('contribution_id'),
+            survey = m.prop(),
+            answered = m.prop(false),
+            answeredAt = m.prop(''),
+            countriesLoader = postgrest.loader(models.country.getPageOptions()),
+            countries = m.prop(),
+            states = m.prop(),
+            openQuestions = m.prop([]),
+            multipleChoiceQuestions = m.prop([]),
+            statesLoader = postgrest.loader(models.state.getPageOptions()),
+            user = userVM.getCurrentUser(),
+            reward = m.prop(),
+            vm = postgrest.filtersVM({
+                contribution_id: 'eq'
+            }),
+            surveyLoader = () => {
+                vm.contribution_id(contributionId);
+
+                return postgrest.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            },
+            sendAnswer = () => {
+                const data = {};
+                _.extend(data, { open_questions: _.map(openQuestions(), question => ({ id: question.question.id, value: question.value() })) });
+                _.extend(data, { multiple_choice_questions: _.map(multipleChoiceQuestions(), question => ({ id: question.question.id, value: question.value() })) });
+                m.request({
+                    method: 'PUT',
+                    url: `/contributions/${contributionId}/surveys/${survey_id}/answer`,
+                    data,
+                    config: h.setCsrfToken
+                });
+            };
+        surveyLoader().load().then((data) => {
+            survey(data);
+            projectVM.fetchProject(_.first(survey()).project_id);
+            rewardVM.rewardLoader(_.first(survey()).reward_id).load().then(reward);
+            const surveyData = _.first(survey());
+            _.map(surveyData.open_questions, (question) => {
+                if (question.answer) {
+                    answered(true);
+                    answeredAt(question.answered_at);
+                }
+                openQuestions().push({ question, value: m.prop(question.answer) });
+            });
+            _.map(surveyData.multiple_choice_questions, (question) => {
+                if (question.survey_question_choice_id) {
+                    answered(true);
+                    answeredAt(question.answered_at);
+                }
+                multipleChoiceQuestions().push({ question, value: m.prop(question.survey_question_choice_id) });
+            });
         });
-        const surveyLoader = () => {
-            vm.survey_id(survey_id);
 
-            return postgrest.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
-        };
-        surveyLoader().load().then(survey);
-
-        const user = userVM.getCurrentUser();
+        countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));
+        statesLoader.load().then(states);
 
         return {
+            projectVM,
             user,
-            survey_id,
+            reward,
+            states,
+            answered,
+            answeredAt,
+            sendAnswer,
+            openQuestions,
+            multipleChoiceQuestions,
+            countries,
             survey
         };
     },
     view(ctrl, args) {
         const user = ctrl.user(),
             survey = _.first(ctrl.survey()),
+            openQuestions = ctrl.openQuestions(),
+            multipleChoiceQuestions = ctrl.multipleChoiceQuestions(),
+            project = ctrl.projectVM.currentProject(),
+            reward = _.first(ctrl.reward()),
             profileImage = userVM.displayImage(user);
-        console.log(survey);
 
-        return m('.survey-show', [
+        return m('.survey-show', !project ? h.loader() : [
             m('.dashboard-header.u-marginbottom-40.u-text-center',
                 m('.w-container',
                     m('.w-row', [
@@ -48,21 +105,21 @@ const surveysShow = {
                                 `Oi, ${userVM.displayName(user)}`
                             ),
                             m('.fontsize-base.u-marginbottom-20',
-                                'NOME_REALIZADOR, do projeto NOME_PROJETO, enviou algumas perguntas para que possa seguir com a produção e entrega da recompensa que você apoiou com R$50:'
+                                `${project.user.name}, do projeto ${project.name}, enviou algumas perguntas para que possa seguir com a produção e entrega da recompensa que você apoiou com R$${reward.minimum_value}:`
                             ),
                             m('.card.u-radius', [
                                 m('.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                                    'Título da recompensa'
+                                    reward.title
                                 ),
                                 m('.fontcolor-secondary.fontsize-small.u-marginbottom-20',
-                                    'Uma camisa com arte customizada feita pelo artista Fulano de Tal e o seu nome nos créditos do filme. Uma camisa com arte customizada feita pelo artista Fulano de Tal e o seu nome nos créditos do filme (...)'
+                                    reward.description
                                 ),
                                 m('.fontcolor-secondary.fontsize-smallest', [
                                     m('span.fontcolor-terciary',
                                         'Entrega prevista:'
                                     ),
-                                    ' Abril/2014 ',
                                     m.trust('&nbsp;'),
+                                    h.momentify(reward.deliver_at, 'MMMM/YYYY'),
                                     ' ',
                                     m.trust('&nbsp;'),
                                     ' ',
@@ -77,7 +134,8 @@ const surveysShow = {
                                     m('span.fontcolor-terciary',
                                         'Envio:'
                                     ),
-                                    ' Para todo o Brasil'
+                                    m.trust('&nbsp;'),
+                                    I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
                                 ])
                             ])
                         ]),
@@ -91,42 +149,39 @@ const surveysShow = {
                         m('.w-col.w-col-1'),
                         m('.w-col.w-col-10',
                             m('.card.card-terciary.medium.u-marginbottom-30', [
+                                (ctrl.answered() ?
                                 m('.card.card-message.u-marginbottom-40.u-radius',
                                     m('.fontsize-base', [
                                         m('span.fa.fa-exclamation-circle',
-                                            '.'
+                                            ''
                                         ),
-                                        ' Você já enviou as respostas abaixo no dia 12/12/2017. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.'
+                                        ` Você já enviou as respostas abaixo no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
                                     ])
-                                ),
+                                ) : ''),
                                 m('.u-marginbottom-30.w-form', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                         'Endereço de entrega'
                                     ),
                                     m("form[data-name='Email Form'][id='email-form'][name='email-form']", [
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-6', [
+                                            m('.w-sub-col.w-col.w-col-6', [
                                                 m("label.field-label.fontweight-semibold[for='field-4']",
                                                     'País / Country'
                                                 ),
                                                 m("select.positive.text-field.w-select[id='field-4'][name='field-4']", [
-                                                    m("option[value='']",
-                                                        'Select one...'
-                                                    ),
-                                                    m("option[value='First']",
-                                                        'First Choice'
-                                                    ),
-                                                    m("option[value='Second']",
-                                                        'Second Choice'
-                                                    ),
-                                                    m("option[value='Third']",
-                                                        'Third Choice'
-                                                    )
+                                                    m('option[value=\'\']'),
+                                                    (!_.isEmpty(ctrl.countries()) ?
+                                                        _.map(ctrl.countries(), country => m('option', {
+                                                            value: country.id
+                                                        },
+                                                            country.name_en
+                                                        )) :
+                                                        '')
                                                 ])
                                             ]),
                                             m('.w-col.w-col-6',
                                                 m('.w-row', [
-                                                    m('._w-sub-col-middle.w-col.w-col-6.w-col-small-6.w-col-tiny-6'),
+                                                    m('.w-sub-col-middle.w-col.w-col-6.w-col-small-6.w-col-tiny-6'),
                                                     m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6')
                                                 ])
                                             )
@@ -138,7 +193,7 @@ const surveysShow = {
                                             m("input.positive.text-field.w-input[data-name='Email 41'][id='email-41'][maxlength='256'][name='email-41'][required='required'][type='email']")
                                         ]),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-4', [
+                                            m('.w-sub-col.w-col.w-col-4', [
                                                 m("label.field-label.fontweight-semibold[for='email-48']",
                                                     'Número'
                                                 ),
@@ -158,7 +213,7 @@ const surveysShow = {
                                             ])
                                         ]),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-4', [
+                                            m('.w-sub-col.w-col.w-col-4', [
                                                 m("label.field-label.fontweight-semibold[for='email-51']",
                                                     'CEP'
                                                 ),
@@ -175,23 +230,18 @@ const surveysShow = {
                                                     'Estado'
                                                 ),
                                                 m("select.positive.text-field.w-select[id='field-4'][name='field-4']", [
-                                                    m("option[value='']",
-                                                        'Select one...'
-                                                    ),
-                                                    m("option[value='First']",
-                                                        'First Choice'
-                                                    ),
-                                                    m("option[value='Second']",
-                                                        'Second Choice'
-                                                    ),
-                                                    m("option[value='Third']",
-                                                        'Third Choice'
-                                                    )
+                                                    m('option[value=\'\']'),
+                                                    (!_.isEmpty(ctrl.states()) ?
+                                                        _.map(ctrl.states(), state => m(`option[value='${state.acronym}']`, {
+                                                            value: state.acronym
+                                                        },
+                                                            state.name
+                                                        )) : ''),
                                                 ])
                                             ])
                                         ]),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-6', [
+                                            m('.w-sub-col.w-col.w-col-6', [
                                                 m("label.field-label.fontweight-semibold[for='email-44']",
                                                     'Telefone'
                                                 ),
@@ -201,52 +251,42 @@ const surveysShow = {
                                         ])
                                     ])
                                 ]),
-                                m('.u-marginbottom-30.w-form', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                        'Tamanho da camisa'
-                                    ),
-                                    m("form[data-name='Email Form'][id='email-form'][name='email-form']", [
-                                        m('.fontsize-small.w-radio', [
-                                            m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"),
-                                            m("label.w-form-label[for='radio']",
-                                                'P'
-                                            )
-                                        ]),
-                                        m('.fontsize-small.w-radio', [
-                                            m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"),
-                                            m("label.w-form-label[for='radio']",
-                                                'M'
-                                            )
-                                        ]),
-                                        m('.fontsize-small.w-radio', [
-                                            m("input.w-radio-input[data-name='Radio 2'][id='radio'][name='radio-2'][type='radio'][value='Radio']"),
-                                            m("label.w-form-label[for='radio']",
-                                                'G'
-                                            )
-                                        ])
-                                    ])
-                                ]),
-                                m('.u-marginbottom-30.w-form', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                        'Qual o nome você quer nos créditos do filme?'
-                                    ),
-                                    m("form[data-name='Email Form'][id='email-form'][name='email-form']",
-                                        m("input.positive.text-field.w-input[id='field'][maxlength='256'][name='field'][placeholder='Sua resposta'][required='required'][type='text']")
-                                    )
-                                ])
+                                _.map(multipleChoiceQuestions, item =>
+                                    m('.u-marginbottom-30.w-form', [
+                                        m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                            item.question.question
+                                        ), [
+                                            _.map(item.question.question_choices, choice =>
+                                                m('.fontsize-small.w-radio', [
+                                                    m(`input.w-radio-input[type='radio'][name='choice${item.id}']`, { value: choice.id, checked: choice.id === item.value(), onchange: m.withAttr('value', item.value) }),
+                                                    m("label.w-form-label[for='radio']",
+                                                        choice.option
+                                                    )
+                                                ]))
+                                        ]
+                                    ])),
+                                _.map(openQuestions, item =>
+                                    m('.u-marginbottom-30.w-form', [
+                                        m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                            item.question.question
+                                        ),
+                                        m("input.positive.text-field.w-input[maxlength='256'][placeholder='Sua resposta'][required='required'][type='text']", {
+                                            value: item.value(),
+                                            onchange: m.withAttr('value', item.value)
+                                        })
+                                    ]))
                             ])
                         ),
                         m('.w-col.w-col-1')
                     ])
                 )
             ),
-
             m('.section',
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-4'),
                         m('.w-col.w-col-4',
-                            m("a.btn.btn-large[href='/bellum/confirm-answer']",
+                            m('a.btn.btn-large', { onclick: ctrl.sendAnswer },
                                 'Enviar'
                             )
                         ),
