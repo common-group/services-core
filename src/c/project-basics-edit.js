@@ -34,6 +34,10 @@ const projectBasicsEdit = {
             isEditingTags = m.prop(false),
             tagEditingLoading = m.prop(false),
             onSubmit = () => {
+                if (isEditingTags()) {
+                    return false;
+                }
+
                 loading(true);
                 m.redraw();
                 const tagString = _.pluck(selectedTags(), 'name').join(',');
@@ -81,13 +85,8 @@ const projectBasicsEdit = {
             return false;
         };
 
-        const tagFilter = postgrest.filtersVM({
-            slug: '@@'
-        });
-
-        const searchTags = tagString => models
-                .publicTags
-                .getPage(tagFilter.slug(tagString).parameters());
+        const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
+        const searchTags = tagString => m.request({ method: 'POST', data: { query: tagString, count: 1 }, url: searchTagsUrl });
         let timer;
         const triggerTagSearch = (e) => {
             const tagString = e.target.value;
@@ -96,7 +95,9 @@ const projectBasicsEdit = {
             tagOptions([]);
 
             const currentTagMatch = _.findWhere(tagOptions(), { slug: h.slugify(tagString) });
-            if (e.keyCode === 188) {
+            const keyCode = e.keyCode;
+
+            if (keyCode === 188 || keyCode === 13) {
                 if (currentTagMatch) {
                     addTag(currentTagMatch).call();
                 } else {
