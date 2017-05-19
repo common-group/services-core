@@ -23,7 +23,6 @@ const generateErrorInstance = () => {
         if (Array.isArray(fieldOrArray)) {
             _.map(fieldOrArray, (field) => {
                 field.push(false);
-                console.log('Will push: ', field);
                 return fields().push(field);
             });
         } else {
