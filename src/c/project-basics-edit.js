@@ -29,7 +29,6 @@ const projectBasicsEdit = {
             showError = h.toggleProp(false, true),
             selectedTags = m.prop([]),
             editTag = m.prop(''),
-            lastTime = m.prop(0),
             tagOptions = m.prop([]),
             isEditingTags = m.prop(false),
             tagEditingLoading = m.prop(false),
@@ -70,6 +69,11 @@ const projectBasicsEdit = {
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
 
         const addTag = tag => () => {
+            if (selectedTags().length >= 5) {
+                vm.e.setError('public_tags', true);
+
+                return false;
+            }
             selectedTags().push(tag);
             isEditingTags(false);
             editTag('');
@@ -86,8 +90,7 @@ const projectBasicsEdit = {
         };
 
         const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
-        const searchTags = tagString => m.request({ method: 'POST', data: { query: tagString, count: 1 }, url: searchTagsUrl });
-        let timer;
+        const searchTags = _.debounce(tagString => () => m.request({ method: 'POST', data: { query: tagString, count: 1 }, url: searchTagsUrl }), 350);
         const triggerTagSearch = (e) => {
             const tagString = e.target.value;
             editTag(tagString);
@@ -101,25 +104,24 @@ const projectBasicsEdit = {
                 if (currentTagMatch) {
                     addTag(currentTagMatch).call();
                 } else {
-                    addTag({ name: tagString.substr(0, tagString.length - 1).toLowerCase() }).call();
+                    const tag = tagString.charAt(tagString.length - 1) === ','
+                        ? tagString.substr(0, tagString.length - 1)
+                        : tagString;
+                    addTag({ name: tag.toLowerCase() }).call();
                 }
             }
 
-            if (timer) {
-                window.clearTimeout(timer);
-            }
-
-            tagEditingLoading(true);
-            timer = setTimeout(() => {
-                if (tagString.length >= 2) {
-                    searchTags(tagString)
-                        .then((data) => {
-                            tagOptions(data);
-                            tagEditingLoading(false);
-                            m.redraw();
-                        });
+            if (tagString.length >= 2) {
+                tagEditingLoading(true);
+                const request = searchTags(tagString);
+                if (request) {
+                    request().then((data) => {
+                        tagOptions(data);
+                        tagEditingLoading(false);
+                        m.redraw();
+                    });
                 }
-            }, 350);
+            }
         };
 
         return {
