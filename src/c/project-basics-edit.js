@@ -89,8 +89,9 @@ const projectBasicsEdit = {
             return false;
         };
 
+        const transport = m.prop({ abort: Function.prototype });
         const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
-        const searchTags = _.debounce(tagString => () => m.request({ method: 'POST', data: { query: tagString, count: 1 }, url: searchTagsUrl }), 350);
+        const searchTags = _.debounce(tagString => () => m.request({ method: 'POST', config: transport, data: { query: tagString, count: 1 }, url: searchTagsUrl }), 350);
         const triggerTagSearch = (e) => {
             const tagString = e.target.value;
             editTag(tagString);
@@ -113,6 +114,7 @@ const projectBasicsEdit = {
 
             if (tagString.length >= 2) {
                 tagEditingLoading(true);
+                transport().abort();
                 const request = searchTags(tagString);
                 if (request) {
                     request().then((data) => {
