@@ -17,6 +17,10 @@ const editRewardCard = {
                 maximumContributions: m.prop(reward.maximum_contributions)
             },
             destroyed = m.prop(false),
+            acceptNumeric = (e) => {
+                fields.minimumValue(e.target.value.replace(/[^0-9]/g, ''));
+                return true;
+            },
             confirmDelete = () => {
                 const r = confirm('Você tem certeza?');
                 if (r) {
@@ -97,6 +101,7 @@ const editRewardCard = {
             deliverAtError,
             descriptionError,
             confirmDelete,
+            acceptNumeric,
             updateOptions,
             showTips,
             destroyed,
@@ -170,7 +175,7 @@ const editRewardCard = {
 
                                             class: ctrl.minimumValueError() ? 'error' : false,
                                             value: ctrl.fields.minimumValue(),
-                                            onchange: m.withAttr('value', ctrl.fields.minimumValue)
+                                            oninput: e => ctrl.acceptNumeric(e)
                                         })
                                     )
                                 ]),
