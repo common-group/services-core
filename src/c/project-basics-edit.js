@@ -39,7 +39,7 @@ const projectBasicsEdit = {
                 loading(true);
                 m.redraw();
                 const tagString = _.pluck(selectedTags(), 'name').join(',');
-                vm.fields.public_tags(tagString.substr(0, tagString.length - 1));
+                vm.fields.public_tags(tagString);
                 vm.updateProject(args.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
@@ -75,9 +75,9 @@ const projectBasicsEdit = {
             }
             selectedTags().push(tag);
             isEditingTags(false);
-
             tagOptions([]);
             m.redraw();
+
             return false;
         };
 
