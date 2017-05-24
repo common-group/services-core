@@ -28,7 +28,6 @@ const projectBasicsEdit = {
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
             selectedTags = m.prop([]),
-            editTag = m.prop(''),
             tagOptions = m.prop([]),
             isEditingTags = m.prop(false),
             tagEditingLoading = m.prop(false),
@@ -76,8 +75,9 @@ const projectBasicsEdit = {
             }
             selectedTags().push(tag);
             isEditingTags(false);
-            editTag('');
+
             tagOptions([]);
+            m.redraw();
             return false;
         };
 
@@ -88,41 +88,42 @@ const projectBasicsEdit = {
 
             return false;
         };
-
+        const tagString = m.prop('');
         const transport = m.prop({ abort: Function.prototype });
         const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
-        const searchTags = _.debounce(tagString => () => m.request({ method: 'POST', config: transport, data: { query: tagString, count: 1 }, url: searchTagsUrl }), 350);
+        const searchTags = () => m.request({ method: 'POST', background: true, config: transport, data: { query: tagString(), count: 3 }, url: searchTagsUrl });
         const triggerTagSearch = (e) => {
-            const tagString = e.target.value;
-            editTag(tagString);
+            tagString(e.target.value);
+
             isEditingTags(true);
             tagOptions([]);
 
-            const currentTagMatch = _.findWhere(tagOptions(), { slug: h.slugify(tagString) });
             const keyCode = e.keyCode;
 
             if (keyCode === 188 || keyCode === 13) {
-                if (currentTagMatch) {
-                    addTag(currentTagMatch).call();
-                } else {
-                    const tag = tagString.charAt(tagString.length - 1) === ','
-                        ? tagString.substr(0, tagString.length - 1)
-                        : tagString;
-                    addTag({ name: tag.toLowerCase() }).call();
-                }
+                const tag = tagString().charAt(tagString().length - 1) === ','
+                    ? tagString().substr(0, tagString().length - 1)
+                    : tagString();
+
+                addTag({ name: tag.toLowerCase() }).call();
+                e.target.value = '';
+                return false;
             }
 
-            if (tagString.length >= 2) {
-                tagEditingLoading(true);
-                transport().abort();
-                const request = searchTags(tagString);
-                if (request) {
-                    request().then((data) => {
-                        tagOptions(data);
-                        tagEditingLoading(false);
-                        m.redraw();
-                    });
-                }
+            tagEditingLoading(true);
+            transport().abort();
+            searchTags().then((data) => {
+                tagOptions(data);
+                tagEditingLoading(false);
+                m.redraw(true);
+            });
+
+            return false;
+        };
+
+        const editTag = (el, isinit) => {
+            if (!isinit) {
+                el.onkeyup = triggerTagSearch;
             }
         };
 
@@ -225,9 +226,9 @@ const projectBasicsEdit = {
                                 onclick: () => ctrl.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        value: ctrl.editTag(),
+                                        config: ctrl.editTag,
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
-                                        onkeyup: ctrl.triggerTagSearch
+                                        // onkeyup: ctrl.triggerTagSearch
                                     }),
                                     ctrl.isEditingTags() ? m('.options-list.table-outer',
                                          ctrl.tagEditingLoading()
@@ -298,7 +299,7 @@ const projectBasicsEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, {loading: ctrl.loading, onSubmit: ctrl.onSubmit})
+                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
             ])
         ]);
     }
