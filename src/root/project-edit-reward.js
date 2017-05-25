@@ -14,7 +14,6 @@ const projectEditReward = {
         const rewards = m.prop([]),
             loading = m.prop(false),
             error = m.prop(false),
-            project_state = args.project_state,
             errors = m.prop([]),
             showSuccess = m.prop(false),
             availableCount = reward => reward.maximum_contributions - reward.paid_count,
@@ -112,7 +111,6 @@ const projectEditReward = {
 
         return {
             loading,
-            project_state,
             error,
             errors,
             showSuccess,
@@ -127,6 +125,8 @@ const projectEditReward = {
 
     view(ctrl, args) {
         const error = ctrl.error;
+        const projectState = args.project().state;
+
         return m("[id='dashboard-rewards-tab']",
             m('.w-section.section',
                 m('.w-container', [
@@ -159,7 +159,7 @@ const projectEditReward = {
                                                             reward: reward(),
                                                             user: ctrl.user(),
                                                             project_id: args.project_id,
-                                                            project_state: ctrl.project_state,
+                                                            project_state: projectState
                                                         }) :
                                                         m(editRewardCard, {
                                                             project_id: args.project_id,
@@ -178,7 +178,7 @@ const projectEditReward = {
 
                                 ])
                             ]),
-                            (rewardVM.canAdd(ctrl.project_state) ? [
+                            (rewardVM.canAdd(projectState) ? [
                                 m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
                                     onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
                                 },
@@ -189,7 +189,7 @@ const projectEditReward = {
                         )
                     )
                 ]),
-                (rewardVM.canAdd(ctrl.project_state) ? [
+                (rewardVM.canAdd(projectState) ? [
                     m(projectEditSaveBtn, {
                         loading: ctrl.loading,
                         onSubmit: ctrl.onSubmit
