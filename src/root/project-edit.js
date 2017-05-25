@@ -22,18 +22,16 @@ const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 
 const projectEdit = {
     controller(args) {
-        const { project_id } = args;
+        const { project_id, user_id } = args;
 
-        projectVM.getCurrentProject();
-        const projectState = projectVM.currentProject().project_state;
-
-        const project_user_id = projectVM.currentProject().user_id,
+        const project = projectVM.fetchProject(project_id),
             hash = m.prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
-                        project_id,
-                        user_id: project_user_id
-                    },
+                    project_id,
+                    user_id,
+                    project
+                },
                     tabs = {
                         '#video': m(projectEditTab, {
                             title: I18n.t('video_html', I18nScope()),
@@ -54,7 +52,7 @@ const projectEdit = {
                         '#reward': m(projectEditTab, {
                             title: I18n.t('reward_html', I18nScope()),
                             subtitle: I18n.t('reward_subtitle', I18nScope()),
-                            content: m(projectEditReward, _.extend({ project_state: projectState }, c_opts))
+                            content: m(projectEditReward, _.extend({}, c_opts))
                         }),
                         '#user_settings': m(projectEditTab, {
                             title: I18n.t('user_settings', I18nScope()),
@@ -86,7 +84,7 @@ const projectEdit = {
                             subtitle: I18n.t('announce_expiration_subtitle', I18nScope()),
                             content: m(projectAnnounceExpiration, _.extend({}, c_opts))
                         }),
-                        '#preview': m(projectPreview, _.extend({ permalink: projectVM.currentProject().permalink }, c_opts))
+                        '#preview': m(projectPreview, _.extend({}, c_opts))
                     };
 
                 hash(window.location.hash);
@@ -100,13 +98,13 @@ const projectEdit = {
 
         h.redrawHashChange();
         return {
-            projectVM,
             displayTabContent,
-            hash
+            hash,
+            project
         };
     },
     view(ctrl, args) {
-        const project = ctrl.projectVM.currentProject;
+        const project = ctrl.project;
 
         return m('.project-dashboard-edit', [
             ctrl.displayTabContent(),
