@@ -124,7 +124,7 @@ const paymentVM = () => {
     };
 
     const checkDocument = () => {
-        const document = fields.ownerDocument(),
+        const document = fields.ownerDocument() || '',
             striped = String(document).replace(/[\.|\-|\/]*/g, '');
         let isValid = false,
             errorMessage = '';
