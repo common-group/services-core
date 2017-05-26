@@ -86,7 +86,7 @@ const posts = {
                     deleteFormSubmit = () => el.submit();
                 }
             },
-            openedPercentage = post => Math.floor((post.open_count / post.delivered_count) * 100);
+              openedPercentage = post => (Math.floor((post.open_count / post.delivered_count) * 100) || 0);
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
@@ -211,7 +211,7 @@ const posts = {
                                     ),
                                     m('.preview-container.u-marginbottom-40', {
                                         class: ctrl.commentHasError() ? 'error' : '',
-                                        onclick: () => ctrl.commentHasError(false),
+                                        onclick: () => ctrl.commentHasError(false)
                                     }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
                                     m('.u-marginbottom-20.w-row', [
                                         m('.w-col.w-col-3'),
