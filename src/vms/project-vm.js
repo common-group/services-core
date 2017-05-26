@@ -54,7 +54,7 @@ const getCurrentProject = () => {
     if (data) {
         const jsonData = JSON.parse(data);
 
-        const { projectId, projectUserId } = jsonData;
+        const { projectId, projectUserId } = jsonData; // legacy
         const { project_id, project_user_id}  = jsonData;
 
         // fill currentProject when jsonData has id and mode (legacy code)

@@ -29,7 +29,7 @@ const projectsShow = {
 
         return m('.project-show', {
             config: ctrl.setProjectPageTitle()
-        }, [
+        }, project() ? [
             m.component(projectHeader, {
                 project,
                 rewardDetails: ctrl.rewardDetails,
@@ -50,7 +50,7 @@ const projectsShow = {
                 (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
                     project
                 }) : '')
-        ]);
+        ] : h.loader());
     }
 };
 
