@@ -4,7 +4,6 @@ import projectsShow from '../root/projects-show';
 
 const projectPreview = {
     view(ctrl, args) {
-        const permalink = args.project().permalink;
         return args.project() ? m('div', [
             m('.u-text-center',
                 m('.w-container',
@@ -19,7 +18,7 @@ const projectPreview = {
                             m('.w-row.u-marginbottom-30', [
                                 m('.w-col.w-col-3'),
                                 m('.w-col.w-col-6',
-                                    m(`input.w-input.text-field[type='text'][value='https://www.catarse.me/${permalink}']`)
+                                    m(`input.w-input.text-field[type='text'][value='https://www.catarse.me/${args.project().permalink}']`)
                                 ),
                                 m('.w-col.w-col-3')
                             ])
