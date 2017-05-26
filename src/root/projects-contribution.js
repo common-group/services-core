@@ -10,7 +10,7 @@ import faqBox from '../c/faq-box';
 
 
 const projectsContribution = {
-    controller() {
+    controller(args) {
         const rewards = () => _.union(
             [{
                 id: null,
@@ -38,17 +38,17 @@ const projectsContribution = {
         projectVM.getCurrentProject();
 
         return {
-            paymentVM: paymentVM(projectVM.currentProject().mode),
             project: projectVM.currentProject,
+            paymentVM: paymentVM(),
             submitContribution,
             sortedRewards: () => _.sortBy(rewards(), reward => Number(reward.row_order))
         };
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const project = ctrl.project;
 
         return m('#contribution-new',
-            project && !_.isUndefined(project()) ? [
+                 !_.isEmpty(project()) ? [
                 m(`.w-section.section-product.${project().mode}`),
                 m(projectHeaderTitle, {
                     project
@@ -74,11 +74,11 @@ const projectsContribution = {
                     m('.w-col.w-col-4', m.component(faqBox, {
                         mode: project().mode,
                         vm: ctrl.paymentVM,
-                        faq: ctrl.paymentVM.faq(),
-                        projectUserId: project().user.id
+                        faq: ctrl.paymentVM.faq(project().mode),
+                        projectUserId: args.project_user_id
                     }))
                 ])))
-            ] : '');
+            ] : h.loader());
     }
 };
 

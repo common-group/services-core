@@ -4,6 +4,7 @@ import I18n from 'i18n-js';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 // @TODO move all tabs to c/
+// using the inside components that root tabs use
 import projectEditGoal from '../root/project-edit-goal';
 import projectEditBasic from '../root/project-edit-basic';
 import projectEditDescription from '../root/project-edit-description';

@@ -16,22 +16,20 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsPayment = {
-    controller() {
-        const project = projectVM.getCurrentProject(),
-            mode = project.mode,
-            projectUserId = project.user.id,
-            vm = paymentVM(mode),
-            showPaymentForm = m.prop(false),
-            contribution = contributionVM.getCurrentContribution(),
-            reward = m.prop(contribution().reward),
-            value = contribution().value,
-            phoneMask = _.partial(h.mask, '(99) 9999-99999'),
-            documentMask = _.partial(h.mask, '999.999.999-99'),
-            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            zipcodeMask = _.partial(h.mask, '99999-999'),
-            isCnpj = m.prop(false),
-            currentUserID = h.getUserID(),
-            user = usersVM.getCurrentUser();
+    controller(args) {
+        const project = projectVM.currentProject,
+              vm = paymentVM(),
+              showPaymentForm = m.prop(false),
+              contribution = contributionVM.getCurrentContribution(),
+              reward = m.prop(contribution().reward),
+              value = contribution().value,
+              phoneMask = _.partial(h.mask, '(99) 9999-99999'),
+              documentMask = _.partial(h.mask, '999.999.999-99'),
+              documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
+              zipcodeMask = _.partial(h.mask, '99999-999'),
+              isCnpj = m.prop(false),
+              currentUserID = h.getUserID(),
+              user = usersVM.getCurrentUser();
 
         const shippingFee = () => _.findWhere(rewardVM.fees(), { id: contribution().shipping_fee_id });
 
@@ -95,6 +93,7 @@ const projectsPayment = {
         rewardVM.getStates();
         rewardVM.getFees(reward()).then(rewardVM.fees);
         vm.similityExecute(contribution().id);
+        projectVM.getCurrentProject();
 
         return {
             addressChange,
@@ -104,12 +103,10 @@ const projectsPayment = {
             fieldHasError,
             setStateOther,
             validateForm,
-            projectUserId,
             showPaymentForm,
             contribution,
             reward,
             value,
-            mode,
             scope,
             isCnpj,
             vm,
@@ -122,11 +119,10 @@ const projectsPayment = {
     },
     view(ctrl) {
         const user = ctrl.user(),
-              project = ctrl.project,
+              project = ctrl.project(),
               formatedValue = h.formatNumber(Number(ctrl.value), 2, 3);
-        console.log(formatedValue);
 
-        return m('#project-payment.w-section.w-clearfix.section', [
+        return m('#project-payment.w-section.w-clearfix.section', !_.isEmpty(project) ? [
             m('.w-col',
                 m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
                     m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
@@ -194,12 +190,7 @@ const projectsPayment = {
 
             m('.w-container',
                 m('.w-row', [
-                    m('.w-col.w-col-8', [!_.isEmpty(ctrl.vm.fields.errors()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
-                            m('.u-marginbottom-10.fontweight-bold', [
-                                I18n.t('errors.global', ctrl.scope()),
-                                m('.errors', _.map(ctrl.vm.fields.errors(), error => m('p', error.message)))
-                            ])
-                        ) : '',
+                    m('.w-col.w-col-8', [
                         m('.w-form', [
                             m('form.u-marginbottom-40', [
                                 m('.u-marginbottom-40.u-text-center-small-only', [
@@ -507,15 +498,15 @@ const projectsPayment = {
                                 ]),
                         ]),
                         m.component(faqBox, {
-                            mode: ctrl.mode,
+                            mode: project.mode,
                             vm: ctrl.vm,
-                            faq: ctrl.vm.faq(),
-                            projectUserId: ctrl.projectUserId
+                            faq: ctrl.vm.faq(project.mode),
+                            projectUserId: project.user_id
                         })
                     ])
                 ])
             )
-        ]);
+        ] : h.loader());
     }
 };
 
