@@ -77,7 +77,7 @@ const projectEditReward = {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
                     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 }
-            },
+            }
         });
 
         const setSorting = (el, isInit) => {
@@ -124,11 +124,11 @@ const projectEditReward = {
     },
 
     view(ctrl, args) {
-        const error = ctrl.error;
-        const projectState = args.project().state;
+        const error = ctrl.error,
+              project = args.project;
 
         return m("[id='dashboard-rewards-tab']",
-            m('.w-section.section',
+                 (project() ? m('.w-section.section',
                 m('.w-container', [
                     (ctrl.showSuccess() ? m.component(popNotification, {
                         message: 'Recompensas salvas com sucesso'
@@ -159,7 +159,7 @@ const projectEditReward = {
                                                             reward: reward(),
                                                             user: ctrl.user(),
                                                             project_id: args.project_id,
-                                                            project_state: projectState
+                                                            project_state: project().state
                                                         }) :
                                                         m(editRewardCard, {
                                                             project_id: args.project_id,
@@ -178,7 +178,7 @@ const projectEditReward = {
 
                                 ])
                             ]),
-                            (rewardVM.canAdd(projectState) ? [
+                          (rewardVM.canAdd(project().state) ? [
                                 m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
                                     onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
                                 },
@@ -189,13 +189,13 @@ const projectEditReward = {
                         )
                     )
                 ]),
-                (rewardVM.canAdd(projectState) ? [
+                                (rewardVM.canAdd(project().state) ? [
                     m(projectEditSaveBtn, {
                         loading: ctrl.loading,
                         onSubmit: ctrl.onSubmit
                     })
                 ] : '')
-            )
+                                    ) : h.loader())
         );
     }
 };
