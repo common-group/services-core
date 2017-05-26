@@ -1,12 +1,12 @@
 import m from 'mithril';
 import _ from 'underscore';
-import h from '../h';
 import I18n from 'i18n-js';
-import userVM from '../vms/user-vm';
+import postgrest from 'mithril-postgrest';
+import models from '../models';
+import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectBasicsVM from '../vms/project-basics-vm';
 import popNotification from './pop-notification';
-import inlineError from './inline-error';
 import inputCard from './input-card';
 import projectEditSaveBtn from './project-edit-save-btn';
 
@@ -27,30 +27,105 @@ const projectBasicsEdit = {
             categories = m.prop([]),
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            onSubmit = (event) => {
+            selectedTags = m.prop([]),
+            tagOptions = m.prop([]),
+            isEditingTags = m.prop(false),
+            tagEditingLoading = m.prop(false),
+            onSubmit = () => {
+                if (isEditingTags()) {
+                    return false;
+                }
+
                 loading(true);
                 m.redraw();
-                vm.updateProject(args.projectId).then((data) => {
+                const tagString = _.pluck(selectedTags(), 'name').join(',');
+                vm.fields.public_tags(tagString);
+                vm.updateProject(args.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
-                    if (!showSuccess()) { showSuccess.toggle(); }
-                    if (showError()) { showError.toggle(); }
-                    railsErrorsVM.validatePublish();
+                    showSuccess(true);
+                    showError(false);
                 }).catch((err) => {
                     if (err.errors_json) {
                         railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
                     }
                     loading(false);
-                    if (showSuccess()) { showSuccess.toggle(); }
-                    if (!showError()) { showError.toggle(); }
+                    showSuccess(false);
+                    showError(true);
                 });
+
                 return false;
             };
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
         vm.fillFields(args.project);
+
+        if (vm.fields.public_tags()) {
+            selectedTags(_.map(vm.fields.public_tags().split(','), name => ({ name })));
+        }
+
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
+
+        const addTag = tag => () => {
+            if (selectedTags().length >= 5) {
+                vm.e.setError('public_tags', true);
+
+                return false;
+            }
+            selectedTags().push(tag);
+            isEditingTags(false);
+            tagOptions([]);
+            m.redraw();
+
+            return false;
+        };
+
+        const removeTag = tagToRemove => () => {
+            const updatedTags = _.reject(selectedTags(), tag => tag === tagToRemove);
+
+            selectedTags(updatedTags);
+
+            return false;
+        };
+        const tagString = m.prop('');
+        const transport = m.prop({ abort: Function.prototype });
+        const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
+        const searchTags = () => m.request({ method: 'POST', background: true, config: transport, data: { query: tagString(), count: 3 }, url: searchTagsUrl });
+        const triggerTagSearch = (e) => {
+            tagString(e.target.value);
+
+            isEditingTags(true);
+            tagOptions([]);
+
+            const keyCode = e.keyCode;
+
+            if (keyCode === 188 || keyCode === 13) {
+                const tag = tagString().charAt(tagString().length - 1) === ','
+                    ? tagString().substr(0, tagString().length - 1)
+                    : tagString();
+
+                addTag({ name: tag.toLowerCase() }).call();
+                e.target.value = '';
+                return false;
+            }
+
+            tagEditingLoading(true);
+            transport().abort();
+            searchTags().then((data) => {
+                tagOptions(data);
+                tagEditingLoading(false);
+                m.redraw(true);
+            });
+
+            return false;
+        };
+
+        const editTag = (el, isinit) => {
+            if (!isinit) {
+                el.onkeyup = triggerTagSearch;
+            }
+        };
 
         return {
             vm,
@@ -59,11 +134,20 @@ const projectBasicsEdit = {
             categories,
             cities,
             showSuccess,
-            showError
+            showError,
+            tagOptions,
+            editTag,
+            addTag,
+            removeTag,
+            isEditingTags,
+            triggerTagSearch,
+            selectedTags,
+            tagEditingLoading
         };
     },
     view(ctrl, args) {
         const vm = ctrl.vm;
+
         return m('#basics-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
                 message: I18n.t('shared.successful_update'),
@@ -101,7 +185,6 @@ const projectBasicsEdit = {
                                   ]
                               }),
                               m(inputCard, {
-                                  label: 'Admin Tags',
                                   label: I18n.t('admin_tags', I18nScope()),
                                   label_hint: I18n.t('admin_tags_hint', I18nScope()),
                                   children: [
@@ -140,13 +223,32 @@ const projectBasicsEdit = {
                             m(inputCard, {
                                 label: I18n.t('tags', I18nScope()),
                                 label_hint: I18n.t('tags_hint', I18nScope()),
+                                onclick: () => ctrl.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        value: vm.fields.public_tags(),
+                                        config: ctrl.editTag,
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
-                                        onchange: m.withAttr('value', vm.fields.public_tags)
+                                        // onkeyup: ctrl.triggerTagSearch
                                     }),
-                                    vm.e.inlineError('public_tags')
+                                    ctrl.isEditingTags() ? m('.options-list.table-outer',
+                                         ctrl.tagEditingLoading()
+                                            ? m('.dropdown-link', m('.fontsize-smallest', 'Carregando...'))
+                                            : ctrl.tagOptions().length
+                                                ? _.map(ctrl.tagOptions(), tag => m('.dropdown-link',
+                                                    { onclick: ctrl.addTag(tag) },
+                                                    m('.fontsize-smaller', tag.name)
+                                                ))
+                                                : m('.dropdown-link', m('.fontsize-smallest', 'Nenhuma tag relacionada...'))
+                                    ) : '',
+                                    vm.e.inlineError('public_tags'),
+                                    m('div.tag-choices',
+                                        _.map(ctrl.selectedTags(), choice => m('.tag-div',
+                                            m('div', [
+                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: ctrl.removeTag(choice) }),
+                                                ` ${choice.name}`
+                                            ]))
+                                        )
+                                    )
                                 ]
                             }),
                             m(inputCard, {

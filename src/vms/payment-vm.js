@@ -10,7 +10,7 @@ import models from '../models';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
-const paymentVM = (mode = 'aon') => {
+const paymentVM = () => {
     const pagarme = m.prop({}),
         submissionError = m.prop(false),
         isLoading = m.prop(false);
@@ -52,7 +52,7 @@ const paymentVM = (mode = 'aon') => {
 
     const populateForm = (fetchedData) => {
         const data = _.first(fetchedData),
-            countryId = data.address.country_id || _.findWhere(fields.countries(), { name: 'Brasil' }).id;
+              countryId = data.address.country_id || (fields.countries() ? _.findWhere(fields.countries(), { name: 'Brasil' }).id : null);
 
         fields.completeName(data.name);
         fields.city(data.address.city);
@@ -102,7 +102,7 @@ const paymentVM = (mode = 'aon') => {
             ? { locale: 'en' }
             : { locale: 'pt' };
 
-    const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
+    const faq = (mode = 'aon') => I18n.translations[I18n.currentLocale()].projects.faq[mode],
         currentUser = h.getUser() || {},
         countriesLoader = postgrest.loader(models.country.getPageOptions()),
         statesLoader = postgrest.loader(models.state.getPageOptions());
@@ -124,7 +124,7 @@ const paymentVM = (mode = 'aon') => {
     };
 
     const checkDocument = () => {
-        const document = fields.ownerDocument(),
+        const document = fields.ownerDocument() || '',
             striped = String(document).replace(/[\.|\-|\/]*/g, '');
         let isValid = false,
             errorMessage = '';
@@ -439,12 +439,14 @@ const paymentVM = (mode = 'aon') => {
         const countryId = fields.userCountryId() || _.findWhere(data, { name: 'Brasil' }).id;
         fields.countries(_.sortBy(data, 'name_en'));
         fields.userCountryId(countryId);
+
+        usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
     });
+
     statesLoader.load().then((data) => {
         fields.states().push({ acronym: null, name: 'Estado' });
         _.map(data, state => fields.states().push(state));
     });
-    usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
 
     return {
         fields,

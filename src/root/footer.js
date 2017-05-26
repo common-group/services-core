@@ -16,21 +16,12 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Bem-vindo'
                                                 ),
-                                                m('a.link-footer[href=\'http://ano.catarse.me/2016?ref=ctrse_footer\']',
-                                                    [
-                                                        'Retrospectiva 2016',
-                                                        m.trust('&nbsp;'),
-                                                        m('span.badge.badge-success',
-                                                            'Novidade‍'
-                                                        )
-                                                    ]
-                                                ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
                                                     ' Como funciona'
-                                                ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/flex?ref=ctrse_footer\']',
-                                                    ' Catarse flex'
-                                                ),
+                                                ),                                                
+                                                m('a.link-footer[href=\'http://blog.catarse.me\']',
+                                                    ' Blog'
+                                                ),                                                
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']',
                                                     [
                                                         ' Nosso time ',
@@ -38,23 +29,45 @@ const footer = {
                                                         '3'
                                                     ]
                                                 ),
-                                                m('a.link-footer[href=\'http://facebook.com/catarse.me\']',
-                                                    ' Facebook'
-                                                ),
-                                                m('a.link-footer[href=\'http://twitter.com/catarse\']',
-                                                    ' Twitter'
-                                                ),
-                                                m('a.link-footer[href=\'http://instagram.com/catarse\']',
-                                                    ' Instagram'
-                                                ),
-                                                m('a.link-footer[href=\'http://github.com/catarse/catarse\']',
-                                                    ' Github'
-                                                ),
-                                                m('a.link-footer[href=\'http://blog.catarse.me\']',
-                                                    ' Blog'
-                                                ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/jobs\']',
                                                     ' Trabalhe conosco'
+                                                ),
+                                                m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
+                                                    ' Imprensa'
+                                                ),                                                                                                
+                                                m('a.u-marginbottom-30.link-footer[href=\'https://ano.catarse.me/2016?ref=ctrse_footer\']',
+                                                    ' Retrospectiva 2016'
+                                                ),
+                                                m('.footer-full-signature-text.fontsize-small',
+                                                    'Redes Sociais'
+                                                ),                                                                                                
+                                                m('a.link-footer[href=\'http://facebook.com/catarse.me\']',
+                                                    [
+                                                        m('span.fa.fa-facebook-square.fa-lg'),
+                                                        m.trust('&nbsp;&nbsp;'),
+                                                        'Facebook'
+                                                    ]
+                                                ), 
+                                                m('a.link-footer[href=\'http://twitter.com/catarse\']',
+                                                    [
+                                                        m('span.fa.fa-twitter-square.fa-lg'),
+                                                        m.trust('&nbsp;&nbsp;'),
+                                                        'Twitter'
+                                                    ]
+                                                ), 
+                                                m('a.link-footer[href=\'http://instagram.com/catarse\']',
+                                                    [
+                                                        m('span.fa.fa-instagram.fa-lg'),
+                                                        m.trust('&nbsp;&nbsp;'),
+                                                        'Instagram'
+                                                    ]
+                                                ),
+                                                m('a.link-footer[href=\'http://github.com/catarse/catarse\']',
+                                                    [
+                                                        m('span.fa.fa-github-square.fa-lg'),
+                                                        m.trust('&nbsp;&nbsp;'),
+                                                        'Github'
+                                                    ]
                                                 )
                                             ]
                                         ),
@@ -63,24 +76,30 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Ajuda'
                                                 ),
+                                                m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']',
+                                                    ' Central de Suporte'
+                                                ),                                                
                                                 m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
                                                     ' Contato'
                                                 ),
+                                                m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
+                                                    [
+                                                        'Escola Catarse',
+                                                        m.trust('&nbsp;'),
+                                                        m('span.badge.badge-success',
+                                                            'Novidade‍'
+                                                        )
+                                                    ]
+                                                ),                                                
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
                                                     ' Nossa Taxa'
-                                                ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
-                                                    ' Imprensa'
-                                                ),
-                                                m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']',
-                                                    ' Central de Suporte'
-                                                ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/guides?ref=ctrse_footer\']',
-                                                    ' Guia dos Realizadores'
                                                 ),
                                                 m('a.link-footer[href=\'http://pesquisa.catarse.me/\']',
                                                     ' Retrato FC Brasil 2013/2014'
                                                 ),
+                                                m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']',
+                                                    ' Responsabilidades e Segurança'
+                                                ),                                                
                                                 m('a.link-footer[href=\'/pt/terms-of-use\']',
                                                     ' Termos de uso'
                                                 ),
@@ -94,7 +113,7 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Faça uma campanha'
                                                 ),
-                                                m('a.w-hidden-small.w-hidden-tiny.link-footer[href=\'/pt/start?ref=ctrse_footer\']',
+                                                m('a.link-footer[href=\'/pt/start?ref=ctrse_footer\']',
                                                     ' Comece seu projeto'
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',

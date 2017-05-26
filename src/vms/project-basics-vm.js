@@ -69,7 +69,7 @@ const loadCategoriesOptionsTo = (prop, selected) => {
 
 const generateSearchCity = (prop) => {
     const filters = postgrest.filtersVM({
-        search_index: '@@'
+        search_index: 'ilike'
     }).order({name: 'asc'});
 
     const genSelectClickCity = (city, citiesProp) => {
@@ -94,7 +94,7 @@ const generateSearchCity = (prop) => {
                 ]);
             });
 
-            prop(m('.table-outer.search-pre-result', map));
+            prop(m('.table-outer.search-pre-result', { style: { 'z-index': 9999}}, map));
         }).catch((err) => {
             prop('');
         });

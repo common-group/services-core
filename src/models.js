@@ -33,6 +33,7 @@ const models = {
     projectTransfer: postgrest.model('project_transfers'),
     project: postgrest.model('projects'),
     projectSearch: postgrest.model('rpc/project_search'),
+    publicTags: postgrest.model('public_tags'),
     category: postgrest.model('categories'),
     categoryTotals: postgrest.model('category_totals'),
     categoryFollower: postgrest.model('category_followers'),
@@ -65,6 +66,7 @@ models.successfulProject.pageSize(9);
 models.finishedProject.pageSize(9);
 models.country.pageSize(false);
 models.state.pageSize(false);
+models.publicTags.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
 models.recommendedProjects.pageSize(3);
