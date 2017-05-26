@@ -10,7 +10,7 @@ import models from '../models';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
-const paymentVM = (mode = 'aon') => {
+const paymentVM = () => {
     const pagarme = m.prop({}),
         submissionError = m.prop(false),
         isLoading = m.prop(false);
@@ -102,7 +102,7 @@ const paymentVM = (mode = 'aon') => {
             ? { locale: 'en' }
             : { locale: 'pt' };
 
-    const faq = () => I18n.translations[I18n.currentLocale()].projects.faq[mode],
+    const faq = (mode = 'aon') => I18n.translations[I18n.currentLocale()].projects.faq[mode],
         currentUser = h.getUser() || {},
         countriesLoader = postgrest.loader(models.country.getPageOptions()),
         statesLoader = postgrest.loader(models.state.getPageOptions());
