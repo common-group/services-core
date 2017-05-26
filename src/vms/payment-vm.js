@@ -439,12 +439,14 @@ const paymentVM = () => {
         const countryId = fields.userCountryId() || _.findWhere(data, { name: 'Brasil' }).id;
         fields.countries(_.sortBy(data, 'name_en'));
         fields.userCountryId(countryId);
+
+        usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
     });
+
     statesLoader.load().then((data) => {
         fields.states().push({ acronym: null, name: 'Estado' });
         _.map(data, state => fields.states().push(state));
     });
-    usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
 
     return {
         fields,
