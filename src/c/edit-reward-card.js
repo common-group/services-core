@@ -92,6 +92,13 @@ const editRewardCard = {
                     args.error(true);
                     minimumValueError(true);
                 }
+                _.map(fees(), (fee) => {
+                    _.extend(fee, { error: false });
+                    if (fee.destination === null) {
+                        args.error(true);
+                        _.extend(fee, { error: true });
+                    }
+                });
             }
         });
 
