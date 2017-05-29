@@ -2,6 +2,9 @@ import m from 'mithril';
 import _ from 'underscore';
 import $ from 'jquery';
 import I18n from 'i18n-js';
+import postgrest from 'mithril-postgrest';
+import models from '../models';
+import paymentStatus from './payment-status';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
@@ -23,6 +26,15 @@ const projectContributionReportContentCard = {
                 }
                 return true;
             },
+            vm = postgrest.filtersVM({
+                contribution_id: 'eq'
+            }),
+            surveyLoader = () => {
+                vm.contribution_id(args.contribution().id);
+
+                return postgrest.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            },
+            survey = m.prop(),
             stateClass = (state) => {
                 const classes = {
                     online: {
@@ -58,8 +70,10 @@ const projectContributionReportContentCard = {
                 return classes[project.state][state];
             };
 
+        surveyLoader().load().then(survey);
         return {
             stateClass,
+            survey,
             checked,
             currentTab,
             showDetail,
@@ -69,6 +83,7 @@ const projectContributionReportContentCard = {
     view(ctrl, args) {
         const contribution = args.contribution(),
             project = args.project(),
+            survey = _.first(ctrl.survey()),
             profileImg = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {
                 minimum_value: 0,
@@ -87,7 +102,6 @@ const projectContributionReportContentCard = {
                                                     ),
                                                     ' Recebida'
                                                 ]) : '');
-        console.log(contribution);
 
         return m('div', [m(`.w-clearfix.card${ctrl.checked(contribution) ? '.card-alert' : ''}`, [
             m('.w-row', [
@@ -181,28 +195,11 @@ const projectContributionReportContentCard = {
                                 m('.right-divider.w-col.w-col-6', [
                                     m('.u-marginbottom-20', [
                                         m('.fontsize-base.fontweight-semibold.u-marginbottom-10',
-                                            'Valor do apoio: R$50'
+                                            `Valor do apoio: R$${contribution.value}`
                                         ),
-                                        m('div',
-                                            m('.fontsize-smaller', [
-                                                m('span.fa.fa-barcode',
-                                                    ''
-                                                ),
-                                                m("a.link-hidden.fontweight-semibold[href='#']", [
-                                                    'Boleto',
-                                                    m.trust('&nbsp;')
-                                                ])
-                                            ])
-                                        ),
-                                        m('.fontsize-smaller.fontweight-semibold', [
-                                            m('span.fa.fa-circle.text-error',
-                                                ''
-                                            ),
-                                            m.trust('&nbsp;'),
-                                            'Não finalizado'
-                                        ]),
+                                        m(paymentStatus, { item: { payment_method: contribution.payment_method, state: contribution.state } }),
                                         m('.fontcolor-secondary.fontsize-smallest',
-                                            '19/05/2015, 01:20 h'
+                                          h.momentify(contribution.created_at, 'DD/MM/YYYY hh:mm')
                                         )
                                     ]),
                                     m('.fontsize-base.fontweight-semibold',
@@ -230,6 +227,8 @@ const projectContributionReportContentCard = {
                                         ])
                                     ])
                                 ]),
+
+
                                 m('.w-col.w-col-6', [
                                     m('.fontsize-base.fontweight-semibold',
                                         'Questionário'
@@ -253,15 +252,31 @@ const projectContributionReportContentCard = {
                                             'BRAZIL'
                                         ])
                                     ]),
-                                    m('.fontsize-small', [
-                                        m('.fontweight-semibold.lineheight-looser',
-                                            'Tamanho da camisa'
-                                        ),
-                                        m('p',
-                                            'P'
-                                        )
-                                    ])
+                                    (survey ? [
+                                        _.map(survey.multiple_choice_questions, (mc_question) => {
+                                            const answer = _.find(mc_question.question_choices, choice => choice.id === mc_question.survey_question_choice_id);
+                                            return m('.fontsize-small', [
+                                                m('.fontweight-semibold.lineheight-looser',
+                                              mc_question.question
+                                          ),
+                                                m('p',
+                                                  answer.option
+                                          )
+                                            ]);
+                                        }),
+                                        _.map(survey.open_questions, open_question =>
+                                      m('.fontsize-small', [
+                                          m('.fontweight-semibold.lineheight-looser',
+                                              open_question.question
+                                          ),
+                                          m('p',
+                                              open_question.answer
+                                          )
+                                      ]))
+                                    ] : '')
                                 ])
+
+
                             ])
                         ) :
                         m('.w-tab-pane',
@@ -271,11 +286,11 @@ const projectContributionReportContentCard = {
                                     m('br'),
                                     contribution.email,
                                     m('br'),
-                                    'Conta no Catarse desde Julho 2011',
+                                    `Conta no Catarse desde ${h.momentify(contribution.user_created_at, 'MMMM YYYY')}`,
                                     m('br'),
                                     `Apoiou ${contribution.total_contributed_projects} projetos`,
                                     m('br'),
-                                    'Criou 2 projetos'
+                                    `Criou ${contribution.total_published_projects} projetos`
                                 ])
                             )
                         ))
