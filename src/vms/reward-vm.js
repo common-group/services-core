@@ -54,10 +54,13 @@ const getSelectedReward = () => {
 };
 
 const selectReward = reward => () => {
+    const currentValue = h.monetaryToFloat(contributionValue);
     if (selectedReward() !== reward) {
         error('');
         selectedReward(reward);
-        contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
+        if (currentValue < reward.minimum_value) {
+            contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
+        }
         if (reward.id) {
             getFees(reward).then(fees);
         }
