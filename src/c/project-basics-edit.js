@@ -66,16 +66,19 @@ const projectBasicsEdit = {
         }
 
         vm.loadCategoriesOptionsTo(categories, vm.fields.category_id());
-
         const addTag = tag => () => {
+            tagOptions([]);
+
             if (selectedTags().length >= 5) {
-                vm.e.setError('public_tags', true);
+                vm.e('public_tags', I18n.t('tags_max_error', I18nScope()));
+                vm.e.inlineError('public_tags', true);
+                m.redraw();
 
                 return false;
             }
             selectedTags().push(tag);
             isEditingTags(false);
-            tagOptions([]);
+
             m.redraw();
 
             return false;
@@ -228,7 +231,7 @@ const projectBasicsEdit = {
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                                         config: ctrl.editTag,
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
-                                        // onkeyup: ctrl.triggerTagSearch
+                                        onfocus: () => vm.e.inlineError('public_tags', false)
                                     }),
                                     ctrl.isEditingTags() ? m('.options-list.table-outer',
                                          ctrl.tagEditingLoading()
