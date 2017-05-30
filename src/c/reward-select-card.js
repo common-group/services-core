@@ -30,6 +30,8 @@ const rewardSelectCard = {
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
             }
 
+            event.stopPropagation();
+
             return false;
         };
 
