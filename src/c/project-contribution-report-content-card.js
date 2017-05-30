@@ -152,6 +152,7 @@ const projectContributionReportContentCard = {
                                         ),
                                         m('.fontsize-smallest.fontcolor-secondary', `${reward.description.substring(0, 80)}...`)
                                     ]),
+                                    (survey ?
                                     m('.w-col.w-col-3.w-col-push-1', [
                                         m('.fontsize-smallest', [
                                             m('a.link-hidden',
@@ -162,9 +163,9 @@ const projectContributionReportContentCard = {
                                             )
                                         ]),
                                         m('.fontcolor-terciary.fontsize-smallest',
-                                            'em 29/10/2015'
+                                            `em ${h.momentify(survey.sent_at, 'DD/MM/YYYY')}`
                                         )
-                                    ])
+                                    ]) : '')
                                 ])
                             ])
                         ])

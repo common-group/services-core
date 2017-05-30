@@ -1,6 +1,7 @@
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
+import moment from 'moment';
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
@@ -18,6 +19,17 @@ const surveys = {
             {
                 project_id
             } = args,
+            toggleOpen = (reward) => {
+                m.request({
+                    method: 'GET',
+                    config: h.setCsrfToken,
+                    url: `/projects/${reward.project_id}/rewards/${reward.id}/toggle_survey_finish`
+                }).then(() => {
+                    // just to avoid another request
+                    if (reward.survey_finished_at) { reward.survey_finished_at = null; } else reward.survey_finished_at = moment().format();
+                    m.redraw();
+                });
+            },
             projectDetails = m.prop([]);
 
         filterVM.project_id(project_id);
@@ -29,6 +41,7 @@ const surveys = {
         return {
             l,
             project_id,
+            toggleOpen,
             rewardVM,
             projectDetails,
         };
@@ -59,7 +72,7 @@ const surveys = {
                             'Aceitando respostas?'
                         ),
                         m('.u-marginbottom-10.w-clearfix',
-                            m('a.toggle.toggle-on.u-right.w-clearfix.w-inline-block', [
+                            m('a.toggle.toggle-on.u-right.w-clearfix.w-inline-block', { onclick: () => { ctrl.toggleOpen(reward); } }, [
                                 m('.toggle-btn'),
                                 m('.u-right',
                                     'SIM'
@@ -84,7 +97,7 @@ const surveys = {
                         'Aceitando respostas?'
                     ),
                     m('.u-marginbottom-10.w-clearfix',
-                        m('a.toggle.toggle-off.u-right.w-inline-block', [
+                        m('a.toggle.toggle-off.u-right.w-inline-block', { onclick: () => { ctrl.toggleOpen(reward); } }, [
                             m('div',
                                 'NÃO'
                             ),
@@ -229,7 +242,7 @@ const surveys = {
                                                 ])
                                             ),
                                             m('.u-text-center-big-only.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
-                                                m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.u-marginright-10.w-button'),
+                                                // m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.u-marginright-10.w-button'),
                                                 m("a.btn.btn-inline.btn-small.btn-terciary.fa.fa-download.fa-lg.w-button[href='#']")
                                             ]),
                                             availableAction(reward)
