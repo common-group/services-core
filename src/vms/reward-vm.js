@@ -158,7 +158,7 @@ const shippingFeeForCurrentReward = (selectedDestination) => {
     return currentFee;
 };
 
-const canEdit = (reward, projectState, user) => user.is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count <= 0 && reward.waiting_payment_count <= 0));
+const canEdit = (reward, projectState, user) => (user||{}).is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count <= 0 && reward.waiting_payment_count <= 0));
 
 const canAdd = projectState => projectState === 'draft' || projectState === 'online';
 
