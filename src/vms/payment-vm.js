@@ -51,8 +51,9 @@ const paymentVM = () => {
     };
 
     const populateForm = (fetchedData) => {
-        const data = _.first(fetchedData),
-              countryId = data.address.country_id || (fields.countries() ? _.findWhere(fields.countries(), { name: 'Brasil' }).id : null);
+        const data = _.first(fetchedData) || {address: {}},
+              defaultCountry = (fields.countries() ? _.findWhere(fields.countries(), { name: 'Brasil' }).id : null),
+              countryId = (data.address && data.address.country_id) || defaultCountry;
 
         fields.completeName(data.name);
         fields.city(data.address.city);
