@@ -7,25 +7,22 @@ import h from '../h';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
+import addressForm from '../c/address-form';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const surveysShow = {
     controller(args) {
         const {
-            survey_id,
-            contribution_id
+            survey_id
         } = args,
             contributionId = m.route.param('contribution_id'),
             survey = m.prop(),
             answered = m.prop(false),
             answeredAt = m.prop(''),
-            countriesLoader = postgrest.loader(models.country.getPageOptions()),
-            countries = m.prop(),
-            states = m.prop(),
+            fields = m.prop(),
             openQuestions = m.prop([]),
             multipleChoiceQuestions = m.prop([]),
-            statesLoader = postgrest.loader(models.state.getPageOptions()),
             user = userVM.getCurrentUser(),
             reward = m.prop(),
             vm = postgrest.filtersVM({
@@ -38,6 +35,7 @@ const surveysShow = {
             },
             sendAnswer = () => {
                 const data = {};
+                _.extend(data, fields());
                 _.extend(data, { open_questions: _.map(openQuestions(), question => ({ id: question.question.id, value: question.value() })) });
                 _.extend(data, { multiple_choice_questions: _.map(multipleChoiceQuestions(), question => ({ id: question.question.id, value: question.value() })) });
                 m.request({
@@ -52,6 +50,7 @@ const surveysShow = {
             projectVM.fetchProject(_.first(survey()).project_id);
             rewardVM.rewardLoader(_.first(survey()).reward_id).load().then(reward);
             const surveyData = _.first(survey());
+            fields(surveyData.address);
             _.map(surveyData.open_questions, (question) => {
                 if (question.answer) {
                     answered(true);
@@ -68,24 +67,20 @@ const surveysShow = {
             });
         });
 
-        countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));
-        statesLoader.load().then(states);
-
         return {
             projectVM,
             user,
+            fields,
             reward,
-            states,
             answered,
             answeredAt,
             sendAnswer,
             openQuestions,
             multipleChoiceQuestions,
-            countries,
             survey
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const user = ctrl.user(),
             survey = _.first(ctrl.survey()),
             openQuestions = ctrl.openQuestions(),
@@ -94,7 +89,7 @@ const surveysShow = {
             reward = _.first(ctrl.reward()),
             profileImage = userVM.displayImage(user);
 
-        return m('.survey-show', !project ? h.loader() : [
+        return m('.survey-show', (!survey || !project) ? h.loader() : [
             m('.dashboard-header.u-marginbottom-40.u-text-center',
                 m('.w-container',
                     m('.w-row', [
@@ -158,99 +153,9 @@ const surveysShow = {
                                         ` Você já enviou as respostas abaixo no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
                                     ])
                                 ) : ''),
-                                m('.u-marginbottom-30.w-form', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                        'Endereço de entrega'
-                                    ),
-                                    m("form[data-name='Email Form'][id='email-form'][name='email-form']", [
-                                        m('.w-row', [
-                                            m('.w-sub-col.w-col.w-col-6', [
-                                                m("label.field-label.fontweight-semibold[for='field-4']",
-                                                    'País / Country'
-                                                ),
-                                                m("select.positive.text-field.w-select[id='field-4'][name='field-4']", [
-                                                    m('option[value=\'\']'),
-                                                    (!_.isEmpty(ctrl.countries()) ?
-                                                        _.map(ctrl.countries(), country => m('option', {
-                                                            value: country.id
-                                                        },
-                                                            country.name_en
-                                                        )) :
-                                                        '')
-                                                ])
-                                            ]),
-                                            m('.w-col.w-col-6',
-                                                m('.w-row', [
-                                                    m('.w-sub-col-middle.w-col.w-col-6.w-col-small-6.w-col-tiny-6'),
-                                                    m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6')
-                                                ])
-                                            )
-                                        ]),
-                                        m('div', [
-                                            m("label.field-label.fontweight-semibold[for='email-41']",
-                                                'Rua'
-                                            ),
-                                            m("input.positive.text-field.w-input[data-name='Email 41'][id='email-41'][maxlength='256'][name='email-41'][required='required'][type='email']")
-                                        ]),
-                                        m('.w-row', [
-                                            m('.w-sub-col.w-col.w-col-4', [
-                                                m("label.field-label.fontweight-semibold[for='email-48']",
-                                                    'Número'
-                                                ),
-                                                m("input.positive.text-field.w-input[data-name='Email 48'][id='email-48'][maxlength='256'][name='email-48'][required='required'][type='email']")
-                                            ]),
-                                            m('.w-col.w-col-4', [
-                                                m("label.field-label.fontweight-semibold[for='email-49']",
-                                                    'Complemento'
-                                                ),
-                                                m("input.positive.text-field.w-input[data-name='Email 49'][id='email-49'][maxlength='256'][name='email-49'][required='required'][type='email']")
-                                            ]),
-                                            m('.w-col.w-col-4', [
-                                                m("label.field-label.fontweight-semibold[for='email-50']",
-                                                    'Bairro'
-                                                ),
-                                                m("input.positive.text-field.w-input[data-name='Email 50'][id='email-50'][maxlength='256'][name='email-50'][required='required'][type='email']")
-                                            ])
-                                        ]),
-                                        m('.w-row', [
-                                            m('.w-sub-col.w-col.w-col-4', [
-                                                m("label.field-label.fontweight-semibold[for='email-51']",
-                                                    'CEP'
-                                                ),
-                                                m("input.positive.text-field.w-input[data-name='Email 51'][id='email-51'][maxlength='256'][name='email-51'][required='required'][type='email']")
-                                            ]),
-                                            m('.w-col.w-col-4', [
-                                                m("label.field-label.fontweight-semibold[for='email-52']",
-                                                    'Cidade'
-                                                ),
-                                                m("input.positive.text-field.w-input[data-name='Email 52'][id='email-52'][maxlength='256'][name='email-52'][required='required'][type='email']")
-                                            ]),
-                                            m('.w-col.w-col-4', [
-                                                m("label.field-label.fontweight-semibold[for='field-4']",
-                                                    'Estado'
-                                                ),
-                                                m("select.positive.text-field.w-select[id='field-4'][name='field-4']", [
-                                                    m('option[value=\'\']'),
-                                                    (!_.isEmpty(ctrl.states()) ?
-                                                        _.map(ctrl.states(), state => m(`option[value='${state.acronym}']`, {
-                                                            value: state.acronym
-                                                        },
-                                                            state.name
-                                                        )) : ''),
-                                                ])
-                                            ])
-                                        ]),
-                                        m('.w-row', [
-                                            m('.w-sub-col.w-col.w-col-6', [
-                                                m("label.field-label.fontweight-semibold[for='email-44']",
-                                                    'Telefone'
-                                                ),
-                                                m("input.positive.text-field.w-input[data-name='Email 44'][id='email-44'][maxlength='256'][name='email-44'][required='required'][type='email']")
-                                            ]),
-                                            m('.w-col.w-col-6')
-                                        ])
-                                    ])
-                                ]),
+                                (survey.confirm_address ?
+                                  m(addressForm, { fields: ctrl.fields })
+                                  : ''),
                                 _.map(multipleChoiceQuestions, item =>
                                     m('.u-marginbottom-30.w-form', [
                                         m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
