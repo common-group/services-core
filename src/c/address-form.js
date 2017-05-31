@@ -10,15 +10,15 @@ const addressForm = {
             countries = m.prop(),
             states = m.prop(),
             fields = {
-                countryID: m.prop(args.fields().country_id),
-                stateID: m.prop(args.fields().state_id),
-                addressStreet: m.prop(args.fields().address_street),
-                addressNumber: m.prop(args.fields().address_number),
-                addressComplement: m.prop(args.fields().address_complement),
-                addressNeighbourhood: m.prop(args.fields().address_neighbourhood),
-                addressCity: m.prop(args.fields().address_city),
-                addressZipCode: m.prop(args.fields().address_zip_code),
-                phoneNumber: m.prop(args.fields().phone_number)
+                countryID: m.prop(args.fields().country_id || ''),
+                stateID: m.prop(args.fields().state_id || ''),
+                addressStreet: m.prop(args.fields().address_street || ''),
+                addressNumber: m.prop(args.fields().address_number || ''),
+                addressComplement: m.prop(args.fields().address_complement || ''),
+                addressNeighbourhood: m.prop(args.fields().address_neighbourhood || ''),
+                addressCity: m.prop(args.fields().address_city || ''),
+                addressZipCode: m.prop(args.fields().address_zip_code || ''),
+                phoneNumber: m.prop(args.fields().phone_number || '')
             };
 
         countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));

@@ -35,7 +35,7 @@ const surveysShow = {
             },
             sendAnswer = () => {
                 const data = {};
-                _.extend(data, fields());
+                _.extend(data, { survey_address_answer: fields() });
                 _.extend(data, { open_questions: _.map(openQuestions(), question => ({ id: question.question.id, value: question.value() })) });
                 _.extend(data, { multiple_choice_questions: _.map(multipleChoiceQuestions(), question => ({ id: question.question.id, value: question.value() })) });
                 m.request({
@@ -50,7 +50,7 @@ const surveysShow = {
             projectVM.fetchProject(_.first(survey()).project_id);
             rewardVM.rewardLoader(_.first(survey()).reward_id).load().then(reward);
             const surveyData = _.first(survey());
-            fields(surveyData.address);
+            fields(surveyData.address || {});
             _.map(surveyData.open_questions, (question) => {
                 if (question.answer) {
                     answered(true);
