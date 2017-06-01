@@ -1,5 +1,6 @@
 import adminUsers from './root/admin-users';
 import adminContributions from './root/admin-contributions';
+import adminBalanceTranfers from './root/admin-balance-tranfers';
 import flex from './root/flex';
 import insights from './root/insights';
 import posts from './root/posts';
@@ -19,7 +20,6 @@ import projectsReward from './root/projects-reward';
 import publish from './root/publish';
 import start from './root/start';
 import team from './root/team';
-import usersBalanceMain from './root/users-balance-main';
 import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
@@ -40,6 +40,7 @@ const c = {
     root: {
         AdminUsers: adminUsers,
         AdminContributions: adminContributions,
+        AdminBalanceTranfers: adminBalanceTranfers,
         ClipboardCopy: copyTextInput,
         Flex: flex,
         Insights: insights,
@@ -61,7 +62,6 @@ const c = {
         Publish: publish,
         Start: start,
         Team: team,
-        UsersBalance: usersBalanceMain,
         Menu: menu,
         Footer: footer,
         FollowFoundFriends,

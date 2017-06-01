@@ -11,7 +11,6 @@ import postgrest from 'mithril-postgrest';
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
-import dashboardInfo from './dashboard-info';
 import projectSuccessfulOnboardConfirmAccount from './project-successful-onboard-confirm-account';
 import modalBox from './modal-box';
 import successfulProjectTaxModal from './successful-project-tax-modal';
@@ -22,114 +21,58 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
 const projectSuccessfulOnboard = {
     controller(args) {
         const projectIdVM = postgrest.filtersVM({ project_id: 'eq' }),
-            projectAccounts = m.prop([]),
-            projectTransfers = m.prop([]),
-            showTaxModal = h.toggleProp(false, true),
-            onboardComponents = {
-                start: dashboardInfo,
-                confirm_account: projectSuccessfulOnboardConfirmAccount,
-                error_account: dashboardInfo,
-                pending_transfer: dashboardInfo,
-                finished: dashboardInfo
-            },
-            currentState = m.prop('start'),
-            currentComponent = () => onboardComponents[currentState()],
-            content = () => insightVM.content(currentState(), {
-                account: projectAccounts,
-                transfer: projectTransfers,
-                showTaxModal
-            }),
-            loader = postgrest.loaderWithToken,
-            declineAccountLoader = (errorMsg) => {
-                const pa = _.first(projectAccounts());
+              projectAccounts = m.prop([]),
+              projectTransfers = m.prop([]),
+              showTaxModal = h.toggleProp(false, true),
+              loader = postgrest.loaderWithToken,
+              listenToReplace = (element, isInitialized, context) => {
+                  if (isInitialized) return;
 
-                return postgrest.loaderWithToken(
-                      models.projectAccountError.postOptions({
-                          project_id: args.project().project_id,
-                          reason: errorMsg
-                      }));
-            },
-            acceptAccountLoader = postgrest.loaderWithToken(
-                  models.projectAccount.postOptions({
-                      project_id: args.project().project_id
-                  })
-              );
+                  const toRedraw = {
+                      tax_link: {
+                          action: 'onclick',
+                          actionSource: () => {
+                              showTaxModal.toggle();
+                              m.redraw();
+                          }
+                      }
+                  };
+
+                  _.map(element.children, (item) => {
+                      const toR = toRedraw[item.getAttribute('id')];
+
+                      if (toR) {
+                          item[toR.action] = toR.actionSource;
+                      }
+                  });
+              };
+
 
         projectIdVM.project_id(args.project().project_id);
 
         const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
         lProjectAccount.load().then((data) => {
             projectAccounts(data);
-
-            loadCurrentStage();
         });
 
         const lProjectTransfer = loader(models.projectTransfer.getRowOptions(projectIdVM.parameters()));
         lProjectTransfer.load().then(projectTransfers);
 
-        const setStage = (state) => {
-                currentState(state);
-
-                return currentComponent;
-            },
-            nextStage = () => {
-                const keys = _.keys(onboardComponents),
-                    nextKey = keys[_.indexOf(keys, currentState()) + 1];
-
-                currentState(nextKey);
-
-                return currentComponent;
-            },
-            loadCurrentStage = () => {
-                if (!lProjectAccount()) {
-                    const pa = _.first(projectAccounts());
-
-                    if (_.isNull(pa)) {
-                        return setStage('finished')();
-                    }
-
-                    if (_.isNull(pa.transfer_state)) {
-                        return setStage('start')();
-                    } else if (!_.isNull(pa.transfer_state)) {
-                        if (pa.transfer_state == 'transferred') {
-                            return setStage('finished')();
-                        }
-                        return setStage('pending_transfer')();
-                    }
-                }
-
-                return false;
-            },
-
-            acceptAccount = () => {
-                acceptAccountLoader.load().then(() => {
-                    setStage('pending_transfer')();
-                });
-
-                return false;
-            };
 
         return {
             projectAccounts,
             projectTransfers,
             lProjectAccount,
             lProjectTransfer,
-            setStage,
-            nextStage,
-            currentComponent,
-            acceptAccount,
-            acceptAccountLoader,
-            content,
-            declineAccountLoader,
-            loadCurrentStage,
-            showTaxModal
+            showTaxModal,
+            listenToReplace
         };
     },
     view(ctrl, args) {
         const projectAccount = _.first(ctrl.projectAccounts()),
-            projectTransfer = _.first(ctrl.projectTransfers()),
-            lpa = ctrl.lProjectAccount,
-            lpt = ctrl.lProjectTransfer;
+              projectTransfer = _.first(ctrl.projectTransfers()),
+              lpa = ctrl.lProjectAccount,
+              lpt = ctrl.lProjectTransfer;
 
         return m('.w-section.section', [
             (ctrl.showTaxModal() ? m.component(modalBox, {
@@ -139,24 +82,21 @@ const projectSuccessfulOnboard = {
                 }]
             }) : ''),
             (!lpa() && !lpt() ?
-             m.component(ctrl.currentComponent(), {
-                 projectTransfer,
-                 projectAccount,
-                 setStage: ctrl.setStage,
-                 acceptAccount: ctrl.acceptAccount,
-                 acceptAccountLoader: ctrl.acceptAccountLoader,
-                 nextStage: ctrl.nextStage,
-                 content: ctrl.content(),
-                 dataToRedraw: {
-                     tax_link: {
-                         action: 'onclick',
-                         actionSource: () => {
-                             ctrl.showTaxModal.toggle();
-                             m.redraw();
-                         }
-                     }
-                 }
-             }) : h.loader())
+             m('.w-container', [
+                 m('.w-row.u-marginbottom-40', [
+                     m('.w-col.w-col-6.w-col-push-3', [
+                         m('.u-text-center', [
+                             m('img.u-marginbottom-20', { src: I18n.t('start.icon', I18nScope()), width: 94 }),
+                             m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n.t('start.title', I18nScope())),
+                             m('.fontsize-base.u-marginbottom-30', {
+                                 config: ctrl.listenToReplace
+                             }, m.trust(
+                                 I18n.t('start.text', I18nScope({ total_amount: h.formatNumber(projectTransfer.total_amount, 2) })))),
+                             m('a.btn.btn-large.btn-inline', { href: `/users/${args.project().user_id}/edit#balance` }, I18n.t('start.cta', I18nScope()))
+                         ])
+                     ])
+                 ])
+             ]) : h.loader())
 
         ]);
     }

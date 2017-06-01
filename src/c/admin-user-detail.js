@@ -11,12 +11,16 @@
 import m from 'mithril';
 import _ from 'underscore';
 import models from '../models';
+import userVM from '../vms/user-vm';
 import adminResetPassword from './admin-reset-password';
 import adminInputAction from './admin-input-action';
 import adminNotificationHistory from './admin-notification-history';
+import adminUserBalanceTransactionsList from './admin-user-balance-transactions-list';
+import h from '../h';
+import postgrest from 'mithril-postgrest';
 
 const adminUserDetail = {
-    controller() {
+    controller(args) {
         return {
             actions: {
                 reset: {
@@ -38,19 +42,19 @@ const adminUserDetail = {
                     forceValue: null,
                     model: models.user
                 }
-            }
+            },
         };
     },
     view(ctrl, args) {
         const actions = ctrl.actions,
-            item = args.item,
-            details = args.details,
-            addOptions = (builder, id) => _.extend({}, builder, {
-                requestOptions: {
-                    url: (`/users/${id}/new_password`),
-                    method: 'POST'
-                }
-            });
+              item = args.item,
+              details = args.details,
+              addOptions = (builder, id) => _.extend({}, builder, {
+                  requestOptions: {
+                      url: (`/users/${id}/new_password`),
+                      method: 'POST'
+                  }
+              });
 
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
@@ -63,9 +67,11 @@ const adminUserDetail = {
                     m.component(adminInputAction, { data: actions.reactivate, item }) : ''
             ]),
             m('.w-row.card.card-terciary.u-radius', [
-                m.component(adminNotificationHistory, {
-                    user: item
+                m(adminNotificationHistory, {
+                    user: item,
+                    wrapperClass: '.w-col.w-col-4'
                 }),
+                m(adminUserBalanceTransactionsList, {user_id: item.id})
             ]),
         ]);
     }

@@ -9,11 +9,18 @@ const adminItem = {
         };
     },
     view(ctrl, args) {
-        const item = args.item;
+        const item = args.item,
+              listWrapper = args.listWrapper || {},
+              selectedItem = (_.isFunction(listWrapper.isSelected) ?
+                              listWrapper.isSelected(item.id) : false);
 
-        return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', [
+
+        return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', {
+            class: (selectedItem ? 'card-alert' : '')
+        },[
             m.component(args.listItem, {
                 item,
+                listWrapper: args.listWrapper,
                 key: args.key
             }),
             m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {

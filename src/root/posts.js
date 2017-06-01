@@ -56,7 +56,7 @@ const posts = {
                 }
                 return false;
             },
-            project_id = args.root.getAttribute('data-id'),
+            project_id = args.project_id,
             projectDetails = m.prop([]),
             rewardText = (rewardId) => {
                 const reward = _.find(rewardVM.rewards(), r => String(r.id) === String(rewardId));
@@ -141,7 +141,7 @@ const posts = {
                 reward_id: ctrl.fields.reward_id(),
                 rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id()) : null
             }) : [
-
+                m(`.w-section.section-product.${project.mode}`),
                 (ctrl.showSuccess() ? m.component(popNotification, {
                     message: 'Mensagem enviada com sucesso'
                 }) : ''),

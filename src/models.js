@@ -72,6 +72,7 @@ models.contributor.pageSize(9);
 models.recommendedProjects.pageSize(3);
 models.bank.pageSize(400);
 models.city.pageSize(200);
+models.balanceTransfer.pageSize(9);
 
 
 export default models;

@@ -169,7 +169,7 @@ const projectContributionReport = {
             }
             ];
 
-        filterVM.project_id(args.root.getAttribute('data-id'));
+        filterVM.project_id(args.project_id);
 
         const lReward = postgrest.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: `eq.${filterVM.project_id()}`
@@ -226,7 +226,7 @@ const projectContributionReport = {
         const list = ctrl.listVM;
 
         if (!ctrl.lProject()) {
-            return [
+            return m('', [
                 m.component(projectDashboardMenu, {
                     project: m.prop(_.first(ctrl.project()))
                 }),
@@ -234,6 +234,7 @@ const projectContributionReport = {
                     project: m.prop(_.first(ctrl.project())),
                     rewards: ctrl.rewards()
                 }) : [
+                    m(`.w-section.section-product.${_.first(ctrl.project()).mode}`),
                     m.component(projectContributionReportHeader, {
                         submit: ctrl.submit,
                         filterBuilder: ctrl.filterBuilder,
@@ -249,9 +250,9 @@ const projectContributionReport = {
                         filterVM: ctrl.filterVM,
                         project: m.prop(_.first(ctrl.project()))
                     })]
-            ];
+            ]);
         }
-        return h.loader();
+        return m('', h.loader());
     }
 };
 

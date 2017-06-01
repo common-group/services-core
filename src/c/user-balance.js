@@ -26,7 +26,7 @@ const userBalance = {
         };
     },
     view(ctrl, args) {
-        const balance = _.first(ctrl.userBalances()),
+        const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0},
             balanceRequestModalC = [
                 userBalanceRequestModalContent,
                 _.extend({}, { balance }, args)

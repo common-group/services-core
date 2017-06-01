@@ -8,6 +8,7 @@ import userAboutEdit from '../c/user-about-edit';
 import userPrivateContributed from '../c/user-private-contributed';
 import userSettings from '../c/user-settings';
 import userNotifications from '../c/user-notifications';
+import userBalanceMain from '../c/user-balance-main';
 
 const usersEdit = {
     controller(args) {
@@ -33,6 +34,11 @@ const usersEdit = {
                         user
                     }),
                     '#notifications': m(userNotifications, {
+                        userId,
+                        user
+                    }),
+                    '#balance': m(userBalanceMain, {
+                        user_id: userId,
                         userId,
                         user
                     })
@@ -85,6 +91,9 @@ const usersEdit = {
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
                                 'Notificações'
                             ),
+                            m(`a.dashboard-nav-link${(ctrl.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
+                              'Saldo'
+                             ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/pt/users/${user.id}']`, {
                                 config: m.route,
                                 onclick: () => {
@@ -99,7 +108,7 @@ const usersEdit = {
                     ),
 
                 m('section.section',
-                        m('.w-container',
+                  m((ctrl.hash() == '#balance' ? '.w-section' : '.w-container'),
                             m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
                         )
                     )
