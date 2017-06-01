@@ -64,7 +64,7 @@ const adminUsers = {
     view(ctrl) {
         const label = 'Usuários';
 
-        return [
+        return m('', [
             m.component(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
@@ -77,7 +77,7 @@ const adminUsers = {
                 listItem: adminUserItem,
                 listDetail: adminUserDetail
             })
-        ];
+        ]);
     }
 };
 

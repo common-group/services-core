@@ -8,9 +8,9 @@ const UserOwnerBox = {
 
         return m('.card.card-terciary.u-radius.u-marginbottom-40', [
             m('.w-row', [
-                m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
+                (args.hideAvatar ? '' : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
                     m(`img.thumb.u-margintop-10.u-round[src="${h.useAvatarOrDefault(user.profile_img_thumbnail)}"][width="100"]`)
-                ]),
+                ])),
                 m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
                      m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
                          (project ? 'Dados do apoiador ' : 'Dados do usuário '),

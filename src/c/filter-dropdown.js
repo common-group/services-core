@@ -9,7 +9,7 @@ const filterDropdown = {
               (args.custom_label ? m.component(args.custom_label[0], args.custom_label[1]) : args.label)),
             m.component(dropdown, {
                 id: args.index,
-                onchange: args.onchange,
+                onchange: _.isFunction(args.onchange) ? args.onchange : Function.prototype,
                 classes: '.w-select.text-field.positive',
                 valueProp: args.vm,
                 options: args.options

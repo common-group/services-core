@@ -14,8 +14,9 @@ const adminList = {
     },
     view(ctrl, args) {
         const list = args.vm.list,
-            error = args.vm.error,
-            label = args.label || '';
+              error = args.vm.error,
+              label = args.label || '',
+              itemComponent = args.itemComponent || adminItem;
 
         return m('.w-section.section', [
             m('.w-container',
@@ -25,14 +26,23 @@ const adminList = {
                         m('.w-col.w-col-9', [
                             m('.fontsize-base',
                                 list.isLoading() ?
-                                `Carregando ${label.toLowerCase()}...` : [m('span.fontweight-semibold', list.total()), ` ${label.toLowerCase()} encontrados`]
+                              `Carregando ${label.toLowerCase()}...` : [
+                                  m('.w-row', [
+                                      m('.w-col.w-col-3', [
+                                          m('.fontweight-semibold', list.total()),
+                                          ` ${label.toLowerCase()} encontrados`
+                                      ]),
+                                      (args.vm && args.vm.hasInputAction ? m('.w-col-9.w-col', args.vm.inputActions()) : '')
+                                  ])
+                              ]
                             )
                         ])
                     ]),
                     m('#admin-contributions-list.w-container', [
-                        list.collection().map(item => m.component(adminItem, {
+                        list.collection().map(item => m.component(itemComponent, {
                             listItem: args.listItem,
                             listDetail: args.listDetail,
+                            listWrapper: args.vm,
                             item,
                             key: item.id
                         })),

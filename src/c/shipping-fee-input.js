@@ -1,6 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
+import inlineError from '../c/inline-error';
 
 const shippingFeeInput = {
     controller(args) {
@@ -32,7 +33,7 @@ const shippingFeeInput = {
             states
         };
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const feeIndex = ctrl.feeIndex,
             index = ctrl.index,
             deleted = ctrl.deleted,
@@ -67,7 +68,8 @@ const shippingFeeInput = {
                             )
                         ] :
 
-                        m(`select.fontsize-smallest.text-field-light.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
+                        m(`select.fontsize-smallest.text-field.text-field-light.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
+                            class: ctrl.fee.error ? 'error' : false,
                             name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
                             value: ctrl.feeDestination(),
                             onchange: (e) => {
@@ -117,7 +119,9 @@ const shippingFeeInput = {
                     value: ctrl.fee.id || null
                 })
 
-            ]), m('.divider.u-marginbottom-10')
+            ],
+            ctrl.fee.error ? m(inlineError, { message: 'Estado não pode ficar em branco.' }) : ''
+            ), m('.divider.u-marginbottom-10')
         ]);
     }
 };

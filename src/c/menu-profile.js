@@ -2,13 +2,16 @@ import m from 'mithril';
 import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
+import models from '../models';
 
 const menuProfile = {
     controller(args) {
         const contributedProjects = m.prop(),
-            latestProjects = m.prop([]),
-            userDetails = m.prop({}),
-            user_id = args.user.user_id;
+              latestProjects = m.prop([]),
+              userDetails = m.prop({}),
+              user_id = args.user.user_id,
+              userBalance = m.prop(0),
+              userIdVM = postgrest.filtersVM({ user_id: 'eq' });
 
         const userName = () => {
             const name = userVM.displayName(userDetails());
@@ -21,12 +24,19 @@ const menuProfile = {
 
         userVM.fetchUser(user_id, true, userDetails);
 
+        userIdVM.user_id(user_id);
+        models.balance.getRowWithToken(userIdVM.parameters()).then((result) => {
+            const data = _.first(result) || {amount: 0, user_id: user_id};
+            userBalance(data.amount);
+        });
+
         return {
             contributedProjects,
             latestProjects,
             userDetails,
             userName,
-            toggleMenu: h.toggleProp(false, true)
+            toggleMenu: h.toggleProp(false, true),
+            userBalance
         };
     },
     view(ctrl, args) {
@@ -34,12 +44,16 @@ const menuProfile = {
 
         return m('.w-dropdown.user-profile',
             [
-                m('a.w-dropdown-toggle.dropdown-toggle[href=\'javascript:void()\'][id=\'user-menu\']',
+                m('.w-dropdown-toggle.dropdown-toggle.w-clearfix[id=\'user-menu\']',
                     {
                         onclick: ctrl.toggleMenu.toggle
                     },
                     [
-                        m('.user-name-menu', ctrl.userName()),
+                        m('.user-name-menu', [
+                            m('.fontsize-smaller.lineheight-tightest.text-align-right', ctrl.userName()),
+                            (ctrl.userBalance() > 0 ? m('.fontsize-smallest.fontweight-semibold.text-success', `R$ ${h.formatNumber(ctrl.userBalance(), 2, 3)}`) : '' )
+
+                        ]),
                         m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
                     ]
                 ),
@@ -55,6 +69,15 @@ const menuProfile = {
                                         m('ul.w-list-unstyled.u-marginbottom-20',
                                             [
                                                 m('li.lineheight-looser',
+                                                  m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#balance']`,
+                                                    m('span', [
+                                                        'Saldo ',
+                                                        m('span.fontcolor-secondary',
+                                                          `R$ ${h.formatNumber(ctrl.userBalance(), 2, 3)}`)
+                                                    ])
+                                                   )
+                                                 ),
+                                                m('li.lineheight-looser',
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#contributions']`,
                                                         'Histórico de apoio'
                                                     )
@@ -68,7 +91,7 @@ const menuProfile = {
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#projects']`,
                                                         'Projetos criados'
                                                     )
-                                                )
+                                                 )
                                             ]
                                         ),
                                         m('.fontweight-semibold.fontsize-smaller.u-marginbottom-10',
@@ -80,8 +103,6 @@ const menuProfile = {
                                                   m('a.alt-link.fontsize-smaller[href=\'/connect-facebook/\']',
                                                     'Encontre amigos'
                                                    ),
-                                                  m.trust('&nbsp;'),
-                                                  m('span.badge.badge-success', 'Novidade')
                                                  ),
                                                 m('li.lineheight-looser',
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#about_me']`,
@@ -116,6 +137,11 @@ const menuProfile = {
                                                         'Apoios'
                                                     )
                                                 ),
+                                                m('li.lineheight-looser',
+                                                  m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/balance-transfers\']',
+                                                    'Saques'
+                                                   )
+                                                 ),
                                                 m('li.lineheight-looser',
                                                     m('a.alt-link.fontsize-smaller[href=\'/pt/admin/financials\']',
                                                         'Rel. Financeiros'

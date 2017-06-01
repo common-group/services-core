@@ -7,6 +7,7 @@ import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import CatarseAnalytics from 'CatarseAnalytics';
 import contributionVM from './vms/contribution-vm';
+import replaceDiacritics from 'replaceDiacritics';
 
 const
     _dataCache : Object = {},
@@ -25,6 +26,8 @@ const
         });
     },
     existy = (x: any): boolean => x != null,
+
+    slugify = (str: string): string => replaceDiacritics(str.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')),
 
     momentify = (date: string, format: string): string => {
         format = format || 'DD/MM/YYYY';
@@ -887,6 +890,7 @@ export default {
     cumulativeOffset,
     discuss,
     existy,
+    slugify,
     validateEmail,
     validateCpf,
     validateCnpj,

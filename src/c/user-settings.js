@@ -11,12 +11,13 @@ import projectEditSaveBtn from './project-edit-save-btn';
 import userSettingsVM from '../vms/user-settings-vm';
 import railsErrorsVM from '../vms/rails-errors-vm';
 
+const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
+
 const userSettings = {
     controller(args) {
         let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = args.user,
-            bankAccount = m.prop({}),
             fields = {
                 owner_document: m.prop(user.owner_document || ''),
                 country_id: m.prop(user.address.country_id || 36),
@@ -29,16 +30,9 @@ const userSettings = {
                 state: m.prop(user.address.state || ''),
                 phonenumber: m.prop(user.address.phonenumber || ''),
                 name: m.prop(user.name || ''),
-                agency: m.prop(''),
-                bank_id: m.prop(''),
-                agency_digit: m.prop(''),
-                account: m.prop(''),
-                account_digit: m.prop(''),
-                bank_account_id: m.prop(''),
                 state_inscription: m.prop(''),
                 birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
-                account_type: m.prop(user.account_type || ''),
-                bank_account_type: m.prop('')
+                account_type: m.prop(user.account_type || '')
             },
             loading = m.prop(false),
             user_id = args.userId,
@@ -57,37 +51,6 @@ const userSettings = {
             birthDayMask = _.partial(h.mask, '99/99/9999'),
             creditCards = m.prop(),
             toDeleteCard = m.prop(-1),
-            bankInput = m.prop(''),
-            bankCode = m.prop('-1'),
-            banks = m.prop(),
-            banksLoader = postgrest.loader(models.bank.getPageOptions()),
-            showOtherBanks = h.toggleProp(false, true),
-            showOtherBanksInput = m.prop(false),
-            popularBanks = [{
-                id: '51',
-                code: '001',
-                name: 'Banco do Brasil S.A.'
-            }, {
-                id: '131',
-                code: '341',
-                name: 'Itaú Unibanco S.A.'
-            }, {
-                id: '122',
-                code: '104',
-                name: 'Caixa Econômica Federal'
-            }, {
-                id: '104',
-                code: '033',
-                name: 'Banco Santander  (Brasil)  S.A.'
-            }, {
-                id: '127',
-                code: '399',
-                name: 'HSBC Bank Brasil S.A. - Banco Múltiplo'
-            }, {
-                id: '23',
-                code: '237',
-                name: 'Banco Bradesco S.A.'
-            }],
             deleteCard = id => () => {
                 toDeleteCard(id);
                 // We must redraw here to update the action output of the hidden form on the DOM.
@@ -119,24 +82,6 @@ const userSettings = {
 
                 if (args.publishingUserSettings) {
                     userData.publishing_user_settings = true;
-                }
-
-                if (args.publishingUserSettings || (!_.isEmpty(fields.account()) || !_.isEmpty(fields.account_digit()) || (!_.isEmpty(bankCode()) && bankCode() != '-1') || !_.isEmpty(fields.agency()))) {
-                    userData.bank_account_attributes = {
-                        owner_name: fields.name(),
-                        owner_document: fields.owner_document(),
-                        bank_id: bankCode(),
-                        input_bank_number: bankInput(),
-                        agency_digit: fields.agency_digit(),
-                        agency: fields.agency(),
-                        account: fields.account(),
-                        account_digit: fields.account_digit(),
-                        account_type: fields.bank_account_type()
-                    };
-
-                    if ((fields.bank_account_id())) {
-                        userData.bank_account_attributes.id = fields.bank_account_id().toString();
-                    }
                 }
 
                 return m.request({
@@ -192,23 +137,6 @@ const userSettings = {
                 m.redraw();
             };
 
-        userVM.getUserBankAccount(user_id).then((data) => {
-            if (!_.isEmpty(_.first(data))) {
-                bankAccount(_.first(data));
-                fields.bank_account_id(bankAccount().bank_account_id);
-                fields.account(bankAccount().account);
-                fields.account_digit(bankAccount().account_digit);
-                fields.agency(bankAccount().agency);
-                fields.agency_digit(bankAccount().agency_digit);
-                fields.bank_id(bankAccount().bank_id);
-                fields.bank_account_type(bankAccount().account_type);
-                bankCode(bankAccount().bank_id);
-            } else {
-                fields.bank_account_type('conta_corrente');
-            }
-        }).catch(handleError);
-
-        banksLoader.load().then(banks).catch(handleError);
         userVM.getUserCreditCards(args.userId).then(creditCards).catch(handleError);
         countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));
         statesLoader.load().then(states);
@@ -235,13 +163,6 @@ const userSettings = {
             deleteCard,
             toDeleteCard,
             setCardDeletionForm,
-            bankAccount,
-            bankInput,
-            banks,
-            showOtherBanks,
-            showOtherBanksInput,
-            bankCode,
-            popularBanks,
             applyBirthDateMask,
             loading,
             parsedErrors
@@ -249,14 +170,13 @@ const userSettings = {
     },
     view(ctrl, args) {
         let user = ctrl.user,
-            bankAccount = ctrl.bankAccount(),
             fields = ctrl.fields,
             hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),
             disableFields = (user.is_admin_role ? false : (hasContributedOrPublished && !_.isEmpty(user.name) && !_.isEmpty(user.owner_document)));
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: 'As suas informações foram atualizadas',
+                message: I18n.t('update_success_msg', I18nScope()),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
@@ -273,10 +193,10 @@ const userSettings = {
                             // ( _.isEmpty(fields.name()) && _.isEmpty(fields.owner_document()) ? '' : m(UserOwnerBox, {user: user}) ),
                             m('.w-form.card.card-terciary', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    'Dados financeiros'
+                                  I18n.t('legal_title', I18nScope())
                                 ),
                                 m('.fontsize-small.u-marginbottom-20', [
-                                    m.trust('Essa serão as informações que utilizaremos para transferências bancárias. <strong>Importante:</strong> Nome completo/Razão social e CPF/CNPJ não poderão ser modificados após a publicação de um projeto ou a confirmação de um apoio.')
+                                    m.trust(I18n.t('legal_subtitle', I18nScope()))
                                 ]),
                                 m('.divider.u-marginbottom-20'),
                                 m('.w-row', [
@@ -289,13 +209,13 @@ const userSettings = {
                                             }, [
                                                 m('option[value=\'pf\']', {
                                                     selected: fields.account_type() === 'pf'
-                                                }, 'Pessoa Física'),
+                                                }, I18n.t('account_types.pf', I18nScope())),
                                                 m('option[value=\'pj\']', {
                                                     selected: fields.account_type() === 'pj'
-                                                }, 'Pessoa Jurídica'),
+                                                }, I18n.t('account_types.pj', I18nScope())),
                                                 m('option[value=\'mei\']', {
                                                     selected: fields.account_type() === 'mei'
-                                                }, 'Pessoa Jurídica (Micro Empreendedor Individual - MEI)'),
+                                                }, I18n.t('account_types.mei', I18nScope())),
                                             ])
                                         ])
                                     ),
@@ -303,7 +223,10 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.w-col.w-col-6.w-sub-col', [
                                         m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
-                                            `Nome completo${fields.account_type() == 'pf' ? '' : '/Razão Social'}`
+                                          I18n.t(
+                                              (fields.account_type() == 'pf' ? 'pf_label_name' : 'pj_label_name'),
+                                              I18nScope()
+                                          )
                                         ),
                                         m(`input.string.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[id='user_bank_account_attributes_owner_name'][type='text']`, {
                                             value: fields.name(),
@@ -318,7 +241,7 @@ const userSettings = {
                                         m('.w-row', [
                                             m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                    `${fields.account_type() == 'pf' ? 'CPF' : 'CNPJ'}`
+                                                  I18n.t((fields.account_type() == 'pf' ? 'pf_label_document' : 'pj_label_document'), I18nScope())
                                                 ),
                                                 m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                     value: fields.owner_document(),
@@ -332,7 +255,7 @@ const userSettings = {
                                             ]),
                                             m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', (fields.account_type() == 'pf' ? [
                                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                    'Data de nascimento'
+                                                  I18n.t('label_birth_date', I18nScope())
                                                 ),
                                                 m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                     value: fields.birth_date(),
@@ -345,7 +268,7 @@ const userSettings = {
                                                 ctrl.parsedErrors.inlineError('birth_date')
                                             ] : [
                                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                    'Inscrição Estadual'
+                                                  I18n.t('label_state_inscription', I18nScope())
                                                 ),
                                                 m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                                                     value: fields.state_inscription(),
@@ -359,234 +282,18 @@ const userSettings = {
                                     ])
 
                                 ]),
-                                m('.w-row', [
-                                    m(`.w-col.w-col-6.w-sub-col${ctrl.showOtherBanksInput() ? '.w-hidden' : ''}[id='bank_select']`,
-                                        m('.input.select.required.user_bank_account_bank_id', [
-                                            m('label.field-label',
-                                                'Banco'
-                                            ),
-                                            m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_bank_id\']', {
-                                                name: 'user[bank_account_attributes][bank_id]',
-                                                class: ctrl.parsedErrors.hasError('bank_id') ? 'error' : false,
-                                                onchange: (e) => {
-                                                    m.withAttr('value', ctrl.bankCode)(e);
-                                                    ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
-                                                }
-                                            }, [
-                                                m('option[value=\'\']', {
-                                                    selected: fields.bank_id() === ''
-                                                }),
-                                                (_.map(ctrl.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
-                                                    selected: fields.bank_id() == bank.id
-                                                },
-                                                    `${bank.code} . ${bank.name}`) : ''))),
-                                                (fields.bank_id() === '' || _.find(ctrl.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
-                                                    m(`option[value='${fields.bank_id()}']`, {
-                                                        selected: true
-                                                    },
-                                                        `${bankAccount.bank_code} . ${bankAccount.bank_name}`
-                                                    )
-                                                ),
-                                                m('option[value=\'0\']',
-                                                    'Outro'
-                                                )
-                                            ]),
-                                            m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_bank_account_attributes_bank_id\']',
-                                                ' Selecione um banco'
-                                            ),
-                                            ctrl.parsedErrors.inlineError('bank_id')
-                                        ])
-                                    ),
-                                    (ctrl.showOtherBanksInput() ?
-                                        m('.w-col.w-col-6.w-sub-col',
-                                            m('.w-row.u-marginbottom-20[id=\'bank_search\']',
-                                                m('.w-col.w-col-12', [
-                                                    m('.input.string.optional.user_bank_account_input_bank_number', [
-                                                        m('label.field-label',
-                                                            'Número do banco (3 números)'
-                                                        ),
-                                                        m('input.string.optional.w-input.text-field.bank_account_input_bank_number[id=\'user_bank_account_attributes_input_bank_number\'][maxlength=\'3\'][size=\'3\'][type=\'text\']', {
-                                                            name: 'user[bank_account_attributes][input_bank_number]',
-                                                            value: ctrl.bankInput(),
-                                                            onchange: m.withAttr('value', ctrl.bankInput)
-                                                        }),
-                                                        m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_bank_account_attributes_input_bank_number\']',
-
-                                                            ' Número do banco inválido'
-                                                        )
-                                                    ]),
-                                                    m('a.w-hidden-small.w-hidden-tiny.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                                                        onclick: ctrl.showOtherBanks.toggle
-                                                    }, [
-                                                        'Busca por nome  ',
-                                                        m.trust('&nbsp;'),
-                                                        m.trust('&gt;')
-                                                    ]),
-                                                    m('a.w-hidden-main.w-hidden-medium.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                                                        onclick: ctrl.showOtherBanks.toggle
-                                                    }, [
-                                                        'Busca por nome  ',
-                                                        m.trust('&nbsp;'),
-                                                        m.trust('&gt;')
-                                                    ])
-                                                ])
-                                            )
-                                        ) : ''),
-                                    (ctrl.showOtherBanks() ?
-                                        m('.w-row[id=\'bank_search_list\']',
-                                            m('.w-col.w-col-12',
-                                                m('.select-bank-list[data-ix=\'height-0-on-load\']', {
-                                                    style: {
-                                                        height: '395px'
-                                                    }
-                                                },
-                                                    m('.card.card-terciary', [
-                                                        m('.fontsize-small.fontweight-semibold.u-marginbottom-10.u-text-center',
-                                                            'Selecione o seu banco abaixo'
-                                                        ),
-                                                        m('.fontsize-smaller', [
-                                                            m('.w-row.card.card-secondary.fontweight-semibold', [
-                                                                m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                                                                    m('div',
-                                                                        'Número'
-                                                                    )
-                                                                ),
-                                                                m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                                                                    m('div',
-                                                                        'Nome'
-                                                                    )
-                                                                )
-                                                            ]),
-                                                            (!_.isEmpty(ctrl.banks()) ?
-                                                                _.map(ctrl.banks(), bank => m('.w-row.card.fontsize-smallest', [
-                                                                    m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                                                                        m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
-                                                                            onclick: () => {
-                                                                                ctrl.bankInput(bank.code);
-                                                                                ctrl.showOtherBanks.toggle();
-                                                                            }
-                                                                        },
-                                                                            bank.code
-                                                                        )
-                                                                    ),
-                                                                    m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                                                                        m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
-                                                                            onclick: () => {
-                                                                                ctrl.bankInput(bank.code);
-                                                                                ctrl.showOtherBanks.toggle();
-                                                                            }
-                                                                        },
-                                                                            `${bank.code} . ${bank.name}`
-                                                                        )
-                                                                    )
-                                                                ])) : '')
-                                                        ])
-                                                    ])
-                                                )
-                                            )
-                                        ) : ''),
-                                    m('.w-col.w-col-6',
-                                        m('.w-row', [
-                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
-                                                m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_agency\']',
-                                                    'Agência'
-                                                ),
-                                                m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_agency\'][type=\'text\']', {
-                                                    value: fields.agency(),
-                                                    class: ctrl.parsedErrors.hasError('agency') ? 'error' : false,
-                                                    name: 'user[bank_account_attributes][agency]',
-                                                    onchange: m.withAttr('value', fields.agency)
-                                                }),
-                                                ctrl.parsedErrors.inlineError('agency')
-                                            ]),
-                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
-                                                m('label.text.optional.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_agency_digit\']',
-                                                    'Dígito agência'
-                                                ),
-                                                m('input.string.optional.w-input.text-field.positive[id=\'user_bank_account_attributes_agency_digit\'][type=\'text\']', {
-                                                    value: fields.agency_digit(),
-                                                    class: ctrl.parsedErrors.hasError('agency_digit') ? 'error' : false,
-                                                    name: 'user[bank_account_attributes][agency_digit]',
-                                                    onchange: m.withAttr('value', fields.agency_digit)
-                                                }),
-                                                ctrl.parsedErrors.inlineError('agency_digit')
-                                            ])
-                                        ])
-                                    )
-                                ]),
-                                m('.w-row', [
-                                    m('.w-col.w-col-6.w-sub-col', [
-                                        m('label.field-label.fontweight-semibold',
-                                            'Tipo de conta'
-                                        ),
-                                        m('.input.select.required.user_bank_account_account_type', [
-                                            m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_account_type\']', {
-                                                name: 'user[bank_account_attributes][account_type]',
-                                                class: ctrl.parsedErrors.hasError('account_type') ? 'error' : false,
-                                                onchange: m.withAttr('value', fields.bank_account_type)
-                                            }, [
-                                                m('option[value=\'conta_corrente\']', {
-                                                    selected: fields.bank_account_type() === 'conta_corrente'
-                                                }, 'Conta corrente'),
-                                                m('option[value=\'conta_poupanca\']', {
-                                                    Selected: fields.bank_account_type() === 'conta_poupanca'
-                                                }, 'Conta poupança'),
-                                                m('option[value=\'conta_corrente_conjunta\']', {
-                                                    selected: fields.bank_account_type() === 'conta_corrente_conjunta'
-                                                }, 'Conta corrente conjunta'),
-                                                m('option[value=\'conta_poupanca_conjunta\']', {
-                                                    selected: fields.bank_account_type() === 'conta_poupanca_conjunta'
-                                                }, 'Conta poupança conjunta'),
-                                            ]),
-                                            ctrl.parsedErrors.inlineError('account_type')
-                                        ])
-                                    ]),
-                                    m('.w-col.w-col-6',
-                                        m('.w-row', [
-                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
-                                                m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_account\']',
-                                                    'No. da conta'
-                                                ),
-                                                m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account\'][type=\'text\']', {
-                                                    value: fields.account(),
-                                                    class: ctrl.parsedErrors.hasError('account') ? 'error' : false,
-                                                    onchange: m.withAttr('value', fields.account),
-                                                    name: 'user[bank_account_attributes][account]'
-                                                }),
-                                                ctrl.parsedErrors.inlineError('account')
-                                            ]),
-                                            m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
-                                                m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_account_digit\']',
-                                                    'Dígito conta'
-                                                ),
-                                                m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account_digit\'][type=\'text\']', {
-                                                    value: fields.account_digit(),
-                                                    class: ctrl.parsedErrors.hasError('account_digit') ? 'error' : false,
-                                                    onchange: m.withAttr('value', fields.account_digit),
-                                                    name: 'user[bank_account_attributes][account_digit]'
-                                                }),
-                                                ctrl.parsedErrors.inlineError('account_digit')
-                                            ])
-                                        ])
-                                    )
-                                ]),
-                                (bankAccount.bank_account_id ?
-                                    m('input[id=\'user_bank_account_attributes_id\'][type=\'hidden\']', {
-                                        name: 'user[bank_account_attributes][id]',
-                                        value: fields.bank_account_id()
-                                    }) : '')
                             ]),
                             m('.w-form.card.card-terciary.u-marginbottom-20', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    'Endereço'
+                                  I18n.t('address_title', I18nScope())
                                 ),
                                 m('.fontsize-small.u-marginbottom-20.u-marginbottom-20', [
-                                    'Os dados abaixo serão utilizados para envio de recompensas e para emissão de Nota Fiscal, caso aplicável.'
+                                    I18n.t('address_subtitle', I18nScope())
                                 ]),
                                 m('.w-row', [
                                     m('.input.select.optional.user_country.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'País'
+                                          I18n.t('label_country', I18nScope())
                                         ),
                                         m('select.select.optional.w-input.text-field.w-select.positive[id=\'user_country_id\'][name=\'user[country_id]\']', {
                                             onchange: m.withAttr('value', fields.country_id),
@@ -608,7 +315,7 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.input.string.optional.user_address_street.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'Endereço'
+                                          I18n.t('label_address_street', I18nScope())
                                         ),
                                         m('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_street\'][name=\'user[address_street]\'][type=\'text\']', {
                                             value: fields.street(),
@@ -621,7 +328,7 @@ const userSettings = {
                                         m('.w-row', [
                                             m('.input.tel.optional.user_address_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                 m('label.field-label',
-                                                    'Número'
+                                                  I18n.t('label_address_number', I18nScope())
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_number\'][name=\'user[address_number]\'][type=\'tel\']', {
                                                     value: fields.number(),
@@ -632,7 +339,7 @@ const userSettings = {
                                             ]),
                                             m('.input.string.optional.user_address_complement.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                                 m('label.field-label',
-                                                    'Complemento'
+                                                  I18n.t('label_address_complement', I18nScope())
                                                 ),
                                                 m('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_complement\'][name=\'user[address_complement]\'][type=\'text\']', {
                                                     value: fields.complement(),
@@ -647,7 +354,7 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.input.string.optional.user_address_neighbourhood.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'Bairro'
+                                          I18n.t('label_address_neighbourhood', I18nScope())
                                         ),
                                         m('input.string.optional.w-input.text-field.w-input.text-field.positive[id=\'user_address_neighbourhood\'][name=\'user[address_neighbourhood]\'][type=\'text\']', {
                                             value: fields.neighbourhood(),
@@ -658,7 +365,7 @@ const userSettings = {
                                     ]),
                                     m('.input.string.optional.user_address_city.w-col.w-col-6', [
                                         m('label.field-label',
-                                            'Cidade'
+                                          I18n.t('label_address_city', I18nScope())
                                         ),
                                         m('input.string.optional.w-input.text-field.w-input.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_city\'][name=\'user[address_city]\'][type=\'text\']', {
                                             value: fields.city(),
@@ -671,7 +378,7 @@ const userSettings = {
                                 m('.w-row', [
                                     m('.input.select.optional.user_address_state.w-col.w-col-6.w-sub-col', [
                                         m('label.field-label',
-                                            'Estado'
+                                          I18n.t('label_address_state', I18nScope())
                                         ),
                                         m('select.select.optional.w-input.text-field.w-select.text-field.positive[data-required-in-brazil=\'true\'][id=\'user_address_state\'][name=\'user[address_state]\']', {
                                             class: ctrl.parsedErrors.hasError('state') ? 'error' : false,
@@ -688,7 +395,7 @@ const userSettings = {
                                                 :
                                                 ''),
                                             m('option[value=\'outro / other\']',
-                                                'Outro / Other'
+                                              I18n.t('label_other_option', I18nScope())
                                             )
                                         ]),
                                         ctrl.parsedErrors.inlineError('state')
@@ -697,7 +404,7 @@ const userSettings = {
                                         m('.w-row', [
                                             m('.input.tel.optional.user_address_zip_code.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                 m('label.field-label',
-                                                    'CEP'
+                                                  I18n.t('label_address_zipcode', I18nScope())
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'99999-999\'][data-required-in-brazil=\'true\'][id=\'user_address_zip_code\'][name=\'user[address_zip_code]\'][type=\'tel\']', {
                                                     value: fields.zipcode(),
@@ -708,7 +415,7 @@ const userSettings = {
                                             ]),
                                             m('.input.tel.optional.user_phone_number.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [
                                                 m('label.field-label',
-                                                    'Telefone'
+                                                  I18n.t('label_address_phone', I18nScope())
                                                 ),
                                                 m('input.string.tel.optional.w-input.text-field.w-input.text-field.positive[data-fixed-mask=\'(99) 9999-99999\'][data-required-in-brazil=\'true\'][id=\'user_phone_number\'][name=\'user[phone_number]\'][type=\'tel\']', {
                                                     value: fields.phonenumber(),
@@ -724,29 +431,23 @@ const userSettings = {
                             ]),
                             (args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    'Cartões de crédito'
+                                  I18n.t('credit_cards.title', I18nScope())
                                 ),
-                                m('.fontsize-small.u-marginbottom-20', [
-                                    'Caso algum projeto que você tenha apoiado ',
-                                    m('b',
-                                        'com Cartão de Crédito'
-                                    ),
-                                    ' não seja bem-sucedido, nós efetuaremos o reembolso ',
-                                    m('b',
-                                        'automaticamente'
-                                    ),
-                                    ' no cartão utilizado para efetuar o apoio. '
-                                ]),
+                                m('.fontsize-small.u-marginbottom-20',
+                                  m.trust(
+                                      I18n.t('credit_cards.subtitle', I18nScope())
+                                  )
+                                ),
                                 m('.divider.u-marginbottom-20'),
                                 m('.w-row.w-hidden-tiny.card', [
                                     m('.w-col.w-col-5.w-col-small-5',
                                         m('.fontsize-small.fontweight-semibold',
-                                            'Cartão'
+                                          I18n.t('credit_cards.card_label', I18nScope())
                                         )
                                     ),
                                     m('.w-col.w-col-5.w-col-small-5',
                                         m('.fontweight-semibold.fontsize-small',
-                                            'Operadora'
+                                          I18n.t('credit_cards.provider_label', I18nScope())
                                         )
                                     ),
                                     m('.w-col.w-col-2.w-col-small-2')
@@ -769,7 +470,7 @@ const userSettings = {
                                         m('a.btn.btn-terciary.btn-small[rel=\'nofollow\']', {
                                             onclick: ctrl.deleteCard(card.id)
                                         },
-                                            'Remover'
+                                          I18n.t('credit_cards.remove_label', I18nScope())
                                         )
                                     )
                                 ]))),

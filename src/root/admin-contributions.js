@@ -138,7 +138,7 @@ const adminContributions = {
     },
 
     view(ctrl) {
-        return [
+        return m('#admin-root-contributions', [
             m.component(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
@@ -149,7 +149,7 @@ const adminContributions = {
                 listItem: adminContributionItem,
                 listDetail: adminContributionDetail
             })
-        ];
+        ]);
     }
 };
 

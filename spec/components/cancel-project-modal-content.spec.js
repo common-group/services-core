@@ -1,7 +1,6 @@
 import m from 'mithril';
 import h from '../../src/h';
 import cancelProjectModalContent from '../../src/c/cancel-project-modal-content';
-import usersBalanceMain from '../../src/root/users-balance-main';
 
 describe('cancelProjectModalContent', () => {
     let toggle, $output,

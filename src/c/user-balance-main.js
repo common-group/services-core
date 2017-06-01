@@ -1,5 +1,5 @@
 /**
- * window.c.root.Balance component
+ * window.c.userBalanceMain component
  * A root component to show user balance and transactions
  *
  * Example:
@@ -10,8 +10,8 @@ import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
 import models from '../models';
-import userBalance from '../c/user-balance';
-import userBalanceTransactions from '../c/user-balance-transactions';
+import userBalance from './user-balance';
+import userBalanceTransactions from './user-balance-transactions';
 
 const userBalanceMain = {
     controller(args) {

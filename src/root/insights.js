@@ -150,6 +150,7 @@ const insights = {
         }
 
         return m('.project-insights', !ctrl.l() ? [
+            m(`.w-section.section-product.${project.mode}`),
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project)
             }) : ''),
