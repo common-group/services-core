@@ -18,12 +18,11 @@ const dashboardRewardCard = {
     view(ctrl, args) {
         const reward = args.reward;
         return m('.w-row.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
-
             m('.card', [
                 m('.w-row', [
                     m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11',
                         m('.fontsize-base.fontweight-semibold',
-                            `Para R$ ${reward.minimum_value} ou mais`
+                            I18n.t('minimum_value_title', I18nScope({minimum_value: reward.minimum_value}))
                         )
                     ),
                     (rewardVM.canEdit(reward, args.project_state, args.user) ?
@@ -38,7 +37,7 @@ const dashboardRewardCard = {
                         ) : '')
                 ]),
                 m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
-                    `${reward.paid_count} apoiadores`
+                    I18n.t('paid_contributors', I18nScope(reward.paid_count))
                 ),
                 m('.fontsize-small.fontweight-semibold',
                     reward.title
@@ -49,29 +48,29 @@ const dashboardRewardCard = {
                 (reward.limited() ? (ctrl.availableCount(reward) <= 0) ?
                     m('.u-margintop-10',
                         m('span.badge.badge-gone.fontsize-smaller',
-                            'Esgotada'
+                            I18n.t('reward_gone', I18nScope())
                         )
                     ) :
                     m('.u-margintop-10',
                         m('span.badge.badge-attention.fontsize-smaller', [
                             m('span.fontweight-bold',
-                                'Limitada '
+                                I18n.t('reward_limited', I18nScope())
                             ),
-                            ` (${ctrl.availableCount(reward)} de ${reward.maximum_contributions} disponíveis)`
+                            I18n.t('reward_available', I18nScope({available: ctrl.availableCount(reward), maximum: reward.maximum_contributions}))
                         ])
                     ) : ''),
 
 
-                (reward.deliver_at ? m('.fontsize-smallest', [m('b', 'Estimativa de entrega: '), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''),
+                (reward.deliver_at ? m('.fontsize-smallest', [m('b', I18n.t('delivery_estimation', I18nScope())), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : ''),
                 m('.fontsize-smallest', m('b', 'Envio: '), I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
 
             ]),
             m('.u-margintop-20', [
                 m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
-                    'Link para apoio direto'
+                    I18n.t('reward_link_label', I18nScope())
                 ),
                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
-                    'O link acima leva para a página de contribuição com essa recompensa já selecionada.'
+                    I18n.t('reward_link_hint', I18nScope())
                 ),
                 m('.w-form',
                     m('.w-col.w-col-6',

@@ -202,7 +202,7 @@ const projectEditReward = {
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
                                         onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
                                     },
-                                        '+ Adicionar recompensa'
+                                        I18n.t('add_reward', I18nScope())
                                     )
 
                               ] : ''
