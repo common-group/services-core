@@ -230,52 +230,52 @@ const projectContributionReportContentCard = {
                                 ]),
 
 
+                                (survey ?
                                 m('.w-col.w-col-6', [
-                                    m('.fontsize-base.fontweight-semibold',
+                                    survey.confirm_address ? [
+                                        m('.fontsize-base.fontweight-semibold',
                                         'Questionário'
                                     ),
-                                    m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
+                                        m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
                                         'Respondido em 19/10/2015'
                                     ),
-                                    m('.fontsize-small', [
-                                        m('.fontweight-semibold.lineheight-looser',
+                                        m('.fontsize-small', [
+                                            m('.fontweight-semibold.lineheight-looser',
                                             'Nome e endereço'
                                         ),
-                                        m('p', [
-                                            'Ciclana de Tals',
-                                            m('br'),
-                                            'Rua das Couves, 56',
-                                            m('br'),
-                                            'Bairro: cosme Velho',
-                                            m('br'),
-                                            '22241-090 Rio de janeiro-RJ',
-                                            m('br'),
-                                            'BRAZIL'
-                                        ])
-                                    ]),
-                                    (survey ? [
-                                        _.map(survey.multiple_choice_questions, (mc_question) => {
-                                            const answer = _.find(mc_question.question_choices, choice => choice.id === mc_question.survey_question_choice_id);
-                                            return m('.fontsize-small', [
-                                                m('.fontweight-semibold.lineheight-looser',
-                                              mc_question.question
+                                            m('p', [
+                                                contribution.user_name,
+                                                m('br'),
+                                                `${survey.address.address_street}, ${survey.address.address_number} ${survey.address.address_complement}`,
+                                                m('br'),
+                                                `Bairro: ${survey.address.address_neighbourhood}`,
+                                                m('br'),
+                                                `${survey.address.address_zip_code} ${survey.address.address_city}-RJ`,
+                                                m('br'),
+                                                'BRAZIL'
+                                            ])
+                                        ])] : '',
+                                    _.map(survey.multiple_choice_questions, (mcQuestion) => {
+                                        const answer = _.find(mcQuestion.question_choices, choice => choice.id === mcQuestion.survey_question_choice_id);
+                                        return m('.fontsize-small', [
+                                            m('.fontweight-semibold.lineheight-looser',
+                                              mcQuestion.question
                                           ),
-                                                m('p',
+                                            m('p',
                                                   answer.option
                                           )
-                                            ]);
-                                        }),
-                                        _.map(survey.open_questions, open_question =>
+                                        ]);
+                                    }),
+                                    _.map(survey.openQuestions, openQuestion =>
                                       m('.fontsize-small', [
                                           m('.fontweight-semibold.lineheight-looser',
-                                              open_question.question
+                                              openQuestion.question
                                           ),
                                           m('p',
-                                              open_question.answer
+                                              openQuestion.answer
                                           )
                                       ]))
-                                    ] : '')
-                                ])
+                                ]) : '')
 
 
                             ])

@@ -9,16 +9,17 @@ const addressForm = {
             statesLoader = postgrest.loader(models.state.getPageOptions()),
             countries = m.prop(),
             states = m.prop(),
+            data = args.fields().address_attributes,
             fields = {
-                countryID: m.prop(args.fields().country_id || ''),
-                stateID: m.prop(args.fields().state_id || ''),
-                addressStreet: m.prop(args.fields().address_street || ''),
-                addressNumber: m.prop(args.fields().address_number || ''),
-                addressComplement: m.prop(args.fields().address_complement || ''),
-                addressNeighbourhood: m.prop(args.fields().address_neighbourhood || ''),
-                addressCity: m.prop(args.fields().address_city || ''),
-                addressZipCode: m.prop(args.fields().address_zip_code || ''),
-                phoneNumber: m.prop(args.fields().phone_number || '')
+                countryID: m.prop(data.country_id || ''),
+                stateID: m.prop(data.state_id || ''),
+                addressStreet: m.prop(data.address_street || ''),
+                addressNumber: m.prop(data.address_number || ''),
+                addressComplement: m.prop(data.address_complement || ''),
+                addressNeighbourhood: m.prop(data.address_neighbourhood || ''),
+                addressCity: m.prop(data.address_city || ''),
+                addressZipCode: m.prop(data.address_zip_code || ''),
+                phoneNumber: m.prop(data.phone_number || '')
             };
 
         countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));
