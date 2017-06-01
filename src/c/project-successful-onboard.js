@@ -26,6 +26,8 @@ const projectSuccessfulOnboard = {
               showTaxModal = h.toggleProp(false, true),
               loader = postgrest.loaderWithToken,
               listenToReplace = (element, isInitialized, context) => {
+                  if (isInitialized) return;
+
                   const toRedraw = {
                       tax_link: {
                           action: 'onclick',
@@ -35,8 +37,6 @@ const projectSuccessfulOnboard = {
                           }
                       }
                   };
-
-                  if (isInitialized) return;
 
                   _.map(element.children, (item) => {
                       const toR = toRedraw[item.getAttribute('id')];

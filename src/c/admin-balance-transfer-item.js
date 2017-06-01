@@ -35,9 +35,7 @@ const adminBalanceTransferItem = {
                 m('span.fontsize-small', `R$ ${h.formatNumber(item.amount, 2, 3)}`)
             ]),
             m('.w-col.w-col-2.w-hidden-small.w-hidden-tiny', [
-                m('', [
-                    m('span', item.state)
-                ])
+                m('span', item.state)
             ]),
             m('.w-col.w-col-2', [
                 m('.fontsize-smallest', [

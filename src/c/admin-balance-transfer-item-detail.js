@@ -8,7 +8,7 @@ import adminUserBalanceTransactionsList from './admin-user-balance-transactions-
 
 const adminBalanceTransferItemDetail = {
     controller(args) {
-        const userBankAccount = m.prop(undefined),
+        const userBankAccount = m.prop(null),
               metadata = args.item.last_transition_metadata || {transfer_data: {}},
               transferData = metadata.transfer_data || {},
               metaBank = transferData.bank_account,
@@ -39,11 +39,11 @@ const adminBalanceTransferItemDetail = {
                 transitionBankAccount({
                     account: metaBank.conta,
                     account_digit: metaBank.conta_dv,
-                    account_type: undefined,
+                    account_type: null,
                     agency: metaBank.agencia,
                     agency_digit: metaBank.agencia_dv,
                     bank_code: metaBank.bank_code,
-                    bank_name: undefined,
+                    bank_name: null,
                     owner_document: metaBank.document_number,
                     owner_name: metaBank.legal_name
                 });

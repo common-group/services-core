@@ -117,7 +117,7 @@ const userBalanceRequestModelContent = {
               fields = ctrl.fields,
               user = args.user;
 
-        return (m('div', [
+        return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center', I18n.t('withdraw', I18nScope()))
             ]),
@@ -214,7 +214,7 @@ const userBalanceRequestModelContent = {
                      m('.w-col.w-col-3')
                  ])
              ]) : '')
-        ]));
+        ]);
     }
 };
 

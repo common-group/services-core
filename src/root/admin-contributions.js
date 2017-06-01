@@ -138,7 +138,7 @@ const adminContributions = {
     },
 
     view(ctrl) {
-        return m('', [
+        return m('#admin-root-contributions', [
             m.component(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
