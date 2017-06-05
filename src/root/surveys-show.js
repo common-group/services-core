@@ -4,6 +4,9 @@ import postgrest from 'mithril-postgrest';
 import I18n from 'i18n-js';
 import models from '../models';
 import h from '../h';
+import modalBox from '../c/modal-box';
+import surveyPreview from '../c/survey-preview';
+import ownerMessageContent from '../c/owner-message-content';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
@@ -18,14 +21,22 @@ const surveysShow = {
         } = args,
             contributionId = m.route.param('contribution_id'),
             survey = m.prop(),
+            displayModal = h.toggleProp(false, true),
             showPreview = h.toggleProp(false, true),
+            showThanks = h.toggleProp(false, true),
             answered = m.prop(false),
+            finished = m.prop(false),
+            countryName = m.prop(''),
+            stateName = m.prop(''),
             answeredAt = m.prop(''),
             fields = m.prop(),
             openQuestions = m.prop([]),
             multipleChoiceQuestions = m.prop([]),
             user = userVM.getCurrentUser(),
             reward = m.prop(),
+            sendMessage = () => {
+                displayModal(true);
+            },
             vm = postgrest.filtersVM({
                 contribution_id: 'eq'
             }),
@@ -56,14 +67,21 @@ const surveysShow = {
                     url: `/contributions/${contributionId}/surveys/${survey_id}/answer`,
                     data,
                     config: h.setCsrfToken
+                }).then(() => {
+                    scroll(0, 0);
+                    showThanks.toggle();
                 });
             };
         surveyLoader().load().then((data) => {
             survey(data);
-            projectVM.fetchProject(_.first(survey()).project_id);
-            rewardVM.rewardLoader(_.first(survey()).reward_id).load().then(reward);
-            const surveyData = _.first(survey());
-            fields({ address_attributes: surveyData.address } || {});
+            survey(_.first(survey()));
+            finished(!_.isEmpty(survey().finished_at));
+            projectVM.fetchProject(survey().project_id);
+            rewardVM.rewardLoader(survey().reward_id).load().then(reward);
+            const surveyData = survey();
+            fields({
+                address_attributes: surveyData.address
+            } || {});
             _.map(surveyData.open_questions, (question) => {
                 if (question.answer) {
                     answered(true);
@@ -88,13 +106,19 @@ const surveysShow = {
 
         return {
             projectVM,
+            countryName,
+            stateName,
             user,
+            finished,
             fields,
             reward,
+            sendMessage,
+            displayModal,
             answered,
             answeredAt,
             sendAnswer,
             showPreview,
+            showThanks,
             openQuestions,
             multipleChoiceQuestions,
             survey
@@ -102,138 +126,113 @@ const surveysShow = {
     },
     view(ctrl) {
         const user = ctrl.user(),
-            survey = _.first(ctrl.survey()),
+            survey = ctrl.survey(),
+            countryName = ctrl.countryName,
+            stateName = ctrl.stateName,
             openQuestions = ctrl.openQuestions(),
             multipleChoiceQuestions = ctrl.multipleChoiceQuestions(),
             project = ctrl.projectVM.currentProject(),
             reward = _.first(ctrl.reward()),
+            contactModalC = [ownerMessageContent, m.prop(project ? project.user : {})],
             profileImage = userVM.displayImage(user);
 
-        return ctrl.showPreview() ? m('.survey-preview', [
-            m('.bg-white.page-header',
-                        m('.w-container',
-                            m('.w-row', [
-                                m('.w-col.w-col-2'),
-                                m('.w-col.w-col-8', [
-                                    m('.u-marginbottom-20.u-text-center',
-                                        m(`img.big.thumb.u-marginbottom-20.u-round[src='${profileImage}']`),
+        return m('.survey', (ctrl.displayModal() ? m.component(modalBox, {
+            displayModal: ctrl.displayModal,
+            content: contactModalC
+        }) : ''),
+            ctrl.showThanks() ? m('.survey-thanks', [
+                m('.bg-white.page-header',
+                    m('.w-container',
+                        m('.w-row', [
+                            m('.w-col.w-col-2'),
+                            m('.w-col.w-col-8', [
+                                m('.u-marginbottom-20.u-text-center',
+                                    m(`img.big.thumb.u-marginbottom-20.u-round[src='${profileImage}']`),
+                                ),
+                                m('.u-text-center',
+                                    m('.fontsize-larger.u-marginbottom-10',
+                                        'Valeu!'
+                                    )
+                                ),
+                                m('.fontsize-base.u-text-center', [
+                                    `As respostas abaixo foram enviadas para ${project.user.name}! Qualquer dúvida sobre o andamento do projeto, visite a `,
+                                    m(`a.alt-link[href='/${project.permalink}#posts'][target='_blank']`,
+                                        'aba de novidades da campanha'
                                     ),
-                                    m('.u-text-center',
-                                        m('.fontsize-larger',
-                                            'Você confirma as respostas abaixo?'
+                                    ' ou ',
+                                    m('a.alt-link[href=\'javascript:void(0);\']', {
+                                        onclick: ctrl.sendMessage
+                                    },
+                                        'envie uma mensagem'
+                                    ),
+                                    '.'
+                                ])
+                            ]),
+                            m('.w-col.w-col-2')
+                        ])
+                    )
+                ),
+                m(surveyPreview, {
+                    countryName: countryName(),
+                    stateName: stateName(),
+                    fields: ctrl.fields,
+                    openQuestions,
+                    multipleChoiceQuestions
+                })
+            ]) : ctrl.showPreview() ? m('.survey-preview', [
+                m('.bg-white.page-header',
+                    m('.w-container',
+                        m('.w-row', [
+                            m('.w-col.w-col-2'),
+                            m('.w-col.w-col-8', [
+                                m('.u-marginbottom-20.u-text-center',
+                                    m(`img.big.thumb.u-marginbottom-20.u-round[src='${profileImage}']`),
+                                ),
+                                m('.u-text-center',
+                                    m('.fontsize-larger',
+                                        'Você confirma as respostas abaixo?'
+                                    )
+                                )
+                            ]),
+                            m('.w-col.w-col-2')
+                        ])
+                    )
+                ),
+                m(surveyPreview, {
+                    countryName: countryName(),
+                    stateName: stateName(),
+                    fields: ctrl.fields,
+                    openQuestions,
+                    multipleChoiceQuestions
+                }),
+                m('div',
+                    m('.w-container',
+                        m('.w-row', [
+                            m('.w-col.w-col-2'),
+                            m('.w-col.w-col-8',
+                                m('.w-row', [
+                                    m('._w-col-small-6.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
+                                        m('a.btn.btn-large.btn-terciary', {
+                                            onclick: ctrl.showPreview.toggle
+                                        },
+                                            'Não'
+                                        )
+                                    ),
+                                    m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
+                                        m('a.btn.btn-large', {
+                                            onclick: ctrl.sendAnswer
+                                        },
+                                            'Sim'
                                         )
                                     )
-                                ]),
-                                m('.w-col.w-col-2')
-                            ])
-                        )
-                    ),
-            m('.section.u-marginbottom-40',
-                        m('.w-container',
-                            m('.w-row', [
-                                m('.w-col.w-col-1'),
-                                m('.w-col.w-col-10',
-                                    m('.card.card-terciary.medium.u-radius', [
-                                        m('.u-marginbottom-30', [
-                                            m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                                'Endereço de entrega'
-                                            ),
-                                            m('.fontsize-base', [
-                                                m('span.fontweight-semibold',
-                                                    'País:'
-                                                ),
-                                                ' Brasil',
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'Endereço:'
-                                                ),
-                                                ctrl.fields().address_attributes.address_street,
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'Número:'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                ctrl.fields().address_attributes.address_number,
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'Bairro:'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                ctrl.fields().address_attributes.address_neighbourhood,
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'Cidade:'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                ctrl.fields().address_attributes.address_city,
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'Estado:'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                'Rio de Janeiro',
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'CEP:'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                ctrl.fields().address_attributes.address_zip_code,
-                                                m('br'),
-                                                m('span.fontweight-semibold',
-                                                    'Telefone:'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                ctrl.fields().address_attributes.phone_number
-                                            ])
-                                        ]),
-                                        _.map(multipleChoiceQuestions, item =>
-                                        m('.u-marginbottom-30', [
-                                            m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                                item.question.question
-                                            ), _.find(item.question.question_choices, choice => item.value() == choice.id).option
-                                        ])),
-                                        _.map(openQuestions, item =>
-                                        m('.u-marginbottom-30', [
-                                            m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                                item.question.question
-                                            ), item.value()
-                                        ]))
-                                    ])
-                                ),
-                                m('.w-col.w-col-1')
-                            ])
-                        )
-                    ),
-
-            m('div',
-                        m('.w-container',
-                            m('.w-row', [
-                                m('.w-col.w-col-2'),
-                                m('.w-col.w-col-8',
-                                    m('.w-row', [
-                                        m('._w-col-small-6.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
-                                            m('a.btn.btn-large.btn-terciary', { onclick: ctrl.showPreview.toggle },
-                                                'Não'
-                                            )
-                                        ),
-                                        m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
-                                            m('a.btn.btn-large', { onclick: ctrl.sendAnswer },
-                                                'Sim'
-                                            )
-                                        )
-                                    ])
-                                ),
-                                m('.w-col.w-col-2')
-                            ])
-                        )
+                                ])
+                            ),
+                            m('.w-col.w-col-2')
+                        ])
                     )
+                )
 
-        ]
-
-            )
-
-            :
-            m('.survey-show', (!survey || !project) ? h.loader() : [
+            ]) : m('.survey-show', (!survey || !project) ? h.loader() : [
                 m('.dashboard-header.u-marginbottom-40.u-text-center',
                     m('.w-container',
                         m('.w-row', [
@@ -282,82 +281,136 @@ const surveysShow = {
                         ])
                     )
                 ),
-                m('div',
-                    m('.w-container',
-                        m('.w-row', [
-                            m('.w-col.w-col-1'),
-                            m('.w-col.w-col-10',
-                                m('.card.card-terciary.medium.u-marginbottom-30', [
-                                    (ctrl.answered() ?
-                                        m('.card.card-message.u-marginbottom-40.u-radius',
-                                            m('.fontsize-base', [
-                                                m('span.fa.fa-exclamation-circle',
-                                                    ''
-                                                ),
-                                                ` Você já enviou as respostas abaixo no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
-                                            ])
-                                        ) : ''),
-                                    (survey.confirm_address ?
-                                        m(addressForm, {
-                                            fields: ctrl.fields
-                                        }) :
-                                        ''),
-                                    _.map(multipleChoiceQuestions, item =>
-                                        m('.u-marginbottom-30.w-form', [
-                                            m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                                item.question.question
-                                            ), [
-                                                _.map(item.question.question_choices, choice =>
-                                                    m('.fontsize-small.w-radio', [
-                                                        m(`input.w-radio-input[type='radio'][name='choice${item.id}']`, {
-                                                            value: choice.id,
-                                                            checked: choice.id === item.value(),
-                                                            onchange: m.withAttr('value', item.value)
-                                                        }),
-                                                        m("label.w-form-label[for='radio']",
-                                                            choice.option
+                (ctrl.finished() ? [
+                    m('div',
+                            m('.w-container',
+                                m('.w-row', [
+                                    m('.w-col.w-col-1'),
+                                    m('.w-col.w-col-10',
+                                        m('.card.card-terciary.medium.u-marginbottom-30', [
+                                            m('.card.card-message.u-marginbottom-40.u-radius',
+                                                m('.fontsize-base', [
+                                                    m('span.fa.fa-exclamation-circle',
+                                                        ''
+                                                    ),
+                                                    (ctrl.answered() ?
+                                                        m('span', ` Esse questionário não está mais aberto para receber respostas. Segue abaixo as respostas que você enviou no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Qualquer dúvida, `,
+                                                            m('a.alt-link[href=\'javascript:void(0);\']', {
+                                                                onclick: ctrl.sendMessage
+                                                            },
+                                                                `envie uma mensagem para ${project.user.name}`
+                                                            )
                                                         )
-                                                    ]))
-                                            ]
-                                        ])),
-                                    _.map(openQuestions, item =>
-                                        m('.u-marginbottom-30.w-form', [
-                                            m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                                item.question.question
-                                            ),
-                                            m("input.positive.text-field.w-input[maxlength='256'][placeholder='Sua resposta'][required='required'][type='text']", {
-                                                value: item.value(),
-                                                onchange: m.withAttr('value', item.value)
-                                            })
-                                        ]))
+                                                      :
+                                                        m('span',
+                                                        ` Oooops! Esse questionário não está mais aberto para respostas desde o dia ${h.momentify(ctrl.survey().finished_at, 'DD/MM/YYYY')}. Nossa recomendação é que você `,
+                                                            m('a.alt-link[href=\'javascript:void(0);\']', {
+                                                                onclick: ctrl.sendMessage
+                                                            },
+                                                                `envie uma mensagem para ${project.user.name}`
+                                                            ),
+                                                          ' para saber como é possível resolver o seu caso! ')
+                                                    )
+                                                ])
+                                            )
+
+
+                                        ])
+                                    ),
+
+                                    (ctrl.answered() ?
+                                        m(surveyPreview, {
+                                            countryName: countryName(),
+                                            stateName: stateName(),
+                                            fields: ctrl.fields,
+                                            openQuestions,
+                                            multipleChoiceQuestions
+                                        }) : ''),
+                                    m('.w-col.w-col-1')
                                 ])
-                            ),
-                            m('.w-col.w-col-1')
-                        ])
-                    )
-                ),
-                m('.section',
-                    m('.w-container',
-                        m('.w-row', [
-                            m('.w-col.w-col-4'),
-                            m('.w-col.w-col-4',
-                                m('a.btn.btn-large', {
-                                    onclick: () => {
-                                        scroll(0, 0);
-                                        ctrl.showPreview.toggle();
-                                    }
-                                },
+                            )
+                        )
+                ] :
+                [
+                    m('div',
+                            m('.w-container',
+                                m('.w-row', [
+                                    m('.w-col.w-col-1'),
+                                    m('.w-col.w-col-10',
+                                        m('.card.card-terciary.medium.u-marginbottom-30', [
+                                            (ctrl.answered() ?
+                                                m('.card.card-message.u-marginbottom-40.u-radius',
+                                                    m('.fontsize-base', [
+                                                        m('span.fa.fa-exclamation-circle',
+                                                            ''
+                                                        ),
+                                                        ` Você já enviou as respostas abaixo no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
+                                                    ])
+                                                ) : ''),
+                                            (survey.confirm_address ?
+                                                m(addressForm, {
+                                                    countryName,
+                                                    stateName,
+                                                    fields: ctrl.fields
+                                                }) :
+                                                ''),
+                                            _.map(multipleChoiceQuestions, item =>
+                                                m('.u-marginbottom-30.w-form', [
+                                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                        item.question.question
+                                                    ), [
+                                                        _.map(item.question.question_choices, choice =>
+                                                            m('.fontsize-small.w-radio', [
+                                                                m(`input.w-radio-input[type='radio'][name='choice${item.id}']`, {
+                                                                    value: choice.id,
+                                                                    checked: choice.id === item.value(),
+                                                                    onchange: m.withAttr('value', item.value)
+                                                                }),
+                                                                m("label.w-form-label[for='radio']",
+                                                                    choice.option
+                                                                )
+                                                            ]))
+                                                    ]
+                                                ])),
+                                            _.map(openQuestions, item =>
+                                                m('.u-marginbottom-30.w-form', [
+                                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                        item.question.question
+                                                    ),
+                                                    m("input.positive.text-field.w-input[maxlength='256'][placeholder='Sua resposta'][required='required'][type='text']", {
+                                                        value: item.value(),
+                                                        onchange: m.withAttr('value', item.value)
+                                                    })
+                                                ]))
+                                        ])
+                                    ),
+                                    m('.w-col.w-col-1')
+                                ])
+                            )
+                        ),
+                    m('.section',
+                            m('.w-container',
+                                m('.w-row', [
+                                    m('.w-col.w-col-4'),
+                                    m('.w-col.w-col-4',
+                                        m('a.btn.btn-large', {
+                                            onclick: () => {
+                                                scroll(0, 0);
+                                                ctrl.showPreview.toggle();
+                                            }
+                                        },
+                                            'Enviar'
+                                        )
+                                    ),
+                                    m('.w-col.w-col-4')
+                                ])
+                            )
+                        )
+                ]
 
-                                    'Enviar'
-                                )
-                            ),
-                            m('.w-col.w-col-4')
-                        ])
-                    )
+
                 )
-
-
-            ]);
+            ]));
     }
 };
 

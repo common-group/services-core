@@ -22,7 +22,7 @@ const addressForm = {
                 phoneNumber: m.prop(data.phone_number || '')
             };
 
-        countriesLoader.load().then(data => countries(_.sortBy(data, 'name_en')));
+        countriesLoader.load().then(countryData => countries(_.sortBy(countryData, 'name_en')));
         statesLoader.load().then(states);
         return {
             fields,
@@ -47,6 +47,8 @@ const addressForm = {
             };
 
         args.fields(address);
+        args.countryName(ctrl.countries() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');
+        args.stateName(ctrl.states() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '');
 
         return m('.u-marginbottom-30.w-form', [
             m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
