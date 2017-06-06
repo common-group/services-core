@@ -250,9 +250,9 @@ const projectContributionReportContentCard = {
                                                 m('br'),
                                                 `Bairro: ${survey.address.address_neighbourhood}`,
                                                 m('br'),
-                                                `${survey.address.address_zip_code} ${survey.address.address_city}-RJ`,
+                                                `${survey.address.address_zip_code} ${survey.address.address_city}-${survey.state_name}`,
                                                 m('br'),
-                                                'BRAZIL'
+                                                survey.country_name
                                             ])
                                         ])] : '',
                                     _.map(survey.multiple_choice_questions, (mcQuestion) => {

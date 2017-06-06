@@ -31,7 +31,7 @@ const ownerMessageContent = {
             }
             submitDisabled(true);
             content(content().split('\n').join('<br />'));
-            const project = h.getCurrentProject();
+            const project = h.getCurrentProject() || { project_id: args().project_id };
 
             const loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
