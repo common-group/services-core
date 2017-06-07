@@ -5,7 +5,7 @@ import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import inlineError from './inline-error';
-import userContributedBox from './user-contributed-box';
+import userContributedList from './user-contributed-list';
 
 const userPrivateContributed = {
     controller(args) {
@@ -91,22 +91,23 @@ const userPrivateContributed = {
                 ])
             ) :
             [
-                m.component(userContributedBox, {
+                m.component(userContributedList, {
                     title: 'Projetos em andamento',
                     collection: onlineCollection,
                     pagination: ctrl.onlinePages
                 }),
                 m('.divider.u-marginbottom-40.u-margintop-40'),
-                m.component(userContributedBox, {
+                m.component(userContributedList, {
                     title: 'Projetos bem-sucedidos',
                     collection: successfulCollection,
                     pagination: ctrl.successfulPages
                 }),
                 m('.divider.u-marginbottom-40.u-margintop-40'),
-                m.component(userContributedBox, {
+                m.component(userContributedList, {
                     title: 'Projetos não-financiados',
                     collection: failedCollection,
-                    pagination: ctrl.failedPages
+                    pagination: ctrl.failedPages,
+                    hideSurveys: true
                 }),
 
             ]);
