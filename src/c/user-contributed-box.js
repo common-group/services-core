@@ -33,7 +33,10 @@ const userContributedBox = {
                 id: contribution.project_user_id,
                 name: contribution.project_owner_name,
                 project_id: contribution.project_id
-            })];
+            })],
+            answeredAt = contribution.survey && (_.find(contribution.survey.multiple_choice_questions, question => !_.isEmpty(question.answered_at)).answered_at ||
+                _.find(contribution.survey.open_questions, question => !_.isEmpty(question.answered_at)).answered_at),
+            finishedAt = contribution.survey && contribution.survey.finished_at;
 
         return (!_.isEmpty(contribution) ? m('div',
             (ctrl.displayModal() ? m.component(modalBox, {
@@ -134,12 +137,41 @@ const userContributedBox = {
                     m(rewardReceiver, {
                         contribution
                     }),
-                    (contribution.survey_id ?
+                    (contribution.survey ? [console.log(contribution.survey),
+
+                        (!answeredAt && finishedAt) ?
                         m('.u-text-center.w-col.w-col-2',
-                            m(`a.btn.w-button[href='/contributions/${contribution.id}/surveys/${contribution.survey_id}']`,
+                            m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
+                                m(`a.link-error[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}'][target='_blank']`, [
+                                    m("span[xmlns='http://www.w3.org/1999/xhtml']"),
+                                    m("span.fa.fa-exclamation-circle[xmlns='http://www.w3.org/1999/xhtml']",
+                                        ''
+                                    ),
+                                    m.trust('&nbsp;'),
+                                    'Questionário',
+                                    m('br'),
+                                    'Não respondido'
+                                ])
+                            )
+                        ) : answeredAt ?
+                        m('.u-text-center.w-col.w-col-2', [
+                            m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
+                                m(`a.link-hidden-dark[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}'][target='_blank']`, [
+                                    'Questionário',
+                                    m('br'),
+                                    'Respondido'
+                                ])
+                            ),
+                            m('.fontcolor-secondary.fontsize-smallest',
+                                `em ${h.momentify(answeredAt, 'DD/MM/YYYY')}`
+                            )
+                        ]) :
+                        m('.u-text-center.w-col.w-col-2',
+                            m(`a.btn.w-button[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}']`,
                                 'Responda o questionário!'
                             )
-                        ) : '')
+                        )
+                    ] : '')
                 ])
             ]
         ) : m('div', ''));
