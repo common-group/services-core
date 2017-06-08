@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
@@ -8,9 +9,10 @@ import rewardSelectCard from '../c/reward-select-card';
 import h from '../h';
 import faqBox from '../c/faq-box';
 
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsContribution = {
-    controller(args) {
+    controller() {
         const rewards = () => _.union(
             [{
                 id: null,
@@ -71,12 +73,20 @@ const projectsContribution = {
                             ])
                         )
                     ),
-                    m('.w-col.w-col-4', m.component(faqBox, {
-                        mode: project().mode,
-                        vm: ctrl.paymentVM,
-                        faq: ctrl.paymentVM.faq(project().mode),
-                        projectUserId: args.project_user_id
-                    }))
+                    m('.w-col.w-col-4', [
+                        m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [
+                            m('.fontsize-small.fontweight-semibold', I18n.t('contribution_warning.title', I18nScope())),
+                            m('.fontsize-smaller.u-marginbottom-10', I18n.t('contribution_warning.subtitle', I18nScope())),
+                            m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n.t('contribution_warning.info', I18nScope())),
+                            m(`a.alt-link.fontsize-smallest[href="${I18n.t('contribution_warning.link')}"]`, I18n.t('contribution_warning.link_label', I18nScope()))
+                        ]),
+                        m.component(faqBox, {
+                            mode: project().mode,
+                            vm: ctrl.paymentVM,
+                            faq: ctrl.paymentVM.faq(project().mode),
+                            projectUserId: args.project_user_id
+                        })
+                    ])
                 ])))
             ] : h.loader());
     }
