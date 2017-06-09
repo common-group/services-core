@@ -17,7 +17,7 @@ const dashboardRewardCard = {
     },
     view(ctrl, args) {
         const reward = args.reward;
-        return m('.w-row.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
+        return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
                 m('.w-row', [
                     m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11',
