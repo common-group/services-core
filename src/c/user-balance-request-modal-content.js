@@ -167,7 +167,7 @@ const userBalanceRequestModelContent = {
                  m('p.fontsize-large', I18n.t('success_message', I18nScope()))
              ]) : m('.modal-dialog-content', [
                  m('.fontsize-base.u-marginbottom-20', [
-                     m('span.fontweight-semibold', `${I18n.t('value_text')}:`),
+                     m('span.fontweight-semibold', `${I18n.t('value_text', I18nScope())}:`),
                      m.trust('&nbsp;'),
                      m('span.text-success',
                        I18n.t('shared.currency', {amount: h.formatNumber(balance.amount, 2, 3)})
