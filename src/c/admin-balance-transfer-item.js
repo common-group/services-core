@@ -35,7 +35,11 @@ const adminBalanceTransferItem = {
                 m('span.fontsize-small', `R$ ${h.formatNumber(item.amount, 2, 3)}`)
             ]),
             m('.w-col.w-col-2.w-hidden-small.w-hidden-tiny', [
-                m('span', item.state)
+                m('span', item.state),
+                (item.transfer_id ? m('.fontcolor-secondary.fontsize-smallest',
+                    m(`a[href="https://dashboard.pagar.me/#/transfers/${item.transfer_id}"]`,
+                        `ID: ${item.transfer_id}`))
+                    : '')
             ]),
             m('.w-col.w-col-2', [
                 m('.fontsize-smallest', [
