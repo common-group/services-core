@@ -246,7 +246,7 @@ const publish = {
 
             ];
 
-        return [!ctrl.l() && !ctrl.accountL() ? [
+        return [project && account ? [
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project),
                 hidePublish: true
