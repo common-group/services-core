@@ -107,13 +107,13 @@ const projectEdit = {
     view(ctrl, args) {
         const project = ctrl.project;
 
-        return m('.project-dashboard-edit', [
+        return m('.project-dashboard-edit', (project() ? [
             m(`.w-section.section-product.${project().mode}`),
             ctrl.displayTabContent(),
             (project() ? m.component(projectDashboardMenu, {
                 project
             }) : '')
-        ]);
+        ] : ''));
     }
 };
 
