@@ -1,5 +1,6 @@
 import m from 'mithril';
 import h from '../h';
+import _ from 'underscore';
 import balanceTransferListVM from '../vms/balance-transfer-list-vm';
 import balanceTransferFilterVM from '../vms/balance-transfer-filter-vm';
 import adminList from '../c/admin-list';
@@ -122,30 +123,33 @@ const adminBalanceTranfers = {
               generateWrapperModal = (customAttrs) => {
                   const wrapper = {
                       view(ctrl, args) {
+                          actionMenuToggle(false);
                           return m('', [
                               m('.modal-dialog-header', [
                                   m('.fontsize-large.u-text-center', args.modalTitle)
                               ]),
                               m('.modal-dialog-content', [
+                                  m('.w-row.fontweight-semibold', [
+                                      m('.w-col.w-col-6', 'Nome'),
+                                      m('.w-col.w-col-3', 'Valor'),
+                                      m('.w-col.w-col-3', 'Solicitado em'),
+                                  ]),
                                   _.map(selectedItemsIDs(), (item, index) => {
                                       return m('.divider.fontsize-smallest.lineheight-looser', [
-                                          m('.w-row.fontweight-semibold', [
-                                              m('.w-col.w-col-4', [
-                                                  m('', item.user_name),
+                                          m('.w-row', [
+                                              m('.w-col.w-col-6', [
+                                                  m('span', item.user_name)
                                               ]),
-                                              m('.w-col.w-col-4', [
+                                              m('.w-col.w-col-3', [
                                                   m('span', `R$ ${h.formatNumber(item.amount, 2, 3)}`)
                                               ]),
-                                              m('.w-col.w-col-4', [
-                                                  m('.fontsize-smallest', [
-                                                      'Solicitado em: ',
-                                                      m('span.fontsize-small.lineheight-tightest', h.momentify(item.created_at)),
-                                                  ])
+                                              m('.w-col.w-col-3', [
+                                                  m('span', h.momentify(item.created_at))
                                               ]),
                                           ])
                                       ]);
                                   }),
-                                  m('.w-row', [
+                                  m('.w-row.u-margintop-20', [
                                       m('.w-col.w-col-1'),
                                       m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
