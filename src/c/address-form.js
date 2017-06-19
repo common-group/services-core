@@ -1,7 +1,11 @@
 import m from 'mithril';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
+import I18n from 'i18n-js';
+import h from '../h';
 import models from '../models';
+
+const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
     controller(args) {
@@ -52,13 +56,13 @@ const addressForm = {
 
         return m('.u-marginbottom-30.w-form', [
             m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                'Endereço de entrega'
+                I18n.t('delivery_address', I18nScope())
             ),
             m('div', [
                 m('.w-row', [
                     m('.w-sub-col.w-col.w-col-6', [
                         m('label.field-label.fontweight-semibold',
-                            'País / Country'
+                            I18n.t('country', I18nScope())
                         ),
                         m('select.positive.text-field.w-select', {
                             onchange: m.withAttr('value', ctrl.fields.countryID)
@@ -83,7 +87,7 @@ const addressForm = {
                 ]),
                 m('div', [
                     m('label.field-label.fontweight-semibold',
-                        'Rua'
+                        I18n.t('address_street', I18nScope())
                     ),
                     m("input.positive.text-field.w-input[maxlength='256'][required='required']", {
                         value: ctrl.fields.addressStreet(),
@@ -93,7 +97,7 @@ const addressForm = {
                 m('.w-row', [
                     m('.w-sub-col.w-col.w-col-4', [
                         m('label.field-label.fontweight-semibold',
-                            'Número'
+                            I18n.t('address_number', I18nScope())
                         ),
                         m("input.positive.text-field.w-input[required='required']", {
                             value: ctrl.fields.addressNumber(),
@@ -102,7 +106,7 @@ const addressForm = {
                     ]),
                     m('.w-col.w-col-4', [
                         m('label.field-label.fontweight-semibold',
-                            'Complemento'
+                            I18n.t('address_complement', I18nScope())
                         ),
                         m("input.positive.text-field.w-input[required='required']", {
                             value: ctrl.fields.addressComplement(),
@@ -111,7 +115,7 @@ const addressForm = {
                     ]),
                     m('.w-col.w-col-4', [
                         m('label.field-label.fontweight-semibold',
-                            'Bairro'
+                            I18n.t('address_neighbourhood', I18nScope())
                         ),
                         m("input.positive.text-field.w-input[required='required']", {
                             value: ctrl.fields.addressNeighbourhood(),
@@ -122,7 +126,7 @@ const addressForm = {
                 m('.w-row', [
                     m('.w-sub-col.w-col.w-col-4', [
                         m('label.field-label.fontweight-semibold',
-                            'CEP'
+                            I18n.t('address_zip_code', I18nScope())
                         ),
                         m("input.positive.text-field.w-input[required='required']", {
                             value: ctrl.fields.addressZipCode(),
@@ -131,7 +135,7 @@ const addressForm = {
                     ]),
                     m('.w-col.w-col-4', [
                         m('label.field-label.fontweight-semibold',
-                            'Cidade'
+                            I18n.t('address_city', I18nScope())
                         ),
                         m("input.positive.text-field.w-input[required='required']", {
                             value: ctrl.fields.addressCity(),
@@ -140,7 +144,7 @@ const addressForm = {
                     ]),
                     m('.w-col.w-col-4', [
                         m('label.field-label.fontweight-semibold',
-                            'Estado'
+                            I18n.t('address_state', I18nScope())
                         ),
                         m('select.positive.text-field.w-select', {
                             onchange: m.withAttr('value', ctrl.fields.stateID)
@@ -159,7 +163,7 @@ const addressForm = {
                 m('.w-row', [
                     m('.w-sub-col.w-col.w-col-6', [
                         m('label.field-label.fontweight-semibold',
-                            'Telefone'
+                            I18n.t('phone_number', I18nScope())
                         ),
                         m("input.positive.text-field.w-input[required='required']", {
                             value: ctrl.fields.phoneNumber(),
