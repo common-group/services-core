@@ -53,7 +53,7 @@ const surveyCreate = {
             surveyVM.updateDashboardQuestion(question);
         };
 
-        const choiceDropdown = (question) => m('.w-sub-col.w-col.w-col-4',
+        const choiceDropdown = (question) => m('.w-col.w-col-4.w-sub-col',
             m('.text-field.w-dropdown', {
                 onclick: () => {
                     question.toggleDropdown.toggle();
@@ -74,12 +74,26 @@ const surveyCreate = {
             ])
         );
 
+        const addDashboardQuestion = () => {
+            surveyVM.addDashboardQuestion();
+
+            return false;
+        };
+
+        const deleteDashboardQuestion = (question) => () => {
+            surveyVM.deleteDashboardQuestion(question);
+
+            return false;
+        };
+
         return {
             reward,
             project_id,
             confirmAddress,
             projectDetails,
-            choiceDropdown
+            choiceDropdown,
+            addDashboardQuestion,
+            deleteDashboardQuestion
         };
     },
     view(ctrl) {
@@ -148,14 +162,22 @@ const surveyCreate = {
                                 )
                             ])
                         ]),
-                        _.map(surveyVM.dashboardQuestions(), (question) => m('.card.card-terciary.medium.u-marginbottom-20.w-row', [
+                        _.map(surveyVM.dashboardQuestions(), question => m('.card.card-terciary.medium.u-marginbottom-20.w-row', [
                             ctrl.choiceDropdown(question),
-                            m.component(
-                                question.type === 'multiple' ? dashboardMultipleChoiceQuestion : dashboardOpenQuestion,
-                                question
-                            )
+                            m('.w-clearfix.w-col.w-col-8', [
+                                m.component(
+                                    question.type === 'multiple' ? dashboardMultipleChoiceQuestion : dashboardOpenQuestion,
+                                    {question}
+                                ),
+                                m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash.u-right', {
+                                    onclick: ctrl.deleteDashboardQuestion(question)
+                                })
+                            ])
+                            
                         ])),
-                        m("button.btn.btn-large.btn-message[href='#']", [
+                        m('button.btn.btn-large.btn-message',{
+                                onclick: ctrl.addDashboardQuestion
+                            },[
                             m('span.fa.fa-plus-circle'),
                             '  Adicionar pergunta'
                         ])
