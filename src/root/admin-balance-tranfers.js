@@ -7,7 +7,7 @@ import adminList from '../c/admin-list';
 import adminFilter from '../c/admin-filter';
 import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
-import filterDateField from '../c/filter-date-field';
+import filterDateRange from '../c/filter-date-range';
 import filterNumberRange from '../c/filter-number-range';
 import modalBox from '../c/modal-box';
 import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
@@ -61,18 +61,20 @@ const adminBalanceTranfers = {
                       }
                   },
                   {
-                      component: filterDateField,
+                      component: filterDateRange,
                       data: {
                           label: 'Data da solicitação',
-                          vm: filterVM.created_date
+                          first: filterVM.created_date.gte,
+                          last: filterVM.created_date.lte
                       }
 
                   },
                   {
-                      component: filterDateField,
+                      component: filterDateRange,
                       data: {
                           label: 'Data da confirmação',
-                          vm: filterVM.transferred_date
+                          first: filterVM.transferred_date.gte,
+                          last: filterVM.transferred_date.lte
                       }
 
                   },

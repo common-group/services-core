@@ -8,8 +8,8 @@ const vm = postgrest.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     transfer_id: 'eq',
-    created_date: 'eq',
-    transferred_date: 'eq',
+    created_date: 'between',
+    transferred_date: 'between',
     amount: 'between'
 });
 
@@ -19,17 +19,25 @@ const paramToString = (p) => {
 
 vm.state('');
 vm.transfer_id('');
-vm.created_date('');
-vm.transferred_date('');
 
-vm.created_date.toFilter = () => {
-    const filter = paramToString(vm.created_date());
-    return filter && h.momentFromString(filter).format('YYYY-MM-DD');
+vm.created_date.lte.toFilter = () => {
+    const filter = paramToString(vm.created_date.lte());
+    return filter && h.momentFromString(filter).endOf('day').format('');
 };
 
-vm.transferred_date.toFilter = () => {
-    const filter = paramToString(vm.transferred_date());
-    return filter && h.momentFromString(filter).format('YYYY-MM-DD');
+vm.created_date.gte.toFilter = () => {
+    const filter = paramToString(vm.created_date.gte());
+    return filter && h.momentFromString(filter).endOf('day').format('');
+};
+
+vm.transferred_date.lte.toFilter = () => {
+    const filter = paramToString(vm.transferred_date.lte());
+    return filter && h.momentFromString(filter).endOf('day').format('');
+};
+
+vm.transferred_date.gte.toFilter = () => {
+    const filter = paramToString(vm.transferred_date.gte());
+    return filter && h.momentFromString(filter).endOf('day').format('');
 };
 
 vm.getAllBalanceTransfers = (filterVM) => {
