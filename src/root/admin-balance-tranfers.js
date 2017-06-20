@@ -151,7 +151,15 @@ const adminBalanceTranfers = {
                                           ])
                                       ]);
                                   }),
-                                  m('.w-row.u-margintop-20', [
+                                  m('.w-row.fontweight-semibold.divider', [
+                                      m('.w-col.w-col-6', 'Total'),
+                                      m('.w-col.w-col-3', 
+                                        `R$ ${h.formatNumber(_.reduce(selectedItemsIDs(), (t, i) => {
+                                            return t + i.amount;
+                                        }, 0), 2, 3)}`),
+                                      m('.w-col.w-col-3'),
+                                  ]),
+                                  m('.w-row.u-margintop-40', [
                                       m('.w-col.w-col-1'),
                                       m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
