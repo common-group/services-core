@@ -24,10 +24,11 @@ const surveyCreate = {
                 project_id: 'eq'
             }),
             {
-                project_id
+                project_id,
+                reward_id
             } = args;
 
-        rewardFilterVM.id(m.route.param('reward_id'));
+        rewardFilterVM.id(reward_id);
         filterVM.project_id(project_id);
         const rewardVM = postgrest.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
@@ -86,6 +87,12 @@ const surveyCreate = {
             return false;
         };
 
+        const sendQuestions = () => {
+            surveyVM.submitQuestions(reward_id).then(console.log).catch(console.error);
+
+            return false;
+        };
+
         return {
             reward,
             project_id,
@@ -93,7 +100,8 @@ const surveyCreate = {
             projectDetails,
             choiceDropdown,
             addDashboardQuestion,
-            deleteDashboardQuestion
+            deleteDashboardQuestion,
+            sendQuestions
         };
     },
     view(ctrl) {
@@ -188,7 +196,9 @@ const surveyCreate = {
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4',
-                            m("a.btn.btn-large[href='/bellum/poll-preview']",
+                            m("a.btn.btn-large[href='/bellum/poll-preview']",{
+                                    onclick: ctrl.sendQuestions
+                                },
                                 'Pré-visualizar'
                             )
                         )

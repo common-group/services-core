@@ -1,18 +1,26 @@
 import h from '../h';
 
-const newQuestion = () => ({
-    type: 'open',
-    question: '',
-    description: '',
-    options: m.prop(['']),
-    toggleDropdown: h.toggleProp(false, true)
-});
+const openQuestionType = 'open',
+    multipleQuestionType = 'multiple',
+    newQuestion = () => ({
+        type: openQuestionType,
+        question: '',
+        description: '',
+        options: m.prop(['']),
+        toggleDropdown: h.toggleProp(false, true)
+    });
 
 const dashboardQuestions = m.prop([newQuestion()]);
 
-const submitQuestions = () => {
-    m.request({
-
+const submitQuestions = (rewardId) => {
+    return m.request({
+        method: 'PUT',
+        url: `/rewards/${rewardId}/surveys/questions`,
+        data: {
+            open_questions: _.filter(dashboardQuestions(), {type: 'open'}),
+            multiple_choice_questions: _.filter(dashboardQuestions(), {type: 'open'})
+        },
+        config: h.setCsrfToken
     });
 };
 
@@ -58,7 +66,10 @@ const surveyVM = {
     deleteDashboardQuestion,
     updateDashboardQuestion,
     deleteMultipleQuestionOption,
-    addMultipleQuestionOption
+    addMultipleQuestionOption,
+    submitQuestions,
+    openQuestionType,
+    multipleQuestionType
 };
 
 export default surveyVM;
