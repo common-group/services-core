@@ -45,6 +45,8 @@ const adminBalanceTransferItem = {
                 m('.fontsize-smallest', [
                     'Solicitado em: ',
                     m('span.fontsize-small.lineheight-tightest', h.momentify(item.created_at)),
+                    m('br'),
+                    m('span.fontsize-smallest.lineheight-tightest', `(${h.momentify(item.transfer_limit_date)})`)
                 ])
             ]),
             m('.w-col.w-col-2', [
