@@ -7,7 +7,7 @@ import adminList from '../c/admin-list';
 import adminFilter from '../c/admin-filter';
 import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
-import filterDateField from '../c/filter-date-field';
+import filterDateRange from '../c/filter-date-range';
 import filterNumberRange from '../c/filter-number-range';
 import modalBox from '../c/modal-box';
 import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
@@ -61,18 +61,20 @@ const adminBalanceTranfers = {
                       }
                   },
                   {
-                      component: filterDateField,
+                      component: filterDateRange,
                       data: {
                           label: 'Data da solicitação',
-                          vm: filterVM.created_date
+                          first: filterVM.created_date.gte,
+                          last: filterVM.created_date.lte
                       }
 
                   },
                   {
-                      component: filterDateField,
+                      component: filterDateRange,
                       data: {
                           label: 'Data da confirmação',
-                          vm: filterVM.transferred_date
+                          first: filterVM.transferred_date.gte,
+                          last: filterVM.transferred_date.lte
                       }
 
                   },
@@ -149,7 +151,15 @@ const adminBalanceTranfers = {
                                           ])
                                       ]);
                                   }),
-                                  m('.w-row.u-margintop-20', [
+                                  m('.w-row.fontweight-semibold.divider', [
+                                      m('.w-col.w-col-6', 'Total'),
+                                      m('.w-col.w-col-3', 
+                                        `R$ ${h.formatNumber(_.reduce(selectedItemsIDs(), (t, i) => {
+                                            return t + i.amount;
+                                        }, 0), 2, 3)}`),
+                                      m('.w-col.w-col-3'),
+                                  ]),
+                                  m('.w-row.u-margintop-40', [
                                       m('.w-col.w-col-1'),
                                       m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
