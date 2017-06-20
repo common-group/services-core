@@ -4,8 +4,8 @@ import surveyVM from '../vms/survey-vm';
 
 const dashboardMultipleChoiceQuestion = {
     controller() {
-        const deleteOption = (question, option) => () => {
-            surveyVM.deleteMultipleQuestionOption(question, option);
+        const deleteOption = (question, idx) => () => {
+            surveyVM.deleteMultipleQuestionOption(question, idx);
 
             return false;
         };
@@ -53,14 +53,14 @@ const dashboardMultipleChoiceQuestion = {
                             )
                         ),
                         m('.w-col.w-col-8', [             
-                            _.map(question.options(), option => m('.w-row', [
+                            _.map(question.options(), (option, idx) => m('.w-row', [
                                 m('.fa.fa-circle-o.fontcolor-terciary.prefix.u-text-center.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1'),
                                 m('.w-col.w-col-10.w-col-medium-10.w-col-small-10.w-col-tiny-10',
                                     m("input.positive.text-field.w-input[type='text']")
                                 ),
                                 m('.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1',
                                     m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-trash', {
-                                        onclick: ctrl.deleteOption(question, option)
+                                        onclick: ctrl.deleteOption(question, idx)
                                     })
                                 )
                             ])),

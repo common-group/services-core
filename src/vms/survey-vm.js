@@ -46,12 +46,8 @@ const addMultipleQuestionOption = (question) => {
     return false;
 };
 
-const deleteMultipleQuestionOption = (question, toDeleteOption) => {
-    const options = question.options();
-
-    question.options(
-        _.without(options, toDeleteOption)
-    );
+const deleteMultipleQuestionOption = (question, idx) => {
+    question.options().splice(idx, 1);
 
     return false;
 };
