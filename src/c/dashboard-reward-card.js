@@ -37,7 +37,7 @@ const dashboardRewardCard = {
                         ) : '')
                 ]),
                 m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
-                    I18n.t('paid_contributors', I18nScope(reward.paid_count))
+                    I18n.t('paid_contributors', I18nScope({count: reward.paid_count}))
                 ),
                 m('.fontsize-small.fontweight-semibold',
                     reward.title
