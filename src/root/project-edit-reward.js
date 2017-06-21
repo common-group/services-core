@@ -131,11 +131,11 @@ const projectEditReward = {
 
     view(ctrl, args) {
         const error = ctrl.error,
-              project = args.project;
+            project = args.project;
 
         return m("[id='dashboard-rewards-tab']",
                  (project() ? [
-            m('.w-section.section',
+                     m('.w-section.section',
                 m('.w-container', [
                     (ctrl.showSuccess() ? m.component(popNotification, {
                         message: 'Recompensas salvas com sucesso'
@@ -176,7 +176,9 @@ const projectEditReward = {
                                                     m('.reward-card', [
                                                         (!reward().edit() ?
                                                             m(dashboardRewardCard, {
-                                                                reward: reward(),
+                                                                index,
+                                                                reward,
+                                                                error,
                                                                 user: ctrl.user(),
                                                                 project_id: args.project_id,
                                                                 project_state: project().state
@@ -199,9 +201,9 @@ const projectEditReward = {
                                     ])
                                 ]),
                               rewardVM.canAdd(project().state) ? [
-                                    m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                        onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
-                                    },
+                                  m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
+                                      onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
+                                  },
                                         I18n.t('add_reward', I18nScope())
                                     )
 
