@@ -13,7 +13,7 @@ const editRewardCard = {
                 shipping_options: m.prop(reward.shipping_options),
                 minimumValue: m.prop(reward.minimum_value),
                 description: m.prop(reward.description),
-                deliverAt: m.prop(reward.deliver_at),
+                deliverAt: m.prop(reward.deliver_at)
             },
             destroyed = m.prop(false),
             acceptNumeric = (e) => {
