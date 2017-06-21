@@ -13,7 +13,12 @@ const dashboardRewardCard = {
         const reward = args.reward(),
             availableCount = () => reward.maximum_contributions - reward.paid_count,
             maximumContributions = m.prop(args.reward().maximum_contributions),
-            limitError = m.prop(false);
+            limitError = m.prop(false),
+            toggleLimit = () => {
+                reward.limited.toggle();
+                maximumContributions('');
+                m.redraw();
+            };
 
         _.extend(args.reward(), {
             validate: () => {
@@ -27,6 +32,7 @@ const dashboardRewardCard = {
 
         return {
             availableCount,
+            toggleLimit,
             limitError,
             maximumContributions
         };
@@ -89,7 +95,7 @@ const dashboardRewardCard = {
                 m('.u-margintop-40.w-row', [
                     m('.w-col.w-col-6', [
                         m('.w-checkbox', [
-                            m("input.w-checkbox-input[type='checkbox']", { onclick: () => { reward.limited.toggle(); ctrl.maximumContributions(''); m.redraw(); }, checked: reward.limited() }),
+                            m("input.w-checkbox-input[type='checkbox']", { onclick: ctrl.toggleLimit, checked: reward.limited() }),
                             m('label.fontsize-smaller.fontweight-semibold.w-form-label',
                                         I18n.t('reward_limited_input', I18nScope())
                                     )
