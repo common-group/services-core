@@ -72,8 +72,8 @@ const menuProfile = {
                                                   m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#balance']`,
                                                     m('span', [
                                                         'Saldo ',
-                                                        m('span.fontcolor-secondary',
-                                                          `R$ ${h.formatNumber(ctrl.userBalance(), 2, 3)}`)
+                                                        (ctrl.userBalance() > 0 ? m('span.fontcolor-secondary',
+                                                          `R$ ${h.formatNumber(ctrl.userBalance(), 2, 3)}`) : ''),
                                                     ])
                                                    )
                                                  ),
