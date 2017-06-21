@@ -1,7 +1,8 @@
 import m from 'mithril';
 
 const dashboardOpenQuestion = {
-    view(){
+    view(ctrl, args){
+        const {question} = args;
         return m('.card.u-marginbottom-30.u-radius.w-form', [
             m('div', [
                 m('.w-row', [
@@ -11,7 +12,9 @@ const dashboardOpenQuestion = {
                         )
                     ),
                     m('.w-col.w-col-8',
-                        m('input.positive.text-field.w-input[data-name="Name 5"][id="name-5"][maxlength="256"][name="name-5"][type="text"]')
+                        m('input.positive.text-field.w-input[name="question"][type="text"]', {
+                            onchange: m.withAttr('value', (newValue) => question.question = newValue)
+                        })
                     )
                 ]),
                 m('.w-row', [
@@ -21,7 +24,9 @@ const dashboardOpenQuestion = {
                         )
                     ),
                     m('.w-col.w-col-8',
-                        m("input.positive.text-field.w-input[data-name='Name 6'][id='name-6'][maxlength='256'][name='name-6'][type='text']")
+                        m('input.positive.text-field.w-input[type="text"]', {
+                            onchange: m.withAttr('value', (newValue) => question.description = newValue)
+                        })
                     )
                 ])
             ])

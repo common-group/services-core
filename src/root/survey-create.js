@@ -66,10 +66,10 @@ const surveyCreate = {
                     class: question.toggleDropdown() ? 'w--open' : null
                 }, [
                     m('span.dropdown-link.w-dropdown-link', {
-                        onclick: setQuestionType(question, 'open')
+                        onclick: setQuestionType(question, surveyVM.openQuestionType)
                     }, choice.open),
                     m('span.dropdown-link.w-dropdown-link',{
-                        onclick: setQuestionType(question, 'multiple')
+                        onclick: setQuestionType(question, surveyVM.multipleQuestionType)
                     }, choice.multiple)
                 ])
             ])

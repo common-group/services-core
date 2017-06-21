@@ -17,8 +17,8 @@ const submitQuestions = (rewardId) => {
         method: 'PUT',
         url: `/rewards/${rewardId}/surveys/questions`,
         data: {
-            open_questions: _.filter(dashboardQuestions(), {type: 'open'}),
-            multiple_choice_questions: _.filter(dashboardQuestions(), {type: 'open'})
+            open_questions: _.filter(dashboardQuestions(), {type: openQuestionType}),
+            multiple_choice_questions: _.filter(dashboardQuestions(), {type: multipleQuestionType})
         },
         config: h.setCsrfToken
     });

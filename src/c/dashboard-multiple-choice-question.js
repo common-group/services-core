@@ -3,7 +3,8 @@ import _ from 'underscore';
 import surveyVM from '../vms/survey-vm';
 
 const dashboardMultipleChoiceQuestion = {
-    controller() {
+    controller(args) {
+        const {question} = args;
         const deleteOption = (question, idx) => () => {
             surveyVM.deleteMultipleQuestionOption(question, idx);
 
@@ -16,24 +17,39 @@ const dashboardMultipleChoiceQuestion = {
             return false;
         };
 
+        const updateOption = (idToUpdate) => (newValue) => {
+            const options = _.map(question.options(), (option, id) => {
+                if (id === idToUpdate) {
+                    return newValue;
+                }
+
+                return option;
+            });
+
+            question.options(options);
+        }
+
         return {
             addOption,
-            deleteOption
+            deleteOption,
+            updateOption
         };
     },
     view(ctrl, args) {
-        const question = args.question;
+        const {question} = args;
         
         return m('.card.u-marginbottom-30.u-radius.w-form', [
                 m('.dashboard-question', [
                     m('.w-row', [
                         m('.w-col.w-col-4',
-                            m("label.fontsize-smaller[for='name-3']",
+                            m("label.fontsize-smaller",
                                 'Pergunta'
                             )
                         ),
                         m('.w-col.w-col-8',
-                            m('input.positive.text-field.w-input[name="name-3"][type="text"]')
+                            m('input.positive.text-field.w-input[type="text"]', {
+                                onchange: m.withAttr('value', (newValue) => question.question = newValue)
+                            })
                         )
                     ]),
                     m('.w-row', [
@@ -43,7 +59,9 @@ const dashboardMultipleChoiceQuestion = {
                             )
                         ),
                         m('.w-col.w-col-8',
-                            m('input.positive.text-field.w-input[type="text"]')
+                            m('input.positive.text-field.w-input[type="text"]', {
+                                onchange: m.withAttr('value', (newValue) => question.description = newValue)
+                            })
                         )
                     ]),
                     m('.w-row', [
@@ -56,7 +74,9 @@ const dashboardMultipleChoiceQuestion = {
                             _.map(question.options(), (option, idx) => m('.w-row', [
                                 m('.fa.fa-circle-o.fontcolor-terciary.prefix.u-text-center.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1'),
                                 m('.w-col.w-col-10.w-col-medium-10.w-col-small-10.w-col-tiny-10',
-                                    m("input.positive.text-field.w-input[type='text']")
+                                    m('input.positive.text-field.w-input[type="text"]', {
+                                        onchange: m.withAttr('value', ctrl.updateOption(idx))
+                                    })
                                 ),
                                 m('.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1',
                                     m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-trash', {
