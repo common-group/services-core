@@ -1,5 +1,9 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
+import h from '../h';
+
+const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveyPreview = {
     controller(args) {
@@ -22,58 +26,58 @@ const surveyPreview = {
                         m('.card.card-terciary.medium.u-radius', [
                             m('.u-marginbottom-30', [
                                 m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                    'Endereço de entrega'
+                                    I18n.t('delivery_address', I18nScope())
                                 ),
                                 m('.fontsize-base', [
                                     m('span.fontweight-semibold',
-                                        'País: '
+                                        `${I18n.t('country', I18nScope())}: `
                                     ),
                                     args.countryName,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Endereço:'
+                                        `${I18n.t('address_street', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.address_street,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Número:'
+                                        `${I18n.t('address_number', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.address_number,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Complemento:'
+                                        `${I18n.t('address_complement', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.address_complement,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Bairro:'
+                                        `${I18n.t('address_neighbourhood', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.address_neighbourhood,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Cidade:'
+                                        `${I18n.t('address_city', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.address_city,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Estado:'
+                                        `${I18n.t('address_state', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     args.stateName,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'CEP:'
+                                        `${I18n.t('address_zip_code', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.address_zip_code,
                                     m('br'),
                                     m('span.fontweight-semibold',
-                                        'Telefone:'
+                                        `${I18n.t('phone_number', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
                                     ctrl.fields().address_attributes.phone_number

@@ -5,7 +5,7 @@ import h from '../h';
 import userContributedBox from '../c/user-contributed-box';
 import loadMoreBtn from './load-more-btn';
 
-const I18nScope = _.partial(h.i18nScope, 'payment.state');
+const I18nScope = _.partial(h.i18nScope, 'users.show.contributions');
 
 const userContributedList = {
     controller(args) {
@@ -30,24 +30,24 @@ const userContributedList = {
                 m('.card.card-secondary.w-hidden-small.w-hidden-tiny.w-row', [
                     m('.w-col.w-col-3',
                         m('.fontsize-small.fontweight-semibold',
-                            'Projeto'
+                            I18n.t('project_col', I18nScope())
                         )
                     ),
                     m('.w-col.w-col-3',
                         m('.fontsize-small.fontweight-semibold',
-                            'Apoio'
+                            I18n.t('contribution_col', I18nScope())
                         )
                     ),
                     m('.w-col.w-col-3',
                         m('.fontsize-small.fontweight-semibold',
-                            'Recompensa'
+                            I18n.t('reward_col', I18nScope())
                         )
                     ),
                     m('.w-col.w-col-1'),
                     (!hideSurveys ?
                     m('.w-col.w-col-2',
                         m('.fontsize-small.fontweight-semibold',
-                            'Questionário'
+                            I18n.t('survey_col', I18nScope())
                         )
                     ) : '')
                 ]),

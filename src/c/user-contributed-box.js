@@ -9,6 +9,7 @@ import userVM from '../vms/user-vm';
 import rewardReceiver from './reward-receiver';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
+const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userContributedBox = {
     controller(args) {
@@ -16,7 +17,7 @@ const userContributedBox = {
             toggleDelivery = (projectId, contribution) => {
                 userVM.toggleDelivery(projectId, contribution).then(() => {
                     const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
-                    contribution.delivery_status = contribution.delivery_status == 'received' ? lastStatus : 'received'; // so we don't have to reload the page
+                    contribution.delivery_status = contribution.delivery_status === 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
             };
 
@@ -64,7 +65,7 @@ const userContributedBox = {
                                 ctrl.displayModal.toggle();
                             }
                         },
-                            'Enviar mensagem'
+                            I18n.t('contact_author', contributionScope())
                         )
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
@@ -74,7 +75,7 @@ const userContributedBox = {
                         m('.w-embed',
                             m('div', [
                                 m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold',
-                                    'Status'
+                                    I18n.t('status', contributionScope())
                                 ),
                                 m('.fontsize-smaller.fontweight-semibold', [
                                     m('.lineheight-tighter'),
@@ -90,25 +91,25 @@ const userContributedBox = {
                                     (contribution.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
                                 ),
                                 (contributionVM.canShowReceipt(contribution) ?
-                                    m(`a.alt-link.u-margintop-10[href='https://www.catarse.me/pt/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/receipt'][target='__blank']`,
-                                        'Ver recibo'
+                                    m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/receipt'][target='__blank']`,
+                                        I18n.t('show_receipt', contributionScope())
                                     ) : ''),
 
                                 (contributionVM.canShowSlip(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='${contribution.gateway_data.boleto_url}'][target='__blank']`,
-                                        'Imprimir boleto'
+                                        I18n.t('print_slip', contributionScope())
                                     ) : ''),
 
                                 (contributionVM.canGenerateSlip(contribution) ?
-                                    m(`a.alt-link.u-margintop-10[href='https://www.catarse.me/pt/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/second_slip'][target='__blank']`,
-                                        'Gerar 2a via'
+                                    m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/second_slip'][target='__blank']`,
+                                        I18n.t('slip_copy', contributionScope())
                                     ) : ''),
                                 m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                                     m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
                                         onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution)
                                     }),
                                     m('label.w-form-label',
-                                        'Quero que meu apoio não seja público'
+                                        I18n.t('anonymous', contributionScope())
                                     )
                                 ])
                             ])
@@ -119,16 +120,16 @@ const userContributedBox = {
                             contribution.reward_title
                         ), m('p.fontcolor-secondary.fontsize-smallest', m.trust(h.simpleFormat(
                             `${contribution.reward_description.substring(0, 90)} (...)`
-                        )))] : ' Não selecionou recompensa'),
+                        )))] : ` ${I18n.t('no_reward', contributionScope())} `),
                         contribution.deliver_at ? m('.fontsize-smallest', [
                             m('span.fontweight-semibold',
-                                'Estimativa de entrega: '
+                                `${I18n.t('delivery_estimate', contributionScope())} `
                             ),
                             h.momentify(contribution.deliver_at, 'MMMM/YYYY')
                         ]) : '',
                         contributionVM.canBeDelivered(contribution) ? m('.fontsize-smallest', [
                             m('span.fontweight-semibold',
-                                'Status da entrega:'
+                                I18n.t('delivery_status', contributionScope())
                             ),
                             m.trust('&nbsp;'),
                             h.contributionStatusBadge(contribution)
@@ -137,8 +138,7 @@ const userContributedBox = {
                     m(rewardReceiver, {
                         contribution
                     }),
-                    (contribution.survey ? [console.log(contribution.survey),
-
+                    (contribution.survey ? [
                         (!answeredAt && finishedAt) ?
                         m('.u-text-center.w-col.w-col-2',
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
@@ -168,7 +168,7 @@ const userContributedBox = {
                         ]) :
                         m('.u-text-center.w-col.w-col-2',
                             m(`a.btn.w-button[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}']`,
-                                'Responda o questionário!'
+                                I18n.t('answer_survey', contributionScope())
                             )
                         )
                     ] : '')
