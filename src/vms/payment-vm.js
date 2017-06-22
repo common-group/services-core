@@ -51,21 +51,24 @@ const paymentVM = () => {
     };
 
     const populateForm = (fetchedData) => {
-        const data = _.first(fetchedData) || {address: {}},
-              defaultCountry = (fields.countries() ? _.findWhere(fields.countries(), { name: 'Brasil' }).id : null),
-              countryId = (data.address && data.address.country_id) || defaultCountry;
+        const data = _.first(fetchedData) || { address: {} },
+            defaultCountry = (fields.countries() ? _.findWhere(fields.countries(), { name: 'Brasil' }).id : null),
+            countryId = (data.address && data.address.country_id) || defaultCountry;
+
+        if (!_.isEmpty(data.address)) {
+            fields.city(data.address.city);
+            fields.zipCode(data.address.zipcode);
+            fields.street(data.address.street);
+            fields.number(data.address.number);
+            fields.addressComplement(data.address.complement);
+            fields.userState(data.address.state);
+            fields.neighbourhood(data.address.neighbourhood);
+            fields.phone(data.address.phonenumber);
+        }
 
         fields.completeName(data.name);
-        fields.city(data.address.city);
-        fields.zipCode(data.address.zipcode);
-        fields.street(data.address.street);
-        fields.number(data.address.number);
-        fields.addressComplement(data.address.complement);
-        fields.userState(data.address.state);
-        fields.userCountryId(countryId);
         fields.ownerDocument(data.owner_document);
-        fields.phone(data.address.phonenumber);
-        fields.neighbourhood(data.address.neighbourhood);
+        fields.userCountryId(countryId);
 
         creditCardFields.cardOwnerDocument(data.owner_document);
     };
