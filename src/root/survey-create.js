@@ -104,10 +104,14 @@ const surveyCreate = {
             sendQuestions
         };
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const project = _.first(ctrl.projectDetails());
         const reward = _.first(ctrl.reward());
-        return (project ? m('.project-surveys',
+        return (project ? m('form.project-surveys',
+            {
+                action: `/rewards/${rewardId}/surveys/questions`,
+                method: 'POST'
+            },
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project)
             }) : ''),
@@ -160,7 +164,10 @@ const surveyCreate = {
                                         }),
                                         ctrl.confirmAddress() ? m('.u-right', 'SIM') : m('.u-left', 'NÃO')
                                     ]
-                                )
+                                ),
+                                m('input[type="hidden"]', {
+                                    name: 'reward[surveys_attributes][confirm_address]'
+                                })
                             ]),
                             m('.w-row', [
                                 m('.w-col.w-col-8.w-col-push-2',
@@ -170,12 +177,12 @@ const surveyCreate = {
                                 )
                             ])
                         ]),
-                        _.map(surveyVM.dashboardQuestions(), question => m('.card.card-terciary.medium.u-marginbottom-20.w-row', [
+                        _.map(surveyVM.dashboardQuestions(), (question, index) => m('.card.card-terciary.medium.u-marginbottom-20.w-row', [
                             ctrl.choiceDropdown(question),
                             m('.w-clearfix.w-col.w-col-8', [
                                 m.component(
                                     question.type === 'multiple' ? dashboardMultipleChoiceQuestion : dashboardOpenQuestion,
-                                    {question}
+                                    {question, index}
                                 ),
                                 m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash.u-right', {
                                     onclick: ctrl.deleteDashboardQuestion(question)

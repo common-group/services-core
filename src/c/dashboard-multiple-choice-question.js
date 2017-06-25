@@ -36,7 +36,7 @@ const dashboardMultipleChoiceQuestion = {
         };
     },
     view(ctrl, args) {
-        const {question} = args;
+        const {question, index} = args;
         
         return m('.card.u-marginbottom-30.u-radius.w-form', [
                 m('.dashboard-question', [
@@ -48,6 +48,7 @@ const dashboardMultipleChoiceQuestion = {
                         ),
                         m('.w-col.w-col-8',
                             m('input.positive.text-field.w-input[type="text"]', {
+                                name: `reward[surveys_attributes][questions][${index}][question]`,
                                 onchange: m.withAttr('value', (newValue) => question.question = newValue)
                             })
                         )
@@ -60,7 +61,8 @@ const dashboardMultipleChoiceQuestion = {
                         ),
                         m('.w-col.w-col-8',
                             m('input.positive.text-field.w-input[type="text"]', {
-                                onchange: m.withAttr('value', (newValue) => question.description = newValue)
+                                onchange: m.withAttr('value', (newValue) => question.description = newValue),
+                                name: `reward[surveys_attributes][questions][${index}][description]`
                             })
                         )
                     ]),
@@ -75,7 +77,8 @@ const dashboardMultipleChoiceQuestion = {
                                 m('.fa.fa-circle-o.fontcolor-terciary.prefix.u-text-center.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1'),
                                 m('.w-col.w-col-10.w-col-medium-10.w-col-small-10.w-col-tiny-10',
                                     m('input.positive.text-field.w-input[type="text"]', {
-                                        onchange: m.withAttr('value', ctrl.updateOption(idx))
+                                        onchange: m.withAttr('value', ctrl.updateOption(idx)),
+                                        name: `reward[surveys_attributes][questions][${index}][question][options][${idx}][option]`
                                     })
                                 ),
                                 m('.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1',
