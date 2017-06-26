@@ -28,8 +28,8 @@ const thankYou = {
 
                 CatarseAnalytics.checkout(
                     `${args.contribution.contribution_id}`,
-                    `[${args.contribution.project.permalink}] ${args.contribution.reward.minimum_value} [${isSlip ? 'slip' : 'creditcard'}]`,
-                    `${args.contribution.reward.reward_id}`,
+                    `[${args.contribution.project.permalink}] ${args.contribution.reward ? args.contribution.reward.minimum_value : '10'} [${isSlip ? 'slip' : 'creditcard'}]`,
+                    `${args.contribution.reward ? args.contribution.reward.reward_id : ''}`,
                     `${args.contribution.project.category}`,
                     `${args.contribution.value}`,
                     `${args.contribution.value * args.contribution.project.service_fee}`
