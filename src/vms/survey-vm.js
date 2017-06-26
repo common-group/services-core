@@ -1,3 +1,5 @@
+import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 
 const openQuestionType = 'open',
@@ -6,23 +8,21 @@ const openQuestionType = 'open',
         type: openQuestionType,
         question: '',
         description: '',
-        options: m.prop(['']),
+        survey_question_choices_attributes: m.prop([]),
         toggleDropdown: h.toggleProp(false, true)
     });
 
 const dashboardQuestions = m.prop([newQuestion()]);
 
-const submitQuestions = (rewardId) => {
-    return m.request({
-        method: 'PUT',
-        url: `/rewards/${rewardId}/surveys/questions`,
-        data: {
-            open_questions: _.filter(dashboardQuestions(), {type: openQuestionType}),
-            multiple_choice_questions: _.filter(dashboardQuestions(), {type: multipleQuestionType})
-        },
-        config: h.setCsrfToken
-    });
-};
+const submitQuestions = rewardId => m.request({
+    method: 'POST',
+    url: `/rewards/${rewardId}/surveys`,
+    data: {
+        survey_open_questions_attributes: _.filter(dashboardQuestions(), { type: openQuestionType }),
+        survey_multiple_choice_questions_attributes: _.filter(dashboardQuestions(), { type: multipleQuestionType })
+    },
+    config: h.setCsrfToken
+});
 
 const updateIfQuestion = questionToUpdate => (question, idx) => {
     if (idx === _.indexOf(dashboardQuestions(), questionToUpdate)) {
@@ -49,13 +49,13 @@ const deleteDashboardQuestion = (question) => {
 };
 
 const addMultipleQuestionOption = (question) => {
-    question.options().push('');
+    question.survey_question_choices_attributes().push({ option: '' });
 
     return false;
 };
 
 const deleteMultipleQuestionOption = (question, idx) => {
-    question.options().splice(idx, 1);
+    question.survey_question_choices_attributes().splice(idx, 1);
 
     return false;
 };

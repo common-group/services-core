@@ -54,7 +54,7 @@ const surveyCreate = {
             surveyVM.updateDashboardQuestion(question);
         };
 
-        const choiceDropdown = (question) => m('.w-col.w-col-4.w-sub-col',
+        const choiceDropdown = question => m('.w-col.w-col-4.w-sub-col',
             m('.text-field.w-dropdown', {
                 onclick: () => {
                     question.toggleDropdown.toggle();
@@ -68,7 +68,7 @@ const surveyCreate = {
                     m('span.dropdown-link.w-dropdown-link', {
                         onclick: setQuestionType(question, surveyVM.openQuestionType)
                     }, choice.open),
-                    m('span.dropdown-link.w-dropdown-link',{
+                    m('span.dropdown-link.w-dropdown-link', {
                         onclick: setQuestionType(question, surveyVM.multipleQuestionType)
                     }, choice.multiple)
                 ])
@@ -81,7 +81,7 @@ const surveyCreate = {
             return false;
         };
 
-        const deleteDashboardQuestion = (question) => () => {
+        const deleteDashboardQuestion = question => () => {
             surveyVM.deleteDashboardQuestion(question);
 
             return false;
@@ -109,7 +109,7 @@ const surveyCreate = {
         const reward = _.first(ctrl.reward());
         return (project ? m('form.project-surveys',
             {
-                action: `/rewards/${rewardId}/surveys/questions`,
+                action: `/rewards/${reward.id}/surveys/questions`,
                 method: 'POST'
             },
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
@@ -155,15 +155,15 @@ const surveyCreate = {
                                 m('.fontsize-base.fontweight-semibold.u-marginbottom-10',
                                     'Confirmar endereço de entrega?'
                                 ),
-                                m(`a.toggle.w-clearfix.w-inline-block`, {
-                                        class: ctrl.confirmAddress() ? 'toggle-on' : 'toggle-off',
-                                        onclick: ctrl.confirmAddress.toggle
-                                    } , [
-                                        m('.toggle-btn', {
-                                            class: ctrl.confirmAddress() ? null : 'toggle-btn--off'
-                                        }),
-                                        ctrl.confirmAddress() ? m('.u-right', 'SIM') : m('.u-left', 'NÃO')
-                                    ]
+                                m('a.toggle.w-clearfix.w-inline-block', {
+                                    class: ctrl.confirmAddress() ? 'toggle-on' : 'toggle-off',
+                                    onclick: ctrl.confirmAddress.toggle
+                                }, [
+                                    m('.toggle-btn', {
+                                        class: ctrl.confirmAddress() ? null : 'toggle-btn--off'
+                                    }),
+                                    ctrl.confirmAddress() ? m('.u-right', 'SIM') : m('.u-left', 'NÃO')
+                                ]
                                 ),
                                 m('input[type="hidden"]', {
                                     name: 'reward[surveys_attributes][confirm_address]'
@@ -182,17 +182,17 @@ const surveyCreate = {
                             m('.w-clearfix.w-col.w-col-8', [
                                 m.component(
                                     question.type === 'multiple' ? dashboardMultipleChoiceQuestion : dashboardOpenQuestion,
-                                    {question, index}
+                                    { question, index }
                                 ),
                                 m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash.u-right', {
                                     onclick: ctrl.deleteDashboardQuestion(question)
                                 })
                             ])
-                            
+
                         ])),
-                        m('button.btn.btn-large.btn-message',{
-                                onclick: ctrl.addDashboardQuestion
-                            },[
+                        m('button.btn.btn-large.btn-message', {
+                            onclick: ctrl.addDashboardQuestion
+                        }, [
                             m('span.fa.fa-plus-circle'),
                             '  Adicionar pergunta'
                         ])
@@ -203,9 +203,9 @@ const surveyCreate = {
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4',
-                            m("a.btn.btn-large[href='/bellum/poll-preview']",{
-                                    onclick: ctrl.sendQuestions
-                                },
+                            m("a.btn.btn-large[href='/bellum/poll-preview']", {
+                                onclick: ctrl.sendQuestions
+                            },
                                 'Pré-visualizar'
                             )
                         )
