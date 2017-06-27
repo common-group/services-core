@@ -6,6 +6,8 @@ import h from '../h';
 import models from '../models';
 import surveyVM from '../vms/survey-vm';
 import projectDashboardMenu from '../c/project-dashboard-menu';
+import rewardCardBig from '../c/reward-card-big';
+import surveyCreatePreview from '../c/survey-create-preview';
 import dashboardMultipleChoiceQuestion from '../c/dashboard-multiple-choice-question';
 import dashboardOpenQuestion from '../c/dashboard-open-question';
 
@@ -15,6 +17,7 @@ const surveyCreate = {
     controller(args) {
         const
             loader = postgrest.loaderWithToken,
+            showPreview = h.toggleProp(false, true),
             confirmAddress = h.toggleProp(true, false),
             projectDetails = m.prop([]),
             rewardFilterVM = postgrest.filtersVM({
@@ -88,13 +91,14 @@ const surveyCreate = {
         };
 
         const sendQuestions = () => {
-            surveyVM.submitQuestions(reward_id).then(console.log).catch(console.error);
+            surveyVM.submitQuestions(reward_id).then(m.route(`/projects/${project_id}/surveys`)).catch(console.error);
 
             return false;
         };
 
         return {
             reward,
+            showPreview,
             project_id,
             confirmAddress,
             projectDetails,
@@ -104,17 +108,13 @@ const surveyCreate = {
             sendQuestions
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const project = _.first(ctrl.projectDetails());
         const reward = _.first(ctrl.reward());
-        return (project ? m('form.project-surveys',
-            {
-                action: `/rewards/${reward.id}/surveys/questions`,
-                method: 'POST'
-            },
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
-            }) : ''),
+        return (project ? m('.project-surveys', (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
+            project: m.prop(project)
+        }) : ''),
+            ctrl.showPreview() ? m(surveyCreatePreview, { confirmAddress: ctrl.confirmAddress(), showPreview: ctrl.showPreview, surveyVM, reward, sendQuestions: ctrl.sendQuestions }) : [
             (reward ?
                 m('.card-terciary.section.u-text-center',
                     m('.w-container',
@@ -124,30 +124,15 @@ const surveyCreate = {
                                     m('.fontsize-small.fontweight-semibold.u-marginbottom-20',
                                         `Questionário para os ${reward.paid_count} apoiadores da recompensa`
                                     ),
-                                    m('.card.u-radius', [
-                                        m('.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                                            `R$${reward.minimum_value} ou mais${reward.title ? `: ${reward.title}` : ''}`
-                                        ),
-                                        m('.fontcolor-secondary.fontsize-small.u-marginbottom-20',
-                                            `${reward.description.substring(0, 140)}...`
-                                        ),
-                                        m('.fontcolor-secondary.fontsize-smallest', [
-                                            m('span.fontcolor-terciary',
-                                                'Entrega prevista: '
-                                            ),
-                                            h.momentify(reward.deliver_at, 'MMMM/YYYY'),
-                                            m('span.fontcolor-terciary', '    |    '),
-                                            m('span.fontcolor-terciary', 'Envio: '),
-                                            I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
-                                        ])
-                                    ])
+                                    m(rewardCardBig, { reward })
                                 ])
                             )
                         ])
                     )
-                ) : ''),
-            m('.divider'),
-            m('.section',
+                )
+              : ''),
+                m('.divider'),
+                m('.section',
                 m('.w-row', [
                     m('.w-col.w-col-10.w-col-push-1', [
                         m('.card.card-terciary.medium.u-marginbottom-20.u-text-center', [
@@ -199,19 +184,19 @@ const surveyCreate = {
                     ])
                 ])
             ),
-            m('.section',
+                m('.section',
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4',
-                            m("a.btn.btn-large[href='/bellum/poll-preview']", {
-                                onclick: ctrl.sendQuestions
+                            m('a.btn.btn-large[href=\'javascript:void(0);\']', {
+                                onclick: ctrl.showPreview.toggle
                             },
                                 'Pré-visualizar'
                             )
                         )
                     ])
                 )
-            )
+            )]
         ) : h.loader());
     }
 };
