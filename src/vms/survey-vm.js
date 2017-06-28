@@ -14,6 +14,7 @@ const openQuestionType = 'open',
 
 const dashboardQuestions = m.prop([newQuestion()]);
 const confirmAddress = h.toggleProp(true, false);
+const questionWithEmptyFields = m.prop([]);
 
 const submitQuestions = rewardId => m.request({
     method: 'POST',
@@ -62,6 +63,41 @@ const deleteMultipleQuestionOption = (question, idx) => {
     return false;
 };
 
+const isValid = () => {
+    questionWithEmptyFields([]);
+
+    return _.reduce(dashboardQuestions(), (isValid, question) => {
+        if (!isValid) {
+            return isValid;
+        }
+
+        const questionTitle = question.question.trim();
+
+        if (questionTitle === '') {
+            questionWithEmptyFields().push(question);
+        }
+
+        if (question.type === multipleQuestionType) {
+            const hasEmptyChoice = _.reduce(
+                survey_question_choices_attributes(), 
+                (hasEmpty, choice) => {
+                    if (hasEmpty) {
+                        return hasEmpty;
+                    }
+
+                    if (choice.trim() === '') {
+                        return true;
+                    }
+
+                    return false;
+                },
+                false
+            );
+        }
+
+    }, true);
+};
+
 const surveyVM = {
     addDashboardQuestion,
     confirmAddress,
@@ -72,7 +108,8 @@ const surveyVM = {
     addMultipleQuestionOption,
     submitQuestions,
     openQuestionType,
-    multipleQuestionType
+    multipleQuestionType,
+    isValid
 };
 
 export default surveyVM;
