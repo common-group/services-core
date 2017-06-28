@@ -51,8 +51,8 @@ const addressForm = {
             };
 
         args.fields(address);
-        args.countryName(ctrl.countries() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');
-        args.stateName(ctrl.states() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '');
+        args.countryName(ctrl.countries() ? (fields.countryID() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '') : '');
+        args.stateName(ctrl.states() ? (fields.stateID() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '') : '');
 
         return m('.u-marginbottom-30.w-form', [
             m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',

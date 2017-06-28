@@ -18,7 +18,7 @@ const surveyCreate = {
         const
             loader = postgrest.loaderWithToken,
             showPreview = h.toggleProp(false, true),
-            confirmAddress = h.toggleProp(true, false),
+            confirmAddress = surveyVM.confirmAddress,
             projectDetails = m.prop([]),
             rewardFilterVM = postgrest.filtersVM({
                 id: 'eq'

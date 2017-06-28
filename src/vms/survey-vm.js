@@ -13,11 +13,13 @@ const openQuestionType = 'open',
     });
 
 const dashboardQuestions = m.prop([newQuestion()]);
+const confirmAddress = h.toggleProp(true, false);
 
 const submitQuestions = rewardId => m.request({
     method: 'POST',
     url: `/rewards/${rewardId}/surveys`,
     data: {
+        confirm_address: confirmAddress(),
         survey_open_questions_attributes: _.filter(dashboardQuestions(), { type: openQuestionType }),
         survey_multiple_choice_questions_attributes: _.filter(dashboardQuestions(), { type: multipleQuestionType })
     },
@@ -62,6 +64,7 @@ const deleteMultipleQuestionOption = (question, idx) => {
 
 const surveyVM = {
     addDashboardQuestion,
+    confirmAddress,
     dashboardQuestions,
     deleteDashboardQuestion,
     updateDashboardQuestion,

@@ -7,6 +7,7 @@ import h from '../h';
 import modalBox from '../c/modal-box';
 import surveyPreview from '../c/survey-preview';
 import ownerMessageContent from '../c/owner-message-content';
+import rewardCardBig from '../c/reward-card-big';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
@@ -80,8 +81,8 @@ const surveysShow = {
             rewardVM.rewardLoader(survey().reward_id).load().then(reward);
             const surveyData = survey();
             fields({
-                address_attributes: surveyData.address
-            } || {});
+                address_attributes: surveyData.address || {}
+            });
             _.map(surveyData.open_questions, (question) => {
                 if (question.answer) {
                     answered(true);
@@ -245,37 +246,7 @@ const surveysShow = {
                                 m('.fontsize-base.u-marginbottom-20',
                                     `${project.user.name}, do projeto ${project.name}, enviou algumas perguntas para que possa seguir com a produção e entrega da recompensa que você apoiou com R$${reward.minimum_value}:`
                                 ),
-                                m('.card.u-radius', [
-                                    m('.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                                        reward.title
-                                    ),
-                                    m('.fontcolor-secondary.fontsize-small.u-marginbottom-20',
-                                        reward.description
-                                    ),
-                                    m('.fontcolor-secondary.fontsize-smallest', [
-                                        m('span.fontcolor-terciary',
-                                            'Entrega prevista:'
-                                        ),
-                                        m.trust('&nbsp;'),
-                                        h.momentify(reward.deliver_at, 'MMMM/YYYY'),
-                                        ' ',
-                                        m.trust('&nbsp;'),
-                                        ' ',
-                                        m('span.fontcolor-terciary',
-                                            '|'
-                                        ),
-                                        ' ',
-                                        m.trust('&nbsp;'),
-                                        ' ',
-                                        m.trust('&nbsp;'),
-                                        ' ',
-                                        m('span.fontcolor-terciary',
-                                            'Envio:'
-                                        ),
-                                        m.trust('&nbsp;'),
-                                        I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
-                                    ])
-                                ])
+                                m(rewardCardBig, { reward })
                             ]),
                             m('.w-col.w-col-2')
                         ])
