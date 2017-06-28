@@ -35,7 +35,15 @@ const surveys = {
         filterVM.project_id(project_id);
         const l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
-        rewardVM.fetchRewards(project_id);
+        rewardVM.fetchRewards(project_id).then(() => {
+            _.map(rewardVM.rewards(), (reward) => {
+                const l = postgrest.loaderWithToken(models.sentSurveyCount.postOptions({ reward_id: reward.id }));
+
+                l.load().then((data) => {
+                    _.extend(reward, { sentCount: data });
+                });
+            });
+        });
         l.load().then(projectDetails);
 
         return {
@@ -189,49 +197,48 @@ const surveys = {
                             )
                         ]),
                         m('.fontsize-small.table-inner', [
-                            (_.map(ctrl.rewardVM.rewards(), reward =>
-                                m('.table-row.w-row', [
-                                    m('.table-col.w-col.w-col-3', [
-                                        m('.fontsize-base.fontweight-semibold',
+                            (_.map(ctrl.rewardVM.rewards(), reward => m('.table-row.w-row', [
+                                m('.table-col.w-col.w-col-3', [
+                                    m('.fontsize-base.fontweight-semibold',
                                             `R$ ${reward.minimum_value} ou mais`
                                         ),
-                                        m('.fontsize-smallest.fontweight-semibold',
+                                    m('.fontsize-smallest.fontweight-semibold',
                                             reward.title
                                         ),
-                                        m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
+                                    m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10',
                                             `${reward.description.substring(0, 90)}...`
                                         ),
-                                        m('.fontcolor-secondary.fontsize-smallest', [
-                                            m('span.fontcolor-terciary',
+                                    m('.fontcolor-secondary.fontsize-smallest', [
+                                        m('span.fontcolor-terciary',
                                                 'Entrega prevista:'
                                             ),
-                                            m.trust('&nbsp;'),
-                                            h.momentify(reward.deliver_at, 'MMMM/YYYY')
-                                        ]),
-                                        m('.fontcolor-secondary.fontsize-smallest', [
-                                            m('span.fontcolor-terciary',
+                                        m.trust('&nbsp;'),
+                                        h.momentify(reward.deliver_at, 'MMMM/YYYY')
+                                    ]),
+                                    m('.fontcolor-secondary.fontsize-smallest', [
+                                        m('span.fontcolor-terciary',
                                                 'Envio:'
                                             ),
-                                            m.trust('&nbsp;'),
-                                            I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
-                                        ])
-                                    ]),
-                                    m('.table-col.w-col.w-col-9',
+                                        m.trust('&nbsp;'),
+                                        I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
+                                    ])
+                                ]),
+                                m('.table-col.w-col.w-col-9',
                                         m('.u-margintop-20.w-row', [
                                             m('.u-text-center-big-only.w-col.w-col-4.w-col-small-4.w-col-tiny-4',
                                                 m('.w-row', [
                                                     m('.w-col.w-col-6',
                                                         m('.fontsize-base', [
                                                             m('span.fa.fa-paper-plane.fontcolor-terciary',
-                                                                '.'
+                                                                ' '
                                                             ),
-                                                            ' 200'
+                                                            ` ${reward.sentCount}`
                                                         ])
                                                     ),
                                                     m('.w-col.w-col-6',
                                                         m('.fontsize-base', [
                                                             m('span.fa.fa-check-circle.fontcolor-terciary',
-                                                                '.'
+                                                                ''
                                                             ),
                                                             ' 30 ',
                                                             m('span.fontcolor-secondary',
@@ -248,7 +255,7 @@ const surveys = {
                                             availableAction(reward)
                                         ])
                                     )
-                                ])))
+                            ])))
                         ])
                     ])
                 ])
