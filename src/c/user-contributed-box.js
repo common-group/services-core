@@ -35,8 +35,10 @@ const userContributedBox = {
                 name: contribution.project_owner_name,
                 project_id: contribution.project_id
             })],
-            answeredAt = contribution.survey && (_.find(contribution.survey.multiple_choice_questions, question => !_.isEmpty(question.answered_at)).answered_at ||
-                _.find(contribution.survey.open_questions, question => !_.isEmpty(question.answered_at)).answered_at),
+            mcAnswered = contribution.survey && _.find(contribution.survey.multiple_choice_questions, question => !_.isEmpty(question.answered_at)),
+            openAnswered = contribution.survey && _.find(contribution.survey.open_questions, question => !_.isEmpty(question.answered_at)),
+            answeredAt = (mcAnswered ? mcAnswered.answered_at : null ||
+                openAnswered ? openAnswered.answered_at : null),
             finishedAt = contribution.survey && contribution.survey.finished_at;
 
         return (!_.isEmpty(contribution) ? m('div',

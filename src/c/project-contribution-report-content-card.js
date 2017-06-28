@@ -228,10 +228,9 @@ const projectContributionReportContentCard = {
                                     ])
                                 ]),
 
-
                                 (survey ?
                                 m('.w-col.w-col-6', [
-                                    survey.confirm_address ? [
+                                    survey.confirm_address && survey.address ? [
                                         m('.fontsize-base.fontweight-semibold',
                                         I18n.t('survey.survey', contributionScope())
                                     ),
@@ -256,7 +255,7 @@ const projectContributionReportContentCard = {
                                         ])] : '',
                                     _.map(survey.multiple_choice_questions, (mcQuestion) => {
                                         const answer = _.find(mcQuestion.question_choices, choice => choice.id === mcQuestion.survey_question_choice_id);
-                                        return m('.fontsize-small', [
+                                        return !answer ? '' : m('.fontsize-small', [
                                             m('.fontweight-semibold.lineheight-looser',
                                               mcQuestion.question
                                           ),
