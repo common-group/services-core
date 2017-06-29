@@ -37,10 +37,15 @@ const surveys = {
 
         rewardVM.fetchRewards(project_id).then(() => {
             _.map(rewardVM.rewards(), (reward) => {
+                _.extend(reward, { sentCount: '', answeredCount: '' });
                 const l = postgrest.loaderWithToken(models.sentSurveyCount.postOptions({ reward_id: reward.id }));
+                const l2 = postgrest.loaderWithToken(models.answeredSurveyCount.postOptions({ reward_id: reward.id }));
 
                 l.load().then((data) => {
-                    _.extend(reward, { sentCount: data });
+                    reward.sentCount = data;
+                });
+                l2.load().then((data) => {
+                    reward.answeredCount = data;
                 });
             });
         });
@@ -56,10 +61,10 @@ const surveys = {
     },
     view(ctrl) {
         const project = _.first(ctrl.projectDetails());
+        const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
+        const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));
         const availableAction = (reward) => {
-            const canBeCreated = !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
-            const cannotBeCreated = !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));
-            if (canBeCreated) {
+            if (canBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-small-stack.w-col-tiny-tiny-stack',
                     m('a.btn.btn-small.w-button', {
                         onclick: () => m.route(`/projects/${ctrl.project_id}/rewards/${reward.id}/surveys/new`)
@@ -67,7 +72,7 @@ const surveys = {
                         'Criar questionário'
                     )
                 );
-            } else if (cannotBeCreated) {
+            } else if (cannotBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-3.w-col-tiny-tiny-stack',
                     m('a.btn.btn-desactivated.btn-small.btn-terciary.w-button',
                         'Criar questionário'
@@ -228,29 +233,32 @@ const surveys = {
                                             m('.u-text-center-big-only.w-col.w-col-4.w-col-small-4.w-col-tiny-4',
                                                 m('.w-row', [
                                                     m('.w-col.w-col-6',
+                                                        (!canBeCreated(reward) && !cannotBeCreated(reward)) ?
                                                         m('.fontsize-base', [
                                                             m('span.fa.fa-paper-plane.fontcolor-terciary',
                                                                 ' '
                                                             ),
                                                             ` ${reward.sentCount}`
-                                                        ])
+                                                        ]) : ''
                                                     ),
                                                     m('.w-col.w-col-6',
+                                                        (!canBeCreated(reward) && !cannotBeCreated(reward)) ?
                                                         m('.fontsize-base', [
                                                             m('span.fa.fa-check-circle.fontcolor-terciary',
                                                                 ''
                                                             ),
-                                                            ' 30 ',
+                                                            ` ${reward.answeredCount}`,
                                                             m('span.fontcolor-secondary',
-                                                                '(15%)'
+                                                                `(${reward.sentCount === 0 ? '0' : Math.floor((reward.answeredCount / reward.sentCount) * 100)}%)`
                                                             )
-                                                        ])
+                                                        ]) : ''
                                                     )
                                                 ])
                                             ),
                                             m('.u-text-center-big-only.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
                                                 // m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.u-marginright-10.w-button'),
-                                                m("a.btn.btn-inline.btn-small.btn-terciary.fa.fa-download.fa-lg.w-button[href='#']")
+                                                (!canBeCreated(reward) && !cannotBeCreated(reward)) ?
+                                                    m(`a.btn.btn-inline.btn-small.btn-terciary.fa.fa-download.fa-lg.w-button[href='/pt/reports/contribution_reports_for_project_owners.csv?project_id=${project.project_id}&amp;reward_id=${reward.id}&amp;state=paid'][target='_blank']`) : ''
                                             ]),
                                             availableAction(reward)
                                         ])

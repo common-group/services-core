@@ -25,7 +25,6 @@ const surveysShow = {
             displayModal = h.toggleProp(false, true),
             showPreview = h.toggleProp(false, true),
             showThanks = h.toggleProp(false, true),
-            answered = m.prop(false),
             finished = m.prop(false),
             countryName = m.prop(''),
             stateName = m.prop(''),
@@ -77,6 +76,7 @@ const surveysShow = {
             survey(data);
             survey(_.first(survey()));
             finished(!_.isEmpty(survey().finished_at));
+            answeredAt(survey().survey_answered_at);
             projectVM.fetchProject(survey().project_id);
             rewardVM.rewardLoader(survey().reward_id).load().then(reward);
             const surveyData = survey();
@@ -84,20 +84,12 @@ const surveysShow = {
                 address_attributes: surveyData.address || {}
             });
             _.map(surveyData.open_questions, (question) => {
-                if (question.answer) {
-                    answered(true);
-                    answeredAt(question.answered_at);
-                }
                 openQuestions().push({
                     question,
                     value: m.prop(question.answer)
                 });
             });
             _.map(surveyData.multiple_choice_questions, (question) => {
-                if (question.survey_question_choice_id) {
-                    answered(true);
-                    answeredAt(question.answered_at);
-                }
                 multipleChoiceQuestions().push({
                     question,
                     value: m.prop(question.survey_question_choice_id)
@@ -115,7 +107,6 @@ const surveysShow = {
             reward,
             sendMessage,
             displayModal,
-            answered,
             answeredAt,
             sendAnswer,
             showPreview,
@@ -264,7 +255,7 @@ const surveysShow = {
                                                     m('span.fa.fa-exclamation-circle',
                                                         ''
                                                     ),
-                                                    (ctrl.answered() ?
+                                                    (ctrl.answeredAt() ?
                                                         m('span', ` Esse questionário não está mais aberto para receber respostas. Segue abaixo as respostas que você enviou no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Qualquer dúvida, `,
                                                             m('a.alt-link[href=\'javascript:void(0);\']', {
                                                                 onclick: ctrl.sendMessage
@@ -289,7 +280,7 @@ const surveysShow = {
                                         ])
                                     ),
 
-                                    (ctrl.answered() ?
+                                    (ctrl.answeredAt() ?
                                         m(surveyPreview, {
                                             countryName: countryName(),
                                             stateName: stateName(),
@@ -309,7 +300,7 @@ const surveysShow = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-10',
                                         m('.card.card-terciary.medium.u-marginbottom-30', [
-                                            (ctrl.answered() ?
+                                            (ctrl.answeredAt() ?
                                                 m('.card.card-message.u-marginbottom-40.u-radius',
                                                     m('.fontsize-base', [
                                                         m('span.fa.fa-exclamation-circle',

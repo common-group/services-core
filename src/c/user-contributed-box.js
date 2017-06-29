@@ -35,11 +35,8 @@ const userContributedBox = {
                 name: contribution.project_owner_name,
                 project_id: contribution.project_id
             })],
-            mcAnswered = contribution.survey && _.find(contribution.survey.multiple_choice_questions, question => !_.isEmpty(question.answered_at)),
-            openAnswered = contribution.survey && _.find(contribution.survey.open_questions, question => !_.isEmpty(question.answered_at)),
-            answeredAt = (mcAnswered ? mcAnswered.answered_at : null ||
-                openAnswered ? openAnswered.answered_at : null),
-            finishedAt = contribution.survey && contribution.survey.finished_at;
+            finishedAt = contribution.survey && contribution.survey.finished_at,
+            answeredAt = contribution.survey_answered_at;
 
         return (!_.isEmpty(contribution) ? m('div',
             (ctrl.displayModal() ? m.component(modalBox, {
