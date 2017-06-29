@@ -51,7 +51,7 @@ const surveyCreatePreview = {
                                     ),
                                     m('form', [
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-6', [
+                                            m('.w-sub-col.w-col.w-col-6', [
                                                 m('label.field-label.fontweight-semibold',
                                                     'País / Country'
                                                 ),
@@ -63,7 +63,7 @@ const surveyCreatePreview = {
                                             ]),
                                             m('.w-col.w-col-6',
                                                 m('.w-row', [
-                                                    m('._w-sub-col-middle.w-col.w-col-6.w-col-small-6.w-col-tiny-6'),
+                                                    m('.w-sub-col-middle.w-col.w-col-6.w-col-small-6.w-col-tiny-6'),
                                                     m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6')
                                                 ])
                                             )
@@ -75,7 +75,7 @@ const surveyCreatePreview = {
                                             m("input.positive.text-field.w-input[type='email']")
                                         ]),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-4', [
+                                            m('.w-sub-col.w-col.w-col-4', [
                                                 m('label.field-label.fontweight-semibold',
                                                     'Número'
                                                 ),
@@ -95,7 +95,7 @@ const surveyCreatePreview = {
                                             ])
                                         ]),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-4', [
+                                            m('.w-sub-col.w-col.w-col-4', [
                                                 m('label.field-label.fontweight-semibold',
                                                     'CEP'
                                                 ),
@@ -119,7 +119,7 @@ const surveyCreatePreview = {
                                             ])
                                         ]),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-6', [
+                                            m('.w-sub-col.w-col.w-col-6', [
                                                 m('label.field-label.fontweight-semibold',
                                                     'Telefone'
                                                 ),
@@ -183,7 +183,7 @@ const surveyCreatePreview = {
                 ]),
                 m('.u-marginbottom-20.w-row', [
                     m('.w-col.w-col-3'),
-                    m('._w-sub-col.w-col.w-col-4',
+                    m('.w-sub-col.w-col.w-col-4',
                         m("a.btn.btn-large[href='javascript:void(0);']", { onclick: args.sendQuestions }, [
                             m('span.fa.fa-paper-plane',
                                 ''

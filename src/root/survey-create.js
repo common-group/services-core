@@ -10,12 +10,14 @@ import rewardCardBig from '../c/reward-card-big';
 import surveyCreatePreview from '../c/survey-create-preview';
 import dashboardMultipleChoiceQuestion from '../c/dashboard-multiple-choice-question';
 import dashboardOpenQuestion from '../c/dashboard-open-question';
+import inlineError from '../c/inline-error';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const surveyCreate = {
     controller(args) {
         const
+            showError = m.prop(false),
             loader = postgrest.loaderWithToken,
             showPreview = h.toggleProp(false, true),
             confirmAddress = surveyVM.confirmAddress,
@@ -90,6 +92,17 @@ const surveyCreate = {
             return false;
         };
 
+        const toggleShowPreview = () => {
+            showError(false);
+
+            if (surveyVM.isValid()){
+                showPreview(true);
+            } else {
+                showPreview(false);
+                showError(true);
+            }
+        };
+
         const sendQuestions = () => {
             surveyVM.submitQuestions(reward_id).then(m.route(`/projects/${project_id}/surveys`)).catch(console.error);
 
@@ -98,7 +111,9 @@ const surveyCreate = {
 
         return {
             reward,
+            showError,
             showPreview,
+            toggleShowPreview,
             project_id,
             confirmAddress,
             projectDetails,
@@ -189,10 +204,11 @@ const surveyCreate = {
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4',
                             m('a.btn.btn-large[href=\'javascript:void(0);\']', {
-                                onclick: ctrl.showPreview.toggle
+                                onclick: ctrl.toggleShowPreview
                             },
                                 'Pré-visualizar'
-                            )
+                            ),
+                            ctrl.showError() ? m(inlineError, {message: 'O campo pergunta não pode ser vazio.'}) : null
                         )
                     ])
                 )

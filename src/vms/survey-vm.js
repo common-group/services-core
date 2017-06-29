@@ -8,7 +8,14 @@ const openQuestionType = 'open',
         type: openQuestionType,
         question: '',
         description: '',
-        survey_question_choices_attributes: m.prop([]),
+        survey_question_choices_attributes: m.prop([
+            {
+                option: 'opção 1'
+            }, 
+            {
+                option: 'opção 2'
+            }
+        ]),
         toggleDropdown: h.toggleProp(false, true)
     });
 
@@ -67,34 +74,17 @@ const isValid = () => {
     questionWithEmptyFields([]);
 
     return _.reduce(dashboardQuestions(), (isValid, question) => {
-        if (!isValid) {
+        if (isValid === false) {
             return isValid;
         }
 
-        const questionTitle = question.question.trim();
-
-        if (questionTitle === '') {
+        if (question.question.trim() === '') {
             questionWithEmptyFields().push(question);
+
+            return false;
         }
 
-        if (question.type === multipleQuestionType) {
-            const hasEmptyChoice = _.reduce(
-                survey_question_choices_attributes(), 
-                (hasEmpty, choice) => {
-                    if (hasEmpty) {
-                        return hasEmpty;
-                    }
-
-                    if (choice.trim() === '') {
-                        return true;
-                    }
-
-                    return false;
-                },
-                false
-            );
-        }
-
+        return true;
     }, true);
 };
 

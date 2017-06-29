@@ -215,7 +215,7 @@ const posts = {
                                     }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
                                     m('.u-marginbottom-20.w-row', [
                                         m('.w-col.w-col-3'),
-                                        m('._w-sub-col.w-col.w-col-6',
+                                        m('.w-sub-col.w-col.w-col-6',
                                             m('button.btn.btn-large', {
                                                 onclick: ctrl.togglePreview
                                             },

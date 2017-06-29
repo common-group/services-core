@@ -49,7 +49,8 @@ const dashboardMultipleChoiceQuestion = {
                     m('.w-col.w-col-8',
                             m('input.positive.text-field.w-input[type="text"]', {
                                 name: `reward[surveys_attributes][questions][${index}][question]`,
-                                onchange: m.withAttr('value', newValue => question.question = newValue)
+                                onchange: m.withAttr('value', newValue => question.question = newValue),
+                                value: question.question
                             })
                         )
                 ]),
@@ -78,7 +79,8 @@ const dashboardMultipleChoiceQuestion = {
                             m('.w-col.w-col-10.w-col-medium-10.w-col-small-10.w-col-tiny-10',
                                     m('input.positive.text-field.w-input[type="text"]', {
                                         onchange: m.withAttr('value', ctrl.updateOption(idx)),
-                                        name: `reward[surveys_attributes][questions][${index}][question][survey_question_choices_attributes][${idx}][option]`
+                                        name: `reward[surveys_attributes][questions][${index}][question][survey_question_choices_attributes][${idx}][option]`,
+                                        value: option.option
                                     })
                                 ),
                             m('.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1',
