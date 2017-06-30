@@ -246,7 +246,7 @@ const projectContributionReportContentCard = {
                                                 m('br'),
                                                 `${survey.address.address_street}, ${survey.address.address_number} ${survey.address.address_complement}`,
                                                 m('br'),
-                                                `${I18n.t('survey.address_neighbourhood', contributionScope())}: ${survey.address.address_neighbourhood}`,
+                                                `${I18n.t('survey.address_neighbourhood', contributionScope())} ${survey.address.address_neighbourhood}`,
                                                 m('br'),
                                                 `${survey.address.address_zip_code} ${survey.address.address_city}-${survey.state_name}`,
                                                 m('br'),
@@ -264,7 +264,7 @@ const projectContributionReportContentCard = {
                                           )
                                         ]);
                                     }),
-                                    _.map(survey.openQuestions, openQuestion =>
+                                    _.map(survey.open_questions, openQuestion =>
                                       m('.fontsize-small', [
                                           m('.fontweight-semibold.lineheight-looser',
                                               openQuestion.question
