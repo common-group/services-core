@@ -81,7 +81,7 @@ const surveyCreatePreview = {
                                                 ),
                                                 m("input.positive.text-field.w-input[type='email']")
                                             ]),
-                                            m('.w-col.w-col-4', [
+                                            m('.w-sub-col.w-col.w-col-4', [
                                                 m('label.field-label.fontweight-semibold',
                                                     'Complemento'
                                                 ),
@@ -101,7 +101,7 @@ const surveyCreatePreview = {
                                                 ),
                                                 m("input.positive.text-field.w-input[type='email']")
                                             ]),
-                                            m('.w-col.w-col-4', [
+                                            m('.w-sub-col.w-col.w-col-4', [
                                                 m('label.field-label.fontweight-semibold',
                                                     'Cidade'
                                                 ),

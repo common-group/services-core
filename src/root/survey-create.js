@@ -66,7 +66,10 @@ const surveyCreate = {
                     surveyVM.updateDashboardQuestion(question);
                 }
             }, [
-                m('.dropdown-toggle.w-dropdown-toggle', choice[question.type]),
+                m('.dropdown-toggle.w-dropdown-toggle', [
+                    choice[question.type],
+                    m('span.w-icon-dropdown-toggle')
+                ]),
                 m('.card.dropdown-list.w-dropdown-list', {
                     class: question.toggleDropdown() ? 'w--open' : null
                 }, [
