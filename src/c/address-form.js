@@ -13,8 +13,9 @@ const addressForm = {
             statesLoader = postgrest.loader(models.state.getPageOptions()),
             countries = m.prop(),
             states = m.prop(),
-            data = args.fields().address_attributes,
+            data = args.fields().addresses_attributes,
             fields = {
+                id: m.prop(data.id || ''),
                 countryID: m.prop(data.country_id || ''),
                 stateID: m.prop(data.state_id || ''),
                 addressStreet: m.prop(data.address_street || ''),
@@ -37,7 +38,8 @@ const addressForm = {
     view(ctrl, args) {
         const fields = ctrl.fields,
             address = {
-                address_attributes: {
+                addresses_attributes: {
+                    id: fields.id(),
                     country_id: fields.countryID(),
                     state_id: fields.stateID(),
                     address_street: fields.addressStreet(),

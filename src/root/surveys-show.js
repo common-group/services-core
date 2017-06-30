@@ -48,18 +48,22 @@ const surveysShow = {
             sendAnswer = () => {
                 const data = {};
                 _.extend(data, {
-                    survey_address_answer: fields()
+                    survey_address_answers_attributes: fields()
                 });
                 _.extend(data, {
-                    open_questions: _.map(openQuestions(), question => ({
-                        id: question.question.id,
-                        value: question.value()
+                    survey_open_question_answers_attributes: _.map(openQuestions(), question => ({
+                        id: question.question.answer_id,
+                        survey_open_question_id: question.question.id,
+                        contribution_id: contributionId,
+                        answer: question.value()
                     }))
                 });
                 _.extend(data, {
-                    multiple_choice_questions: _.map(multipleChoiceQuestions(), question => ({
-                        id: question.question.id,
-                        value: question.value()
+                    survey_multiple_choice_question_answers_attributes: _.map(multipleChoiceQuestions(), question => ({
+                        id: question.question.survey_question_choice_id,
+                        contribution_id: contributionId,
+                        survey_multiple_choice_question_id: question.question.id,
+                        survey_question_choice_id: question.value()
                     }))
                 });
                 m.request({
@@ -81,7 +85,7 @@ const surveysShow = {
             rewardVM.rewardLoader(survey().reward_id).load().then(reward);
             const surveyData = survey();
             fields({
-                address_attributes: surveyData.address || {}
+                addresses_attributes: surveyData.address || {}
             });
             _.map(surveyData.open_questions, (question) => {
                 openQuestions().push({

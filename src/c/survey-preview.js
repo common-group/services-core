@@ -38,31 +38,31 @@ const surveyPreview = {
                                         `${I18n.t('address_street', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.address_street,
+                                    ctrl.fields().addresses_attributes.address_street,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${I18n.t('address_number', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.address_number,
+                                    ctrl.fields().addresses_attributes.address_number,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${I18n.t('address_complement', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.address_complement,
+                                    ctrl.fields().addresses_attributes.address_complement,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${I18n.t('address_neighbourhood', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.address_neighbourhood,
+                                    ctrl.fields().addresses_attributes.address_neighbourhood,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${I18n.t('address_city', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.address_city,
+                                    ctrl.fields().addresses_attributes.address_city,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${I18n.t('address_state', I18nScope())}:`
@@ -74,13 +74,13 @@ const surveyPreview = {
                                         `${I18n.t('address_zip_code', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.address_zip_code,
+                                    ctrl.fields().addresses_attributes.address_zip_code,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${I18n.t('phone_number', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    ctrl.fields().address_attributes.phone_number
+                                    ctrl.fields().addresses_attributes.phone_number
                                 ])
                             ]),
                             _.map(ctrl.multipleChoiceQuestions, item =>
