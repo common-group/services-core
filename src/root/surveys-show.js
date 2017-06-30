@@ -60,7 +60,7 @@ const surveysShow = {
                 });
                 _.extend(data, {
                     survey_multiple_choice_question_answers_attributes: _.map(multipleChoiceQuestions(), question => ({
-                        id: question.question.survey_question_choice_id,
+                        id: question.question.answer_id,
                         contribution_id: contributionId,
                         survey_multiple_choice_question_id: question.question.id,
                         survey_question_choice_id: question.value()
