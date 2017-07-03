@@ -87,7 +87,7 @@ const projectDashboardMenu = {
                         m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"][width=80]`)
 
                     ]),
-                    m('#info-links', [
+                    m('#info-links.u-marginbottom-20', [
                         m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [
                             m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
                         ]), (project.is_published ? [
@@ -100,6 +100,9 @@ const projectDashboardMenu = {
                                 project.posts_count > 0 ?
                                 m('span.badge', project.posts_count) :
                                 m('span.badge.badge-attention', 'Nenhuma')
+                            ]),
+                            m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, [
+                                m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n.t('surveys_tab', I18nScope())
                             ])
                         ] : '')
                     ]),

@@ -115,7 +115,7 @@ const postsPreview = {
                 ]),
                 m('.u-marginbottom-20.w-row', [
                     m('.w-col.w-col-3'),
-                    m('._w-sub-col.w-col.w-col-4',
+                    m('.w-sub-col.w-col.w-col-4',
                         m('button.btn.btn-large', {
                             onclick: ctrl.sendNotification
                         }, [

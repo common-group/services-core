@@ -35,14 +35,12 @@ const projectHeader = {
                     onclick: ctrl.showContributions.toggle
                 }, 'Detalhes')
             ]),
-            ctrl.showContributions() ? m('.card.u-margintop-20',
-                m('.w-row',
+            ctrl.showContributions() ? m('.u-margintop-20.w-row',
                     _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, {
                         contribution,
                         rewardDetails
                     }))
-                )
-            ) : ''
+                ) : ''
         ]) : '';
 
         return (!_.isUndefined(project()) ? m('#project-header', [

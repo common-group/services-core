@@ -4,6 +4,8 @@ import adminBalanceTranfers from './root/admin-balance-tranfers';
 import flex from './root/flex';
 import insights from './root/insights';
 import posts from './root/posts';
+import surveys from './root/surveys';
+import surveyCreate from './root/survey-create';
 import jobs from './root/jobs';
 import liveStatistics from './root/live-statistics';
 import projectsContributionReport from './root/projects-contribution-report';
@@ -13,6 +15,7 @@ import projectsHome from './root/projects-home';
 import projectsShow from './root/projects-show';
 import projectsContribution from './root/projects-contribution';
 import usersShow from './root/users-show';
+import surveysShow from './root/surveys-show';
 import usersEdit from './root/users-edit';
 import projectEdit from './root/project-edit';
 import projectsPayment from './root/projects-payment';
@@ -45,6 +48,7 @@ const c = {
         Flex: flex,
         Insights: insights,
         Posts: posts,
+        Surveys: surveys,
         Jobs: jobs,
         LiveStatistics: liveStatistics,
         ProjectsContributionReport: projectsContributionReport,
@@ -53,8 +57,10 @@ const c = {
         ProjectsHome: projectsHome,
         ProjectsShow: projectsShow,
         UsersShow: usersShow,
+        SurveysShow: surveysShow,
         UsersEdit: usersEdit,
         ProjectEdit: projectEdit,
+        SurveyCreate: surveyCreate,
         ProjectsContribution: projectsContribution,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,

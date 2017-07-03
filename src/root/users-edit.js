@@ -108,7 +108,7 @@ const usersEdit = {
                     ),
 
                 m('section.section',
-                  m((ctrl.hash() == '#balance' ? '.w-section' : '.w-container'),
+                  m((ctrl.hash() == '#projects' ? '.w-container' : '.w-section'),
                             m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
                         )
                     )
