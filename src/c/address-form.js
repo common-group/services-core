@@ -147,7 +147,7 @@ const addressForm = {
                         ),
                         m('.w-col.w-col-4',
                             m('.fontsize-small.w-radio', [
-                                m("input.w-radio-inputp[name='nationality'][type='radio']", {
+                                m("input.w-radio-input[name='nationality'][type='radio']", {
                                     checked: international(),
                                     onclick: () => {
                                         international(true);
