@@ -13,7 +13,7 @@ import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
 import addressForm from '../c/address-form';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
+const addressScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveysShow = {
     controller(args) {
@@ -29,7 +29,7 @@ const surveysShow = {
             countryName = m.prop(''),
             stateName = m.prop(''),
             answeredAt = m.prop(''),
-            fields = m.prop(),
+            fields = m.prop({}),
             openQuestions = m.prop([]),
             multipleChoiceQuestions = m.prop([]),
             user = userVM.getCurrentUser(),
@@ -44,6 +44,17 @@ const surveysShow = {
                 vm.contribution_id(contributionId);
 
                 return postgrest.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            },
+            preview = () => {
+                if (survey().confirm_address) {
+                    window.location.hash = '#address-form';
+                    if (fields().validate()) {
+                        scroll(0, 0);
+                        showPreview.toggle();
+                    }
+                } else {
+                    showPreview.toggle();
+                }
             },
             sendAnswer = () => {
                 const data = {};
@@ -106,6 +117,7 @@ const surveysShow = {
             countryName,
             stateName,
             user,
+            preview,
             finished,
             fields,
             reward,
@@ -314,11 +326,15 @@ const surveysShow = {
                                                     ])
                                                 ) : ''),
                                             (survey.confirm_address ?
+                                            [
+                                                m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                I18n.t('delivery_address', addressScope())
+                                                ),
                                                 m(addressForm, {
                                                     countryName,
                                                     stateName,
                                                     fields: ctrl.fields
-                                                }) :
+                                                })] :
                                                 ''),
                                             _.map(multipleChoiceQuestions, item =>
                                                 m('.u-marginbottom-30.w-form', [
@@ -361,8 +377,7 @@ const surveysShow = {
                                     m('.w-col.w-col-4',
                                         m('a.btn.btn-large', {
                                             onclick: () => {
-                                                scroll(0, 0);
-                                                ctrl.showPreview.toggle();
+                                                ctrl.preview();
                                             }
                                         },
                                             'Enviar'
