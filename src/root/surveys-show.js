@@ -181,6 +181,7 @@ const surveysShow = {
                     )
                 ),
                 m(surveyPreview, {
+                    confirmAddress: survey.confirm_address,
                     countryName: countryName(),
                     stateName: stateName(),
                     fields: ctrl.fields,
@@ -299,6 +300,7 @@ const surveysShow = {
 
                                     (ctrl.answeredAt() ?
                                         m(surveyPreview, {
+                                            confirmAddress: survey.confirm_address,
                                             countryName: countryName(),
                                             stateName: stateName(),
                                             fields: ctrl.fields,
