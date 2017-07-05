@@ -14,7 +14,8 @@ const dashboardOpenQuestion = {
                     m('.w-col.w-col-8',
                         m('input.positive.text-field.w-input[name="question"][type="text"]', {
                             name: `reward[surveys_attributes][questions][${index}][question]`,
-                            onchange: m.withAttr('value', newValue => question.question = newValue)
+                            onchange: m.withAttr('value', newValue => question.question = newValue),
+                            value: question.question
                         })
                     )
                 ]),
@@ -27,7 +28,8 @@ const dashboardOpenQuestion = {
                     m('.w-col.w-col-8',
                         m('input.positive.text-field.w-input[type="text"]', {
                             name: `reward[surveys_attributes][questions][${index}][description]`,
-                            onchange: m.withAttr('value', newValue => question.description = newValue)
+                            onchange: m.withAttr('value', newValue => question.description = newValue),
+                            value: question.description
                         })
                     )
                 ])
