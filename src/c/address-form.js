@@ -42,8 +42,7 @@ const addressForm = {
                 addressZipCode: m.prop(false),
                 phoneNumber: m.prop(false)
             },
-            international = m.prop(fields.countryID() !== '' && fields.countryID() !== defaultCountryID),
-            disableFields = m.prop(true);
+            international = m.prop(fields.countryID() !== '' && fields.countryID() !== defaultCountryID);
 
         _.extend(args.fields(), {
             validate: () => {
@@ -63,7 +62,7 @@ const addressForm = {
         });
 
         const lookupZipCode = (zipCode) => {
-            fields.addressZipCode(zipCode);
+            fields.addressZipCode(h.numbersOnlyMask(zipCode));
             if (zipCode.length === 8) {
                 m.request({
                     method: 'GET',
@@ -92,7 +91,6 @@ const addressForm = {
             zipCodeErrorMessage,
             errors,
             defaultCountryID,
-            disableFields,
             fields,
             international,
             states,
@@ -295,14 +293,11 @@ const addressForm = {
                                 m('.w-col.w-col-6')
                             ]),
                             m('div', [
-                                m('.field-label.fontweight-semibold', {
-                                    class: ctrl.disableFields() ? 'fontcolor-terciary' : ''
-                                },
+                                m('.field-label.fontweight-semibold',
                                     `${I18n.t('address_street', I18nScope())} *`
                                 ),
                                 m("input.positive.text-field.w-input[maxlength='256'][required='required'][type='text']", {
                                     class: errors.addressStreet() ? 'error' : '',
-                                    disabled: ctrl.disableFields(),
                                     value: ctrl.fields.addressStreet(),
                                     onchange: m.withAttr('value', ctrl.fields.addressStreet)
                                 }),
@@ -334,14 +329,11 @@ const addressForm = {
                                     })
                                 ]),
                                 m('.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold', {
-                                        class: ctrl.disableFields() ? 'fontcolor-terciary' : ''
-                                    },
+                                    m('.field-label.fontweight-semibold',
                                         `${I18n.t('address_neighbourhood', I18nScope())} *`
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressNeighbourhood() ? 'error' : '',
-                                        disabled: ctrl.disableFields(),
                                         value: ctrl.fields.addressNeighbourhood(),
                                         onchange: m.withAttr('value', ctrl.fields.addressNeighbourhood)
                                     }),
@@ -352,14 +344,11 @@ const addressForm = {
                             ]),
                             m('.w-row', [
                                 m('.w-sub-col.w-col.w-col-6', [
-                                    m('.field-label.fontweight-semibold', {
-                                        class: ctrl.disableFields() ? 'fontcolor-terciary' : ''
-                                    },
+                                    m('.field-label.fontweight-semibold',
                                         `${I18n.t('address_city', I18nScope())} *`
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressCity() ? 'error' : '',
-                                        disabled: ctrl.disableFields(),
                                         value: ctrl.fields.addressCity(),
                                         onchange: m.withAttr('value', ctrl.fields.addressCity)
                                     }),
@@ -368,14 +357,11 @@ const addressForm = {
                                     }) : ''
                                 ]),
                                 m('.w-col.w-col-6', [
-                                    m('.field-label.fontweight-semibold', {
-                                        class: ctrl.disableFields() ? 'fontcolor-terciary' : ''
-                                    },
+                                    m('.field-label.fontweight-semibold',
                                         `${I18n.t('address_state', I18nScope())} *`
                                     ),
                                     m('select.positive.text-field.w-select', {
                                         class: errors.stateID() ? 'error' : '',
-                                        disabled: ctrl.disableFields(),
                                         onchange: m.withAttr('value', ctrl.fields.stateID)
                                     }, [
                                         m('option[value=\'\']'),
