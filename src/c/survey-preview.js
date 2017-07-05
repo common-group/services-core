@@ -24,6 +24,7 @@ const surveyPreview = {
                     m('.w-col.w-col-1'),
                     m('.w-col.w-col-10',
                         m('.card.card-terciary.medium.u-radius', [
+                            (args.confirmAddress ?
                             m('.u-marginbottom-30', [
                                 m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                     I18n.t('delivery_address', I18nScope())
@@ -82,7 +83,7 @@ const surveyPreview = {
                                     m.trust('&nbsp;'),
                                     ctrl.fields().addresses_attributes.phone_number
                                 ])
-                            ]),
+                            ]) : ''),
                             _.map(ctrl.multipleChoiceQuestions, item =>
                                 m('.u-marginbottom-30', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',

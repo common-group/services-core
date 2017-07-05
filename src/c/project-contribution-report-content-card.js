@@ -155,6 +155,33 @@ const projectContributionReportContentCard = {
                                         m('.fontsize-smallest.fontcolor-secondary', `${reward.description.substring(0, 80)}...`)
                                     ]),
                                     (survey ?
+                                      survey.survey_answered_at ?
+                                      m('.w-col.w-col-3.w-col-push-1', [
+                                          m('.fontsize-smallest', [
+                                              m('a.link-hidden',
+                                                'Questionário '
+                                            ),
+                                              m('span.fontweight-semibold.text-success',
+                                                'respondido'
+                                            )
+                                          ]),
+                                          m('.fontcolor-terciary.fontsize-smallest',
+                                            `em ${h.momentify(survey.survey_answered_at, 'DD/MM/YYYY')}`
+                                        )
+                                      ]) : survey.finished_at ?
+                                      m('.w-col.w-col-3.w-col-push-1', [
+                                          m('.fontsize-smallest', [
+                                              m('a.link-hidden',
+                                                'Questionário '
+                                            ),
+                                              m('span.fontweight-semibold.text-fail',
+                                                'sem resposta'
+                                            )
+                                          ]),
+                                          m('.fontcolor-terciary.fontsize-smallest',
+                                            `finalizado em ${h.momentify(survey.finished_at, 'DD/MM/YYYY')}`
+                                        )
+                                      ]) :
                                     m('.w-col.w-col-3.w-col-push-1', [
                                         m('.fontsize-smallest', [
                                             m('a.link-hidden',
@@ -230,13 +257,13 @@ const projectContributionReportContentCard = {
 
                                 (survey ?
                                 m('.w-col.w-col-6', [
-                                    survey.confirm_address && survey.address ? [
-                                        m('.fontsize-base.fontweight-semibold',
+                                    m('.fontsize-base.fontweight-semibold',
                                         I18n.t('survey.survey', contributionScope())
                                     ),
-                                        m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
-                                        I18n.t('survey.answered_at', contributionScope({ date: moment().format() }))// TODO fixme
+                                    m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
+                                        I18n.t('survey.answered_at', contributionScope({ date: moment(survey.survey_answered_at).format('DD/MM/YYYY') }))
                                     ),
+                                    survey.confirm_address && survey.address ? [
                                         m('.fontsize-small', [
                                             m('.fontweight-semibold.lineheight-looser',
                                             I18n.t('survey.address_title', contributionScope())
