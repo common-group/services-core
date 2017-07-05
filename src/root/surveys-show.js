@@ -221,7 +221,7 @@ const surveysShow = {
                             m('.w-col.w-col-2'),
                             m('.w-col.w-col-8',
                                 m('.w-row', [
-                                    m('.w-col-small-6.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
+                                    m('.w-col-small-6.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col',
                                         m('a.btn.btn-large.btn-terciary', {
                                             onclick: ctrl.showPreview.toggle
                                         },
