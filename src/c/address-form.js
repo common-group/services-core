@@ -301,7 +301,7 @@ const addressForm = {
                                 },
                                     `${I18n.t('address_street', I18nScope())} *`
                                 ),
-                                m("input.positive.text-field.text-field-faded.w-input[maxlength='256'][required='required'][type='text']", {
+                                m("input.positive.text-field.w-input[maxlength='256'][required='required'][type='text']", {
                                     class: errors.addressStreet() ? 'error' : '',
                                     disabled: ctrl.disableFields(),
                                     value: ctrl.fields.addressStreet(),
@@ -318,7 +318,7 @@ const addressForm = {
                                     },
                                         `${I18n.t('address_number', I18nScope())} *`
                                     ),
-                                    m("input.positive.text-field.text-field-faded.w-input[required='required'][type='text']", {
+                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressNumber() ? 'error' : '',
                                         disabled: ctrl.disableFields(),
                                         value: ctrl.fields.addressNumber(),
@@ -334,7 +334,7 @@ const addressForm = {
                                     },
                                         `${I18n.t('address_complement', I18nScope())} *`
                                     ),
-                                    m("input.positive.text-field.text-field-faded.w-input[required='required'][type='text']", {
+                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         disabled: ctrl.disableFields(),
                                         value: ctrl.fields.addressComplement(),
                                         onchange: m.withAttr('value', ctrl.fields.addressComplement)
@@ -346,7 +346,7 @@ const addressForm = {
                                     },
                                         `${I18n.t('address_neighbourhood', I18nScope())} *`
                                     ),
-                                    m("input.positive.text-field.text-field-faded.w-input[required='required'][type='text']", {
+                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressNeighbourhood() ? 'error' : '',
                                         disabled: ctrl.disableFields(),
                                         value: ctrl.fields.addressNeighbourhood(),
@@ -380,7 +380,7 @@ const addressForm = {
                                     },
                                         `${I18n.t('address_state', I18nScope())} *`
                                     ),
-                                    m('select.positive.text-field.text-field-faded.w-select', {
+                                    m('select.positive.text-field.w-select', {
                                         class: errors.stateID() ? 'error' : '',
                                         disabled: ctrl.disableFields(),
                                         onchange: m.withAttr('value', ctrl.fields.stateID)

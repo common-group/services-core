@@ -141,7 +141,7 @@ const userContributedBox = {
                         (!answeredAt && finishedAt) ?
                         m('.u-text-center.w-col.w-col-2',
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                m(`a.link-error[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}'][target='_blank']`, [
+                                m(`a.link-error[href='/contributions/${contribution.contribution_id}/surveys/${contribution.survey.survey_id}'][target='_blank']`, [
                                     m("span[xmlns='http://www.w3.org/1999/xhtml']"),
                                     m("span.fa.fa-exclamation-circle[xmlns='http://www.w3.org/1999/xhtml']",
                                         ''
@@ -155,7 +155,7 @@ const userContributedBox = {
                         ) : answeredAt ?
                         m('.u-text-center.w-col.w-col-2', [
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                m(`a.link-hidden-dark[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}'][target='_blank']`, [
+                                m(`a.link-hidden-dark[href='/contributions/${contribution.contribution_id}/surveys/${contribution.survey.survey_id}'][target='_blank']`, [
                                     'Questionário',
                                     m('br'),
                                     'Respondido'
@@ -166,7 +166,7 @@ const userContributedBox = {
                             )
                         ]) :
                         m('.u-text-center.w-col.w-col-2',
-                            m(`a.btn.w-button[href='/contributions/${contribution.id}/surveys/${contribution.survey.survey_id}']`,
+                            m(`a.btn.w-button[href='/contributions/${contribution.contribution_id}/surveys/${contribution.survey.survey_id}']`,
                                 I18n.t('answer_survey', contributionScope())
                             )
                         )
