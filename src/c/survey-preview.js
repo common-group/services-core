@@ -88,13 +88,13 @@ const surveyPreview = {
                                 m('.u-marginbottom-30', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                         item.question.question
-                                    ), _.find(item.question.question_choices, choice => item.value() == choice.id).option
+                                    ), m('.fontsize-base', _.find(item.question.question_choices, choice => item.value() == choice.id).option)
                                 ])),
                             _.map(ctrl.openQuestions, item =>
                                 m('.u-marginbottom-30', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                         item.question.question
-                                    ), item.value()
+                                    ), m('.fontsize-base', item.value())
                                 ]))
                         ])
                     ),
