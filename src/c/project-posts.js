@@ -61,7 +61,7 @@ const projectPosts = {
                                 m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
                                     m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
                                 ]),
-                                    (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores.'))
+                                    (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', `Post exclusivo para apoiadores${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}.`))
                             ]),
                             m('.divider.u-marginbottom-60')
                         ])
