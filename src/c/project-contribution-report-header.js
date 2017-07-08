@@ -18,6 +18,9 @@ const projectContributionReportHeader = {
             deliveryFilter = _.findWhere(filterBuilder, {
                 label: 'delivery_filter'
             }),
+            surveyFilter = _.findWhere(filterBuilder, {
+                label: 'survey_filter'
+            }),
             mainFilter = _.findWhere(filterBuilder, {
                 component: FilterMain
             }),
@@ -48,7 +51,8 @@ const projectContributionReportHeader = {
                                 m('.w-row', [
                                     m.component(paymentStateFilter.component, paymentStateFilter.data),
                                     m.component(rewardFilter.component, rewardFilter.data),
-                                    m.component(deliveryFilter.component, deliveryFilter.data)
+                                    m.component(deliveryFilter.component, deliveryFilter.data),
+                                    m.component(surveyFilter.component, surveyFilter.data)
                                 ])
                             ),
 

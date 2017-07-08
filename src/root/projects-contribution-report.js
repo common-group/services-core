@@ -107,11 +107,11 @@ const projectContributionReport = {
                 label: 'reward_filter',
                 component: FilterDropdown,
                 data: {
-                    label: 'Recompensa selecionada',
+                    label: 'Recompensa',
                     onchange: submit,
                     name: 'reward_id',
                     vm: filterVM.reward_id,
-                    wrapper_class: '.w-sub-col.w-col.w-col-4',
+                    wrapper_class: '.w-sub-col.w-col.w-col-3',
                     options: []
                 }
             },
@@ -126,7 +126,7 @@ const projectContributionReport = {
                     onchange: submit,
                     name: 'delivery_status',
                     vm: filterVM.delivery_status,
-                    wrapper_class: '.w-col.w-col-4',
+                    wrapper_class: '.w-sub-col.w-col.w-col-3',
                     options: [{
                         value: '',
                         option: 'Todos'
@@ -151,6 +151,34 @@ const projectContributionReport = {
                 }
             },
             {
+                label: 'survey_filter',
+                component: FilterDropdown,
+                data: {
+                    label: 'Status do questionário',
+                    onchange: submit,
+                    name: 'survey_status',
+                    vm: filterVM.survey_status,
+                    wrapper_class: '.w-col.w-col-3',
+                    options: [{
+                        value: '',
+                        option: 'Todos'
+                    },
+                    {
+                        value: 'not_sent',
+                        option: 'Não enviado'
+                    },
+                    {
+                        value: 'sent',
+                        option: 'Enviado'
+                    },
+                    {
+                        value: 'answered',
+                        option: 'Respondido'
+                    }
+                    ]
+                }
+            },
+            {
                 label: 'payment_state',
                 component: FilterDropdown,
                 data: {
@@ -163,7 +191,7 @@ const projectContributionReport = {
                     name: 'state',
                     onchange: submit,
                     vm: filterVM.state,
-                    wrapper_class: '.w-sub-col.w-col.w-col-4',
+                    wrapper_class: '.w-sub-col.w-col.w-col-3',
                     options: contributionStateOptions
                 }
             }
