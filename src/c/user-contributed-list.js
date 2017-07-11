@@ -55,7 +55,7 @@ const userContributedList = {
                 m('.w-row.u-marginbottom-40.u-margintop-30', [
                     m(loadMoreBtn, {
                         collection: pagination,
-                        cssClass: '.w-col-push-5'
+                        cssClass: '.w-col-push-4'
                     })
                 ])
             ])) : m('div', ''));

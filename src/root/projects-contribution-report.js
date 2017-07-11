@@ -1,4 +1,5 @@
 import m from 'mithril';
+import $ from 'jquery';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import models from '../models';
@@ -207,6 +208,9 @@ const projectContributionReport = {
         };
 
         if (!listVM.collection().length) {
+            if (m.route.param('rewardId')) {
+                filterVM.reward_id(m.route.param('rewardId'));
+            }
             listVM.firstPage(filterVM.parameters());
         }
 
