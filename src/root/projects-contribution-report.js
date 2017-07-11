@@ -1,5 +1,4 @@
 import m from 'mithril';
-import $ from 'jquery';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import models from '../models';
