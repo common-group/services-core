@@ -68,7 +68,7 @@ const surveyCreate = {
             }, [
                 m('.dropdown-toggle.w-dropdown-toggle', [
                     choice[question.type],
-                    m('span.w-icon-dropdown-toggle')
+                    m('span.fa.fa-chevron-down.u-right')
                 ]),
                 m('.card.dropdown-list.w-dropdown-list', {
                     class: question.toggleDropdown() ? 'w--open' : null
@@ -98,7 +98,8 @@ const surveyCreate = {
         const toggleShowPreview = () => {
             showError(false);
 
-            if (surveyVM.isValid()){
+            if (surveyVM.isValid()) {
+                h.scrollTop();
                 showPreview(true);
             } else {
                 showPreview(false);
@@ -211,7 +212,7 @@ const surveyCreate = {
                             },
                                 'Pré-visualizar'
                             ),
-                            ctrl.showError() ? m(inlineError, {message: 'O campo pergunta não pode ser vazio.'}) : null
+                            ctrl.showError() ? m(inlineError, { message: 'O campo pergunta não pode ser vazio.' }) : null
                         )
                     ])
                 )

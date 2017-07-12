@@ -235,6 +235,9 @@ const projectContributionReport = {
         };
 
         if (!listVM.collection().length) {
+            if (m.route.param('rewardId')) {
+                filterVM.reward_id(m.route.param('rewardId'));
+            }
             listVM.firstPage(filterVM.parameters());
         }
 

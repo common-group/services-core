@@ -9,8 +9,13 @@ const surveyCreatePreview = {
     controller(args) {
         const openQuestions = _.filter(args.surveyVM.dashboardQuestions(), { type: 'open' }),
             multipleChoiceQuestions = _.filter(args.surveyVM.dashboardQuestions(), { type: 'multiple' });
+        const togglePreview = () => {
+            args.showPreview.toggle();
+            h.scrollTop();
+        };
 
         return {
+            togglePreview,
             multipleChoiceQuestions,
             openQuestions
         };
@@ -194,7 +199,7 @@ const surveyCreatePreview = {
                         ])
                     ),
                     m('.w-col.w-col-2',
-                        m("a.btn.btn-large.btn-terciary[href='javascript:void(0);']", { onclick: args.showPreview.toggle },
+                        m("a.btn.btn-large.btn-terciary[href='javascript:void(0);']", { onclick: ctrl.togglePreview },
                             'Editar'
                         )
                     ),

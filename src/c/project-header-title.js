@@ -7,10 +7,10 @@ const projectHeaderTitle = {
     view(ctrl, args) {
         const project = args.project;
 
-        return !_.isUndefined(project()) ? m('.w-section.page-header.u-text-center', [
+        return !_.isUndefined(project()) ? m('.w-section.page-header', [
             m('.w-container', [
-                m('h1.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
-                m('h2.fontsize-base.lineheight-looser[itemprop="author"]', [
+                m('h1.u-text-center.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
+                m('h2.u-text-center.fontsize-base.lineheight-looser[itemprop="author"]', [
                     'por ',
                     project().user ? userVM.displayName(project().user) : (project().owner_public_name ? project().owner_public_name : project().owner_name)
                 ]),
