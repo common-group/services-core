@@ -330,7 +330,7 @@ const surveysShow = {
                                                 ) : ''),
                                             (survey.confirm_address ?
                                             [
-                                                m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                                 I18n.t('delivery_address', addressScope())
                                                 ),
                                                 m(addressForm, {
