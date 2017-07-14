@@ -120,7 +120,10 @@ const addressForm = {
         args.stateName(ctrl.states() && fields.stateID() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '');
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            m('.card.card-terciary.u-marginbottom-30.u-radius.w-form', [
+            m('.fontsize-smaller.u-marginbottom-20',
+                '* Preenchimento obrigatório'
+            ),
+            m('.u-marginbottom-30', [
                 m('div',
                     m('.w-row', [
                         m('.w-col.w-col-4',
@@ -273,7 +276,7 @@ const addressForm = {
                                 m('.w-col.w-col-6', [
                                     m('.field-label', [
                                         m('span.fontweight-semibold',
-                                            I18n.t('address_zip_code', I18nScope())
+                                            `${I18n.t('address_zip_code', I18nScope())} *`
                                         ),
                                         m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']",
                                             I18n.t('zipcode_unknown', I18nScope())
