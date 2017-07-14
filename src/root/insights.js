@@ -279,7 +279,7 @@ const insights = {
                         ]),
                     ])
                 ]),
-            (project.state === 'online' && (project.is_admin_role || project.pledged == 0) ?
+            (project.state != 'rejected' ?
                 m.component(projectCancelButton, { project })
             : '')
 
