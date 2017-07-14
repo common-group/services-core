@@ -133,11 +133,11 @@ const projectContributionReport = {
                     },
                     {
                         value: 'undelivered',
-                        option: 'Não enviada'
+                        option: 'Não entregue'
                     },
                     {
                         value: 'delivered',
-                        option: 'Enviada'
+                        option: 'Entregue'
                     },
                     {
                         value: 'error',
