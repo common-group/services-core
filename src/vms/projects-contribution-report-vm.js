@@ -9,7 +9,7 @@ const vm = postgrest.filtersVM({
         state: 'in',
         reward_id: 'eq',
         delivery_status: 'eq',
-        survey_status: 'eq',
+        survey_status: 'in',
         project_id: 'eq'
     }),
     paramToString = p => (p || '').toString().trim();

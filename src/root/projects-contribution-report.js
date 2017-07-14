@@ -168,8 +168,12 @@ const projectContributionReport = {
                         option: 'Não enviado'
                     },
                     {
-                        value: 'sent',
+                        value: 'sent,answered',
                         option: 'Enviado'
+                    },
+                    {
+                        value: 'sent',
+                        option: 'Não Respondido'
                     },
                     {
                         value: 'answered',
