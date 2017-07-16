@@ -6284,10 +6284,10 @@ var projectContributionReport = {
                     option: 'Todos'
                 }, {
                     value: 'undelivered',
-                    option: 'Não enviada'
+                    option: 'Não entregue'
                 }, {
                     value: 'delivered',
-                    option: 'Enviada'
+                    option: 'Entregue'
                 }, {
                     value: 'error',
                     option: 'Erro no envio'
@@ -9331,7 +9331,7 @@ var addressForm = {
             return state.id === parseInt(fields.stateID());
         }).name : '');
 
-        return m('#address-form.u-marginbottom-30.w-form', [m('.card.card-terciary.u-marginbottom-30.u-radius.w-form', [m('div', m('.w-row', [m('.w-col.w-col-4', m('.fontsize-small.fontweight-semibold', 'Nacionalidade:')), m('.w-col.w-col-4', m('.fontsize-small.w-radio', [m("input.w-radio-input[name='nationality'][type='radio']", {
+        return m('#address-form.u-marginbottom-30.w-form', [m('.fontsize-smaller.u-marginbottom-20', '* Preenchimento obrigatório'), m('.u-marginbottom-30', [m('div', m('.w-row', [m('.w-col.w-col-4', m('.fontsize-small.fontweight-semibold', 'Nacionalidade:')), m('.w-col.w-col-4', m('.fontsize-small.w-radio', [m("input.w-radio-input[name='nationality'][type='radio']", {
             checked: !international(),
             onclick: function onclick() {
                 fields.countryID(ctrl.defaultCountryID);
@@ -9382,7 +9382,7 @@ var addressForm = {
                 selected: country.id === ctrl.fields.countryID(),
                 value: country.id
             }, country.name_en);
-        }) : ''])]), m('.w-col.w-col-6')]), m('div', [m('.w-row', [m('.w-col.w-col-6', [m('.field-label', [m('span.fontweight-semibold', I18n$1.t('address_zip_code', I18nScope$29())), m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']", I18n$1.t('zipcode_unknown', I18nScope$29()))]), m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][maxlength='8'][type='text']", {
+        }) : ''])]), m('.w-col.w-col-6')]), m('div', [m('.w-row', [m('.w-col.w-col-6', [m('.field-label', [m('span.fontweight-semibold', I18n$1.t('address_zip_code', I18nScope$29()) + ' *'), m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']", I18n$1.t('zipcode_unknown', I18nScope$29()))]), m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][maxlength='8'][type='text']", {
             class: errors.addressZipCode() ? 'error' : '',
             value: ctrl.fields.addressZipCode(),
             oninput: function oninput(e) {
@@ -9605,7 +9605,7 @@ var surveysShow = {
             fields: ctrl.fields,
             openQuestions: openQuestions,
             multipleChoiceQuestions: multipleChoiceQuestions
-        }) : '', m('.w-col.w-col-1')])))] : [m('div', m('.w-container', m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.card.card-terciary.medium.u-marginbottom-30', [ctrl.answeredAt() ? m('.card.card-message.u-marginbottom-40.u-radius', m('.fontsize-base', [m('span.fa.fa-exclamation-circle', ''), ' Voc\xEA j\xE1 enviou as respostas abaixo no dia ' + h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY') + '. Se notou algo errado, n\xE3o tem problema: basta alterar as informa\xE7\xF5es necess\xE1rias abaixo e reenviar as respostas.'])) : '', survey.confirm_address ? [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('delivery_address', addressScope())), m(addressForm, {
+        }) : '', m('.w-col.w-col-1')])))] : [m('div', m('.w-container', m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.card.card-terciary.medium.u-marginbottom-30', [ctrl.answeredAt() ? m('.card.card-message.u-marginbottom-40.u-radius', m('.fontsize-base', [m('span.fa.fa-exclamation-circle', ''), ' Voc\xEA j\xE1 enviou as respostas abaixo no dia ' + h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY') + '. Se notou algo errado, n\xE3o tem problema: basta alterar as informa\xE7\xF5es necess\xE1rias abaixo e reenviar as respostas.'])) : '', survey.confirm_address ? [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', I18n$1.t('delivery_address', addressScope())), m(addressForm, {
             countryName: countryName,
             stateName: stateName,
             fields: ctrl.fields
