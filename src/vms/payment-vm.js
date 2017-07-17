@@ -56,14 +56,14 @@ const paymentVM = () => {
             countryId = (data.address && data.address.country_id) || defaultCountry;
 
         if (!_.isEmpty(data.address)) {
-            fields.city(data.address.city);
-            fields.zipCode(data.address.zipcode);
-            fields.street(data.address.street);
-            fields.number(data.address.number);
-            fields.addressComplement(data.address.complement);
-            fields.userState(data.address.state);
-            fields.neighbourhood(data.address.neighbourhood);
-            fields.phone(data.address.phonenumber);
+            fields.city(data.address.address_city);
+            fields.zipCode(data.address.address_zip_code);
+            fields.street(data.address.address_street);
+            fields.number(data.address.address_number);
+            fields.addressComplement(data.address.address_complement);
+            fields.userState(data.address.address_state);
+            fields.neighbourhood(data.address.address_neighbourhood);
+            fields.phone(data.address.phone_number);
         }
 
         fields.completeName(data.name);

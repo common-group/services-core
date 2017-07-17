@@ -59,7 +59,7 @@ const surveysShow = {
             sendAnswer = () => {
                 const data = {};
                 _.extend(data, {
-                    survey_address_answers_attributes: fields()
+                    survey_address_answers_attributes: { addresses_attributes: fields().address() }
                 });
                 _.extend(data, {
                     survey_open_question_answers_attributes: _.map(openQuestions(), question => ({
@@ -88,15 +88,14 @@ const surveysShow = {
                 });
             };
         surveyLoader().load().then((data) => {
-            survey(data);
-            survey(_.first(survey()));
+            survey(_.first(data));
             finished(!_.isEmpty(survey().finished_at));
             answeredAt(survey().survey_answered_at);
             projectVM.fetchProject(survey().project_id);
             rewardVM.rewardLoader(survey().reward_id).load().then(reward);
             const surveyData = survey();
             fields({
-                addresses_attributes: surveyData.address || {}
+                address: m.prop(surveyData.address || {})
             });
             _.map(surveyData.open_questions, (question) => {
                 openQuestions().push({
@@ -184,7 +183,7 @@ const surveysShow = {
                     confirmAddress: survey.confirm_address,
                     countryName: countryName(),
                     stateName: stateName(),
-                    fields: ctrl.fields,
+                    fields: ctrl.fields().address(),
                     openQuestions,
                     multipleChoiceQuestions
                 })
@@ -211,7 +210,7 @@ const surveysShow = {
                     confirmAddress: survey.confirm_address,
                     countryName: countryName(),
                     stateName: stateName(),
-                    fields: ctrl.fields,
+                    fields: ctrl.fields().address(),
                     openQuestions,
                     multipleChoiceQuestions
                 }),
@@ -303,7 +302,7 @@ const surveysShow = {
                                             confirmAddress: survey.confirm_address,
                                             countryName: countryName(),
                                             stateName: stateName(),
-                                            fields: ctrl.fields,
+                                            fields: ctrl.fields().address(),
                                             openQuestions,
                                             multipleChoiceQuestions
                                         }) : ''),
