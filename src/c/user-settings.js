@@ -255,7 +255,7 @@ const userSettings = {
                                 m('.fontsize-small', [
                                     I18n.t('address_subtitle', I18nScope())
                                 ]),
-                                m(addressForm, { fields: ctrl.fields })
+                                m(addressForm, { fields: ctrl.fields, parsedErrors: ctrl.parsedErrors })
                             ]),
 
                             (args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [

@@ -10,6 +10,7 @@ const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
     controller(args) {
+        const parsedErrors = args.parsedErrors;
         const countriesLoader = postgrest.loader(models.country.getPageOptions()),
             statesLoader = postgrest.loader(models.state.getPageOptions()),
             countries = m.prop(),
@@ -31,16 +32,16 @@ const addressForm = {
                 phoneNumber: m.prop(data.phone_number || '')
             },
             errors = {
-                countryID: m.prop(false),
-                stateID: m.prop(false),
-                addressStreet: m.prop(false),
-                addressNumber: m.prop(false),
+                countryID: m.prop(parsedErrors ? parsedErrors.hasError('country_id') : false),
+                stateID: m.prop(parsedErrors ? parsedErrors.hasError('state') : false),
+                addressStreet: m.prop(parsedErrors ? parsedErrors.hasError('street') : false),
+                addressNumber: m.prop(parsedErrors ? parsedErrors.hasError('number') : false),
                 addressComplement: m.prop(false),
-                addressNeighbourhood: m.prop(false),
-                addressCity: m.prop(false),
-                addressState: m.prop(false),
-                addressZipCode: m.prop(false),
-                phoneNumber: m.prop(false)
+                addressNeighbourhood: m.prop(parsedErrors ? parsedErrors.hasError('neighbourhood') : false),
+                addressCity: m.prop(parsedErrors ? parsedErrors.hasError('city') : false),
+                addressState: m.prop(parsedErrors ? parsedErrors.hasError('state') : false),
+                addressZipCode: m.prop(parsedErrors ? parsedErrors.hasError('zipcode') : false),
+                phoneNumber: m.prop(parsedErrors ? parsedErrors.hasError('phonenumber') : false)
             },
             phoneMask = _.partial(h.mask, '(99) 9999-99999'),
             zipcodeMask = _.partial(h.mask, '99999-999'),
@@ -305,7 +306,7 @@ const addressForm = {
                                 ]),
                                 m('.w-col.w-col-6')
                             ]),
-                            m('div', [
+                            m('.w-row', [
                                 m('.field-label.fontweight-semibold',
                                     `${I18n.t('address_street', I18nScope())} *`
                                 ),
