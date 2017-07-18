@@ -183,7 +183,7 @@ const userBalanceRequestModelContent = {
                         (ctrl.requestLoader() || ctrl.loading() ?
                          h.loader()
                          : [
-                             m('a.btn.btn-medium.btn-request-fund[href="js:void(0);"]',
+                             m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]',
                                { onclick: () => ctrl.requestFund() },
                                I18n.t('shared.confirm_text')),
                          ])
@@ -207,7 +207,7 @@ const userBalanceRequestModelContent = {
                      m('.w-col.w-col-6', [
                          (ctrl.requestLoader() || ctrl.loading() ?
                           h.loader()
-                          : m('a.btn.btn-large.btn-request-fund[href="js:void(0);"]',
+                          : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]',
                               { onclick: () => ctrl.updateUserData(args.user.id) },
                               I18n.t('request_fund', I18nScope())))
                      ]),
