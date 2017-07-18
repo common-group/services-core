@@ -94,7 +94,7 @@ const userContributedBox = {
                                         I18n.t('show_receipt', contributionScope())
                                     ) : ''),
 
-                                (contributionVM.canShowSlip(contribution) ?
+                                (contributionVM.canShowSlip(contribution) && contribution.gateway_data ?
                                     m(`a.alt-link.u-margintop-10[href='${contribution.gateway_data.boleto_url}'][target='__blank']`,
                                         I18n.t('print_slip', contributionScope())
                                     ) : ''),
