@@ -52,7 +52,7 @@ const userBalanceTrasactionRow = {
                              ])
                          ])
                      ]),
-                     m(`a.w-inline-block.arrow-admin.${(ctrl.expanded() ? 'arrow-admin-opened' : '')}.fa.fa-chevron-down.fontcolor-secondary[href="js:(void(0));"]`, { onclick: ctrl.expanded.toggle })
+                     m(`a.w-inline-block.arrow-admin.${(ctrl.expanded() ? 'arrow-admin-opened' : '')}.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]`, { onclick: ctrl.expanded.toggle })
                  ]),
                  (ctrl.expanded() ? m('.card', _.map(item.source, (transaction) => {
                      const pos = transaction.amount >= 0;
