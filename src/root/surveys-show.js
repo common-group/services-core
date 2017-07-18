@@ -343,9 +343,10 @@ const surveysShow = {
                                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                                         item.question.question
                                                     ), [
+
                                                         _.map(item.question.question_choices, choice =>
                                                             m('.fontsize-small.w-radio', [
-                                                                m(`input.w-radio-input[type='radio'][name='choice${item.id}']`, {
+                                                                m(`input.w-radio-input[type='radio'][name='choice${item.question.id}']`, {
                                                                     value: choice.id,
                                                                     checked: choice.id === item.value(),
                                                                     onchange: m.withAttr('value', item.value)
