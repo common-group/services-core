@@ -14,7 +14,7 @@ const projectDataStats = {
     view(ctrl, args) {
         const project = args.project(),
             visitorsTotal = args.visitorsTotal(),
-            statusTextObj = h.projectStateTextClass(project.state),
+            statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),
             remainingTextObj = h.translatedTime(project.remaining_time),
             elapsedTextObj = h.translatedTime(project.elapsed_time);
 

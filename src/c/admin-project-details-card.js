@@ -27,7 +27,7 @@ const adminProjectDetailsCard = {
     view(ctrl) {
         let project = ctrl.project,
             progress = project.progress.toFixed(2),
-            statusTextObj = h.projectStateTextClass(project.state),
+            statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),
             remainingTextObj = ctrl.remainingTextObj,
             elapsedTextObj = ctrl.elapsedTextObj;
 

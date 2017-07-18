@@ -163,16 +163,19 @@ const insights = {
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', I18n.t('campaign_title', I18nScope())),
-                        (project.state === 'online' ? m.component(projectInviteCard, { project }) : ''),
-                        (project.state === 'draft' ? m.component(adminProjectDetailsCard, {
+
+                        (project.state === 'online' && !project.has_cancelation_request ? m.component(projectInviteCard, { project }) : ''),
+                        (project.state === 'draft'  && !project.has_cancelation_request ? m.component(adminProjectDetailsCard, {
                             resource: project
                         }) : ''),
-                        m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`, [
+                        (project.has_cancelation_request ? m('p', 
+                            m.trust(I18n.t('has_cancelation_request_explanation', I18nScope()))
+                        ) : m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`, [
                             project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
                                 m.trust(I18n.t('finish_explanation', I18nScope())),
                                 m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/213783503-tudo-sobre-Prazo-da-campanha"][target="_blank"]', I18n.t('know_more', I18nScope()))
                             ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))
-                        ])
+                        ]))
                     ])
                 ]),
             ]),
@@ -279,7 +282,7 @@ const insights = {
                         ]),
                     ])
                 ]),
-            (project.state === 'online' && (project.is_admin_role || project.pledged == 0) ?
+            (project.state != 'draft' && project.state != 'rejected' && !project.has_cancelation_request ?
                 m.component(projectCancelButton, { project })
             : '')
 

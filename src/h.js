@@ -543,7 +543,7 @@ const
         };
     },
 
-    projectStateTextClass = (state: string): {cssClass: string, text: string} => {
+    projectStateTextClass = (state: string, has_cancelation_request: boolean): {cssClass: string, text: string} => {
         const statusText = {
             online: {
                 cssClass: 'text-success',
@@ -563,7 +563,7 @@ const
             },
             rejected: {
                 cssClass: 'text-error',
-                text: 'RECUSADO'
+                text: 'CANCELADO'
             },
             draft: {
                 cssClass: '',
@@ -579,7 +579,14 @@ const
             }
         };
 
-        return statusText[state];
+        if (has_cancelation_request) {
+            return {
+                cssClass: 'text-error',
+                text: 'AGUARDANDO CANCELAMENTO'
+            }
+        } else {
+            return statusText[state];
+        }
     },
 
     RDTracker = (eventId: string): mConfig => (el, isInitialized) => {
