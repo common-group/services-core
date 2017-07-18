@@ -31,7 +31,7 @@ const cancelProjectModalContent = {
             [
                 m('.fontsize-small.u-marginbottom-20',
                     [
-                        'Após o cancelamento, sua campanha constará na plataforma como "não financiada" e os seus apoiadores serão imediatamente reembolsados. ',
+                        'Após o cancelamento, sua campanha será expirada e os seus apoiadores serão reembolsados dentro das próximas 24h horas.',
                         m('span.fontweight-semibold',
                                 'Essa ação não poderá ser desfeita!'
                             ),
@@ -45,10 +45,10 @@ const cancelProjectModalContent = {
                         m('span.fontweight-semibold.text-error',
                                 'cancelar-projeto '
                             ),
-                        'no campo abaixo. Em seguida te pediremos para escrever uma mensagem aos seus apoiadores e seu projeto será então cancelado.',
+                        'no campo abaixo. Em seguida lhe pediremos para escrever uma mensagem aos apoiadores e seu projeto será então cancelado.',
                         m('span.fontweight-semibold.text-error')
                     ]
-                    ),
+                ),
                 m('.w-form',
                     [
                         m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', { class: !ctrl.checkError() ? false : 'error', placeholder: 'cancelar-projeto', onchange: m.withAttr('value', ctrl.check) })
