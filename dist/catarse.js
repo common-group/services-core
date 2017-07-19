@@ -9635,7 +9635,7 @@ var surveysShow = {
             fields: ctrl.fields
         })] : '', _$1.map(multipleChoiceQuestions, function (item) {
             return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', item.question.question), [_$1.map(item.question.question_choices, function (choice) {
-                return m('.fontsize-small.w-radio', [m('input.w-radio-input[type=\'radio\'][name=\'choice' + item.id + '\']', {
+                return m('.fontsize-small.w-radio', [m('input.w-radio-input[type=\'radio\'][name=\'choice' + item.question.id + '\']', {
                     value: choice.id,
                     checked: choice.id === item.value(),
                     onchange: m.withAttr('value', item.value)
