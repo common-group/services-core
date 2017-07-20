@@ -22,6 +22,7 @@ const surveysShow = {
         } = args,
             contributionId = m.route.param('contribution_id'),
             survey = m.prop(),
+            idVM = h.idVM,
             displayModal = h.toggleProp(false, true),
             showPreview = h.toggleProp(false, true),
             showThanks = h.toggleProp(false, true),
@@ -32,7 +33,7 @@ const surveysShow = {
             fields = m.prop({}),
             openQuestions = m.prop([]),
             multipleChoiceQuestions = m.prop([]),
-            user = userVM.getCurrentUser(),
+            user = m.prop({}),
             reward = m.prop(),
             sendMessage = () => {
                 displayModal(true);
@@ -94,9 +95,18 @@ const surveysShow = {
             projectVM.fetchProject(survey().project_id);
             rewardVM.rewardLoader(survey().reward_id).load().then(reward);
             const surveyData = survey();
-            fields({
-                address: m.prop(surveyData.address || {})
+
+            idVM.id(h.getUserID());
+
+            const lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+
+            lUser.load().then((userData) => {
+                user(_.first(userData));
+                fields({
+                    address: m.prop(surveyData.address || _.omit(user().address, 'id') || {})
+                });
             });
+
             _.map(surveyData.open_questions, (question) => {
                 openQuestions().push({
                     question,

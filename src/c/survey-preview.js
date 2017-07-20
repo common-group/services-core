@@ -84,12 +84,14 @@ const surveyPreview = {
                                     ctrl.fields.phone_number
                                 ])
                             ]) : ''),
-                            _.map(ctrl.multipleChoiceQuestions, item =>
-                                m('.u-marginbottom-30', [
+                            _.map(ctrl.multipleChoiceQuestions, (item) => {
+                                const answer = _.find(item.question.question_choices, choice => item.value() == choice.id);
+                                return m('.u-marginbottom-30', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                         item.question.question
-                                    ), m('.fontsize-base', _.find(item.question.question_choices, choice => item.value() == choice.id).option)
-                                ])),
+                                    ), m('.fontsize-base', answer ? answer.option : '')
+                                ]);
+                            }),
                             _.map(ctrl.openQuestions, item =>
                                 m('.u-marginbottom-30', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
