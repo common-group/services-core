@@ -78,8 +78,11 @@ const isValid = () => {
             return isValid;
         }
 
+        question.error = false;
+
         if (question.question.trim() === '') {
             questionWithEmptyFields().push(question);
+            question.error = true;
 
             return false;
         }
