@@ -1,4 +1,5 @@
 import m from 'mithril';
+import inlineError from '../c/inline-error';
 
 const dashboardOpenQuestion = {
     view(ctrl, args) {
@@ -13,10 +14,15 @@ const dashboardOpenQuestion = {
                     ),
                     m('.w-col.w-col-8',
                         m('input.positive.text-field.w-input[name="question"][type="text"]', {
+                            class: question.error ? 'error' : null,
                             name: `reward[surveys_attributes][questions][${index}][question]`,
                             onchange: m.withAttr('value', newValue => question.question = newValue),
-                            value: question.question
-                        })
+                            value: question.question,
+                            onfocus: () => {
+                                question.error = false;
+                            }
+                        }),
+                        question.error ? m(inlineError, { message: 'O campo pergunta não pode ser vazio.' }) : null
                     )
                 ]),
                 m('.w-row', [

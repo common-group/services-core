@@ -212,7 +212,9 @@ const surveyCreate = {
                             },
                                 'Pré-visualizar'
                             ),
-                            ctrl.showError() ? m(inlineError, { message: 'O campo pergunta não pode ser vazio.' }) : null
+                            ctrl.showError() 
+                                ? m('.u-text-center.u-margintop-10', m(inlineError, { message: 'Erro ao salvar formulário.' }))
+                                : null
                         )
                     ])
                 )

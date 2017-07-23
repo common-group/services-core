@@ -150,7 +150,6 @@ const surveyCreatePreview = {
                                         ]))
                                     ])
                                 ])),
-
                                 _.map(ctrl.openQuestions, question =>
                                 m('.u-marginbottom-30.w-form', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',

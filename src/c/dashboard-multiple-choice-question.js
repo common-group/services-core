@@ -1,6 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import surveyVM from '../vms/survey-vm';
+import inlineError from '../c/inline-error';
 
 const dashboardMultipleChoiceQuestion = {
     controller(args) {
@@ -48,10 +49,15 @@ const dashboardMultipleChoiceQuestion = {
                         ),
                     m('.w-col.w-col-8',
                             m('input.positive.text-field.w-input[type="text"]', {
+                                class: question.error ? 'error' : null,
                                 name: `reward[surveys_attributes][questions][${index}][question]`,
                                 onchange: m.withAttr('value', newValue => question.question = newValue),
+                                onfocus: () => {
+                                    question.error = false;
+                                },
                                 value: question.question
-                            })
+                            }),
+                            question.error ? m(inlineError, { message: 'O campo pergunta não pode ser vazio.' }) : null
                         )
                 ]),
                 m('.w-row', [
