@@ -66,7 +66,7 @@ const projectCard = {
             if (project.expires_at) {
                 return isFinished(project) ? [
                     m('.fontsize-smaller.fontweight-loose', 'Encerrado'),
-                    m('.fontsize-smallest.lineheight-tightest', h.momentify(project.zone_expires_at))
+                    m('.fontsize-smallest.lineheight-tightest', h.momentify(project.expires_at))
                 ] : [
                     m('.fontsize-smaller.fontweight-semibold', `${remainingTextObj.total} ${remainingTextObj.unit}`),
                     m('.fontsize-smallest.lineheight-tightest', (remainingTextObj.total > 1) ? 'Restantes' : 'Restante')
@@ -91,10 +91,10 @@ const projectCard = {
     },
     view(ctrl, args) {
         const project = args.project,
-              projectOwnerName = (project.user ? (
-                  project.user.public_name||project.user.name
+            projectOwnerName = (project.user ? (
+                  project.user.public_name || project.user.name
               ) : (project.owner_public_name || project.owner_name)),
-              projectAddress = (project.address ? (
+            projectAddress = (project.address ? (
                   `${project.address.city} - ${project.address.state_acronym}`
               ) : (`${project.city_name} - ${project.state_acronym}`));
 
@@ -103,7 +103,7 @@ const projectCard = {
                 m(`a${ctrl.css().thumb}[href="/${project.permalink}?ref=${args.ref}"]`, {
                     onclick: projectVM.routeToProject(project, args.ref),
                     style: {
-                        'background-image': `url(${project.project_img||project.large_image})`,
+                        'background-image': `url(${project.project_img || project.large_image})`,
                         display: 'block'
                     }
                 }),
@@ -113,7 +113,7 @@ const projectCard = {
                             m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
                             },
-                            project.project_name||project.name)
+                            project.project_name || project.name)
                         ]),
                         m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${projectOwnerName}`),
                         m(ctrl.css().headline, [
