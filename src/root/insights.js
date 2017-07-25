@@ -159,7 +159,7 @@ const insights = {
                 content: [onlineSuccessModalContent]
             }) : ''),
 
-            m('.w-container', (project.state === 'successful') ? m.component(projectSuccessfulOnboard, { project: m.prop(project) }) : [
+            m('.w-container', (project.state === 'successful' && !project.has_cancelation_request) ? m.component(projectSuccessfulOnboard, { project: m.prop(project) }) : [
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2', [
                         m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', I18n.t('campaign_title', I18nScope())),
