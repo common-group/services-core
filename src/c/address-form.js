@@ -133,6 +133,7 @@ const addressForm = {
             m('.fontsize-smaller.u-marginbottom-20',
                 '* Preenchimento obrigatório'
             ),
+            m('.divider.u-marginbottom-20'),
             m('.u-marginbottom-30', [
                 m('div',
                     m('.w-row', [
@@ -164,7 +165,7 @@ const addressForm = {
                                     }
                                 }),
                                 m('label.w-form-label',
-                                    'International backer'
+                                    'International'
                                 )
                             ])
                         )
@@ -199,17 +200,20 @@ const addressForm = {
                         m('.w-col.w-col-6')
                     ]),
                     m('div', [
-                        m('.field-label.fontweight-semibold',
-                            'Address *'
-                        ),
-                        m("input.positive.text-field.w-input[required='required'][type='text']", {
-                            class: errors.addressStreet() ? 'error' : '',
-                            value: ctrl.fields.addressStreet(),
-                            onchange: m.withAttr('value', ctrl.fields.addressStreet)
-                        }),
-                        errors.addressStreet() ? m(inlineError, {
-                            message: 'Please fill in an address.'
-                        }) : '',
+                        m('.w-row',
+                                m('.w-col.w-col-12', [
+                                    m('.field-label.fontweight-semibold',
+                                      'Address *'
+                                    ),
+                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                        class: errors.addressStreet() ? 'error' : '',
+                                        value: ctrl.fields.addressStreet(),
+                                        onchange: m.withAttr('value', ctrl.fields.addressStreet)
+                                    }),
+                                    errors.addressStreet() ? m(inlineError, {
+                                        message: 'Please fill in an address.'
+                                    }) : ''
+                                ])),
                         m('div',
                             m('.w-row', [
                                 m('.w-sub-col.w-col.w-col-4', [
@@ -335,7 +339,7 @@ const addressForm = {
                                 ]),
                                 m('.w-sub-col.w-col.w-col-4', [
                                     m('.field-label.fontweight-semibold',
-                                        `${I18n.t('address_complement', I18nScope())} *`
+                                        I18n.t('address_complement', I18nScope())
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         value: ctrl.fields.addressComplement(),
@@ -370,7 +374,7 @@ const addressForm = {
                                         message: 'Informe uma cidade.'
                                     }) : ''
                                 ]),
-                                m('.w-col.w-col-6', [
+                                m('.w-sub-col.w-col.w-col-2', [
                                     m('.field-label.fontweight-semibold',
                                         `${I18n.t('address_state', I18nScope())} *`
                                     ),
@@ -384,16 +388,14 @@ const addressForm = {
                                                 value: state.id,
                                                 selected: state.id === ctrl.fields.stateID()
                                             },
-                                                state.name
+                                                state.acronym
                                             )) : ''),
                                     ]),
                                     errors.stateID() ? m(inlineError, {
                                         message: 'Informe um estado.'
                                     }) : ''
-                                ])
-                            ]),
-                            m('.w-row', [
-                                m('.w-col.w-col-6', [
+                                ]),
+                                m('.w-col.w-col-4', [
                                     m('.field-label.fontweight-semibold',
                                         `${I18n.t('phone_number', I18nScope())} *`
                                     ),
@@ -406,9 +408,9 @@ const addressForm = {
                                     errors.phoneNumber() ? m(inlineError, {
                                         message: 'Informe um telefone.'
                                     }) : ''
-                                ]),
-                                m('.w-col.w-col-6')
+                                ])
                             ])
+
                         ])
                     ])
                 ]))
