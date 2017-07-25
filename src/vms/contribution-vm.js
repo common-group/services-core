@@ -1,5 +1,6 @@
 import postgrest from 'mithril-postgrest';
 import m from 'mithril';
+import moment from 'moment';
 import _ from 'underscore';
 import models from '../models';
 
@@ -39,13 +40,14 @@ const wasConfirmed = contribution => _.contains(['paid', 'pending_refund', 'refu
 
 const canShowReceipt = contribution => wasConfirmed(contribution);
 
-const canShowSlip = contribution => contribution.payment_method === 'BoletoBancario' && contribution.waiting_payment;
+const canShowSlip = contribution => contribution.payment_method === 'BoletoBancario' && moment(contribution.gateway_data.boleto_expiration_date).isAfter(moment());
 
 const canGenerateSlip = contribution => contribution.payment_method === 'BoletoBancario' &&
     contribution.state === 'pending' &&
     contribution.project_state === 'online' &&
     !contribution.reward_sold_out &&
-    !contribution.waiting_payment;
+    !moment(contribution.gateway_data.boleto_expiration_date).isAfter(moment());
+
 
 const canBeDelivered = contribution => (contribution.state === 'paid' && contribution.reward_id && contribution.project_state !== 'failed');
 
