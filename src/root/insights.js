@@ -282,7 +282,7 @@ const insights = {
                         ]),
                     ])
                 ]),
-            (project.state != 'draft' && project.state != 'rejected' && !project.has_cancelation_request ?
+            (project.can_cancel ?
                 m.component(projectCancelButton, { project })
             : '')
 
