@@ -24,7 +24,6 @@ const paymentVM = () => {
         anonymous: m.prop(),
         address: m.prop({}),
         ownerDocument: m.prop(''),
-        phone: m.prop(''),
         errors: m.prop([])
     };
 

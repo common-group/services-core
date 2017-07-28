@@ -207,7 +207,7 @@ const addressForm = {
                                 ),
                                 ' *'
                             ]),
-                            m('select.positive.text-field.w-select', {
+                            m('select#country.positive.text-field.w-select', {
                                 onchange: m.withAttr('value', ctrl.fields.countryID)
                             }, [
                                 (!_.isEmpty(ctrl.countries()) ?
@@ -269,7 +269,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         'State *'
                                     ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                    m("input#address-state.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressState() ? 'error' : '',
                                         value: ctrl.fields.addressState(),
                                         onchange: m.withAttr('value', ctrl.fields.addressState)
@@ -293,7 +293,7 @@ const addressForm = {
                                     ),
                                     ' *'
                                 ]),
-                                m('select.positive.text-field.w-select', {
+                                m('select#country.positive.text-field.w-select', {
                                     onchange: m.withAttr('value', ctrl.fields.countryID)
                                 }, [
                                     (!_.isEmpty(ctrl.countries()) ?
@@ -401,7 +401,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         `${I18n.t('address_state', I18nScope())} *`
                                     ),
-                                    m('select.positive.text-field.w-select', {
+                                    m('select#address-state.positive.text-field.w-select', {
                                         class: errors.stateID() ? 'error' : '',
                                         onchange: m.withAttr('value', ctrl.fields.stateID)
                                     }, [
@@ -422,7 +422,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         `${I18n.t('phone_number', I18nScope())} *`
                                     ),
-                                    m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
+                                    m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                         class: errors.phoneNumber() ? 'error' : '',
                                         value: ctrl.fields.phoneNumber(),
                                         onkeyup: m.withAttr('value', value => ctrl.applyPhoneMask(value)),
