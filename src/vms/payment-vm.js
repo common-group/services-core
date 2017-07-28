@@ -1,11 +1,9 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
 import moment from 'moment';
 import I18n from 'i18n-js';
 import h from '../h';
 import usersVM from './user-vm';
-import models from '../models';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
@@ -24,16 +22,7 @@ const paymentVM = () => {
     const fields = {
         completeName: m.prop(''),
         anonymous: m.prop(),
-        countries: m.prop(),
-        userCountryId: m.prop(),
-        zipCode: m.prop(''),
-        street: m.prop(''),
-        number: m.prop(''),
-        addressComplement: m.prop(''),
-        neighbourhood: m.prop(''),
-        city: m.prop(''),
-        states: m.prop([]),
-        userState: m.prop(),
+        address: m.prop({}),
         ownerDocument: m.prop(''),
         phone: m.prop(''),
         errors: m.prop([])
@@ -51,24 +40,14 @@ const paymentVM = () => {
     };
 
     const populateForm = (fetchedData) => {
-        const data = _.first(fetchedData) || { address: {} },
-            defaultCountry = (fields.countries() ? _.findWhere(fields.countries(), { name: 'Brasil' }).id : null),
-            countryId = (data.address && data.address.country_id) || defaultCountry;
+        const data = _.first(fetchedData) || { address: {} };
 
         if (!_.isEmpty(data.address)) {
-            fields.city(data.address.address_city);
-            fields.zipCode(data.address.address_zip_code);
-            fields.street(data.address.address_street);
-            fields.number(data.address.address_number);
-            fields.addressComplement(data.address.address_complement);
-            fields.userState(data.address.address_state);
-            fields.neighbourhood(data.address.address_neighbourhood);
-            fields.phone(data.address.phone_number);
+            fields.address(_.omit(data.address, 'id'));
         }
 
         fields.completeName(data.name);
         fields.ownerDocument(data.owner_document);
-        fields.userCountryId(countryId);
 
         creditCardFields.cardOwnerDocument(data.owner_document);
     };
@@ -98,7 +77,7 @@ const paymentVM = () => {
         return yearsOptions;
     };
 
-    const isInternational = () => !_.isEmpty(fields.countries()) ? fields.userCountryId() != _.findWhere(fields.countries(), { name: 'Brasil' }).id : false;
+    const isInternational = () => fields.address().country_id !== 36;// @TODO fixme
 
     const scope = data => isInternational() ? I18nIntScope(data) : I18nScope(data);
 
@@ -107,9 +86,7 @@ const paymentVM = () => {
             : { locale: 'pt' };
 
     const faq = (mode = 'aon') => I18n.translations[I18n.currentLocale()].projects.faq[mode],
-        currentUser = h.getUser() || {},
-        countriesLoader = postgrest.loader(models.country.getPageOptions()),
-        statesLoader = postgrest.loader(models.state.getPageOptions());
+        currentUser = h.getUser() || {};
 
     const checkEmptyFields = checkedFields => _.map(checkedFields, (field) => {
         const val = fields[field]();
@@ -146,37 +123,17 @@ const paymentVM = () => {
         }
     };
 
-    const checkUserState = () => {
-        if (_.isEmpty(fields.userState()) || fields.userState() === 'null') {
-            fields.errors().push({ field: 'userState', message: I18n.t('validation.state', scope()) });
-        }
-    };
-
-    const checkPhone = () => {
-        const phone = fields.phone(),
-            strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, ''),
-            error = { field: 'phone', message: I18n.t('validation.phone', scope()) };
-
-        if (strippedPhone.length < 10) {
-            fields.errors().push(error);
-        } else {
-            const controlDigit = Number(strippedPhone.charAt(2));
-            if (!(controlDigit >= 2 && controlDigit <= 9)) {
-                fields.errors().push(error);
-            }
-        }
-    };
-
     const validate = () => {
         fields.errors([]);
+        if (!fields.validate()) {
+            return false;
+        }
 
-        checkEmptyFields(['completeName', 'zipCode', 'street', 'userState', 'city', 'userCountryId']);
+        checkEmptyFields(['completeName']);
 
         if (!isInternational()) {
-            checkEmptyFields(['phone', 'number', 'neighbourhood', 'ownerDocument', 'userState']);
-            checkUserState();
+            checkEmptyFields(['ownerDocument']);
             checkDocument();
-            checkPhone();
         }
 
         return _.isEmpty(fields.errors());
@@ -338,17 +295,9 @@ const paymentVM = () => {
     const updateContributionData = (contribution_id, project_id) => {
         const contributionData = {
             anonymous: fields.anonymous(),
-            country_id: fields.userCountryId(),
-            payer_name: fields.completeName(),
             payer_document: fields.ownerDocument(),
-            address_street: fields.street(),
-            address_number: fields.number(),
-            address_complement: fields.addressComplement(),
-            address_neighbourhood: fields.neighbourhood(),
-            address_zip_code: fields.zipCode(),
-            address_city: fields.city(),
-            address_state: fields.userState(),
-            address_phone_number: fields.phone(),
+            payer_name: fields.completeName(),
+            address_attributes: fields.address(),
             card_owner_document: creditCardFields.cardOwnerDocument()
         };
 
@@ -439,18 +388,7 @@ const paymentVM = () => {
 
     const applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
-    countriesLoader.load().then((data) => {
-        const countryId = fields.userCountryId() || _.findWhere(data, { name: 'Brasil' }).id;
-        fields.countries(_.sortBy(data, 'name_en'));
-        fields.userCountryId(countryId);
-
-        usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
-    });
-
-    statesLoader.load().then((data) => {
-        fields.states().push({ acronym: null, name: 'Estado' });
-        _.map(data, state => fields.states().push(state));
-    });
+    usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
 
     return {
         fields,

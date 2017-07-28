@@ -49,19 +49,42 @@ const addressForm = {
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
             international = m.prop(fields.countryID() !== '' && fields.countryID() !== defaultCountryID);
 
+        const checkPhone = () => {
+            let hasError = false;
+            const phone = fields.phoneNumber(),
+                strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, '');
+
+            if (strippedPhone.length < 10) {
+                errors.phoneNumber(true);
+                hasError = true;
+            } else {
+                const controlDigit = Number(strippedPhone.charAt(2));
+                if (!(controlDigit >= 2 && controlDigit <= 9)) {
+                    errors.phoneNumber(true);
+                    hasError = true;
+                }
+            }
+            return hasError;
+        };
         _.extend(args.fields(), {
             validate: () => {
                 let hasError = false;
-                const fieldsToIgnore = international() ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber'] : ['id', 'addressComplement', 'addressState'];
+                const fieldsToIgnore = international() ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber'] : ['id', 'addressComplement', 'addressState', 'phoneNumber'];
+                // clear all errors
                 _.mapObject(errors, (val, key) => {
                     val(false);
                 });
+                // check for empty fields
                 _.mapObject(_.omit(fields, fieldsToIgnore), (val, key) => {
                     if (!val()) {
                         errors[key](true);
                         hasError = true;
                     }
                 });
+                if (!international()) {
+                    const hasPhoneError = checkPhone();
+                    hasError = hasError || hasPhoneError;
+                }
                 return !hasError;
             }
         });
@@ -406,7 +429,7 @@ const addressForm = {
                                         onchange: m.withAttr('value', ctrl.fields.phoneNumber)
                                     }),
                                     errors.phoneNumber() ? m(inlineError, {
-                                        message: 'Informe um telefone.'
+                                        message: 'Informe um telefone válido.'
                                     }) : ''
                                 ])
                             ])
