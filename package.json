@@ -48,6 +48,7 @@
     "rollup-plugin-flow": "^1.0.1",
     "rollup-plugin-multi-entry": "^1.2.0",
     "rollup-stream": "^1.5.0",
+    "select": "^1.1.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "yargs": "^3.24.0"
