@@ -188,7 +188,6 @@ const projectsPayment = {
                                 ]),
                                 user.name && user.owner_document ? m(UserOwnerBox, { user, project }) : '',
 
-                                m(addressForm, { fields: m.prop(ctrl.vm.fields) }),
                                 ((user.name && user.owner_document) ? '' : m('.w-row', [
                                     m('.w-col.w-col-7.w-sub-col', [
                                         m('label.field-label.fontweight-semibold[for=\'complete-name\']',
@@ -228,7 +227,7 @@ const projectsPayment = {
                                         I18n.t('fields.anonymous', ctrl.scope())
                                     )
                                 ]),
-                                ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
+                                (ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
                                     m('div', [
                                         m('span.fontweight-bold', [
                                             I18n.t('anonymous_confirmation_title', ctrl.scope()),
@@ -237,7 +236,8 @@ const projectsPayment = {
                                         m('br'),
                                         I18n.t('anonymous_confirmation', ctrl.scope())
                                     ])
-                                ) : ''
+                                ) : ''),
+                                m(addressForm, { fields: m.prop(ctrl.vm.fields) })
                             ])
                         ]),
                         m('.w-row.u-marginbottom-40',

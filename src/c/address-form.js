@@ -5,16 +5,16 @@ import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import inlineError from '../c/inline-error';
+import countrySelect from '../c/country-select';
 
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
     controller(args) {
         const parsedErrors = args.parsedErrors;
-        const countriesLoader = postgrest.loader(models.country.getPageOptions()),
-            statesLoader = postgrest.loader(models.state.getPageOptions()),
-            countries = m.prop(),
+        const statesLoader = postgrest.loader(models.state.getPageOptions()),
             defaultCountryID = 36, // @TODO get id from endpoint
+            defaultForeignCountryID = 74,
             states = m.prop(),
             zipCodeErrorMessage = m.prop(''),
             data = args.fields().address(),
@@ -47,7 +47,7 @@ const addressForm = {
             zipcodeMask = _.partial(h.mask, '99999-999'),
             applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = m.prop(fields.countryID() !== '' && fields.countryID() !== defaultCountryID);
+            international = m.prop();
 
         const checkPhone = () => {
             let hasError = false;
@@ -112,7 +112,6 @@ const addressForm = {
             }
         };
 
-        countriesLoader.load().then(countryData => countries(_.sortBy(countryData, 'name_en')));
         statesLoader.load().then(states);
         return {
             lookupZipCode,
@@ -121,15 +120,17 @@ const addressForm = {
             applyPhoneMask,
             applyZipcodeMask,
             defaultCountryID,
+            defaultForeignCountryID,
             fields,
             international,
-            states,
-            countries
+            states
         };
     },
     view(ctrl, args) {
         const fields = ctrl.fields,
             international = ctrl.international,
+            defaultCountryID = ctrl.defaultCountryID,
+            defaultForeignCountryID = ctrl.defaultForeignCountryID,
             errors = ctrl.errors,
             // hash to send to rails
             address = {
@@ -147,15 +148,11 @@ const addressForm = {
             };
 
         args.fields().address(address);
-        if (args.countryName && args.stateName) {
-            args.countryName(ctrl.countries() && fields.countryID() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');
+        if (args.stateName) {
             args.stateName(ctrl.states() && fields.stateID() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '');
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            m('.fontsize-smaller.u-marginbottom-20',
-                '* Preenchimento obrigatório'
-            ),
             m('.divider.u-marginbottom-20'),
             m('.u-marginbottom-30', [
                 m('div',
@@ -184,6 +181,9 @@ const addressForm = {
                                 m("input.w-radio-input[name='nationality'][type='radio']", {
                                     checked: international(),
                                     onclick: () => {
+                                        if (fields.countryID() === ctrl.defaultCountryID) {
+                                            fields.countryID(ctrl.defaultForeignCountryID); // USA
+                                        }
                                         international(true);
                                     }
                                 }),
@@ -198,45 +198,27 @@ const addressForm = {
             // @TODO move to another component
             (international() ?
                 m('form', [
-                    m('.u-marginbottom-30.w-row', [
-                        m('.w-col.w-col-6', [
-                            m('.field-label.fontweight-semibold', [
-                                'País / ',
-                                m('em',
-                                    'Country'
-                                ),
-                                ' *'
-                            ]),
-                            m('select#country.positive.text-field.w-select', {
-                                onchange: m.withAttr('value', ctrl.fields.countryID)
-                            }, [
-                                (!_.isEmpty(ctrl.countries()) ?
-                                    _.map(ctrl.countries(), country => m('option', {
-                                        selected: country.id === ctrl.fields.countryID(),
-                                        value: country.id
-                                    },
-                                        country.name_en
-                                    )) :
-                                    '')
-                            ])
-                        ]),
-                        m('.w-col.w-col-6')
-                    ]),
+                    m(countrySelect, {
+                        fields,
+                        international,
+                        defaultCountryID,
+                        defaultForeignCountryID
+                    }),
                     m('div', [
                         m('.w-row',
-                                m('.w-col.w-col-12', [
-                                    m('.field-label.fontweight-semibold',
-                                      'Address *'
-                                    ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressStreet() ? 'error' : '',
-                                        value: ctrl.fields.addressStreet(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressStreet)
-                                    }),
-                                    errors.addressStreet() ? m(inlineError, {
-                                        message: 'Please fill in an address.'
-                                    }) : ''
-                                ])),
+                            m('.w-col.w-col-12', [
+                                m('.field-label.fontweight-semibold',
+                                    'Address *'
+                                ),
+                                m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                    class: errors.addressStreet() ? 'error' : '',
+                                    value: ctrl.fields.addressStreet(),
+                                    onchange: m.withAttr('value', ctrl.fields.addressStreet)
+                                }),
+                                errors.addressStreet() ? m(inlineError, {
+                                    message: 'Please fill in an address.'
+                                }) : ''
+                            ])),
                         m('div',
                             m('.w-row', [
                                 m('.w-sub-col.w-col.w-col-4', [
@@ -284,30 +266,12 @@ const addressForm = {
                 ]) :
                 m('.w-form', [
                     m('div', [
-                        m('.u-marginbottom-30.w-row', [
-                            m('.w-col.w-col-6', [
-                                m('.field-label.fontweight-semibold', [
-                                    'País / ',
-                                    m('em',
-                                        'Country'
-                                    ),
-                                    ' *'
-                                ]),
-                                m('select#country.positive.text-field.w-select', {
-                                    onchange: m.withAttr('value', ctrl.fields.countryID)
-                                }, [
-                                    (!_.isEmpty(ctrl.countries()) ?
-                                        _.map(ctrl.countries(), country => m('option', {
-                                            selected: country.id === ctrl.fields.countryID(),
-                                            value: country.id
-                                        },
-                                            country.name_en
-                                        )) :
-                                        '')
-                                ])
-                            ]),
-                            m('.w-col.w-col-6')
-                        ]),
+                        m(countrySelect, {
+                            fields,
+                            international,
+                            defaultCountryID,
+                            defaultForeignCountryID
+                        }),
                         m('div', [
                             m('.w-row', [
                                 m('.w-col.w-col-6', [

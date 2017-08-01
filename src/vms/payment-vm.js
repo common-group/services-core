@@ -76,7 +76,7 @@ const paymentVM = () => {
         return yearsOptions;
     };
 
-    const isInternational = () => fields.address().country_id !== 36;// @TODO fixme
+    const isInternational = () => parseInt(fields.address().country_id) !== 36;// @TODO fixme
 
     const scope = data => isInternational() ? I18nIntScope(data) : I18nScope(data);
 
