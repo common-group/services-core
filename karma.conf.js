@@ -27,6 +27,7 @@ module.exports = function(config) {
       'bower_components/mithril-postgrest/mithril-postgrest.umd.js',
       'bower_components/chartjs/Chart.js',
       'node_modules/moment/moment.js',
+      'node_modules/select/dist/select.js',
       'node_modules/jquery/dist/jquery.min.js',
       'bower_components/replace-diacritics/index.js',
       'spec/lib/mocks/*mock.js',
