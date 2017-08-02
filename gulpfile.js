@@ -26,11 +26,12 @@ var rollupGlobals = {
     moment: 'moment',
     mithril: 'm',
     jquery: '$',
-    'chartjs': 'Chart',
-    'replaceDiacritics': 'replaceDiacritics',
+    select: 'select',
+    CatarseAnalytics: 'CatarseAnalytics',
+    chartjs: 'Chart',
+    replaceDiacritics: 'replaceDiacritics',
     'mithril-postgrest': 'postgrest',
-    'i18n-js': 'I18n',
-    'CatarseAnalytics': 'CatarseAnalytics'
+    'i18n-js': 'I18n'
 };
 
 gulp.task('bundle-tests', function(done){

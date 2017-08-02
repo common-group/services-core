@@ -10,12 +10,13 @@ export default {
   moduleName: 'c',
   plugins: [babel()],
   globals: {
-      underscore: '_',
-      moment: 'moment',
-      mithril: 'm',
       chartjs: 'Chart',
-      replaceDiacritics: 'replaceDiacritics',
+      mithril: 'm',
       'mithril-postgrest': 'postgrest',
-      'i18n-js': 'I18n'
+      moment: 'moment',
+      'i18n-js': 'I18n',
+      replaceDiacritics: 'replaceDiacritics',
+      select: 'select',
+      underscore: '_'
   }
 };
