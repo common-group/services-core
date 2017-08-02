@@ -1,21 +1,20 @@
-beforeAll(() => {
-    CountriesMockery = function (attrs) {
-    // @TODO refactor code to get id from name
-        const data = [
-            {
-                id: 74,
-                name: 'Estados Unidos'
-            },
-            {
-                id: 36,
-                name: 'Brasil'
-            }
-        ];
+beforeAll(function() {
+  CountriesMockery = function(attrs) {
+    var data = [
+      {
+        id: 74,
+        name: 'Argentina'
+      },
+      {
+        id: 36,
+        name: 'Brasil'
+      }
+    ];
 
-        return data;
-    };
+    return data;
+  };
 
-    jasmine.Ajax.stubRequest(new RegExp(`(${apiPrefix}\/countries)` + '(.*)')).andReturn({
-        responseText: JSON.stringify(CountriesMockery())
-    });
+  jasmine.Ajax.stubRequest(new RegExp("("+apiPrefix + '\/countries)'+'(.*)')).andReturn({
+    'responseText' : JSON.stringify(CountriesMockery())
+  });
 });
