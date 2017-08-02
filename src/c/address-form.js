@@ -158,6 +158,7 @@ const addressForm = {
             (international() ?
                 m('form', [
                     m(countrySelect, {
+                        countryName: args.countryName,
                         fields,
                         international,
                         defaultCountryID,
@@ -226,6 +227,7 @@ const addressForm = {
                 m('.w-form', [
                     m('div', [
                         m(countrySelect, {
+                            countryName: args.countryName,
                             fields,
                             international,
                             defaultCountryID,
