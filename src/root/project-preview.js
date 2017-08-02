@@ -28,7 +28,7 @@ const projectPreview = {
                 )
             ),
             m(projectsShow, args)
-        ]) : h.loader() ;
+        ]) : h.loader();
     }
 };
 

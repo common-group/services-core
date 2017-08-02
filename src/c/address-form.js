@@ -5,32 +5,25 @@ import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import inlineError from '../c/inline-error';
+import countrySelect from '../c/country-select';
+import nationalityRadio from '../c/nationality-radio';
+import addressVM from '../vms/address-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
     controller(args) {
         const parsedErrors = args.parsedErrors;
-        const countriesLoader = postgrest.loader(models.country.getPageOptions()),
-            statesLoader = postgrest.loader(models.state.getPageOptions()),
-            countries = m.prop(),
-            defaultCountryID = 36, // @TODO get id from endpoint
+        const statesLoader = postgrest.loader(models.state.getPageOptions()),
+            data = args.fields().address(),
+            vm = addressVM({
+                data
+            }),
+            defaultCountryID = vm.defaultCountryID,
+            defaultForeignCountryID = vm.defaultForeignCountryID,
             states = m.prop(),
             zipCodeErrorMessage = m.prop(''),
-            data = args.fields().address(),
-            fields = {
-                id: m.prop(data.id || ''),
-                countryID: m.prop(data.country_id || defaultCountryID),
-                stateID: m.prop(data.state_id || ''),
-                addressStreet: m.prop(data.address_street || ''),
-                addressNumber: m.prop(data.address_number || ''),
-                addressComplement: m.prop(data.address_complement || ''),
-                addressNeighbourhood: m.prop(data.address_neighbourhood || ''),
-                addressCity: m.prop(data.address_city || ''),
-                addressState: m.prop(data.address_state || ''),
-                addressZipCode: m.prop(data.address_zip_code || ''),
-                phoneNumber: m.prop(data.phone_number || '')
-            },
+            fields = args.addressFields || vm.fields,
             errors = {
                 countryID: m.prop(parsedErrors ? parsedErrors.hasError('country_id') : false),
                 stateID: m.prop(parsedErrors ? parsedErrors.hasError('state') : false),
@@ -47,21 +40,44 @@ const addressForm = {
             zipcodeMask = _.partial(h.mask, '99999-999'),
             applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = m.prop(fields.countryID() !== '' && fields.countryID() !== defaultCountryID);
+            international = args.international || vm.international;
 
+        const checkPhone = () => {
+            let hasError = false;
+            const phone = fields.phoneNumber(),
+                strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, '');
+
+            if (strippedPhone.length < 10) {
+                errors.phoneNumber(true);
+                hasError = true;
+            } else {
+                const controlDigit = Number(strippedPhone.charAt(2));
+                if (!(controlDigit >= 2 && controlDigit <= 9)) {
+                    errors.phoneNumber(true);
+                    hasError = true;
+                }
+            }
+            return hasError;
+        };
         _.extend(args.fields(), {
             validate: () => {
                 let hasError = false;
-                const fieldsToIgnore = international() ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber'] : ['id', 'addressComplement', 'addressState'];
+                const fieldsToIgnore = international() ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber'] : ['id', 'addressComplement', 'addressState', 'phoneNumber'];
+                // clear all errors
                 _.mapObject(errors, (val, key) => {
                     val(false);
                 });
+                // check for empty fields
                 _.mapObject(_.omit(fields, fieldsToIgnore), (val, key) => {
                     if (!val()) {
                         errors[key](true);
                         hasError = true;
                     }
                 });
+                if (!international()) {
+                    const hasPhoneError = checkPhone();
+                    hasError = hasError || hasPhoneError;
+                }
                 return !hasError;
             }
         });
@@ -89,7 +105,6 @@ const addressForm = {
             }
         };
 
-        countriesLoader.load().then(countryData => countries(_.sortBy(countryData, 'name_en')));
         statesLoader.load().then(states);
         return {
             lookupZipCode,
@@ -98,15 +113,17 @@ const addressForm = {
             applyPhoneMask,
             applyZipcodeMask,
             defaultCountryID,
+            defaultForeignCountryID,
             fields,
             international,
-            states,
-            countries
+            states
         };
     },
     view(ctrl, args) {
         const fields = ctrl.fields,
             international = ctrl.international,
+            defaultCountryID = ctrl.defaultCountryID,
+            defaultForeignCountryID = ctrl.defaultForeignCountryID,
             errors = ctrl.errors,
             // hash to send to rails
             address = {
@@ -124,96 +141,44 @@ const addressForm = {
             };
 
         args.fields().address(address);
-        if (args.countryName && args.stateName) {
-            args.countryName(ctrl.countries() && fields.countryID() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');
+        if (args.stateName) {
             args.stateName(ctrl.states() && fields.stateID() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '');
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            m('.fontsize-smaller.u-marginbottom-20',
-                '* Preenchimento obrigatório'
-            ),
-            m('.divider.u-marginbottom-20'),
-            m('.u-marginbottom-30', [
-                m('div',
-                    m('.w-row', [
-                        m('.w-col.w-col-4',
-                            m('.fontsize-small.fontweight-semibold',
-                                'Nacionalidade:'
-                            )
-                        ),
-                        m('.w-col.w-col-4',
-                            m('.fontsize-small.w-radio', [
-                                m("input.w-radio-input[name='nationality'][type='radio']", {
-                                    checked: !international(),
-                                    onclick: () => {
-                                        fields.countryID(ctrl.defaultCountryID);
-                                        international(false);
-                                    }
-                                }),
-                                m('label.w-form-label',
-                                    'Brasileiro (a)'
-                                )
-                            ])
-                        ),
-                        m('.w-col.w-col-4',
-                            m('.fontsize-small.w-radio', [
-                                m("input.w-radio-input[name='nationality'][type='radio']", {
-                                    checked: international(),
-                                    onclick: () => {
-                                        international(true);
-                                    }
-                                }),
-                                m('label.w-form-label',
-                                    'International'
-                                )
-                            ])
-                        )
-                    ])
-                )
-            ]),
+            (!args.hideNationality ?
+                m('.u-marginbottom-30',
+                m(nationalityRadio, {
+                    fields,
+                    defaultCountryID,
+                    defaultForeignCountryID,
+                    international
+                })) : ''),
             // @TODO move to another component
             (international() ?
                 m('form', [
-                    m('.u-marginbottom-30.w-row', [
-                        m('.w-col.w-col-6', [
-                            m('.field-label.fontweight-semibold', [
-                                'País / ',
-                                m('em',
-                                    'Country'
-                                ),
-                                ' *'
-                            ]),
-                            m('select.positive.text-field.w-select', {
-                                onchange: m.withAttr('value', ctrl.fields.countryID)
-                            }, [
-                                (!_.isEmpty(ctrl.countries()) ?
-                                    _.map(ctrl.countries(), country => m('option', {
-                                        selected: country.id === ctrl.fields.countryID(),
-                                        value: country.id
-                                    },
-                                        country.name_en
-                                    )) :
-                                    '')
-                            ])
-                        ]),
-                        m('.w-col.w-col-6')
-                    ]),
+                    m(countrySelect, {
+                        countryName: args.countryName,
+                        fields,
+                        international,
+                        defaultCountryID,
+                        defaultForeignCountryID
+                    }),
                     m('div', [
                         m('.w-row',
-                                m('.w-col.w-col-12', [
-                                    m('.field-label.fontweight-semibold',
-                                      'Address *'
-                                    ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressStreet() ? 'error' : '',
-                                        value: ctrl.fields.addressStreet(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressStreet)
-                                    }),
-                                    errors.addressStreet() ? m(inlineError, {
-                                        message: 'Please fill in an address.'
-                                    }) : ''
-                                ])),
+                            m('.w-col.w-col-12', [
+                                m('.field-label.fontweight-semibold',
+                                    'Address *'
+                                ),
+                                m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                    class: errors.addressStreet() ? 'error' : '',
+                                    value: ctrl.fields.addressStreet(),
+                                    onchange: m.withAttr('value', ctrl.fields.addressStreet)
+                                }),
+                                errors.addressStreet() ? m(inlineError, {
+                                    message: 'Please fill in an address.'
+                                }) : ''
+                            ])),
                         m('div',
                             m('.w-row', [
                                 m('.w-sub-col.w-col.w-col-4', [
@@ -246,7 +211,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         'State *'
                                     ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                    m("input#address-state.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressState() ? 'error' : '',
                                         value: ctrl.fields.addressState(),
                                         onchange: m.withAttr('value', ctrl.fields.addressState)
@@ -261,30 +226,13 @@ const addressForm = {
                 ]) :
                 m('.w-form', [
                     m('div', [
-                        m('.u-marginbottom-30.w-row', [
-                            m('.w-col.w-col-6', [
-                                m('.field-label.fontweight-semibold', [
-                                    'País / ',
-                                    m('em',
-                                        'Country'
-                                    ),
-                                    ' *'
-                                ]),
-                                m('select.positive.text-field.w-select', {
-                                    onchange: m.withAttr('value', ctrl.fields.countryID)
-                                }, [
-                                    (!_.isEmpty(ctrl.countries()) ?
-                                        _.map(ctrl.countries(), country => m('option', {
-                                            selected: country.id === ctrl.fields.countryID(),
-                                            value: country.id
-                                        },
-                                            country.name_en
-                                        )) :
-                                        '')
-                                ])
-                            ]),
-                            m('.w-col.w-col-6')
-                        ]),
+                        m(countrySelect, {
+                            countryName: args.countryName,
+                            fields,
+                            international,
+                            defaultCountryID,
+                            defaultForeignCountryID
+                        }),
                         m('div', [
                             m('.w-row', [
                                 m('.w-col.w-col-6', [
@@ -378,7 +326,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         `${I18n.t('address_state', I18nScope())} *`
                                     ),
-                                    m('select.positive.text-field.w-select', {
+                                    m('select#address-state.positive.text-field.w-select', {
                                         class: errors.stateID() ? 'error' : '',
                                         onchange: m.withAttr('value', ctrl.fields.stateID)
                                     }, [
@@ -399,14 +347,14 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         `${I18n.t('phone_number', I18nScope())} *`
                                     ),
-                                    m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
+                                    m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                         class: errors.phoneNumber() ? 'error' : '',
                                         value: ctrl.fields.phoneNumber(),
                                         onkeyup: m.withAttr('value', value => ctrl.applyPhoneMask(value)),
                                         onchange: m.withAttr('value', ctrl.fields.phoneNumber)
                                     }),
                                     errors.phoneNumber() ? m(inlineError, {
-                                        message: 'Informe um telefone.'
+                                        message: 'Informe um telefone válido.'
                                     }) : ''
                                 ])
                             ])

@@ -2,11 +2,11 @@ beforeAll(function() {
   CountriesMockery = function(attrs) {
     var data = [
       {
-        id: 1,
+        id: 74,
         name: 'Argentina'
       },
       {
-        id: 2,
+        id: 36,
         name: 'Brasil'
       }
     ];
