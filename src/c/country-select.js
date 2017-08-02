@@ -1,12 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
-import I18n from 'i18n-js';
-import h from '../h';
 import models from '../models';
-import inlineError from '../c/inline-error';
-
-const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const countrySelect = {
     controller(args) {
@@ -19,7 +14,7 @@ const countrySelect = {
 
         const changeCountry = (countryID) => {
             fields.countryID(parseInt(countryID));
-            international(parseInt(countryID) !== defaultCountryID);
+            args.international(parseInt(countryID) !== defaultCountryID);
         };
 
         countriesLoader.load().then(countryData => countries(_.sortBy(countryData, 'name_en')));

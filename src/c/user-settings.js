@@ -256,6 +256,7 @@ const userSettings = {
                                 label: I18n.t('address_title', I18nScope()),
                                 label_hint: I18n.t('address_subtitle', I18nScope()),
                                 children: [
+                                    m('.divider.u-marginbottom-20'),
                                     m(addressForm, {
                                         fields: ctrl.fields,
                                         parsedErrors: ctrl.parsedErrors

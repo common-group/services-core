@@ -387,9 +387,10 @@ const paymentVM = () => {
 
     const applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
-    usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
+    const fetchUser = () => usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
 
     return {
+        fetchUser,
         fields,
         validate,
         isInternational,

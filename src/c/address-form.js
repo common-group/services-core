@@ -7,6 +7,7 @@ import models from '../models';
 import inlineError from '../c/inline-error';
 import countrySelect from '../c/country-select';
 import nationalityRadio from '../c/nationality-radio';
+import addressVM from '../vms/address-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
@@ -14,24 +15,15 @@ const addressForm = {
     controller(args) {
         const parsedErrors = args.parsedErrors;
         const statesLoader = postgrest.loader(models.state.getPageOptions()),
-            defaultCountryID = 36, // @TODO get id from endpoint
-            defaultForeignCountryID = 74,
+            data = args.fields().address(),
+            vm = addressVM({
+                data
+            }),
+            defaultCountryID = vm.defaultCountryID,
+            defaultForeignCountryID = vm.defaultForeignCountryID,
             states = m.prop(),
             zipCodeErrorMessage = m.prop(''),
-            data = args.fields().address(),
-            fields = {
-                id: m.prop(data.id || ''),
-                countryID: m.prop(data.country_id || defaultCountryID),
-                stateID: m.prop(data.state_id || ''),
-                addressStreet: m.prop(data.address_street || ''),
-                addressNumber: m.prop(data.address_number || ''),
-                addressComplement: m.prop(data.address_complement || ''),
-                addressNeighbourhood: m.prop(data.address_neighbourhood || ''),
-                addressCity: m.prop(data.address_city || ''),
-                addressState: m.prop(data.address_state || ''),
-                addressZipCode: m.prop(data.address_zip_code || ''),
-                phoneNumber: m.prop(data.phone_number || '')
-            },
+            fields = args.addressFields || vm.fields,
             errors = {
                 countryID: m.prop(parsedErrors ? parsedErrors.hasError('country_id') : false),
                 stateID: m.prop(parsedErrors ? parsedErrors.hasError('state') : false),
@@ -48,7 +40,7 @@ const addressForm = {
             zipcodeMask = _.partial(h.mask, '99999-999'),
             applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = m.prop();
+            international = args.international || vm.international;
 
         const checkPhone = () => {
             let hasError = false;
@@ -154,8 +146,14 @@ const addressForm = {
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            m('.divider.u-marginbottom-20'),
-            m(nationalityRadio, { fields, defaultCountryID, defaultForeignCountryID, international }),
+            (!args.hideNationality ?
+                m('.u-marginbottom-30',
+                m(nationalityRadio, {
+                    fields,
+                    defaultCountryID,
+                    defaultForeignCountryID,
+                    international
+                })) : ''),
             // @TODO move to another component
             (international() ?
                 m('form', [
