@@ -224,7 +224,7 @@ const projectsPayment = {
                                             }),
                                             ctrl.fieldHasError('completeName')
                                         ]),
-                                        m('.w-col.w-col-5', (ctrl.vm.isInternational() ? '' : [
+                                        m('.w-col.w-col-5', (addVM.international() ? '' : [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
                                                 I18n.t('fields.owner_document', ctrl.scope())
                                             ),
