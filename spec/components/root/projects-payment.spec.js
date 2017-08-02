@@ -19,7 +19,7 @@ describe('ProjectsPayment', () => {
 
   describe('when contribution is international', () => {
       beforeAll(() => {
-          $output.setValue('#country', 1);
+          $output.setValue('#country', 74);
       });
 
       it('should not show user document', () => {
@@ -36,7 +36,7 @@ describe('ProjectsPayment', () => {
 
   describe('when contribution is national', () => {
       beforeAll(() => {
-          $output.setValue('#country', 2);
+          $output.setValue('#country', 36);
       });
       it('should show user document', () => {
           expect($output.has('input#document')).toBeTrue();
