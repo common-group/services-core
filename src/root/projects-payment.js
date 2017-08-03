@@ -196,7 +196,9 @@ const projectsPayment = {
                                 ]),
                                 user.name && user.owner_document ? m(UserOwnerBox, {
                                     user,
-                                    project
+                                    project,
+                                    reward: ctrl.reward(),
+                                    value: ctrl.value * 100
                                 }) : '',
 
                                 m('.card.card-terciary.u-marginbottom-30.u-radius.w-form',

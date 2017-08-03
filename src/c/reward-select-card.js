@@ -13,6 +13,10 @@ const rewardSelectCard = {
         const isSelected = currentReward => currentReward.id === rewardVM.selectedReward().id;
         const selectedDestination = m.prop('');
         const queryRewardId = h.getParams('reward_id');
+        const queryRewardValue = h.getParams('value');
+        if (queryRewardValue) {
+            rewardVM.setValue(h.formatNumber(Number(queryRewardValue / 100), 2, 3));
+        }
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
