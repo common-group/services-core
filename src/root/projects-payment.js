@@ -12,7 +12,6 @@ import faqBox from '../c/faq-box';
 import nationalityRadio from '../c/nationality-radio';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
-import UserOwnerBox from '../c/user-owner-box';
 import addressForm from '../c/address-form';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
@@ -85,7 +84,11 @@ const projectsPayment = {
             return h.navigateToDevise();
         }
         rewardVM.getFees(reward()).then(rewardVM.fees);
-        vm.fetchUser().then(() => { addVM(addressVM({ data: vm.fields.address() })); });
+        vm.fetchUser().then(() => {
+            addVM(addressVM({
+                data: vm.fields.address()
+            }));
+        });
         vm.similityExecute(contribution().id);
         projectVM.getCurrentProject();
 
@@ -113,7 +116,35 @@ const projectsPayment = {
         const user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),
-            formatedValue = h.formatNumber(Number(ctrl.value), 2, 3);
+            formatedValue = h.formatNumber(Number(ctrl.value), 2, 3),
+            anonymousCheckbox = m('.w-row', [
+                m('.w-checkbox.w-clearfix', [
+                    m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
+                        onclick: () => CatarseAnalytics.event({
+                            cat: 'contribution_finish',
+                            act: 'contribution_anonymous_change'
+                        }),
+                        onchange: () => {
+                            ctrl.vm.fields.anonymous.toggle();
+                        },
+                        checked: ctrl.vm.fields.anonymous(),
+                    }),
+                    m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
+                        I18n.t('fields.anonymous', ctrl.scope())
+                    )
+                ]),
+
+                (ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
+                    m('div', [
+                        m('span.fontweight-bold', [
+                            I18n.t('anonymous_confirmation_title', ctrl.scope()),
+                            m('br')
+                        ]),
+                        m('br'),
+                        I18n.t('anonymous_confirmation', ctrl.scope())
+                    ])
+                ) : '')
+            ]);
 
         return m('#project-payment.w-section.w-clearfix.section', (addVM && !_.isEmpty(project)) ? [
             m('.w-col',
@@ -139,8 +170,7 @@ const projectsPayment = {
                         ),
                         m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
                             class: ctrl.isLongDescription(ctrl.reward()) ?
-                                    ctrl.toggleDescription() ? 'extended' : '' :
-                                    'extended'
+                                    ctrl.toggleDescription() ? 'extended' : '' : 'extended'
                         }, ctrl.reward().description ?
                             ctrl.reward().description :
                             m.trust(
@@ -194,12 +224,27 @@ const projectsPayment = {
                                         I18n.t('required', ctrl.scope())
                                     )
                                 ]),
-                                user.name && user.owner_document ? m(UserOwnerBox, {
-                                    user,
-                                    project,
-                                    reward: ctrl.reward(),
-                                    value: ctrl.value * 100
-                                }) : '',
+
+                                (user.name && user.owner_document ?
+                                    m('.card.card-terciary.u-radius.u-marginbottom-40', [
+                                        m('.w-row.u-marginbottom-20', [
+                                            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
+                                                m(`img.thumb.u-margintop-10.u-round[src="${h.useAvatarOrDefault(user.profile_img_thumbnail)}"][width="100"]`)
+                                            ]),
+                                            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
+                                                m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
+                                                    (project ? 'Dados do apoiador ' : 'Dados do usuário '),
+                                                    m(`a.alt-link[href="/not-my-account${project ? `?project_id=${project.project_id}` : ''}${ctrl.reward() ? `&reward_id=${ctrl.reward().id}` : ''}${ctrl.value ? `&value=${ctrl.value * 100}` : ''}"]`, 'Não é você?')
+                                                ]),
+                                                m('.fontsize-base.fontweight-semibold', user.name),
+                                                (user.owner_document ?
+                                                    m('label.field-label', `CPF/CNPJ: ${user.owner_document}`) : ''),
+
+                                            ])
+                                        ]),
+                                        anonymousCheckbox
+
+                                    ]) : ''),
 
                                 m('.card.card-terciary.u-marginbottom-30.u-radius.w-form',
                                     m(nationalityRadio, {
@@ -210,8 +255,8 @@ const projectsPayment = {
                                     })
                                 ),
 
-                                m('.card.card-terciary.u-radius.u-marginbottom-40', [
-                                    ((user.name && user.owner_document) ? '' : m('.w-row', [
+                                (user.name && user.owner_document) ? '' : m('.card.card-terciary.u-radius.u-marginbottom-40', [
+                                    (m('.w-row', [
                                         m('.w-col.w-col-7.w-sub-col', [
                                             m('label.field-label.fontweight-semibold[for=\'complete-name\']',
                                                 I18n.t('fields.complete_name', ctrl.scope())
@@ -240,29 +285,7 @@ const projectsPayment = {
                                             ctrl.fieldHasError('ownerDocument')
                                         ])),
                                     ])),
-                                    m('.w-checkbox.w-clearfix', [
-                                        m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
-                                            onclick: () => CatarseAnalytics.event({
-                                                cat: 'contribution_finish',
-                                                act: 'contribution_anonymous_change'
-                                            }),
-                                            onchange: m.withAttr('value', ctrl.vm.fields.anonymous),
-                                            checked: ctrl.vm.fields.anonymous(),
-                                        }),
-                                        m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
-                                            I18n.t('fields.anonymous', ctrl.scope())
-                                        )
-                                    ]),
-                                    (ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
-                                        m('div', [
-                                            m('span.fontweight-bold', [
-                                                I18n.t('anonymous_confirmation_title', ctrl.scope()),
-                                                m('br')
-                                            ]),
-                                            m('br'),
-                                            I18n.t('anonymous_confirmation', ctrl.scope())
-                                        ])
-                                    ) : '')
+                                    anonymousCheckbox
                                 ]),
 
                                 m('.card.card-terciary.u-radius.u-marginbottom-40',
@@ -315,8 +338,7 @@ const projectsPayment = {
                                 ),
                                 m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
                                     class: ctrl.isLongDescription(ctrl.reward()) ?
-                                            ctrl.toggleDescription() ? 'extended' : '' :
-                                            'extended'
+                                            ctrl.toggleDescription() ? 'extended' : '' : 'extended'
                                 }, ctrl.reward().description ?
                                     ctrl.reward().description :
                                     m.trust(

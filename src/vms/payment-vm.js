@@ -21,7 +21,7 @@ const paymentVM = () => {
 
     const fields = {
         completeName: m.prop(''),
-        anonymous: m.prop(),
+        anonymous: h.toggleProp(false, true),
         address: m.prop({}),
         ownerDocument: m.prop(''),
         errors: m.prop([])
