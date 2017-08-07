@@ -356,9 +356,11 @@ const surveysShow = {
 
                                                         _.map(item.question.question_choices, choice =>
                                                             m('.fontsize-small.w-radio', [
+                                                                console.log(choice.id),
+                                                                console.log(item.value()),
                                                                 m(`input.w-radio-input[type='radio'][name='choice${item.question.id}']`, {
                                                                     value: choice.id,
-                                                                    checked: choice.id === item.value(),
+                                                                    checked: parseInt(choice.id) === parseInt(item.value()),
                                                                     onchange: m.withAttr('value', item.value)
                                                                 }),
                                                                 m("label.w-form-label[for='radio']",
