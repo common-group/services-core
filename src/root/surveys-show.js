@@ -350,9 +350,13 @@ const surveysShow = {
                                                 ''),
                                             _.map(multipleChoiceQuestions, item =>
                                                 m('.u-marginbottom-30.w-form', [
-                                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                                         item.question.question
-                                                    ), [
+                                                    ),
+                                                    m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
+                                                        item.question.description
+                                                    ),
+                                                    [
 
                                                         _.map(item.question.question_choices, choice =>
                                                             m('.fontsize-small.w-radio', [
@@ -369,8 +373,11 @@ const surveysShow = {
                                                 ])),
                                             _.map(openQuestions, item =>
                                                 m('.u-marginbottom-30.w-form', [
-                                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                                         item.question.question
+                                                    ),
+                                                    m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
+                                                        item.question.description
                                                     ),
                                                     m("input.positive.text-field.w-input[maxlength='256'][placeholder='Sua resposta'][required='required'][type='text']", {
                                                         value: item.value(),

@@ -137,8 +137,11 @@ const surveyCreatePreview = {
 
                                 _.map(ctrl.multipleChoiceQuestions, question =>
                                 m('.u-marginbottom-30.w-form', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                       question.question
+                                    ),
+                                    m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
+                                      question.description
                                     ),
                                     m('form', [
                                         _.map(question.survey_question_choices_attributes(), choice =>
@@ -152,8 +155,11 @@ const surveyCreatePreview = {
                                 ])),
                                 _.map(ctrl.openQuestions, question =>
                                 m('.u-marginbottom-30.w-form', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                       question.question
+                                    ),
+                                    m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
+                                        question.description
                                     ),
                                     m('form',
                                         m("input.positive.text-field.w-input[placeholder='Sua resposta'][type='text']")
