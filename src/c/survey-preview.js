@@ -87,16 +87,24 @@ const surveyPreview = {
                             _.map(ctrl.multipleChoiceQuestions, (item) => {
                                 const answer = _.find(item.question.question_choices, choice => item.value() == choice.id);
                                 return m('.u-marginbottom-30', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                         item.question.question
-                                    ), m('.fontsize-base', answer ? answer.option : '')
+                                    ),
+                                    m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
+                                                        item.question.description
+                                                    ),
+                                    m('.fontsize-base', answer ? answer.option : '')
                                 ]);
                             }),
                             _.map(ctrl.openQuestions, item =>
                                 m('.u-marginbottom-30', [
-                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                         item.question.question
-                                    ), m('.fontsize-base', item.value())
+                                    ),
+                                    m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
+                                                        item.question.description
+                                                    ),
+                                    m('.fontsize-base', item.value())
                                 ]))
                         ])
                     ),
