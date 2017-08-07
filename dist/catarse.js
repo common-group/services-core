@@ -5456,11 +5456,11 @@ var surveyCreatePreview = {
     },
     view: function view(ctrl, args) {
         return m('.section.u-marginbottom-40', m('.section.u-text-center', m('.w-container', m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-larger.fontweight-semibold.lineheight-looser', 'Revise o questionário'), m('.fontsize-base', 'Os seus apoiadores irão receber um link para o questionário abaixo por email. Veja se está tudo correto antes de enviá-lo!')]), m('.w-col.w-col-2')]))), m('.section', m('.w-container', m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.card.card-terciary.medium.u-marginbottom-30', [args.confirmAddress ? m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', 'Endereço de entrega da recompensa'), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-30', 'Para onde Nome do Realizador deve enviar sua recompensa quando estiver pronta.'), m('form', [m('.w-row', [m('.w-sub-col.w-col.w-col-6', [m('label.field-label.fontweight-semibold', 'País / Country'), m('select.positive.text-field.w-select', [m("option[value='']", 'Selecione...')])]), m('.w-col.w-col-6', m('.w-row', [m('.w-sub-col-middle.w-col.w-col-6.w-col-small-6.w-col-tiny-6'), m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6')]))]), m('div', [m('label.field-label.fontweight-semibold', 'Rua'), m("input.positive.text-field.w-input[type='email']")]), m('.w-row', [m('.w-sub-col.w-col.w-col-4', [m('label.field-label.fontweight-semibold', 'Número'), m("input.positive.text-field.w-input[type='email']")]), m('.w-sub-col.w-col.w-col-4', [m('label.field-label.fontweight-semibold', 'Complemento'), m("input.positive.text-field.w-input[type='email']")]), m('.w-col.w-col-4', [m('label.field-label.fontweight-semibold', 'Bairro'), m("input.positive.text-field.w-input[type='email']")])]), m('.w-row', [m('.w-sub-col.w-col.w-col-4', [m('label.field-label.fontweight-semibold', 'CEP'), m("input.positive.text-field.w-input[type='email']")]), m('.w-sub-col.w-col.w-col-4', [m('label.field-label.fontweight-semibold', 'Cidade'), m("input.positive.text-field.w-input[type='email']")]), m('.w-col.w-col-4', [m('label.field-label.fontweight-semibold', 'Estado'), m('select.positive.text-field.w-select', [m("option[value='']", 'Selecione...')])])]), m('.w-row', [m('.w-sub-col.w-col.w-col-6', [m('label.field-label.fontweight-semibold', 'Telefone'), m("input.positive.text-field.w-input[type='email']")]), m('.w-col.w-col-6')])])]) : '', _$1.map(ctrl.multipleChoiceQuestions, function (question) {
-            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', question.question), m('form', [_$1.map(question.survey_question_choices_attributes(), function (choice) {
+            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', question.question), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20', question.description), m('form', [_$1.map(question.survey_question_choices_attributes(), function (choice) {
                 return m('.fontsize-small.w-radio', [m("input.w-radio-input[type='radio'][value='Radio']"), m('label.w-form-label', choice.option)]);
             })])]);
         }), _$1.map(ctrl.openQuestions, function (question) {
-            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', question.question), m('form', m("input.positive.text-field.w-input[placeholder='Sua resposta'][type='text']"))]);
+            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', question.question), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20', question.description), m('form', m("input.positive.text-field.w-input[placeholder='Sua resposta'][type='text']"))]);
         })])), m('.w-col.w-col-1')]))), m('.section', [m('.u-marginbottom-30.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.u-marginbottom-30.u-text-center', [m('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'O question\xE1rio acima ser\xE1 enviado para os ' + args.reward.paid_count + ' apoiadores da recompensa'), m(rewardCardBig, { reward: args.reward })]), m('.card.card-message.fontsize-small.u-marginbottom-30.u-radius', [m('span.fontweight-semibold', 'OBS:'), m.trust('&nbsp;'), 'As perguntas serão reenviadas automaticamente para aqueles que não responderem em até 4 dias. Caso os apoiadores continuem sem enviar as respostas, o questionário será reenviado mais duas vezes.'])]), m('.w-col.w-col-2')]), m('.u-marginbottom-20.w-row', [m('.w-col.w-col-3'), m('.w-sub-col.w-col.w-col-4', m("a.btn.btn-large[href='javascript:void(0);']", { onclick: args.sendQuestions }, [m('span.fa.fa-paper-plane', ''), ' ', m.trust('&nbsp;'), 'Enviar'])), m('.w-col.w-col-2', m("a.btn.btn-large.btn-terciary[href='javascript:void(0);']", { onclick: ctrl.togglePreview }, 'Editar')), m('.w-col.w-col-3')])]));
     }
 };
@@ -8278,7 +8278,7 @@ var paymentVM = function paymentVM() {
 
     var fields = {
         completeName: m.prop(''),
-        anonymous: m.prop(),
+        anonymous: h.toggleProp(false, true),
         address: m.prop({}),
         ownerDocument: m.prop(''),
         errors: m.prop([])
@@ -9152,9 +9152,9 @@ var surveyPreview = {
             var answer = _$1.find(item.question.question_choices, function (choice) {
                 return item.value() == choice.id;
             });
-            return m('.u-marginbottom-30', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', item.question.question), m('.fontsize-base', answer ? answer.option : '')]);
+            return m('.u-marginbottom-30', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', item.question.question), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20', item.question.description), m('.fontsize-base', answer ? answer.option : '')]);
         }), _$1.map(ctrl.openQuestions, function (item) {
-            return m('.u-marginbottom-30', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', item.question.question), m('.fontsize-base', item.value())]);
+            return m('.u-marginbottom-30', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', item.question.question), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20', item.question.description), m('.fontsize-base', item.value())]);
         })])), m('.w-col.w-col-1')])));
     }
 };
@@ -9694,15 +9694,15 @@ var surveysShow = {
             stateName: stateName,
             fields: ctrl.fields
         })] : '', _$1.map(multipleChoiceQuestions, function (item) {
-            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', item.question.question), [_$1.map(item.question.question_choices, function (choice) {
+            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', item.question.question), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20', item.question.description), [_$1.map(item.question.question_choices, function (choice) {
                 return m('.fontsize-small.w-radio', [m('input.w-radio-input[type=\'radio\'][name=\'choice' + item.question.id + '\']', {
                     value: choice.id,
-                    checked: choice.id === item.value(),
+                    checked: parseInt(choice.id) === parseInt(item.value()),
                     onchange: m.withAttr('value', item.value)
                 }), m("label.w-form-label[for='radio']", choice.option)]);
             })]]);
         }), _$1.map(openQuestions, function (item) {
-            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', item.question.question), m("input.positive.text-field.w-input[maxlength='256'][placeholder='Sua resposta'][required='required'][type='text']", {
+            return m('.u-marginbottom-30.w-form', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold', item.question.question), m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20', item.question.description), m("input.positive.text-field.w-input[maxlength='256'][placeholder='Sua resposta'][required='required'][type='text']", {
                 value: item.value(),
                 onchange: m.withAttr('value', item.value)
             })]);
@@ -13768,7 +13768,9 @@ var projectsPayment = {
         }
         rewardVM.getFees(reward()).then(rewardVM.fees);
         vm.fetchUser().then(function () {
-            addVM(addressVM({ data: vm.fields.address() }));
+            addVM(addressVM({
+                data: vm.fields.address()
+            }));
         });
         vm.similityExecute(contribution().id);
         projectVM.getCurrentProject();
@@ -13797,7 +13799,19 @@ var projectsPayment = {
         var user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),
-            formatedValue = h.formatNumber(Number(ctrl.value), 2, 3);
+            formatedValue = h.formatNumber(Number(ctrl.value), 2, 3),
+            anonymousCheckbox = m('.w-row', [m('.w-checkbox.w-clearfix', [m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
+            onclick: function onclick() {
+                return CatarseAnalytics.event({
+                    cat: 'contribution_finish',
+                    act: 'contribution_anonymous_change'
+                });
+            },
+            onchange: function onchange() {
+                ctrl.vm.fields.anonymous.toggle();
+            },
+            checked: ctrl.vm.fields.anonymous()
+        }), m('label.w-form-label.fontsize-smallest[for=\'anonymous\']', I18n$1.t('fields.anonymous', ctrl.scope()))]), ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest', m('div', [m('span.fontweight-bold', [I18n$1.t('anonymous_confirmation_title', ctrl.scope()), m('br')]), m('br'), I18n$1.t('anonymous_confirmation', ctrl.scope())])) : '']);
 
         return m('#project-payment.w-section.w-clearfix.section', addVM && !_$1.isEmpty(project) ? [m('.w-col', m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', I18n$1.t('selected_reward.value', ctrl.scope())), m('.w-clearfix', [m('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), m('a.alt-link.fontsize-smaller.u-right[href="/projects/' + projectVM.currentProject().project_id + '/contributions/new' + (ctrl.reward().id ? '?reward_id=' + ctrl.reward().id : '') + '"]', 'Editar')]), m('.divider.u-marginbottom-10.u-margintop-10'), m('.back-payment-info-reward', [m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.reward', ctrl.scope())), m('.fontsize-smallest.fontweight-semibold', ctrl.reward().title), m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
             class: ctrl.isLongDescription(ctrl.reward()) ? ctrl.toggleDescription() ? 'extended' : '' : 'extended'
@@ -13809,17 +13823,12 @@ var projectsPayment = {
             class: ctrl.toggleDescription() ? 'reversed' : ''
         })]) : '', ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [m('span.fontweight-semibold', 'Entrega prevista:'), ' ' + h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')]) : '', rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential' ? m('.fontcolor-secondary.fontsize-smallest', [m('span.fontweight-semibold', 'Forma de envio: '), I18n$1.t('shipping_options.' + ctrl.reward().shipping_options, {
             scope: 'projects.contributions'
-        })]) : ''])])), m('.w-container', m('.w-row', [m('.w-col.w-col-8', [m('.w-form', [m('form.u-marginbottom-40', [m('.u-marginbottom-40.u-text-center-small-only', [m('.fontweight-semibold.lineheight-tight.fontsize-large', I18n$1.t('title', ctrl.scope())), m('.fontsize-smaller', I18n$1.t('required', ctrl.scope()))]), user.name && user.owner_document ? m(UserOwnerBox, {
-            user: user,
-            project: project,
-            reward: ctrl.reward(),
-            value: ctrl.value * 100
-        }) : '', m('.card.card-terciary.u-marginbottom-30.u-radius.w-form', m(nationalityRadio, {
+        })]) : ''])])), m('.w-container', m('.w-row', [m('.w-col.w-col-8', [m('.w-form', [m('form.u-marginbottom-40', [m('.u-marginbottom-40.u-text-center-small-only', [m('.fontweight-semibold.lineheight-tight.fontsize-large', I18n$1.t('title', ctrl.scope())), m('.fontsize-smaller', I18n$1.t('required', ctrl.scope()))]), user.name && user.owner_document ? m('.card.card-terciary.u-radius.u-marginbottom-40', [m('.w-row.u-marginbottom-20', [m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [m('img.thumb.u-margintop-10.u-round[src="' + h.useAvatarOrDefault(user.profile_img_thumbnail) + '"][width="100"]')]), m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [project ? 'Dados do apoiador ' : 'Dados do usuário ', m('a.alt-link[href="/not-my-account' + (project ? '?project_id=' + project.project_id : '') + (ctrl.reward() ? '&reward_id=' + ctrl.reward().id : '') + (ctrl.value ? '&value=' + ctrl.value * 100 : '') + '"]', 'Não é você?')]), m('.fontsize-base.fontweight-semibold', user.name), user.owner_document ? m('label.field-label', 'CPF/CNPJ: ' + user.owner_document) : ''])]), anonymousCheckbox]) : '', m('.card.card-terciary.u-marginbottom-30.u-radius.w-form', m(nationalityRadio, {
             fields: addVM.fields,
             defaultCountryID: addVM.defaultCountryID,
             defaultForeignCountryID: addVM.defaultForeignCountryID,
             international: addVM.international
-        })), m('.card.card-terciary.u-radius.u-marginbottom-40', [user.name && user.owner_document ? '' : m('.w-row', [m('.w-col.w-col-7.w-sub-col', [m('label.field-label.fontweight-semibold[for=\'complete-name\']', I18n$1.t('fields.complete_name', ctrl.scope())), m('input.positive.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
+        })), user.name && user.owner_document ? '' : m('.card.card-terciary.u-radius.u-marginbottom-40', [m('.w-row', [m('.w-col.w-col-7.w-sub-col', [m('label.field-label.fontweight-semibold[for=\'complete-name\']', I18n$1.t('fields.complete_name', ctrl.scope())), m('input.positive.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
             onfocus: ctrl.vm.resetFieldError('completeName'),
             class: ctrl.fieldHasError('completeName') ? 'error' : false,
             type: 'text',
@@ -13832,16 +13841,7 @@ var projectsPayment = {
             type: 'tel',
             onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
             value: ctrl.vm.fields.ownerDocument()
-        }), ctrl.fieldHasError('ownerDocument')])]), m('.w-checkbox.w-clearfix', [m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
-            onclick: function onclick() {
-                return CatarseAnalytics.event({
-                    cat: 'contribution_finish',
-                    act: 'contribution_anonymous_change'
-                });
-            },
-            onchange: m.withAttr('value', ctrl.vm.fields.anonymous),
-            checked: ctrl.vm.fields.anonymous()
-        }), m('label.w-form-label.fontsize-smallest[for=\'anonymous\']', I18n$1.t('fields.anonymous', ctrl.scope()))]), ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest', m('div', [m('span.fontweight-bold', [I18n$1.t('anonymous_confirmation_title', ctrl.scope()), m('br')]), m('br'), I18n$1.t('anonymous_confirmation', ctrl.scope())])) : '']), m('.card.card-terciary.u-radius.u-marginbottom-40', m(addressForm, {
+        }), ctrl.fieldHasError('ownerDocument')])]), anonymousCheckbox]), m('.card.card-terciary.u-radius.u-marginbottom-40', m(addressForm, {
             addressFields: addVM.fields,
             fields: m.prop(ctrl.vm.fields),
             international: addVM.international,
