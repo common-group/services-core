@@ -10,6 +10,7 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 
 const paymentVM = () => {
     const pagarme = m.prop({}),
+        defaultCountryID = 36,
         submissionError = m.prop(false),
         isLoading = m.prop(false);
 
@@ -22,7 +23,7 @@ const paymentVM = () => {
     const fields = {
         completeName: m.prop(''),
         anonymous: h.toggleProp(false, true),
-        address: m.prop({}),
+        address: m.prop({ country_id: defaultCountryID }),
         ownerDocument: m.prop(''),
         errors: m.prop([])
     };
@@ -76,7 +77,7 @@ const paymentVM = () => {
         return yearsOptions;
     };
 
-    const isInternational = () => parseInt(fields.address().country_id) !== 36;// @TODO fixme
+    const isInternational = () => parseInt(fields.address().country_id) !== defaultCountryID;
 
     const scope = data => isInternational() ? I18nIntScope(data) : I18nScope(data);
 
