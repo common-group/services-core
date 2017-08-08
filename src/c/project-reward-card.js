@@ -180,8 +180,8 @@ const projectRewardCard = {
                             },
                                 _.map(
                                     ctrl.locationOptions(reward, ctrl.selectedDestination),
-                                    option => m(`option[value="${option.value}"]`,
-                                        { selected: option.value === ctrl.selectedDestination() },
+                                    option => m('option',
+                                        { selected: option.value === ctrl.selectedDestination(), value: option.value },
                                         [
                                             `${option.name} `,
                                             option.value != '' ? `+R$${option.fee}` : null

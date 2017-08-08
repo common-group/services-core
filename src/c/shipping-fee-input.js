@@ -78,7 +78,8 @@ const shippingFeeInput = {
                             }
                         }, [
                             (_.map(states(), state =>
-                                m(`option[value='${state.acronym}']`, {
+                                m('option', {
+                                    value: state.acronym,
                                     disabled: ctrl.stateInUse(state)
                                 },
                                     state.name

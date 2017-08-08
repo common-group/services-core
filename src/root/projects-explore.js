@@ -72,7 +72,7 @@ const projectsExplore = {
             category = _.compose(findCategory, categoryId),
             loadCategories = () => models.category.getPageWithToken(filters({}).order({ name: 'asc' }).parameters()).then(categoryCollection),
             externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories,
-            hasSpecialFooter = (categoryId) => !_.isUndefined(externalLinkCategories[categoryId]),
+            hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]),
               // just small fix when have two scored projects only
             checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
               // Fake projects object to be able to render page while loadding (in case of search)
@@ -242,7 +242,7 @@ const projectsExplore = {
                                 _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => {
                                     const isSelected = ctrl.currentFilter() === pageFilter;
 
-                                    return m(`option[value="${pageFilter.keyName}"]`, { selected: isSelected }, pageFilter.nicename);
+                                    return m('option', { value: pageFilter.keyName, selected: isSelected }, pageFilter.nicename);
                                 })
                             ) : ''
                         )
@@ -315,7 +315,7 @@ const projectsExplore = {
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             hasSpecialFooter
-                                ? m('a.w-button.btn.btn-large', { href: ctrl.externalLinkCategories[categoryId()].link+'?ref=ctrse_explore' }, ctrl.externalLinkCategories[categoryId()].cta)
+                                ? m('a.w-button.btn.btn-large', { href: `${ctrl.externalLinkCategories[categoryId()].link}?ref=ctrse_explore` }, ctrl.externalLinkCategories[categoryId()].cta)
                                 : m('a.w-button.btn.btn-large', { href: '/start?ref=ctrse_explore' }, 'Aprenda como')
                         ])
                     ])

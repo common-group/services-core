@@ -231,7 +231,7 @@ const paymentCreditCard = {
                                                 m('select.w-select.text-field.text-field-creditcard', {
                                                     onchange: m.withAttr('value', ctrl.selectedInstallment),
                                                     value: ctrl.selectedInstallment()
-                                                }, _.map(ctrl.installments(), installment => m(`option[value="${installment.number}"]`,
+                                                }, _.map(ctrl.installments(), installment => m('option', { value: installment.number },
                                                         `${installment.number} X R$ ${installment.amount}`
                                                     ))
                                             )

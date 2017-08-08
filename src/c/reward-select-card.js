@@ -108,7 +108,7 @@ const rewardSelectCard = {
                             onchange: m.withAttr('value', ctrl.selectDestination)
                         },
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
-                                option => m(`option[value="${option.value}"]`, [
+                                option => m('option', { value: option.value }, [
                                     `${option.name} `,
                                     option.value != '' ? `+R$${option.fee}` : null
                                 ])
