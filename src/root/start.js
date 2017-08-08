@@ -48,7 +48,7 @@ const start = {
                 const externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories;
                 return _.isUndefined(externalLinkCategories[category.id])
                     ? null
-                    : externalLinkCategories[category.id].link + '?ref=ctrse_start';
+                    : `${externalLinkCategories[category.id].link}?ref=ctrse_start`;
             },
             loadCategoryProjects = (category) => {
                 selectedCategory(category);
@@ -429,7 +429,7 @@ const start = {
                                     }
                                 }, [
                                     m('option[value="-1"]', I18n.t('form.select_default', I18nScope())),
-                                    _.map(ctrl.categories(), category => m(`option[value="${category.id}"]`, { selected: ctrl.projectCategory() === category.id }, category.name))
+                                    _.map(ctrl.categories(), category => m('option', { value: category.id, selected: ctrl.projectCategory() === category.id }, category.name))
                                 ])
                             ]),
                             m('.w-col.w-col-2'),

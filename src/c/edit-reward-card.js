@@ -198,7 +198,8 @@ const editRewardCard = {
                                                 ctrl.fields.deliverAt(moment(ctrl.fields.deliverAt()).month(parseInt(e.target.value) - 1).format());
                                             }
                                         }, [
-                                            _.map(moment.monthsShort(), (month, monthIndex) => m(`option[value='${monthIndex + 1}']`, {
+                                            _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
+                                                value: monthIndex + 1,
                                                 selected: moment(ctrl.fields.deliverAt()).format('M') == monthIndex + 1
                                             },
                                                 h.capitalize(month)
@@ -212,7 +213,8 @@ const editRewardCard = {
                                             }
                                         }, [
                                             _.map(_.range(moment().year(), moment().year() + 6), year =>
-                                                m(`option[value='${year}']`, {
+                                                m('option', {
+                                                    value: year,
                                                     selected: moment(ctrl.fields.deliverAt()).format('YYYY') === String(year)
                                                 },
                                                     year
