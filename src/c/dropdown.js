@@ -11,7 +11,7 @@ const dropdown = {
                 onchange: (e) => { args.valueProp(e.target.value); args.onchange(); },
                 value: args.valueProp()
             },
-            _.map(opts, data => m(`option[value="${data.value}"]`, data.option))
+            _.map(opts, data => m('option', { value: data.value }, data.option))
         );
     }
 };
