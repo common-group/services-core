@@ -124,7 +124,7 @@ const projectCard = {
                     ]),
                     m(ctrl.css().city, [
                         m('.fontsize-smallest.fontcolor-secondary', [
-                            m('span.fa.fa-map-marker.fa-1', ' '),
+                            m('span.fa.fa-fw.fa-map-marker.fa-1', ' '),
                             projectAddress
                         ])
                     ]),
