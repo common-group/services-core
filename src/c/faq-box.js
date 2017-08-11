@@ -29,7 +29,7 @@ const faqBox = {
                         answer: I18n.t(`${tKey()}.questions.${idx}.answer`,
                                     I18nScope(
                                         { userLink: `/users/${user().id}`,
-                                            userName: user().name
+                                            userName: user().public_name || user().name
                                         }
                                     )
                                 )
