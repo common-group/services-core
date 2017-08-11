@@ -96,13 +96,11 @@ const userPrivateContributed = {
                     collection: onlineCollection,
                     pagination: ctrl.onlinePages
                 }),
-                m('.divider.u-marginbottom-80.u-margintop-80'),
                 m.component(userContributedList, {
                     title: 'Projetos bem-sucedidos',
                     collection: successfulCollection,
                     pagination: ctrl.successfulPages
                 }),
-                m('.divider.u-marginbottom-80.u-margintop-80'),
                 m.component(userContributedList, {
                     title: 'Projetos não-financiados',
                     collection: failedCollection,
