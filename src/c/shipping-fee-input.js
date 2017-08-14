@@ -10,7 +10,7 @@ const shippingFeeInput = {
             fees = args.fees,
             feeIndex = args.feeIndex,
             deleted = h.toggleProp(false, true),
-            feeValue = m.prop(`${h.formatNumber(fee.value, 2, 3)}` || '0'),
+            feeValue = m.prop(fee.value ? `${h.formatNumber(fee.value, 2, 3)}` : '0,00'),
             feeDestination = m.prop(fee.destination),
             index = args.index,
             stateInUse = state => state.acronym !== feeDestination() && _.contains(_.pluck(fees(), 'destination'), state.acronym),
