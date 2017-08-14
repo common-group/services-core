@@ -10,7 +10,7 @@ const shippingFeeInput = {
             fees = args.fees,
             feeIndex = args.feeIndex,
             deleted = h.toggleProp(false, true),
-            feeValue = m.prop(fee.value || 0),
+            feeValue = m.prop(fee.value ? `${h.formatNumber(fee.value, 2, 3)}` : '0,00'),
             feeDestination = m.prop(fee.destination),
             index = args.index,
             stateInUse = state => state.acronym !== feeDestination() && _.contains(_.pluck(fees(), 'destination'), state.acronym),
@@ -18,10 +18,12 @@ const shippingFeeInput = {
                 const feeToUpdateIndex = _.indexOf(fees(), fee);
                 fee.destination = feeDestination();
                 fees()[feeToUpdateIndex] = fee;
-            };
+            },
+            applyMask = _.compose(feeValue, h.applyMonetaryMask);
 
         return {
             fee,
+            applyMask,
             fees,
             deleted,
             feeValue,
@@ -33,7 +35,7 @@ const shippingFeeInput = {
             states
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const feeIndex = ctrl.feeIndex,
             index = ctrl.index,
             deleted = ctrl.deleted,
@@ -95,8 +97,11 @@ const shippingFeeInput = {
                             )
                         ),
                         m('.w-col.w-col-9',
-                            m("input.positive.postfix.text-field.w-input[type='text']", {
+                            m('input.positive.postfix.text-field.w-input', {
                                 value: ctrl.feeValue(),
+                                autocomplete: 'off',
+                                type: 'text',
+                                onkeyup: m.withAttr('value', ctrl.applyMask),
                                 name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][value]`,
                                 oninput: m.withAttr('value', ctrl.feeValue)
                             })
