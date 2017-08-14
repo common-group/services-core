@@ -33,7 +33,7 @@ const projectRewardCard = {
                 ? Number(vm.shippingFeeForCurrentReward(selectedDestination).value)
                 : 0;
             const rewardMinValue = Number(vm.selectedReward().minimum_value);
-            vm.applyMask(`${shippingFee + rewardMinValue},00`);
+            vm.applyMask(`${h.formatNumber(shippingFee + rewardMinValue, 2, 3)}`);
         };
 
         // @TODO: move submit, fee & value logic to VM
@@ -44,7 +44,7 @@ const projectRewardCard = {
             if (!selectedDestination() && rewardVM.hasShippingOptions(vm.selectedReward())) {
                 vm.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
-                vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
+                vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value, 2, 3)}`);
             } else {
                 vm.error('');
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
@@ -184,7 +184,7 @@ const projectRewardCard = {
                                         { selected: option.value === ctrl.selectedDestination(), value: option.value },
                                         [
                                             `${option.name} `,
-                                            option.value != '' ? `+R$${option.fee}` : null
+                                            option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
                                         ]
                                     )
                                 )

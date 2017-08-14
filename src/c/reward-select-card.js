@@ -27,7 +27,7 @@ const rewardSelectCard = {
             if (!selectedDestination() && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
-                rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value)}`);
+                rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value, 2, 3)}`);
             } else {
                 rewardVM.error('');
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
@@ -45,7 +45,7 @@ const rewardSelectCard = {
                 Number(rewardVM.shippingFeeForCurrentReward(selectedDestination).value) :
                 0;
             const rewardMinValue = Number(rewardVM.selectedReward().minimum_value);
-            rewardVM.applyMask(`${shippingFee + rewardMinValue},00`);
+            rewardVM.applyMask(`${h.formatNumber(shippingFee + rewardMinValue, 2, 3)}`);
         };
 
         const normalReward = (reward) => {
@@ -110,7 +110,7 @@ const rewardSelectCard = {
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
                                 option => m('option', { value: option.value }, [
                                     `${option.name} `,
-                                    option.value != '' ? `+R$${option.fee}` : null
+                                    option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
                                 ])
                             )
                         )
