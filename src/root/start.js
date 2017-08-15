@@ -357,7 +357,7 @@ const start = {
                                                 m(`img.user-avatar[src="${h.useAvatarOrDefault(project.userThumb)}"]`)
                                             ]),
                                             m('.w-col.w-col-11', [
-                                                m('.fontsize-base.fontweight-semibold', project.user.name),
+                                                m('.fontsize-base.fontweight-semibold', project.user.public_name || project.user.name),
                                                 m('.fontsize-smallest', [
                                                     I18n.t('categories.pledged', I18nScope({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })),
                                                     m(`a.link-hidden[href="/${project.permalink}"]`, project.name)
