@@ -128,7 +128,7 @@ const projectContributionReportContentCard = {
                                 m('.w-row', [
                                     m('.w-col.w-col-3', [
                                         m('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')),
-                                        m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.user_name),
+                                        m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.public_user_name || contribution.user_name),
                                         m('.fontsize-smallest.lineheight-looser', [
                                             (contribution.has_another ? [
                                                 m('a.link-hidden-light.badge.badge-light', '+1 apoio '),
@@ -269,7 +269,7 @@ const projectContributionReportContentCard = {
                                             I18n.t('survey.address_title', contributionScope())
                                         ),
                                             m('p', [
-                                                contribution.user_name,
+                                                contribution.public_user_name,
                                                 m('br'),
                                                 `${survey.address.address_street}, ${survey.address.address_number} ${survey.address.address_complement}`,
                                                 m('br'),
@@ -308,7 +308,9 @@ const projectContributionReportContentCard = {
                         m('.w-tab-pane',
                             m('.fontsize-small',
                                 m('p', [
-                                    contribution.user_name,
+                                    `Nome completo: ${contribution.user_name}`,
+                                    m('br'),
+                                    `Nome público: ${contribution.public_user_name}`,
                                     m('br'),
                                     contribution.email,
                                     m('br'),
