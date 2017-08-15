@@ -128,12 +128,12 @@ const projectContributionReportContent = {
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                 onclick: () => ctrl.displayDeliverModal.toggle()
                                             },
-                                                'Enviada'
+                                                'Entregue'
                                             ),
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
                                                 onclick: () => ctrl.displayErrorModal.toggle()
                                             },
-                                                'Erro no envio'
+                                                'Erro na entrega'
                                             )
                                         ]) : '')
                                 ]) : '')
