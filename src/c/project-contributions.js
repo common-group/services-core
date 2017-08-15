@@ -102,7 +102,7 @@ const projectContributions = {
                     m('.w-col.w-col-6',
                       m('.card.card-terciary.u-radius',
                         m('.w-row', [
-                            m('.u-marginbottom-20.w-col.w-col-6.w-col-small-6', [
+                            m('.u-marginbottom-20.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                 m('.fontweight-semibold.u-marginbottom-10',
                                   'Apoiadores novos'
                                  ),
@@ -113,7 +113,7 @@ const projectContributions = {
                                   'apoiadores que nunca tinham apoiado um projeto no Catarse'
                                  )
                             ]),
-                            m('.w-col.w-col-6.w-col-small-6', [
+                            m('.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                 m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
                                 m('.fontweight-semibold.u-marginbottom-10',
                                   'Apoiadores recorrentes'
