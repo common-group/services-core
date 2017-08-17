@@ -4725,9 +4725,9 @@ var projectSuccessfulOnboard = {
             content: [successfulProjectTaxModal, {
                 projectTransfer: projectTransfer
             }]
-        }) : '', !lpa() && !lpt() ? m('.w-container', [m('.w-row.u-marginbottom-40', [m('.w-col.w-col-6.w-col-push-3', [m('.u-text-center', [m('img.u-marginbottom-20', { src: I18n$1.t('start.icon', I18nScope$6()), width: 94 }), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('start.title', I18nScope$6())), m('.fontsize-base.u-marginbottom-30', {
+        }) : '', !lpa() && !lpt() ? m('.w-container', [m('.w-row.u-marginbottom-40', [m('.w-col.w-col-6.w-col-push-3', [m('.u-text-center', [m('img.u-marginbottom-20', { src: I18n$1.t('finished.icon', I18nScope$6()), width: 94 }), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('finished.title', I18nScope$6())), m('.fontsize-base.u-marginbottom-30', {
             config: ctrl.listenToReplace
-        }, m.trust(I18n$1.t('start.text', I18nScope$6({ total_amount: h.formatNumber(projectTransfer.total_amount, 2) })))), m('a.btn.btn-large.btn-inline', { href: '/users/' + args.project().user_id + '/edit#balance' }, I18n$1.t('start.cta', I18nScope$6()))])])])]) : h.loader()]);
+        }, m.trust(I18n$1.t('finished.text', I18nScope$6({ link_news: '/projects/' + args.project().id + '/posts' }))))])])])]) : h.loader()]);
     }
 };
 
