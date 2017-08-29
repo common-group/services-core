@@ -8,6 +8,7 @@ const userNotifications = {
     controller(args) {
         const contributedProjects = m.prop(),
             projectReminders = m.prop(),
+            mailMarketingLists = m.prop(),
             user_id = args.userId,
             showNotifications = h.toggleProp(false, true),
             error = m.prop(false);
@@ -19,6 +20,13 @@ const userNotifications = {
             m.redraw();
         });
 
+        userVM.getMailMarketingLists().then(
+            mailMarketingLists
+        ).catch((err) => {
+            error(true);
+            m.redraw()
+        });
+
         userVM.getUserContributedProjects(user_id, null).then(
             contributedProjects
         ).catch((err) => {
@@ -28,6 +36,7 @@ const userNotifications = {
 
         return {
             projects: contributedProjects,
+            mailMarketingLists,
             showNotifications,
             projectReminders,
             error
@@ -37,6 +46,8 @@ const userNotifications = {
         const user = args.user,
             reminders = ctrl.projectReminders();
         const projects_collection = ctrl.projects();
+
+        console.log(ctrl.mailMarketingLists());
 
         return m('[id=\'notifications-tab\']', ctrl.error() ? m.component(inlineError, {
             message: 'Erro ao carregar a página.'
