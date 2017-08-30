@@ -73,11 +73,11 @@ const getUserProjectReminders = (user_id) => {
     return lUserReminders.load();
 };
 
-const getMailMarketingLists = () => {
-    models.userCreditCard.pageSize(false);
-
+const getMailMarketingLists = (user_id) => {
     const l = postgrest.loaderWithToken(
-        models.mailMarketingList.getPageOptions({}));
+        models.mailMarketingList.getPageOptions({
+            user_id: `in.${user_id},0`,
+            order: 'id.asc' }));
 
     return l.load();
 };
