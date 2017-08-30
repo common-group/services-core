@@ -8,6 +8,7 @@ const userNotifications = {
     controller(args) {
         const contributedProjects = m.prop(),
             projectReminders = m.prop(),
+            mailMarketingLists = m.prop(),
             user_id = args.userId,
             showNotifications = h.toggleProp(false, true),
             error = m.prop(false);
@@ -19,6 +20,14 @@ const userNotifications = {
             m.redraw();
         });
 
+        userVM.getMailMarketingLists(user_id).then((data) => {
+            mailMarketingLists(generateListHandler(data))
+        }
+        ).catch((err) => {
+            error(true);
+            m.redraw()
+        });
+
         userVM.getUserContributedProjects(user_id, null).then(
             contributedProjects
         ).catch((err) => {
@@ -26,17 +35,33 @@ const userNotifications = {
             m.redraw();
         });
 
+        const generateListHandler = (list) => {
+            return _.map(list, (item, i) => {
+                let handler = {
+                    item: item,
+                    in_list: args.userId == item.user_id,
+                    should_insert: m.prop(false),
+                    should_destroy: m.prop(false)
+                };
+
+                return handler;
+            });
+        };
+
         return {
             projects: contributedProjects,
+            mailMarketingLists,
             showNotifications,
             projectReminders,
-            error
+            error,
+            generateListHandler
         };
     },
     view(ctrl, args) {
         const user = args.user,
-            reminders = ctrl.projectReminders();
-        const projects_collection = ctrl.projects();
+            reminders = ctrl.projectReminders(),
+            projects_collection = ctrl.projects(),
+            marketing_lists = ctrl.mailMarketingLists();
 
         return m('[id=\'notifications-tab\']', ctrl.error() ? m.component(inlineError, {
             message: 'Erro ao carregar a página.'
@@ -56,19 +81,30 @@ const userNotifications = {
                                             'Newsletters:'
                                         )
                                     ),
-                                    m('.w-col.w-col-8',
-                                        m('.w-checkbox.w-clearfix', [
-                                            m('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'),
-                                            m(`input.w-checkbox-input${user.newsletter ? '[checked=\'checked\']' : ''}[id='user_newsletter'][name=user[newsletter]][type='checkbox'][value='1']`),
+                                    m('.w-col.w-col-8', (_.isEmpty(marketing_lists) ? h.loader() : _.map(marketing_lists, (_item, i) => {
+                                        const item = _item.item;
+                                        return m('.w-checkbox.w-clearfix', [
+                                            //m('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'),
+                                            (_item.should_insert() || _item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
+                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: item.marketing_user_id }) : ''),
+                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
+                                            m(`input.w-checkbox-input${(_item.in_list) ? '[checked=\'checked\']' : ''}[id=''][type='checkbox'][value='1']`, {
+                                                onchange: (evt) => {
+                                                    if(!_.isEmpty(item.marketing_user_id)) {
+                                                        _item.should_destroy(!evt.currentTarget.checked);
+                                                    }
+                                                    _item.should_insert(evt.currentTarget.checked);
+                                                }
+                                            }),
                                             m('label.w-form-label.fontsize-base.fontweight-semibold[for=\'checkbox\']',
-                                                ' Newsletter do Catarse (semanal)'
+                                                item.label
                                             ),
                                             m('div', [
-                                                'Projetos em destaque e posts do nosso Blog',
+                                                item.description,
                                                 m.trust('&nbsp;')
                                             ])
                                         ])
-                                    )
+                                    })))
                                 ]),
                                 m('.w-row.u-marginbottom-20', [
                                     m('.w-col.w-col-4',

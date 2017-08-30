@@ -73,6 +73,15 @@ const getUserProjectReminders = (user_id) => {
     return lUserReminders.load();
 };
 
+const getMailMarketingLists = (user_id) => {
+    const l = postgrest.loaderWithToken(
+        models.mailMarketingList.getPageOptions({
+            user_id: `in.${user_id},0`,
+            order: 'id.asc' }));
+
+    return l.load();
+};
+
 const getUserCreditCards = (user_id) => {
     const contextVM = postgrest.filtersVM({
         user_id: 'eq'
@@ -233,7 +242,8 @@ const userVM = {
     displayCover,
     displayName,
     fetchUser,
-    getCurrentUser
+    getCurrentUser,
+    getMailMarketingLists
 };
 
 export default userVM;

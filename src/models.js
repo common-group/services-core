@@ -56,7 +56,8 @@ const models = {
     shippingFee: postgrest.model('shipping_fees'),
     deleteProject: postgrest.model('rpc/delete_project'),
     cancelProject: postgrest.model('rpc/cancel_project'),
-    city: postgrest.model('cities')
+    city: postgrest.model('cities'),
+    mailMarketingList: postgrest.model('mail_marketing_lists')
 };
 
 models.teamMember.pageSize(40);
