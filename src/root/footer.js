@@ -166,7 +166,7 @@ const footer = {
                                         'Assine nossa news'
                                     ),
                                     m('.w-form',
-                                        m(`form[accept-charset='UTF-8'][action='${h.getMailchimpUrl()}'][id='mailee-form'][method='post']`,
+                                        m(`form[accept-charset='UTF-8'][action='${h.getNewsletterUrl()}'][id='mailee-form'][method='post']`,
                                             [
                                                 m('.w-form.footer-newsletter',
                                                     m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')

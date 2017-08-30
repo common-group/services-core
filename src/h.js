@@ -291,11 +291,11 @@ const
         return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : null;
     },
 
-    getMailchimpUrl = (): ?string => {
-        if (_dataCache.mailchumUrl) { return _dataCache.mailchumUrl; }
+    getNewsletterUrl = (): ?string => {
+        if (_dataCache.newsletterUrl) { return _dataCache.newsletterUrl; }
 
-        const meta = _.first(document.querySelectorAll('[name=mailchimp-url]'));
-        return meta ? (_dataCache.mailchumUrl = meta.getAttribute('content')) : null;
+        const meta = _.first(document.querySelectorAll('[name=newsletter-url]'));
+        return meta ? (_dataCache.newsletterUrl = meta.getAttribute('content')) : null;
     },
 
     getUser = (): ?Object => {
@@ -909,7 +909,7 @@ export default {
     getUserID,
     getSimilityCustomer,
     getApiHost,
-    getMailchimpUrl,
+    getNewsletterUrl,
     getCurrentProject,
     getParams,
     toggleProp,

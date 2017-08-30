@@ -7,6 +7,7 @@ import posts from './root/posts';
 import surveys from './root/surveys';
 import surveyCreate from './root/survey-create';
 import jobs from './root/jobs';
+import press from './root/press';
 import liveStatistics from './root/live-statistics';
 import projectsContributionReport from './root/projects-contribution-report';
 import projectsDashboard from './root/projects-dashboard';
@@ -69,6 +70,7 @@ const c = {
         Start: start,
         Team: team,
         Menu: menu,
+        Press: press,
         Footer: footer,
         FollowFoundFriends,
         CheckEmail,
