@@ -1,17 +1,21 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import inlineError from './inline-error';
 
+const I18nScope = _.partial(h.i18nScope, 'users.edit.notifications_fields');
 const userNotifications = {
     controller(args) {
         const contributedProjects = m.prop(),
             projectReminders = m.prop(),
             mailMarketingLists = m.prop(),
             user_id = args.userId,
+            insertList = h.toggleProp(false, true),
             showNotifications = h.toggleProp(false, true),
-            error = m.prop(false);
+            error = m.prop(false),
+            hovering = m.prop(false);
 
         userVM.getUserProjectReminders(user_id).then(
             projectReminders
@@ -43,7 +47,7 @@ const userNotifications = {
                     should_insert: m.prop(false),
                     should_destroy: m.prop(false)
                 };
-
+                insertList(!handler.in_list);
                 return handler;
             });
         };
@@ -54,7 +58,9 @@ const userNotifications = {
             showNotifications,
             projectReminders,
             error,
-            generateListHandler
+            generateListHandler,
+            insertList,
+            hovering
         };
     },
     view(ctrl, args) {
@@ -83,27 +89,52 @@ const userNotifications = {
                                     ),
                                     m('.w-col.w-col-8', (_.isEmpty(marketing_lists) ? h.loader() : _.map(marketing_lists, (_item, i) => {
                                         const item = _item.item;
-                                        return m('.w-checkbox.w-clearfix', [
-                                            //m('input[name=user[newsletter]][type=\'hidden\'][value=\'0\']'),
-                                            (_item.should_insert() || _item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
-                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: item.marketing_user_id }) : ''),
-                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
-                                            m(`input.w-checkbox-input${(_item.in_list) ? '[checked=\'checked\']' : ''}[id=''][type='checkbox'][value='1']`, {
-                                                onchange: (evt) => {
-                                                    if(!_.isEmpty(item.marketing_user_id)) {
-                                                        _item.should_destroy(!evt.currentTarget.checked);
-                                                    }
-                                                    _item.should_insert(evt.currentTarget.checked);
-                                                }
-                                            }),
-                                            m('label.w-form-label.fontsize-base.fontweight-semibold[for=\'checkbox\']',
-                                                item.label
-                                            ),
-                                            m('div', [
-                                                item.description,
-                                                m.trust('&nbsp;')
-                                            ])
-                                        ])
+                                        const hovering = m.prop(false);
+
+                                        return m('.card.u-marginbottom-20.u-radius.u-text-center-small-only',
+                                            m('.w-row',
+                                                [
+                                                    m('.w-sub-col.w-col.w-col-6', 
+                                                        m('img', {
+                                                            src: I18n.t(`newsletters.${item.list_id}.image_src`, I18nScope())
+                                                        })
+                                                    ),
+                                                    m('.w-col.w-col-6',
+                                                        [   
+                                                            m('.fontsize-base.fontweight-semibold', 
+                                                                I18n.t(`newsletters.${item.list_id}.title`, I18nScope())
+                                                            ),
+                                                            m('.fontsize-small.u-marginbottom-30', 
+                                                                I18n.t(`newsletters.${item.list_id}.description`, I18nScope())
+                                                            ),
+                                                            (_item.should_insert() || _item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
+                                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: item.marketing_user_id }) : ''),
+                                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
+                                                            m('button.btn.btn-medium.w-button',
+                                                                {   
+                                                                    class: !ctrl.insertList() ? 'btn-terciary' : null,
+                                                                    onclick: (event) => {
+                                                                        if(!_.isUndefined(item.marketing_user_id)) {
+                                                                            _item.should_destroy(!ctrl.insertList());
+                                                                        }
+                                                                        _item.should_insert(ctrl.insertList());
+                                                                        
+                                                                        ctrl.insertList.toggle();
+                                                                    },
+                                                                    onmouseenter: () => {
+                                                                        ctrl.hovering(true);
+                                                                    },
+                                                                    onmouseout: () => {
+                                                                        ctrl.hovering(false);
+                                                                    }
+                                                                }, 
+                                                                !ctrl.insertList() ? ctrl.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar'
+                                                            )
+                                                        ]
+                                                    )
+                                                ]
+                                            )
+                                        );
                                     })))
                                 ]),
                                 m('.w-row.u-marginbottom-20', [
