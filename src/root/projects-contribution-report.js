@@ -277,7 +277,6 @@ const projectContributionReport = {
                         mapRewardsToOptions: ctrl.mapRewardsToOptions,
                         filterVM: ctrl.filterVM
                     }),
-                    m('.divider.u-margintop-30'),
                     m.component(projectContributionReportContent, {
                         submit: ctrl.submit,
                         list,

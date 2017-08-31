@@ -28,43 +28,59 @@ const projectContributionReportHeader = {
 
         rewardFilter.data.options = args.mapRewardsToOptions();
 
-        return m('.w-section.dashboard-header',
-            m('.w-container', [
-                m('.w-container',
-                    m('.w-row',
-                        m('.w-col.w-col-8.w-col-push-2.u-marginbottom-30.u-text-center', [
-                            m('.fontweight-semibold.fontsize-larger.lineheight-looser',
-                                I18n.t('title', I18nScope())
-                            ),
-                            m('.fontsize-base',
-                                I18n.t('subtitle_html', I18nScope())
-                            )
+        return m('div', [
+            m('.dashboard-header',
+                    m('.w-container',
+                        m('.w-row', [
+                            m('.w-col.w-col-3'),
+                            m('.w-col.w-col-6', [
+                                m('.fontsize-larger.fontweight-semibold.lineheight-looser.u-text-center',
+                                    I18n.t('title', I18nScope())
+                                ),
+                                m('.fontsize-base.u-marginbottom-20.u-text-center',
+                                    I18n.t('subtitle_html', I18nScope())
+                                ),
+                                m('.u-marginbottom-60.u-text-center',
+                                    m('.w-inline-block.card.fontsize-small.u-radius', [
+                                        m('span.fa.fa-lightbulb-o',
+                                            ''
+                                        ),
+                                        m.trust('&nbsp;'),
+                                        m.trust(I18n.t('help_link', I18nScope()))
+                                    ])
+                                )
+                            ]),
+                            m('.w-col.w-col-3')
                         ])
                     )
                 ),
-                m('.w-form', [
-                    m('form', {
-                        onsubmit: args.submit
-                    },
-                        m('.w-row', [
-                            m('.w-col.w-col-8',
-                                m('.w-row', [
-                                    m.component(paymentStateFilter.component, paymentStateFilter.data),
-                                    m.component(rewardFilter.component, rewardFilter.data),
-                                    m.component(deliveryFilter.component, deliveryFilter.data),
-                                    m.component(surveyFilter.component, surveyFilter.data)
-                                ])
-                            ),
-
-                            m('.w-col.w-col-4',
+            m('.card',
+                    m('.w-container',
+                        m('.w-form', [
+                            m('form', {
+                                onsubmit: args.submit
+                            },
                                 m('.u-margintop-20.w-row', [
-                                    m.component(mainFilter.component, mainFilter.data)
+                                    m('.w-col.w-col-8',
+                                        m('.w-row', [
+                                            m.component(paymentStateFilter.component, paymentStateFilter.data),
+                                            m.component(rewardFilter.component, rewardFilter.data),
+                                            m.component(deliveryFilter.component, deliveryFilter.data),
+                                            m.component(surveyFilter.component, surveyFilter.data)
+                                        ])
+                                    ),
+                                    m('.w-col.w-col-4',
+                                        m('.u-margintop-20.w-row', [
+                                            m.component(mainFilter.component, mainFilter.data)
+
+                                        ])
+                                    )
                                 ])
                             )
                         ])
                     )
-                ])
-            ])
+                )
+        ]
         );
     }
 };
