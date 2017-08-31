@@ -592,13 +592,13 @@ var getSimilityCustomer = function getSimilityCustomer() {
     var meta = _$1.first(document.querySelectorAll('[name=simility-customer]'));
     return meta ? _dataCache.similityCustomer = meta.getAttribute('content') : null;
 };
-var getMailchimpUrl = function getMailchimpUrl() {
-    if (_dataCache.mailchumUrl) {
-        return _dataCache.mailchumUrl;
+var getNewsletterUrl = function getNewsletterUrl() {
+    if (_dataCache.newsletterUrl) {
+        return _dataCache.newsletterUrl;
     }
 
-    var meta = _$1.first(document.querySelectorAll('[name=mailchimp-url]'));
-    return meta ? _dataCache.mailchumUrl = meta.getAttribute('content') : null;
+    var meta = _$1.first(document.querySelectorAll('[name=newsletter-url]'));
+    return meta ? _dataCache.newsletterUrl = meta.getAttribute('content') : null;
 };
 var getUser = function getUser() {
     if (_dataCache.user) {
@@ -1240,7 +1240,7 @@ var h = {
     getUserID: getUserID,
     getSimilityCustomer: getSimilityCustomer,
     getApiHost: getApiHost,
-    getMailchimpUrl: getMailchimpUrl,
+    getNewsletterUrl: getNewsletterUrl,
     getCurrentProject: getCurrentProject,
     getParams: getParams,
     toggleProp: toggleProp,
@@ -5713,6 +5713,26 @@ var jobs = {
     }
 };
 
+var I18nScope$15 = _$1.partial(h.i18nScope, 'pages.press');
+var press = {
+    controller: function controller() {
+        var stats = m.prop([]);
+        var loader = postgrest$1.loader;
+        var statsLoader = loader(models.statistic.getRowOptions());
+
+        statsLoader.load().then(stats);
+
+        return {
+            stats: stats
+        };
+    },
+    view: function view(ctrl) {
+        var stats = _$1.first(ctrl.stats());
+
+        return m('#press', [m(".hero-jobs.hero-medium", m(".w-container.u-text-center", [m("img.icon-hero[alt='Icon assets'][src='/assets/icon-assets-98f4556940e31b239cdd5fbdd993b5d5ed3bf67dcc3164b805e224d22e1340b7.png']"), m(".u-text-center.u-marginbottom-20.fontsize-largest", I18n$1.t('page-title', I18nScope$15()))])), m(".section-large.bg-gray", m(".w-container", m(".w-row", m(".w-col.w-col-8.w-col-push-2", m(".u-marginbottom-20.fontsize-large", I18n$1.t('abstract.title', I18nScope$15())))))), m(".section-large", m(".w-container", m(".w-row", m(".w-col.w-col-8.w-col-push-2", [m(".fontsize-large.fontweight-semibold.u-marginbottom-10", I18n$1.t('history.title', I18nScope$15())), m(".fontsize-large.u-marginbottom-20", I18n$1.t('history.subtitle', I18nScope$15())), m.trust(I18n$1.t('history.cta_html', I18nScope$15()))])))), m(".section-large.bg-gray", m(".w-container", m(".w-row", m(".w-col.w-col-8.w-col-push-2", [m(".fontsize-large.fontweight-semibold.u-marginbottom-10", I18n$1.t('stats.title', I18nScope$15())), m(".fontsize-large.u-marginbottom-40", I18n$1.t('stats.subtitle', I18nScope$15())), m(".w-row.w.hidden-small.u-text-center.u-marginbottom-40", [m(".w-col.w-col-4.u-marginbottom-20", [m(".text-success.lineheight-loose.fontsize-larger", h.formatNumber(stats.total_contributors, 0, 3)), m(".fontsize-smaller", m.trust(I18n$1.t('stats.people_html', I18nScope$15())))]), m(".w-col.w-col-4.u-marginbottom-20", [m(".text-success.lineheight-loose.fontsize-larger", h.formatNumber(stats.total_projects_success, 0, 3)), m(".fontsize-smaller", m.trust(I18n$1.t('stats.projects_html', I18nScope$15())))]), m(".w-col.w-col-4.u-marginbottom-20", [m(".text-success.lineheight-loose.fontsize-larger", stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), m(".fontsize-smaller", m.trust(I18n$1.t('stats.money_html', I18nScope$15())))])]), m("a.alt-link.fontsize-large[href='https://www.catarse.me/dbhero/dataclips/fa0d3570-9fa7-4af3-b070-2b2e386ef060'][target='_blank']", [m.trust(I18n$1.t('stats.cta_html', I18nScope$15()))])])))), m(".section-large", m(".w-container", [m(".w-row.u-marginbottom-30.u-text-center", m(".w-col.w-col-8.w-col-push-2", [m("div", m("img[alt='Logo catarse press'][src='/assets/logo-catarse-press-2f2dad49d3e5b256c29e136673b4c4f543c03e0d5548d351ae5a8d1e6e3d2645.png']")), m(".fontsize-base", I18n$1.t('assets.title', I18nScope$15()))])), m(".w-row", m(".w-col.w-col-4.w-col-push-4.u-text-center", m("a.alt-link.fontsize-large[href='https://www.catarse.me/assets'][target='_blank']", [m.trust(I18n$1.t('assets.cta_html', I18nScope$15()))])))])), m(".section-large.bg-projectgrid", m(".w-container", [m(".fontsize-large.u-text-center.fontweight-semibold.u-marginbottom-30", I18n$1.t('social.title', I18nScope$15())), m(".w-row", [m(".w-col.w-col-3", m("a.btn.btn-dark.btn-large.u-marginbottom-10[href='https://www.facebook.com/Catarse.me'][target='_blank']", [m("span.fa.fa-facebook"), " Facebook"])), m(".w-col.w-col-3", m("a.btn.btn-dark.btn-large.u-marginbottom-10[href='https://twitter.com/catarse'][target='_blank']", [m("span.fa.fa-twitter"), " Twitter"])), m(".w-col.w-col-3", m("a.btn.btn-dark.btn-large.u-marginbottom-10[href='https://instagram.com/catarse/'][target='_blank']", [m("span.fa.fa-instagram"), " Instagram"])), m(".w-col.w-col-3", m("a.btn.btn-dark.btn-large.u-marginbottom-10[href='http://blog.catarse.me/'][target='_blank']", [m("span.fa.fa-rss"), " Blog do Catarse"]))])])), m(".section-large.bg-blue-one.fontcolor-negative", m(".w-container", m(".w-row", m(".w-col.w-col-6.w-col-push-3", [m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30", I18n$1.t('social.news', I18nScope$15())), m(".w-form", m('form[accept-charset=\'UTF-8\'][action=\'' + h.getNewsletterUrl() + '\'][id=\'mailee-form\'][method=\'post\']', [m(".w-form.footer-newsletter", m("input.w-input.text-field.prefix[id='EMAIL'][label='email'][name='EMAIL'][placeholder='Digite seu email'][type='email']")), m("a.w-inline-block.btn.btn-edit.postfix.btn-attached[href='#']", m("img.footer-news-icon[alt='Icon newsletter'][src='/assets/catarse_bootstrap/icon-newsletter-9c3ff92b6137fbdb9d928ecdb34c88948277a32cdde3e5b525e97d57735210f5.png']"))]))])))), m(".section-large.bg-gray.before-footer", m(".w-container", m(".w-row.u-text-center", m(".w-col.w-col-8.w-col-push-2", [m(".fontsize-larger.fontweight-semibold.u-marginbottom-10", I18n$1.t('email.title', I18nScope$15())), m("div", m('a.alt-link.fontsize-large[href=\'mailto:' + I18n$1.t('email.cta', I18nScope$15()) + '\']', I18n$1.t('email.cta', I18nScope$15())))]))))]);
+    }
+};
+
 var liveStatistics = {
     controller: function controller() {
         var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -5745,7 +5765,7 @@ var liveStatistics = {
     }
 };
 
-var I18nScope$15 = _$1.partial(h.i18nScope, 'projects.dashboard_contribution_reports');
+var I18nScope$16 = _$1.partial(h.i18nScope, 'projects.dashboard_contribution_reports');
 
 var projectContributionReportHeader = {
     view: function view(ctrl, args) {
@@ -5769,13 +5789,13 @@ var projectContributionReportHeader = {
 
         rewardFilter.data.options = args.mapRewardsToOptions();
 
-        return m('.w-section.dashboard-header', m('.w-container', [m('.w-container', m('.w-row', m('.w-col.w-col-8.w-col-push-2.u-marginbottom-30.u-text-center', [m('.fontweight-semibold.fontsize-larger.lineheight-looser', I18n$1.t('title', I18nScope$15())), m('.fontsize-base', I18n$1.t('subtitle_html', I18nScope$15()))]))), m('.w-form', [m('form', {
+        return m('.w-section.dashboard-header', m('.w-container', [m('.w-container', m('.w-row', m('.w-col.w-col-8.w-col-push-2.u-marginbottom-30.u-text-center', [m('.fontweight-semibold.fontsize-larger.lineheight-looser', I18n$1.t('title', I18nScope$16())), m('.fontsize-base', I18n$1.t('subtitle_html', I18nScope$16()))]))), m('.w-form', [m('form', {
             onsubmit: args.submit
         }, m('.w-row', [m('.w-col.w-col-8', m('.w-row', [m.component(paymentStateFilter.component, paymentStateFilter.data), m.component(rewardFilter.component, rewardFilter.data), m.component(deliveryFilter.component, deliveryFilter.data), m.component(surveyFilter.component, surveyFilter.data)])), m('.w-col.w-col-4', m('.u-margintop-20.w-row', [m.component(mainFilter.component, mainFilter.data)]))]))])]));
     }
 };
 
-var I18nScope$16 = _$1.partial(h.i18nScope, 'projects.reward_fields');
+var I18nScope$17 = _$1.partial(h.i18nScope, 'projects.reward_fields');
 var contributionScope = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var projectContributionReportContentCard = {
@@ -5861,7 +5881,7 @@ var projectContributionReportContentCard = {
             description: I18n$1.t('contribution.no_reward', contributionScope())
         },
             deliveryBadge = function deliveryBadge() {
-            return contribution.delivery_status === 'error' ? m('span.badge.badge-attention.fontsize-smaller', I18n$1.t('status.' + contribution.delivery_status, I18nScope$16())) : contribution.delivery_status === 'delivered' ? m('span.badge.badge-success.fontsize-smaller', I18n$1.t('status.' + contribution.delivery_status, I18nScope$16())) : contribution.delivery_status === 'received' ? m('span.fontsize-smaller.badge.badge-success', [m('span.fa.fa-check-circle', ''), I18n$1.t('status.' + contribution.delivery_status, I18nScope$16())]) : '';
+            return contribution.delivery_status === 'error' ? m('span.badge.badge-attention.fontsize-smaller', I18n$1.t('status.' + contribution.delivery_status, I18nScope$17())) : contribution.delivery_status === 'delivered' ? m('span.badge.badge-success.fontsize-smaller', I18n$1.t('status.' + contribution.delivery_status, I18nScope$17())) : contribution.delivery_status === 'received' ? m('span.fontsize-smaller.badge.badge-success', [m('span.fa.fa-check-circle', ''), I18n$1.t('status.' + contribution.delivery_status, I18nScope$17())]) : '';
         };
 
         return m('div', [m('.w-clearfix.card' + (ctrl.checked(contribution) ? '.card-alert' : ''), [m('.w-row', [m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', m('.w-inline-block', m('.w-checkbox.w-clearfix', contribution.delivery_status !== 'received' && project.state !== 'failed' ? m('input.w-checkbox-input[type=\'checkbox\']', {
@@ -5870,13 +5890,13 @@ var projectContributionReportContentCard = {
             onclick: function onclick() {
                 return ctrl.selectContribution(contribution);
             }
-        }) : ''))), m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11', m('.w-row', [m('.w-col.w-col-1.w-col-tiny-1', [m('img.user-avatar.u-marginbottom-10[src=\'' + profileImg + '\']')]), m('.w-col.w-col-11.w-col-tiny-11', [m('.w-row', [m('.w-col.w-col-3', [m('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')), m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.public_user_name || contribution.user_name), m('.fontsize-smallest.lineheight-looser', [contribution.has_another ? [m('a.link-hidden-light.badge.badge-light', '+1 apoio ')] : '', contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary', m('span.fontcolor-secondary[style="font-size:11px;"]', ' ' + I18n$1.t('contribution.anonymous_contribution', contributionScope()))) : '']), m('.fontsize-smallest.lineheight-looser', contribution.email)]), m('.w-col.w-col-3', [m('.lineheight-tighter', [m('span.fa.fontsize-smallest.' + ctrl.stateClass(contribution.state)), '   ', m('span.fontsize-large', 'R$ ' + h.formatNumber(contribution.value, 2, 3))])]), m('.w-col.w-col-3.w-hidden-small.w-hidden-tiny', [m('div', deliveryBadge()), m('.fontsize-smallest.fontweight-semibold', I18n$1.t('reward', I18nScope$16()) + ': ' + (reward.minimum_value ? h.formatNumber(reward.minimum_value, 2, 3) : '')), m('.fontsize-smallest.fontweight-semibold', reward.title), m('.fontsize-smallest.fontcolor-secondary', reward.description.substring(0, 80) + '...')]), survey ? survey.survey_answered_at ? m('.w-col.w-col-3.w-col-push-1', [m('.fontsize-smallest', [m('a.link-hidden', 'Questionário '), m('span.fontweight-semibold.text-success', 'respondido')]), m('.fontcolor-terciary.fontsize-smallest', 'em ' + h.momentify(survey.survey_answered_at, 'DD/MM/YYYY'))]) : survey.finished_at ? m('.w-col.w-col-3.w-col-push-1', [m('.fontsize-smallest', [m('a.link-hidden', 'Questionário '), m('span.fontweight-semibold.text-fail', 'sem resposta')]), m('.fontcolor-terciary.fontsize-smallest', 'finalizado em ' + h.momentify(survey.finished_at, 'DD/MM/YYYY'))]) : m('.w-col.w-col-3.w-col-push-1', [m('.fontsize-smallest', [m('a.link-hidden', 'Questionário '), m('span.fontweight-semibold.text-waiting', 'enviado')]), m('.fontcolor-terciary.fontsize-smallest', 'em ' + h.momentify(survey.sent_at, 'DD/MM/YYYY'))]) : ''])])]))]), m('a.arrow-admin.fa.fa-chevron-down.fontcolor-secondary.w-inline-block', {
+        }) : ''))), m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11', m('.w-row', [m('.w-col.w-col-1.w-col-tiny-1', [m('img.user-avatar.u-marginbottom-10[src=\'' + profileImg + '\']')]), m('.w-col.w-col-11.w-col-tiny-11', [m('.w-row', [m('.w-col.w-col-3', [m('.fontcolor-secondary.fontsize-mini.fontweight-semibold', h.momentify(contribution.created_at, 'DD/MM/YYYY, HH:mm')), m('.fontweight-semibold.fontsize-smaller.lineheight-tighter', contribution.public_user_name || contribution.user_name), m('.fontsize-smallest.lineheight-looser', [contribution.has_another ? [m('a.link-hidden-light.badge.badge-light', '+1 apoio ')] : '', contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary', m('span.fontcolor-secondary[style="font-size:11px;"]', ' ' + I18n$1.t('contribution.anonymous_contribution', contributionScope()))) : '']), m('.fontsize-smallest.lineheight-looser', contribution.email)]), m('.w-col.w-col-3', [m('.lineheight-tighter', [m('span.fa.fontsize-smallest.' + ctrl.stateClass(contribution.state)), '   ', m('span.fontsize-large', 'R$ ' + h.formatNumber(contribution.value, 2, 3))])]), m('.w-col.w-col-3.w-hidden-small.w-hidden-tiny', [m('div', deliveryBadge()), m('.fontsize-smallest.fontweight-semibold', I18n$1.t('reward', I18nScope$17()) + ': ' + (reward.minimum_value ? h.formatNumber(reward.minimum_value, 2, 3) : '')), m('.fontsize-smallest.fontweight-semibold', reward.title), m('.fontsize-smallest.fontcolor-secondary', reward.description.substring(0, 80) + '...')]), survey ? survey.survey_answered_at ? m('.w-col.w-col-3.w-col-push-1', [m('.fontsize-smallest', [m('a.link-hidden', 'Questionário '), m('span.fontweight-semibold.text-success', 'respondido')]), m('.fontcolor-terciary.fontsize-smallest', 'em ' + h.momentify(survey.survey_answered_at, 'DD/MM/YYYY'))]) : survey.finished_at ? m('.w-col.w-col-3.w-col-push-1', [m('.fontsize-smallest', [m('a.link-hidden', 'Questionário '), m('span.fontweight-semibold.text-fail', 'sem resposta')]), m('.fontcolor-terciary.fontsize-smallest', 'finalizado em ' + h.momentify(survey.finished_at, 'DD/MM/YYYY'))]) : m('.w-col.w-col-3.w-col-push-1', [m('.fontsize-smallest', [m('a.link-hidden', 'Questionário '), m('span.fontweight-semibold.text-waiting', 'enviado')]), m('.fontcolor-terciary.fontsize-smallest', 'em ' + h.momentify(survey.sent_at, 'DD/MM/YYYY'))]) : ''])])]))]), m('a.arrow-admin.fa.fa-chevron-down.fontcolor-secondary.w-inline-block', {
             onclick: ctrl.showDetail.toggle
         })]), ctrl.showDetail() ? m('.card.details-backed-project.w-tabs', [m('.w-tab-menu', [_$1.map(['info', 'profile'], function (tab) {
             return m('a.dashboard-nav-link.w-inline-block.w-tab-link' + (ctrl.currentTab() === tab ? '.w--current' : ''), { onclick: function onclick() {
                     return ctrl.currentTab(tab);
                 } }, m('div', I18n$1.t('report.' + tab, contributionScope())));
-        })]), m('.card.card-terciary.w-tab-content', [ctrl.currentTab() === 'info' ? m('.w-tab-pane.w--tab-active', m('.w-row', [m('.right-divider.w-col.w-col-6', [m('.u-marginbottom-20', [m('.fontsize-base.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.value', contributionScope()) + ': R$' + contribution.value), m(paymentStatus, { item: { payment_method: contribution.payment_method, state: contribution.state } }), m('.fontcolor-secondary.fontsize-smallest', h.momentify(contribution.created_at, 'DD/MM/YYYY hh:mm'))]), m('.fontsize-base.fontweight-semibold', I18n$1.t('reward', I18nScope$16()) + ':'), m('.fontsize-small.fontweight-semibold.u-marginbottom-10', ['R$' + reward.minimum_value + ' ' + (reward.title ? '- ' + reward.title : '') + ' ', deliveryBadge()]), m('p.fontsize-smaller', reward.description), m('.u-marginbottom-10', [m('.fontsize-smaller', [m('span.fontweight-semibold', I18n$1.t('deliver_at', I18nScope$16()) + ' '), h.momentify(reward.deliver_at, 'MMMM/YYYY')]), reward.shipping_options ? m('.fontsize-smaller', [m('span.fontweight-semibold', I18n$1.t('delivery', I18nScope$16())), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$16())]) : ''])]), survey ? m('.w-col.w-col-6', [m('.fontsize-base.fontweight-semibold', I18n$1.t('survey.survey', contributionScope())), m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20', I18n$1.t('survey.answered_at', contributionScope({ date: moment(survey.survey_answered_at).format('DD/MM/YYYY') }))), survey.confirm_address && survey.address ? [m('.fontsize-small', [m('.fontweight-semibold.lineheight-looser', I18n$1.t('survey.address_title', contributionScope())), m('p', [contribution.public_user_name, m('br'), survey.address.address_street + ', ' + survey.address.address_number + ' ' + survey.address.address_complement, m('br'), I18n$1.t('survey.address_neighbourhood', contributionScope()) + ' ' + survey.address.address_neighbourhood, m('br'), survey.address.address_zip_code + ' ' + survey.address.address_city + '-' + survey.state_name, m('br'), survey.country_name])])] : '', _$1.map(survey.multiple_choice_questions, function (mcQuestion) {
+        })]), m('.card.card-terciary.w-tab-content', [ctrl.currentTab() === 'info' ? m('.w-tab-pane.w--tab-active', m('.w-row', [m('.right-divider.w-col.w-col-6', [m('.u-marginbottom-20', [m('.fontsize-base.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.value', contributionScope()) + ': R$' + contribution.value), m(paymentStatus, { item: { payment_method: contribution.payment_method, state: contribution.state } }), m('.fontcolor-secondary.fontsize-smallest', h.momentify(contribution.created_at, 'DD/MM/YYYY hh:mm'))]), m('.fontsize-base.fontweight-semibold', I18n$1.t('reward', I18nScope$17()) + ':'), m('.fontsize-small.fontweight-semibold.u-marginbottom-10', ['R$' + reward.minimum_value + ' ' + (reward.title ? '- ' + reward.title : '') + ' ', deliveryBadge()]), m('p.fontsize-smaller', reward.description), m('.u-marginbottom-10', [m('.fontsize-smaller', [m('span.fontweight-semibold', I18n$1.t('deliver_at', I18nScope$17()) + ' '), h.momentify(reward.deliver_at, 'MMMM/YYYY')]), reward.shipping_options ? m('.fontsize-smaller', [m('span.fontweight-semibold', I18n$1.t('delivery', I18nScope$17())), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$17())]) : ''])]), survey ? m('.w-col.w-col-6', [m('.fontsize-base.fontweight-semibold', I18n$1.t('survey.survey', contributionScope())), m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20', I18n$1.t('survey.answered_at', contributionScope({ date: moment(survey.survey_answered_at).format('DD/MM/YYYY') }))), survey.confirm_address && survey.address ? [m('.fontsize-small', [m('.fontweight-semibold.lineheight-looser', I18n$1.t('survey.address_title', contributionScope())), m('p', [contribution.public_user_name, m('br'), survey.address.address_street + ', ' + survey.address.address_number + ' ' + survey.address.address_complement, m('br'), I18n$1.t('survey.address_neighbourhood', contributionScope()) + ' ' + survey.address.address_neighbourhood, m('br'), survey.address.address_zip_code + ' ' + survey.address.address_city + '-' + survey.state_name, m('br'), survey.country_name])])] : '', _$1.map(survey.multiple_choice_questions, function (mcQuestion) {
             var answer = _$1.find(mcQuestion.question_choices, function (choice) {
                 return choice.id === mcQuestion.survey_question_choice_id;
             });
@@ -6125,12 +6145,12 @@ var InfoProjectContributionLegend = {
     }
 };
 
-var I18nScope$17 = _$1.partial(h.i18nScope, 'projects.contributions_report.legend_labels');
+var I18nScope$18 = _$1.partial(h.i18nScope, 'projects.contributions_report.legend_labels');
 
 var ProjectContributionStateLegendModal = {
     controller: function controller(args) {
         var translate = function translate(path) {
-            return I18n$1.t(path, I18nScope$17());
+            return I18n$1.t(path, I18nScope$18());
         };
 
         return {
@@ -6522,7 +6542,7 @@ var UnsignedFriendFacebookConnect = {
  * To mount this component just create a DOM element like:
  * <div data-mithril="ProjectsExplore">
  */
-var I18nScope$18 = _$1.partial(h.i18nScope, 'pages.explore');
+var I18nScope$19 = _$1.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 var projectsExplore = {
     controller: function controller(args) {
@@ -6728,7 +6748,7 @@ var projectsExplore = {
             }
         }
 
-        return m('#explore', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$18())) }, [m('.w-section.hero-search', [m.component(search), m('.w-container.u-marginbottom-10', [m('.u-text-center.u-marginbottom-40', [m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]', { onclick: function onclick() {
+        return m('#explore', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$19())) }, [m('.w-section.hero-search', [m.component(search), m('.w-container.u-marginbottom-10', [m('.u-text-center.u-marginbottom-40', [m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]', { onclick: function onclick() {
                 return ctrl.toggleCategories.toggle();
             } }, ['Explore projetos incríveis ', m('span#explore-btn.fa.fa-angle-down' + (ctrl.toggleCategories() ? '.opened' : ''), '')])]), m('#categories.category-slider' + (ctrl.toggleCategories() ? '.opened' : ''), [m('.w-row.u-marginbottom-30', [_$1.map(ctrl.categories(), function (category) {
             return m.component(categoryButton, { category: category });
@@ -6928,7 +6948,7 @@ var blogBanner = {
     }
 };
 
-var I18nScope$19 = _$1.partial(h.i18nScope, 'projects.home');
+var I18nScope$20 = _$1.partial(h.i18nScope, 'projects.home');
 
 var projectsHome = {
     controller: function controller(args) {
@@ -6987,7 +7007,7 @@ var projectsHome = {
             });
         };
 
-        return m('#projects-home-component', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$19())) }, [
+        return m('#projects-home-component', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$20())) }, [
         // m.component(menu, {transparent: true}),
         m.component(slider, {
             slides: slides(),
@@ -7413,7 +7433,7 @@ var projectUserCard = {
     }
 };
 
-var I18nScope$20 = _$1.partial(h.i18nScope, 'projects.project_sidebar');
+var I18nScope$21 = _$1.partial(h.i18nScope, 'projects.project_sidebar');
 
 var projectSidebar = {
     controller: function controller(args) {
@@ -7478,24 +7498,24 @@ var projectSidebar = {
         },
             displayStatusText = function displayStatusText() {
             var states = {
-                approved: I18n$1.t('display_status.approved', I18nScope$20()),
-                online: h.existy(project().zone_expires_at) && project().open_for_contributions ? I18n$1.t('display_status.online', I18nScope$20({ date: h.momentify(project().zone_expires_at) })) : '',
-                failed: I18n$1.t('display_status.failed', I18nScope$20({ date: h.momentify(project().zone_expires_at), goal: 'R$ ' + h.formatNumber(project().goal, 2, 3) })),
-                rejected: I18n$1.t('display_status.rejected', I18nScope$20()),
-                in_analysis: I18n$1.t('display_status.in_analysis', I18nScope$20()),
-                successful: I18n$1.t('display_status.successful', I18nScope$20({ date: h.momentify(project().zone_expires_at) })),
-                waiting_funds: I18n$1.t('display_status.waiting_funds', I18nScope$20()),
-                draft: I18n$1.t('display_status.draft', I18nScope$20())
+                approved: I18n$1.t('display_status.approved', I18nScope$21()),
+                online: h.existy(project().zone_expires_at) && project().open_for_contributions ? I18n$1.t('display_status.online', I18nScope$21({ date: h.momentify(project().zone_expires_at) })) : '',
+                failed: I18n$1.t('display_status.failed', I18nScope$21({ date: h.momentify(project().zone_expires_at), goal: 'R$ ' + h.formatNumber(project().goal, 2, 3) })),
+                rejected: I18n$1.t('display_status.rejected', I18nScope$21()),
+                in_analysis: I18n$1.t('display_status.in_analysis', I18nScope$21()),
+                successful: I18n$1.t('display_status.successful', I18nScope$21({ date: h.momentify(project().zone_expires_at) })),
+                waiting_funds: I18n$1.t('display_status.waiting_funds', I18nScope$21()),
+                draft: I18n$1.t('display_status.draft', I18nScope$21())
             };
 
             return states[project().state];
         };
 
-        return m('#project-sidebar.aside', [m('.project-stats', [m('.project-stats-inner', [m('.project-stats-info', [m('.u-marginbottom-20', [m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', 'R$ ' + (project().pledged ? h.formatNumber(project().pledged) : '0')), m('.fontsize-small.u-text-center-small-only', [I18n$1.t('contributors_call', I18nScope$20()), m('span#contributors.fontweight-semibold', I18n$1.t('contributors_count', I18nScope$20({ count: project().total_contributors }))), !project().expires_at && elapsed ? ' em ' + I18n$1.t('datetime.distance_in_words.x_' + elapsed.unit, { count: elapsed.total }, I18nScope$20()) : ''])]), m('.meter', [m('#progressBar.meter-fill', {
+        return m('#project-sidebar.aside', [m('.project-stats', [m('.project-stats-inner', [m('.project-stats-info', [m('.u-marginbottom-20', [m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', 'R$ ' + (project().pledged ? h.formatNumber(project().pledged) : '0')), m('.fontsize-small.u-text-center-small-only', [I18n$1.t('contributors_call', I18nScope$21()), m('span#contributors.fontweight-semibold', I18n$1.t('contributors_count', I18nScope$21({ count: project().total_contributors }))), !project().expires_at && elapsed ? ' em ' + I18n$1.t('datetime.distance_in_words.x_' + elapsed.unit, { count: elapsed.total }, I18nScope$21()) : ''])]), m('.meter', [m('#progressBar.meter-fill', {
             style: {
                 width: project().progress + '%'
             }
-        })]), m('.w-row.u-margintop-10', [m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [m('.fontsize-small.fontweight-semibold.lineheight-tighter', (project().progress ? parseInt(project().progress) : '0') + '%')]), m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [m('span.fontweight-semibold', remaining.total), I18n$1.t('remaining_time.' + remaining.unit, I18nScope$20({ count: remaining.total }))] : '')])])]), m('.w-row', [m.component(projectMode, {
+        })]), m('.w-row.u-margintop-10', [m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [m('.fontsize-small.fontweight-semibold.lineheight-tighter', (project().progress ? parseInt(project().progress) : '0') + '%')]), m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [m('span.fontweight-semibold', remaining.total), I18n$1.t('remaining_time.' + remaining.unit, I18nScope$21({ count: remaining.total }))] : '')])])]), m('.w-row', [m.component(projectMode, {
             project: project
         })])]), project().open_for_contributions ? m('.back-project-btn-div', [m('.back-project--btn-row', [m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]', {
             onclick: h.analytics.event({
@@ -7506,7 +7526,7 @@ var projectSidebar = {
                 return h.navigateTo('/projects/' + project().project_id + '/contributions/new');
             })
 
-        }, I18n$1.t('submit', I18nScope$20()))]), m('.back-project-btn-row-right', m.component(projectReminder, {
+        }, I18n$1.t('submit', I18nScope$21()))]), m('.back-project-btn-row-right', m.component(projectReminder, {
             project: project,
             type: 'link'
         }))]) : '', m('.friend-backed-card.project-page', [!_$1.isUndefined(project()) && project().contributed_by_friends ? m.component(projectFriends, { project: project(), wrapper: 'div' }) : '']), m('div[class="fontsize-smaller u-marginbottom-30 ' + displayCardClass() + '"]', displayStatusText())]), m('.project-share.w-hidden-main.w-hidden-medium', [m.component(addressTag, { project: project }), m.component(categoryTag, { project: project }), m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-inline.btn-medium.btn-terciary', {
@@ -7553,7 +7573,7 @@ var rewardReceiver = {
     }
 };
 
-var I18nScope$21 = _$1.partial(h.i18nScope, 'payment.state');
+var I18nScope$22 = _$1.partial(h.i18nScope, 'payment.state');
 var contributionScope$1 = _$1.partial(h.i18nScope, 'users.contribution_row');
 
 var userContributedBox = {
@@ -7590,7 +7610,7 @@ var userContributedBox = {
             onclick: function onclick() {
                 ctrl.displayModal.toggle();
             }
-        }, I18n$1.t('contact_author', contributionScope$1()))]), m('.u-marginbottom-20.w-col.w-col-3', [m('.fontsize-base.fontweight-semibold.lineheight-looser', 'R$ ' + contribution.value), m('.w-embed', m('div', [m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', I18n$1.t('status', contributionScope$1())), m('.fontsize-smaller.fontweight-semibold', [m('.lineheight-tighter'), m('span.fa.fa-circle.fontsize-smallest.' + (contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'), m.trust('&nbsp;')), I18n$1.t(contribution.state, I18nScope$21({
+        }, I18n$1.t('contact_author', contributionScope$1()))]), m('.u-marginbottom-20.w-col.w-col-3', [m('.fontsize-base.fontweight-semibold.lineheight-looser', 'R$ ' + contribution.value), m('.w-embed', m('div', [m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', I18n$1.t('status', contributionScope$1())), m('.fontsize-smaller.fontweight-semibold', [m('.lineheight-tighter'), m('span.fa.fa-circle.fontsize-smallest.' + (contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'), m.trust('&nbsp;')), I18n$1.t(contribution.state, I18nScope$22({
             date: h.momentify(contribution[contribution.state + '_at'])
         }))]), m('.fontsize-smallest', contribution.installments > 1 ? contribution.installments + ' x R$ ' + contribution.installment_value + ' ' : '', contribution.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito'), contributionVM.canShowReceipt(contribution) ? m('a.alt-link.u-margintop-10[href=\'/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/receipt\'][target=\'__blank\']', I18n$1.t('show_receipt', contributionScope$1())) : '', contributionVM.canShowSlip(contribution) && contribution.gateway_data ? m('a.alt-link.u-margintop-10[href=\'' + contribution.gateway_data.boleto_url + '\'][target=\'__blank\']', I18n$1.t('print_slip', contributionScope$1())) : '', contributionVM.canGenerateSlip(contribution) ? m('a.alt-link.u-margintop-10[href=\'/projects/' + contribution.project_id + '/contributions/' + contribution.contribution_id + '/second_slip\'][target=\'__blank\']', I18n$1.t('slip_copy', contributionScope$1())) : '', m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']' + (contribution.anonymous ? '[checked=\'checked\']' : '') + '[value=\'1\']', {
             onclick: function onclick() {
@@ -7737,7 +7757,7 @@ var projectTabs = {
     }
 };
 
-var I18nScope$22 = _$1.partial(h.i18nScope, 'projects.contributions');
+var I18nScope$23 = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var projectRewardCard = {
     controller: function controller(args) {
@@ -7848,7 +7868,7 @@ var projectRewardCard = {
             }
         }, [ctrl.isRewardDescriptionExtended() ? 'menos ' : 'mais ', m('span.fa.fa-angle-down', {
             class: ctrl.isRewardDescriptionExtended() ? 'reversed' : ''
-        })]) : '', m('.u-marginbottom-20.w-row', [m('.w-col.w-col-6', !_$1.isEmpty(reward.deliver_at) ? [m('.fontcolor-secondary.fontsize-smallest', m('span', 'Entrega prevista:')), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))] : ''), m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) || reward.shipping_options === 'presential' ? [m('.fontcolor-secondary.fontsize-smallest', m('span', 'Envio:')), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$22()))] : '')]), reward.maximum_contributions > 0 ? [h.rewardSouldOut(reward) ? m('.u-margintop-10', [m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')]) : m('.u-margintop-10', [m('span.badge.badge-attention.fontsize-smaller', [m('span.fontweight-bold', 'Limitada'), project.open_for_contributions ? ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' dispon\xEDveis)' : ''])])] : '', m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))]) : '', project.open_for_contributions && !h.rewardSouldOut(reward) ? [ctrl.isRewardOpened() ? m('.w-form', [m('form.u-margintop-30', {
+        })]) : '', m('.u-marginbottom-20.w-row', [m('.w-col.w-col-6', !_$1.isEmpty(reward.deliver_at) ? [m('.fontcolor-secondary.fontsize-smallest', m('span', 'Entrega prevista:')), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))] : ''), m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) || reward.shipping_options === 'presential' ? [m('.fontcolor-secondary.fontsize-smallest', m('span', 'Envio:')), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$23()))] : '')]), reward.maximum_contributions > 0 ? [h.rewardSouldOut(reward) ? m('.u-margintop-10', [m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')]) : m('.u-margintop-10', [m('span.badge.badge-attention.fontsize-smaller', [m('span.fontweight-bold', 'Limitada'), project.open_for_contributions ? ' (' + h.rewardRemaning(reward) + ' de ' + reward.maximum_contributions + ' dispon\xEDveis)' : ''])])] : '', m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')), reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))]) : '', project.open_for_contributions && !h.rewardSouldOut(reward) ? [ctrl.isRewardOpened() ? m('.w-form', [m('form.u-margintop-30', {
             onsubmit: ctrl.submitContribution
         }, [m('.divider.u-marginbottom-20'), rewardVM.hasShippingOptions(reward) ? m('div', [m('.fontcolor-secondary.u-marginbottom-10', 'Local de entrega'), m('select.positive.text-field.w-select', {
             onchange: m.withAttr('value', ctrl.selectDestination),
@@ -8133,7 +8153,7 @@ var projectComments = {
     }
 };
 
-var I18nScope$23 = _$1.partial(h.i18nScope, 'projects.posts');
+var I18nScope$24 = _$1.partial(h.i18nScope, 'projects.posts');
 
 var projectPosts = {
     controller: function controller(args) {
@@ -8170,7 +8190,7 @@ var projectPosts = {
 
         return m('#posts.project-posts.w-section', { config: ctrl.scrollTo }, [m('.w-container.u-margintop-20', [project.is_owner_or_admin ? [!list.isLoading() ? _$1.isEmpty(list.collection()) ? m('.w-hidden-small.w-hidden-tiny', [m('.fontsize-base.u-marginbottom-30.u-margintop-20', 'Toda novidade publicada no Catarse é enviada diretamente para o email de quem já apoiou seu projeto e também fica disponível para visualização no site. Você pode optar por deixá-la pública, ou visível somente para seus apoiadores aqui nesta aba.')]) : '' : '', m('.w-row.u-marginbottom-20', [m('.w-col.w-col-4.w-col-push-4', [m('a.btn.btn-edit.btn-small[href=\'/pt/projects/' + project.project_id + '/posts\']', 'Escrever novidade')])])] : '', _$1.map(list.collection(), function (post) {
             return m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', [m('.post', [m('.u-marginbottom-60 .w-clearfix', [m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)), m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [m('a.link-hidden[href="/projects/' + post.project_id + '/posts/' + post.id + '#posts"]', post.title)]), !_$1.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', 'Post exclusivo para apoiadores' + (post.reward_id ? ' da recompensa de R$' + post.minimum_value : '') + '.')]), m('.divider.u-marginbottom-60')])]), m('.w-col.w-col-1')]);
-        }), m('.w-row', [!_$1.isUndefined(args.post_id) ? '' : !list.isLoading() ? list.collection().length === 0 && args.projectContributions().length === 0 ? !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1', m('p.fontsize-base', m.trust(I18n$1.t('empty', I18nScope$23({
+        }), m('.w-row', [!_$1.isUndefined(args.post_id) ? '' : !list.isLoading() ? list.collection().length === 0 && args.projectContributions().length === 0 ? !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1', m('p.fontsize-base', m.trust(I18n$1.t('empty', I18nScope$24({
             project_user_name: args.userDetails().name,
             project_id: project.project_id
         }))))) : '' : m('.w-col.w-col-2.w-col-push-5', list.isLastPage() ? list.collection().length === 0 ? 'Nenhuma novidade.' : '' : m('button#load-more.btn.btn-medium.btn-terciary', {
@@ -8273,7 +8293,7 @@ var projectsShow = {
     }
 };
 
-var I18nScope$25 = _$1.partial(h.i18nScope, 'projects.contributions.edit.errors');
+var I18nScope$26 = _$1.partial(h.i18nScope, 'projects.contributions.edit.errors');
 var I18nIntScope = _$1.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 var paymentVM = function paymentVM() {
@@ -8338,7 +8358,7 @@ var paymentVM = function paymentVM() {
     };
 
     var scope = function scope(data) {
-        return isInternational() ? I18nIntScope(data) : I18nScope$25(data);
+        return isInternational() ? I18nIntScope(data) : I18nScope$26(data);
     };
 
     var getLocale = function getLocale() {
@@ -8686,7 +8706,7 @@ var paymentVM = function paymentVM() {
     };
 };
 
-var I18nScope$26 = _$1.partial(h.i18nScope, 'projects.contributions');
+var I18nScope$27 = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var rewardSelectCard = {
     controller: function controller(args) {
@@ -8791,11 +8811,11 @@ var rewardSelectCard = {
             value: ctrl.contributionValue()
         }))]), m('.fontsize-smaller.text-error.u-marginbottom-20.w-hidden', [m('span.fa.fa-exclamation-triangle'), ' O valor do apoio está incorreto'])]), m('.submit-form.w-col.w-col-4', m('button.btn.btn-medium.u-margintop-30', {
             onclick: ctrl.submitContribution
-        }, ['Continuar  ', m('span.fa.fa-chevron-right')]))]), ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [m('br'), m('span.fa.fa-exclamation-triangle'), ' ' + ctrl.error()]) : '', m('.fontsize-smaller.fontweight-semibold', reward.title), m('.back-reward-reward-description', [m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description), m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))]), !rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential' ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Envio:'), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$26()))])])])]));
+        }, ['Continuar  ', m('span.fa.fa-chevron-right')]))]), ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [m('br'), m('span.fa.fa-exclamation-triangle'), ' ' + ctrl.error()]) : '', m('.fontsize-smaller.fontweight-semibold', reward.title), m('.back-reward-reward-description', [m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description), m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))]), !rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential' ? '' : m('.w-col.w-col-6', [m('.fontsize-smallest.fontcolor-secondary', 'Envio:'), m('.fontsize-smallest', I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$27()))])])])]));
     }
 };
 
-var I18nScope$27 = _.partial(h.i18nScope, 'projects.faq');
+var I18nScope$28 = _.partial(h.i18nScope, 'projects.faq');
 
 var faqBox = {
     controller: function controller(args) {
@@ -8818,8 +8838,8 @@ var faqBox = {
             var updatedQuestions = {};
             _.each(questions, function (quest, idx) {
                 _.extend(updatedQuestions, defineProperty({}, idx + 1, {
-                    question: I18n$1.t(tKey() + '.questions.' + idx + '.question', I18nScope$27()),
-                    answer: I18n$1.t(tKey() + '.questions.' + idx + '.answer', I18nScope$27({ userLink: '/users/' + user().id,
+                    question: I18n$1.t(tKey() + '.questions.' + idx + '.question', I18nScope$28()),
+                    answer: I18n$1.t(tKey() + '.questions.' + idx + '.answer', I18nScope$28({ userLink: '/users/' + user().id,
                         userName: user().public_name || user().name
                     }))
                 }));
@@ -8841,7 +8861,7 @@ var faqBox = {
     view: function view(ctrl, args) {
         return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius', [m('.w-row.u-marginbottom-30', [m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('img[width=\'30\']', {
             src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
-        })), m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary', I18n$1.t(ctrl.tKey() + '.description', I18nScope$27())))]), m('.u-marginbottom-20.fontsize-small.fontweight-semibold', I18n$1.t('' + (args.vm.isInternational() ? 'international_title' : 'title'), I18nScope$27())), m('ul.w-list-unstyled', _.map(ctrl.scopedQuestions(), function (question, idx) {
+        })), m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary', I18n$1.t(ctrl.tKey() + '.description', I18nScope$28())))]), m('.u-marginbottom-20.fontsize-small.fontweight-semibold', I18n$1.t('' + (args.vm.isInternational() ? 'international_title' : 'title'), I18nScope$28())), m('ul.w-list-unstyled', _.map(ctrl.scopedQuestions(), function (question, idx) {
             return [m('li#faq_question_' + idx + '.fontsize-smaller.alt-link.list-question', {
                 onclick: ctrl.selectQuestion(idx)
             }, m('span', [m('span.faq-box-arrow'), ' ' + question.question])), m('li.list-answer', {
@@ -8851,7 +8871,7 @@ var faqBox = {
     }
 };
 
-var I18nScope$24 = _$1.partial(h.i18nScope, 'projects.contributions');
+var I18nScope$25 = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var projectsContribution = {
     controller: function controller() {
@@ -8898,7 +8918,7 @@ var projectsContribution = {
             project: project
         }), m('.w-section.header-cont-new', m('.w-container', m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', 'Escolha a recompensa e em seguida o valor do apoio'))), m('.section', m('.w-container', m('.w-row', [m('.w-col.w-col-8', m('.w-form.back-reward-form', m('form.simple_form.new_contribution[accept-charset="UTF-8"][action="/pt/projects/' + project().id + '/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]', { onsubmit: ctrl.submitContribution }, [m('input[name="utf8"][type="hidden"][value="✓"]'), _$1.map(ctrl.sortedRewards(), function (reward) {
             return m(rewardSelectCard, { reward: reward });
-        })]))), m('.w-col.w-col-4', [m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [m('.fontsize-small.fontweight-semibold', I18n$1.t('contribution_warning.title', I18nScope$24())), m('.fontsize-smaller.u-marginbottom-10', I18n$1.t('contribution_warning.subtitle', I18nScope$24())), m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n$1.t('contribution_warning.info', I18nScope$24())), m('a.alt-link.fontsize-smallest[target="__blank"][href="' + I18n$1.t('contribution_warning.link', I18nScope$24()) + '"]', I18n$1.t('contribution_warning.link_label', I18nScope$24()))]), m.component(faqBox, {
+        })]))), m('.w-col.w-col-4', [m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [m('.fontsize-small.fontweight-semibold', I18n$1.t('contribution_warning.title', I18nScope$25())), m('.fontsize-smaller.u-marginbottom-10', I18n$1.t('contribution_warning.subtitle', I18nScope$25())), m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n$1.t('contribution_warning.info', I18nScope$25())), m('a.alt-link.fontsize-smallest[target="__blank"][href="' + I18n$1.t('contribution_warning.link', I18nScope$25()) + '"]', I18n$1.t('contribution_warning.link_label', I18nScope$25()))]), m.component(faqBox, {
             mode: project().mode,
             vm: ctrl.paymentVM,
             faq: ctrl.paymentVM.faq(project().mode),
@@ -9145,7 +9165,7 @@ var usersShow = {
     }
 };
 
-var I18nScope$28 = _$1.partial(h.i18nScope, 'activerecord.attributes.address');
+var I18nScope$29 = _$1.partial(h.i18nScope, 'activerecord.attributes.address');
 
 var surveyPreview = {
     controller: function controller(args) {
@@ -9160,7 +9180,7 @@ var surveyPreview = {
         };
     },
     view: function view(ctrl, args) {
-        return m('.section.u-marginbottom-40', m('.w-container', m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.card.card-terciary.medium.u-radius', [args.confirmAddress ? m('.u-marginbottom-30', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('delivery_address', I18nScope$28())), m('.fontsize-base', [m('span.fontweight-semibold', I18n$1.t('country', I18nScope$28()) + ': '), args.countryName, m('br'), m('span.fontweight-semibold', I18n$1.t('address_street', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_street, m('br'), m('span.fontweight-semibold', I18n$1.t('address_number', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_number, m('br'), m('span.fontweight-semibold', I18n$1.t('address_complement', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_complement, m('br'), m('span.fontweight-semibold', I18n$1.t('address_neighbourhood', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_neighbourhood, m('br'), m('span.fontweight-semibold', I18n$1.t('address_city', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_city, m('br'), m('span.fontweight-semibold', I18n$1.t('address_state', I18nScope$28()) + ':'), m.trust('&nbsp;'), args.stateName, m('br'), m('span.fontweight-semibold', I18n$1.t('address_zip_code', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_zip_code, m('br'), m('span.fontweight-semibold', I18n$1.t('phone_number', I18nScope$28()) + ':'), m.trust('&nbsp;'), ctrl.fields.phone_number])]) : '', _$1.map(ctrl.multipleChoiceQuestions, function (item) {
+        return m('.section.u-marginbottom-40', m('.w-container', m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.card.card-terciary.medium.u-radius', [args.confirmAddress ? m('.u-marginbottom-30', [m('.fontcolor-secondary.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('delivery_address', I18nScope$29())), m('.fontsize-base', [m('span.fontweight-semibold', I18n$1.t('country', I18nScope$29()) + ': '), args.countryName, m('br'), m('span.fontweight-semibold', I18n$1.t('address_street', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_street, m('br'), m('span.fontweight-semibold', I18n$1.t('address_number', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_number, m('br'), m('span.fontweight-semibold', I18n$1.t('address_complement', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_complement, m('br'), m('span.fontweight-semibold', I18n$1.t('address_neighbourhood', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_neighbourhood, m('br'), m('span.fontweight-semibold', I18n$1.t('address_city', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_city, m('br'), m('span.fontweight-semibold', I18n$1.t('address_state', I18nScope$29()) + ':'), m.trust('&nbsp;'), args.stateName, m('br'), m('span.fontweight-semibold', I18n$1.t('address_zip_code', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.address_zip_code, m('br'), m('span.fontweight-semibold', I18n$1.t('phone_number', I18nScope$29()) + ':'), m.trust('&nbsp;'), ctrl.fields.phone_number])]) : '', _$1.map(ctrl.multipleChoiceQuestions, function (item) {
             var answer = _$1.find(item.question.question_choices, function (choice) {
                 return item.value() == choice.id;
             });
@@ -9279,7 +9299,7 @@ var addressVM = function addressVM(args) {
     };
 };
 
-var I18nScope$29 = _$1.partial(h.i18nScope, 'activerecord.attributes.address');
+var I18nScope$30 = _$1.partial(h.i18nScope, 'activerecord.attributes.address');
 
 var addressForm = {
     controller: function controller(args) {
@@ -9463,7 +9483,7 @@ var addressForm = {
             international: international,
             defaultCountryID: defaultCountryID,
             defaultForeignCountryID: defaultForeignCountryID
-        }), m('div', [m('.w-row', [m('.w-col.w-col-6', [m('.field-label', [m('span.fontweight-semibold', I18n$1.t('address_zip_code', I18nScope$29()) + ' *'), m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']", I18n$1.t('zipcode_unknown', I18nScope$29()))]), m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
+        }), m('div', [m('.w-row', [m('.w-col.w-col-6', [m('.field-label', [m('span.fontweight-semibold', I18n$1.t('address_zip_code', I18nScope$30()) + ' *'), m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']", I18n$1.t('zipcode_unknown', I18nScope$30()))]), m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
             class: errors.addressZipCode() ? 'error' : '',
             value: ctrl.fields.addressZipCode(),
             onkeyup: m.withAttr('value', function (value) {
@@ -9474,34 +9494,34 @@ var addressForm = {
             }
         }), errors.addressZipCode() ? m(inlineError, {
             message: ctrl.zipCodeErrorMessage() ? ctrl.zipCodeErrorMessage() : 'Informe um CEP válido.'
-        }) : '']), m('.w-col.w-col-6')]), m('.w-row', [m('.field-label.fontweight-semibold', I18n$1.t('address_street', I18nScope$29()) + ' *'), m("input.positive.text-field.w-input[maxlength='256'][required='required'][type='text']", {
+        }) : '']), m('.w-col.w-col-6')]), m('.w-row', [m('.field-label.fontweight-semibold', I18n$1.t('address_street', I18nScope$30()) + ' *'), m("input.positive.text-field.w-input[maxlength='256'][required='required'][type='text']", {
             class: errors.addressStreet() ? 'error' : '',
             value: ctrl.fields.addressStreet(),
             onchange: m.withAttr('value', ctrl.fields.addressStreet)
         }), errors.addressStreet() ? m(inlineError, {
             message: 'Informe um endereço.'
-        }) : '']), m('.w-row', [m('.w-sub-col.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('address_number', I18nScope$29()) + ' *'), m("input.positive.text-field.w-input[required='required'][type='text']", {
+        }) : '']), m('.w-row', [m('.w-sub-col.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('address_number', I18nScope$30()) + ' *'), m("input.positive.text-field.w-input[required='required'][type='text']", {
             class: errors.addressNumber() ? 'error' : '',
             value: ctrl.fields.addressNumber(),
             onchange: m.withAttr('value', ctrl.fields.addressNumber)
         }), errors.addressNumber() ? m(inlineError, {
             message: 'Informe um número.'
-        }) : '']), m('.w-sub-col.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('address_complement', I18nScope$29())), m("input.positive.text-field.w-input[required='required'][type='text']", {
+        }) : '']), m('.w-sub-col.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('address_complement', I18nScope$30())), m("input.positive.text-field.w-input[required='required'][type='text']", {
             value: ctrl.fields.addressComplement(),
             onchange: m.withAttr('value', ctrl.fields.addressComplement)
-        })]), m('.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('address_neighbourhood', I18nScope$29()) + ' *'), m("input.positive.text-field.w-input[required='required'][type='text']", {
+        })]), m('.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('address_neighbourhood', I18nScope$30()) + ' *'), m("input.positive.text-field.w-input[required='required'][type='text']", {
             class: errors.addressNeighbourhood() ? 'error' : '',
             value: ctrl.fields.addressNeighbourhood(),
             onchange: m.withAttr('value', ctrl.fields.addressNeighbourhood)
         }), errors.addressNeighbourhood() ? m(inlineError, {
             message: 'Informe um bairro.'
-        }) : ''])]), m('.w-row', [m('.w-sub-col.w-col.w-col-6', [m('.field-label.fontweight-semibold', I18n$1.t('address_city', I18nScope$29()) + ' *'), m("input.positive.text-field.w-input[required='required'][type='text']", {
+        }) : ''])]), m('.w-row', [m('.w-sub-col.w-col.w-col-6', [m('.field-label.fontweight-semibold', I18n$1.t('address_city', I18nScope$30()) + ' *'), m("input.positive.text-field.w-input[required='required'][type='text']", {
             class: errors.addressCity() ? 'error' : '',
             value: ctrl.fields.addressCity(),
             onchange: m.withAttr('value', ctrl.fields.addressCity)
         }), errors.addressCity() ? m(inlineError, {
             message: 'Informe uma cidade.'
-        }) : '']), m('.w-sub-col.w-col.w-col-2', [m('.field-label.fontweight-semibold', I18n$1.t('address_state', I18nScope$29()) + ' *'), m('select#address-state.positive.text-field.w-select', {
+        }) : '']), m('.w-sub-col.w-col.w-col-2', [m('.field-label.fontweight-semibold', I18n$1.t('address_state', I18nScope$30()) + ' *'), m('select#address-state.positive.text-field.w-select', {
             class: errors.stateID() ? 'error' : '',
             onchange: m.withAttr('value', ctrl.fields.stateID)
         }, [m('option', { value: '' }), !_$1.isEmpty(ctrl.states()) ? _$1.map(ctrl.states(), function (state) {
@@ -9511,7 +9531,7 @@ var addressForm = {
             }, state.acronym);
         }) : '']), errors.stateID() ? m(inlineError, {
             message: 'Informe um estado.'
-        }) : '']), m('.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('phone_number', I18nScope$29()) + ' *'), m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
+        }) : '']), m('.w-col.w-col-4', [m('.field-label.fontweight-semibold', I18n$1.t('phone_number', I18nScope$30()) + ' *'), m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
             class: errors.phoneNumber() ? 'error' : '',
             value: ctrl.fields.phoneNumber(),
             onkeyup: m.withAttr('value', function (value) {
@@ -10183,7 +10203,7 @@ var userAboutEdit = {
     }
 };
 
-var I18nScope$30 = _$1.partial(h.i18nScope, 'users.show.contributions');
+var I18nScope$31 = _$1.partial(h.i18nScope, 'users.show.contributions');
 
 var userContributedList = {
     controller: function controller(args) {
@@ -10200,7 +10220,7 @@ var userContributedList = {
             hideSurveys = ctrl.hideSurveys,
             title = ctrl.title;
 
-        return !_$1.isEmpty(collection) ? m('div', [m('.section-one-column.u-marginbottom-30', m('.w-container', [m('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center', title), m('.card.card-secondary.w-hidden-small.w-hidden-tiny.w-row', [m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', I18n$1.t('project_col', I18nScope$30()))), m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', I18n$1.t('contribution_col', I18nScope$30()))), m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', I18n$1.t('reward_col', I18nScope$30()))), m('.w-col.w-col-1'), !hideSurveys ? m('.w-col.w-col-2', m('.fontsize-small.fontweight-semibold', I18n$1.t('survey_col', I18nScope$30()))) : '']), _$1.map(collection, function (contribution) {
+        return !_$1.isEmpty(collection) ? m('div', [m('.section-one-column.u-marginbottom-30', m('.w-container', [m('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center', title), m('.card.card-secondary.w-hidden-small.w-hidden-tiny.w-row', [m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', I18n$1.t('project_col', I18nScope$31()))), m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', I18n$1.t('contribution_col', I18nScope$31()))), m('.w-col.w-col-3', m('.fontsize-small.fontweight-semibold', I18n$1.t('reward_col', I18nScope$31()))), m('.w-col.w-col-1'), !hideSurveys ? m('.w-col.w-col-2', m('.fontsize-small.fontweight-semibold', I18n$1.t('survey_col', I18nScope$31()))) : '']), _$1.map(collection, function (contribution) {
             return m(userContributedBox, {
                 contribution: contribution
             });
@@ -10367,7 +10387,7 @@ var userSettingsVM = {
     mapRailsErrors: mapRailsErrors$2
 };
 
-var I18nScope$31 = _$1.partial(h.i18nScope, 'users.edit.settings_tab');
+var I18nScope$32 = _$1.partial(h.i18nScope, 'users.edit.settings_tab');
 
 var userSettings = {
     controller: function controller(args) {
@@ -10504,7 +10524,7 @@ var userSettings = {
             disableFields = user.is_admin_role ? false : hasContributedOrPublished && !_$1.isEmpty(user.name) && !_$1.isEmpty(user.owner_document);
 
         return m('[id=\'settings-tab\']', [ctrl.showSuccess() ? m.component(popNotification, {
-            message: I18n$1.t('update_success_msg', I18nScope$31()),
+            message: I18n$1.t('update_success_msg', I18nScope$32()),
             toggleOpt: ctrl.showSuccess
         }) : '', ctrl.showError() ? m.component(popNotification, {
             message: m.trust(ctrl.error()),
@@ -10516,55 +10536,55 @@ var userSettings = {
         // ( _.isEmpty(fields.name()) && _.isEmpty(fields.owner_document()) ? '' : m(UserOwnerBox, {user: user}) ),
 
         m(bigCard, {
-            label: I18n$1.t('legal_title', I18nScope$31()),
-            label_hint: m.trust(I18n$1.t('legal_subtitle', I18nScope$31())),
+            label: I18n$1.t('legal_title', I18nScope$32()),
+            label_hint: m.trust(I18n$1.t('legal_subtitle', I18nScope$32())),
             children: [m('.divider.u-marginbottom-20'), m('.w-row', [m('.w-col.w-col-6.w-sub-col', m('.input.select.required.user_bank_account_bank_id', [m('select.select.required.w-input.text-field.bank-select.positive' + (disableFields ? '.text-field-disabled' : '') + '[id=\'user_bank_account_attributes_bank_id\']', {
                 name: 'user[bank_account_attributes][bank_id]',
                 onchange: m.withAttr('value', fields.account_type),
                 disabled: disableFields
             }, [m('option[value=\'pf\']', {
                 selected: fields.account_type() === 'pf'
-            }, I18n$1.t('account_types.pf', I18nScope$31())), m('option[value=\'pj\']', {
+            }, I18n$1.t('account_types.pf', I18nScope$32())), m('option[value=\'pj\']', {
                 selected: fields.account_type() === 'pj'
-            }, I18n$1.t('account_types.pj', I18nScope$31())), m('option[value=\'mei\']', {
+            }, I18n$1.t('account_types.pj', I18nScope$32())), m('option[value=\'mei\']', {
                 selected: fields.account_type() === 'mei'
-            }, I18n$1.t('account_types.mei', I18nScope$31()))])]))]), m('.w-row', [m('.w-col.w-col-6.w-sub-col', [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']', I18n$1.t(fields.account_type() == 'pf' ? 'pf_label_name' : 'pj_label_name', I18nScope$31())), m('input.string.required.w-input.text-field.positive' + (disableFields ? '.text-field-disabled' : '') + '[id=\'user_bank_account_attributes_owner_name\'][type=\'text\']', {
+            }, I18n$1.t('account_types.mei', I18nScope$32()))])]))]), m('.w-row', [m('.w-col.w-col-6.w-sub-col', [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']', I18n$1.t(fields.account_type() == 'pf' ? 'pf_label_name' : 'pj_label_name', I18nScope$32())), m('input.string.required.w-input.text-field.positive' + (disableFields ? '.text-field-disabled' : '') + '[id=\'user_bank_account_attributes_owner_name\'][type=\'text\']', {
                 value: fields.name(),
                 name: 'user[name]',
                 class: ctrl.parsedErrors.hasError('name') ? 'error' : false,
                 onchange: m.withAttr('value', fields.name),
                 disabled: disableFields
-            }), ctrl.parsedErrors.inlineError('name')]), m('.w-col.w-col-6', [m('.w-row', [m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']', I18n$1.t(fields.account_type() == 'pf' ? 'pf_label_document' : 'pj_label_document', I18nScope$31())), m('input.string.tel.required.w-input.text-field.positive' + (disableFields ? '.text-field-disabled' : '') + '[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
+            }), ctrl.parsedErrors.inlineError('name')]), m('.w-col.w-col-6', [m('.w-row', [m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']', I18n$1.t(fields.account_type() == 'pf' ? 'pf_label_document' : 'pj_label_document', I18nScope$32())), m('input.string.tel.required.w-input.text-field.positive' + (disableFields ? '.text-field-disabled' : '') + '[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                 value: fields.owner_document(),
                 class: ctrl.parsedErrors.hasError('owner_document') ? 'error' : false,
                 disabled: disableFields,
                 name: 'user[cpf]',
                 onchange: m.withAttr('value', ctrl.applyDocumentMask),
                 onkeyup: m.withAttr('value', ctrl.applyDocumentMask)
-            }), ctrl.parsedErrors.inlineError('owner_document')]), m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', fields.account_type() == 'pf' ? [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']', I18n$1.t('label_birth_date', I18nScope$31())), m('input.string.tel.required.w-input.text-field.positive' + (disableFields && !_$1.isEmpty(user.birth_date) ? '.text-field-disabled' : '') + '[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
+            }), ctrl.parsedErrors.inlineError('owner_document')]), m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', fields.account_type() == 'pf' ? [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']', I18n$1.t('label_birth_date', I18nScope$32())), m('input.string.tel.required.w-input.text-field.positive' + (disableFields && !_$1.isEmpty(user.birth_date) ? '.text-field-disabled' : '') + '[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                 value: fields.birth_date(),
                 name: 'user[birth_date]',
                 class: ctrl.parsedErrors.hasError('birth_date') ? 'error' : false,
                 disabled: disableFields && !_$1.isEmpty(user.birth_date),
                 onchange: m.withAttr('value', ctrl.applyBirthDateMask),
                 onkeyup: m.withAttr('value', ctrl.applyBirthDateMask)
-            }), ctrl.parsedErrors.inlineError('birth_date')] : [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']', I18n$1.t('label_state_inscription', I18nScope$31())), m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
+            }), ctrl.parsedErrors.inlineError('birth_date')] : [m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']', I18n$1.t('label_state_inscription', I18nScope$32())), m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                 value: fields.state_inscription(),
                 class: ctrl.parsedErrors.hasError('state_inscription') ? 'error' : false,
                 name: 'user[state_inscription]',
                 onchange: m.withAttr('value', fields.state_inscription)
             }), ctrl.parsedErrors.inlineError('state_inscription')])])])])]
         }), m(bigCard, {
-            label: I18n$1.t('address_title', I18nScope$31()),
-            label_hint: I18n$1.t('address_subtitle', I18nScope$31()),
+            label: I18n$1.t('address_title', I18nScope$32()),
+            label_hint: I18n$1.t('address_subtitle', I18nScope$32()),
             children: [m('.divider.u-marginbottom-20'), m(addressForm, {
                 fields: ctrl.fields,
                 parsedErrors: ctrl.parsedErrors
             })]
-        }), args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [m('.fontsize-base.fontweight-semibold', I18n$1.t('credit_cards.title', I18nScope$31())), m('.fontsize-small.u-marginbottom-20', m.trust(I18n$1.t('credit_cards.subtitle', I18nScope$31()))), m('.divider.u-marginbottom-20'), m('.w-row.w-hidden-tiny.card', [m('.w-col.w-col-5.w-col-small-5', m('.fontsize-small.fontweight-semibold', I18n$1.t('credit_cards.card_label', I18nScope$31()))), m('.w-col.w-col-5.w-col-small-5', m('.fontweight-semibold.fontsize-small', I18n$1.t('credit_cards.provider_label', I18nScope$31()))), m('.w-col.w-col-2.w-col-small-2')]), _$1.map(ctrl.creditCards(), function (card) {
+        }), args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [m('.fontsize-base.fontweight-semibold', I18n$1.t('credit_cards.title', I18nScope$32())), m('.fontsize-small.u-marginbottom-20', m.trust(I18n$1.t('credit_cards.subtitle', I18nScope$32()))), m('.divider.u-marginbottom-20'), m('.w-row.w-hidden-tiny.card', [m('.w-col.w-col-5.w-col-small-5', m('.fontsize-small.fontweight-semibold', I18n$1.t('credit_cards.card_label', I18nScope$32()))), m('.w-col.w-col-5.w-col-small-5', m('.fontweight-semibold.fontsize-small', I18n$1.t('credit_cards.provider_label', I18nScope$32()))), m('.w-col.w-col-2.w-col-small-2')]), _$1.map(ctrl.creditCards(), function (card) {
             return m('.w-row.card', [m('.w-col.w-col-5.w-col-small-5', m('.fontsize-small.fontweight-semibold', ['XXXX XXXX XXXX', m.trust('&nbsp;'), card.last_digits])), m('.w-col.w-col-5.w-col-small-5', m('.fontsize-small.fontweight-semibold.u-marginbottom-10', card.card_brand.toUpperCase())), m('.w-col.w-col-2.w-col-small-2', m('a.btn.btn-terciary.btn-small[rel=\'nofollow\']', {
                 onclick: ctrl.deleteCard(card.id)
-            }, I18n$1.t('credit_cards.remove_label', I18nScope$31())))]);
+            }, I18n$1.t('credit_cards.remove_label', I18nScope$32())))]);
         }), m('form.w-hidden', {
             action: '/pt/users/' + user.id + '/credit_cards/' + ctrl.toDeleteCard(),
             method: 'POST',
@@ -10829,7 +10849,7 @@ var userBankForm = {
  *     balance: {user_id: 123, amount: 123} // userBalance struct
  * })
  */
-var I18nScope$33 = _$1.partial(h.i18nScope, 'users.balance');
+var I18nScope$34 = _$1.partial(h.i18nScope, 'users.balance');
 
 var userBalanceRequestModelContent = {
     controller: function controller(args) {
@@ -10926,15 +10946,15 @@ var userBalanceRequestModelContent = {
             fields = ctrl.fields,
             user = args.user;
 
-        return m('div', [m('.modal-dialog-header', [m('.fontsize-large.u-text-center', I18n$1.t('withdraw', I18nScope$33()))]), ctrl.displayConfirmation() ? m('.modal-dialog-content.u-text-center', ctrl.loadBankA() ? h.loader() : _$1.map(ctrl.bankAccounts(), function (item) {
-            return [m('.fontsize-base.u-marginbottom-20', [m('span.fontweight-semibold', I18n$1.t('value_text', I18nScope$33()) + ':'), m.trust('&nbsp;'), m('span.text-success', I18n$1.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) }))]), m('.fontsize-base.u-marginbottom-10', [m('span', { style: { 'font-weight': ' 600' } }, I18n$1.t('bank.account', I18nScope$33()))]), m('.fontsize-small.u-marginbottom-10', [m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.name', I18nScope$33())), m.trust('&nbsp;'), item.owner_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.cpf_cnpj', I18nScope$33())), m.trust('&nbsp;'), item.owner_document]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.bank_name', I18nScope$33())), m.trust('&nbsp;'), item.bank_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.agency', I18nScope$33())), m.trust('&nbsp;'), item.agency + '-' + item.agency_digit]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.account', I18nScope$33())), m.trust('&nbsp;'), item.account + '-' + item.account_digit])])];
-        })) : ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m('p.fontsize-large', I18n$1.t('success_message', I18nScope$33()))]) : m('.modal-dialog-content', [m('.fontsize-base.u-marginbottom-20', [m('span.fontweight-semibold', I18n$1.t('value_text', I18nScope$33()) + ':'), m.trust('&nbsp;'), m('span.text-success', I18n$1.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) }))]), m(UserOwnerBox, { user: args.user, hideAvatar: true }), m(userBankForm, { user: args.user, parsedErrors: ctrl.parsedErrors, fields: ctrl.fields, bankCode: ctrl.bankCode, bankInput: ctrl.bankInput })]), ctrl.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-5', ctrl.requestLoader() || ctrl.loading() ? h.loader() : [m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]', { onclick: function onclick() {
+        return m('div', [m('.modal-dialog-header', [m('.fontsize-large.u-text-center', I18n$1.t('withdraw', I18nScope$34()))]), ctrl.displayConfirmation() ? m('.modal-dialog-content.u-text-center', ctrl.loadBankA() ? h.loader() : _$1.map(ctrl.bankAccounts(), function (item) {
+            return [m('.fontsize-base.u-marginbottom-20', [m('span.fontweight-semibold', I18n$1.t('value_text', I18nScope$34()) + ':'), m.trust('&nbsp;'), m('span.text-success', I18n$1.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) }))]), m('.fontsize-base.u-marginbottom-10', [m('span', { style: { 'font-weight': ' 600' } }, I18n$1.t('bank.account', I18nScope$34()))]), m('.fontsize-small.u-marginbottom-10', [m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.name', I18nScope$34())), m.trust('&nbsp;'), item.owner_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.cpf_cnpj', I18nScope$34())), m.trust('&nbsp;'), item.owner_document]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.bank_name', I18nScope$34())), m.trust('&nbsp;'), item.bank_name]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.agency', I18nScope$34())), m.trust('&nbsp;'), item.agency + '-' + item.agency_digit]), m('div', [m('span.fontcolor-secondary', I18n$1.t('bank.account', I18nScope$34())), m.trust('&nbsp;'), item.account + '-' + item.account_digit])])];
+        })) : ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), m('p.fontsize-large', I18n$1.t('success_message', I18nScope$34()))]) : m('.modal-dialog-content', [m('.fontsize-base.u-marginbottom-20', [m('span.fontweight-semibold', I18n$1.t('value_text', I18nScope$34()) + ':'), m.trust('&nbsp;'), m('span.text-success', I18n$1.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) }))]), m(UserOwnerBox, { user: args.user, hideAvatar: true }), m(userBankForm, { user: args.user, parsedErrors: ctrl.parsedErrors, fields: ctrl.fields, bankCode: ctrl.bankCode, bankInput: ctrl.bankInput })]), ctrl.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-5', ctrl.requestLoader() || ctrl.loading() ? h.loader() : [m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]', { onclick: function onclick() {
                 return ctrl.requestFund();
             } }, I18n$1.t('shared.confirm_text'))]), m('.w-col.w-col-5', ctrl.requestLoader() || ctrl.loading() ? '' : [m('a.btn.btn-medium.btn-terciary.w-button', {
             onclick: ctrl.displayConfirmation.toggle
         }, I18n$1.t('shared.back_text'))]), m('.w-col.w-col-1')])]) : '', !ctrl.displayConfirmation() && !ctrl.displayDone() ? m('.modal-dialog-nav-bottom', { style: 'position: relative;' }, [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [ctrl.requestLoader() || ctrl.loading() ? h.loader() : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]', { onclick: function onclick() {
                 return ctrl.updateUserData(args.user.id);
-            } }, I18n$1.t('request_fund', I18nScope$33()))]), m('.w-col.w-col-3')])]) : '']);
+            } }, I18n$1.t('request_fund', I18nScope$34()))]), m('.w-col.w-col-3')])]) : '']);
     }
 };
 
@@ -10947,7 +10967,7 @@ var userBalanceRequestModelContent = {
  *     user_id: 123,
  * })
  */
-var I18nScope$32 = _$1.partial(h.i18nScope, 'users.balance');
+var I18nScope$33 = _$1.partial(h.i18nScope, 'users.balance');
 
 var userBalance = {
     controller: function controller(args) {
@@ -10965,11 +10985,11 @@ var userBalance = {
         return m('.w-section.section.user-balance-section', [ctrl.displayModal() ? m.component(modalBox, {
             displayModal: ctrl.displayModal,
             content: balanceRequestModalC
-        }) : '', m('.w-container', [m('.w-row', [m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m('.fontsize-larger', [I18n.t('totals', I18nScope$32()), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m('.w-col.w-col-4', [m('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 ? 'btn-inactive' : '') + '"][href="javascript:void(0);"]', { onclick: balance.amount > 0 ? ctrl.displayModal.toggle : 'javascript:void(0);' }, I18n.t('withdraw_cta', I18nScope$32()))])])])]);
+        }) : '', m('.w-container', [m('.w-row', [m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m('.fontsize-larger', [I18n.t('totals', I18nScope$33()), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m('.w-col.w-col-4', [m('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 ? 'btn-inactive' : '') + '"][href="javascript:void(0);"]', { onclick: balance.amount > 0 ? ctrl.displayModal.toggle : 'javascript:void(0);' }, I18n.t('withdraw_cta', I18nScope$33()))])])])]);
     }
 };
 
-var I18nScope$34 = _.partial(h.i18nScope, 'users.balance');
+var I18nScope$35 = _.partial(h.i18nScope, 'users.balance');
 
 var userBalanceTrasactionRow = {
     controller: function controller(args) {
@@ -10987,10 +11007,10 @@ var userBalanceTrasactionRow = {
         var item = args.item,
             createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 
-        return m('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m('.w-clearfix.card.card-clickable', [m('.w-row', [m('.w-col.w-col-2.w-col-tiny-2', [m('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m('.w-col.w-col-10.w-col-tiny-10', [m('.w-row', [m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$34())), m.trust('&nbsp;'), m('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$34())), m.trust('&nbsp;'), m('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$34())), m.trust('&nbsp;'), m('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m('.card', _.map(item.source, function (transaction) {
+        return m('div[class=\'balance-card ' + (ctrl.expanded() ? 'card-detailed-open' : '') + '\']', m('.w-clearfix.card.card-clickable', [m('.w-row', [m('.w-col.w-col-2.w-col-tiny-2', [m('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), m('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), m('.w-col.w-col-10.w-col-tiny-10', [m('.w-row', [m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope$35())), m.trust('&nbsp;'), m('span.fontsize-base.text-error', 'R$ ' + h.formatNumber(Math.abs(item.debit), 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope$35())), m.trust('&nbsp;'), m('span.fontsize-base.text-success', 'R$ ' + h.formatNumber(item.credit, 2, 3))])]), m('.w-col.w-col-4', [m('div', [m('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope$35())), m.trust('&nbsp;'), m('span.fontsize-base', 'R$ ' + h.formatNumber(item.total_amount, 2, 3))])])])])]), m('a.w-inline-block.arrow-admin.' + (ctrl.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]', { onclick: ctrl.expanded.toggle })]), ctrl.expanded() ? m('.card', _.map(item.source, function (transaction) {
             var pos = transaction.amount >= 0;
 
-            return m('div', [m('.w-row.fontsize-small.u-marginbottom-10', [m('.w-col.w-col-2', [m('.text-' + (pos ? 'success' : 'error'), (pos ? '+' : '-') + ' R$ ' + h.formatNumber(Math.abs(transaction.amount), 2, 3))]), m('.w-col.w-col-10', [m('div', I18n.t('event_names.' + transaction.event_name, I18nScope$34({
+            return m('div', [m('.w-row.fontsize-small.u-marginbottom-10', [m('.w-col.w-col-2', [m('.text-' + (pos ? 'success' : 'error'), (pos ? '+' : '-') + ' R$ ' + h.formatNumber(Math.abs(transaction.amount), 2, 3))]), m('.w-col.w-col-10', [m('div', I18n.t('event_names.' + transaction.event_name, I18nScope$35({
                 service_fee: transaction.origin_objects.service_fee ? transaction.origin_objects.service_fee * 100.0 : '',
                 project_name: transaction.origin_objects.project_name,
                 contributitor_name: transaction.origin_objects.contributor_name
@@ -11205,7 +11225,7 @@ var projectGoalVM = {
     genClickChangeMode: genClickChangeMode
 };
 
-var I18nScope$36 = _$1.partial(h.i18nScope, 'projects.dashboard_goal');
+var I18nScope$37 = _$1.partial(h.i18nScope, 'projects.dashboard_goal');
 
 var projectGoalEdit = {
     controller: function controller(args) {
@@ -11271,18 +11291,18 @@ var projectGoalEdit = {
             toggleOpt: ctrl.showError,
             error: true
         }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(bigCard, {
-            label: I18n$1.t('mode_label', I18nScope$36()),
-            label_hint: I18n$1.t('mode_hint', I18nScope$36()),
+            label: I18n$1.t('mode_label', I18nScope$37()),
+            label_hint: I18n$1.t('mode_hint', I18nScope$37()),
             children: [m('.flex-row.u-marginbottom-30', [m('a.choose-mode.choose-aon.w-inline-block.btn-select.flex-column.u-text-center[data-mode="aon"][href="javascript:void(0);"]', {
                 onclick: vm.genClickChangeMode('aon'),
                 class: vm.fields.mode() == 'aon' ? 'selected' : false
             }, [m('img[alt="Badge aon"][src="/assets/catarse_bootstrap/badge-aon.png"]')]), m('a.choose-mode.choose-flex.w-inline-block.btn-select.flex-column.u-text-center[data-mode="flex"][href="javascript:void(0);"]', {
                 onclick: vm.genClickChangeMode('flex'),
                 class: vm.fields.mode() == 'flex' ? 'selected' : false
-            }, [m('img[alt="Badge flex"][src="/assets/catarse_bootstrap/badge-flex.png"]')])]), m('.u-text-center.fontsize-smaller', [m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, ['Veja a diferença entre os modelos ', m('span.fa.fa-chevron-down')])]), ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [m('.flex-row', [m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('aon_diff_html', I18nScope$36()))), m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('flex_diff_html', I18nScope$36())))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$36())), m.trust(I18n$1.t('mode_diff_ebook', I18nScope$36()))])]) : '']
+            }, [m('img[alt="Badge flex"][src="/assets/catarse_bootstrap/badge-flex.png"]')])]), m('.u-text-center.fontsize-smaller', [m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, ['Veja a diferença entre os modelos ', m('span.fa.fa-chevron-down')])]), ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [m('.flex-row', [m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('aon_diff_html', I18nScope$37()))), m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n$1.t('flex_diff_html', I18nScope$37())))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$37())), m.trust(I18n$1.t('mode_diff_ebook', I18nScope$37()))])]) : '']
         }), m(bigCard, {
-            label: I18n$1.t('goal_label', I18nScope$36()),
-            label_hint: I18n$1.t('goal_hint', I18nScope$36()),
+            label: I18n$1.t('goal_label', I18nScope$37()),
+            label_hint: I18n$1.t('goal_hint', I18nScope$37()),
             children: [m('.w-row.u-marginbottom-30', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.w-row', [m('.w-col.w-col-4.w-col-small-6.w-col-tiny-6.text-field.prefix.no-hover.medium.prefix-permalink', [m('.fontcolor-secondary.u-text-center.fontsize-base.lineheight-tightest', 'R$')]), m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6.label-hide', [m('.input.tel.optional.project_goal', [m('label.field-label'), m('input.string.optional.w-input.text-field.postfix.positive.medium[autocomplete="off"][id="project-goal-input"][name="project[goal]"][type="tel"]', {
                 class: vm.e.hasError('goal') ? 'error' : false,
                 value: vm.fields.goal(),
@@ -11290,10 +11310,10 @@ var projectGoalEdit = {
                 onkeyup: m.withAttr('value', ctrl.applyGoalMask)
             })])])]), m('.u-text-center', vm.e.inlineError('goal'))]), m('.w-col.w-col-2')]), m('.u-text-center.fontsize-smaller.fontweight-semibold', [m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
                 onclick: ctrl.showTaxesDiff.toggle
-            }, [I18n$1.t('goal_taxes_link', I18nScope$36()), m('span.fa.fa-chevron-down')])]), ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [m('.u-marginbottom-30', [m('.fontsize-small.fontweight-semibold', I18n$1.t('goal_taxes_label', I18nScope$36())), m('.fontsize-smaller', I18n$1.t('goal_' + vm.fields.mode() + '_taxes_hint', I18nScope$36()))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$36())), m.trust(I18n$1.t('goal_taxes_watch_video_html', I18nScope$36()))])]) : '']
+            }, [I18n$1.t('goal_taxes_link', I18nScope$37()), m('span.fa.fa-chevron-down')])]), ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [m('.u-marginbottom-30', [m('.fontsize-small.fontweight-semibold', I18n$1.t('goal_taxes_label', I18nScope$37())), m('.fontsize-smaller', I18n$1.t('goal_' + vm.fields.mode() + '_taxes_hint', I18nScope$37()))]), m('.u-text-center.u-margintop-30', [m('.divider.u-marginbottom-20'), m('.fontsize-base', I18n$1.t('want_more', I18nScope$37())), m.trust(I18n$1.t('goal_taxes_watch_video_html', I18nScope$37()))])]) : '']
         }), m(bigCard, {
-            label: I18n$1.t('online_days_label', I18nScope$36()),
-            label_hint: m.trust(I18n$1.t('online_days_' + vm.fields.mode() + '_hint', I18nScope$36())),
+            label: I18n$1.t('online_days_label', I18nScope$37()),
+            label_hint: m.trust(I18n$1.t('online_days_' + vm.fields.mode() + '_hint', I18nScope$37())),
             children: vm.fields.mode() == 'aon' ? [m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.w-row', [m('.w-col.w-col-8.label-hide', [m('.input.integer.optional.disabled.project_online_days', [m('label.field-label'), m('input.numeric.integer.optional.disabled.w-input.text-field.postfix.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
                 onchange: m.withAttr('value', vm.fields.online_days),
                 value: vm.fields.online_days(),
@@ -11303,12 +11323,12 @@ var projectGoalEdit = {
                 onclick: function onclick() {
                     vm.fields.online_days('');
                 }
-            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_open', I18nScope$36())), m('.w-hidden-tiny', I18n$1.t('online_days_open_hint', I18nScope$36()))]), m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
+            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_open', I18nScope$37())), m('.w-hidden-tiny', I18n$1.t('online_days_open_hint', I18nScope$37()))]), m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
                 class: _$1.isEmpty(vm.fields.online_days().toString()) ? '' : 'selected',
                 onclick: function onclick() {
                     vm.fields.online_days(1);
                 }
-            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_closed', I18nScope$36())), m('.w-hidden-tiny.u-marginbottom-30', I18n$1.t('online_days_closed_hint', I18nScope$36())), m('.w-row', [m('.w-col.w-col-6.label-hide', [m('.input.integer.optional.project_online_days', [m('label.field-label'), m('input.numeric.integer.optional.w-input.text-field.field.w-input.text-field.medium.prefix[id="project_online_days"][name="project[online_days]"][type="number"]', {
+            }, [m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n$1.t('online_days_closed', I18nScope$37())), m('.w-hidden-tiny.u-marginbottom-30', I18n$1.t('online_days_closed_hint', I18nScope$37())), m('.w-row', [m('.w-col.w-col-6.label-hide', [m('.input.integer.optional.project_online_days', [m('label.field-label'), m('input.numeric.integer.optional.w-input.text-field.field.w-input.text-field.medium.prefix[id="project_online_days"][name="project[online_days]"][type="number"]', {
                 onchange: m.withAttr('value', vm.fields.online_days),
                 value: vm.fields.online_days(),
                 class: vm.e.hasError('online_days') ? 'error' : false
@@ -11446,7 +11466,7 @@ var inputCard = {
     }
 };
 
-var I18nScope$37 = _$1.partial(h.i18nScope, 'projects.dashboard_basics');
+var I18nScope$38 = _$1.partial(h.i18nScope, 'projects.dashboard_basics');
 
 var projectBasicsEdit = {
     controller: function controller(args) {
@@ -11503,7 +11523,7 @@ var projectBasicsEdit = {
                 tagOptions([]);
 
                 if (selectedTags().length >= 5) {
-                    vm.e('public_tags', I18n$1.t('tags_max_error', I18nScope$37()));
+                    vm.e('public_tags', I18n$1.t('tags_max_error', I18nScope$38()));
                     vm.e.inlineError('public_tags', true);
                     m.redraw();
 
@@ -11602,41 +11622,41 @@ var projectBasicsEdit = {
         m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [
         // admin fields
         args.user.is_admin ? m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(inputCard, {
-            label: I18n$1.t('tracker_snippet_html', I18nScope$37()),
+            label: I18n$1.t('tracker_snippet_html', I18nScope$38()),
             children: [m('textarea.text.optional.w-input.text-field.positive.medium', {
                 value: vm.fields.tracker_snippet_html(),
                 onchange: m.withAttr('value', vm.fields.tracker_snippet_html)
             })]
         }), m(inputCard, {
-            label: I18n$1.t('user_id', I18nScope$37()),
+            label: I18n$1.t('user_id', I18nScope$38()),
             children: [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.user_id(),
                 onchange: m.withAttr('value', vm.fields.user_id)
             })]
         }), m(inputCard, {
-            label: I18n$1.t('admin_tags', I18nScope$37()),
-            label_hint: I18n$1.t('admin_tags_hint', I18nScope$37()),
+            label: I18n$1.t('admin_tags', I18nScope$38()),
+            label_hint: I18n$1.t('admin_tags_hint', I18nScope$38()),
             children: [m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.admin_tags(),
                 onchange: m.withAttr('value', vm.fields.admin_tags)
             })]
         }), m(inputCard, {
-            label: I18n$1.t('service_fee', I18nScope$37()),
+            label: I18n$1.t('service_fee', I18nScope$38()),
             children: [m('input.string.optional.w-input.text-field.positive.medium[type="number"]', {
                 value: vm.fields.service_fee(),
                 onchange: m.withAttr('value', vm.fields.service_fee)
             })]
         })])]) : '', m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m(inputCard, {
-            label: I18n$1.t('name', I18nScope$37()),
-            label_hint: I18n$1.t('name_hint', I18nScope$37()),
+            label: I18n$1.t('name', I18nScope$38()),
+            label_hint: I18n$1.t('name_hint', I18nScope$38()),
             children: [m('input.string.required.w-input.text-field.positive.medium[type="text"][maxlength="50"]', {
                 value: vm.fields.name(),
                 class: vm.e.hasError('name') ? 'error' : '',
                 onchange: m.withAttr('value', vm.fields.name)
             }), vm.e.inlineError('name')]
         }), m(inputCard, {
-            label: I18n$1.t('tags', I18nScope$37()),
-            label_hint: I18n$1.t('tags_hint', I18nScope$37()),
+            label: I18n$1.t('tags', I18nScope$38()),
+            label_hint: I18n$1.t('tags_hint', I18nScope$38()),
             onclick: function onclick() {
                 return ctrl.isEditingTags(false);
             },
@@ -11652,8 +11672,8 @@ var projectBasicsEdit = {
                 return m('.tag-div', m('div', [m('a.tag-close-btn.fa.fa-times-circle', { onclick: ctrl.removeTag(choice) }), ' ' + choice.name]));
             }))]
         }), m(inputCard, {
-            label: I18n$1.t('permalink', I18nScope$37()),
-            label_hint: I18n$1.t('permalink_hint', I18nScope$37()),
+            label: I18n$1.t('permalink', I18nScope$38()),
+            label_hint: I18n$1.t('permalink_hint', I18nScope$38()),
             children: [m('.w-row', [m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', {
                 class: vm.e.hasError('permalink') ? 'error' : ''
             }, m('.fontcolor-secondary.u-text-center.fontcolor-secondary.u-text-center.fontsize-smallest', 'www.catarse.me/')), m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6', [m('input.string.required.w-input.text-field.postfix.positive.medium[type="text"]', {
@@ -11662,16 +11682,16 @@ var projectBasicsEdit = {
                 onchange: m.withAttr('value', vm.fields.permalink)
             })])]), m('.w-row', vm.e.inlineError('permalink'))]
         }), m(inputCard, {
-            label: I18n$1.t('category', I18nScope$37()),
-            label_hint: I18n$1.t('category_hint', I18nScope$37()),
+            label: I18n$1.t('category', I18nScope$38()),
+            label_hint: I18n$1.t('category_hint', I18nScope$38()),
             children: [m('select.required.w-input.text-field.w-select.positive.medium', {
                 value: vm.fields.category_id(),
                 class: vm.e.hasError('category_id') ? 'error' : '',
                 onchange: m.withAttr('value', vm.fields.category_id)
             }, ctrl.categories()), vm.e.inlineError('category_id')]
         }), m(inputCard, {
-            label: I18n$1.t('city', I18nScope$37()),
-            label_hint: I18n$1.t('city_hint', I18nScope$37()),
+            label: I18n$1.t('city', I18nScope$38()),
+            label_hint: I18n$1.t('city_hint', I18nScope$38()),
             children: [m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.city_name(),
                 class: vm.e.hasError('city_id') ? 'error' : '',
@@ -11731,7 +11751,7 @@ var bigInputCard = {
     }
 };
 
-var I18nScope$38 = _$1.partial(h.i18nScope, 'projects.dashboard_description');
+var I18nScope$39 = _$1.partial(h.i18nScope, 'projects.dashboard_description');
 
 var projectDescriptionEdit = {
     controller: function controller(args) {
@@ -11790,9 +11810,9 @@ var projectDescriptionEdit = {
             message: I18n$1.t('shared.failed_update'),
             toggleOpt: ctrl.showError,
             error: true
-        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('description_alert', I18nScope$38()))])]), m(bigInputCard, {
-            label: I18n$1.t('description_label', I18nScope$38()),
-            label_hint: I18n$1.t('description_hint', I18nScope$38()),
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('description_alert', I18nScope$39()))])]), m(bigInputCard, {
+            label: I18n$1.t('description_label', I18nScope$39()),
+            label_hint: I18n$1.t('description_hint', I18nScope$39()),
             children: [m('.preview-container', {
                 class: vm.e.hasError('about_html') ? 'error' : false
             }, h.redactor('project[about_html]', vm.fields.about_html)), vm.e.inlineError('about_html')]
@@ -11842,7 +11862,7 @@ var projectVideoVM = {
     e: e$6
 };
 
-var I18nScope$39 = _$1.partial(h.i18nScope, 'projects.dashboard_video');
+var I18nScope$40 = _$1.partial(h.i18nScope, 'projects.dashboard_video');
 
 var projectBudgetEdit = {
     controller: function controller(args) {
@@ -11901,9 +11921,9 @@ var projectBudgetEdit = {
             message: I18n$1.t('shared.failed_update'),
             toggleOpt: ctrl.showError,
             error: true
-        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('video_alert', I18nScope$39()))])]), m(inputCard, {
-            label: I18n$1.t('video_label', I18nScope$39()),
-            label_hint: I18n$1.t('video_hint', I18nScope$39()),
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('video_alert', I18nScope$40()))])]), m(inputCard, {
+            label: I18n$1.t('video_label', I18nScope$40()),
+            label_hint: I18n$1.t('video_hint', I18nScope$40()),
             children: [m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                 value: vm.fields.video_url(),
                 class: vm.e.hasError('video_url') ? 'error' : '',
@@ -11955,7 +11975,7 @@ var projectBudgetVM = {
     e: e$7
 };
 
-var I18nScope$40 = _$1.partial(h.i18nScope, 'projects.dashboard_budget');
+var I18nScope$41 = _$1.partial(h.i18nScope, 'projects.dashboard_budget');
 
 var projectBudgetEdit$1 = {
     controller: function controller(args) {
@@ -12014,9 +12034,9 @@ var projectBudgetEdit$1 = {
             message: I18n$1.t('shared.failed_update'),
             toggleOpt: ctrl.showError,
             error: true
-        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('budget_alert', I18nScope$40()))])]), m(bigInputCard, {
+        }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-60.u-text-center', [m('.w-inline-block.card.fontsize-small.u-radius', [m.trust(I18n$1.t('budget_alert', I18nScope$41()))])]), m(bigInputCard, {
             cardStyle: { display: 'block' },
-            label: I18n$1.t('budget_label', I18nScope$40()),
+            label: I18n$1.t('budget_label', I18nScope$41()),
             children: [m('.preview-container', {
                 class: vm.e.hasError('budget') ? 'error' : false
             }, h.redactor('project[budget]', vm.fields.budget)), vm.e.inlineError('budget')]
@@ -12360,7 +12380,7 @@ var editRewardCard = {
     }
 };
 
-var I18nScope$42 = _$1.partial(h.i18nScope, 'projects.reward_fields');
+var I18nScope$43 = _$1.partial(h.i18nScope, 'projects.reward_fields');
 
 var dashboardRewardCard = {
     controller: function controller(args) {
@@ -12396,29 +12416,29 @@ var dashboardRewardCard = {
     view: function view(ctrl, args) {
         var reward = args.reward(),
             index = args.index;
-        return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [m('.card', [m('.w-row', [m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11', m('.fontsize-base.fontweight-semibold', I18n$1.t('minimum_value_title', I18nScope$42({
+        return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [m('.card', [m('.w-row', [m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11', m('.fontsize-base.fontweight-semibold', I18n$1.t('minimum_value_title', I18nScope$43({
             minimum_value: reward.minimum_value
         })))), rewardVM.canEdit(reward, args.project_state, args.user) ? m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', m("a.show_reward_form[href='javascript:void(0);']", {
             onclick: function onclick() {
                 reward.edit.toggle();
             }
-        }, m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border'))) : '']), m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold', I18n$1.t('paid_contributors', I18nScope$42({
+        }, m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border'))) : '']), m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold', I18n$1.t('paid_contributors', I18nScope$43({
             count: reward.paid_count
-        }))), m('.fontsize-small.fontweight-semibold', reward.title), m('.fontsize-small.fontcolor-secondary', m.trust(h.simpleFormat(h.strip(reward.description)))), reward.limited() ? ctrl.availableCount() <= 0 ? m('.u-margintop-10', m('span.badge.badge-gone.fontsize-smaller', I18n$1.t('reward_gone', I18nScope$42()))) : m('.u-margintop-10', m('span.badge.badge-attention.fontsize-smaller', [m('span.fontweight-bold', I18n$1.t('reward_limited', I18nScope$42())), I18n$1.t('reward_available', I18nScope$42({
+        }))), m('.fontsize-small.fontweight-semibold', reward.title), m('.fontsize-small.fontcolor-secondary', m.trust(h.simpleFormat(h.strip(reward.description)))), reward.limited() ? ctrl.availableCount() <= 0 ? m('.u-margintop-10', m('span.badge.badge-gone.fontsize-smaller', I18n$1.t('reward_gone', I18nScope$43()))) : m('.u-margintop-10', m('span.badge.badge-attention.fontsize-smaller', [m('span.fontweight-bold', I18n$1.t('reward_limited', I18nScope$43())), I18n$1.t('reward_available', I18nScope$43({
             available: ctrl.availableCount(),
             maximum: reward.maximum_contributions
-        }))])) : '', reward.deliver_at ? m('.fontsize-smallest', [m('b', I18n$1.t('delivery_estimation', I18nScope$42())), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', m('.fontsize-smallest', m('b', I18n$1.t('delivery', I18nScope$42()) + ': '), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$42())), m('.u-margintop-40.w-row', [m('.w-col.w-col-6', [m('.w-checkbox', [m("input.w-checkbox-input[type='checkbox']", { onclick: ctrl.toggleLimit, checked: reward.limited() }), m('label.fontsize-smaller.fontweight-semibold.w-form-label', I18n$1.t('reward_limited_input', I18nScope$42()))]), m('div' + (reward.limited() ? '' : '.w-hidden'), m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade dispon\xEDvel\'][type=\'tel\'][id=\'project_rewards_attributes_' + index + '_maximum_contributions\']', {
+        }))])) : '', reward.deliver_at ? m('.fontsize-smallest', [m('b', I18n$1.t('delivery_estimation', I18nScope$43())), h.momentify(reward.deliver_at, 'MMM/YYYY')]) : '', m('.fontsize-smallest', m('b', I18n$1.t('delivery', I18nScope$43()) + ': '), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$43())), m('.u-margintop-40.w-row', [m('.w-col.w-col-6', [m('.w-checkbox', [m("input.w-checkbox-input[type='checkbox']", { onclick: ctrl.toggleLimit, checked: reward.limited() }), m('label.fontsize-smaller.fontweight-semibold.w-form-label', I18n$1.t('reward_limited_input', I18nScope$43()))]), m('div' + (reward.limited() ? '' : '.w-hidden'), m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade dispon\xEDvel\'][type=\'tel\'][id=\'project_rewards_attributes_' + index + '_maximum_contributions\']', {
             name: 'project[rewards_attributes][' + index + '][maximum_contributions]',
             class: ctrl.limitError() ? 'error' : false,
             value: ctrl.maximumContributions(),
             onchange: m.withAttr('value', ctrl.maximumContributions)
-        }))]), m('.w-col.w-col-6')]), ctrl.limitError() ? m(inlineError, { message: 'Limite deve ser maior que quantidade de apoios.' }) : '',,]), m('.u-margintop-20', [m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', I18n$1.t('reward_link_label', I18nScope$42())), m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n$1.t('reward_link_hint', I18nScope$42())), m('.w-form', m('.w-col.w-col-6', m.component(copyTextInput, {
+        }))]), m('.w-col.w-col-6')]), ctrl.limitError() ? m(inlineError, { message: 'Limite deve ser maior que quantidade de apoios.' }) : '',,]), m('.u-margintop-20', [m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', I18n$1.t('reward_link_label', I18nScope$43())), m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n$1.t('reward_link_hint', I18nScope$43())), m('.w-form', m('.w-col.w-col-6', m.component(copyTextInput, {
             value: 'https://www.catarse.me/pt/projects/' + args.project_id + '/contributions/new?reward_id=' + reward.id
         })))])]);
     }
 };
 
-var I18nScope$41 = _$1.partial(h.i18nScope, 'projects.reward_fields');
+var I18nScope$42 = _$1.partial(h.i18nScope, 'projects.reward_fields');
 
 var projectEditReward = {
     controller: function controller(args) {
@@ -12553,7 +12573,7 @@ var projectEditReward = {
         }) : '', ctrl.error() ? m.component(popNotification, {
             message: ctrl.errors(),
             error: true
-        }) : '', m('.w-row', m('.w-col.w-col-8.w-col-push-2', m('.u-marginbottom-60.u-text-center', m('.w-inline-block.card.fontsize-small.u-radius', [m('span.fa.fa-lightbulb-o'), m.trust(' ' + I18n$1.t('reward_know_more_cta_html', I18nScope$41()))])))), m('.w-row', [m('.w-col.w-col-9', m('form.simple_form.project-form.w-form[id=\'reward_form\']', {
+        }) : '', m('.w-row', m('.w-col.w-col-8.w-col-push-2', m('.u-marginbottom-60.u-text-center', m('.w-inline-block.card.fontsize-small.u-radius', [m('span.fa.fa-lightbulb-o'), m.trust(' ' + I18n$1.t('reward_know_more_cta_html', I18nScope$42()))])))), m('.w-row', [m('.w-col.w-col-9', m('form.simple_form.project-form.w-form[id=\'reward_form\']', {
             onsubmit: ctrl.onSubmit
         }, [m("input[name='utf8'][type='hidden'][value='✓']"), m("input[name='_method'][type='hidden'][value='patch']"), m('input[name="authenticity_token"][type="hidden"][value=' + h.authenticityToken() + ']'), m('input[id=\'project_id\'][name=\'project_id\'][type=\'hidden\'][value=\'' + args.project_id + '\']'), m("input[id='anchor'][name='anchor'][type='hidden'][value='reward']"), m("[id='dashboard-rewards']", [ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
             config: ctrl.setSorting
@@ -12580,7 +12600,7 @@ var projectEditReward = {
             onclick: function onclick() {
                 return ctrl.rewards().push(m.prop(ctrl.newReward()));
             }
-        }, I18n$1.t('add_reward', I18nScope$41()))] : ''), m('.w-col.w-col-3', [I18n$1.t('reward_faq_intro', I18nScope$41()), m('br'), m('br'), I18n$1.t('reward_faq_sub_intro', I18nScope$41()), m('br'), m('br'), _$1.map(ctrl.tips, function (tip) {
+        }, I18n$1.t('add_reward', I18nScope$42()))] : ''), m('.w-col.w-col-3', [I18n$1.t('reward_faq_intro', I18nScope$42()), m('br'), m('br'), I18n$1.t('reward_faq_sub_intro', I18nScope$42()), m('br'), m('br'), _$1.map(ctrl.tips, function (tip) {
             return [m('.fontweight-semibold', tip.title), m.trust(tip.description), m('br'), m('br')];
         })])])]), rewardVM.canAdd(project().state, ctrl.user()) ? [m(projectEditSaveBtn, {
             loading: ctrl.loading,
@@ -12656,7 +12676,7 @@ var projectCardVM = {
     reloadCurrentProject: reloadCurrentProject
 };
 
-var I18nScope$43 = _$1.partial(h.i18nScope, 'projects.dashboard_card');
+var I18nScope$44 = _$1.partial(h.i18nScope, 'projects.dashboard_card');
 
 var projectCardEdit = {
     controller: function controller(args) {
@@ -12731,15 +12751,15 @@ var projectCardEdit = {
             toggleOpt: ctrl.showError,
             error: true
         }) : '', m('form.w-form', { onsubmit: ctrl.onSubmit }, [m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-8', [m(inputCard, {
-            label: I18n$1.t('uploaded_image_label', I18nScope$43()),
-            label_hint: I18n$1.t('uploaded_image_hint', I18nScope$43()),
+            label: I18n$1.t('uploaded_image_label', I18nScope$44()),
+            label_hint: I18n$1.t('uploaded_image_hint', I18nScope$44()),
             children: [m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[uploaded_image]"][type="file"]', {
                 class: vm.e.hasError('uploaded_image') ? 'error' : false,
                 onchange: vm.prepareForUpload
             }), vm.e.inlineError('uploaded_image')]
         }), m(inputCard, {
-            label: I18n$1.t('headline_label', I18nScope$43()),
-            label_hint: I18n$1.t('headline_label_hint', I18nScope$43()),
+            label: I18n$1.t('headline_label', I18nScope$44()),
+            label_hint: I18n$1.t('headline_label_hint', I18nScope$44()),
             children: [m('textarea.text.optional.w-input.text-field.positive[id="project_headline"][maxlength="100"][name="project[headline]"][rows="3"]', {
                 onchange: m.withAttr('value', vm.fields.headline),
                 class: vm.e.hasError('headline') ? 'error' : false
@@ -12818,7 +12838,7 @@ var projectEditTab = {
 
 // @TODO move all tabs to c/
 // using the inside components that root tabs use
-var I18nScope$35 = _$1.partial(h.i18nScope, 'projects.edit');
+var I18nScope$36 = _$1.partial(h.i18nScope, 'projects.edit');
 
 var projectEdit = {
     controller: function controller(args) {
@@ -12836,53 +12856,53 @@ var projectEdit = {
             },
                 tabs = {
                 '#video': m(projectEditTab, {
-                    title: I18n$1.t('video_html', I18nScope$35()),
-                    subtitle: I18n$1.t('video_subtitle', I18nScope$35()),
+                    title: I18n$1.t('video_html', I18nScope$36()),
+                    subtitle: I18n$1.t('video_subtitle', I18nScope$36()),
                     content: m(projectEditVideo, _$1.extend({}, c_opts))
                 }),
                 '#description': m(projectEditTab, {
-                    title: I18n$1.t('description', I18nScope$35()),
-                    subtitle: I18n$1.t('description_subtitle', I18nScope$35()),
+                    title: I18n$1.t('description', I18nScope$36()),
+                    subtitle: I18n$1.t('description_subtitle', I18nScope$36()),
                     content: m(projectEditDescription, _$1.extend({}, c_opts))
                 }),
                 '#budget': m(projectEditTab, {
-                    title: I18n$1.t('budget', I18nScope$35()),
-                    subtitle: I18n$1.t('budget_subtitle', I18nScope$35()),
+                    title: I18n$1.t('budget', I18nScope$36()),
+                    subtitle: I18n$1.t('budget_subtitle', I18nScope$36()),
                     content: m(projectEditBudget, _$1.extend({}, c_opts))
                 }),
                 '#reward': m(projectEditTab, {
-                    title: I18n$1.t('reward_html', I18nScope$35()),
-                    subtitle: I18n$1.t('reward_subtitle', I18nScope$35()),
+                    title: I18n$1.t('reward_html', I18nScope$36()),
+                    subtitle: I18n$1.t('reward_subtitle', I18nScope$36()),
                     content: m(projectEditReward, _$1.extend({}, c_opts))
                 }),
                 '#user_settings': m(projectEditTab, {
-                    title: I18n$1.t('user_settings', I18nScope$35()),
-                    subtitle: I18n$1.t('user_settings_subtitle', I18nScope$35()),
+                    title: I18n$1.t('user_settings', I18nScope$36()),
+                    subtitle: I18n$1.t('user_settings_subtitle', I18nScope$36()),
                     content: m(projectEditUserSettings, _$1.extend({}, c_opts))
                 }),
                 '#user_about': m(projectEditTab, {
-                    title: I18n$1.t('user_about', I18nScope$35()),
-                    subtitle: I18n$1.t('user_about_subtitle', I18nScope$35()),
+                    title: I18n$1.t('user_about', I18nScope$36()),
+                    subtitle: I18n$1.t('user_about_subtitle', I18nScope$36()),
                     content: m(projectEditUserAbout, _$1.extend({}, c_opts))
                 }),
                 '#card': m(projectEditTab, {
-                    title: I18n$1.t('card', I18nScope$35()),
-                    subtitle: I18n$1.t('card_subtitle', I18nScope$35()),
+                    title: I18n$1.t('card', I18nScope$36()),
+                    subtitle: I18n$1.t('card_subtitle', I18nScope$36()),
                     content: m(projectEditCard, _$1.extend({}, c_opts))
                 }),
                 '#basics': m(projectEditTab, {
-                    title: I18n$1.t('basics', I18nScope$35()),
-                    subtitle: I18n$1.t('basics_subtitle', I18nScope$35()),
+                    title: I18n$1.t('basics', I18nScope$36()),
+                    subtitle: I18n$1.t('basics_subtitle', I18nScope$36()),
                     content: m(projectEditBasic, _$1.extend({}, c_opts))
                 }),
                 '#goal': m(projectEditTab, {
-                    title: I18n$1.t('goal', I18nScope$35()),
-                    subtitle: I18n$1.t('goal_subtitle', I18nScope$35()),
+                    title: I18n$1.t('goal', I18nScope$36()),
+                    subtitle: I18n$1.t('goal_subtitle', I18nScope$36()),
                     content: m(projectEditGoal, _$1.extend({}, c_opts))
                 }),
                 '#announce_expiration': m(projectEditTab, {
-                    title: I18n$1.t('announce_expiration', I18nScope$35()),
-                    subtitle: I18n$1.t('announce_expiration_subtitle', I18nScope$35()),
+                    title: I18n$1.t('announce_expiration', I18nScope$36()),
+                    subtitle: I18n$1.t('announce_expiration_subtitle', I18nScope$36()),
                     content: m(projectAnnounceExpiration, _$1.extend({}, c_opts))
                 }),
                 '#preview': m(projectPreview, _$1.extend({}, c_opts))
@@ -12913,7 +12933,7 @@ var projectEdit = {
     }
 };
 
-var I18nScope$46 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+var I18nScope$47 = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 
 var paymentSlip = {
     controller: function controller(args) {
@@ -13454,7 +13474,7 @@ var creditCardInput = {
     }
 };
 
-var I18nScope$47 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$48 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$3 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var paymentCreditCard = {
@@ -13600,7 +13620,7 @@ var paymentCreditCard = {
         };
 
         var scope = function scope(attr) {
-            return vm.isInternational() ? I18nIntScope$3(attr) : I18nScope$47(attr);
+            return vm.isInternational() ? I18nIntScope$3(attr) : I18nScope$48(attr);
         };
 
         vm.getInstallments(args.contribution_id).then(function () {
@@ -13719,14 +13739,14 @@ var paymentCreditCard = {
     }
 };
 
-var I18nScope$45 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$46 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$2 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var paymentForm = {
     controller: function controller(args) {
         var isSlip = m.prop(false),
             scope = function scope() {
-            return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$45();
+            return args.vm.isInternational() ? I18nIntScope$2() : I18nScope$46();
         };
         return {
             isSlip: isSlip,
@@ -13749,7 +13769,7 @@ var paymentForm = {
     }
 };
 
-var I18nScope$44 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
+var I18nScope$45 = _$1.partial(h.i18nScope, 'projects.contributions.edit');
 var I18nIntScope$1 = _$1.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 var projectsPayment = {
@@ -13814,7 +13834,7 @@ var projectsPayment = {
         };
 
         var scope = function scope(attr) {
-            return vm.isInternational() ? I18nIntScope$1(attr) : I18nScope$44(attr);
+            return vm.isInternational() ? I18nIntScope$1(attr) : I18nScope$45(attr);
         };
 
         var isLongDescription = function isLongDescription(reward) {
@@ -14012,7 +14032,7 @@ var projectsReward = {
     }
 };
 
-var I18nScope$48 = _$1.partial(h.i18nScope, 'projects.publish');
+var I18nScope$49 = _$1.partial(h.i18nScope, 'projects.publish');
 
 var publish = {
     controller: function controller(args) {
@@ -14077,7 +14097,7 @@ var publish = {
         return [project && account ? [project.is_owner_or_admin ? m.component(projectDashboardMenu, {
             project: m.prop(project),
             hidePublish: true
-        }) : '', m('.w-section.section-product.' + project.mode), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [m('.u-text-center', [m('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), m('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), m('.w-col.w-col-3')])])]), m('.divider'), m('.w-section.section-one-column.bg-gray.section.before-footer', [m('.w-container', [m('.card.medium.u-marginbottom-60.card-terciary', [m('.w-row', [m('.w-col.w-col-6.w-clearfix', [m('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), m('.w-col.w-col-6', [m('.u-marginbottom-30.fontsize-base', [m('div', [m('span.fontweight-semibold', 'Título: '), project.name]), m('div', [m('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n$1.t(project.mode, I18nScope$48())]), m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + h.formatNumber(project.goal, 2, 3)]), project.online_days !== null ? m('div', [m('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', m('div', [m('span.fontweight-semibold', 'Responsável: '), account.owner_name]), m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), m('.u-text-center', [m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', [m('.divider.u-marginbottom-10'), m('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), m('.w-col.w-col-1')])])]), m('.card.medium.u-radius.u-marginbottom-60', [m('.u-text-center.u-marginbottom-60', [m('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), m('.w-col.w-col-2')])]), _$1.map(project.mode === 'flex' ? flexTerms(project) : terms(project), function (term, index) {
+        }) : '', m('.w-section.section-product.' + project.mode), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-6', [m('.u-text-center', [m('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), m('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), m('.w-col.w-col-3')])])]), m('.divider'), m('.w-section.section-one-column.bg-gray.section.before-footer', [m('.w-container', [m('.card.medium.u-marginbottom-60.card-terciary', [m('.w-row', [m('.w-col.w-col-6.w-clearfix', [m('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), m('.w-col.w-col-6', [m('.u-marginbottom-30.fontsize-base', [m('div', [m('span.fontweight-semibold', 'Título: '), project.name]), m('div', [m('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n$1.t(project.mode, I18nScope$49())]), m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + h.formatNumber(project.goal, 2, 3)]), project.online_days !== null ? m('div', [m('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', m('div', [m('span.fontweight-semibold', 'Responsável: '), account.owner_name]), m('div', [m('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), m('.u-text-center', [m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', [m('.divider.u-marginbottom-10'), m('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), m('.w-col.w-col-1')])])]), m('.card.medium.u-radius.u-marginbottom-60', [m('.u-text-center.u-marginbottom-60', [m('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), m('.w-col.w-col-2')])]), _$1.map(project.mode === 'flex' ? flexTerms(project) : terms(project), function (term, index) {
             return m('.u-marginbottom-30.fontsize-base' + (index === 0 ? '' : '.w-hidden.publish-rules'), [m('.w-row[id=\'rule-' + index + '\']', [m('.w-col.w-col-1.u-text-center', [m('div', [m((project.mode === 'flex' ? ctrl.flexAcceptTerm() : ctrl.acceptTerm())[index] ? 'a.w-inline-block.checkbox-big[href=\'#rule-' + (index + 1) + '\']' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg[href=\'#rule-' + (index + 1) + '\']', { onclick: function onclick() {
                     return ctrl.showNextTerm(index, project.mode === 'flex' ? ctrl.flexAcceptTerm : ctrl.acceptTerm);
                 } })])]), term])]);
@@ -14198,7 +14218,7 @@ var youtubeLightbox = {
     }
 };
 
-var I18nScope$49 = _$1.partial(h.i18nScope, 'pages.start');
+var I18nScope$50 = _$1.partial(h.i18nScope, 'pages.start');
 
 var start = {
     controller: function controller() {
@@ -14335,35 +14355,35 @@ var start = {
             });
         };
 
-        return m('#start', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$49())) }, [m('.w-section.hero-full.hero-start', [m('.w-container.u-text-center', [m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n$1.t('slogan', I18nScope$49())), m('.w-row.u-marginbottom-40', [m('.w-col.w-col-4.w-col-push-4', [m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
+        return m('#start', { config: h.setPageTitle(I18n$1.t('header_html', I18nScope$50())) }, [m('.w-section.hero-full.hero-start', [m('.w-container.u-text-center', [m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', I18n$1.t('slogan', I18nScope$50())), m('.w-row.u-marginbottom-40', [m('.w-col.w-col-4.w-col-push-4', [m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
             config: h.scrollTo(),
             onclick: h.analytics.event({ cat: 'project_start', act: 'start_btnstart_click' })
-        }, I18n$1.t('submit', I18nScope$49()))])]), m('.w-row', _$1.isEmpty(stats) ? '' : [m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.people', I18nScope$49()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), m('p.fontsize-small.start-stats', I18n$1.t('header.money', I18nScope$49()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.success', I18nScope$49()))])])])]), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1.u-text-center', [m('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n$1.t('page-title', I18nScope$49())), m('.fontsize-small', I18n$1.t('page-subtitle', I18nScope$49()))])]), m('.w-clearfix.how-row', [m('.w-hidden-small.w-hidden-tiny.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$49())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$49()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$49())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$49()))])]), m('.how-col-02'), m('.how-col-03', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.5', I18nScope$49())), m('.fontsize-base', I18n$1.t('banner.6', I18nScope$49())), m('.fontweight-semibold.fontsize-large.u-margintop-30', I18n$1.t('banner.7', I18nScope$49())), m('.fontsize-base', I18n$1.t('banner.8', I18nScope$49()))]), m('.w-hidden-main.w-hidden-medium.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$49())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$49()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$49())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$49()))])])])])]), m('.w-section.divider'), m('.w-section.section-large', [m('.w-container.u-text-center.u-marginbottom-60', [m('div', [m('span.fontsize-largest.fontweight-semibold', I18n$1.t('features.title', I18nScope$49()))]), m('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n$1.t('features.subtitle', I18nScope$49())), m('.w-hidden-main.w-hidden-medium.u-margintop-30', [m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_1', I18nScope$49())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_2', I18nScope$49())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_3', I18nScope$49())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_4', I18nScope$49())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_5', I18nScope$49())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_6', I18nScope$49()))])]), m('.w-container', [m('.w-tabs.w-hidden-small.w-hidden-tiny', [m('.w-tab-menu.w-col.w-col-4', _$1.map(ctrl.paneImages, function (pane, idx) {
+        }, I18n$1.t('submit', I18nScope$50()))])]), m('.w-row', _$1.isEmpty(stats) ? '' : [m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.people', I18nScope$50()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), m('p.fontsize-small.start-stats', I18n$1.t('header.money', I18nScope$50()))]), m('.w-col.w-col-4', [m('.fontsize-largest.lineheight-loose', h.formatNumber(stats.total_projects_success, 0, 3)), m('p.fontsize-small.start-stats', I18n$1.t('header.success', I18nScope$50()))])])])]), m('.w-section.section', [m('.w-container', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1.u-text-center', [m('.fontsize-larger.u-marginbottom-10.fontweight-semibold', I18n$1.t('page-title', I18nScope$50())), m('.fontsize-small', I18n$1.t('page-subtitle', I18nScope$50()))])]), m('.w-clearfix.how-row', [m('.w-hidden-small.w-hidden-tiny.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$50())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$50()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$50())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$50()))])]), m('.how-col-02'), m('.how-col-03', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.5', I18nScope$50())), m('.fontsize-base', I18n$1.t('banner.6', I18nScope$50())), m('.fontweight-semibold.fontsize-large.u-margintop-30', I18n$1.t('banner.7', I18nScope$50())), m('.fontsize-base', I18n$1.t('banner.8', I18nScope$50()))]), m('.w-hidden-main.w-hidden-medium.how-col-01', [m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.1', I18nScope$50())), m('.fontsize-base', I18n$1.t('banner.2', I18nScope$50()))]), m('.info-howworks-backers', [m('.fontweight-semibold.fontsize-large', I18n$1.t('banner.3', I18nScope$50())), m('.fontsize-base', I18n$1.t('banner.4', I18nScope$50()))])])])])]), m('.w-section.divider'), m('.w-section.section-large', [m('.w-container.u-text-center.u-marginbottom-60', [m('div', [m('span.fontsize-largest.fontweight-semibold', I18n$1.t('features.title', I18nScope$50()))]), m('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', I18n$1.t('features.subtitle', I18nScope$50())), m('.w-hidden-main.w-hidden-medium.u-margintop-30', [m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_1', I18nScope$50())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_2', I18nScope$50())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_3', I18nScope$50())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_4', I18nScope$50())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_5', I18nScope$50())), m('.fontsize-large.u-marginbottom-30', I18n$1.t('features.feature_6', I18nScope$50()))])]), m('.w-container', [m('.w-tabs.w-hidden-small.w-hidden-tiny', [m('.w-tab-menu.w-col.w-col-4', _$1.map(ctrl.paneImages, function (pane, idx) {
             return m('btn.w-tab-link.w-inline-block.tab-list-item' + (idx === ctrl.selectedPane() ? '.selected' : ''), {
                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_solution_click', lbl: pane.label }, ctrl.selectPane(idx))
             }, pane.label);
         })), m('.w-tab-content.w-col.w-col-8', _$1.map(ctrl.paneImages, function (pane, idx) {
             return m('.w-tab-pane', [m('img[src="' + pane.src + '"].pane-image' + (idx === ctrl.selectedPane() ? '.selected' : ''))]);
-        }))])])]), m('.w-section.section-large.card-terciary', m('.w-container', [m('.u-text-center.u-marginbottom-40', [m('div', m('span.fontsize-largest.fontweight-semibold', I18n$1.t('mode.title', I18nScope$49()))), m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.fontsize-large.u-marginbottom-20', I18n$1.t('mode.subtitle', I18nScope$49()))), m('.w-col.w-col-1')])]), m('div', m('.flex-row.u-marginbottom-40', [m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', [I18n$1.t('mode.aon.info', I18nScope$49()), m.trust('&nbsp;')]), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.aon.info_2', I18nScope$49()))]), m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', I18n$1.t('mode.flex.info', I18nScope$49())), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.flex.info_2', I18nScope$49()))])])), m('.u-text-center.u-marginbottom-30', [m('.fontsize-large.fontweight-semibold', I18n$1.t('mode.tax_info', I18nScope$49())), m('.fontsize-smallest.fontcolor-secondary', [I18n$1.t('mode.failed_info', I18nScope$49()), m.trust(I18n$1.t('mode.more_link', I18nScope$49()))])])])), m('.w-section.section-large.bg-blue-one', [m('.w-container.u-text-center', [m('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [I18n$1.t('video.title', I18nScope$49()), m('br'), I18n$1.t('video.subtitle', I18nScope$49())]), m.component(youtubeLightbox, {
-            src: I18n$1.t('video.src', I18nScope$49()),
+        }))])])]), m('.w-section.section-large.card-terciary', m('.w-container', [m('.u-text-center.u-marginbottom-40', [m('div', m('span.fontsize-largest.fontweight-semibold', I18n$1.t('mode.title', I18nScope$50()))), m('.w-row', [m('.w-col.w-col-1'), m('.w-col.w-col-10', m('.fontsize-large.u-marginbottom-20', I18n$1.t('mode.subtitle', I18nScope$50()))), m('.w-col.w-col-1')])]), m('div', m('.flex-row.u-marginbottom-40', [m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', [I18n$1.t('mode.aon.info', I18nScope$50()), m.trust('&nbsp;')]), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.aon.info_2', I18nScope$50()))]), m('.flex-column.card.u-radius.u-marginbottom-30', [m('.u-text-center.u-marginbottom-30', m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')), m('.fontsize-large.flex-column.u-marginbottom-20', I18n$1.t('mode.flex.info', I18nScope$50())), m('.fontsize-base.flex-column.fontcolor-secondary', I18n$1.t('mode.flex.info_2', I18nScope$50()))])])), m('.u-text-center.u-marginbottom-30', [m('.fontsize-large.fontweight-semibold', I18n$1.t('mode.tax_info', I18nScope$50())), m('.fontsize-smallest.fontcolor-secondary', [I18n$1.t('mode.failed_info', I18nScope$50()), m.trust(I18n$1.t('mode.more_link', I18nScope$50()))])])])), m('.w-section.section-large.bg-blue-one', [m('.w-container.u-text-center', [m('.fontsize-larger.lineheight-tight.fontcolor-negative.u-marginbottom-20', [I18n$1.t('video.title', I18nScope$50()), m('br'), I18n$1.t('video.subtitle', I18nScope$50())]), m.component(youtubeLightbox, {
+            src: I18n$1.t('video.src', I18nScope$50()),
             onclick: h.analytics.event({ cat: 'project_start', act: 'start_video_play' })
-        })])]), m('.w-hidden-small.w-hidden-tiny.section-categories', [m('.w-container', [m('.u-text-center', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n$1.t('categories.title', I18nScope$49()))])])]), m('.w-tabs', [m('.w-tab-menu.u-text-center', _$1.map(ctrl.categories(), function (category) {
+        })])]), m('.w-hidden-small.w-hidden-tiny.section-categories', [m('.w-container', [m('.u-text-center', [m('.w-row', [m('.w-col.w-col-10.w-col-push-1', [m('.fontsize-large.u-marginbottom-40.fontcolor-negative', I18n$1.t('categories.title', I18nScope$50()))])])]), m('.w-tabs', [m('.w-tab-menu.u-text-center', _$1.map(ctrl.categories(), function (category) {
             return m('a.w-tab-link.w-inline-block.btn-category.small.btn-inline' + (ctrl.selectedCategoryIdx() === category.id ? '.w--current' : ''), {
                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_category_click', lbl: category.name }, ctrl.selectCategory(category))
             }, [m('div', category.name)]);
         })), m('.w-tab-content.u-margintop-40', [m('.w-tab-pane.w--tab-active', [m('.w-row', ctrl.selectedCategoryIdx() !== -1 ? _$1.map(ctrl.selectedCategory(), function (category) {
             return [m('.w-col.w-col-5', [m('.fontsize-jumbo.u-marginbottom-20', category.name), m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
                 config: h.scrollTo()
-            }, I18n$1.t('submit', I18nScope$49()))]), m('.w-col.w-col-7', [m('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...')), m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_$1.isEmpty(ctrl.featuredProjects()) ? _$1.map(ctrl.featuredProjects(), function (project) {
-                return !_$1.isUndefined(project) ? m('.w-row.u-marginbottom-10', [m('.w-col.w-col-1', [m('img.user-avatar[src="' + h.useAvatarOrDefault(project.userThumb) + '"]')]), m('.w-col.w-col-11', [m('.fontsize-base.fontweight-semibold', project.user.public_name || project.user.name), m('.fontsize-smallest', [I18n$1.t('categories.pledged', I18nScope$49({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })), m('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : m('.fontsize-base', I18n$1.t('categories.loading_featured', I18nScope$49()));
+            }, I18n$1.t('submit', I18nScope$50()))]), m('.w-col.w-col-7', [m('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? h.formatNumber(category.total_successful_value, 2, 3) : '...')), m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), m('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_$1.isEmpty(ctrl.featuredProjects()) ? _$1.map(ctrl.featuredProjects(), function (project) {
+                return !_$1.isUndefined(project) ? m('.w-row.u-marginbottom-10', [m('.w-col.w-col-1', [m('img.user-avatar[src="' + h.useAvatarOrDefault(project.userThumb) + '"]')]), m('.w-col.w-col-11', [m('.fontsize-base.fontweight-semibold', project.user.public_name || project.user.name), m('.fontsize-smallest', [I18n$1.t('categories.pledged', I18nScope$50({ pledged: h.formatNumber(project.pledged), contributors: project.total_contributors })), m('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : m('.fontsize-base', I18n$1.t('categories.loading_featured', I18nScope$50()));
             }) : ''])];
         }) : '')])])])])]), m.component(slider, {
             slides: testimonials(),
-            title: I18n$1.t('testimonials_title', I18nScope$49()),
+            title: I18n$1.t('testimonials_title', I18nScope$50()),
             slideClass: 'slide-testimonials-content',
             wrapperClass: 'slide-testimonials',
             onchange: h.analytics.event({ cat: 'project_start', act: 'start_testimonials_change' })
-        }), m('.w-section.divider.u-margintop-30'), m('.w-container', [m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n$1.t('qa_title', I18nScope$49())), m('.w-row.u-marginbottom-60', [m('.w-col.w-col-6', _$1.map(ctrl.questions.col_1, function (question) {
+        }), m('.w-section.divider.u-margintop-30'), m('.w-container', [m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', I18n$1.t('qa_title', I18nScope$50())), m('.w-row.u-marginbottom-60', [m('.w-col.w-col-6', _$1.map(ctrl.questions.col_1, function (question) {
             return m.component(landingQA, {
                 question: question.question,
                 answer: question.answer,
@@ -14380,7 +14400,7 @@ var start = {
                 h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_submit' })(e);
                 return ctrl.validateProjectForm();
             }
-        }, [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n$1.t('form.title', I18nScope$49())), m('input[name="utf8"][type="hidden"][value="✓"]'), m('input[name="authenticity_token"][type="hidden"][value="' + h.authenticityToken() + '"]'), m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
+        }, [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', I18n$1.t('form.title', I18nScope$50())), m('input[name="utf8"][type="hidden"][value="✓"]'), m('input[name="authenticity_token"][type="hidden"][value="' + h.authenticityToken() + '"]'), m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
             name: 'project[name]',
             class: ctrl.projectNameError() ? 'error' : '',
             onfocus: function onfocus() {
@@ -14400,9 +14420,9 @@ var start = {
                 h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'category' })(e);
                 m.withAttr('value', ctrl.projectCategory)(e);
             }
-        }, [m('option[value="-1"]', I18n$1.t('form.select_default', I18nScope$49())), _$1.map(ctrl.categories(), function (category) {
+        }, [m('option[value="-1"]', I18n$1.t('form.select_default', I18nScope$50())), _$1.map(ctrl.categories(), function (category) {
             return m('option', { value: category.id, selected: ctrl.projectCategory() === category.id }, category.name);
-        })])]), m('.w-col.w-col-2'), m('.w-row.u-marginbottom-20', [m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [m('input[type="submit"][value="' + I18n$1.t('form.submit', I18nScope$49()) + '"].w-button.btn.btn-large')])]), m('.w-row.u-marginbottom-80', ctrl.projectNameError() || ctrl.projectCategoryError() ? m.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')])])])]);
+        })])]), m('.w-col.w-col-2'), m('.w-row.u-marginbottom-20', [m('.w-col.w-col-4.w-col-push-4.u-margintop-40', [m('input[type="submit"][value="' + I18n$1.t('form.submit', I18nScope$50()) + '"].w-button.btn.btn-large')])]), m('.w-row.u-marginbottom-80', ctrl.projectNameError() || ctrl.projectCategoryError() ? m.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')])])])]);
     }
 };
 
@@ -14549,7 +14569,7 @@ var menu = {
 
 var footer = {
     view: function view() {
-        return m('footer.main-footer.main-footer-neg', [m('section.w-container', m('.w-row', [m('.w-col.w-col-9', m('.w-row', [m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.w-hidden-tiny', [m('.footer-full-signature-text.fontsize-small', 'Bem-vindo'), m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']', ' Como funciona'), m('a.link-footer[href=\'http://blog.catarse.me\']', ' Blog'), m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']', [' Nosso time ', m.trust('&lt;'), '3']), m('a.link-footer[href=\'https://www.catarse.me/pt/jobs\']', ' Trabalhe conosco'), m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']', ' Imprensa'), m('a.u-marginbottom-30.link-footer[href=\'https://ano.catarse.me/2016?ref=ctrse_footer\']', ' Retrospectiva 2016'), m('.footer-full-signature-text.fontsize-small', 'Redes Sociais'), m('a.link-footer[href=\'http://facebook.com/catarse.me\']', [m('span.fa.fa-facebook-square.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Facebook']), m('a.link-footer[href=\'http://twitter.com/catarse\']', [m('span.fa.fa-twitter-square.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Twitter']), m('a.link-footer[href=\'http://instagram.com/catarse\']', [m('span.fa.fa-instagram.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Instagram']), m('a.link-footer[href=\'http://github.com/catarse/catarse\']', [m('span.fa.fa-github-square.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Github'])]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-firstcolumn', [m('.footer-full-signature-text.fontsize-small', 'Ajuda'), m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']', ' Central de Suporte'), m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]', ' Contato'), m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']', ['Escola Catarse', m.trust('&nbsp;'), m('span.badge.badge-success', 'Novidade‍')]), m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']', ' Nossa Taxa'), m('a.link-footer[href=\'http://pesquisa.catarse.me/\']', ' Retrato FC Brasil 2013/2014'), m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']', ' Responsabilidades e Segurança'), m('a.link-footer[href=\'/pt/terms-of-use\']', ' Termos de uso'), m('a.link-footer[href=\'/pt/privacy-policy\']', ' Política de privacidade')]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn', [m('.footer-full-signature-text.fontsize-small', 'Faça uma campanha'), m('a.link-footer[href=\'/pt/start?ref=ctrse_footer\']', ' Comece seu projeto'), m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']', ['Música no Catarse', m.trust('&nbsp;'), m('span.badge.badge-success', 'Novidade')]), m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']', ['Publicações Independentes', m.trust('&nbsp;'), m('span.badge.badge-success', 'Novidade')]), m('.footer-full-signature-text.fontsize-small', 'Apoie projetos no Catarse'), m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']', ' Explore projetos'), m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me?ref=ctrse_footer\']', ' Blog'), m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\']', ' Contato'), m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score&ref=ctrse_footer\']', ' Populares'), m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online&ref=ctrse_footer\']', ' No ar'), m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']', ' Finalizados')])])), m('.w-col.w-col-3.column-social-media-footer', [m('.footer-full-signature-text.fontsize-small', 'Assine nossa news'), m('.w-form', m('form[accept-charset=\'UTF-8\'][action=\'' + h.getMailchimpUrl() + '\'][id=\'mailee-form\'][method=\'post\']', [m('.w-form.footer-newsletter', m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')), m('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]', m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter.png\']'))])), m('.footer-full-signature-text.fontsize-small', 'Change language'), m('[id=\'google_translate_element\']')])])), m('.w-container', m('.footer-full-copyleft', [m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'), m('.lineheight-loose', m('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']', ' Feito com amor | ' + new Date().getFullYear() + ' | Open source'))]))]);
+        return m('footer.main-footer.main-footer-neg', [m('section.w-container', m('.w-row', [m('.w-col.w-col-9', m('.w-row', [m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.w-hidden-tiny', [m('.footer-full-signature-text.fontsize-small', 'Bem-vindo'), m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']', ' Como funciona'), m('a.link-footer[href=\'http://blog.catarse.me\']', ' Blog'), m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']', [' Nosso time ', m.trust('&lt;'), '3']), m('a.link-footer[href=\'https://www.catarse.me/pt/jobs\']', ' Trabalhe conosco'), m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']', ' Imprensa'), m('a.u-marginbottom-30.link-footer[href=\'https://ano.catarse.me/2016?ref=ctrse_footer\']', ' Retrospectiva 2016'), m('.footer-full-signature-text.fontsize-small', 'Redes Sociais'), m('a.link-footer[href=\'http://facebook.com/catarse.me\']', [m('span.fa.fa-facebook-square.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Facebook']), m('a.link-footer[href=\'http://twitter.com/catarse\']', [m('span.fa.fa-twitter-square.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Twitter']), m('a.link-footer[href=\'http://instagram.com/catarse\']', [m('span.fa.fa-instagram.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Instagram']), m('a.link-footer[href=\'http://github.com/catarse/catarse\']', [m('span.fa.fa-github-square.fa-lg'), m.trust('&nbsp;&nbsp;'), 'Github'])]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-firstcolumn', [m('.footer-full-signature-text.fontsize-small', 'Ajuda'), m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']', ' Central de Suporte'), m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]', ' Contato'), m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']', ['Escola Catarse', m.trust('&nbsp;'), m('span.badge.badge-success', 'Novidade‍')]), m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']', ' Nossa Taxa'), m('a.link-footer[href=\'http://pesquisa.catarse.me/\']', ' Retrato FC Brasil 2013/2014'), m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']', ' Responsabilidades e Segurança'), m('a.link-footer[href=\'/pt/terms-of-use\']', ' Termos de uso'), m('a.link-footer[href=\'/pt/privacy-policy\']', ' Política de privacidade')]), m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn', [m('.footer-full-signature-text.fontsize-small', 'Faça uma campanha'), m('a.link-footer[href=\'/pt/start?ref=ctrse_footer\']', ' Comece seu projeto'), m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']', ['Música no Catarse', m.trust('&nbsp;'), m('span.badge.badge-success', 'Novidade')]), m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']', ['Publicações Independentes', m.trust('&nbsp;'), m('span.badge.badge-success', 'Novidade')]), m('.footer-full-signature-text.fontsize-small', 'Apoie projetos no Catarse'), m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']', ' Explore projetos'), m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me?ref=ctrse_footer\']', ' Blog'), m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\']', ' Contato'), m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score&ref=ctrse_footer\']', ' Populares'), m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online&ref=ctrse_footer\']', ' No ar'), m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']', ' Finalizados')])])), m('.w-col.w-col-3.column-social-media-footer', [m('.footer-full-signature-text.fontsize-small', 'Assine nossa news'), m('.w-form', m('form[accept-charset=\'UTF-8\'][action=\'' + h.getNewsletterUrl() + '\'][id=\'mailee-form\'][method=\'post\']', [m('.w-form.footer-newsletter', m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')), m('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]', m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter.png\']'))])), m('.footer-full-signature-text.fontsize-small', 'Change language'), m('[id=\'google_translate_element\']')])])), m('.w-container', m('.footer-full-copyleft', [m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'), m('.lineheight-loose', m('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']', ' Feito com amor | ' + new Date().getFullYear() + ' | Open source'))]))]);
     }
 };
 
@@ -14792,7 +14812,7 @@ var FollowFoundFriends = {
     }
 };
 
-var I18nScope$50 = _$1.partial(h.i18nScope, 'projects.contributions');
+var I18nScope$51 = _$1.partial(h.i18nScope, 'projects.contributions');
 
 var thankYou = {
     controller: function controller(args) {
@@ -14823,12 +14843,12 @@ var thankYou = {
         };
     },
     view: function view(ctrl, args) {
-        return m('#thank-you', { config: ctrl.setEvents }, [m('.page-header.u-marginbottom-30', m('.w-container', m('.w-row', m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-20.u-text-center', m('img.big.thumb.u-round[src=\'' + args.contribution.project.user_thumb + '\']')), m('#thank-you.u-text-center', !ctrl.isSlip ? [m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', I18n$1.t('thank_you.thank_you', I18nScope$50())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you.thank_you_text_html', I18nScope$50({
+        return m('#thank-you', { config: ctrl.setEvents }, [m('.page-header.u-marginbottom-30', m('.w-container', m('.w-row', m('.w-col.w-col-10.w-col-push-1', [m('.u-marginbottom-20.u-text-center', m('img.big.thumb.u-round[src=\'' + args.contribution.project.user_thumb + '\']')), m('#thank-you.u-text-center', !ctrl.isSlip ? [m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', I18n$1.t('thank_you.thank_you', I18nScope$51())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you.thank_you_text_html', I18nScope$51({
             total: args.contribution.project.total_contributions,
             email: args.contribution.contribution_email,
             link2: '/pt/users/' + h.getUser().user_id + '/edit#contributions',
             link_email: '/pt/users/' + h.getUser().user_id + '/edit#about_me'
-        })))), m('.fontsize-base.fontweight-semibold.u-marginbottom-20', 'Compartilhe com seus amigos e ajude esse projeto a bater a meta!')] : [m('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$50())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$50({
+        })))), m('.fontsize-base.fontweight-semibold.u-marginbottom-20', 'Compartilhe com seus amigos e ajude esse projeto a bater a meta!')] : [m('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', I18n$1.t('thank_you_slip.thank_you', I18nScope$51())), m('.fontsize-base.u-marginbottom-40', m.trust(I18n$1.t('thank_you_slip.thank_you_text_html', I18nScope$51({
             email: args.contribution.contribution_email,
             link_email: '/pt/users/' + h.getUser().user_id + '/edit#about_me'
         }))))]), ctrl.isSlip ? '' : m('.w-row', [m('.w-hidden-small.w-hidden-tiny', [m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
@@ -14853,14 +14873,14 @@ var thankYou = {
             height: '905px',
             frameborder: '0',
             style: 'overflow: hidden;'
-        }))) : [m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', I18n$1.t('thank_you.project_recommendations', I18nScope$50())), m.component(projectRow, {
+        }))) : [m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center', I18n$1.t('thank_you.project_recommendations', I18nScope$51())), m.component(projectRow, {
             collection: ctrl.recommendedProjects,
             ref: 'ctrse_thankyou_r'
         })]))]);
     }
 };
 
-var I18nScope$51 = _$1.partial(h.i18nScope, 'users.edit.email_confirmation');
+var I18nScope$52 = _$1.partial(h.i18nScope, 'users.edit.email_confirmation');
 
 var CheckEmail = {
     controller: function controller(args) {
@@ -14898,7 +14918,7 @@ var CheckEmail = {
         if (user) {
             var userCreatedRecently = moment().isBefore(moment(user.created_at).add(2, 'days'));
 
-            return user && !userCreatedRecently && !user.email_active && !ctrl.hideAlert() ? m('.card-alert.section.u-text-center', { style: args.menuTransparency ? { 'padding-top': '100px' } : {} }, [m('.w-container', ctrl.confirmedEmail() ? [m('.fontsize-large.fontweight-semibold', I18n$1.t('confirmed_title', I18nScope$51())), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('confirmed_sub', I18nScope$51()))] : [m('.fontsize-large.fontweight-semibold', _$1.isNull(user.name) ? 'Olá' : I18n$1.t('hello', I18nScope$51({ name: user.name }))), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('hello_sub', I18nScope$51())), m('.fontsize-base.u-marginbottom-10', I18n$1.t('hello_email', I18nScope$51({ email: user.email }))), m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-3', [m('button.btn.btn-medium.btn-terciary.w-button', {
+            return user && !userCreatedRecently && !user.email_active && !ctrl.hideAlert() ? m('.card-alert.section.u-text-center', { style: args.menuTransparency ? { 'padding-top': '100px' } : {} }, [m('.w-container', ctrl.confirmedEmail() ? [m('.fontsize-large.fontweight-semibold', I18n$1.t('confirmed_title', I18nScope$52())), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('confirmed_sub', I18nScope$52()))] : [m('.fontsize-large.fontweight-semibold', _$1.isNull(user.name) ? 'Olá' : I18n$1.t('hello', I18nScope$52({ name: user.name }))), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('hello_sub', I18nScope$52())), m('.fontsize-base.u-marginbottom-10', I18n$1.t('hello_email', I18nScope$52({ email: user.email }))), m('.w-row', [m('.w-col.w-col-3'), m('.w-col.w-col-3', [m('button.btn.btn-medium.btn-terciary.w-button', {
                 onclick: ctrl.checkEmail
             }, 'Sim!')]), m('.w-col.w-col-3', [m('a.btn.btn-medium.w-button[href="/users/' + user.id + '/edit#about_me"]', 'Editar o email')]), m('.w-col.w-col-3')])])]) : m('div');
         }
@@ -14937,6 +14957,7 @@ var c = {
         Start: start,
         Team: team,
         Menu: menu,
+        Press: press,
         Footer: footer,
         FollowFoundFriends: FollowFoundFriends,
         CheckEmail: CheckEmail,
@@ -14955,4 +14976,4 @@ var c = {
 return c;
 
 }(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart,select));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
