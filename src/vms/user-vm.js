@@ -73,11 +73,9 @@ const getUserProjectReminders = (user_id) => {
     return lUserReminders.load();
 };
 
-const getMailMarketingLists = (user_id) => {
+const getMailMarketingLists = () => {
     const l = postgrest.loaderWithToken(
-        models.mailMarketingList.getPageOptions({
-            user_id: `in.${user_id},0`,
-            order: 'id.asc' }));
+        models.mailMarketingList.getPageOptions({order: 'id.asc' }));
 
     return l.load();
 };

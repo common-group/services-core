@@ -24,7 +24,7 @@ const userNotifications = {
             m.redraw();
         });
 
-        userVM.getMailMarketingLists(user_id).then((data) => {
+        userVM.getMailMarketingLists().then((data) => {
             mailMarketingLists(generateListHandler(data))
         }
         ).catch((err) => {
@@ -40,10 +40,14 @@ const userNotifications = {
         });
 
         const generateListHandler = (list) => {
+            const user_lists = args.user.mail_marketing_lists;
             return _.map(list, (item, i) => {
+                let user_signed = !_.isEmpty(user_lists) && !_.isUndefined(_.find(user_lists, (l) => {
+                    return !_.isNull(l) && l.list_id == item.list_id;
+                }));
                 let handler = {
                     item: item,
-                    in_list: args.userId == item.user_id,
+                    in_list: user_signed,
                     should_insert: m.prop(false),
                     should_destroy: m.prop(false)
                 };
