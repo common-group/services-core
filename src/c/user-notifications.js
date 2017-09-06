@@ -12,10 +12,8 @@ const userNotifications = {
             projectReminders = m.prop(),
             mailMarketingLists = m.prop(),
             user_id = args.userId,
-            isInsertInListState = h.toggleProp(false, true),
             showNotifications = h.toggleProp(false, true),
-            error = m.prop(false),
-            hovering = m.prop(false);
+            error = m.prop(false);
 
         userVM.getUserProjectReminders(user_id).then(
             projectReminders
@@ -49,16 +47,18 @@ const userNotifications = {
                     item: item,
                     in_list: user_signed,
                     should_insert: m.prop(false),
-                    should_destroy: m.prop(false)
+                    should_destroy: m.prop(false),
+                    isInsertInListState: h.toggleProp(false, true),
+                    hovering: m.prop(false)
                 };
-                isInsertInListState(!handler.in_list);
+                handler.isInsertInListState(!handler.in_list);
                 return handler;
             });
         };
 
         const getUserMarketingListId = (list) => {
             const currentList = _.find(args.user.mail_marketing_lists, userList => userList.marketing_list.list_id === list.list_id);
-            
+
             return currentList ? currentList['user_marketing_list_id'] : null;
         }
 
@@ -79,10 +79,8 @@ const userNotifications = {
             projectReminders,
             error,
             generateListHandler,
-            isInsertInListState,
             getUserMarketingListId,
             isOnCurrentList,
-            hovering
         };
     },
     view(ctrl, args) {
@@ -111,7 +109,6 @@ const userNotifications = {
                                     ),
                                     m('.w-col.w-col-8', (_.isEmpty(marketing_lists) ? h.loader() : _.map(marketing_lists, (_item, i) => {
                                         const item = _item.item;
-                                        const hovering = m.prop(false);
 
                                         return m('.card.u-marginbottom-20.u-radius.u-text-center-small-only',
                                             m('.w-row',
@@ -134,7 +131,7 @@ const userNotifications = {
                                                             (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
                                                             m('button.btn.btn-medium.w-button',
                                                                 {   
-                                                                    class: !ctrl.isInsertInListState() ? 'btn-terciary' : null,
+                                                                    class: !_item.isInsertInListState() ? 'btn-terciary' : null,
                                                                     onclick: (event) => {
                                                                         // If user already has this list, click should enable destroy state
                                                                         if(ctrl.isOnCurrentList(user.mail_marketing_lists, item)) {
@@ -145,13 +142,13 @@ const userNotifications = {
                                                                         _item.should_insert(true);
                                                                     },
                                                                     onmouseenter: () => {
-                                                                        ctrl.hovering(true);
+                                                                        _item.hovering(true);
                                                                     },
                                                                     onmouseout: () => {
-                                                                        ctrl.hovering(false);
+                                                                        _item.hovering(false);
                                                                     }
                                                                 }, 
-                                                                !ctrl.isInsertInListState() ? ctrl.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar'
+                                                                _item.in_list ? _item.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar'
                                                             )
                                                         ]
                                                     )
