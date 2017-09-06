@@ -12,7 +12,7 @@ const userNotifications = {
             projectReminders = m.prop(),
             mailMarketingLists = m.prop(),
             user_id = args.userId,
-            insertList = h.toggleProp(false, true),
+            isInsertInListState = h.toggleProp(false, true),
             showNotifications = h.toggleProp(false, true),
             error = m.prop(false),
             hovering = m.prop(false);
@@ -42,8 +42,8 @@ const userNotifications = {
         const generateListHandler = (list) => {
             const user_lists = args.user.mail_marketing_lists;
             return _.map(list, (item, i) => {
-                let user_signed = !_.isEmpty(user_lists) && !_.isUndefined(_.find(user_lists, (l) => {
-                    return !_.isNull(l) && l.list_id == item.list_id;
+                let user_signed = !_.isEmpty(user_lists) && !_.isUndefined(_.find(user_lists, userList => {
+                    return userList.marketing_list ? userList.marketing_list.list_id === item.list_id : false;
                 }));
                 let handler = {
                     item: item,
@@ -51,9 +51,25 @@ const userNotifications = {
                     should_insert: m.prop(false),
                     should_destroy: m.prop(false)
                 };
-                insertList(!handler.in_list);
+                isInsertInListState(!handler.in_list);
                 return handler;
             });
+        };
+
+        const getUserMarketingListId = (list) => {
+            const currentList = _.find(args.user.mail_marketing_lists, userList => userList.marketing_list.list_id === list.list_id);
+            
+            return currentList ? currentList['user_marketing_list_id'] : null;
+        }
+
+        const isOnCurrentList = (userLists, currentList) => {
+            return Boolean(_.find(userLists, userList => {
+                if (userList.marketing_list) {
+                    return userList.marketing_list.list_id === currentList.list_id;
+                }
+
+                return false;
+            }));
         };
 
         return {
@@ -63,7 +79,9 @@ const userNotifications = {
             projectReminders,
             error,
             generateListHandler,
-            insertList,
+            isInsertInListState,
+            getUserMarketingListId,
+            isOnCurrentList,
             hovering
         };
     },
@@ -112,18 +130,19 @@ const userNotifications = {
                                                                 I18n.t(`newsletters.${item.list_id}.description`, I18nScope())
                                                             ),
                                                             (_item.should_insert() || _item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
-                                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: item.marketing_user_id }) : ''),
+                                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: ctrl.getUserMarketingListId(item) }) : ''),
                                                             (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
                                                             m('button.btn.btn-medium.w-button',
                                                                 {   
-                                                                    class: !ctrl.insertList() ? 'btn-terciary' : null,
+                                                                    class: !ctrl.isInsertInListState() ? 'btn-terciary' : null,
                                                                     onclick: (event) => {
-                                                                        if(!_.isUndefined(item.marketing_user_id)) {
-                                                                            _item.should_destroy(!ctrl.insertList());
+                                                                        // If user already has this list, click should enable destroy state
+                                                                        if(ctrl.isOnCurrentList(user.mail_marketing_lists, item)) {
+                                                                            _item.should_destroy(true);
+
+                                                                            return;
                                                                         }
-                                                                        _item.should_insert(ctrl.insertList());
-                                                                        
-                                                                        ctrl.insertList.toggle();
+                                                                        _item.should_insert(true);
                                                                     },
                                                                     onmouseenter: () => {
                                                                         ctrl.hovering(true);
@@ -132,7 +151,7 @@ const userNotifications = {
                                                                         ctrl.hovering(false);
                                                                     }
                                                                 }, 
-                                                                !ctrl.insertList() ? ctrl.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar'
+                                                                !ctrl.isInsertInListState() ? ctrl.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar'
                                                             )
                                                         ]
                                                     )
