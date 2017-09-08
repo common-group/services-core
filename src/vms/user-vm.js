@@ -139,7 +139,7 @@ const getCurrentUser = () => {
 };
 
 const displayName = (user) => {
-    let u = user || {name: 'no name'};
+    const u = user || { name: 'no name' };
     return _.isEmpty(u.public_name) ? u.name : u.public_name;
 };
 
