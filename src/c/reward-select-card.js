@@ -10,7 +10,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const rewardSelectCard = {
     controller(args) {
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
-        const isSelected = currentReward => currentReward.id === rewardVM.selectedReward().id;
+        const isSelected = currentReward => _.isEmpty(rewardVM.rewards()) || currentReward.id === rewardVM.selectedReward().id;
         const selectedDestination = m.prop('');
         const queryRewardId = h.getParams('reward_id');
         const queryRewardValue = h.getParams('value');
