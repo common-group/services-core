@@ -9,8 +9,9 @@ const error = m.prop(''),
     states = m.prop([]),
     fees = m.prop([]),
     noReward = {
-        id: -1,
+        id: null,
         description: 'Obrigado. Eu só quero ajudar o projeto.',
+        shipping_options: null,
         minimum_value: 10
     },
     contributionValue = m.prop(`${noReward.minimum_value},00`),
