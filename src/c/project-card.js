@@ -4,6 +4,7 @@ import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 import projectFriends from './project-friends';
+import progressMeter from './progress-meter';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
@@ -54,12 +55,6 @@ const projectCard = {
             return cssClasses[type];
         };
 
-        const cardMeter = () => {
-            const failed = () => ((project.state === 'failed') || (project.state === 'waiting_funds')) ? 'card-secondary' : '';
-
-            return `.card-project-meter.${project.mode}.${project.state}.${progress > 100 ? 'complete' : 'incomplete'}.${failed()}`;
-        };
-
         const isFinished = project => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
 
         const cardCopy = (project) => {
@@ -85,8 +80,7 @@ const projectCard = {
             progress,
             remainingTextObj,
             elapsedTextObj,
-            isFinished,
-            cardMeter
+            isFinished
         };
     },
     view(ctrl, args) {
@@ -128,19 +122,7 @@ const projectCard = {
                             projectAddress
                         ])
                     ]),
-                    m(ctrl.cardMeter(), [
-                        (ctrl.isFinished(project)) ?
-                            m('div',
-                                project.state === 'successful' && ctrl.progress < 100 ? I18n.t('display_status.flex_successful', I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
-                            ) :
-                        m('.meter', [
-                            m('.meter-fill', {
-                                style: {
-                                    width: `${(ctrl.progress > 100 ? 100 : ctrl.progress)}%`
-                                }
-                            })
-                        ])
-                    ]),
+                    m(progressMeter, { progress: ctrl.progress, project }),
                     m('.card-project-stats', [
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
