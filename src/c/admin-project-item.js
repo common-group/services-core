@@ -2,25 +2,30 @@ import m from 'mithril';
 import h from '../h';
 import progressMeter from './progress-meter';
 import userVM from '../vms/user-vm';
+import projectVM from '../vms/project-vm';
 
 const adminProjectItem = {
     controller(args) {
         const project = args.item,
-            recommended = m.prop(project.recommended);
+            recommended = h.toggleProp(project.recommended, !project.recommended),
+            toggleRecommend = () => {
+                projectVM.updateProject(project.project_id, { recommended: !recommended() }).then(recommended.toggle);
+            };
 
         return {
             project,
+            toggleRecommend,
             recommended
         };
     },
-    view(ctrl, args) {
+    view(ctrl) {
         const project = ctrl.project,
             recommended = ctrl.recommended;
         return m('.w-row', [
             m('.w-col.w-col-4',
                 m('.w-row', [
                     m('.w-col.w-col-2',
-                        m('a.btn-star.fa.fa-lg.fa-star.w-inline-block', { class: recommended() ? 'selected' : '' })
+                        m('a.btn-star.fa.fa-lg.fa-star.w-inline-block', { onclick: () => { ctrl.toggleRecommend(); }, class: recommended() ? 'selected' : '' })
                     ),
                     m('.w-col.w-col-10',
                         m('.w-row', [
@@ -28,7 +33,7 @@ const adminProjectItem = {
                                 m(`img.thumb-project.u-radius[src=${project.project_img}][width=50]`)
                             ),
                             m('.w-col.w-col-9.w-col-small-9', [
-                                m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-10',
+                                m(`a.alt-link.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-10[href='/${project.permalink}'][target='_blank']`,
                                     project.project_name
                                 ),
                                 m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
