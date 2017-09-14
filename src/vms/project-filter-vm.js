@@ -19,7 +19,7 @@ const vm = postgrest.filtersVM({
         return (p || '').toString().trim();
     };
 
-vm.state('');
+vm.state('online');
 vm.mode('');
 vm.recommended('');
 vm.category_name('');

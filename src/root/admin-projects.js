@@ -140,7 +140,7 @@ const adminProjects = {
                 categories(data);
                 const options = _.map(categories(), category => ({ value: category.name, option: category.name }));
                 options.unshift({ value: '', option: 'Qualquer uma' });
-                filterBuilder.push(
+                filterBuilder.unshift(
                     { // category
                         component: filterDropdown,
                         data: {
@@ -184,6 +184,7 @@ const adminProjects = {
             }),
             m.component(adminList, {
                 vm: ctrl.listVM,
+                filterVM: ctrl.filterVM,
                 label,
                 listItem: adminProjectItem,
                 listDetail: adminProjectDetail

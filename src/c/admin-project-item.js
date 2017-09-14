@@ -4,13 +4,23 @@ import progressMeter from './progress-meter';
 import userVM from '../vms/user-vm';
 
 const adminProjectItem = {
+    controller(args) {
+        const project = args.item,
+            recommended = m.prop(project.recommended);
+
+        return {
+            project,
+            recommended
+        };
+    },
     view(ctrl, args) {
-        const project = args.item;
+        const project = ctrl.project,
+            recommended = ctrl.recommended;
         return m('.w-row', [
             m('.w-col.w-col-4',
                 m('.w-row', [
                     m('.w-col.w-col-2',
-                        m('a.btn-star.fa.fa-lg.fa-star.w-inline-block', { class: project.recommended ? 'selected' : '' })
+                        m('a.btn-star.fa.fa-lg.fa-star.w-inline-block', { class: recommended() ? 'selected' : '' })
                     ),
                     m('.w-col.w-col-10',
                         m('.w-row', [
