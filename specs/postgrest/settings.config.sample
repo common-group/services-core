@@ -1,4 +1,4 @@
-db-uri = "postgres://postgrest@localhost:5433/services_core_test"
+db-uri = "postgres://postgrest:changeme@localhost:5433/services_core_test"
 db-schema = "api"
 db-anon-role = "anonymous"
 db-pool = 10

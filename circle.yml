@@ -18,7 +18,7 @@ dependencies:
 
 test:
   override:
-    - mkdir -p ./specs/api-specs/logs
+    - mkdir -p ./specs/logs
     - cp -rf ./specs/postgrest/settings.config{.sample,}
     - wget https://github.com/begriffs/postgrest/releases/download/v0.4.3.0/postgrest-v0.4.3.0-ubuntu.tar.xz -O ./specs/postgrest/postgrest-0.4.3.0-linux.tar.xz
     - cd ./specs/postgrest && tar -xvf postgrest-0.4.3.0-linux.tar.xz
