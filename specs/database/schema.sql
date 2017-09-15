@@ -15,6 +15,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: community_service; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA community_service;
+
+
+--
+-- Name: community_service_api; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA community_service_api;
+
+
+--
 -- Name: core; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -88,6 +102,52 @@ CREATE TYPE jwt_token AS (
 );
 
 
+SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: generate_scoped_user_key(uuid); Type: FUNCTION; Schema: community_service_api; Owner: -
+--
+
+CREATE FUNCTION generate_scoped_user_key(user_key uuid) RETURNS core.jwt_token
+    LANGUAGE plpgsql STABLE
+    AS $_$
+        declare
+            _platform platform_service.platforms;
+            _user community_service.users;
+            _result core.jwt_token;
+        begin
+            select * from platform_service.platforms p 
+                where p.token = core.current_platform_token()
+                into _platform;
+
+            if _platform is null then
+                raise exception 'invalid platform';
+            end if;
+
+            select * from community_service.users cu
+                where cu.platform_id = _platform.id
+                    and cu.key = $1
+                into _user;
+
+            if _user is null then
+                raise exception 'invalid user id';
+            end if;
+
+
+            select core.gen_jwt_token(json_build_object(
+                'role', 'scoped_user',
+                'user_id', _user.id,
+                'platform_token', core.current_platform_token(),
+                'exp', extract(epoch from now())::integer + (60*60)*2
+            )) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+SET search_path = core, pg_catalog;
+
 --
 -- Name: algorithm_sign(text, text, text); Type: FUNCTION; Schema: core; Owner: -
 --
@@ -104,6 +164,29 @@ WITH
       ELSE '' END AS id)  -- hmac throws error
 SELECT core.url_encode(hmac(signables, secret, alg.id)) FROM alg;
 $$;
+
+
+--
+-- Name: current_platform_token(); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION current_platform_token() RETURNS uuid
+    LANGUAGE plpgsql STABLE
+    AS $$
+        BEGIN
+          RETURN nullif(current_setting('request.jwt.claim.platform_token'), '')::uuid;
+        EXCEPTION
+            WHEN others THEN
+            RETURN NULL::integer;
+        END
+    $$;
+
+
+--
+-- Name: FUNCTION current_platform_token(); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION current_platform_token() IS 'Get platform uuid token from jwt';
 
 
 --
@@ -398,7 +481,7 @@ CREATE FUNCTION generate_api_key(platform_id integer) RETURNS api_keys
             _platform_token uuid;
             _result platform_service.platform_api_keys;
         begin
-            if not platform_service.user_in_platform(current_user_id(), $1) then
+            if not platform_service.user_in_platform(core.current_user_id(), $1) then
                 raise exception 'insufficient permissions to do this action';
             end if;
 
@@ -541,6 +624,54 @@ BEGIN
     RETURN NEW;
 END;
 $$;
+
+
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: users; Type: TABLE; Schema: community_service; Owner: -
+--
+
+CREATE TABLE users (
+    platform_id integer,
+    id bigint NOT NULL,
+    email text NOT NULL,
+    password text NOT NULL,
+    name text NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
+    CONSTRAINT users_name_check CHECK ((length(name) < 255)),
+    CONSTRAINT users_password_check CHECK ((length(password) < 512))
+);
+
+
+--
+-- Name: TABLE users; Type: COMMENT; Schema: community_service; Owner: -
+--
+
+COMMENT ON TABLE users IS 'Stores community users';
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: community_service; Owner: -
+--
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: community_service; Owner: -
+--
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 SET search_path = core, pg_catalog;
@@ -700,6 +831,15 @@ CREATE TABLE __diesel_schema_migrations (
 );
 
 
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: users id; Type: DEFAULT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
 SET search_path = core, pg_catalog;
 
 --
@@ -737,6 +877,32 @@ ALTER TABLE ONLY platforms ALTER COLUMN id SET DEFAULT nextval('platforms_id_seq
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: users uidx_platform_email; Type: CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT uidx_platform_email UNIQUE (platform_id, email);
+
+
+--
+-- Name: users users_key_key; Type: CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_key_key UNIQUE (key);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 SET search_path = core, pg_catalog;
@@ -865,6 +1031,18 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCED
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON platform_users FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
 
 
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: users users_platform_id_fkey; Type: FK CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+
+SET search_path = platform_service, pg_catalog;
+
 --
 -- Name: platform_api_keys platform_api_keys_platform_id_fkey; Type: FK CONSTRAINT; Schema: platform_service; Owner: -
 --
@@ -887,6 +1065,27 @@ ALTER TABLE ONLY platform_users
 
 ALTER TABLE ONLY platform_users
     ADD CONSTRAINT platform_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- Name: community_service; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA community_service TO anonymous;
+GRANT USAGE ON SCHEMA community_service TO postgrest;
+GRANT USAGE ON SCHEMA community_service TO admin;
+GRANT USAGE ON SCHEMA community_service TO platform_user;
+GRANT USAGE ON SCHEMA community_service TO scoped_user;
+
+
+--
+-- Name: community_service_api; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA community_service_api TO anonymous;
+GRANT USAGE ON SCHEMA community_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA community_service_api TO postgrest;
+GRANT USAGE ON SCHEMA community_service_api TO platform_user;
 
 
 --
@@ -917,7 +1116,20 @@ GRANT USAGE ON SCHEMA platform_service_api TO anonymous;
 GRANT USAGE ON SCHEMA platform_service_api TO admin;
 GRANT USAGE ON SCHEMA platform_service_api TO postgrest;
 GRANT USAGE ON SCHEMA platform_service_api TO platform_user;
+GRANT USAGE ON SCHEMA platform_service_api TO scoped_user;
 
+
+SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: generate_scoped_user_key(uuid); Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO admin;
+GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
+
+
+SET search_path = platform_service, pg_catalog;
 
 --
 -- Name: platforms; Type: ACL; Schema: platform_service; Owner: -
@@ -984,6 +1196,19 @@ GRANT ALL ON FUNCTION login(email text, password text) TO anonymous;
 --
 
 GRANT ALL ON FUNCTION sign_up(name text, email text, password text) TO anonymous;
+
+
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: users; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT SELECT ON TABLE users TO anonymous;
+GRANT SELECT ON TABLE users TO scoped_user;
+GRANT SELECT ON TABLE users TO admin;
+GRANT SELECT ON TABLE users TO postgrest;
+GRANT SELECT ON TABLE users TO platform_user;
 
 
 SET search_path = core, pg_catalog;
