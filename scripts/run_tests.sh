@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DB_HOST=${TEST_DB_HOST:-localhost}
-DB_NAME=${TEST_DB_NAME:-serivice_core_test}
+DB_NAME=${TEST_DB_NAME:-service_core_test}
 DB_USER=${TEST_DB_USER:-postgres}
 DB_PORT=${TEST_DB_PORT:-5432}
 db=$DB_NAME
