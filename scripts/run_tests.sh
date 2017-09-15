@@ -59,7 +59,12 @@ do
     service_api_schema=$(echo $service_name'-api' | sed 's/-/_/g')
 
     echo "Initiating PostgREST server ./specs/postgrest/$postgrest_bin ... for service $service_name"
-    sed -i '' "s/db-schema = .*/db-schema = \"$service_api_schema\"/g" ./specs/postgrest/settings.config
+
+    if [[ "$unamestr" == 'Linux' ]]; then
+        sed -i "s/db-schema = .*/db-schema = \"$service_api_schema\"/g" ./specs/postgrest/settings.config
+    elif [[ "$unamestr" == 'Darwin' ]]; then
+        sed -i '' "s/db-schema = .*/db-schema = \"$service_api_schema\"/g" ./specs/postgrest/settings.config
+    fi
     ./specs/postgrest/$postgrest_bin ./specs/postgrest/settings.config > specs/logs/postgrest.log 2>&1 &
 
     echo "Running tests for $service_name"
