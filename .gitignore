@@ -1,0 +1,3 @@
+logs/*.log
+specs/logs/*.log
+specs/postgrest/settings.config
