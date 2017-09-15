@@ -11,7 +11,7 @@ exit_code=0
 
 postgrest_bin='unknown'
 unamestr=`uname`
-ver='0.4.2.0'
+ver='0.4.3.0'
 dir='postgrest'
 
 schema_log='specs/logs/schema_load.log'
