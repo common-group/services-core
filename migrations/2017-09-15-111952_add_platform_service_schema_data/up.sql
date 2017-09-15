@@ -45,7 +45,7 @@ select diesel_manage_updated_at('platform_service.platform_users');
 CREATE TABLE platform_service.platform_api_keys (
     id serial not null primary key,
     platform_id integer references platform_service.platforms(id) not null,
-    token core.jwt_token not null unique,
+    token text not null unique,
     created_at timestamp not null default now(),
     disabled_at timestamp
 );

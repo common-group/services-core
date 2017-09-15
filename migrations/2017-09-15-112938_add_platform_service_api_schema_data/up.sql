@@ -1,6 +1,10 @@
 -- Your SQL goes here
+ALTER TABLE 
 CREATE SCHEMA platform_service_api;
+grant usage on schema platform_service to anonymous, platform_user, admin;
 grant usage on schema platform_service_api to anonymous, platform_user, admin;
+grant usage on schema core to anonymous, platform_user, scoped_user
+grant select on core.core_settings to anonymous, platform_user, scoped_user
 
 CREATE OR REPLACE FUNCTION core.current_user_id()
  RETURNS integer
