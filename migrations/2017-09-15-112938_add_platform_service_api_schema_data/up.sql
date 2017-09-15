@@ -1,5 +1,4 @@
 -- Your SQL goes here
-ALTER TABLE 
 CREATE SCHEMA platform_service_api;
 grant usage on schema platform_service to anonymous, platform_user, admin;
 grant usage on schema platform_service_api to anonymous, platform_user, admin;
@@ -96,7 +95,7 @@ create or replace function platform_service_api.generate_api_key(platform_id int
             _platform_token uuid;
             _result platform_service.platform_api_keys;
         begin
-            if not platform_service.user_in_platform(current_user_id(), $1) then
+            if not platform_service.user_in_platform(core.current_user_id(), $1) then
                 raise exception 'insufficient permissions to do this action';
             end if;
 
