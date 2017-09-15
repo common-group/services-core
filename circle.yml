@@ -1,0 +1,26 @@
+machine:
+  python:
+    version: 2.7.10
+  pre:
+    - sudo service postgresql stop
+    - sudo mv /usr/lib/postgresql-9.6/9.6 /usr/lib/postgresql/9.6
+    - sudo mv /etc/postgresql-9.6/9.6 /etc/postgresql/9.6
+    - sudo service postgresql start 9.6
+    - sudo -u postgres psql -p 5433 -c "create user ubuntu;"
+    - sudo -u postgres psql -p 5433 -c "alter user ubuntu with superuser;"
+    - sudo -u postgres psql -p 5433 -c "create user postgrest with password 'changeme';"
+    - sudo -u postgres psql -p 5433 -c "alter user postgrest with superuser;"
+    - sudo -u postgres psql -p 5433 -c "create database ubuntu;"
+
+dependencies:
+  pre:
+      - pip install pyresttest
+
+test:
+  override:
+    - mkdir -p ./specs/api-specs/logs
+    - cp -rf ./specs/postgrest/settings.config{.sample,}
+    - wget https://github.com/begriffs/postgrest/releases/download/v0.4.3.0/postgrest-v0.4.3.0-ubuntu.tar.xz -O ./specs/postgrest/postgrest-0.4.3.0-linux.tar.xz
+    - cd ./specs/postgrest && tar -xvf postgrest-0.4.3.0-linux.tar.xz
+    - cd ./specs/postgrest && mv postgrest postgrest-0.4.3.0-linux
+    - TEST_DB_HOST=/var/run/postgresql/ TEST_DB_USER=ubuntu TEST_DB_PORT=5433 ./scripts/run_tests.sh
