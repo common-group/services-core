@@ -1,0 +1,33 @@
+
+---
+- config:
+  - testset: "create_project"
+
+- test:
+  - name: "Create a new project with platform api_key"
+  - url: "/rpc/create_project"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json'}
+  - method: "POST"
+  - body: '{"project": {"user_id": 999, "name": "test flex project api", "mode": "flex"} }'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.id", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "0.name", comparator: "eq", expected: "test flex project api"}
+    - compare: {jsonpath_mini: "0.token", comparator: "regex", expected: ".*"}
+
+- test:
+  - name: "Should not create a new project with scoped user api_key"
+  - url: "/rpc/create_project"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json'}
+  - method: "POST"
+  - body: '{"project": {"user_id": 999, "name": "test flex project api", "mode": "flex"} }'
+  - expected_status: [403]
+
+- test:
+  - name: "Creating platform without auth"
+  - url: "/rpc/create_project"
+  - method: "POST"
+  - body: '{"name": "platform test"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [401]
+

@@ -50,6 +50,20 @@ CREATE SCHEMA platform_service_api;
 
 
 --
+-- Name: project_service; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA project_service;
+
+
+--
+-- Name: project_service_api; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA project_service_api;
+
+
+--
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -99,6 +113,31 @@ SET search_path = core, pg_catalog;
 
 CREATE TYPE jwt_token AS (
 	token text
+);
+
+
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: project_mode; Type: TYPE; Schema: project_service; Owner: -
+--
+
+CREATE TYPE project_mode AS ENUM (
+    'aon',
+    'flex',
+    'sub'
+);
+
+
+--
+-- Name: new_project_record; Type: TYPE; Schema: project_service; Owner: -
+--
+
+CREATE TYPE new_project_record AS (
+	id bigint,
+	name text,
+	mode project_mode,
+	key uuid
 );
 
 
@@ -164,6 +203,17 @@ WITH
       ELSE '' END AS id)  -- hmac throws error
 SELECT core.url_encode(hmac(signables, secret, alg.id)) FROM alg;
 $$;
+
+
+--
+-- Name: current_platform_id(); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION current_platform_id() RETURNS integer
+    LANGUAGE sql STABLE
+    AS $$
+        select id from platform_service.platforms where token = core.current_platform_token();
+    $$;
 
 
 --
@@ -591,6 +641,46 @@ $$;
 COMMENT ON FUNCTION sign_up(name text, email text, password text) IS 'Handles with creation of new platform users';
 
 
+SET search_path = project_service_api, pg_catalog;
+
+--
+-- Name: create_project(json); Type: FUNCTION; Schema: project_service_api; Owner: -
+--
+
+CREATE FUNCTION create_project(project json) RETURNS project_service.new_project_record
+    LANGUAGE plpgsql
+    AS $$
+    declare
+        _platform platform_service.platforms;
+        _user community_service.users;
+        _result project_service.new_project_record;
+    begin
+        select * from community_service.users cu
+            where cu.id = (project ->> 'user_id')::bigint
+                and cu.platform_id = core.current_platform_id()
+            into _user;
+
+            if _user is null then
+                raise exception 'invalid user id';
+            end if;
+
+            insert into project_service.projects (
+                platform_id, user_id, name, mode
+            ) values (core.current_platform_id(), _user.id, project ->> 'name', (project ->> 'mode')::project_service.project_mode)
+            returning id, name, mode, key into _result;
+
+            return _result;
+    end;
+$$;
+
+
+--
+-- Name: FUNCTION create_project(project json); Type: COMMENT; Schema: project_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION create_project(project json) IS 'Create a new project for user and platform, can be used only by platform api key';
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -819,6 +909,48 @@ CREATE SEQUENCE users_id_seq
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: projects; Type: TABLE; Schema: project_service; Owner: -
+--
+
+CREATE TABLE projects (
+    platform_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    name text NOT NULL,
+    mode project_mode NOT NULL,
+    key uuid DEFAULT public.uuid_generate_v4() NOT NULL
+);
+
+
+--
+-- Name: TABLE projects; Type: COMMENT; Schema: project_service; Owner: -
+--
+
+COMMENT ON TABLE projects IS 'store project data for platforms';
+
+
+--
+-- Name: projects_id_seq; Type: SEQUENCE; Schema: project_service; Owner: -
+--
+
+CREATE SEQUENCE projects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: projects_id_seq; Type: SEQUENCE OWNED BY; Schema: project_service; Owner: -
+--
+
+ALTER SEQUENCE projects_id_seq OWNED BY projects.id;
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -877,6 +1009,15 @@ ALTER TABLE ONLY platforms ALTER COLUMN id SET DEFAULT nextval('platforms_id_seq
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: projects id; Type: DEFAULT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects ALTER COLUMN id SET DEFAULT nextval('projects_id_seq'::regclass);
 
 
 SET search_path = community_service, pg_catalog;
@@ -989,6 +1130,24 @@ ALTER TABLE ONLY platform_users
     ADD CONSTRAINT uuidx_user_and_platform UNIQUE (user_id, platform_id);
 
 
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: projects projects_key_key; Type: CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT projects_key_key UNIQUE (key);
+
+
+--
+-- Name: projects projects_pkey; Type: CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT projects_pkey PRIMARY KEY (id);
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -1067,6 +1226,24 @@ ALTER TABLE ONLY platform_users
     ADD CONSTRAINT platform_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
 
 
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: projects projects_platform_id_fkey; Type: FK CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT projects_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+
+--
+-- Name: projects projects_user_id_fkey; Type: FK CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT projects_user_id_fkey FOREIGN KEY (user_id) REFERENCES community_service.users(id);
+
+
 --
 -- Name: community_service; Type: ACL; Schema: -; Owner: -
 --
@@ -1117,6 +1294,26 @@ GRANT USAGE ON SCHEMA platform_service_api TO admin;
 GRANT USAGE ON SCHEMA platform_service_api TO postgrest;
 GRANT USAGE ON SCHEMA platform_service_api TO platform_user;
 GRANT USAGE ON SCHEMA platform_service_api TO scoped_user;
+
+
+--
+-- Name: project_service; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA project_service TO scoped_user;
+GRANT USAGE ON SCHEMA project_service TO postgrest;
+GRANT USAGE ON SCHEMA project_service TO admin;
+GRANT USAGE ON SCHEMA project_service TO platform_user;
+
+
+--
+-- Name: project_service_api; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA project_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA project_service_api TO postgrest;
+GRANT USAGE ON SCHEMA project_service_api TO admin;
+GRANT USAGE ON SCHEMA project_service_api TO platform_user;
 
 
 SET search_path = community_service_api, pg_catalog;
@@ -1198,6 +1395,16 @@ GRANT ALL ON FUNCTION login(email text, password text) TO anonymous;
 GRANT ALL ON FUNCTION sign_up(name text, email text, password text) TO anonymous;
 
 
+SET search_path = project_service_api, pg_catalog;
+
+--
+-- Name: create_project(json); Type: ACL; Schema: project_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION create_project(project json) TO admin;
+GRANT ALL ON FUNCTION create_project(project json) TO platform_user;
+
+
 SET search_path = community_service, pg_catalog;
 
 --
@@ -1264,6 +1471,26 @@ GRANT SELECT,INSERT ON TABLE users TO platform_user;
 GRANT ALL ON SEQUENCE users_id_seq TO admin;
 GRANT ALL ON SEQUENCE users_id_seq TO platform_user;
 GRANT ALL ON SEQUENCE users_id_seq TO anonymous;
+
+
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: projects; Type: ACL; Schema: project_service; Owner: -
+--
+
+GRANT SELECT,INSERT ON TABLE projects TO admin;
+GRANT SELECT,INSERT ON TABLE projects TO platform_user;
+GRANT SELECT ON TABLE projects TO scoped_user;
+GRANT SELECT ON TABLE projects TO anonymous;
+
+
+--
+-- Name: projects_id_seq; Type: ACL; Schema: project_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE projects_id_seq TO platform_user;
+GRANT USAGE ON SEQUENCE projects_id_seq TO admin;
 
 
 --
