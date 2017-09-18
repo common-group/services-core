@@ -6,13 +6,14 @@ import models from '../models';
 import adminInputAction from './admin-input-action';
 import adminRadioAction from './admin-radio-action';
 import adminExternalAction from './admin-external-action';
+import projectVM from '../vms/project-vm';
 
 const adminProjectDetail = {
     controller(args) {
         let bankl;
+        const project_id = args.item.project_id;
         const loadBank = () => {
             const model = models.projectAccount,
-                project_id = args.item.project_id,
                 opts = model.getRowOptions(h.idVM.id(project_id).parameters()),
                 project = m.prop({});
 
@@ -40,30 +41,45 @@ const adminProjectDetail = {
             return user;
         };
 
+        const changeUserAction = {
+            toggler: h.toggleProp(false, true),
+            submit: (event) => {
+                event.preventDefault();
+                changeUserAction.complete(false);
+                projectVM
+                    .updateProject(project_id, {user_id: changeUserAction.newValue()})
+                    .then(() => {
+                        changeUserAction.complete(true);
+                        changeUserAction.success(true);
+                        changeUserAction.error(false);
+                    })
+                    .catch(() => {
+                        changeUserAction.complete(true);
+                        changeUserAction.success(true);  
+                        changeUserAction.error(true);
+                    });
+                return false;
+            },
+            complete: m.prop(false),
+            error: m.prop(false),
+            success: m.prop(false),
+            newValue: m.prop('')
+        };
+
+        const actionUnload = action => () => {
+            action.complete(false);
+            action.error(false);
+            action.success(false);
+            action.newValue('');
+        };
+
         return {
             user: loadUser(),
             bankAccount: loadBank(),
             actions: {
-                refund: {
-                    updateKey: 'id',
-                    callToAction: 'Reembolso direto',
-                    innerLabel: 'Tem certeza que deseja reembolsar esse apoio?',
-                    outerLabel: 'Reembolsar Apoio',
-                    model: models.contributionDetail
-                },
-                remove: {
-                    property: 'state',
-                    updateKey: 'id',
-                    callToAction: 'Apagar',
-                    innerLabel: 'Tem certeza que deseja apagar esse apoio?',
-                    outerLabel: 'Apagar Apoio',
-                    forceValue: 'deleted',
-                    successMessage: 'Apoio removido com sucesso!',
-                    errorMessage: 'O apoio não foi removido!',
-                    model: models.contributionDetail
-                }
+                changeUserAction
             },
-            l
+            actionUnload
         };
     },
     view(ctrl, args) {
@@ -71,26 +87,38 @@ const adminProjectDetail = {
             item = args.item,
             user = ctrl.user(),
             bankAccount = ctrl.bankAccount(),
-            userAddress = user.address || {},
-            addOptions = (builder, id) => _.extend({}, builder, {
-                requestOptions: {
-                    url: (`/admin/contributions/${id}/gateway_refund`),
-                    method: 'PUT'
-                }
-            });
+            userAddress = user.address || {};
 
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
             m('.w-row.u-marginbottom-30', [
-                (ctrl.l()) ? h.loader :
-                m.component(adminExternalAction, {
-                    data: addOptions(actions.refund, item.id),
-                    item
-                }),
-                m.component(adminInputAction, {
-                    data: actions.remove,
-                    item
-                })
+                m('.w-col.w-col-2', [
+                    m('button.btn.btn-small.btn-terciary', {
+                        onclick: ctrl.actions.changeUserAction.toggler.toggle
+                    }, 'Trocar realizador'), (ctrl.actions.changeUserAction.toggler()) ?
+                    m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10',{
+                        config: ctrl.actionUnload(ctrl.actions.changeUserAction)
+                    },[
+                        m('form.w-form', {
+                            onsubmit: ctrl.actions.changeUserAction.submit
+                        }, (!ctrl.actions.changeUserAction.complete()) ? [
+                            m('label', 'Id do novo realizador:'),
+                            m(`input.w-input.text-field[type="tel"][placeholder="ex: 239049"]`, {
+                                onchange: m.withAttr('value', ctrl.actions.changeUserAction.newValue),
+                                value: ctrl.actions.changeUserAction.newValue()
+                            }),
+                            m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]')
+                        ] : (!ctrl.actions.changeUserAction.error()) ? [
+                            m('.w-form-done[style="display:block;"]', [
+                                m('p', 'Usuário transferido com sucesso')
+                            ])
+                        ] : [
+                            m('.w-form-error[style="display:block;"]', [
+                                m('p', 'Houve um problema na requisição. Verifique se o usuário que vai receber o projeto possui dados válidos.')
+                            ])
+                        ])
+                    ]) : ''
+                ]),
             ]),
             m('.w-row.card.card-terciary.u-radius', [
                 m('.w-col.w-col-4', [
