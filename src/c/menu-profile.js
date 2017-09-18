@@ -7,11 +7,11 @@ import models from '../models';
 const menuProfile = {
     controller(args) {
         const contributedProjects = m.prop(),
-              latestProjects = m.prop([]),
-              userDetails = m.prop({}),
-              user_id = args.user.user_id,
-              userBalance = m.prop(0),
-              userIdVM = postgrest.filtersVM({ user_id: 'eq' });
+            latestProjects = m.prop([]),
+            userDetails = m.prop({}),
+            user_id = args.user.user_id,
+            userBalance = m.prop(0),
+            userIdVM = postgrest.filtersVM({ user_id: 'eq' });
 
         const userName = () => {
             const name = userVM.displayName(userDetails());
@@ -26,7 +26,7 @@ const menuProfile = {
 
         userIdVM.user_id(user_id);
         models.balance.getRowWithToken(userIdVM.parameters()).then((result) => {
-            const data = _.first(result) || {amount: 0, user_id: user_id};
+            const data = _.first(result) || { amount: 0, user_id };
             userBalance(data.amount);
         });
 
@@ -51,7 +51,7 @@ const menuProfile = {
                     [
                         m('.user-name-menu', [
                             m('.fontsize-smaller.lineheight-tightest.text-align-right', ctrl.userName()),
-                            (ctrl.userBalance() > 0 ? m('.fontsize-smallest.fontweight-semibold.text-success', `R$ ${h.formatNumber(ctrl.userBalance(), 2, 3)}`) : '' )
+                            (ctrl.userBalance() > 0 ? m('.fontsize-smallest.fontweight-semibold.text-success', `R$ ${h.formatNumber(ctrl.userBalance(), 2, 3)}`) : '')
 
                         ]),
                         m(`img.user-avatar[alt='Thumbnail - ${user.name}'][height='40'][src='${h.useAvatarOrDefault(user.profile_img_thumbnail)}'][width='40']`)
@@ -116,7 +116,7 @@ const menuProfile = {
                                                 ),
                                                 m('li.lineheight-looser',
                                                     m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#settings']`,
-                                                        `Dados cadastrais`
+                                                        'Dados cadastrais'
                                                     )
                                                 )
                                             ]
@@ -148,7 +148,7 @@ const menuProfile = {
                                                     )
                                                 ),
                                                 m('li.lineheight-looser',
-                                                    m('a.alt-link.fontsize-smaller[href=\'/pt/admin/projects\']',
+                                                    m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/projects\']',
                                                         'Admin projetos'
                                                     )
                                                 ),

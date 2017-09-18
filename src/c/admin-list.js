@@ -7,16 +7,16 @@ const adminList = {
         const list = args.vm.list;
 
         if (!list.collection().length && list.firstPage) {
-            list.firstPage().then(null, (serverError) => {
+            list.firstPage(args.filterVM ? args.filterVM.parameters() : null).then(null, (serverError) => {
                 args.vm.error(serverError.message);
             });
         }
     },
     view(ctrl, args) {
         const list = args.vm.list,
-              error = args.vm.error,
-              label = args.label || '',
-              itemComponent = args.itemComponent || adminItem;
+            error = args.vm.error,
+            label = args.label || '',
+            itemComponent = args.itemComponent || adminItem;
 
         return m('.w-section.section', [
             m('.w-container',

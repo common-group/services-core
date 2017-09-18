@@ -1,4 +1,5 @@
 import adminUsers from './root/admin-users';
+import adminProjects from './root/admin-projects';
 import adminContributions from './root/admin-contributions';
 import adminBalanceTranfers from './root/admin-balance-tranfers';
 import flex from './root/flex';
@@ -43,6 +44,7 @@ import copyTextInput from './c/copy-text-input';
 const c = {
     root: {
         AdminUsers: adminUsers,
+        AdminProjects: adminProjects,
         AdminContributions: adminContributions,
         AdminBalanceTranfers: adminBalanceTranfers,
         ClipboardCopy: copyTextInput,

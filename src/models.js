@@ -33,6 +33,7 @@ const models = {
     projectVisitorsPerDay: postgrest.model('project_visitors_per_day'),
     projectTransfer: postgrest.model('project_transfers'),
     project: postgrest.model('projects'),
+    adminProject: postgrest.model('admin_projects'),
     projectSearch: postgrest.model('rpc/project_search'),
     publicTags: postgrest.model('public_tags'),
     category: postgrest.model('categories'),
