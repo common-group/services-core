@@ -43,11 +43,11 @@ const adminProjectDetail = {
 
         const changeUserAction = {
             toggler: h.toggleProp(false, true),
-            submit: (event) => {
-                event.preventDefault();
+            submit: (newValue) => () => {
+                console.log('new value', newValue);
                 changeUserAction.complete(false);
                 projectVM
-                    .updateProject(project_id, {user_id: changeUserAction.newValue()})
+                    .updateProject(project_id, {user_id: newValue})
                     .then(() => {
                         changeUserAction.complete(true);
                         changeUserAction.success(true);
@@ -64,6 +64,10 @@ const adminProjectDetail = {
             error: m.prop(false),
             success: m.prop(false),
             newValue: m.prop('')
+        };
+
+        const contributionReport = {
+            toggler: h.toggleProp(false, true)
         };
 
         const actionUnload = action => () => {
@@ -107,7 +111,9 @@ const adminProjectDetail = {
                                 onchange: m.withAttr('value', ctrl.actions.changeUserAction.newValue),
                                 value: ctrl.actions.changeUserAction.newValue()
                             }),
-                            m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]')
+                            m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]', {
+                                onclick: ctrl.actions.changeUserAction.submit(ctrl.actions.changeUserAction.newValue())
+                            })
                         ] : (!ctrl.actions.changeUserAction.error()) ? [
                             m('.w-form-done[style="display:block;"]', [
                                 m('p', 'Usuário transferido com sucesso')
@@ -119,6 +125,9 @@ const adminProjectDetail = {
                         ])
                     ]) : ''
                 ]),
+                m('.w-col.w-col-2', [
+                    m('a.btn.btn-small.btn-terciary', {href: `/projects/${item.project_id}/contributions_report`}, 'Relatório de apoios')
+                ])
             ]),
             m('.w-row.card.card-terciary.u-radius', [
                 m('.w-col.w-col-4', [
