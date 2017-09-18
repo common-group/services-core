@@ -146,17 +146,7 @@ const adminProjectDetail = {
                         m('span.fontweight-semibold',
                             'Alcançado:'
                         ),
-                        ` R$ ${h.formatNumber(item.pledged, 2, 3)}\ `,
-                        m('br'),
-                        m('span.fontweight-semibold',
-                            'Taxa do MP:'
-                        ),
-                        ' R$ 341\ ',
-                        m('br'),
-                        m('span.fontweight-semibold',
-                            'Taxa do Catarse:'
-                        ),
-                        ' R$ 1.055'
+                        ` R$ ${h.formatNumber(item.pledged, 2, 3)}\ `
                     ]),
                     m('.fontsize-smallest.lineheight-looser', [
                         m('span.fontweight-semibold',
@@ -169,11 +159,6 @@ const adminProjectDetail = {
                         ),
                         h.momentify(item.project_expires_at, 'DD/MM/YYYY, HH:mm'),
                         m('br'),
-                        // m('span.fontweight-semibold',
-                            // 'Prazo de entrega:'
-                        // ),
-                        // ' 30/11/2015\ ',
-                        // m('br'),
                         m('span.fontweight-semibold',
                             'Últ. atualização: '
                         ),
@@ -194,19 +179,6 @@ const adminProjectDetail = {
                     m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20',
                         'Dados bancários'
                     ),
-                    m('.fontsize-smallest.lineheight-looser.u-marginbottom-20', [
-                        m('span.fontweight-semibold',
-                            'Valor do repasse:'
-                        ),
-                        m.trust('&nbsp;'),
-                        'R$ 15050',
-                        m('br'),
-                        m('span.fontweight-semibold',
-                            'Data do repasse:'
-                        ),
-                        m.trust('&nbsp;'),
-                        '20/01/2015'
-                    ]),
                     m('.fontsize-smallest.lineheight-looser', [
                         m('span.fontweight-semibold',
                             'Banco: '
