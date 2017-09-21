@@ -8,37 +8,27 @@ const shippingFeeInput = {
         const states = args.states;
         const fee = args.fee,
             fees = args.fees,
-            feeIndex = args.feeIndex,
             deleted = h.toggleProp(false, true),
-            feeValue = m.prop(fee.value ? `${h.formatNumber(fee.value, 2, 3)}` : '0,00'),
-            feeDestination = m.prop(fee.destination),
-            index = args.index,
-            stateInUse = state => state.acronym !== feeDestination() && _.contains(_.pluck(fees(), 'destination'), state.acronym),
-            updateFees = () => {
-                const feeToUpdateIndex = _.indexOf(fees(), fee);
-                fee.destination = feeDestination();
-                fees()[feeToUpdateIndex] = fee;
+            stateInUse = (state) => {
+                const destinations = _.map(fees(), fee => fee.destination());
+                return state.acronym !== fee.destination() && _.contains(destinations, state.acronym);
             },
-            applyMask = _.compose(feeValue, h.applyMonetaryMask);
+            applyMask = _.compose(fee.value, h.applyMonetaryMask);
 
+        _.extend(fee, { deleted });
+        fee.value(fee.value() ? `${h.formatNumber(fee.value(), 2, 3)}` : '0,00');
         return {
             fee,
             applyMask,
             fees,
             deleted,
-            feeValue,
+            feeValue: fee.value,
             stateInUse,
-            feeDestination,
-            updateFees,
-            feeIndex,
-            index,
             states
         };
     },
     view(ctrl) {
-        const feeIndex = ctrl.feeIndex,
-            index = ctrl.index,
-            deleted = ctrl.deleted,
+        const deleted = ctrl.deleted,
             othersCount = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international').length,
             states = ctrl.states;
 
@@ -47,10 +37,9 @@ const shippingFeeInput = {
                 m('.w-col.w-col-6',
 
                     (
-                        ctrl.feeDestination() === 'others' ? [
+                        ctrl.fee.destination() === 'others' ? [
 
                             m('input[type=\'hidden\']', {
-                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
                                 value: 'others'
                             }),
                             m('label.field-label.fontsize-smallest',
@@ -58,11 +47,10 @@ const shippingFeeInput = {
                             )
                         ] :
 
-                        ctrl.feeDestination() === 'international' ?
+                        ctrl.fee.destination() === 'international' ?
 
                         [
                             m('input[type=\'hidden\']', {
-                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
                                 value: 'international'
                             }),
                             m('label.field-label.fontsize-smallest',
@@ -70,14 +58,10 @@ const shippingFeeInput = {
                             )
                         ] :
 
-                        m(`select.fontsize-smallest.text-field.text-field-light.w-select[id='project_rewards_shipping_fees_attributes_${index}_destination']`, {
+                        m('select.fontsize-smallest.text-field.text-field-light.w-select', {
                             class: ctrl.fee.error ? 'error' : false,
-                            name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][destination]`,
-                            value: ctrl.feeDestination(),
-                            onchange: (e) => {
-                                ctrl.feeDestination(e.target.value);
-                                ctrl.updateFees();
-                            }
+                            value: ctrl.fee.destination(),
+                            onchange: m.withAttr('value', ctrl.fee.destination)
                         }, [
                             (_.map(states(), state =>
                                 m('option', {
@@ -102,28 +86,22 @@ const shippingFeeInput = {
                                 autocomplete: 'off',
                                 type: 'text',
                                 onkeyup: m.withAttr('value', ctrl.applyMask),
-                                name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][value]`,
                                 oninput: m.withAttr('value', ctrl.feeValue)
                             })
                         )
                     ])
                 ),
                 m('.w-col.w-col-1', [
-                    m(`input[id='project_rewards_shipping_fees_attributes_${index}__destroy'][type='hidden']`, {
-                        value: ctrl.deleted(),
-                        name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][_destroy]`
+                    m('input[type=\'hidden\']', {
+                        value: ctrl.deleted()
                     }),
 
-                    (ctrl.feeDestination() === 'others' || ctrl.feeDestination() === 'international' ? '' :
+                    (ctrl.fee.destination() === 'others' || ctrl.fee.destination() === 'international' ? '' :
                         m('a.btn.btn-no-border.btn-small.btn-terciary.fa.fa-1.fa-trash', {
                             onclick: () => ctrl.deleted.toggle()
                         }))
-                ]),
+                ])
 
-                m(`input[type='hidden'][id='project_rewards_shipping_fees_attributes_${feeIndex}_id']`, {
-                    name: `project[rewards_attributes][${index}][shipping_fees_attributes][${feeIndex}][id]`,
-                    value: ctrl.fee.id || null
-                })
 
             ],
             ctrl.fee.error ? m(inlineError, { message: 'Estado não pode ficar em branco.' }) : ''
