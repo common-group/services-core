@@ -103,74 +103,68 @@ const projectEditReward = {
             project = args.project;
 
         return m("[id='dashboard-rewards-tab']",
-                 (project() ? [
-                     m('.w-section.section',
-                m('.w-container', [
-                    (ctrl.showSuccess() ? m.component(popNotification, {
-                        message: 'Recompensa salva com sucesso'
-                    }) : ''),
-                    (ctrl.error() ? m.component(popNotification, {
-                        message: ctrl.errors(),
-                        error: true
-                    }) : ''),
-                    m('.w-row',
-                        m('.w-col.w-col-8.w-col-push-2',
-                            m('.u-marginbottom-60.u-text-center',
-                                m('.w-inline-block.card.fontsize-small.u-radius',
-                                    [
+            (project() ? [
+                m('.w-section.section',
+                    m('.w-container', [
+                        (ctrl.showSuccess() ? m.component(popNotification, {
+                            message: 'Recompensa salva com sucesso'
+                        }) : ''),
+                        (ctrl.error() ? m.component(popNotification, {
+                            message: ctrl.errors(),
+                            error: true
+                        }) : ''),
+                        m('.w-row',
+                            m('.w-col.w-col-8.w-col-push-2',
+                                m('.u-marginbottom-60.u-text-center',
+                                    m('.w-inline-block.card.fontsize-small.u-radius', [
                                         m('span.fa.fa-lightbulb-o'),
                                         m.trust(` ${I18n.t('reward_know_more_cta_html', I18nScope())}`)
-                                    ]
+                                    ])
                                 )
                             )
-                        )
-                    ),
-                    m('.w-row',
-                        [
+                        ),
+                        m('.w-row', [
                             m('.w-col.w-col-9',
-                                m('form.simple_form.project-form.w-form[id=\'reward_form\']', [
-                                    m("input[id='anchor'][name='anchor'][type='hidden'][value='reward']"),
-                                    m("[id='dashboard-rewards']", [
-
-                                        ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
-                                            config: ctrl.setSorting
-                                        }, [
-                                            _.map(_.sortBy(ctrl.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
-                                                    m('.reward-card', [
-                                                        (!reward().edit() ?
-                                                            m(dashboardRewardCard, {
-                                                                index,
-                                                                reward,
-                                                                error,
-                                                                user: ctrl.user(),
-                                                                project_id: args.project_id,
-                                                                project_state: project().state
-                                                            }) :
-                                                            m(editRewardCard, {
-                                                                project_id: args.project_id,
-                                                                error,
-                                                                showSuccess: ctrl.showSuccess,
-                                                                errors: ctrl.errors,
-                                                                reward
-                                                            }))
-                                                    ])
-                                                ),
-                                                m('input.ui-sortable-handle[type=\'hidden\']', {
-                                                    value: reward().id()
-                                                })
-                                            ]))
-                                        ]),
-
+                                m('.w-form', [
+                                    ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
+                                        config: ctrl.setSorting
+                                    }, [
+                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
+                                                m('.reward-card', [
+                                                    (!reward().edit() ?
+                                                        m(dashboardRewardCard, {
+                                                            reward,
+                                                            error,
+                                                            errors: ctrl.errors,
+                                                            user: ctrl.user(),
+                                                            showSuccess: ctrl.showSuccess,
+                                                            project_id: args.project_id,
+                                                            project_state: project().state
+                                                        }) :
+                                                        m(editRewardCard, {
+                                                            project_id: args.project_id,
+                                                            error,
+                                                            showSuccess: ctrl.showSuccess,
+                                                            errors: ctrl.errors,
+                                                            reward
+                                                        }))
+                                                ])
+                                            ),
+                                            m('input.ui-sortable-handle[type=\'hidden\']', {
+                                                value: reward().id()
+                                            })
+                                        ]))
                                     ])
+
                                 ]),
-                              rewardVM.canAdd(project().state, ctrl.user()) ? [
-                                  m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                      onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
-                                  },
+                                rewardVM.canAdd(project().state, ctrl.user()) ? [
+                                    m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
+                                        onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
+                                    },
                                         I18n.t('add_reward', I18nScope())
                                     )
 
-                              ] : ''
+                                ] : ''
                             ),
                             m('.w-col.w-col-3', [
                                 I18n.t('reward_faq_intro', I18nScope()),
@@ -186,10 +180,10 @@ const projectEditReward = {
                                     m('br')
                                 ])
                             ])
-                        ]
-                    )
-                ])
-                            )] : h.loader())
+                        ])
+                    ])
+                )
+            ] : h.loader())
         );
     }
 };

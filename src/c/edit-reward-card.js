@@ -16,6 +16,7 @@ const editRewardCard = {
             confirmDelete = () => {
                 const r = confirm('Você tem certeza?');
                 if (r) {
+                    if (reward.newReward) { destroyed(true); return false; }
                     return m.request({
                         method: 'DELETE',
                         url: `/projects/${args.project_id}/rewards/${reward.id()}`,
@@ -320,21 +321,21 @@ const editRewardCard = {
                         ])
                     ]),
                     m('.w-row.u-margintop-30', [
+                        m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
+                                m('a.w-button.btn.btn-small', {
+                                    onclick: () => {
+                                        ctrl.saveReward();
+                                    }
+                                }, 'Salvar')
+                            ),
                         (reward.newReward ? '' :
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                                 m('a.w-button.btn-terciary.btn.btn-small.reward-close-button', {
                                     onclick: () => {
                                         reward.edit.toggle();
                                     }
-                                }, 'Fechar')
+                                }, 'Cancelar')
                             )),
-                        m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
-                                m('a.w-button.btn-terciary.btn.btn-small', {
-                                    onclick: () => {
-                                        ctrl.saveReward();
-                                    }
-                                }, 'Salvar')
-                            ),
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                             m('input[type=\'hidden\'][value=\'false\']'),
                             m('a.remove_fields.existing', { onclick: ctrl.confirmDelete },
