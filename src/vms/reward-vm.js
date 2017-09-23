@@ -37,12 +37,12 @@ const rewardLoader = (rewardId) => {
 
 const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
 
-const getFees = (reward) => {
+const getFees = (rewardId) => {
     const feesFilter = postgrest.filtersVM({
         reward_id: 'eq'
     });
 
-    feesFilter.reward_id(reward.id);
+    feesFilter.reward_id(rewardId);
     const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
     return feesLoader.load();
 };
@@ -166,6 +166,20 @@ const shippingFeeForCurrentReward = (selectedDestination) => {
     return currentFee;
 };
 
+const createReward = (projectId, rewardData) => m.request({
+    method: 'POST',
+    url: `/projects/${projectId}/rewards.json`,
+    data: { reward: rewardData },
+    config: h.setCsrfToken
+});
+
+const updateReward = (projectId, rewardId, rewardData) => m.request({
+    method: 'PATCH',
+    url: `/projects/${projectId}/rewards/${rewardId}.json`,
+    data: { reward: rewardData },
+    config: h.setCsrfToken
+});
+
 const canEdit = (reward, projectState, user) => (user || {}).is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count <= 0 && reward.waiting_payment_count <= 0));
 
 const canAdd = (projectState, user) => (user || {}).is_admin || projectState === 'draft' || projectState === 'online';
@@ -188,6 +202,8 @@ const rewardVM = {
     getSelectedReward,
     selectedReward,
     contributionValue,
+    updateReward,
+    createReward,
     rewardsLoader,
     locationOptions,
     shippingFeeForCurrentReward,

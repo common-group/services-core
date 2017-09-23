@@ -8,24 +8,18 @@ import rewardVM from '../vms/reward-vm';
 const editRewardCard = {
     controller(args) {
         const reward = args.reward(),
-            fields = {
-                title: m.prop(reward.title),
-                shipping_options: m.prop(reward.shipping_options),
-                minimumValue: m.prop(reward.minimum_value),
-                description: m.prop(reward.description),
-                deliverAt: m.prop(reward.deliver_at)
-            },
             destroyed = m.prop(false),
             acceptNumeric = (e) => {
-                fields.minimumValue(e.target.value.replace(/[^0-9]/g, ''));
+                reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
                 return true;
             },
             confirmDelete = () => {
                 const r = confirm('Você tem certeza?');
                 if (r) {
+                    if (reward.newReward) { destroyed(true); return false; }
                     return m.request({
                         method: 'DELETE',
-                        url: `/projects/${args.project_id}/rewards/${reward.id}`,
+                        url: `/projects/${args.project_id}/rewards/${reward.id()}`,
                         config: h.setCsrfToken
                     }).then(() => {
                         destroyed(true);
@@ -37,24 +31,82 @@ const editRewardCard = {
             descriptionError = m.prop(false),
             minimumValueError = m.prop(false),
             deliverAtError = m.prop(false),
-            index = args.index,
-            showTips = h.toggleProp(false, true),
             states = m.prop([]),
             fees = m.prop([]),
             statesLoader = rewardVM.statesLoader,
-            updateOptions = () => {
-                if (((fields.shipping_options() === 'national' || fields.shipping_options() === 'international') && !_.contains(_.pluck(fees(), 'destination'), 'others'))) {
-                    fees().push({
-                        value: 0,
-                        destination: 'others'
+            validate = () => {
+                args.error(false);
+                args.errors('Erro ao salvar informações. Confira os dados informados.');
+                descriptionError(false);
+                minimumValueError(false);
+                deliverAtError(false);
+                if (reward.newReward && moment(reward.deliver_at()).isBefore(moment().date(-1))) {
+                    args.error(true);
+                    deliverAtError(true);
+                }
+                if (_.isEmpty(reward.description())) {
+                    args.error(true);
+                    descriptionError(true);
+                }
+                if (!reward.minimum_value() || parseInt(reward.minimum_value()) < 10) {
+                    args.error(true);
+                    minimumValueError(true);
+                }
+                _.map(fees(), (fee) => {
+                    _.extend(fee, { error: false });
+                    if (fee.destination() === null) {
+                        args.error(true);
+                        _.extend(fee, { error: true });
+                    }
+                });
+            },
+            saveReward = () => {
+                validate();
+                if (args.error()) {
+                    return false;
+                }
+                const shippingFees = _.map(fees(), fee => ({ _destroy: fee.deleted(), id: fee.id(), value: fee.value(), destination: fee.destination() }));
+                const data = {
+                    title: reward.title(),
+                    project_id: args.project_id,
+                    shipping_options: reward.shipping_options(),
+                    minimum_value: reward.minimum_value(),
+                    description: reward.description(),
+                    shipping_fees_attributes: shippingFees,
+                    deliver_at: reward.deliver_at()
+                };
+                if (reward.newReward) {
+                    rewardVM.createReward(args.project_id, data).then((r) => {
+                        args.showSuccess(true);
+                        reward.newReward = false;
+                        // save id so we can update without reloading the page
+                        reward.id(r.reward_id);
+                        reward.edit.toggle();
+                    });
+                } else {
+                    rewardVM.updateReward(args.project_id, reward.id(), data).then(() => {
+                        args.showSuccess(true);
+                        reward.edit.toggle();
                     });
                 }
-                if (fields.shipping_options() === 'national') {
-                    fees(_.reject(fees(), fee => fee.destination === 'international'));
-                } else if (fields.shipping_options() === 'international' && !_.contains(_.pluck(fees(), 'destination'), 'international')) {
+                return false;
+            },
+            updateOptions = () => {
+                const destinations = _.map(fees(), fee => fee.destination());
+                if (((reward.shipping_options() === 'national' || reward.shipping_options() === 'international') && !_.contains(destinations, 'others'))) {
                     fees().push({
-                        value: 0,
-                        destination: 'international'
+                        id: m.prop(null),
+                        value: m.prop(0),
+                        destination: m.prop('others')
+                    });
+                }
+                if (reward.shipping_options() === 'national') {
+                    fees(_.reject(fees(), fee => fee.destination() === 'international'));
+                } else if (reward.shipping_options() === 'international' && !_.contains(destinations, 'international')) {
+                    fees().push({
+                        id: m.prop(null),
+                        value: m.prop(0),
+                        destination: m.prop('international')
                     });
                 }
             };
@@ -67,61 +119,39 @@ const editRewardCard = {
             });
 
             if (!reward.newReward) {
-                rewardVM.getFees(reward).then((feeData) => {
-                    fees(feeData);
+                rewardVM.getFees(reward.id()).then((feeData) => {
+                    _.map(feeData, (fee) => {
+                        const feeProp = {
+                            id: m.prop(fee.id),
+                            value: m.prop(fee.value),
+                            destination: m.prop(fee.destination)
+                        };
+                        fees().unshift(feeProp);
+                    });
                     updateOptions();
                 });
             }
         });
 
-        _.extend(args.reward(), {
-            validate: () => {
-                descriptionError(false);
-                minimumValueError(false);
-                deliverAtError(false);
-                if (reward.newReward && moment(fields.deliverAt()).isBefore(moment().date(-1))) {
-                    args.error(true);
-                    deliverAtError(true);
-                }
-                if (_.isEmpty(fields.description())) {
-                    args.error(true);
-                    descriptionError(true);
-                }
-                if (!fields.minimumValue() || parseInt(fields.minimumValue()) < 10) {
-                    args.error(true);
-                    minimumValueError(true);
-                }
-                _.map(fees(), (fee) => {
-                    _.extend(fee, { error: false });
-                    if (fee.destination === null) {
-                        args.error(true);
-                        _.extend(fee, { error: true });
-                    }
-                });
-            }
-        });
-
         return {
-            fields,
             minimumValueError,
             deliverAtError,
             descriptionError,
             confirmDelete,
             acceptNumeric,
             updateOptions,
-            showTips,
+            saveReward,
             destroyed,
             states,
             reward,
-            index,
             fees
         };
     },
     view(ctrl, args) {
-        const index = ctrl.index,
-            newFee = {
-                value: null,
-                destination: null
+        const newFee = {
+                id: m.prop(null),
+                value: m.prop(null),
+                destination: m.prop(null)
             },
             fees = ctrl.fees(),
             reward = args.reward(),
@@ -141,10 +171,9 @@ const editRewardCard = {
                             )
                         ),
                         m('.w-col.w-col-7',
-                            m(`input.w-input.text-field.positive[aria-required='true'][autocomplete='off'][type='tel'][id='project_rewards_attributes_${index}_title']`, {
-                                name: `project[rewards_attributes][${index}][title]`,
-                                value: ctrl.fields.title(),
-                                onchange: m.withAttr('value', ctrl.fields.title)
+                            m('input.w-input.text-field.positive[aria-required=\'true\'][autocomplete=\'off\'][type=\'tel\']', {
+                                value: ctrl.reward.title(),
+                                oninput: m.withAttr('value', ctrl.reward.title)
                             })
                         )
                     ]),
@@ -162,11 +191,10 @@ const editRewardCard = {
                                     )
                                 ),
                                 m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                                    m(`input.string.tel.required.w-input.text-field.project-edit-reward.positive.postfix[aria-required='true'][autocomplete='off'][required='required'][type='tel'][id='project_rewards_attributes_${index}_minimum_value']`, {
-                                        name: `project[rewards_attributes][${index}][minimum_value]`,
+                                    m('input.string.tel.required.w-input.text-field.project-edit-reward.positive.postfix[aria-required=\'true\'][autocomplete=\'off\'][required=\'required\'][type=\'tel\']', {
 
                                         class: ctrl.minimumValueError() ? 'error' : false,
-                                        value: ctrl.fields.minimumValue(),
+                                        value: ctrl.reward.minimum_value(),
                                         oninput: e => ctrl.acceptNumeric(e)
                                     })
                                 )
@@ -188,34 +216,30 @@ const editRewardCard = {
                             m('.w-row',
                                 m('.w-col.w-col-12',
                                     m('.w-row', [
-                                        m(`input[id='project_rewards_attributes_${index}_deliver_at_3i'][type='hidden'][value='1']`, {
-                                            name: `project[rewards_attributes][${index}][deliver_at(3i)]`
-                                        }),
-                                        m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_2i']`, {
-                                            name: `project[rewards_attributes][${index}][deliver_at(2i)]`,
+                                        m('input[type=\'hidden\'][value=\'1\']'),
+                                        m('select.date.required.w-input.text-field.w-col-6.positive[aria-required=\'true\'][discard_day=\'true\'][required=\'required\'][use_short_month=\'true\']', {
                                             class: ctrl.deliverAtError() ? 'error' : false,
                                             onchange: (e) => {
-                                                ctrl.fields.deliverAt(moment(ctrl.fields.deliverAt()).month(parseInt(e.target.value) - 1).format());
+                                                ctrl.reward.deliver_at(moment(ctrl.reward.deliver_at()).month(parseInt(e.target.value) - 1).format());
                                             }
                                         }, [
                                             _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
                                                 value: monthIndex + 1,
-                                                selected: moment(ctrl.fields.deliverAt()).format('M') == monthIndex + 1
+                                                selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
                                             },
                                                 h.capitalize(month)
                                             ))
                                         ]),
-                                        m(`select.date.required.w-input.text-field.w-col-6.positive[aria-required='true'][discard_day='true'][required='required'][use_short_month='true'][id='project_rewards_attributes_${index}_deliver_at_1i']`, {
-                                            name: `project[rewards_attributes][${index}][deliver_at(1i)]`,
+                                        m('select.date.required.w-input.text-field.w-col-6.positive[aria-required=\'true\'][discard_day=\'true\'][required=\'required\'][use_short_month=\'true\']', {
                                             class: ctrl.deliverAtError() ? 'error' : false,
                                             onchange: (e) => {
-                                                ctrl.fields.deliverAt(moment(reward.deliverAt).year(parseInt(e.target.value)).format());
+                                                ctrl.reward.deliver_at(moment(reward.deliver_at()).year(parseInt(e.target.value)).format());
                                             }
                                         }, [
                                             _.map(_.range(moment().year(), moment().year() + 6), year =>
                                                 m('option', {
                                                     value: year,
-                                                    selected: moment(ctrl.fields.deliverAt()).format('YYYY') === String(year)
+                                                    selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
                                                 },
                                                     year
                                                 )
@@ -233,11 +257,10 @@ const editRewardCard = {
                         )
                     ),
                     m('.w-row', [
-                        m(`textarea.text.required.w-input.text-field.positive.height-medium[aria-required='true'][placeholder='Descreva sua recompensa'][required='required'][id='project_rewards_attributes_${index}_description']`, {
-                            name: `project[rewards_attributes][${index}][description]`,
-                            value: ctrl.fields.description(),
+                        m('textarea.text.required.w-input.text-field.positive.height-medium[aria-required=\'true\'][placeholder=\'Descreva sua recompensa\'][required=\'required\']', {
+                            value: ctrl.reward.description(),
                             class: ctrl.descriptionError() ? 'error' : false,
-                            onchange: m.withAttr('value', ctrl.fields.description)
+                            oninput: m.withAttr('value', ctrl.reward.description)
                         }),
                         m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                             'Descrição não pode ficar em branco'
@@ -251,11 +274,10 @@ const editRewardCard = {
                             )
                         ),
                         m('.w-col.w-col-9', [
-                            m(`select.positive.text-field.w-select[id='project_rewards_attributes_${index}_shipping_options']`, {
-                                name: `project[rewards_attributes][${index}][shipping_options]`,
-                                value: ctrl.fields.shipping_options() || 'free',
+                            m('select.positive.text-field.w-select', {
+                                value: ctrl.reward.shipping_options() || 'free',
                                 onchange: (e) => {
-                                    ctrl.fields.shipping_options(e.target.value);
+                                    ctrl.reward.shipping_options(e.target.value);
                                     ctrl.updateOptions();
                                 }
                             }, [
@@ -273,14 +295,13 @@ const editRewardCard = {
                                 )
                             ]),
 
-                            ((ctrl.fields.shipping_options() === 'national' || ctrl.fields.shipping_options() === 'international') ?
+                            ((ctrl.reward.shipping_options() === 'national' || ctrl.reward.shipping_options() === 'international') ?
                                 m('.card.card-terciary', [
 
                                     // state fees
                                     (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
                                         fee,
                                         fees: ctrl.fees,
-                                        index,
                                         feeIndex,
                                         states: ctrl.states
                                     }),
@@ -300,18 +321,23 @@ const editRewardCard = {
                         ])
                     ]),
                     m('.w-row.u-margintop-30', [
+                        m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
+                                m('a.w-button.btn.btn-small', {
+                                    onclick: () => {
+                                        ctrl.saveReward();
+                                    }
+                                }, 'Salvar')
+                            ),
                         (reward.newReward ? '' :
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
-                                m("input.w-button.btn-terciary.btn.btn-small.reward-close-button[type='submit'][value='Fechar']", {
+                                m('a.w-button.btn-terciary.btn.btn-small.reward-close-button', {
                                     onclick: () => {
                                         reward.edit.toggle();
                                     }
-                                })
+                                }, 'Cancelar')
                             )),
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
-                            m(`input[id='project_rewards_attributes_${index}__destroy'][type='hidden'][value='false']`, {
-                                name: `project[rewards_attributes][${index}][_destroy]`
-                            }),
+                            m('input[type=\'hidden\'][value=\'false\']'),
                             m('a.remove_fields.existing', { onclick: ctrl.confirmDelete },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
                             )
