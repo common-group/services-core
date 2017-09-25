@@ -83,7 +83,7 @@ const projectsPayment = {
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
-        rewardVM.getFees(reward().id).then(rewardVM.fees);
+        rewardVM.getFees(reward()).then(rewardVM.fees);
         vm.fetchUser().then(() => {
             addVM(addressVM({
                 data: vm.fields.address()

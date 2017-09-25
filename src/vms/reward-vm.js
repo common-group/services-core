@@ -37,12 +37,12 @@ const rewardLoader = (rewardId) => {
 
 const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
 
-const getFees = (rewardId) => {
+const getFees = (reward) => {
     const feesFilter = postgrest.filtersVM({
         reward_id: 'eq'
     });
 
-    feesFilter.reward_id(rewardId);
+    feesFilter.reward_id(reward.id);
     const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
     return feesLoader.load();
 };
