@@ -36,6 +36,20 @@ CREATE SCHEMA core;
 
 
 --
+-- Name: payment_service; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA payment_service;
+
+
+--
+-- Name: payment_service_api; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA payment_service_api;
+
+
+--
 -- Name: platform_service; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -385,6 +399,78 @@ CREATE FUNCTION verify(token text, secret text, algorithm text DEFAULT 'HS256'::
 $$;
 
 
+SET search_path = payment_service_api, pg_catalog;
+
+--
+-- Name: create_payment(json); Type: FUNCTION; Schema: payment_service_api; Owner: -
+--
+
+CREATE FUNCTION create_payment(data json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+        declare
+            _result json;
+            _payment payment_service.catalog_payments;
+            _user_id bigint;
+            _project project_service.projects;
+            _subscription payment_service.subscriptions;
+        begin
+            if current_role = 'platform_user' or current_role = 'admin' then
+                _user_id := ($1 ->> 'user_id')::bigint;
+            else
+                _user_id := core.current_user_id();
+            end if;
+
+            if _user_id is null then
+                raise exception 'missing user';
+            end if;
+
+            if ($1->>'project_id') is null OR not exists(select * from project_service.projects psp
+                where psp.id = ($1->>'project_id')::bigint
+                    and psp.platform_id = core.current_platform_id()) then
+                raise exception 'project not found on platform';
+            end if;
+
+            insert into payment_service.catalog_payments (
+                platform_id, project_id, user_id, data, gateway
+            ) values (
+                core.current_platform_id(),
+                ($1->>'project_id')::bigint,
+                _user_id,
+                $1,
+                coalesce(($1->>'gateway')::text, 'pagarme')
+            ) returning * into _payment;
+
+            if ($1->>'subscription')::boolean then
+                insert into payment_service.subscriptions (
+                    platform_id, project_id, user_id
+                ) values (_payment.platform_id, _payment.project_id, _payment.user_id)
+                returning * into _subscription;
+
+                update payment_service.catalog_payments
+                    set subscription_id = _subscription.id
+                    where id = _payment.id;
+            end if;
+
+            select json_build_object(
+                'id', _payment.id,
+                'subscription_id', _subscription.id
+            ) into _result;
+
+            PERFORM pg_notify('process_payments_channel', _result::text);
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION create_payment(data json); Type: COMMENT; Schema: payment_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION create_payment(data json) IS 'Catalog new payment for processing and return id';
+
+
 SET search_path = platform_service, pg_catalog;
 
 --
@@ -723,7 +809,7 @@ SET search_path = community_service, pg_catalog;
 --
 
 CREATE TABLE users (
-    platform_id integer,
+    platform_id integer NOT NULL,
     id bigint NOT NULL,
     email text NOT NULL,
     password text NOT NULL,
@@ -803,6 +889,189 @@ CREATE SEQUENCE core_settings_id_seq
 --
 
 ALTER SEQUENCE core_settings_id_seq OWNED BY core_settings.id;
+
+
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payments; Type: TABLE; Schema: payment_service; Owner: -
+--
+
+CREATE TABLE catalog_payments (
+    id bigint NOT NULL,
+    platform_id integer NOT NULL,
+    project_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    subscription_id bigint,
+    data jsonb NOT NULL,
+    gateway text NOT NULL,
+    gateway_cached_data jsonb,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: TABLE catalog_payments; Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON TABLE catalog_payments IS 'Store initial payments data to sent to queue';
+
+
+--
+-- Name: catalog_payments_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE catalog_payments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: catalog_payments_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE catalog_payments_id_seq OWNED BY catalog_payments.id;
+
+
+--
+-- Name: credit_cards; Type: TABLE; Schema: payment_service; Owner: -
+--
+
+CREATE TABLE credit_cards (
+    id bigint NOT NULL,
+    platform_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    gateway text NOT NULL,
+    gateway_data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: TABLE credit_cards; Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON TABLE credit_cards IS 'Store gateway credit_cards references';
+
+
+--
+-- Name: credit_cards_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE credit_cards_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: credit_cards_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE credit_cards_id_seq OWNED BY credit_cards.id;
+
+
+--
+-- Name: subscription_transitions; Type: TABLE; Schema: payment_service; Owner: -
+--
+
+CREATE TABLE subscription_transitions (
+    id bigint NOT NULL,
+    subscription_id bigint NOT NULL,
+    to_status text NOT NULL,
+    most_recent boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: subscription_transitions_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE subscription_transitions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subscription_transitions_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE subscription_transitions_id_seq OWNED BY subscription_transitions.id;
+
+
+--
+-- Name: subscription_transitions_subscription_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE subscription_transitions_subscription_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subscription_transitions_subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE subscription_transitions_subscription_id_seq OWNED BY subscription_transitions.subscription_id;
+
+
+--
+-- Name: subscriptions; Type: TABLE; Schema: payment_service; Owner: -
+--
+
+CREATE TABLE subscriptions (
+    id bigint NOT NULL,
+    platform_id integer NOT NULL,
+    project_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    credit_card_id bigint,
+    status text DEFAULT 'pending'::text NOT NULL,
+    current_period_start timestamp without time zone,
+    current_period_end timestamp without time zone,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: TABLE subscriptions; Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON TABLE subscriptions IS 'Store subscription transitions between charges';
+
+
+--
+-- Name: subscriptions_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE subscriptions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
 
 
 SET search_path = platform_service, pg_catalog;
@@ -981,6 +1250,43 @@ SET search_path = core, pg_catalog;
 ALTER TABLE ONLY core_settings ALTER COLUMN id SET DEFAULT nextval('core_settings_id_seq'::regclass);
 
 
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payments id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payments ALTER COLUMN id SET DEFAULT nextval('catalog_payments_id_seq'::regclass);
+
+
+--
+-- Name: credit_cards id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY credit_cards ALTER COLUMN id SET DEFAULT nextval('credit_cards_id_seq'::regclass);
+
+
+--
+-- Name: subscription_transitions id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscription_transitions ALTER COLUMN id SET DEFAULT nextval('subscription_transitions_id_seq'::regclass);
+
+
+--
+-- Name: subscription_transitions subscription_id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscription_transitions ALTER COLUMN subscription_id SET DEFAULT nextval('subscription_transitions_subscription_id_seq'::regclass);
+
+
+--
+-- Name: subscriptions id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscriptions ALTER COLUMN id SET DEFAULT nextval('subscriptions_id_seq'::regclass);
+
+
 SET search_path = platform_service, pg_catalog;
 
 --
@@ -1062,6 +1368,40 @@ ALTER TABLE ONLY core_settings
 
 ALTER TABLE ONLY core_settings
     ADD CONSTRAINT core_settings_pkey PRIMARY KEY (id);
+
+
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payments catalog_payments_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payments
+    ADD CONSTRAINT catalog_payments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: credit_cards credit_cards_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY credit_cards
+    ADD CONSTRAINT credit_cards_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subscription_transitions subscription_transitions_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscription_transitions
+    ADD CONSTRAINT subscription_transitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subscriptions subscriptions_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (id);
 
 
 SET search_path = platform_service, pg_catalog;
@@ -1167,6 +1507,36 @@ SET search_path = core, pg_catalog;
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON core_settings FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
 
 
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: credit_cards set_updated_at; Type: TRIGGER; Schema: payment_service; Owner: -
+--
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON credit_cards FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
+
+
+--
+-- Name: subscriptions set_updated_at; Type: TRIGGER; Schema: payment_service; Owner: -
+--
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON subscriptions FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
+
+
+--
+-- Name: subscription_transitions set_updated_at; Type: TRIGGER; Schema: payment_service; Owner: -
+--
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON subscription_transitions FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
+
+
+--
+-- Name: catalog_payments set_updated_at; Type: TRIGGER; Schema: payment_service; Owner: -
+--
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON catalog_payments FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
+
+
 SET search_path = platform_service, pg_catalog;
 
 --
@@ -1198,6 +1568,96 @@ SET search_path = community_service, pg_catalog;
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payments catalog_payments_platform_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payments
+    ADD CONSTRAINT catalog_payments_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+
+--
+-- Name: catalog_payments catalog_payments_project_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payments
+    ADD CONSTRAINT catalog_payments_project_id_fkey FOREIGN KEY (project_id) REFERENCES project_service.projects(id);
+
+
+--
+-- Name: catalog_payments catalog_payments_subscription_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payments
+    ADD CONSTRAINT catalog_payments_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES subscriptions(id);
+
+
+--
+-- Name: catalog_payments catalog_payments_user_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payments
+    ADD CONSTRAINT catalog_payments_user_id_fkey FOREIGN KEY (user_id) REFERENCES community_service.users(id);
+
+
+--
+-- Name: credit_cards credit_cards_platform_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY credit_cards
+    ADD CONSTRAINT credit_cards_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+
+--
+-- Name: credit_cards credit_cards_user_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY credit_cards
+    ADD CONSTRAINT credit_cards_user_id_fkey FOREIGN KEY (user_id) REFERENCES community_service.users(id);
+
+
+--
+-- Name: subscription_transitions subscription_transitions_subscription_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscription_transitions
+    ADD CONSTRAINT subscription_transitions_subscription_id_fkey FOREIGN KEY (subscription_id) REFERENCES subscriptions(id);
+
+
+--
+-- Name: subscriptions subscriptions_credit_card_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_credit_card_id_fkey FOREIGN KEY (credit_card_id) REFERENCES credit_cards(id);
+
+
+--
+-- Name: subscriptions subscriptions_platform_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+
+--
+-- Name: subscriptions subscriptions_project_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_project_id_fkey FOREIGN KEY (project_id) REFERENCES project_service.projects(id);
+
+
+--
+-- Name: subscriptions subscriptions_user_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_user_id_fkey FOREIGN KEY (user_id) REFERENCES community_service.users(id);
 
 
 SET search_path = platform_service, pg_catalog;
@@ -1248,10 +1708,10 @@ ALTER TABLE ONLY projects
 -- Name: community_service; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA community_service TO anonymous;
-GRANT USAGE ON SCHEMA community_service TO postgrest;
-GRANT USAGE ON SCHEMA community_service TO admin;
 GRANT USAGE ON SCHEMA community_service TO platform_user;
+GRANT USAGE ON SCHEMA community_service TO postgrest;
+GRANT USAGE ON SCHEMA community_service TO anonymous;
+GRANT USAGE ON SCHEMA community_service TO admin;
 GRANT USAGE ON SCHEMA community_service TO scoped_user;
 
 
@@ -1259,41 +1719,60 @@ GRANT USAGE ON SCHEMA community_service TO scoped_user;
 -- Name: community_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA community_service_api TO anonymous;
-GRANT USAGE ON SCHEMA community_service_api TO scoped_user;
-GRANT USAGE ON SCHEMA community_service_api TO postgrest;
 GRANT USAGE ON SCHEMA community_service_api TO platform_user;
+GRANT USAGE ON SCHEMA community_service_api TO anonymous;
+GRANT USAGE ON SCHEMA community_service_api TO postgrest;
+GRANT USAGE ON SCHEMA community_service_api TO admin;
+GRANT USAGE ON SCHEMA community_service_api TO scoped_user;
 
 
 --
 -- Name: core; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA core TO anonymous;
 GRANT USAGE ON SCHEMA core TO scoped_user;
-GRANT USAGE ON SCHEMA core TO postgrest;
 GRANT USAGE ON SCHEMA core TO platform_user;
+GRANT USAGE ON SCHEMA core TO anonymous;
+
+
+--
+-- Name: payment_service; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA payment_service TO scoped_user;
+GRANT USAGE ON SCHEMA payment_service TO platform_user;
+GRANT USAGE ON SCHEMA payment_service TO postgrest;
+GRANT USAGE ON SCHEMA payment_service TO admin;
+
+
+--
+-- Name: payment_service_api; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA payment_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA payment_service_api TO platform_user;
+GRANT USAGE ON SCHEMA payment_service_api TO postgrest;
+GRANT USAGE ON SCHEMA payment_service_api TO admin;
 
 
 --
 -- Name: platform_service; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA platform_service TO anonymous;
-GRANT USAGE ON SCHEMA platform_service TO admin;
-GRANT USAGE ON SCHEMA platform_service TO postgrest;
 GRANT USAGE ON SCHEMA platform_service TO platform_user;
+GRANT USAGE ON SCHEMA platform_service TO anonymous;
+GRANT USAGE ON SCHEMA platform_service TO postgrest;
+GRANT USAGE ON SCHEMA platform_service TO admin;
+GRANT USAGE ON SCHEMA platform_service TO scoped_user;
 
 
 --
 -- Name: platform_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA platform_service_api TO anonymous;
 GRANT USAGE ON SCHEMA platform_service_api TO admin;
-GRANT USAGE ON SCHEMA platform_service_api TO postgrest;
 GRANT USAGE ON SCHEMA platform_service_api TO platform_user;
-GRANT USAGE ON SCHEMA platform_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA platform_service_api TO anonymous;
 
 
 --
@@ -1301,9 +1780,9 @@ GRANT USAGE ON SCHEMA platform_service_api TO scoped_user;
 --
 
 GRANT USAGE ON SCHEMA project_service TO scoped_user;
+GRANT USAGE ON SCHEMA project_service TO platform_user;
 GRANT USAGE ON SCHEMA project_service TO postgrest;
 GRANT USAGE ON SCHEMA project_service TO admin;
-GRANT USAGE ON SCHEMA project_service TO platform_user;
 
 
 --
@@ -1311,9 +1790,9 @@ GRANT USAGE ON SCHEMA project_service TO platform_user;
 --
 
 GRANT USAGE ON SCHEMA project_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA project_service_api TO platform_user;
 GRANT USAGE ON SCHEMA project_service_api TO postgrest;
 GRANT USAGE ON SCHEMA project_service_api TO admin;
-GRANT USAGE ON SCHEMA project_service_api TO platform_user;
 
 
 SET search_path = community_service_api, pg_catalog;
@@ -1326,14 +1805,26 @@ GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO admin;
 GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
 
 
+SET search_path = payment_service_api, pg_catalog;
+
+--
+-- Name: create_payment(json); Type: ACL; Schema: payment_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION create_payment(data json) TO scoped_user;
+GRANT ALL ON FUNCTION create_payment(data json) TO platform_user;
+GRANT ALL ON FUNCTION create_payment(data json) TO admin;
+
+
 SET search_path = platform_service, pg_catalog;
 
 --
 -- Name: platforms; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE platforms TO admin;
 GRANT SELECT,INSERT ON TABLE platforms TO platform_user;
+GRANT SELECT,INSERT ON TABLE platforms TO admin;
+GRANT SELECT ON TABLE platforms TO scoped_user;
 
 
 SET search_path = platform_service_api, pg_catalog;
@@ -1351,16 +1842,16 @@ SET search_path = platform_service, pg_catalog;
 -- Name: platform_api_keys; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE platform_api_keys TO admin;
 GRANT SELECT,INSERT ON TABLE platform_api_keys TO platform_user;
+GRANT SELECT,INSERT ON TABLE platform_api_keys TO admin;
 
 
 --
 -- Name: platform_users; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE platform_users TO admin;
 GRANT SELECT,INSERT ON TABLE platform_users TO platform_user;
+GRANT SELECT,INSERT ON TABLE platform_users TO admin;
 
 
 SET search_path = platform_service_api, pg_catalog;
@@ -1369,8 +1860,8 @@ SET search_path = platform_service_api, pg_catalog;
 -- Name: api_keys; Type: ACL; Schema: platform_service_api; Owner: -
 --
 
-GRANT SELECT ON TABLE api_keys TO admin;
 GRANT SELECT ON TABLE api_keys TO platform_user;
+GRANT SELECT ON TABLE api_keys TO admin;
 
 
 --
@@ -1411,11 +1902,11 @@ SET search_path = community_service, pg_catalog;
 -- Name: users; Type: ACL; Schema: community_service; Owner: -
 --
 
-GRANT SELECT ON TABLE users TO anonymous;
-GRANT SELECT ON TABLE users TO scoped_user;
-GRANT SELECT ON TABLE users TO admin;
-GRANT SELECT ON TABLE users TO postgrest;
 GRANT SELECT ON TABLE users TO platform_user;
+GRANT SELECT ON TABLE users TO postgrest;
+GRANT SELECT ON TABLE users TO admin;
+GRANT SELECT ON TABLE users TO scoped_user;
+GRANT SELECT ON TABLE users TO anonymous;
 
 
 SET search_path = core, pg_catalog;
@@ -1429,48 +1920,86 @@ GRANT SELECT ON TABLE core_settings TO anonymous;
 GRANT SELECT ON TABLE core_settings TO scoped_user;
 
 
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payments; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO scoped_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO platform_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO admin;
+
+
+--
+-- Name: catalog_payments_id_seq; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO admin;
+GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO platform_user;
+
+
+--
+-- Name: subscriptions; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO scoped_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO platform_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO admin;
+
+
+--
+-- Name: subscriptions_id_seq; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE subscriptions_id_seq TO admin;
+GRANT USAGE ON SEQUENCE subscriptions_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE subscriptions_id_seq TO platform_user;
+
+
 SET search_path = platform_service, pg_catalog;
 
 --
 -- Name: platform_api_keys_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT SELECT,UPDATE ON SEQUENCE platform_api_keys_id_seq TO admin;
 GRANT SELECT,UPDATE ON SEQUENCE platform_api_keys_id_seq TO platform_user;
+GRANT SELECT,UPDATE ON SEQUENCE platform_api_keys_id_seq TO admin;
 
 
 --
 -- Name: platform_users_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT ALL ON SEQUENCE platform_users_id_seq TO admin;
 GRANT ALL ON SEQUENCE platform_users_id_seq TO platform_user;
+GRANT ALL ON SEQUENCE platform_users_id_seq TO admin;
 
 
 --
 -- Name: platforms_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT ALL ON SEQUENCE platforms_id_seq TO admin;
 GRANT ALL ON SEQUENCE platforms_id_seq TO platform_user;
+GRANT ALL ON SEQUENCE platforms_id_seq TO admin;
 
 
 --
 -- Name: users; Type: ACL; Schema: platform_service; Owner: -
 --
 
+GRANT SELECT,INSERT ON TABLE users TO platform_user;
 GRANT SELECT,INSERT ON TABLE users TO anonymous;
 GRANT SELECT,INSERT ON TABLE users TO admin;
-GRANT SELECT,INSERT ON TABLE users TO platform_user;
 
 
 --
 -- Name: users_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT ALL ON SEQUENCE users_id_seq TO admin;
 GRANT ALL ON SEQUENCE users_id_seq TO platform_user;
 GRANT ALL ON SEQUENCE users_id_seq TO anonymous;
+GRANT ALL ON SEQUENCE users_id_seq TO admin;
 
 
 SET search_path = project_service, pg_catalog;
@@ -1479,18 +2008,18 @@ SET search_path = project_service, pg_catalog;
 -- Name: projects; Type: ACL; Schema: project_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE projects TO admin;
 GRANT SELECT,INSERT ON TABLE projects TO platform_user;
-GRANT SELECT ON TABLE projects TO scoped_user;
 GRANT SELECT ON TABLE projects TO anonymous;
+GRANT SELECT,INSERT ON TABLE projects TO admin;
+GRANT SELECT ON TABLE projects TO scoped_user;
 
 
 --
 -- Name: projects_id_seq; Type: ACL; Schema: project_service; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE projects_id_seq TO platform_user;
 GRANT USAGE ON SEQUENCE projects_id_seq TO admin;
+GRANT USAGE ON SEQUENCE projects_id_seq TO platform_user;
 
 
 --

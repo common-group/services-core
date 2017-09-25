@@ -12,7 +12,7 @@
     - compare: {jsonpath_mini: "0.token", comparator: "regex", expected: ".*"}
 
 - test:
-  - name: "Creating scoped_user with invalid user id"
+  - name: "Should not create scoped_user with invalid user id"
   - url: "/rpc/generate_scoped_user_key"
   - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json'}
   - method: "POST"

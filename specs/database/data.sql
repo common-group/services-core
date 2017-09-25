@@ -13,4 +13,7 @@ insert into platform_service.platform_api_keys(id, platform_id, token)
     values(9999, 9999, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A');
 
 insert into community_service.users(platform_id, id, name, email, password, key)
-    values (9999, 999, 'test community user 01', 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f');
+    values (9999, 999, 'test community user 01', 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f'),
+    (9999, 998, 'test community user 02 owner', 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63');
+
+insert into project_service.projects(id, platform_id, user_id, name, mode) values (9999, 9999, 998, 'test project 01', 'sub');
