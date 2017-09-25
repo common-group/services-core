@@ -119,7 +119,7 @@ const editRewardCard = {
             });
 
             if (!reward.newReward) {
-                rewardVM.getFees(reward.id()).then((feeData) => {
+                rewardVM.getFees({ id: reward.id() }).then((feeData) => {
                     _.map(feeData, (fee) => {
                         const feeProp = {
                             id: m.prop(fee.id),
