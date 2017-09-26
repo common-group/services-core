@@ -30,3 +30,4 @@ spec/bundle.spec.js
 .tern-port
 *.swp
 .python-version
+.node-version
