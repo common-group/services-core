@@ -13,12 +13,17 @@ postgrest_bin='unknown'
 unamestr=`uname`
 ver='0.4.3.0'
 dir='postgrest'
+windows_bash=$(uname -r|grep -i Microsoft)
 
 schema_log='specs/logs/schema_load.log'
 data_log='specs/logs/data_load.log'
 
 if [[ "$unamestr" == 'Linux' ]]; then
-  postgrest_bin="postgrest-$ver-linux"
+  if [[ -n "$windows_bash" ]]; then
+    postgrest_bin="postgrest-$ver-win.exe"
+  else
+    postgrest_bin="postgrest-$ver-linux"
+  fi
 elif [[ "$unamestr" == 'Darwin' ]]; then
   postgrest_bin="postgrest-$ver-osx"
 fi
@@ -81,7 +86,11 @@ do
     echo ""
 
     echo "Terminating PostgREST server... for $service_name"
-    killall $postgrest_bin
+    if [[ -n "$windows_bash" ]]; then
+        taskkill.exe /IM $postgrest_bin /F
+    else
+        killall $postgrest_bin
+    fi
 done
 echo "Done."
 exit $exit_code
