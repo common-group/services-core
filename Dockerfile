@@ -1,6 +1,6 @@
 FROM comum/pg-dispatcher:latest AS dispatcher-env
 
-FROM ruby:2.4.1-jessie
+FROM node:8.5
 
 RUN apt-get update
 RUN apt-get update && apt-get install -y libssl-dev
@@ -11,4 +11,4 @@ WORKDIR /usr/app
 
 COPY . .
 
-RUN bundle install
+RUN npm install

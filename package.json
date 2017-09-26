@@ -1,0 +1,19 @@
+{
+  "name": "payment-service-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "dependencies": {
+    "pg": "^7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/common-group/payment-service-api.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/common-group/payment-service-api/issues"
+  },
+  "homepage": "https://github.com/common-group/payment-service-api#readme"
+}
