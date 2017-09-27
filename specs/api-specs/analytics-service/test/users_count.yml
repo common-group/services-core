@@ -1,0 +1,19 @@
+
+---
+- config:
+  - testset: "users_count"
+- test:
+  - name: "Basic get"
+  - url: "/users_count"
+  - method: "GET"
+  - expected_status: [401]
+
+- test:
+  - name: "Get with scoped user"
+  - url: "/users_count"
+  - method: "GET"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOjk5OTl9.vqzoX2JmI5ZCKZNSCxeX-fns4p4x_r47gjD1qLYIC7Y'}
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.users", comparator: "eq", expected: 2}
+
