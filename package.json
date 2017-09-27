@@ -4,7 +4,8 @@
   "description": "",
   "main": "",
   "dependencies": {
-    "pg": "^7"
+    "pg": "^7",
+    "pagarme": "^3"
   },
   "repository": {
     "type": "git",
