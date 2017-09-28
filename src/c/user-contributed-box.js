@@ -94,12 +94,12 @@ const userContributedBox = {
                                         I18n.t('show_receipt', contributionScope())
                                     ) : ''),
 
-                                (contributionVM.canShowSlip(contribution) && contribution.gateway_data ?
+                                (contribution.gateway_data && contributionVM.canShowSlip(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='${contribution.gateway_data.boleto_url}'][target='__blank']`,
                                         I18n.t('print_slip', contributionScope())
                                     ) : ''),
 
-                                (contributionVM.canGenerateSlip(contribution) ?
+                                (contribution.gateway_data && contributionVM.canGenerateSlip(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/second_slip'][target='__blank']`,
                                         I18n.t('slip_copy', contributionScope())
                                     ) : ''),
