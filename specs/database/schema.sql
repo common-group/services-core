@@ -15,6 +15,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: analytics_service; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA analytics_service;
+
+
+--
+-- Name: analytics_service_api; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA analytics_service_api;
+
+
+--
 -- Name: community_service; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -830,6 +844,27 @@ CREATE TABLE users (
 
 COMMENT ON TABLE users IS 'Stores community users';
 
+
+SET search_path = analytics_service_api, pg_catalog;
+
+--
+-- Name: users_count; Type: VIEW; Schema: analytics_service_api; Owner: -
+--
+
+CREATE VIEW users_count AS
+ SELECT count(*) AS users
+   FROM community_service.users
+  WHERE (users.platform_id = core.current_platform_id());
+
+
+--
+-- Name: VIEW users_count; Type: COMMENT; Schema: analytics_service_api; Owner: -
+--
+
+COMMENT ON VIEW users_count IS 'Shows the number of users on actual platform';
+
+
+SET search_path = community_service, pg_catalog;
 
 --
 -- Name: users_id_seq; Type: SEQUENCE; Schema: community_service; Owner: -
@@ -1705,6 +1740,26 @@ ALTER TABLE ONLY projects
 
 
 --
+-- Name: analytics_service; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA analytics_service TO scoped_user;
+GRANT USAGE ON SCHEMA analytics_service TO platform_user;
+GRANT USAGE ON SCHEMA analytics_service TO postgrest;
+GRANT USAGE ON SCHEMA analytics_service TO admin;
+
+
+--
+-- Name: analytics_service_api; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA analytics_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA analytics_service_api TO platform_user;
+GRANT USAGE ON SCHEMA analytics_service_api TO postgrest;
+GRANT USAGE ON SCHEMA analytics_service_api TO admin;
+
+
+--
 -- Name: community_service; Type: ACL; Schema: -; Owner: -
 --
 
@@ -1907,6 +1962,17 @@ GRANT SELECT ON TABLE users TO postgrest;
 GRANT SELECT ON TABLE users TO admin;
 GRANT SELECT ON TABLE users TO scoped_user;
 GRANT SELECT ON TABLE users TO anonymous;
+
+
+SET search_path = analytics_service_api, pg_catalog;
+
+--
+-- Name: users_count; Type: ACL; Schema: analytics_service_api; Owner: -
+--
+
+GRANT SELECT ON TABLE users_count TO platform_user;
+GRANT SELECT ON TABLE users_count TO admin;
+GRANT SELECT ON TABLE users_count TO scoped_user;
 
 
 SET search_path = core, pg_catalog;

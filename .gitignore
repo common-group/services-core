@@ -2,3 +2,4 @@ logs/*.log
 specs/logs/*.log
 specs/postgrest/settings.config
 specs/postgrest/postgrest-0.4.3.0-osx
+specs/postgrest/postgrest-*
