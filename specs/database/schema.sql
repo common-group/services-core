@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.5
--- Dumped by pg_dump version 9.6.5
+-- Dumped from database version 9.6.4
+-- Dumped by pg_dump version 9.6.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -851,10 +851,10 @@ SET search_path = analytics_service_api, pg_catalog;
 -- Name: users_count; Type: VIEW; Schema: analytics_service_api; Owner: -
 --
 
-CREATE VIEW analytics_service_api.users_count AS 
+CREATE VIEW users_count AS
  SELECT count(*) AS users
    FROM community_service.users
-  WHERE users.platform_id = core.current_platform_id();
+  WHERE (users.platform_id = core.current_platform_id());
 
 
 --
@@ -1743,9 +1743,9 @@ ALTER TABLE ONLY projects
 -- Name: analytics_service; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA analytics_service TO postgrest;
-GRANT USAGE ON SCHEMA analytics_service TO platform_user;
 GRANT USAGE ON SCHEMA analytics_service TO scoped_user;
+GRANT USAGE ON SCHEMA analytics_service TO platform_user;
+GRANT USAGE ON SCHEMA analytics_service TO postgrest;
 GRANT USAGE ON SCHEMA analytics_service TO admin;
 
 
@@ -1753,9 +1753,9 @@ GRANT USAGE ON SCHEMA analytics_service TO admin;
 -- Name: analytics_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA analytics_service_api TO postgrest;
-GRANT USAGE ON SCHEMA analytics_service_api TO platform_user;
 GRANT USAGE ON SCHEMA analytics_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA analytics_service_api TO platform_user;
+GRANT USAGE ON SCHEMA analytics_service_api TO postgrest;
 GRANT USAGE ON SCHEMA analytics_service_api TO admin;
 
 
@@ -1763,28 +1763,30 @@ GRANT USAGE ON SCHEMA analytics_service_api TO admin;
 -- Name: community_service; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA community_service TO scoped_user;
-GRANT USAGE ON SCHEMA community_service TO admin;
-GRANT USAGE ON SCHEMA community_service TO anonymous;
 GRANT USAGE ON SCHEMA community_service TO platform_user;
+GRANT USAGE ON SCHEMA community_service TO postgrest;
+GRANT USAGE ON SCHEMA community_service TO anonymous;
+GRANT USAGE ON SCHEMA community_service TO admin;
+GRANT USAGE ON SCHEMA community_service TO scoped_user;
 
 
 --
 -- Name: community_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA community_service_api TO scoped_user;
-GRANT USAGE ON SCHEMA community_service_api TO admin;
-GRANT USAGE ON SCHEMA community_service_api TO anonymous;
 GRANT USAGE ON SCHEMA community_service_api TO platform_user;
+GRANT USAGE ON SCHEMA community_service_api TO anonymous;
+GRANT USAGE ON SCHEMA community_service_api TO postgrest;
+GRANT USAGE ON SCHEMA community_service_api TO admin;
+GRANT USAGE ON SCHEMA community_service_api TO scoped_user;
 
 
 --
 -- Name: core; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA core TO platform_user;
 GRANT USAGE ON SCHEMA core TO scoped_user;
+GRANT USAGE ON SCHEMA core TO platform_user;
 GRANT USAGE ON SCHEMA core TO anonymous;
 
 
@@ -1792,8 +1794,9 @@ GRANT USAGE ON SCHEMA core TO anonymous;
 -- Name: payment_service; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA payment_service TO platform_user;
 GRANT USAGE ON SCHEMA payment_service TO scoped_user;
+GRANT USAGE ON SCHEMA payment_service TO platform_user;
+GRANT USAGE ON SCHEMA payment_service TO postgrest;
 GRANT USAGE ON SCHEMA payment_service TO admin;
 
 
@@ -1801,8 +1804,9 @@ GRANT USAGE ON SCHEMA payment_service TO admin;
 -- Name: payment_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA payment_service_api TO platform_user;
 GRANT USAGE ON SCHEMA payment_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA payment_service_api TO platform_user;
+GRANT USAGE ON SCHEMA payment_service_api TO postgrest;
 GRANT USAGE ON SCHEMA payment_service_api TO admin;
 
 
@@ -1811,16 +1815,18 @@ GRANT USAGE ON SCHEMA payment_service_api TO admin;
 --
 
 GRANT USAGE ON SCHEMA platform_service TO platform_user;
-GRANT USAGE ON SCHEMA platform_service TO admin;
 GRANT USAGE ON SCHEMA platform_service TO anonymous;
+GRANT USAGE ON SCHEMA platform_service TO postgrest;
+GRANT USAGE ON SCHEMA platform_service TO admin;
+GRANT USAGE ON SCHEMA platform_service TO scoped_user;
 
 
 --
 -- Name: platform_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA platform_service_api TO platform_user;
 GRANT USAGE ON SCHEMA platform_service_api TO admin;
+GRANT USAGE ON SCHEMA platform_service_api TO platform_user;
 GRANT USAGE ON SCHEMA platform_service_api TO anonymous;
 
 
@@ -1828,8 +1834,9 @@ GRANT USAGE ON SCHEMA platform_service_api TO anonymous;
 -- Name: project_service; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA project_service TO platform_user;
 GRANT USAGE ON SCHEMA project_service TO scoped_user;
+GRANT USAGE ON SCHEMA project_service TO platform_user;
+GRANT USAGE ON SCHEMA project_service TO postgrest;
 GRANT USAGE ON SCHEMA project_service TO admin;
 
 
@@ -1837,8 +1844,9 @@ GRANT USAGE ON SCHEMA project_service TO admin;
 -- Name: project_service_api; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA project_service_api TO platform_user;
 GRANT USAGE ON SCHEMA project_service_api TO scoped_user;
+GRANT USAGE ON SCHEMA project_service_api TO platform_user;
+GRANT USAGE ON SCHEMA project_service_api TO postgrest;
 GRANT USAGE ON SCHEMA project_service_api TO admin;
 
 
@@ -1848,8 +1856,8 @@ SET search_path = community_service_api, pg_catalog;
 -- Name: generate_scoped_user_key(uuid); Type: ACL; Schema: community_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
 GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO admin;
+GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
 
 
 SET search_path = payment_service_api, pg_catalog;
@@ -1859,8 +1867,8 @@ SET search_path = payment_service_api, pg_catalog;
 --
 
 GRANT ALL ON FUNCTION create_payment(data json) TO scoped_user;
-GRANT ALL ON FUNCTION create_payment(data json) TO admin;
 GRANT ALL ON FUNCTION create_payment(data json) TO platform_user;
+GRANT ALL ON FUNCTION create_payment(data json) TO admin;
 
 
 SET search_path = platform_service, pg_catalog;
@@ -1871,6 +1879,7 @@ SET search_path = platform_service, pg_catalog;
 
 GRANT SELECT,INSERT ON TABLE platforms TO platform_user;
 GRANT SELECT,INSERT ON TABLE platforms TO admin;
+GRANT SELECT ON TABLE platforms TO scoped_user;
 
 
 SET search_path = platform_service_api, pg_catalog;
@@ -1906,16 +1915,16 @@ SET search_path = platform_service_api, pg_catalog;
 -- Name: api_keys; Type: ACL; Schema: platform_service_api; Owner: -
 --
 
-GRANT SELECT ON TABLE api_keys TO admin;
 GRANT SELECT ON TABLE api_keys TO platform_user;
+GRANT SELECT ON TABLE api_keys TO admin;
 
 
 --
 -- Name: generate_api_key(integer); Type: ACL; Schema: platform_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION generate_api_key(platform_id integer) TO platform_user;
 GRANT ALL ON FUNCTION generate_api_key(platform_id integer) TO admin;
+GRANT ALL ON FUNCTION generate_api_key(platform_id integer) TO platform_user;
 
 
 --
@@ -1938,8 +1947,8 @@ SET search_path = project_service_api, pg_catalog;
 -- Name: create_project(json); Type: ACL; Schema: project_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION create_project(project json) TO platform_user;
 GRANT ALL ON FUNCTION create_project(project json) TO admin;
+GRANT ALL ON FUNCTION create_project(project json) TO platform_user;
 
 
 SET search_path = community_service, pg_catalog;
@@ -1948,10 +1957,11 @@ SET search_path = community_service, pg_catalog;
 -- Name: users; Type: ACL; Schema: community_service; Owner: -
 --
 
-GRANT SELECT ON TABLE users TO admin;
-GRANT SELECT ON TABLE users TO anonymous;
 GRANT SELECT ON TABLE users TO platform_user;
+GRANT SELECT ON TABLE users TO postgrest;
+GRANT SELECT ON TABLE users TO admin;
 GRANT SELECT ON TABLE users TO scoped_user;
+GRANT SELECT ON TABLE users TO anonymous;
 
 
 SET search_path = analytics_service_api, pg_catalog;
@@ -1961,8 +1971,8 @@ SET search_path = analytics_service_api, pg_catalog;
 --
 
 GRANT SELECT ON TABLE users_count TO platform_user;
-GRANT SELECT ON TABLE users_count TO scoped_user;
 GRANT SELECT ON TABLE users_count TO admin;
+GRANT SELECT ON TABLE users_count TO scoped_user;
 
 
 SET search_path = core, pg_catalog;
@@ -1971,8 +1981,8 @@ SET search_path = core, pg_catalog;
 -- Name: core_settings; Type: ACL; Schema: core; Owner: -
 --
 
-GRANT SELECT ON TABLE core_settings TO anonymous;
 GRANT SELECT ON TABLE core_settings TO platform_user;
+GRANT SELECT ON TABLE core_settings TO anonymous;
 GRANT SELECT ON TABLE core_settings TO scoped_user;
 
 
@@ -1983,17 +1993,17 @@ SET search_path = payment_service, pg_catalog;
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO scoped_user;
-GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO admin;
 GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO platform_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO admin;
 
 
 --
 -- Name: catalog_payments_id_seq; Type: ACL; Schema: payment_service; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO platform_user;
-GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO scoped_user;
 GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO admin;
+GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO platform_user;
 
 
 --
@@ -2001,17 +2011,17 @@ GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO admin;
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO scoped_user;
-GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO admin;
 GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO platform_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE subscriptions TO admin;
 
 
 --
 -- Name: subscriptions_id_seq; Type: ACL; Schema: payment_service; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE subscriptions_id_seq TO platform_user;
-GRANT USAGE ON SEQUENCE subscriptions_id_seq TO scoped_user;
 GRANT USAGE ON SEQUENCE subscriptions_id_seq TO admin;
+GRANT USAGE ON SEQUENCE subscriptions_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE subscriptions_id_seq TO platform_user;
 
 
 SET search_path = platform_service, pg_catalog;
@@ -2020,42 +2030,42 @@ SET search_path = platform_service, pg_catalog;
 -- Name: platform_api_keys_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT SELECT,UPDATE ON SEQUENCE platform_api_keys_id_seq TO admin;
 GRANT SELECT,UPDATE ON SEQUENCE platform_api_keys_id_seq TO platform_user;
+GRANT SELECT,UPDATE ON SEQUENCE platform_api_keys_id_seq TO admin;
 
 
 --
 -- Name: platform_users_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT ALL ON SEQUENCE platform_users_id_seq TO admin;
 GRANT ALL ON SEQUENCE platform_users_id_seq TO platform_user;
+GRANT ALL ON SEQUENCE platform_users_id_seq TO admin;
 
 
 --
 -- Name: platforms_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT ALL ON SEQUENCE platforms_id_seq TO admin;
 GRANT ALL ON SEQUENCE platforms_id_seq TO platform_user;
+GRANT ALL ON SEQUENCE platforms_id_seq TO admin;
 
 
 --
 -- Name: users; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE users TO admin;
-GRANT SELECT,INSERT ON TABLE users TO anonymous;
 GRANT SELECT,INSERT ON TABLE users TO platform_user;
+GRANT SELECT,INSERT ON TABLE users TO anonymous;
+GRANT SELECT,INSERT ON TABLE users TO admin;
 
 
 --
 -- Name: users_id_seq; Type: ACL; Schema: platform_service; Owner: -
 --
 
-GRANT ALL ON SEQUENCE users_id_seq TO admin;
-GRANT ALL ON SEQUENCE users_id_seq TO anonymous;
 GRANT ALL ON SEQUENCE users_id_seq TO platform_user;
+GRANT ALL ON SEQUENCE users_id_seq TO anonymous;
+GRANT ALL ON SEQUENCE users_id_seq TO admin;
 
 
 SET search_path = project_service, pg_catalog;
@@ -2064,9 +2074,9 @@ SET search_path = project_service, pg_catalog;
 -- Name: projects; Type: ACL; Schema: project_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE projects TO admin;
-GRANT SELECT ON TABLE projects TO anonymous;
 GRANT SELECT,INSERT ON TABLE projects TO platform_user;
+GRANT SELECT ON TABLE projects TO anonymous;
+GRANT SELECT,INSERT ON TABLE projects TO admin;
 GRANT SELECT ON TABLE projects TO scoped_user;
 
 
@@ -2074,8 +2084,8 @@ GRANT SELECT ON TABLE projects TO scoped_user;
 -- Name: projects_id_seq; Type: ACL; Schema: project_service; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE projects_id_seq TO platform_user;
 GRANT USAGE ON SEQUENCE projects_id_seq TO admin;
+GRANT USAGE ON SEQUENCE projects_id_seq TO platform_user;
 
 
 --

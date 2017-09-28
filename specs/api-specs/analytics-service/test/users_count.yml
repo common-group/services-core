@@ -12,7 +12,7 @@
   - name: "Get with scoped user"
   - url: "/users_count"
   - method: "GET"
-  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOjk5OTl9.vqzoX2JmI5ZCKZNSCxeX-fns4p4x_r47gjD1qLYIC7Y'}
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json'}
   - expected_status: [200]
   - validators:
     - compare: {jsonpath_mini: "0.users", comparator: "eq", expected: 2}
