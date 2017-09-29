@@ -121,7 +121,8 @@ const projectDashboardMenu = {
                                 m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
                                 ]),
-                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope())),
+                                (project.mode === 'sub' ? '' :
+                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope()))),
                                 m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t('card_tab', linksScope())),
                                 m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt

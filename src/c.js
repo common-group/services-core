@@ -29,6 +29,7 @@ import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
 import thankYou from './root/thank-you';
+import subProjectNew from './root/sub-project-new';
 import CheckEmail from './root/check-email';
 import projectEditUserAbout from './root/project-edit-user-about';
 import projectEditReward from './root/project-edit-reward';
@@ -63,6 +64,7 @@ const c = {
         SurveysShow: surveysShow,
         UsersEdit: usersEdit,
         ProjectEdit: projectEdit,
+        SubProjectNew: subProjectNew,
         SurveyCreate: surveyCreate,
         ProjectsContribution: projectsContribution,
         ProjectsPayment: projectsPayment,
