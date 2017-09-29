@@ -4,8 +4,10 @@
   "description": "",
   "main": "",
   "dependencies": {
-    "pg": "^7",
-    "pagarme": "^3"
+    "get-stdin": "^5.0.1",
+    "lodash": "^4.17.4",
+    "pagarme": "^3",
+    "pg": "^7"
   },
   "repository": {
     "type": "git",
