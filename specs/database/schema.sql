@@ -347,6 +347,49 @@ COMMENT ON FUNCTION is_owner_or_admin(integer) IS 'Check if current_role is admi
 
 
 --
+-- Name: is_owner_or_admin(bigint); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION is_owner_or_admin(bigint) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $_$
+        SELECT
+            core.current_user_id() = $1
+            OR current_user = 'admin';
+   $_$;
+
+
+--
+-- Name: FUNCTION is_owner_or_admin(bigint); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION is_owner_or_admin(bigint) IS 'Check if current_role is admin or passed id match with current_user_id';
+
+
+--
+-- Name: project_exists_on_platform(bigint, integer); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION project_exists_on_platform(project_id bigint, platform_id integer) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $_$
+    select exists(
+        select true
+        from project_service.projects p
+            where p.id = $1
+                and p.platform_id = $2
+    )
+$_$;
+
+
+--
+-- Name: FUNCTION project_exists_on_platform(project_id bigint, platform_id integer); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION project_exists_on_platform(project_id bigint, platform_id integer) IS 'check if project id exists on platform';
+
+
+--
 -- Name: sign(json, text, text); Type: FUNCTION; Schema: core; Owner: -
 --
 
@@ -775,10 +818,54 @@ $$;
 
 
 --
--- Name: FUNCTION create_project(project json); Type: COMMENT; Schema: project_service_api; Owner: -
+-- Name: update_project(json); Type: FUNCTION; Schema: project_service_api; Owner: -
 --
 
-COMMENT ON FUNCTION create_project(project json) IS 'Create a new project for user and platform, can be used only by platform api key';
+CREATE FUNCTION update_project(project json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+    declare
+        _project project_service.projects;
+        _result json;
+    begin
+        if (($1->>'id')::bigint is null)
+            OR (not core.project_exists_on_platform(
+                    ($1->>'id')::bigint
+                    , core.current_platform_id()
+            ))
+        then
+            raise exception undefined_table;
+        end if;
+
+        select * from project_service.projects
+            where id = ($1->>'id')::bigint
+            into _project;
+
+        if not core.is_owner_or_admin(_project.user_id) then
+            raise exception insufficient_privilege;
+        end if;
+
+        insert into project_service.project_versions(project_id, data)
+            values (_project.id, _project.data);
+
+        update project_service.projects
+            set data = $1
+            where id = _project.id;
+
+        select json_build_object(
+            'id', _project.id
+        ) into _result;
+
+        return _result;
+    end;
+$_$;
+
+
+--
+-- Name: FUNCTION update_project(project json); Type: COMMENT; Schema: project_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION update_project(project json) IS 'update project data';
 
 
 SET search_path = public, pg_catalog;
@@ -1216,6 +1303,45 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 SET search_path = project_service, pg_catalog;
 
 --
+-- Name: project_versions; Type: TABLE; Schema: project_service; Owner: -
+--
+
+CREATE TABLE project_versions (
+    id bigint NOT NULL,
+    project_id bigint NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: TABLE project_versions; Type: COMMENT; Schema: project_service; Owner: -
+--
+
+COMMENT ON TABLE project_versions IS 'Store project data versions';
+
+
+--
+-- Name: project_versions_id_seq; Type: SEQUENCE; Schema: project_service; Owner: -
+--
+
+CREATE SEQUENCE project_versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: project_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: project_service; Owner: -
+--
+
+ALTER SEQUENCE project_versions_id_seq OWNED BY project_versions.id;
+
+
+--
 -- Name: projects; Type: TABLE; Schema: project_service; Owner: -
 --
 
@@ -1225,7 +1351,8 @@ CREATE TABLE projects (
     user_id bigint NOT NULL,
     name text NOT NULL,
     mode project_mode NOT NULL,
-    key uuid DEFAULT public.uuid_generate_v4() NOT NULL
+    key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 
 
@@ -1353,6 +1480,13 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 SET search_path = project_service, pg_catalog;
+
+--
+-- Name: project_versions id; Type: DEFAULT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY project_versions ALTER COLUMN id SET DEFAULT nextval('project_versions_id_seq'::regclass);
+
 
 --
 -- Name: projects id; Type: DEFAULT; Schema: project_service; Owner: -
@@ -1508,6 +1642,14 @@ ALTER TABLE ONLY platform_users
 SET search_path = project_service, pg_catalog;
 
 --
+-- Name: project_versions project_versions_pkey; Type: CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY project_versions
+    ADD CONSTRAINT project_versions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: projects projects_key_key; Type: CONSTRAINT; Schema: project_service; Owner: -
 --
 
@@ -1593,6 +1735,15 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCED
 --
 
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON platform_users FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
+
+
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: project_versions set_updated_at; Type: TRIGGER; Schema: project_service; Owner: -
+--
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON project_versions FOR EACH ROW EXECUTE PROCEDURE public.diesel_set_updated_at();
 
 
 SET search_path = community_service, pg_catalog;
@@ -1722,6 +1873,14 @@ ALTER TABLE ONLY platform_users
 
 
 SET search_path = project_service, pg_catalog;
+
+--
+-- Name: project_versions project_versions_project_id_fkey; Type: FK CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY project_versions
+    ADD CONSTRAINT project_versions_project_id_fkey FOREIGN KEY (project_id) REFERENCES projects(id);
+
 
 --
 -- Name: projects projects_platform_id_fkey; Type: FK CONSTRAINT; Schema: project_service; Owner: -
@@ -1944,11 +2103,12 @@ GRANT ALL ON FUNCTION sign_up(name text, email text, password text) TO anonymous
 SET search_path = project_service_api, pg_catalog;
 
 --
--- Name: create_project(json); Type: ACL; Schema: project_service_api; Owner: -
+-- Name: update_project(json); Type: ACL; Schema: project_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION create_project(project json) TO admin;
-GRANT ALL ON FUNCTION create_project(project json) TO platform_user;
+GRANT ALL ON FUNCTION update_project(project json) TO scoped_user;
+GRANT ALL ON FUNCTION update_project(project json) TO platform_user;
+GRANT ALL ON FUNCTION update_project(project json) TO admin;
 
 
 SET search_path = community_service, pg_catalog;
@@ -2071,13 +2231,31 @@ GRANT ALL ON SEQUENCE users_id_seq TO admin;
 SET search_path = project_service, pg_catalog;
 
 --
+-- Name: project_versions; Type: ACL; Schema: project_service; Owner: -
+--
+
+GRANT SELECT,INSERT ON TABLE project_versions TO scoped_user;
+GRANT SELECT,INSERT ON TABLE project_versions TO platform_user;
+GRANT SELECT,INSERT ON TABLE project_versions TO admin;
+
+
+--
+-- Name: project_versions_id_seq; Type: ACL; Schema: project_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE project_versions_id_seq TO admin;
+GRANT USAGE ON SEQUENCE project_versions_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE project_versions_id_seq TO platform_user;
+
+
+--
 -- Name: projects; Type: ACL; Schema: project_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE projects TO platform_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE projects TO platform_user;
 GRANT SELECT ON TABLE projects TO anonymous;
-GRANT SELECT,INSERT ON TABLE projects TO admin;
-GRANT SELECT ON TABLE projects TO scoped_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE projects TO admin;
+GRANT SELECT,UPDATE ON TABLE projects TO scoped_user;
 
 
 --
