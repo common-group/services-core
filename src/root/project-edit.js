@@ -34,7 +34,9 @@ const projectEdit = {
                     project
                 },
                     tabs = {
-                        '#video': m(projectEditTab, {
+                        '#video': projectVM.isSubscription(project) 
+                            ? null 
+                            : m(projectEditTab, {
                             title: I18n.t('video_html', I18nScope()),
                             subtitle: I18n.t('video_subtitle', I18nScope()),
                             content: m(projectEditVideo, _.extend({}, c_opts))
@@ -42,8 +44,7 @@ const projectEdit = {
                         '#description': m(projectEditTab, {
                             title: I18n.t('description', I18nScope()),
                             subtitle: I18n.t('description_subtitle', I18nScope()),
-                            content: m(projectEditDescription, _.extend({},
-                                c_opts))
+                            content: m(projectEditDescription, _.extend({}, c_opts))
                         }),
                         '#budget': m(projectEditTab, {
                             title: I18n.t('budget', I18nScope()),
