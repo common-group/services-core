@@ -11,8 +11,22 @@ const goals = m.prop([]),
 
 const goalsLoader = (projectId) => {
     vm.project_id(projectId);
+    vm.order({
+        value: 'asc'
+    });
 
     return postgrest.loaderWithToken(models.goalDetail.getPageOptions(vm.parameters()));
+};
+
+const addGoal = (projectId) => {
+    goals().push(m.prop({
+        id: m.prop(null),
+        project_id: m.prop(projectId),
+        editing: h.toggleProp(true, false),
+        value: m.prop(''),
+        title: m.prop(''),
+        description: m.prop('')
+    }));
 };
 
 const fetchGoals = projectId => goalsLoader(projectId).load().then((data) => {
@@ -20,12 +34,17 @@ const fetchGoals = projectId => goalsLoader(projectId).load().then((data) => {
         const goalProp = m.prop({
             id: m.prop(goal.id),
             project_id: m.prop(projectId),
+            editing: h.toggleProp(false, true),
             value: m.prop(goal.value),
             title: m.prop(goal.title),
             description: m.prop(goal.description)
         });
         goals().push(goalProp);
     });
+
+    if (_.isEmpty(goals())) {
+        addGoal(projectId);
+    }
 }
 
 );
@@ -47,6 +66,7 @@ const updateGoal = (projectId, goalId, goalData) => m.request({
 const projectGoalsVM = {
     goals,
     fetchGoals,
+    addGoal,
     updateGoal,
     createGoal,
     goalsLoader

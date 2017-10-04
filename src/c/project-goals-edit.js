@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import projectGoalEditCard from './project-goal-edit-card';
+import projectGoalCard from './project-goal-card';
 import projectGoalsVM from '../vms/project-goals-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
@@ -9,27 +10,12 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 const projectGoalsEdit = {
     controller(args) {
         const goals = projectGoalsVM.goals;
-        const newGoal = m.prop({
-            id: m.prop(null),
-            project_id: m.prop(args.projectId),
-            value: m.prop(''),
-            title: m.prop(''),
-            description: m.prop('')
-        });
-        const addGoal = () => {
-            goals().push(newGoal);
-        };
 
         projectGoalsVM.fetchGoals(args.projectId);
 
-        if (_.isEmpty(goals())) {
-            addGoal();
-        }
-
         return {
             goals,
-            addGoal,
-            newGoal
+            addGoal: projectGoalsVM.addGoal
         };
     },
 
@@ -51,11 +37,18 @@ const projectGoalsEdit = {
                                         'juntos com o sucesso de seu Catarse Assinaturas.'
                                     ])
                                 ]),
-                                _.map(ctrl.goals(), goal => m(projectGoalEditCard, {
-                                    goal
-                                })),
+                                _.map(ctrl.goals(), (goal) => {
+                                    if (goal().editing()) {
+                                        return m(projectGoalEditCard, {
+                                            goal
+                                        });
+                                    }
+                                    return m(projectGoalCard, {
+                                        goal
+                                    });
+                                }),
                                 m('button.btn.btn-large.btn-message', {
-                                    onclick: ctrl.addGoal
+                                    onclick: () => { ctrl.addGoal(args.projectId); }
                                 }, [
                                     '+ ',
                                     m.trust('&nbsp;'),

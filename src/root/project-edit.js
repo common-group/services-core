@@ -83,7 +83,7 @@ const projectEdit = {
                         }),
                         '#goals': m(projectEditTab, {
                             title: I18n.t('goals', I18nScope()),
-                            subtitle: I18n.t('goals_subtitle', I18nScope()),
+                            subtitle: '',
                             content: m(projectEditGoals, _.extend({}, c_opts))
                         }),
                         '#announce_expiration': m(projectEditTab, {

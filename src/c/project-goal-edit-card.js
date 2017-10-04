@@ -1,14 +1,32 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import projectGoalsVM from '../vms/project-goals-vm';
-
-const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectGoalEditCard = {
     controller(args) {
         const goal = args.goal();
+        const destroyed = m.prop(false);
+
+        const acceptNumeric = (e) => {
+            goal.value(e.target.value.replace(/[^0-9]/g, ''));
+            return true;
+        };
+        const confirmDelete = () => {
+            const r = confirm('Você tem certeza?');
+            if (r) {
+                if (!goal.id()) { destroyed(true); return false; }
+                return m.request({
+                    method: 'DELETE',
+                    url: `/projects/${goal.project_id()}/goals/${goal.id()}`,
+                    config: h.setCsrfToken
+                }).then(() => {
+                    destroyed(true);
+                    m.redraw();
+                });
+            }
+            return false;
+        };
         const saveGoal = () => {
             const data = {
                 id: goal.id(),
@@ -20,21 +38,27 @@ const projectGoalEditCard = {
 
             if (goal.id()) {
                 projectGoalsVM.updateGoal(goal.project_id(), goal.id(), data).then(() => {
-                    m.redraw();
+                    goal.editing.toggle();
                 });
             } else {
-                projectGoalsVM.createGoal(goal.project_id(), data);
+                projectGoalsVM.createGoal(goal.project_id(), data).then((r) => {
+                    goal.id(r.goal_id);
+                    goal.editing.toggle();
+                });
             }
             return false;
         };
         return {
+            confirmDelete,
+            acceptNumeric,
+            destroyed,
             saveGoal
         };
     },
     view(ctrl, args) {
         const goal = args.goal();
 
-        return m('.card.u-marginbottom-30', [
+        return ctrl.destroyed() ? m('div', '') : m('.card.u-marginbottom-30', [
             m('.w-row', [
                 m('.w-col.w-col-6',
                     m('.fontsize-small',
@@ -51,6 +75,7 @@ const projectGoalEditCard = {
                         m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6',
                             m("input.positive.postfix.text-field.w-input[type='text']", {
                                 value: goal.value(),
+                                oninput: e => ctrl.acceptNumeric(e),
                                 onchange: m.withAttr('value', goal.value)
                             })
                         )
@@ -84,13 +109,18 @@ const projectGoalEditCard = {
                 )
             ]),
             m('.u-margintop-30.w-row', [
-                m('._w-sub-col.w-col.w-col-5',
-                    m('button.btn.btn-small.w-button', { onclick: ctrl.saveGoal }, 'Salvar')
+                m('.w-sub-col.w-col.w-col-5',
+                    m('button.btn.btn-small.w-button', {
+                        onclick: ctrl.saveGoal
+                    }, 'Salvar')
                 ),
-                m('._w-sub-col.w-col.w-col-1',
-                    m("a.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash[href='#']")
-                ),
-                m('.w-col.w-col-6')
+                (args.goal().id() ?
+                m('.w-sub-col.w-col.w-col-6',
+                    m('button.btn.btn-small.btn-terciary.w-button', { onclick: () => { args.goal().editing.toggle(); } }, 'Cancelar')
+                ) : ''),
+                m('.w-col.w-col-1',
+                    m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash', { onclick: ctrl.confirmDelete })
+                )
             ])
         ]);
     }
