@@ -104,6 +104,8 @@ const updateProject = (projectId, projectData) => m.request({
     config: h.setCsrfToken
 });
 
+const isSubscription = project => project() ? project().mode === 'sub' : false;
+
 
 const projectVM = {
     userDetails,
@@ -115,7 +117,8 @@ const projectVM = {
     setProjectPageTitle,
     init,
     fetchProject,
-    updateProject
+    updateProject,
+    isSubscription
 };
 
 export default projectVM;
