@@ -15,6 +15,7 @@ const models = {
     userCreditCard: postgrest.model('user_credit_cards'),
     bankAccount: postgrest.model('bank_accounts'),
     bank: postgrest.model('banks'),
+    goalDetail: postgrest.model('goals'),
     rewardDetail: postgrest.model('reward_details'),
     projectReminder: postgrest.model('project_reminders'),
     projectReport: postgrest.model('project_reports'),
@@ -65,6 +66,7 @@ models.teamMember.pageSize(40);
 models.rewardDetail.pageSize(false);
 models.shippingFee.pageSize(false);
 models.projectReminder.pageSize(false);
+models.goalDetail.pageSize(false);
 models.project.pageSize(30);
 models.category.pageSize(50);
 models.contributionActivity.pageSize(40);
