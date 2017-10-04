@@ -39,7 +39,7 @@ const projectMain = {
                 hash(window.location.hash);
 
                 if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
-                    return tabs['#about'];
+                    return tabs[h.mobileScreen()?'#rewards':'#about'];
                 }
 
                 return tabs[hash()];
