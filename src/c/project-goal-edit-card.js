@@ -5,7 +5,22 @@ import projectGoalsVM from '../vms/project-goals-vm';
 
 const projectGoalEditCard = {
     controller(args) {
-        const goal = args.goal();
+        const goal = args.goal(),
+            descriptionError = m.prop(false),
+            valueError = m.prop(false),
+            validate = () => {
+                args.error(false);
+                descriptionError(false);
+                valueError(false);
+                if (_.isEmpty(goal.description())) {
+                    args.error(true);
+                    descriptionError(true);
+                }
+                if (!goal.value() || parseInt(goal.value()) < 10) {
+                    args.error(true);
+                    valueError(true);
+                }
+            };
         const destroyed = m.prop(false);
 
         const acceptNumeric = (e) => {
@@ -31,6 +46,10 @@ const projectGoalEditCard = {
             return false;
         };
         const saveGoal = () => {
+            validate();
+            if (args.error()) {
+                return false;
+            }
             const data = {
                 id: goal.id(),
                 project_id: goal.project_id(),
@@ -56,13 +75,20 @@ const projectGoalEditCard = {
         };
         return {
             confirmDelete,
+            descriptionError,
+            valueError,
             acceptNumeric,
             destroyed,
             saveGoal
         };
     },
     view(ctrl, args) {
-        const goal = args.goal();
+        const goal = args.goal(),
+            inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
+                m('span',
+                    message
+                )
+            );
 
         return ctrl.destroyed() ? m('div', '') :
             m('.card.u-marginbottom-30', [
@@ -81,6 +107,7 @@ const projectGoalEditCard = {
                             ),
                             m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6',
                                 m("input.positive.postfix.text-field.w-input[type='text']", {
+                                    class: ctrl.valueError() ? 'error' : false,
                                     value: goal.value(),
                                     oninput: e => ctrl.acceptNumeric(e),
                                     onchange: m.withAttr('value', goal.value)
@@ -89,6 +116,8 @@ const projectGoalEditCard = {
                         ])
                     )
                 ]),
+
+                ctrl.valueError() ? inlineError('Meta não pode ficar em branco.') : '',
                 m('.w-row', [
                     m('.w-col.w-col-6',
                         m('.fontsize-small',
@@ -111,10 +140,12 @@ const projectGoalEditCard = {
                     m('.w-col.w-col-6',
                         m("textarea.height-medium.positive.text-field.w-input[placeholder='O que você vai fazer se atingir essa meta?']", {
                             value: goal.description(),
+                            class: ctrl.descriptionError() ? 'error' : false,
                             onchange: m.withAttr('value', goal.description)
                         })
                     )
                 ]),
+                ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
                 m('.u-margintop-30.w-row', [
                     m('.w-sub-col.w-col.w-col-5',
                         m('button.btn.btn-small.w-button', {
