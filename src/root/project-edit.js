@@ -14,6 +14,7 @@ import projectEditUserAbout from '../root/project-edit-user-about';
 import projectEditUserSettings from '../root/project-edit-user-settings';
 import projectEditReward from '../root/project-edit-reward';
 import projectEditCard from '../root/project-edit-card';
+import projectEditStart from '../root/project-edit-start';
 import projectPreview from '../root/project-preview';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectAnnounceExpiration from '../c/project-announce-expiration';
@@ -86,7 +87,8 @@ const projectEdit = {
                             subtitle: I18n.t('announce_expiration_subtitle', I18nScope()),
                             content: m(projectAnnounceExpiration, _.extend({}, c_opts))
                         }),
-                        '#preview': m(projectPreview, _.extend({}, c_opts))
+                        '#preview': m(projectPreview, _.extend({}, c_opts)),
+                        '#start': m(projectEditStart, _.extend({}, c_opts))
                     };
 
                 hash(window.location.hash);

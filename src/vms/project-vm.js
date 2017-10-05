@@ -104,7 +104,13 @@ const updateProject = (projectId, projectData) => m.request({
     config: h.setCsrfToken
 });
 
-const isSubscription = project => project() ? project().mode === 'sub' : false;
+const isSubscription = project => {
+    if (_.isFunction(project)) {
+        return project() ? project().mode === 'sub' : false;
+    }
+    
+    return project ? project.mode === 'sub' : false;
+}
 
 
 const projectVM = {

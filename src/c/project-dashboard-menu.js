@@ -13,6 +13,7 @@ import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
+import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
@@ -77,7 +78,6 @@ const projectDashboardMenu = {
         const optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
 
         ctrl.body.className = ctrl.bodyToggleForNav();
-
         return m('#project-nav', [
             m('.project-nav-wrapper', [
                 m('nav.w-section.dashboard-nav.side', [
@@ -85,12 +85,15 @@ const projectDashboardMenu = {
                         m(`img.thumb-project-dashboard[src="${project ? ctrl.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
                         m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"][width=80]`)
-
                     ]),
                     m('#info-links.u-marginbottom-20', [
-                        m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [
-                            m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
-                        ]), (project.is_published ? [
+                        (project.state === 'draft' && projectVM.isSubscription(project)) 
+                            ? m(`a#dashboard_home_link[class="${editLinkClass('#budget')}"][href="${editRoute}#start"]`, [
+                                m('span.fa.fa-info.fa-lg.fa-fw'), I18n.t('draft_start_tab', I18nScope())
+                            ]) 
+                            : m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [
+                                m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
+                            ]), (project.is_published ? [
                             m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, [
                                 m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
                             ]),
@@ -118,11 +121,11 @@ const projectDashboardMenu = {
                                     m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), I18n.t('goal_tab', linksScope())),
                                 ] : ''),
                                 m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description"]`, railsErrorsVM.errorsFor('description'), I18n.t('description_tab', linksScope())),
-                                m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
+                                projectVM.isSubscription(project) ? null : m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
                                 ]),
-                                (project.mode === 'sub' ? '' :
-                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope()))),
+                                projectVM.isSubscription(project) ? null :
+                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope())),
                                 m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t('card_tab', linksScope())),
                                 m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
