@@ -4,24 +4,39 @@ import h from '../h';
 import projectGoalEditCard from './project-goal-edit-card';
 import projectGoalCard from './project-goal-card';
 import projectGoalsVM from '../vms/project-goals-vm';
+import popNotification from './pop-notification';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalsEdit = {
     controller(args) {
         const goals = projectGoalsVM.goals;
+        const showSuccess = m.prop(false);
+        const error = m.prop(false);
 
         projectGoalsVM.fetchGoals(args.projectId);
 
         return {
+            showSuccess,
+            error,
             goals,
             addGoal: projectGoalsVM.addGoal
         };
     },
 
     view(ctrl, args) {
+        const showSuccess = ctrl.showSuccess,
+            error = ctrl.error;
         return m('.w-container',
             m('.w-row', [
+                (ctrl.showSuccess() ? m.component(popNotification, {
+                    message: 'Meta salva com sucesso'
+                }) : ''),
+                (ctrl.error() ? m.component(popNotification, {
+                    message: 'Erro ao salvar informações',
+                    error: true
+                }) : ''),
+
                 m('.w-col.w-col-1'),
                 m('.w-col.w-col-10',
                     m('.w-form', [
@@ -40,7 +55,9 @@ const projectGoalsEdit = {
                                 _.map(ctrl.goals(), (goal) => {
                                     if (goal().editing()) {
                                         return m(projectGoalEditCard, {
-                                            goal
+                                            goal,
+                                            showSuccess,
+                                            error
                                         });
                                     }
                                     return m(projectGoalCard, {
@@ -48,7 +65,9 @@ const projectGoalsEdit = {
                                     });
                                 }),
                                 m('button.btn.btn-large.btn-message', {
-                                    onclick: () => { ctrl.addGoal(args.projectId); }
+                                    onclick: () => {
+                                        ctrl.addGoal(args.projectId);
+                                    }
                                 }, [
                                     '+ ',
                                     m.trust('&nbsp;'),
