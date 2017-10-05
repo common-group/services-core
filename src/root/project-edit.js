@@ -6,6 +6,7 @@ import projectVM from '../vms/project-vm';
 // @TODO move all tabs to c/
 // using the inside components that root tabs use
 import projectEditGoal from '../root/project-edit-goal';
+import projectEditGoals from '../root/project-edit-goals';
 import projectEditBasic from '../root/project-edit-basic';
 import projectEditDescription from '../root/project-edit-description';
 import projectEditVideo from '../root/project-edit-video';
@@ -30,10 +31,10 @@ const projectEdit = {
             hash = m.prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
-                    project_id,
-                    user_id,
-                    project
-                },
+                        project_id,
+                        user_id,
+                        project
+                    },
                     tabs = {
                         '#video': projectVM.isSubscription(project) 
                             ? null 
@@ -81,6 +82,11 @@ const projectEdit = {
                             title: I18n.t('goal', I18nScope()),
                             subtitle: I18n.t('goal_subtitle', I18nScope()),
                             content: m(projectEditGoal, _.extend({}, c_opts))
+                        }),
+                        '#goals': m(projectEditTab, {
+                            title: I18n.t('goals', I18nScope()),
+                            subtitle: '',
+                            content: m(projectEditGoals, _.extend({}, c_opts))
                         }),
                         '#announce_expiration': m(projectEditTab, {
                             title: I18n.t('announce_expiration', I18nScope()),

@@ -39,6 +39,7 @@ import projectEditDescription from './root/project-edit-description';
 import projectEditBudget from './root/project-edit-budget';
 import projectEditVideo from './root/project-edit-video';
 import projectEditGoal from './root/project-edit-goal';
+import projectEditGoals from './root/project-edit-goals';
 import projectEditCard from './root/project-edit-card';
 import copyTextInput from './c/copy-text-input';
 
@@ -86,6 +87,7 @@ const c = {
         projectEditBudget,
         projectEditVideo,
         projectEditGoal,
+        projectEditGoals,
         projectEditCard
     }
 };
