@@ -16,4 +16,4 @@ insert into community_service.users(platform_id, id, name, email, password, key)
     values (9999, 999, 'test community user 01', 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f'),
     (9999, 998, 'test community user 02 owner', 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63');
 
-insert into project_service.projects(id, platform_id, user_id, name, mode) values (9999, 9999, 998, 'test project 01', 'sub');
+insert into project_service.projects(id, platform_id, user_id, name, mode, data) values (9999, 9999, 998, 'test project 01', 'sub', json_build_object('name', 'test project 01'));
