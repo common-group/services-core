@@ -117,7 +117,7 @@ const projectGoalEditCard = {
                     )
                 ]),
 
-                ctrl.valueError() ? inlineError('Meta não pode ficar em branco.') : '',
+                ctrl.valueError() ? inlineError('A meta deve ser igual ou superior a R$10') : '',
                 m('.w-row', [
                     m('.w-col.w-col-6',
                         m('.fontsize-small',
