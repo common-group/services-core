@@ -88,7 +88,7 @@ const projectDashboardMenu = {
                     ]),
                     m('#info-links.u-marginbottom-20', [
                         (project.state === 'draft' && projectVM.isSubscription(project)) 
-                            ? m(`a#dashboard_home_link[class="${editLinkClass('#budget')}"][href="${editRoute}#start"]`, [
+                            ? m(`a#dashboard_home_link[class="${editLinkClass('#start')}"][href="${editRoute}#start"]`, [
                                 m('span.fa.fa-info.fa-lg.fa-fw'), I18n.t('draft_start_tab', I18nScope())
                             ]) 
                             : m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [
