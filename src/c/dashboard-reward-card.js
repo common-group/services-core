@@ -61,6 +61,8 @@ const dashboardRewardCard = {
     view(ctrl, args) {
         const reward = args.reward();
         const project = args.project();
+        const isSubscription = projectVM.isSubscription(project);
+
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
                 m('.w-row', [
@@ -84,7 +86,7 @@ const dashboardRewardCard = {
                 ]),
                 m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
                     I18n.t(
-                        projectVM.isSubscription(project) 
+                        isSubscription 
                         ? 'paid_subscribers' 
                         : 'paid_contributors', I18nScope({
                             count: reward.paid_count()
@@ -115,8 +117,13 @@ const dashboardRewardCard = {
                         ])
                     ) : ''),
 
-                (reward.deliver_at() ? m('.fontsize-smallest', [m('b', I18n.t('delivery_estimation', I18nScope())), h.momentify(reward.deliver_at(), 'MMM/YYYY')]) : ''),
-                m('.fontsize-smallest', m('b', `${I18n.t('delivery', I18nScope())}: `), I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
+                reward.deliver_at() && !isSubscription ? m('.fontsize-smallest', [
+                    m('b', I18n.t('delivery_estimation', I18nScope())),
+                    h.momentify(reward.deliver_at(), 'MMM/YYYY')
+                ]) : null,
+                isSubscription ? null : m('.fontsize-smallest',
+                    m('b', `${I18n.t('delivery', I18nScope())}: `),
+                    I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
                 m('.u-margintop-40.w-row', [
                     (ctrl.showLimited() ? '' :
                         m('.w-col.w-col-4', [
