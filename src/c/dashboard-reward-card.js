@@ -4,6 +4,7 @@ import I18n from 'i18n-js';
 import h from '../h';
 import copyTextInput from './copy-text-input';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 import inlineError from './inline-error';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
@@ -39,7 +40,7 @@ const dashboardRewardCard = {
                     maximum_contributions: reward.maximum_contributions()
                 };
 
-                rewardVM.updateReward(args.project_id, reward.id(), data).then(() => {
+                rewardVM.updateReward(args.project().project_id, reward.id(), data).then(() => {
                     args.showSuccess(true);
                     showLimited.toggle();
                     reward.limited(reward.maximum_contributions() !== null);
@@ -59,6 +60,7 @@ const dashboardRewardCard = {
     },
     view(ctrl, args) {
         const reward = args.reward();
+        const project = args.project();
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
                 m('.w-row', [
@@ -69,7 +71,7 @@ const dashboardRewardCard = {
                             }))
                         )
                     ),
-                    (rewardVM.canEdit(reward, args.project_state, args.user) ?
+                    (rewardVM.canEdit(reward, project.state, args.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
                                 onclick: () => {
@@ -81,9 +83,13 @@ const dashboardRewardCard = {
                         ) : '')
                 ]),
                 m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
-                    I18n.t('paid_contributors', I18nScope({
-                        count: reward.paid_count()
-                    }))
+                    I18n.t(
+                        projectVM.isSubscription(project) 
+                        ? 'paid_subscribers' 
+                        : 'paid_contributors', I18nScope({
+                            count: reward.paid_count()
+                        })
+                    )
                 ),
                 m('.fontsize-small.fontweight-semibold',
                     reward.title()
@@ -181,7 +187,7 @@ const dashboardRewardCard = {
                 m('.w-form',
                     m('.w-col.w-col-6',
                         m.component(copyTextInput, {
-                            value: `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id()}`
+                            value: `https://www.catarse.me/pt/projects/${project.project_id}/contributions/new?reward_id=${reward.id()}`
                         }),
                     )
                 ),
