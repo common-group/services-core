@@ -68,27 +68,30 @@ const dashboardRewardCard = {
                 m('.w-row', [
                     m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11',
                         m('.fontsize-base.fontweight-semibold',
-                            I18n.t('minimum_value_title', I18nScope({
-                                minimum_value: reward.minimum_value()
-                            }))
+                            I18n.t(
+                                isSubscription ?
+                                'minimum_value_subscription_title' :
+                                'minimum_value_title', I18nScope({
+                                    minimum_value: reward.minimum_value()
+                                }))
                         )
                     ),
                     (rewardVM.canEdit(reward, project.state, args.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
-                                onclick: () => {
-                                    reward.edit.toggle();
-                                }
-                            },
+                                    onclick: () => {
+                                        reward.edit.toggle();
+                                    }
+                                },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                             )
                         ) : '')
                 ]),
                 m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
                     I18n.t(
-                        isSubscription 
-                        ? 'paid_subscribers' 
-                        : 'paid_contributors', I18nScope({
+                        isSubscription ?
+                        'paid_subscribers' :
+                        'paid_contributors', I18nScope({
                             count: reward.paid_count()
                         })
                     )
@@ -136,10 +139,10 @@ const dashboardRewardCard = {
                 ]),
                 m(`div${ctrl.showLimited() ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
-                        style: {
-                            display: 'block'
-                        }
-                    },
+                            style: {
+                                display: 'block'
+                            }
+                        },
                         m('.w-form', [
                             [
                                 m('.w-row', [
@@ -164,12 +167,14 @@ const dashboardRewardCard = {
                                 ]),
                                 m('.w-row', [
                                     m('.w-sub-col.w-col.w-col-4',
-                                        m('button.btn.btn-small.w-button', { onclick: ctrl.saveReward }, 'Salvar')
+                                        m('button.btn.btn-small.w-button', {
+                                            onclick: ctrl.saveReward
+                                        }, 'Salvar')
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: ctrl.toggleShowLimit
-                                        },
+                                                onclick: ctrl.toggleShowLimit
+                                            },
                                             'Cancelar'
                                         )
                                     ),
