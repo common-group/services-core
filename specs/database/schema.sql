@@ -50,6 +50,13 @@ CREATE SCHEMA core;
 
 
 --
+-- Name: core_validator; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA core_validator;
+
+
+--
 -- Name: payment_service; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -442,6 +449,29 @@ $$;
 
 
 --
+-- Name: user_exists_on_platform(bigint, integer); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION user_exists_on_platform(user_id bigint, platform_id integer) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $_$
+    select exists(
+        select true
+        from community_service.users u
+            where u.id = $1
+                and u.platform_id = $2
+    )
+$_$;
+
+
+--
+-- Name: FUNCTION user_exists_on_platform(user_id bigint, platform_id integer); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION user_exists_on_platform(user_id bigint, platform_id integer) IS 'Check if user_id exists on platform';
+
+
+--
 -- Name: verify(text, text, text); Type: FUNCTION; Schema: core; Owner: -
 --
 
@@ -454,6 +484,101 @@ CREATE FUNCTION verify(token text, secret text, algorithm text DEFAULT 'HS256'::
     r[3] = core.algorithm_sign(r[1] || '.' || r[2], secret, algorithm) AS valid
   FROM regexp_split_to_array(token, '\.') r;
 $$;
+
+
+SET search_path = core_validator, pg_catalog;
+
+--
+-- Name: is_empty(text); Type: FUNCTION; Schema: core_validator; Owner: -
+--
+
+CREATE FUNCTION is_empty(_value text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE
+    AS $$
+        select nullif(btrim(_value, ' '), '') is null;
+    $$;
+
+
+--
+-- Name: FUNCTION is_empty(_value text); Type: COMMENT; Schema: core_validator; Owner: -
+--
+
+COMMENT ON FUNCTION is_empty(_value text) IS 'check if a text is empty';
+
+
+--
+-- Name: raise_when_empty(text, text); Type: FUNCTION; Schema: core_validator; Owner: -
+--
+
+CREATE FUNCTION raise_when_empty(_value text, _label text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+        declare
+        begin
+            if nullif(btrim(_value, ' '), '') is null then
+                raise 'missing field %', _label;
+            end if;
+            
+            return btrim(_value, ' ');
+        end;
+    $$;
+
+
+--
+-- Name: FUNCTION raise_when_empty(_value text, _label text); Type: COMMENT; Schema: core_validator; Owner: -
+--
+
+COMMENT ON FUNCTION raise_when_empty(_value text, _label text) IS 'Raise when value::text is missing';
+
+
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: check_and_generate_payment_data(json); Type: FUNCTION; Schema: payment_service; Owner: -
+--
+
+CREATE FUNCTION check_and_generate_payment_data(data json) RETURNS json
+    LANGUAGE plpgsql STABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'current_ip', core_validator.raise_when_empty(($1->>'current_ip')::text, 'ip_address'),
+                'amount', core_validator.raise_when_empty((($1->>'amount')::integer)::text, 'amount'),
+                'payment_method', core_validator.raise_when_empty(lower(($1->>'payment_method')::text), 'payment_method'),
+                'customer', json_build_object(
+                    'name', core_validator.raise_when_empty(($1->'customer'->>'name')::text, 'name'),
+                    'email', core_validator.raise_when_empty(($1->'customer'->>'email')::text, 'email'),
+                    'document_number', core_validator.raise_when_empty(($1->'customer'->>'document_number')::text, 'document_number'),
+                    'address', json_build_object(
+                        'street', core_validator.raise_when_empty(($1->'customer'->'address'->>'street')::text, 'street'),
+                        'street_number', core_validator.raise_when_empty(($1->'customer'->'address'->>'street_number')::text, 'street_number'),
+                        'neighborhood', core_validator.raise_when_empty(($1->'customer'->'address'->>'neighborhood')::text, 'neighborhood'),
+                        'zipcode', core_validator.raise_when_empty(($1->'customer'->'address'->>'zipcode')::text, 'zipcode'),
+                        'country', core_validator.raise_when_empty(($1->'customer'->'address'->>'country')::text, 'country'),
+                        'state', core_validator.raise_when_empty(($1->'customer'->'address'->>'state')::text, 'state'),
+                        'city', core_validator.raise_when_empty(($1->'customer'->'address'->>'city')::text, 'city'),
+                        'complementary', ($1->'customer'->'address'->>'complementary')::text
+                    ),
+                    'phone', json_build_object(
+                        'ddi', core_validator.raise_when_empty(($1->'customer'->'phone'->>'ddi')::text, 'phone_ddi'),
+                        'ddd', core_validator.raise_when_empty(($1->'customer'->'phone'->>'ddd')::text, 'phone_ddd'),
+                        'number', core_validator.raise_when_empty(($1->'customer'->'phone'->>'number')::text, 'phone_number')
+                    )
+                )
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION check_and_generate_payment_data(data json); Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON FUNCTION check_and_generate_payment_data(data json) IS 'check and generate a json structure with correct payment data';
 
 
 SET search_path = payment_service_api, pg_catalog;
@@ -469,35 +594,71 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             _result json;
             _payment payment_service.catalog_payments;
             _user_id bigint;
+            _user community_service.users;
             _project project_service.projects;
             _subscription payment_service.subscriptions;
+            _refined jsonb;
         begin
+            -- check roles to define how user_id is set
             if current_role = 'platform_user' or current_role = 'admin' then
                 _user_id := ($1 ->> 'user_id')::bigint;
             else
                 _user_id := core.current_user_id();
             end if;
+            
+            -- check if project exists on platform
+            if ($1->>'project_id') is null 
+                OR not core.project_exists_on_platform(($1->>'project_id')::bigint, core.current_platform_id()) then
+                raise exception 'project not found on platform';
+            end if;            
 
-            if _user_id is null then
+            -- check if user exists on current platform
+            if _user_id is null or not core.user_exists_on_platform(_user_id, core.current_platform_id()) then
                 raise exception 'missing user';
             end if;
-
-            if ($1->>'project_id') is null OR not exists(select * from project_service.projects psp
-                where psp.id = ($1->>'project_id')::bigint
-                    and psp.platform_id = core.current_platform_id()) then
-                raise exception 'project not found on platform';
+            
+            -- set user into variable
+            select * 
+            from community_service.users 
+            where id = _user_id
+            into _user;
+            
+            -- fill ip address to received params
+            select jsonb_set(($1)::jsonb, '{current_ip}'::text[], to_jsonb(current_setting('request.header.x-forwarded-for', true)::text))
+                into _refined;
+            
+            -- if user already has filled document_number/name/email should use then
+            if not core_validator.is_empty((_user.data->>'name')::text) then
+                select jsonb_set(_refined, '{customer,name}', to_jsonb(_user.data->>'name'::text))
+                    into _refined;
             end if;
-
+            
+            if not core_validator.is_empty((_user.data->>'email')::text) then
+                select jsonb_set(_refined, '{customer,email}', to_jsonb(_user.data->>'email'::text))
+                    into _refined;
+            end if;
+            
+            if not core_validator.is_empty((_user.data->>'email')::text) then
+                select jsonb_set(_refined, '{customer,document_number}', to_jsonb(_user.data->>'document_number'::text))
+                    into _refined;                
+            end if;
+            
+            -- generate a base structure to payment json
+            select (payment_service.check_and_generate_payment_data((_refined)::json))::jsonb
+                into _refined;
+                
+            -- insert payment in table
             insert into payment_service.catalog_payments (
                 platform_id, project_id, user_id, data, gateway
             ) values (
                 core.current_platform_id(),
                 ($1->>'project_id')::bigint,
                 _user_id,
-                $1,
+                _refined,
                 coalesce(($1->>'gateway')::text, 'pagarme')
             ) returning * into _payment;
 
+            -- check if payment is a subscription to create one
             if ($1->>'subscription')::boolean then
                 insert into payment_service.subscriptions (
                     platform_id, project_id, user_id
@@ -509,23 +670,18 @@ CREATE FUNCTION create_payment(data json) RETURNS json
                     where id = _payment.id;
             end if;
 
+            -- build result json with payment_id and subscription_id
             select json_build_object(
                 'id', _payment.id,
                 'subscription_id', _subscription.id
             ) into _result;
 
+            -- notify to backend processor via listen
             PERFORM pg_notify('process_payments_channel', _result::text);
 
             return _result;
         end;
     $_$;
-
-
---
--- Name: FUNCTION create_payment(data json); Type: COMMENT; Schema: payment_service_api; Owner: -
---
-
-COMMENT ON FUNCTION create_payment(data json) IS 'Catalog new payment for processing and return id';
 
 
 SET search_path = platform_service, pg_catalog;
@@ -1950,6 +2106,16 @@ GRANT USAGE ON SCHEMA core TO anonymous;
 
 
 --
+-- Name: core_validator; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA core_validator TO scoped_user;
+GRANT USAGE ON SCHEMA core_validator TO platform_user;
+GRANT USAGE ON SCHEMA core_validator TO postgrest;
+GRANT USAGE ON SCHEMA core_validator TO admin;
+
+
+--
 -- Name: payment_service; Type: ACL; Schema: -; Owner: -
 --
 
@@ -2017,17 +2183,6 @@ SET search_path = community_service_api, pg_catalog;
 
 GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO admin;
 GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
-
-
-SET search_path = payment_service_api, pg_catalog;
-
---
--- Name: create_payment(json); Type: ACL; Schema: payment_service_api; Owner: -
---
-
-GRANT ALL ON FUNCTION create_payment(data json) TO scoped_user;
-GRANT ALL ON FUNCTION create_payment(data json) TO platform_user;
-GRANT ALL ON FUNCTION create_payment(data json) TO admin;
 
 
 SET search_path = platform_service, pg_catalog;
