@@ -152,3 +152,32 @@ services:
           condition: on-failure
     ports:
       - "3004:3000"
+
+  analytics_service_api:
+    image: postgrest/postgrest:v0.4.3.0
+    environment:
+      DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
+      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
+      PGRST_DB_ANON_ROLE: anonymous
+      PGRST_DB_POOL: 10
+      PGRST_DB_SCHEMA: analytics_service_api
+      PGRST_DB_URI: postgres://postgrest:example@service_core_db:5432/service_core
+      PGRST_JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
+      PGRST_SERVER_PROXY_URI: https://0.0.0.0:3000/
+      POSTGREST_VER: 0.4.3.0
+      PGRST_SERVER_PORT: 3000
+      PGRST_SERVER_HOST: 0.0.0.0
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "50M"
+        restart_policy:
+          condition: on-failure
+    ports:
+      - "3005:3000"
