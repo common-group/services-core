@@ -82,20 +82,29 @@ const projectCardEdit = {
             m('form.w-form', { onsubmit: ctrl.onSubmit }, [
                 m('.w-section.section', [
                     m('.w-container', [
+                        (vm.currentProject().mode === 'sub' ?
+                        m('.w-row', [
+                            m('.w-col.w-col-12', [
+                                m(inputCard, {
+                                    label: m.trust(I18n.t('cover_image_label', I18nScope())),
+                                    label_hint: I18n.t('cover_image_hint', I18nScope()),
+                                    children: [
+                                        m('input.file.optional.w-input.text-field[id="project_cover_image"][name="project[cover_image]"][type="file"]', {
+                                            class: vm.e.hasError('cover_image') ? 'error' : false,
+                                            onchange: (e) => { vm.prepareForUpload(e, 'cover_image'); }
+                                        }),
+                                        vm.e.inlineError('cover_image')
+                                    ]
+                                })
+                            ])
+                        ])
+                        : ''),
                         m('.w-row', [
                             m('.w-col.w-col-8', [
                                 m(inputCard, {
                                     label: I18n.t('uploaded_image_label', I18nScope()),
                                     label_hint: I18n.t('uploaded_image_hint', I18nScope()),
                                     children: [
-                                        (vm.currentProject().mode === 'sub' ? [
-                                            m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[cover_image]"][type="file"]', {
-                                                class: vm.e.hasError('cover_image') ? 'error' : false,
-                                                onchange: (e) => { vm.prepareForUpload(e, 'cover_image'); }
-                                            }),
-                                            vm.e.inlineError('cover_image')
-                                        ]
-                                        : ''),
                                         m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[uploaded_image]"][type="file"]', {
                                             class: vm.e.hasError('uploaded_image') ? 'error' : false,
                                             onchange: (e) => { vm.prepareForUpload(e, 'uploaded_image'); }
