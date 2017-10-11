@@ -17,3 +17,6 @@ insert into community_service.users(platform_id, id, name, email, password, key)
     (9999, 998, 'test community user 02 owner', 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63');
 
 insert into project_service.projects(id, platform_id, user_id, name, mode, data) values (9999, 9999, 998, 'test project 01', 'sub', json_build_object('name', 'test project 01'));
+
+insert into payment_service.credit_cards(id, platform_id, user_id, gateway, gateway_data) values (999, 9999, 999, 'pagarme', json_build_object(
+'id', 123));
