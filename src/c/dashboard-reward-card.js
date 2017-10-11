@@ -4,6 +4,7 @@ import I18n from 'i18n-js';
 import h from '../h';
 import copyTextInput from './copy-text-input';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 import inlineError from './inline-error';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
@@ -39,7 +40,7 @@ const dashboardRewardCard = {
                     maximum_contributions: reward.maximum_contributions()
                 };
 
-                rewardVM.updateReward(args.project_id, reward.id(), data).then(() => {
+                rewardVM.updateReward(args.project().project_id, reward.id(), data).then(() => {
                     args.showSuccess(true);
                     showLimited.toggle();
                     reward.limited(reward.maximum_contributions() !== null);
@@ -59,31 +60,41 @@ const dashboardRewardCard = {
     },
     view(ctrl, args) {
         const reward = args.reward();
+        const project = args.project();
+        const isSubscription = projectVM.isSubscription(project);
+
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
                 m('.w-row', [
                     m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11',
                         m('.fontsize-base.fontweight-semibold',
-                            I18n.t('minimum_value_title', I18nScope({
-                                minimum_value: reward.minimum_value()
-                            }))
+                            I18n.t(
+                                isSubscription ?
+                                'minimum_value_subscription_title' :
+                                'minimum_value_title', I18nScope({
+                                    minimum_value: reward.minimum_value()
+                                }))
                         )
                     ),
-                    (rewardVM.canEdit(reward, args.project_state, args.user) ?
+                    (rewardVM.canEdit(reward, project.state, args.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
-                                onclick: () => {
-                                    reward.edit.toggle();
-                                }
-                            },
+                                    onclick: () => {
+                                        reward.edit.toggle();
+                                    }
+                                },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                             )
                         ) : '')
                 ]),
                 m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
-                    I18n.t('paid_contributors', I18nScope({
-                        count: reward.paid_count()
-                    }))
+                    I18n.t(
+                        isSubscription ?
+                        'paid_subscribers' :
+                        'paid_contributors', I18nScope({
+                            count: reward.paid_count()
+                        })
+                    )
                 ),
                 m('.fontsize-small.fontweight-semibold',
                     reward.title()
@@ -109,8 +120,13 @@ const dashboardRewardCard = {
                         ])
                     ) : ''),
 
-                (reward.deliver_at() ? m('.fontsize-smallest', [m('b', I18n.t('delivery_estimation', I18nScope())), h.momentify(reward.deliver_at(), 'MMM/YYYY')]) : ''),
-                m('.fontsize-smallest', m('b', `${I18n.t('delivery', I18nScope())}: `), I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
+                reward.deliver_at() && !isSubscription ? m('.fontsize-smallest', [
+                    m('b', I18n.t('delivery_estimation', I18nScope())),
+                    h.momentify(reward.deliver_at(), 'MMM/YYYY')
+                ]) : null,
+                isSubscription ? null : m('.fontsize-smallest',
+                    m('b', `${I18n.t('delivery', I18nScope())}: `),
+                    I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
                 m('.u-margintop-40.w-row', [
                     (ctrl.showLimited() ? '' :
                         m('.w-col.w-col-4', [
@@ -123,10 +139,10 @@ const dashboardRewardCard = {
                 ]),
                 m(`div${ctrl.showLimited() ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
-                        style: {
-                            display: 'block'
-                        }
-                    },
+                            style: {
+                                display: 'block'
+                            }
+                        },
                         m('.w-form', [
                             [
                                 m('.w-row', [
@@ -151,12 +167,14 @@ const dashboardRewardCard = {
                                 ]),
                                 m('.w-row', [
                                     m('.w-sub-col.w-col.w-col-4',
-                                        m('button.btn.btn-small.w-button', { onclick: ctrl.saveReward }, 'Salvar')
+                                        m('button.btn.btn-small.w-button', {
+                                            onclick: ctrl.saveReward
+                                        }, 'Salvar')
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: ctrl.toggleShowLimit
-                                        },
+                                                onclick: ctrl.toggleShowLimit
+                                            },
                                             'Cancelar'
                                         )
                                     ),
@@ -181,7 +199,7 @@ const dashboardRewardCard = {
                 m('.w-form',
                     m('.w-col.w-col-6',
                         m.component(copyTextInput, {
-                            value: `https://www.catarse.me/pt/projects/${args.project_id}/contributions/new?reward_id=${reward.id()}`
+                            value: `https://www.catarse.me/pt/projects/${project.project_id}/contributions/new?reward_id=${reward.id()}`
                         }),
                     )
                 ),

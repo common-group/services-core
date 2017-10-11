@@ -84,11 +84,13 @@ const projectDashboardMenu = {
                     m(`a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="${project.is_published ? `/${project.permalink}` : `${editRoute}#preview`}"]`, [
                         m(`img.thumb-project-dashboard[src="${project ? ctrl.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
-                        m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"][width=80]`)
+                        m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"]`, {
+                            width: projectVM.isSubscription(project) ? 130 : 80
+                        })
                     ]),
                     m('#info-links.u-marginbottom-20', [
                         (project.state === 'draft' && projectVM.isSubscription(project)) 
-                            ? m(`a#dashboard_home_link[class="${editLinkClass('#budget')}"][href="${editRoute}#start"]`, [
+                            ? m(`a#dashboard_home_link[class="${editLinkClass('#start')}"][href="${editRoute}#start"]`, [
                                 m('span.fa.fa-info.fa-lg.fa-fw'), I18n.t('draft_start_tab', I18nScope())
                             ]) 
                             : m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [

@@ -138,8 +138,7 @@ const projectEditReward = {
                                                             errors: ctrl.errors,
                                                             user: ctrl.user(),
                                                             showSuccess: ctrl.showSuccess,
-                                                            project_id: args.project_id,
-                                                            project_state: project().state
+                                                            project: project
                                                         }) :
                                                         m(editRewardCard, {
                                                             project_id: args.project_id,
