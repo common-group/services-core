@@ -16,6 +16,7 @@ const projectCardEdit = {
         const vm = projectCardVM,
             mapErrors = [
                   ['uploaded_image', ['uploaded_image']],
+                  ['cover_image', ['cover_image']],
                   ['headline', ['headline']],
             ],
             showSuccess = h.toggleProp(false, true),
@@ -87,9 +88,17 @@ const projectCardEdit = {
                                     label: I18n.t('uploaded_image_label', I18nScope()),
                                     label_hint: I18n.t('uploaded_image_hint', I18nScope()),
                                     children: [
+                                        (vm.currentProject().mode === 'sub' ? [
+                                            m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[cover_image]"][type="file"]', {
+                                                class: vm.e.hasError('cover_image') ? 'error' : false,
+                                                onchange: (e) => { vm.prepareForUpload(e, 'cover_image'); }
+                                            }),
+                                            vm.e.inlineError('cover_image')
+                                        ]
+                                        : ''),
                                         m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[uploaded_image]"][type="file"]', {
                                             class: vm.e.hasError('uploaded_image') ? 'error' : false,
-                                            onchange: vm.prepareForUpload
+                                            onchange: (e) => { vm.prepareForUpload(e, 'uploaded_image'); }
                                         }),
                                         vm.e.inlineError('uploaded_image')
                                     ]
