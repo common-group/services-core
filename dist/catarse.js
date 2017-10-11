@@ -2447,7 +2447,7 @@ var updateReward = function updateReward(projectId, rewardId, rewardData) {
 };
 
 var canEdit = function canEdit(reward, projectState, user) {
-    return (user || {}).is_admin || projectState === 'draft' || projectState === 'online' && reward.paid_count <= 0 && reward.waiting_payment_count <= 0;
+    return (user || {}).is_admin || projectState === 'draft' || projectState === 'online' && reward.paid_count() <= 0 && reward.waiting_payment_count() <= 0;
 };
 
 var canAdd = function canAdd(projectState, user) {
