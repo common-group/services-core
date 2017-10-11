@@ -7,11 +7,16 @@ const projectGoalEditCard = {
     controller(args) {
         const goal = args.goal(),
             descriptionError = m.prop(false),
+            titleError = m.prop(false),
             valueError = m.prop(false),
             validate = () => {
                 args.error(false);
                 descriptionError(false);
                 valueError(false);
+                if (_.isEmpty(goal.title())) {
+                    args.error(true);
+                    titleError(true);
+                }
                 if (_.isEmpty(goal.description())) {
                     args.error(true);
                     descriptionError(true);
@@ -76,6 +81,7 @@ const projectGoalEditCard = {
         return {
             confirmDelete,
             descriptionError,
+            titleError,
             valueError,
             acceptNumeric,
             destroyed,
@@ -127,10 +133,12 @@ const projectGoalEditCard = {
                     m('.w-col.w-col-6',
                         m("input.positive.text-field.w-input[type='text']", {
                             value: goal.title(),
+                            class: ctrl.descriptionError() ? 'error' : false,
                             onchange: m.withAttr('value', goal.title)
                         })
                     )
                 ]),
+                ctrl.titleError() ? inlineError('Título não pode ficar em branco.') : '',
                 m('.w-row', [
                     m('.w-col.w-col-6',
                         m('.fontsize-small',

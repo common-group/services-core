@@ -9,6 +9,7 @@ const currentProject = m.prop({});
 const fields = {
     headline: m.prop(''),
     uploaded_image: m.prop(''),
+    cover_image: m.prop(''),
     upload_files: m.prop(undefined)
 };
 
@@ -26,10 +27,10 @@ const reloadCurrentProject = () => {
     }
 };
 
-const prepareForUpload = (event) => {
+const prepareForUpload = (event, target) => {
     const formData = new FormData();
     if (event.target.files[0]) {
-        formData.append('uploaded_image', event.target.files[0]);
+        formData.append(target, event.target.files[0]);
     }
     fields.upload_files(formData);
 };

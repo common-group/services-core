@@ -43,7 +43,7 @@ const projectHeader = {
                 ) : ''
         ]) : '';
 
-        return (!_.isUndefined(project()) ? m('#project-header', [
+        return (!_.isUndefined(project()) ? m('#project-header.project-with-background', { style: `background-image:url('${project().cover_image}');` }, [
             m(`.w-section.section-product.${project().mode}`),
             m(projectHeaderTitle, {
                 project,
