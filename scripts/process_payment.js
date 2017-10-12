@@ -52,15 +52,17 @@ async function init(stdin_data) {
             api_key: process.env.GATEWAY_API_KEY
         });
 
+        let customer = payment.data.customer;
+
         let af_address_data = {
-            country: payment.data.address.country,
-            state: payment.data.address.state,
-            city: payment.data.address.city,
-            zipcode: payment.data.address.zipcode,
-            neighborhood: payment.data.address.neighbourhood,
-            street: payment.data.address.street_number,
-            street_number: payment.data.address.number,
-            complementary: payment.data.adress.complement,
+            country: customer.address.country,
+            state: customer.address.state,
+            city: customer.address.city,
+            zipcode: customer.address.zipcode,
+            neighborhood: customer.address.neighbourhood,
+            street: customer.address.street_number,
+            street_number: customer.address.number,
+            complementary: customer.adress.complement,
             latitude: '',
             longitude: ''
         };
@@ -70,19 +72,19 @@ async function init(stdin_data) {
             payment_method: payment.data.payment_method,
             postback_url: process.env.POSTBACK_URL,
             customer: {
-                name: user.data.name,
-                email: user.data.email,
-                document_number: user.data.document_number,
+                name: customer.name,
+                email: customer.email,
+                document_number: customer.document_number,
                 address: {
-                    street: payment.data.address.street,
-                    street_number: payment.data.address.street_number,
-                    neighborhood: payment.data.address.neighborhood,
-                    zipcode: payment.data.address.zipcode
+                    street: customer.address.street,
+                    street_number: customer.address.street_number,
+                    neighborhood: customer.address.neighborhood,
+                    zipcode: customer.address.zipcode
                 },
                 phone: {
-                    ddi: payment.data.phone.ddi,
-                    ddd: payment.data.phone.ddd,
-                    number: payment.data.phone.number
+                    ddi: customer.phone.ddi,
+                    ddd: customer.phone.ddd,
+                    number: customer.phone.number
                 }
             },
             metadata: {
@@ -98,8 +100,8 @@ async function init(stdin_data) {
                 ip: payment.data.current_ip,
                 platform: "web",
                 register: {
-                    id: user.id,
-                    email: user.data.email,
+                    id: payment.user_id,
+                    email: customer.email,
                     registered_at: user.created_at,
                     login_source: "registered",
                     company_group: "",
@@ -107,7 +109,7 @@ async function init(stdin_data) {
                 },
                 billing: {
                     customer: {
-                        name: user.data.name,
+                        name: customer.name,
                         document_number: payment.data.credit_card_owner_document,
                         born_at: "",
                         gender: ""
@@ -115,38 +117,38 @@ async function init(stdin_data) {
                     address: af_address_data,
                     phone_numbers: [
                         {
-                            ddi: payment.data.phone.ddi,
-                            ddd: payment.data.phone.ddd,
-                            number: payment.data.phone.number
+                            ddi: customer.phone.ddi,
+                            ddd: customer.phone.ddd,
+                            number: customer.phone.number
                         }
                     ]
                 },
                 buyer: {
                     customer: {
-                        name: user.data.name,
-                        document_number: user.data.document_number,
+                        name: customer.name,
+                        document_number: customer.document_number,
                         born_at: "",
                         gender: ""
                     },
                     adress: af_address_data,
                     phone_numbers: [{
-                        ddi: payment.data.phone.ddi,
-                        ddd: payment.data.phone.ddd,
-                        number: payment.data.phone.number
+                        ddi: customer.phone.ddi,
+                        ddd: customer.phone.ddd,
+                        number: customer.phone.number
                     }]
                 },
                 shipping: {
                     customer: {
-                        name: user.data.name,
-                        document_number: user.data.document_number,
+                        name: customer.name,
+                        document_number: customer.document_number,
                         bornt_at: "",
                         gender: ""
                     },
                     adress: af_address_data,
                     phone_numbers: [{
-                        ddi: payment.data.phone.ddi,
-                        ddd: payment.data.phone.ddd,
-                        number: payment.data.phone.number
+                        ddi: customer.phone.ddi,
+                        ddd: customer.phone.ddd,
+                        number: customer.phone.number
                     }],
                     shipping_method: "",
                     fee: 0,
@@ -161,8 +163,8 @@ async function init(stdin_data) {
                     totalDiscounts: 0,
                     event_id: project.id,
                     ticket_type_id: "0",
-                    ticket_owner_name: user.data.name,
-                    ticket_owner_document_number: user.data.document_number
+                    ticket_owner_name: customer.name,
+                    ticket_owner_document_number: customer.document_number,
                 }],
                 discounts: [{
                     type: "other",
@@ -233,7 +235,6 @@ async function init(stdin_data) {
                 update_payment_sql
                 , [payment.id, JSON.stringify(transaction_data)]);
 
-            console.log(insert_transaction);
         } catch(err) {
             let insert_errors = await pg_client.query(
                 update_payment_sql
