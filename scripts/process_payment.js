@@ -56,7 +56,7 @@ async function init(stdin_data) {
             country: payment.data.address.country,
             state: payment.data.address.state,
             city: payment.data.address.city,
-            zipcode: payment.data.address.zipcode
+            zipcode: payment.data.address.zipcode,
             neighborhood: payment.data.address.neighbourhood,
             street: payment.data.address.street_number,
             street_number: payment.data.address.number,
