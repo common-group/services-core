@@ -8,8 +8,8 @@ const _ = require('lodash');
 getStdin().then(str => {
     if(str !== null && str !== "") {
         init(JSON.parse(str))
-            .then( x => void(0) )
-            .catch( x => void(0) )
+            .then(void(0))
+            .catch(void(0));
     }
 });
 
@@ -156,12 +156,12 @@ async function init(stdin_data) {
                     name: `${payment.data.amount/100.0} - ${project.data.name}`,
                     type: "contribution",
                     quantity: "1",
-                    unit_price: payment.data.amount
+                    unit_price: payment.data.amount,
                     totalAdditions: 0,
                     totalDiscounts: 0,
-                    event_id: poject.id,
+                    event_id: project.id,
                     ticket_type_id: "0",
-                    ticket_owner_name: user.data.name
+                    ticket_owner_name: user.data.name,
                     ticket_owner_document_number: user.data.document_number
                 }],
                 discounts: [{
@@ -176,12 +176,12 @@ async function init(stdin_data) {
                 events: [{
                     id: project.id,
                     name: project.data.name,
-                    type: project.mode == 'flex' ? 'flex' : 'full',
+                    type: project.mode === 'aon' ? 'full' : project.mode,
                     date: project.data.expires_at,
                     venue_name: project_owner.data.name,
                     address: {
                         country: "Brasil",
-                        state: project_owner.data.address.state
+                        state: project_owner.data.address.state,
                         city: project_owner.data.addess.city,
                         zipcode: project_owner.data.address.zipcode,
                         neighborhood: project_owner.data.address.neighborhood,
@@ -191,22 +191,22 @@ async function init(stdin_data) {
                         latitude: 0.0,
                         longitude: 0.0
                     },
-                    ticket_types: [
-                        {
-                            id: payment.id,
-                            name: "",
-                            type: "",
-                            batch: "",
-                            price: payment.data.amount,
-                            available_number: 0,
-                            total_number: 0,
-                            identity_verified: "",
-                            assigned_seats:  ""
-                        }]
+                    ticket_types: [{
+                        id: payment.id,
+                        name: "",
+                        type: "",
+                        batch: "",
+                        price: payment.data.amount,
+                        available_number: 0,
+                        total_number: 0,
+                        identity_verified: "",
+                        assigned_seats:  ""
+                    }]
                 }]
-            };
+            }
+        };
 
-        if(payment.data.payment_method == 'credit_card') {
+        if(payment.data.payment_method === 'credit_card') {
             let payment_charge = (payment.data.card_hash ? {
                 card_hash: payment.data.card_hash
             } : {
@@ -221,7 +221,8 @@ async function init(stdin_data) {
                     where id = $1::bigint`;
 
         try {
-            const transaction = await pagarme_client.transactions.create(transaction_data)
+            const transaction = await pagarme_client.transactions.create(transaction_data);
+
             console.log(transaction);
             let transaction_data = {
                 transaction: transaction,
