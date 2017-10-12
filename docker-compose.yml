@@ -26,9 +26,9 @@ services:
 
   payment_processor_dispatcher:
     image: comum/payment-service:latest
-    environment:
-      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-    command: ["pg-dispatcher", "--db-uri", "postgres://postgres:example@service_core_db:5432/service_core", "--redis-uri", "redis://dispatcher_redis:6379", "--channel", "process_payments_channel", "--workers", "2", "--exec", "node ./scripts/process_payment.js"]
+    env_file:
+      - ./compose_env/.payment_processor_dispatcher.env
+    command: ["./dispatchers/payment_processor_dispatcher"]
     links:
       - "service_core_db:service_core_db"
       - "dispatcher_redis:dispatcher_redis"
@@ -39,18 +39,8 @@ services:
 
   payment_service_api:
     image: postgrest/postgrest:v0.4.3.0
-    environment:
-      DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PGRST_DB_ANON_ROLE: anonymous
-      PGRST_DB_POOL: 10
-      PGRST_DB_SCHEMA: payment_service_api
-      PGRST_DB_URI: postgres://postgrest:example@service_core_db:5432/service_core
-      PGRST_JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
-      PGRST_SERVER_PROXY_URI: https://0.0.0.0:3000/
-      POSTGREST_VER: 0.4.3.0
-      PGRST_SERVER_PORT: 3000
-      PGRST_SERVER_HOST: 0.0.0.0
+    env_file:
+      - ./compose_env/.payment_service_api.env
     depends_on:
       - service_core_db
     links:
@@ -68,18 +58,8 @@ services:
 
   project_service_api:
     image: postgrest/postgrest:v0.4.3.0
-    environment:
-      DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PGRST_DB_ANON_ROLE: anonymous
-      PGRST_DB_POOL: 10
-      PGRST_DB_SCHEMA: project_service_api
-      PGRST_DB_URI: postgres://postgrest:example@service_core_db:5432/service_core
-      PGRST_JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
-      PGRST_SERVER_PROXY_URI: https://0.0.0.0:3000/
-      POSTGREST_VER: 0.4.3.0
-      PGRST_SERVER_PORT: 3000
-      PGRST_SERVER_HOST: 0.0.0.0
+    env_file:
+      - ./compose_env/.project_service_api.env
     depends_on:
       - service_core_db
     links:
@@ -97,18 +77,8 @@ services:
 
   community_service_api:
     image: postgrest/postgrest:v0.4.3.0
-    environment:
-      DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PGRST_DB_ANON_ROLE: anonymous
-      PGRST_DB_POOL: 10
-      PGRST_DB_SCHEMA: community_service_api
-      PGRST_DB_URI: postgres://postgrest:example@service_core_db:5432/service_core
-      PGRST_JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
-      PGRST_SERVER_PROXY_URI: https://0.0.0.0:3000/
-      POSTGREST_VER: 0.4.3.0
-      PGRST_SERVER_PORT: 3000
-      PGRST_SERVER_HOST: 0.0.0.0
+    env_file:
+      - ./compose_env/.community_service_api.env
     depends_on:
       - service_core_db
     links:
@@ -126,18 +96,8 @@ services:
 
   platform_service_api:
     image: postgrest/postgrest:v0.4.3.0
-    environment:
-      DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PGRST_DB_ANON_ROLE: anonymous
-      PGRST_DB_POOL: 10
-      PGRST_DB_SCHEMA: platform_service_api
-      PGRST_DB_URI: postgres://postgrest:example@service_core_db:5432/service_core
-      PGRST_JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
-      PGRST_SERVER_PROXY_URI: https://0.0.0.0:3000/
-      POSTGREST_VER: 0.4.3.0
-      PGRST_SERVER_PORT: 3000
-      PGRST_SERVER_HOST: 0.0.0.0
+    env_file:
+      - ./compose_env/.platform_service_api.env
     depends_on:
       - service_core_db
     links:
@@ -155,18 +115,8 @@ services:
 
   analytics_service_api:
     image: postgrest/postgrest:v0.4.3.0
-    environment:
-      DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PROCESS_PAYMENT_DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
-      PGRST_DB_ANON_ROLE: anonymous
-      PGRST_DB_POOL: 10
-      PGRST_DB_SCHEMA: analytics_service_api
-      PGRST_DB_URI: postgres://postgrest:example@service_core_db:5432/service_core
-      PGRST_JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
-      PGRST_SERVER_PROXY_URI: https://0.0.0.0:3000/
-      POSTGREST_VER: 0.4.3.0
-      PGRST_SERVER_PORT: 3000
-      PGRST_SERVER_HOST: 0.0.0.0
+    env_file:
+      - ./compose_env/.analytics_service_api.env
     depends_on:
       - service_core_db
     links:

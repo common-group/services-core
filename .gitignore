@@ -3,3 +3,10 @@ specs/logs/*.log
 specs/postgrest/settings.config
 specs/postgrest/postgrest-0.4.3.0-osx
 specs/postgrest/postgrest-*
+compose_env/.analytics_service_api.env
+compose_env/.platform_service_api.env
+compose_env/.community_service_api.env
+compose_env/.project_service_api.env
+compose_env/.payment_service_api.env
+compose_env/.process_payment_dispatcher.env
+compose_env/.payment_processor_dispatcher.env
