@@ -596,7 +596,6 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             _user_id bigint;
             _user community_service.users;
             _project project_service.projects;
-            _credit_card payment_service.credit_cards;
             _subscription payment_service.subscriptions;
             _refined jsonb;
         begin
@@ -647,42 +646,6 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             -- generate a base structure to payment json
             select (payment_service.check_and_generate_payment_data((_refined)::json))::jsonb
                 into _refined;
-                
-            -- fill with is_international
-            select jsonb_set(_refined, '{is_international}'::text[], to_jsonb(coalesce(($1)->>'is_international'::text, false::text)::text))
-                into _refined;
-                
-            -- fill with save_card
-            select jsonb_set(_refined, '{save_card}'::text[], to_jsonb(coalesce(($1)->>'save_card'::text, false::text)))
-                into _refined;                
-                
-            -- if payment_method is credit_card should check for card_hash or card_id
-            if (_refined->>'payment_method')::text = 'credit_card' then
-            
-                -- check if card_hash or card_id is present
-                if core_validator.is_empty((($1)->>'card_hash')::text) 
-                    and core_validator.is_empty((($1)->>'card_id')::text) then
-                    raise 'missing card_hash or card_id';
-                end if;
-                
-                -- if has card_id check if user is card owner
-                if not core_validator.is_empty((($1)->>'card_id')::text) then
-                    select cc.* from payment_service.credit_cards cc 
-                    where cc.user_id = _user_id and cc.id = (($1)->>'card_id')::bigint
-                    into _credit_card;
-
-                    if _credit_card.id is null then
-                        raise 'invalid card_id';
-                    end if;
-                    
-                    select jsonb_set(_refined, '{card_id}'::text[], to_jsonb(_credit_card.id::text))
-                        into _refined;
-                elsif not core_validator.is_empty((($1)->>'card_hash')::text) then
-                    select jsonb_set(_refined, '{card_hash}'::text[], to_jsonb((($1)->>'card_hash')::text))
-                        into _refined;
-                end if;
-                
-            end if;
                 
             -- insert payment in table
             insert into payment_service.catalog_payments (

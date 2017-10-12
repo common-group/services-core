@@ -62,11 +62,11 @@ AS $function$
                 into _refined;
                 
             -- fill with is_international
-            select jsonb_set(_refined, '{is_international}'::text[], to_jsonb((($1)->>'is_international'::boolean)::text))
+            select jsonb_set(_refined, '{is_international}'::text[], to_jsonb((($1)->>'is_international')::text))
                 into _refined;
                 
             -- fill with save_card
-            select jsonb_set(_refined, '{is_international}'::text[], to_jsonb((($1)->>'save_card'::boolean)::text))
+            select jsonb_set(_refined, '{is_international}'::text[], to_jsonb((($1)->>'save_card')::text))
                 into _refined;                
                 
             -- if payment_method is credit_card should check for card_hash or card_id
