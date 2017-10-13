@@ -3,7 +3,8 @@
 - config:
   - testset: "users_count"
 - test:
-  - name: "Basic get"
+  - name: "Basic get with anonymous"
+  - headers: { 'Platform-Code': 'a28be766-bb36-4821-82ec-768d2634d78b' }
   - url: "/users_count"
   - method: "GET"
   - expected_status: [401]
