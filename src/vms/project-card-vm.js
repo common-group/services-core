@@ -15,6 +15,7 @@ const fields = {
 
 const fillFields = (data) => {
     fields.headline(data.headline || '');
+    fields.cover_image(data.cover_image || '');
     currentProject(data);
 };
 
