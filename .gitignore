@@ -10,3 +10,4 @@ compose_env/.project_service_api.env
 compose_env/.payment_service_api.env
 compose_env/.process_payment_dispatcher.env
 compose_env/.payment_processor_dispatcher.env
+seed.sql
