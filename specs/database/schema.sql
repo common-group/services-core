@@ -192,7 +192,9 @@ CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
                 'name', ($1->>'name')::text,
                 'email', ($1->>'email')::text,
                 'document_number', replace(replace(replace(($1->>'document_number')::text, '.', ''), '/', ''), '-', ''),
-                'document_number', ($1->>'document_type')::text,
+                'born_at', ($1->>'born_at')::date,
+                'document_type', ($1->>'document_type')::text,
+                'legal_account_type', ($1->>'legal_account_type')::text,
                 'address', json_build_object(
                     'street', ($1->'address'->>'street')::text,
                     'street_number', ($1->'address'->>'street_number')::text,
@@ -204,10 +206,18 @@ CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
                     'complementary', ($1->'address'->>'complementary')::text
                 ),
                 'phone', json_build_object(
-                    'ddi', ($1->'customer'->'phone'->>'ddi')::text,
-                    'ddd', ($1->'customer'->'phone'->>'ddd')::text,
-                    'number', ($1->'customer'->'phone'->>'number')::text
-                )
+                    'ddi', ($1->'phone'->>'ddi')::text,
+                    'ddd', ($1->'phone'->>'ddd')::text,
+                    'number', ($1->'phone'->>'number')::text
+                ),
+                'bank_account', json_build_object(
+                    'bank_code', ($1->'bank_account'->>'bank_code')::text,
+                    'account', ($1->'bank_account'->>'account')::text,
+                    'account_digit', ($1->'bank_account'->>'account_digit')::text,
+                    'agency', ($1->'bank_account'->>'agency')::text,
+                    'agency_digit', ($1->'bank_account'->>'agency_digit')::text
+                ),
+                'metadata', ($1->>'metadata')::json
             ) into _result;
 
             return _result;
@@ -313,6 +323,66 @@ CREATE FUNCTION create_user(data json) RETURNS json
 COMMENT ON FUNCTION create_user(data json) IS 'insert new user on current platform';
 
 
+--
+-- Name: update_user(json); Type: FUNCTION; Schema: community_service_api; Owner: -
+--
+
+CREATE FUNCTION update_user(data json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+        declare
+            _user_id bigint;
+            _user community_service.users;
+            _platform platform_service.platforms;
+            _version community_service.user_versions;
+            _refined json;
+            _result json;
+        begin
+            -- ensure that roles come from any permitted
+            perform core.force_any_of_roles('{platform_user, scoped_user}');
+            
+            -- platform user can update any project inside the platform
+            if current_role = 'platform_user' then
+                _user_id := ($1->>'id')::bigint;
+            else -- scoped_user can only update they records
+                _user_id := core.current_user_id();
+            end if;
+            
+            select * from community_service.users 
+                where id = _user_id
+                    and platform_id = core.current_platform_id()
+            into _user;
+            
+            -- check if user exists on platform
+            if _user.id is null OR not core.user_exists_on_platform(_user.id, core.current_platform_id()) then
+                raise 'user not found';
+            end if;
+            
+            -- generate user basic data structure with received json
+            select community_service._serialize_user_basic_data($1)
+                into _refined;
+                
+            -- insert old user data to version
+            insert into community_service.user_versions(user_id, data)
+                values (_user.id, _user.data)
+                returning * into _version;
+            
+            update community_service.users
+                set data = _refined
+            where id = _user.id;
+
+            -- build result with user id
+            select json_build_object(
+                'id', _user.id,
+                'old_version_id', _version.id,
+                'data', _refined
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
 SET search_path = core, pg_catalog;
 
 --
@@ -393,6 +463,29 @@ COMMENT ON FUNCTION current_user_id() IS 'Returns the user_id decoded on jwt';
 
 
 --
+-- Name: force_any_of_roles(text[]); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION force_any_of_roles(roles text[]) RETURNS void
+    LANGUAGE plpgsql STABLE
+    AS $_$
+        declare
+        begin
+            if not core.has_any_of_roles($1) then
+                raise exception insufficient_privilege;
+            end if;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION force_any_of_roles(roles text[]); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION force_any_of_roles(roles text[]) IS 'raise insufficient_privilege when current role not in any of requested roles';
+
+
+--
 -- Name: gen_jwt_token(json); Type: FUNCTION; Schema: core; Owner: -
 --
 
@@ -429,6 +522,24 @@ COMMENT ON FUNCTION get_setting(character varying) IS 'Get a value from a core s
 
 
 --
+-- Name: has_any_of_roles(text[]); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION has_any_of_roles(roles text[]) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $$
+        select current_role = ANY(roles);
+    $$;
+
+
+--
+-- Name: FUNCTION has_any_of_roles(roles text[]); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION has_any_of_roles(roles text[]) IS 'check if current role in any of requested roles';
+
+
+--
 -- Name: is_owner_or_admin(integer); Type: FUNCTION; Schema: core; Owner: -
 --
 
@@ -457,7 +568,7 @@ CREATE FUNCTION is_owner_or_admin(bigint) RETURNS boolean
     AS $_$
         SELECT
             core.current_user_id() = $1
-            OR current_user = 'admin';
+            OR current_user = 'platform_user';
    $_$;
 
 
@@ -1240,6 +1351,38 @@ COMMENT ON VIEW users_count IS 'Shows the number of users on actual platform';
 SET search_path = community_service, pg_catalog;
 
 --
+-- Name: user_versions; Type: TABLE; Schema: community_service; Owner: -
+--
+
+CREATE TABLE user_versions (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: user_versions_id_seq; Type: SEQUENCE; Schema: community_service; Owner: -
+--
+
+CREATE SEQUENCE user_versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: community_service; Owner: -
+--
+
+ALTER SEQUENCE user_versions_id_seq OWNED BY user_versions.id;
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE; Schema: community_service; Owner: -
 --
 
@@ -1256,6 +1399,29 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: users; Type: VIEW; Schema: community_service_api; Owner: -
+--
+
+CREATE VIEW users AS
+ SELECT u.id,
+    (u.data ->> 'name'::text) AS name,
+    (u.data ->> 'public_name'::text) AS public_name,
+    (u.data ->> 'document_number'::text) AS document_number,
+    (u.data ->> 'document_type'::text) AS document_type,
+    (u.data ->> 'legal_account_type'::text) AS legal_account_type,
+    u.email,
+    ((u.data ->> 'address'::text))::jsonb AS address,
+    ((u.data ->> 'metadata'::text))::jsonb AS metadata,
+    ((u.data ->> 'bank_account'::text))::jsonb AS bank_account,
+    u.created_at,
+    u.updated_at
+   FROM community_service.users u
+  WHERE (u.platform_id = core.current_platform_id());
 
 
 SET search_path = core, pg_catalog;
@@ -1683,6 +1849,13 @@ CREATE TABLE __diesel_schema_migrations (
 SET search_path = community_service, pg_catalog;
 
 --
+-- Name: user_versions id; Type: DEFAULT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY user_versions ALTER COLUMN id SET DEFAULT nextval('user_versions_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: community_service; Owner: -
 --
 
@@ -1789,6 +1962,14 @@ SET search_path = community_service, pg_catalog;
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT uidx_platform_email UNIQUE (platform_id, email);
+
+
+--
+-- Name: user_versions user_versions_pkey; Type: CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY user_versions
+    ADD CONSTRAINT user_versions_pkey PRIMARY KEY (id);
 
 
 --
@@ -2033,6 +2214,14 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON project_versions FOR EACH ROW EXE
 
 
 SET search_path = community_service, pg_catalog;
+
+--
+-- Name: user_versions user_versions_user_id_fkey; Type: FK CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY user_versions
+    ADD CONSTRAINT user_versions_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
+
 
 --
 -- Name: users users_platform_id_fkey; Type: FK CONSTRAINT; Schema: community_service; Owner: -
@@ -2321,6 +2510,13 @@ GRANT ALL ON FUNCTION create_scoped_user_session(id bigint) TO platform_user;
 GRANT ALL ON FUNCTION create_user(data json) TO platform_user;
 
 
+--
+-- Name: update_user(json); Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION update_user(data json) TO platform_user;
+
+
 SET search_path = platform_service, pg_catalog;
 
 --
@@ -2328,6 +2524,7 @@ SET search_path = platform_service, pg_catalog;
 --
 
 GRANT SELECT,INSERT ON TABLE platforms TO platform_user;
+GRANT SELECT ON TABLE platforms TO anonymous;
 GRANT SELECT,INSERT ON TABLE platforms TO admin;
 GRANT SELECT ON TABLE platforms TO scoped_user;
 
@@ -2408,10 +2605,10 @@ SET search_path = community_service, pg_catalog;
 -- Name: users; Type: ACL; Schema: community_service; Owner: -
 --
 
-GRANT SELECT,INSERT ON TABLE users TO platform_user;
 GRANT SELECT ON TABLE users TO postgrest;
 GRANT SELECT ON TABLE users TO admin;
 GRANT SELECT ON TABLE users TO scoped_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE users TO platform_user;
 GRANT SELECT ON TABLE users TO anonymous;
 
 
@@ -2429,10 +2626,34 @@ GRANT SELECT ON TABLE users_count TO scoped_user;
 SET search_path = community_service, pg_catalog;
 
 --
+-- Name: user_versions; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT SELECT,INSERT ON TABLE user_versions TO scoped_user;
+GRANT SELECT,INSERT ON TABLE user_versions TO platform_user;
+
+
+--
+-- Name: user_versions_id_seq; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE user_versions_id_seq TO platform_user;
+
+
+--
 -- Name: users_id_seq; Type: ACL; Schema: community_service; Owner: -
 --
 
 GRANT USAGE ON SEQUENCE users_id_seq TO platform_user;
+
+
+SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: users; Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT SELECT ON TABLE users TO platform_user;
 
 
 SET search_path = core, pg_catalog;
