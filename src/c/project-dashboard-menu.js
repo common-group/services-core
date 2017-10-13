@@ -89,27 +89,27 @@ const projectDashboardMenu = {
                         })
                     ]),
                     m('#info-links.u-marginbottom-20', [
-                        (project.state === 'draft' && projectVM.isSubscription(project)) 
+                        (project.state === 'draft' && projectVM.isSubscription(project))
                             ? m(`a#dashboard_home_link[class="${editLinkClass('#start')}"][href="${editRoute}#start"]`, [
                                 m('span.fa.fa-info.fa-lg.fa-fw'), I18n.t('draft_start_tab', I18nScope())
-                            ]) 
+                            ])
                             : m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [
                                 m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
                             ]), (project.is_published ? [
-                            m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, [
-                                m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
-                            ]),
-                            m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
-                                m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
-                                I18n.t('posts_tab', I18nScope()),
-                                project.posts_count > 0 ?
+                                m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, [
+                                    m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
+                                ]),
+                                m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
+                                    m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
+                                    I18n.t('posts_tab', I18nScope()),
+                                    project.posts_count > 0 ?
                                 m('span.badge', project.posts_count) :
                                 m('span.badge.badge-attention', 'Nenhuma')
-                            ]),
-                            m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, [
-                                m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n.t('surveys_tab', I18nScope())
-                            ])
-                        ] : '')
+                                ]),
+                                m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, [
+                                    m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n.t('surveys_tab', I18nScope())
+                                ])
+                            ] : '')
                     ]),
                     m('.edit-project-div', [
                         (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
@@ -130,7 +130,7 @@ const projectDashboardMenu = {
                                 ]),
                                 projectVM.isSubscription(project) ? null :
                                 m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope())),
-                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t('card_tab', linksScope())),
+                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t(`card_tab_${project.mode}`, linksScope())),
                                 m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
                                 ]),
