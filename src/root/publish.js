@@ -17,24 +17,6 @@ const publish = {
             }),
             projectAccount = m.prop([]),
             projectDetails = m.prop([]),
-            acceptTerm = m.prop(Array(9).fill(true)),
-            flexAcceptTerm = m.prop(Array(9).fill(true)),
-            subAcceptTerm = m.prop(Array(9).fill(true)),
-            showNextTerm = (index, acceptTerms) => {
-                const terms = acceptTerms();
-                if (terms[index]) {
-                    terms[index] = false;
-                    acceptTerms(terms);
-                    const nextTerm = document.getElementsByClassName('w-hidden publish-rules');
-                    if (nextTerm[0] !== undefined) {
-                        nextTerm[0].classList.remove('w-hidden');
-                    }
-                }
-                // show publish button after accepting all rules
-                if (index === terms.length - 1) {
-                    document.getElementsByClassName('publish-btn-section')[0].classList.remove('w-hidden');
-                }
-            },
             loader = postgrest.loaderWithToken;
 
         filtersVM.project_id(args.root.getAttribute('data-id'));
@@ -49,21 +31,21 @@ const publish = {
             return moment().add(project.online_days, 'days');
         };
 
+        const acceptedIndex = m.prop(0);
+
         return {
             l,
             accountL,
+            acceptedIndex,
             expiresAt,
             filtersVM,
-            acceptTerm,
-            flexAcceptTerm,
-            subAcceptTerm,
-            showNextTerm,
             projectAccount,
             projectDetails
         };
     },
     view(ctrl, args) {
         const project = _.first(ctrl.projectDetails()),
+            acceptedIndex = ctrl.acceptedIndex,
             account = _.first(ctrl.projectAccount());
 
         const terms = project.mode === 'flex' ? publishVM.flexTerms(project) :
@@ -136,12 +118,12 @@ const publish = {
                             ])
                         ]),
 
-                        _.map(terms, (term, index) => m(`.u-marginbottom-30.fontsize-base${index === 0 ? '' : '.w-hidden.publish-rules'}`, [
-                            m(`.w-row[id='rule-${index}']`, [
+                        _.map(terms, (term, index) => m(`.u-marginbottom-30.fontsize-base${(index <= acceptedIndex()) ? '' : '.w-hidden.publish-rules'}`, [
+                            m('.w-row', [
                                 m('.w-col.w-col-1.u-text-center', [
                                     m('div', [
-                                        m((project.mode === 'flex' ? ctrl.flexAcceptTerm() : ctrl.acceptTerm())[index] ? `a.w-inline-block.checkbox-big[href='#rule-${index + 1}']` : `a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg[href='#rule-${index + 1}']`, {
-                                            onclick: () => ctrl.showNextTerm(index, (project.mode === 'flex' ? ctrl.flexAcceptTerm : ctrl.acceptTerm))
+                                        m((index + 1 > acceptedIndex()) ? 'a.w-inline-block.checkbox-big' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg', {
+                                            onclick: () => { acceptedIndex(acceptedIndex() + 1); }
                                         })
                                     ])
                                 ]),
@@ -150,7 +132,8 @@ const publish = {
                         ]))
 
                     ]),
-                    m('.w-row.publish-btn-section.w-hidden', [
+                    (acceptedIndex() >= terms.length ?
+                    m('.w-row.publish-btn-section', [
                         m('.w-col.w-col-4'),
                         m('.w-col.w-col-4', [
                             m(`a.btn.btn-large.u-marginbottom-20[href=/${project.mode === 'flex' ? 'flexible_projects' : 'projects'}/${project.project_id}/push_to_online]`, 'Publicar agora!'),
@@ -162,7 +145,7 @@ const publish = {
                             ])
                         ]),
                         m('.w-col.w-col-4')
-                    ])
+                    ]) : '')
                 ])
             ])
         ] : h.loader()];
