@@ -176,7 +176,92 @@ CREATE TYPE new_project_record AS (
 );
 
 
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: _serialize_user_basic_data(json); Type: FUNCTION; Schema: community_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'name', ($1->>'name')::text,
+                'email', ($1->>'email')::text,
+                'document_number', replace(replace(replace(($1->>'document_number')::text, '.', ''), '/', ''), '-', ''),
+                'document_number', ($1->>'document_type')::text,
+                'address', json_build_object(
+                    'street', ($1->'address'->>'street')::text,
+                    'street_number', ($1->'address'->>'street_number')::text,
+                    'neighborhood', ($1->'address'->>'neighborhood')::text,
+                    'zipcode', ($1->'address'->>'zipcode')::text,
+                    'country', ($1->'address'->>'country')::text,
+                    'state', ($1->'address'->>'state')::text,
+                    'city', ($1->'address'->>'city')::text,
+                    'complementary', ($1->'address'->>'complementary')::text
+                ),
+                'phone', json_build_object(
+                    'ddi', ($1->'customer'->'phone'->>'ddi')::text,
+                    'ddd', ($1->'customer'->'phone'->>'ddd')::text,
+                    'number', ($1->'customer'->'phone'->>'number')::text
+                )
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
 SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: create_user(json); Type: FUNCTION; Schema: community_service_api; Owner: -
+--
+
+CREATE FUNCTION create_user(data json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+        declare
+            _user community_service.users;
+            _platform platform_service.platforms;
+            _refined json;
+            _result json;
+        begin
+            -- generate user basic data structure with received json
+            select community_service._serialize_user_basic_data($1)
+                into _refined;
+
+            -- insert user in current platform
+            insert into community_service.users (platform_id, email, password, data, created_at, updated_at)
+                values (core.current_platform_id(),
+                        lower(($1)->>'email'::text),
+                        crypt(($1->>'password')::text,
+                        gen_salt('bf')),
+                        _refined::jsonb,
+                        coalesce(($1->>'created_at')::timestamp, now()),
+                        coalesce(($1->>'updated_at')::timestamp, now())
+                    )
+                    returning * into _user;
+
+            -- build result with user id
+            select json_build_object(
+                'id', _user.id
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION create_user(data json); Type: COMMENT; Schema: community_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION create_user(data json) IS 'insert new user on current platform';
+
 
 --
 -- Name: generate_scoped_user_key(uuid); Type: FUNCTION; Schema: community_service_api; Owner: -
@@ -259,7 +344,9 @@ CREATE FUNCTION current_platform_token() RETURNS uuid
     LANGUAGE plpgsql STABLE
     AS $$
         BEGIN
-          RETURN nullif(current_setting('request.jwt.claim.platform_token'), '')::uuid;
+          RETURN COALESCE(
+            current_setting('request.jwt.claim.platform_token', true)::uuid, 
+            current_setting('request.header.platform-code')::uuid);
         EXCEPTION
             WHEN others THEN
             RETURN NULL::integer;
@@ -596,6 +683,7 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             _user_id bigint;
             _user community_service.users;
             _project project_service.projects;
+            _credit_card payment_service.credit_cards;
             _subscription payment_service.subscriptions;
             _refined jsonb;
         begin
@@ -605,7 +693,7 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             else
                 _user_id := core.current_user_id();
             end if;
-            
+
             -- check if project exists on platform
             if ($1->>'project_id') is null 
                 OR not core.project_exists_on_platform(($1->>'project_id')::bigint, core.current_platform_id()) then
@@ -616,37 +704,73 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             if _user_id is null or not core.user_exists_on_platform(_user_id, core.current_platform_id()) then
                 raise exception 'missing user';
             end if;
-            
+
             -- set user into variable
             select * 
             from community_service.users 
             where id = _user_id
             into _user;
-            
+
             -- fill ip address to received params
             select jsonb_set(($1)::jsonb, '{current_ip}'::text[], to_jsonb(current_setting('request.header.x-forwarded-for', true)::text))
                 into _refined;
-            
+
             -- if user already has filled document_number/name/email should use then
             if not core_validator.is_empty((_user.data->>'name')::text) then
                 select jsonb_set(_refined, '{customer,name}', to_jsonb(_user.data->>'name'::text))
                     into _refined;
             end if;
-            
+
             if not core_validator.is_empty((_user.data->>'email')::text) then
                 select jsonb_set(_refined, '{customer,email}', to_jsonb(_user.data->>'email'::text))
                     into _refined;
             end if;
-            
+
             if not core_validator.is_empty((_user.data->>'email')::text) then
                 select jsonb_set(_refined, '{customer,document_number}', to_jsonb(_user.data->>'document_number'::text))
-                    into _refined;                
+                    into _refined;
             end if;
-            
+
             -- generate a base structure to payment json
             select (payment_service.check_and_generate_payment_data((_refined)::json))::jsonb
                 into _refined;
-                
+
+            -- if payment_method is credit_card should check for card_hash or card_id
+            if _refined->>'payment_method'::text = 'credit_card' then
+
+                -- fill with is_international
+                select jsonb_set(_refined, '{is_international}'::text[], to_jsonb((coalesce($1->>'is_international')::text, 'false')::text))
+                    into _refined;
+
+                -- fill with save_card
+                select jsonb_set(_refined, '{save_card}'::text[], to_jsonb(coalesce(($1->>'save_card')::text, 'false')))
+                    into _refined;
+
+                -- check if card_hash or card_id is present
+                if core_validator.is_empty((($1)->>'card_hash')::text) 
+                    and core_validator.is_empty((($1)->>'card_id')::text) then
+                    raise 'missing card_hash or card_id';
+                end if;
+
+                -- if has card_id check if user is card owner
+                if not core_validator.is_empty((($1)->>'card_id')::text) then
+                    select cc.* from payment_service.credit_cards cc 
+                    where cc.user_id = _user_id and cc.id = (($1)->>'card_id')::bigint
+                    into _credit_card;
+
+                    if _credit_card.id is null then
+                        raise 'invalid card_id';
+                    end if;
+
+                    select jsonb_set(_refined, '{card_id}'::text[], to_jsonb(_credit_card.id::text))
+                        into _refined;
+                elsif not core_validator.is_empty((($1)->>'card_hash')::text) then
+                    select jsonb_set(_refined, '{card_hash}'::text[], to_jsonb($1->>'card_hash'::text))
+                        into _refined;
+                end if;
+
+            end if;
+
             -- insert payment in table
             insert into payment_service.catalog_payments (
                 platform_id, project_id, user_id, data, gateway
@@ -1070,13 +1194,11 @@ CREATE TABLE users (
     id bigint NOT NULL,
     email text NOT NULL,
     password text NOT NULL,
-    name text NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     data jsonb DEFAULT '{}'::jsonb NOT NULL,
     key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
-    CONSTRAINT users_name_check CHECK ((length(name) < 255)),
     CONSTRAINT users_password_check CHECK ((length(password) < 512))
 );
 
@@ -2178,6 +2300,13 @@ GRANT USAGE ON SCHEMA project_service_api TO admin;
 SET search_path = community_service_api, pg_catalog;
 
 --
+-- Name: create_user(json); Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION create_user(data json) TO platform_user;
+
+
+--
 -- Name: generate_scoped_user_key(uuid); Type: ACL; Schema: community_service_api; Owner: -
 --
 
@@ -2272,7 +2401,7 @@ SET search_path = community_service, pg_catalog;
 -- Name: users; Type: ACL; Schema: community_service; Owner: -
 --
 
-GRANT SELECT ON TABLE users TO platform_user;
+GRANT SELECT,INSERT ON TABLE users TO platform_user;
 GRANT SELECT ON TABLE users TO postgrest;
 GRANT SELECT ON TABLE users TO admin;
 GRANT SELECT ON TABLE users TO scoped_user;
@@ -2288,6 +2417,15 @@ SET search_path = analytics_service_api, pg_catalog;
 GRANT SELECT ON TABLE users_count TO platform_user;
 GRANT SELECT ON TABLE users_count TO admin;
 GRANT SELECT ON TABLE users_count TO scoped_user;
+
+
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: users_id_seq; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE users_id_seq TO platform_user;
 
 
 SET search_path = core, pg_catalog;
