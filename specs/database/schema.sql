@@ -218,6 +218,56 @@ CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
 SET search_path = community_service_api, pg_catalog;
 
 --
+-- Name: create_scoped_user_session(bigint); Type: FUNCTION; Schema: community_service_api; Owner: -
+--
+
+CREATE FUNCTION create_scoped_user_session(id bigint) RETURNS json
+    LANGUAGE plpgsql STABLE
+    AS $_$
+        declare
+            _platform platform_service.platforms;
+            _user community_service.users;
+            _jwt core.jwt_token;
+            _result json;
+        begin
+            if current_role != 'platform_user' then
+                RAISE insufficient_privilege;
+            end if;
+
+            select * from community_service.users cu
+                where cu.platform_id = core.current_platform_id()
+                    and cu.id = $1
+                into _user;
+
+            if _user is null then
+                raise exception 'invalid user id';
+            end if;
+
+
+            select core.gen_jwt_token(json_build_object(
+                'role', 'scoped_user',
+                'user_id', _user.id,
+                'platform_token', core.current_platform_token(),
+                'exp', extract(epoch from now())::integer + (60*60)*2
+            )) into _jwt;
+
+            select json_build_object(
+                'token', _jwt.token
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION create_scoped_user_session(id bigint); Type: COMMENT; Schema: community_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION create_scoped_user_session(id bigint) IS 'Create a token for scoped user in community';
+
+
+--
 -- Name: create_user(json); Type: FUNCTION; Schema: community_service_api; Owner: -
 --
 
@@ -261,48 +311,6 @@ CREATE FUNCTION create_user(data json) RETURNS json
 --
 
 COMMENT ON FUNCTION create_user(data json) IS 'insert new user on current platform';
-
-
---
--- Name: generate_scoped_user_key(uuid); Type: FUNCTION; Schema: community_service_api; Owner: -
---
-
-CREATE FUNCTION generate_scoped_user_key(user_key uuid) RETURNS core.jwt_token
-    LANGUAGE plpgsql STABLE
-    AS $_$
-        declare
-            _platform platform_service.platforms;
-            _user community_service.users;
-            _result core.jwt_token;
-        begin
-            select * from platform_service.platforms p 
-                where p.token = core.current_platform_token()
-                into _platform;
-
-            if _platform is null then
-                raise exception 'invalid platform';
-            end if;
-
-            select * from community_service.users cu
-                where cu.platform_id = _platform.id
-                    and cu.key = $1
-                into _user;
-
-            if _user is null then
-                raise exception 'invalid user id';
-            end if;
-
-
-            select core.gen_jwt_token(json_build_object(
-                'role', 'scoped_user',
-                'user_id', _user.id,
-                'platform_token', core.current_platform_token(),
-                'exp', extract(epoch from now())::integer + (60*60)*2
-            )) into _result;
-
-            return _result;
-        end;
-    $_$;
 
 
 SET search_path = core, pg_catalog;
@@ -2300,18 +2308,17 @@ GRANT USAGE ON SCHEMA project_service_api TO admin;
 SET search_path = community_service_api, pg_catalog;
 
 --
+-- Name: create_scoped_user_session(bigint); Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION create_scoped_user_session(id bigint) TO platform_user;
+
+
+--
 -- Name: create_user(json); Type: ACL; Schema: community_service_api; Owner: -
 --
 
 GRANT ALL ON FUNCTION create_user(data json) TO platform_user;
-
-
---
--- Name: generate_scoped_user_key(uuid); Type: ACL; Schema: community_service_api; Owner: -
---
-
-GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO admin;
-GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
 
 
 SET search_path = platform_service, pg_catalog;
