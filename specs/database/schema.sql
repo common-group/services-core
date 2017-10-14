@@ -127,6 +127,20 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
+
+
+--
 -- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -615,6 +629,17 @@ $_$;
 --
 
 COMMENT ON FUNCTION project_exists_on_platform(project_id bigint, platform_id integer) IS 'check if project id exists on platform';
+
+
+--
+-- Name: request_ip_adress(); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION request_ip_adress() RETURNS text
+    LANGUAGE sql
+    AS $$
+        select current_setting('request.header.x-forwarded-for', true);
+    $$;
 
 
 --
@@ -1198,37 +1223,128 @@ $$;
 COMMENT ON FUNCTION sign_up(name text, email text, password text) IS 'Handles with creation of new platform users';
 
 
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: _serialize_project_basic_data(json); Type: FUNCTION; Schema: project_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_project_basic_data(json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'name', core_validator.raise_when_empty(($1->>'name')::text, 'name'),
+                'state', ($1->>'state'::text),
+                'permalink', core_validator.raise_when_empty(($1->>'permalink')::text, 'permalink'),
+                'mode', core_validator.raise_when_empty((($1->>'mode')::project_service.project_mode)::text, 'mode'),
+                'about_html', ($1->>'about_html')::text,
+                'budget_html', ($1->>'budget_html')::text,
+                'online_days', ($1->>'online_days')::integer,
+                'cover_image_versions', ($1->>'cover_image_versions')::json,
+                'card_info', json_build_object(
+                    'image_url', ($1->'card_info'->>'image_url')::text,
+                    'title', ($1->'card_info'->>'title')::text,
+                    'description', ($1->'card_info'->>'description')::text
+                ),
+                'video_info', json_build_object(
+                    'id', ($1->'video'->>'id')::text,
+                    'provider', ($1->'video'->>'provider')::text,
+                    'embed_url', ($1->'video'->>'embed_url')::text,
+                    'thumb_url', ($1->'video'->>'cover_url')::text
+                ),
+                'address', json_build_object(
+                    'state', ($1->'address'->>'state')::text,
+                    'city', ($1->'address'->>'city')::text
+                ),
+                'metadata', ($1->>'metadata')::json
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
 SET search_path = project_service_api, pg_catalog;
 
 --
 -- Name: create_project(json); Type: FUNCTION; Schema: project_service_api; Owner: -
 --
 
-CREATE FUNCTION create_project(project json) RETURNS project_service.new_project_record
+CREATE FUNCTION create_project(data json) RETURNS json
     LANGUAGE plpgsql
-    AS $$
+    AS $_$
     declare
         _platform platform_service.platforms;
         _user community_service.users;
-        _result project_service.new_project_record;
+        _result json;
+        _permalink text;
+        _refined jsonb;
+        _project project_service.projects;
+        _version project_service.project_versions;
     begin
+        -- ensure that roles come from any permitted
+        perform core.force_any_of_roles('{platform_user}');
+        
+        -- select and check if user is on same platform
         select * from community_service.users cu
-            where cu.id = (project ->> 'user_id')::bigint
+            where cu.id = ($1 ->> 'user_id')::bigint
                 and cu.platform_id = core.current_platform_id()
             into _user;
 
-            if _user is null then
-                raise exception 'invalid user id';
-            end if;
+        if _user.id is null then
+            raise exception 'invalid user id';
+        end if;
+        
+        -- check if permalink is provided
+        if core_validator.is_empty($1->>'permalink'::text) then
+            _permalink := unaccent(replace(replace(lower($1->>'name'),' ','_'), '-', '_'));
+        else
+            _permalink := unaccent(replace(replace(lower($1->>'permalink'),' ','_'), '-', '_'));
+        end if;
 
-            insert into project_service.projects (
-                platform_id, user_id, name, mode
-            ) values (core.current_platform_id(), _user.id, project ->> 'name', (project ->> 'mode')::project_service.project_mode)
-            returning id, name, mode, key into _result;
+        -- put first status on project
+        select jsonb_set($1::jsonb, '{status}'::text[], to_jsonb('draft'::text))
+            into _refined;
+        
+        -- put generated permalink into refined json
+        select jsonb_set(_refined, '{permalink}'::text[], to_jsonb(_permalink::text))
+            into _refined;
+        
+        -- put current request ip into refined json
+        select jsonb_set(_refined, '{current_ip}'::text[], to_jsonb(core.request_ip_adress()))
+            into _refined;
+        
+        -- redefined refined json with project basic serializer
+        select project_service._serialize_project_basic_data(_refined::json)::jsonb
+            into _refined;
+        
+        -- insert project 
+        insert into project_service.projects (
+            platform_id, user_id, permalink, name, mode, data
+        ) values (core.current_platform_id(), _user.id, _permalink, ($1 ->> 'name')::text, ($1 ->> 'mode')::project_service.project_mode, _refined)
+        returning * into _project;
+        
+        -- insert first version of project
+        insert into project_service.project_versions (
+            project_id, data
+        ) values (_project.id, _project.data)
+        returning * into _version;
+        
+        select json_build_object(
+            'id', _project.id,
+            'old_version_id', _version.id,
+            'permalink', _project.permalink,
+            'mode', _project.mode,
+            'status', _project.status,
+            'data', _project.data            
+        ) into _result;
 
-            return _result;
+        return _result;
     end;
-$$;
+$_$;
 
 
 --
@@ -1819,7 +1935,9 @@ CREATE TABLE projects (
     name text NOT NULL,
     mode project_mode NOT NULL,
     key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    data jsonb DEFAULT '{}'::jsonb NOT NULL
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    status text DEFAULT 'draft'::text NOT NULL,
+    permalink text NOT NULL
 );
 
 
@@ -2145,6 +2263,14 @@ ALTER TABLE ONLY projects
 
 ALTER TABLE ONLY projects
     ADD CONSTRAINT projects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: projects unq_permalink_on_platform; Type: CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT unq_permalink_on_platform UNIQUE (platform_id, permalink);
 
 
 SET search_path = public, pg_catalog;
