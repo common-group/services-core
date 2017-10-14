@@ -36,3 +36,5 @@ AS $function$
 drop view community_service_api.users;
 drop function community_service_api.update_user(data json);
 drop table community_service.user_versions;
+drop function core.has_any_of_roles(text[]);
+drop function core.force_any_of_roles(text[]);
