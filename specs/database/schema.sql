@@ -940,69 +940,66 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             _payment payment_service.catalog_payments;
             _user_id bigint;
             _user community_service.users;
-            _project project_service.projects;
+            _version payment_service.catalog_payment_versions;
             _credit_card payment_service.credit_cards;
             _subscription payment_service.subscriptions;
             _refined jsonb;
         begin
+            -- ensure that roles come from any permitted
+            perform core.force_any_of_roles('{platform_user, scoped_user}');
+
             -- check roles to define how user_id is set
-            if current_role = 'platform_user' or current_role = 'admin' then
+            if current_role = 'platform_user' then
                 _user_id := ($1 ->> 'user_id')::bigint;
             else
                 _user_id := core.current_user_id();
             end if;
 
             -- check if project exists on platform
-            if ($1->>'project_id') is null 
+            if ($1->>'project_id')::bigint is null 
                 OR not core.project_exists_on_platform(($1->>'project_id')::bigint, core.current_platform_id()) then
                 raise exception 'project not found on platform';
-            end if;
-
-            -- check if user exists on current platform
-            if _user_id is null or not core.user_exists_on_platform(_user_id, core.current_platform_id()) then
-                raise exception 'missing user';
             end if;
 
             -- set user into variable
             select * 
             from community_service.users 
             where id = _user_id
+                and platform_id = core.current_platform_id()
             into _user;
 
+            -- check if user exists on current platform
+            if _user.id is null then
+                raise exception 'missing user';
+            end if;
+
             -- fill ip address to received params
-            select jsonb_set(($1)::jsonb, '{current_ip}'::text[], to_jsonb(current_setting('request.header.x-forwarded-for', true)::text))
-                into _refined;
+            _refined := jsonb_set(($1)::jsonb, '{current_ip}'::text[], to_jsonb(core.force_ip_address()::text));
 
             -- if user already has filled document_number/name/email should use then
             if not core_validator.is_empty((_user.data->>'name')::text) then
-                select jsonb_set(_refined, '{customer,name}', to_jsonb(_user.data->>'name'::text))
-                    into _refined;
+                _refined := jsonb_set(_refined, '{customer,name}', to_jsonb(_user.data->>'name'::text));
             end if;
 
             if not core_validator.is_empty((_user.data->>'email')::text) then
-                select jsonb_set(_refined, '{customer,email}', to_jsonb(_user.data->>'email'::text))
-                    into _refined;
+                _refined := jsonb_set(_refined, '{customer,email}', to_jsonb(_user.data->>'email'::text));
             end if;
 
             if not core_validator.is_empty((_user.data->>'email')::text) then
-                select jsonb_set(_refined, '{customer,document_number}', to_jsonb(_user.data->>'document_number'::text))
-                    into _refined;
+                _refined := jsonb_set(_refined, '{customer,document_number}', to_jsonb(_user.data->>'document_number'::text));
             end if;
 
             -- generate a base structure to payment json
-            select (payment_service.check_and_generate_payment_data((_refined)::json))::jsonb
-                into _refined;
+            _refined := (payment_service.check_and_generate_payment_data((_refined)::json))::jsonb;
 
             -- if payment_method is credit_card should check for card_hash or card_id
             if _refined->>'payment_method'::text = 'credit_card' then
 
                 -- fill with is_international
-                select jsonb_set(_refined, '{is_international}'::text[], to_jsonb((coalesce($1->>'is_international')::text, 'false')::text))
-                    into _refined;
+                _refined := jsonb_set(_refined, '{is_international}'::text[], to_jsonb((coalesce($1->>'is_international')::text, 'false')::text));
 
                 -- fill with save_card
-                select jsonb_set(_refined, '{save_card}'::text[], to_jsonb(coalesce(($1->>'save_card')::text, 'false')))
-                    into _refined;
+                _refined := jsonb_set(_refined, '{save_card}'::text[], to_jsonb(coalesce(($1->>'save_card')::text, 'false')));
 
                 -- check if card_hash or card_id is present
                 if core_validator.is_empty((($1)->>'card_hash')::text) 
@@ -1020,11 +1017,10 @@ CREATE FUNCTION create_payment(data json) RETURNS json
                         raise 'invalid card_id';
                     end if;
 
-                    select jsonb_set(_refined, '{card_id}'::text[], to_jsonb(_credit_card.id::text))
-                        into _refined;
+                    _refined := jsonb_set(_refined, '{card_id}'::text[], to_jsonb(_credit_card.id::text));
+                    
                 elsif not core_validator.is_empty((($1)->>'card_hash')::text) then
-                    select jsonb_set(_refined, '{card_hash}'::text[], to_jsonb($1->>'card_hash'::text))
-                        into _refined;
+                    _refined := jsonb_set(_refined, '{card_hash}'::text[], to_jsonb($1->>'card_hash'::text));
                 end if;
 
             end if;
@@ -1039,6 +1035,12 @@ CREATE FUNCTION create_payment(data json) RETURNS json
                 _refined,
                 coalesce(($1->>'gateway')::text, 'pagarme')
             ) returning * into _payment;
+            
+            -- insert first payment version
+            insert into payment_service.catalog_payment_versions (
+                catalog_payment_id, data
+            ) values ( _payment.id, _payment.data )
+            returning * into _version;
 
             -- check if payment is a subscription to create one
             if ($1->>'subscription')::boolean then
@@ -1055,11 +1057,19 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             -- build result json with payment_id and subscription_id
             select json_build_object(
                 'id', _payment.id,
-                'subscription_id', _subscription.id
+                'subscription_id', _subscription.id,
+                'old_version_id', _version.id,
+                'data', _payment.data::json
             ) into _result;
 
             -- notify to backend processor via listen
-            PERFORM pg_notify('process_payments_channel', _result::text);
+            PERFORM pg_notify('process_payments_channel',
+                json_build_object(
+                    'id', _payment.id,
+                    'subscription_id', _payment.subscription_id,
+                    'created_at', _payment.created_at::timestamp
+                )::text
+            );
 
             return _result;
         end;
@@ -1786,6 +1796,45 @@ ALTER SEQUENCE core_settings_id_seq OWNED BY core_settings.id;
 SET search_path = payment_service, pg_catalog;
 
 --
+-- Name: catalog_payment_versions; Type: TABLE; Schema: payment_service; Owner: -
+--
+
+CREATE TABLE catalog_payment_versions (
+    id bigint NOT NULL,
+    catalog_payment_id bigint NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: TABLE catalog_payment_versions; Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON TABLE catalog_payment_versions IS 'store catalog payment versions when need to be updated';
+
+
+--
+-- Name: catalog_payment_versions_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE catalog_payment_versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: catalog_payment_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE catalog_payment_versions_id_seq OWNED BY catalog_payment_versions.id;
+
+
+--
 -- Name: catalog_payments; Type: TABLE; Schema: payment_service; Owner: -
 --
 
@@ -2194,6 +2243,13 @@ ALTER TABLE ONLY core_settings ALTER COLUMN id SET DEFAULT nextval('core_setting
 SET search_path = payment_service, pg_catalog;
 
 --
+-- Name: catalog_payment_versions id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payment_versions ALTER COLUMN id SET DEFAULT nextval('catalog_payment_versions_id_seq'::regclass);
+
+
+--
 -- Name: catalog_payments id; Type: DEFAULT; Schema: payment_service; Owner: -
 --
 
@@ -2327,6 +2383,14 @@ ALTER TABLE ONLY core_settings
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions catalog_payment_versions_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payment_versions
+    ADD CONSTRAINT catalog_payment_versions_pkey PRIMARY KEY (id);
+
 
 --
 -- Name: catalog_payments catalog_payments_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
@@ -2560,6 +2624,14 @@ ALTER TABLE ONLY users
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions catalog_payment_versions_catalog_payment_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payment_versions
+    ADD CONSTRAINT catalog_payment_versions_catalog_payment_id_fkey FOREIGN KEY (catalog_payment_id) REFERENCES catalog_payments(id);
+
 
 --
 -- Name: catalog_payments catalog_payments_platform_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
@@ -2994,6 +3066,22 @@ GRANT SELECT ON TABLE core_settings TO scoped_user;
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT SELECT,INSERT ON TABLE catalog_payment_versions TO scoped_user;
+GRANT SELECT,INSERT ON TABLE catalog_payment_versions TO platform_user;
+
+
+--
+-- Name: catalog_payment_versions_id_seq; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE catalog_payment_versions_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE catalog_payment_versions_id_seq TO platform_user;
+
 
 --
 -- Name: catalog_payments; Type: ACL; Schema: payment_service; Owner: -
