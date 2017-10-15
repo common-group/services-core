@@ -1,3 +1,4 @@
+#!/usr/local/bin/node
 'use strict';
 
 const {Client} = require('pg');
