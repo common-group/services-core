@@ -113,6 +113,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -190,6 +204,16 @@ CREATE TYPE new_project_record AS (
 );
 
 
+SET search_path = public, pg_catalog;
+
+--
+-- Name: email; Type: DOMAIN; Schema: public; Owner: -
+--
+
+CREATE DOMAIN email AS citext
+	CONSTRAINT email_check CHECK ((VALUE ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'::citext));
+
+
 SET search_path = community_service, pg_catalog;
 
 --
@@ -203,8 +227,9 @@ CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
             _result json;
         begin
             select json_build_object(
+                'current_ip', ($1->>'current_ip')::text,
                 'name', ($1->>'name')::text,
-                'email', ($1->>'email')::text,
+                'email', ($1->>'email')::email,
                 'document_number', replace(replace(replace(($1->>'document_number')::text, '.', ''), '/', ''), '-', ''),
                 'born_at', ($1->>'born_at')::date,
                 'document_type', ($1->>'document_type')::text,
@@ -232,6 +257,54 @@ CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
                     'agency_digit', ($1->'bank_account'->>'agency_digit')::text
                 ),
                 'metadata', ($1->>'metadata')::json
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: _serialize_user_basic_data(json, json); Type: FUNCTION; Schema: community_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_user_basic_data(json, with_default json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'current_ip', ($1->>'current_ip')::text,
+                'name', coalesce(($1->>'name')::text, ($2->>'name')::text),
+                'email', coalesce(($1->>'email')::email, ($2->>'email')::email),
+                'document_number', replace(replace(replace(coalesce(($1->>'document_number')::text, ($2->>'document_number')::text), '.', ''), '/', ''), '-', ''),
+                'born_at', coalesce(($1->>'born_at')::date, ($2->>'born_at')::date),
+                'document_type', coalesce(($1->>'document_type')::text, ($2->>'document_type')::text),
+                'legal_account_type', coalesce(($1->>'legal_account_type')::text, ($2->>'legal_account_type')::text),
+                'address', json_build_object(
+                    'street', coalesce(($1->'address'->>'street')::text, ($2->'address'->>'street')::text),
+                    'street_number', coalesce(($1->'address'->>'street_number')::text, ($2->'address'->>'street_number')::text),
+                    'neighborhood', coalesce(($1->'address'->>'neighborhood')::text, ($2->'address'->>'neighborhood')::text),
+                    'zipcode', coalesce(($1->'address'->>'zipcode')::text, ($2->'address'->>'zipcode')::text),
+                    'country', coalesce(($1->'address'->>'country')::text, ($2->'address'->>'country')::text),
+                    'state', coalesce(($1->'address'->>'state')::text, ($2->'address'->>'state')::text),
+                    'city', coalesce(($1->'address'->>'city')::text, ($2->'address'->>'city')::text),
+                    'complementary', coalesce(($1->'address'->>'complementary')::text, ($2->'address'->>'complementary')::text)
+                ),
+                'phone', json_build_object(
+                    'ddi', coalesce(($1->'phone'->>'ddi')::text, ($2->'phone'->>'ddi')::text),
+                    'ddd', coalesce(($1->'phone'->>'ddd')::text, ($2->'phone'->>'ddd')::text),
+                    'number', coalesce(($1->'phone'->>'number')::text, ($2->'phone'->>'number')::text)
+                ),
+                'bank_account', json_build_object(
+                    'bank_code', coalesce(($1->'bank_account'->>'bank_code')::text, ($2->'bank_account'->>'bank_code')::text),
+                    'account', coalesce(($1->'bank_account'->>'account')::text, ($2->'bank_account'->>'account')::text),
+                    'account_digit', coalesce(($1->'bank_account'->>'account_digit')::text, ($2->'bank_account'->>'account_digit')::text),
+                    'agency', coalesce(($1->'bank_account'->>'agency')::text, ($2->'bank_account'->>'agency')::text),
+                    'agency_digit', coalesce(($1->'bank_account'->>'agency_digit')::text, ($2->'bank_account'->>'agency_digit')::text)
+                ),
+                'metadata', coalesce(($1->>'metadata')::json, ($2->>'metadata')::json)
             ) into _result;
 
             return _result;
@@ -301,26 +374,31 @@ CREATE FUNCTION create_user(data json) RETURNS json
         declare
             _user community_service.users;
             _platform platform_service.platforms;
-            _refined json;
+            _refined jsonb;
             _result json;
             _passwd text;
             _version community_service.user_versions;
         begin
             -- ensure that roles come from any permitted
             perform core.force_any_of_roles('{platform_user}');
+            
+            -- insert current_ip into refined
+            _refined := jsonb_set($1::jsonb, '{current_ip}'::text[], to_jsonb(coalesce(($1->>'current_ip')::text, core.force_ip_address())));
 
             -- generate user basic data structure with received json
-            select community_service._serialize_user_basic_data($1)
-                into _refined;
+            _refined := community_service._serialize_user_basic_data($1);
 
             -- check if password already encrypted
-            select (case when ($1->>'password_encrypted'::text) = 'true' then ($1->>'password')::text  else crypt(($1->>'password')::text, gen_salt('bf')) end)
-                into _passwd;
+            _passwd := (case when ($1->>'password_encrypted'::text) = 'true' then 
+                            ($1->>'password')::text  
+                        else 
+                            crypt(($1->>'password')::text, gen_salt('bf')) 
+                        end);
 
             -- insert user in current platform
             insert into community_service.users (platform_id, email, password, data, created_at, updated_at)
                 values (core.current_platform_id(),
-                        lower(($1)->>'email'::text),
+                        ($1)->>'email',
                         _passwd,
                         _refined::jsonb,
                         coalesce(($1->>'created_at')::timestamp, now()),
@@ -369,35 +447,38 @@ CREATE FUNCTION update_user(data json) RETURNS json
         begin
             -- ensure that roles come from any permitted
             perform core.force_any_of_roles('{platform_user, scoped_user}');
-            
+
             -- platform user can update any project inside the platform
             if current_role = 'platform_user' then
                 _user_id := ($1->>'id')::bigint;
             else -- scoped_user can only update they records
                 _user_id := core.current_user_id();
             end if;
-            
+
             select * from community_service.users 
                 where id = _user_id
                     and platform_id = core.current_platform_id()
             into _user;
-            
+
             -- check if user exists on platform
-            if _user.id is null OR not core.user_exists_on_platform(_user.id, core.current_platform_id()) then
+            if _user.id is null then
                 raise 'user not found';
             end if;
-            
+
+            -- put current ip inside jsonb
+            _refined := jsonb_set($1::jsonb, '{current_ip}'::text[], to_jsonb(core.force_ip_address()));
+
             -- generate user basic data structure with received json
-            select community_service._serialize_user_basic_data($1)
-                into _refined;
-                
+            _refined := community_service._serialize_user_basic_data($1, _user.data::json);
+
             -- insert old user data to version
             insert into community_service.user_versions(user_id, data)
                 values (_user.id, _user.data)
                 returning * into _version;
-            
+
             update community_service.users
-                set data = _refined
+                set data = _refined,
+                    email = _refined->>'email'
             where id = _user.id;
 
             -- build result with user id
@@ -512,6 +593,24 @@ CREATE FUNCTION force_any_of_roles(roles text[]) RETURNS void
 --
 
 COMMENT ON FUNCTION force_any_of_roles(roles text[]) IS 'raise insufficient_privilege when current role not in any of requested roles';
+
+
+--
+-- Name: force_ip_address(); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION force_ip_address() RETURNS text
+    LANGUAGE sql
+    AS $$
+        select current_setting('request.header.x-forwarded-for');
+    $$;
+
+
+--
+-- Name: FUNCTION force_ip_address(); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION force_ip_address() IS 'Get ip address form request header or raise error';
 
 
 --
@@ -1531,13 +1630,12 @@ SET search_path = community_service, pg_catalog;
 CREATE TABLE users (
     platform_id integer NOT NULL,
     id bigint NOT NULL,
-    email text NOT NULL,
+    email public.email NOT NULL,
     password text NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     data jsonb DEFAULT '{}'::jsonb NOT NULL,
     key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
     CONSTRAINT users_password_check CHECK ((length(password) < 512))
 );
 
