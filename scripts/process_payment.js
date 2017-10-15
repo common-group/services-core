@@ -220,7 +220,8 @@ async function init(stdin_data) {
         }
 
         const update_payment_sql = `update payment_service.catalog_payments
-                    set gateway_cached_data = $2::json
+                    set gateway_cached_data = $2::json,
+                        gateway_general_data = payment_service.__extractor_for_pagarme($2::json)
                     where id = $1::bigint`;
 
         try {
@@ -241,7 +242,9 @@ async function init(stdin_data) {
         } catch(err) {
             console.log(err);
             let insert_errors = await pg_client.query(
-                update_payment_sql
+                `update payment_service.catalog_payments
+                    set gateway_cached_data = $2::json,
+                    where id = $1::bigint`
                 , [payment.id, JSON.stringify(err.response.errors)]);
 
             console.log(err.response.errors);
