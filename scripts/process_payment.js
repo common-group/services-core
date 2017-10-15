@@ -62,7 +62,7 @@ async function init(stdin_data) {
             neighborhood: customer.address.neighbourhood,
             street: customer.address.street_number,
             street_number: customer.address.number,
-            complementary: customer.adress.complement,
+            complementary: customer.address.complementary,
             latitude: '',
             longitude: ''
         };
@@ -130,7 +130,7 @@ async function init(stdin_data) {
                         born_at: "",
                         gender: ""
                     },
-                    adress: af_address_data,
+                    address: af_address_data,
                     phone_numbers: [{
                         ddi: customer.phone.ddi,
                         ddd: customer.phone.ddd,
@@ -144,7 +144,7 @@ async function init(stdin_data) {
                         bornt_at: "",
                         gender: ""
                     },
-                    adress: af_address_data,
+                    address: af_address_data,
                     phone_numbers: [{
                         ddi: customer.phone.ddi,
                         ddd: customer.phone.ddd,
@@ -184,12 +184,12 @@ async function init(stdin_data) {
                     address: {
                         country: "Brasil",
                         state: project_owner.data.address.state,
-                        city: project_owner.data.addess.city,
+                        city: project_owner.data.address.city,
                         zipcode: project_owner.data.address.zipcode,
                         neighborhood: project_owner.data.address.neighborhood,
                         street: project_owner.data.address.street,
                         street_number: project_owner.data.address.street_number,
-                        complementary: project_owner.data.address.complement,
+                        complementary: project_owner.data.address.complementary,
                         latitude: 0.0,
                         longitude: 0.0
                     },
@@ -224,18 +224,21 @@ async function init(stdin_data) {
 
         try {
             const transaction = await pagarme_client.transactions.create(transaction_data);
+            const payables = await pagarme_client.payables.find({ transactionId: transaction.id});
 
             console.log(transaction);
-            let transaction_data = {
+            console.log(payables);
+            let result_transaction_data = {
                 transaction: transaction,
-                payables: transaction.payables
+                payables: payables
             };
 
             let insert_transaction = await pg_client.query(
                 update_payment_sql
-                , [payment.id, JSON.stringify(transaction_data)]);
+                , [payment.id, JSON.stringify(result_transaction_data)]);
 
         } catch(err) {
+            console.log(err);
             let insert_errors = await pg_client.query(
                 update_payment_sql
                 , [payment.id, JSON.stringify(err.response.errors)]);
