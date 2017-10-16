@@ -226,28 +226,53 @@ async function init(stdin_data) {
 
         try {
             const transaction = await pagarme_client.transactions.create(transaction_data);
-            const payables = await pagarme_client.payables.find({ transactionId: transaction.id});
+            console.log('created transaction with id ', transaction.id);
 
-            console.log(transaction);
-            console.log(payables);
-            let result_transaction_data = {
-                transaction: transaction,
-                payables: payables
-            };
+            if (transaction.id) {
+                const payables = await pagarme_client.payables.find({ transactionId: transaction.id});
 
-            let insert_transaction = await pg_client.query(
-                update_payment_sql
-                , [payment.id, JSON.stringify(result_transaction_data)]);
+                const result_transaction_data = {
+                    transaction: transaction,
+                    payables: payables
+                };
 
+                const insert_transaction = await pg_client.query(
+                    update_payment_sql
+                    , [payment.id, JSON.stringify(result_transaction_data)]);
+                if (!_.includes(['processing', 'waiting_payment'], transaction.status)) {
+                    await pg_client.query(
+                        `select
+                            payment_service.transition_to(p, ($2)::payment_service.payment_status, payment_service.__extractor_for_pagarme(($3)::json))
+                        from payment_service.catalog_payments p
+                        where p.id = ($1)::bigint
+                    `, [
+                        payment.id,
+                        transaction.status,
+                        JSON.stringify(result_transaction_data)
+                    ]
+                    );
+                }
+            } else {
+                console.log('not charged on gateway');
+                console.log(transaction);
+            }
         } catch(err) {
-            console.log(err);
-            let insert_errors = await pg_client.query(
-                `update payment_service.catalog_payments
-                    set gateway_cached_data = $2::json,
+            console.log(err.errors);
+            if(err.response && err.response.errors) {
+                await pg_client.query(
+                    `update payment_service.catalog_payments
+                    set gateway_cached_data = $2::json
                     where id = $1::bigint`
-                , [payment.id, JSON.stringify(err.response.errors)]);
+                    , [payment.id, JSON.stringify(err.response.errors)]);
+                await pg_client.query(`
+                        select
+                            payment_service.transition_to(p, ($2)::payment_service.payment_status, payment_service.__extractor_for_pagarme(($3)::json))
+                        from payment_service.catalog_payments p
+                        where p.id = ($1)::bigint
+                `, [payment.id, 'error', JSON.stringify(err.response.errors)]);
 
-            console.log(err.response.errors);
+                console.log(JSON.stringify(err.response.errors));
+            }
         }
 
         await pg_client.end();
