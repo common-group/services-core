@@ -4,33 +4,165 @@
   - testset: "create_payment"
 
 - test:
-  - name: "Create a payment in catalog when is platform_user"
+  - name: "Create a payment in catalog when is platform_user using saved card"
   - url: "/rpc/create_payment"
-  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json'}
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
   - method: "POST"
-  - body: '{"data": {"user_id": 999, "project_id": 9999, "amount": 20000}}'
+  - body: '{"data": 
+      {
+        "user_id": 999, "project_id": 9999, "amount": 20000, "payment_method": "credit_card", "card_id": 999,
+        "customer": {
+          "name": "Teste da silva", "email": "notpersisted@email.com", "document_number": "88985122878",
+          "address": {
+            "street": "Rua lorem ipsum",
+            "street_number": 200,
+            "neighborhood": "bairro",
+            "zipcode": "34569000",
+            "country": "Brasil",
+            "state": "MG",
+            "city": "lorem",
+            "complementary": "comple"
+          },
+          "phone": {
+            "ddi": "55",
+            "ddd": "21",
+            "number": "933448877"
+          }
+        }
+      }
+    }'
   - expected_status: [200]
   - validators:
     - compare: {jsonpath_mini: "0.id", comparator: 'regex', expected: ".*"}
     - compare: {jsonpath_mini: "0.subscription_id", comparator: 'str_eq', expected: "None"}
 
 - test:
-  - name: "Create a payment in catalog when is scoped_user"
+  - name: "Create a payment in catalog when is platform_user using card_hash"
   - url: "/rpc/create_payment"
-  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json'}
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
   - method: "POST"
-  - body: '{"data": {"user_id": 999, "project_id": 9999, "amount": 20000}}'
+  - body: '{"data": 
+      {
+        "user_id": 999, "project_id": 9999, "amount": 20000, "payment_method": "credit_card", "card_hash": "CARD_HASH",
+        "customer": {
+          "name": "Teste da silva", "email": "notpersisted@email.com", "document_number": "88985122878",
+          "address": {
+            "street": "Rua lorem ipsum",
+            "street_number": 200,
+            "neighborhood": "bairro",
+            "zipcode": "34569000",
+            "country": "Brasil",
+            "state": "MG",
+            "city": "lorem",
+            "complementary": "comple"
+          },
+          "phone": {
+            "ddi": "55",
+            "ddd": "21",
+            "number": "933448877"
+          }
+        }
+      }
+    }'
   - expected_status: [200]
   - validators:
     - compare: {jsonpath_mini: "0.id", comparator: 'regex', expected: ".*"}
     - compare: {jsonpath_mini: "0.subscription_id", comparator: 'str_eq', expected: "None"}
 
 - test:
-  - name: "Create a payment subscription in catalog when is scoped_user"
+  - name: "Create a payment in catalog when is platform_user using boleto"
   - url: "/rpc/create_payment"
-  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json'}
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
   - method: "POST"
-  - body: '{"data": {"user_id": 999, "subscription": true, "project_id": 9999, "amount": 20000}}'
+  - body: '{"data": 
+      {
+        "user_id": 999, "project_id": 9999, "amount": 20000, "payment_method": "boleto",
+        "customer": {
+          "name": "Teste da silva", "email": "notpersisted@email.com", "document_number": "88985122878",
+          "address": {
+            "street": "Rua lorem ipsum",
+            "street_number": 200,
+            "neighborhood": "bairro",
+            "zipcode": "34569000",
+            "country": "Brasil",
+            "state": "MG",
+            "city": "lorem",
+            "complementary": "comple"
+          },
+          "phone": {
+            "ddi": "55",
+            "ddd": "21",
+            "number": "933448877"
+          }
+        }
+      }
+    }'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.id", comparator: 'regex', expected: ".*"}
+    - compare: {jsonpath_mini: "0.subscription_id", comparator: 'str_eq', expected: "None"}
+
+- test:
+  - name: "Create a payment in catalog when is scoped_user using boleto"
+  - url: "/rpc/create_payment"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{"data": 
+      {
+        "project_id": 9999, "amount": 20000, "payment_method": "boleto",
+        "customer": {
+          "name": "Teste da silva", "email": "notpersisted@email.com", "document_number": "88985122878",
+          "address": {
+            "street": "Rua lorem ipsum",
+            "street_number": 200,
+            "neighborhood": "bairro",
+            "zipcode": "34569000",
+            "country": "Brasil",
+            "state": "MG",
+            "city": "lorem",
+            "complementary": "comple"
+          },
+          "phone": {
+            "ddi": "55",
+            "ddd": "21",
+            "number": "933448877"
+          }
+        }
+      }
+    }'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.id", comparator: 'regex', expected: ".*"}
+    - compare: {jsonpath_mini: "0.subscription_id", comparator: 'str_eq', expected: "None"}
+
+- test:
+  - name: "Create a subscription in catalog when is scoped_user using boleto"
+  - url: "/rpc/create_payment"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{"data": 
+      {
+        "project_id": 9999, "amount": 20000, "payment_method": "boleto",
+        "customer": {
+          "name": "Teste da silva", "email": "notpersisted@email.com", "document_number": "88985122878",
+          "address": {
+            "street": "Rua lorem ipsum",
+            "street_number": 200,
+            "neighborhood": "bairro",
+            "zipcode": "34569000",
+            "country": "Brasil",
+            "state": "MG",
+            "city": "lorem",
+            "complementary": "comple"
+          },
+          "phone": {
+            "ddi": "55",
+            "ddd": "21",
+            "number": "933448877"
+          }
+        }
+      }
+    }'
   - expected_status: [200]
   - validators:
     - compare: {jsonpath_mini: "0.id", comparator: 'regex', expected: ".*"}
@@ -40,6 +172,28 @@
   - name: 'Anonymous user cannot call this function'
   - url: "/rpc/create_payment"
   - method: "POST"
-  - body: '{"data": {"user_id": 999, "project_id": 9999, "amount": 20000}}'
+  - body: '{"data": 
+      {
+        "user_id": 999, "project_id": 9999, "amount": 20000, "payment_method": "boleto",
+        "customer": {
+          "name": "Teste da silva", "email": "notpersisted@email.com", "document_number": "88985122878",
+          "address": {
+            "street": "Rua lorem ipsum",
+            "street_number": 200,
+            "neighborhood": "bairro",
+            "zipcode": "34569000",
+            "country": "Brasil",
+            "state": "MG",
+            "city": "lorem",
+            "complementary": "comple"
+          },
+          "phone": {
+            "ddi": "55",
+            "ddd": "21",
+            "number": "933448877"
+          }
+        }
+      }
+    }'
   - expected_status: [401]
 

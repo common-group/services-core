@@ -50,6 +50,13 @@ CREATE SCHEMA core;
 
 
 --
+-- Name: core_validator; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA core_validator;
+
+
+--
 -- Name: payment_service; Type: SCHEMA; Schema: -; Owner: -
 --
 
@@ -106,6 +113,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -117,6 +138,20 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+--
+-- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
@@ -169,31 +204,136 @@ CREATE TYPE new_project_record AS (
 );
 
 
+SET search_path = public, pg_catalog;
+
+--
+-- Name: email; Type: DOMAIN; Schema: public; Owner: -
+--
+
+CREATE DOMAIN email AS citext
+	CONSTRAINT email_check CHECK ((VALUE ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$'::citext));
+
+
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: _serialize_user_basic_data(json); Type: FUNCTION; Schema: community_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_user_basic_data(json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'current_ip', ($1->>'current_ip')::text,
+                'name', ($1->>'name')::text,
+                'email', ($1->>'email')::email,
+                'document_number', replace(replace(replace(($1->>'document_number')::text, '.', ''), '/', ''), '-', ''),
+                'born_at', ($1->>'born_at')::date,
+                'document_type', ($1->>'document_type')::text,
+                'legal_account_type', ($1->>'legal_account_type')::text,
+                'address', json_build_object(
+                    'street', ($1->'address'->>'street')::text,
+                    'street_number', ($1->'address'->>'street_number')::text,
+                    'neighborhood', ($1->'address'->>'neighborhood')::text,
+                    'zipcode', ($1->'address'->>'zipcode')::text,
+                    'country', ($1->'address'->>'country')::text,
+                    'state', ($1->'address'->>'state')::text,
+                    'city', ($1->'address'->>'city')::text,
+                    'complementary', ($1->'address'->>'complementary')::text
+                ),
+                'phone', json_build_object(
+                    'ddi', ($1->'phone'->>'ddi')::text,
+                    'ddd', ($1->'phone'->>'ddd')::text,
+                    'number', ($1->'phone'->>'number')::text
+                ),
+                'bank_account', json_build_object(
+                    'bank_code', ($1->'bank_account'->>'bank_code')::text,
+                    'account', ($1->'bank_account'->>'account')::text,
+                    'account_digit', ($1->'bank_account'->>'account_digit')::text,
+                    'agency', ($1->'bank_account'->>'agency')::text,
+                    'agency_digit', ($1->'bank_account'->>'agency_digit')::text
+                ),
+                'metadata', ($1->>'metadata')::json
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: _serialize_user_basic_data(json, json); Type: FUNCTION; Schema: community_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_user_basic_data(json, with_default json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'current_ip', ($1->>'current_ip')::text,
+                'name', coalesce(($1->>'name')::text, ($2->>'name')::text),
+                'email', coalesce(($1->>'email')::email, ($2->>'email')::email),
+                'document_number', replace(replace(replace(coalesce(($1->>'document_number')::text, ($2->>'document_number')::text), '.', ''), '/', ''), '-', ''),
+                'born_at', coalesce(($1->>'born_at')::date, ($2->>'born_at')::date),
+                'document_type', coalesce(($1->>'document_type')::text, ($2->>'document_type')::text),
+                'legal_account_type', coalesce(($1->>'legal_account_type')::text, ($2->>'legal_account_type')::text),
+                'address', json_build_object(
+                    'street', coalesce(($1->'address'->>'street')::text, ($2->'address'->>'street')::text),
+                    'street_number', coalesce(($1->'address'->>'street_number')::text, ($2->'address'->>'street_number')::text),
+                    'neighborhood', coalesce(($1->'address'->>'neighborhood')::text, ($2->'address'->>'neighborhood')::text),
+                    'zipcode', coalesce(($1->'address'->>'zipcode')::text, ($2->'address'->>'zipcode')::text),
+                    'country', coalesce(($1->'address'->>'country')::text, ($2->'address'->>'country')::text),
+                    'state', coalesce(($1->'address'->>'state')::text, ($2->'address'->>'state')::text),
+                    'city', coalesce(($1->'address'->>'city')::text, ($2->'address'->>'city')::text),
+                    'complementary', coalesce(($1->'address'->>'complementary')::text, ($2->'address'->>'complementary')::text)
+                ),
+                'phone', json_build_object(
+                    'ddi', coalesce(($1->'phone'->>'ddi')::text, ($2->'phone'->>'ddi')::text),
+                    'ddd', coalesce(($1->'phone'->>'ddd')::text, ($2->'phone'->>'ddd')::text),
+                    'number', coalesce(($1->'phone'->>'number')::text, ($2->'phone'->>'number')::text)
+                ),
+                'bank_account', json_build_object(
+                    'bank_code', coalesce(($1->'bank_account'->>'bank_code')::text, ($2->'bank_account'->>'bank_code')::text),
+                    'account', coalesce(($1->'bank_account'->>'account')::text, ($2->'bank_account'->>'account')::text),
+                    'account_digit', coalesce(($1->'bank_account'->>'account_digit')::text, ($2->'bank_account'->>'account_digit')::text),
+                    'agency', coalesce(($1->'bank_account'->>'agency')::text, ($2->'bank_account'->>'agency')::text),
+                    'agency_digit', coalesce(($1->'bank_account'->>'agency_digit')::text, ($2->'bank_account'->>'agency_digit')::text)
+                ),
+                'metadata', coalesce(($1->>'metadata')::json, ($2->>'metadata')::json)
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
 SET search_path = community_service_api, pg_catalog;
 
 --
--- Name: generate_scoped_user_key(uuid); Type: FUNCTION; Schema: community_service_api; Owner: -
+-- Name: create_scoped_user_session(bigint); Type: FUNCTION; Schema: community_service_api; Owner: -
 --
 
-CREATE FUNCTION generate_scoped_user_key(user_key uuid) RETURNS core.jwt_token
+CREATE FUNCTION create_scoped_user_session(id bigint) RETURNS json
     LANGUAGE plpgsql STABLE
     AS $_$
         declare
             _platform platform_service.platforms;
             _user community_service.users;
-            _result core.jwt_token;
+            _jwt core.jwt_token;
+            _result json;
         begin
-            select * from platform_service.platforms p 
-                where p.token = core.current_platform_token()
-                into _platform;
+            -- ensure that roles come from any permitted
+            perform core.force_any_of_roles('{platform_user}');
 
-            if _platform is null then
-                raise exception 'invalid platform';
-            end if;
 
             select * from community_service.users cu
-                where cu.platform_id = _platform.id
-                    and cu.key = $1
+                where cu.platform_id = core.current_platform_id()
+                    and cu.id = $1
                 into _user;
 
             if _user is null then
@@ -206,7 +346,147 @@ CREATE FUNCTION generate_scoped_user_key(user_key uuid) RETURNS core.jwt_token
                 'user_id', _user.id,
                 'platform_token', core.current_platform_token(),
                 'exp', extract(epoch from now())::integer + (60*60)*2
-            )) into _result;
+            )) into _jwt;
+
+            select json_build_object(
+                'token', _jwt.token
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION create_scoped_user_session(id bigint); Type: COMMENT; Schema: community_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION create_scoped_user_session(id bigint) IS 'Create a token for scoped user in community';
+
+
+--
+-- Name: create_user(json); Type: FUNCTION; Schema: community_service_api; Owner: -
+--
+
+CREATE FUNCTION create_user(data json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+        declare
+            _user community_service.users;
+            _platform platform_service.platforms;
+            _refined jsonb;
+            _result json;
+            _passwd text;
+            _version community_service.user_versions;
+        begin
+            -- ensure that roles come from any permitted
+            perform core.force_any_of_roles('{platform_user}');
+            
+            -- insert current_ip into refined
+            _refined := jsonb_set($1::jsonb, '{current_ip}'::text[], to_jsonb(coalesce(($1->>'current_ip')::text, core.force_ip_address())));
+
+            -- generate user basic data structure with received json
+            _refined := community_service._serialize_user_basic_data($1);
+
+            -- check if password already encrypted
+            _passwd := (case when ($1->>'password_encrypted'::text) = 'true' then 
+                            ($1->>'password')::text  
+                        else 
+                            crypt(($1->>'password')::text, gen_salt('bf')) 
+                        end);
+
+            -- insert user in current platform
+            insert into community_service.users (platform_id, email, password, data, created_at, updated_at)
+                values (core.current_platform_id(),
+                        ($1)->>'email',
+                        _passwd,
+                        _refined::jsonb,
+                        coalesce(($1->>'created_at')::timestamp, now()),
+                        coalesce(($1->>'updated_at')::timestamp, now())
+                    )
+                    returning * into _user;
+
+            -- insert user version
+            insert into community_service.user_versions(user_id, data)
+                values (_user.id, _refined)
+            returning * into _version;
+
+            -- build result with user id
+            select json_build_object(
+                'id', _user.id,
+                'old_version_id', _version.id,
+                'data', _refined
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION create_user(data json); Type: COMMENT; Schema: community_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION create_user(data json) IS 'insert new user on current platform';
+
+
+--
+-- Name: update_user(json); Type: FUNCTION; Schema: community_service_api; Owner: -
+--
+
+CREATE FUNCTION update_user(data json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+        declare
+            _user_id bigint;
+            _user community_service.users;
+            _platform platform_service.platforms;
+            _version community_service.user_versions;
+            _refined json;
+            _result json;
+        begin
+            -- ensure that roles come from any permitted
+            perform core.force_any_of_roles('{platform_user, scoped_user}');
+
+            -- platform user can update any project inside the platform
+            if current_role = 'platform_user' then
+                _user_id := ($1->>'id')::bigint;
+            else -- scoped_user can only update they records
+                _user_id := core.current_user_id();
+            end if;
+
+            select * from community_service.users 
+                where id = _user_id
+                    and platform_id = core.current_platform_id()
+            into _user;
+
+            -- check if user exists on platform
+            if _user.id is null then
+                raise 'user not found';
+            end if;
+
+            -- put current ip inside jsonb
+            _refined := jsonb_set($1::jsonb, '{current_ip}'::text[], to_jsonb(core.force_ip_address()));
+
+            -- generate user basic data structure with received json
+            _refined := community_service._serialize_user_basic_data($1, _user.data::json);
+
+            -- insert old user data to version
+            insert into community_service.user_versions(user_id, data)
+                values (_user.id, _user.data)
+                returning * into _version;
+
+            update community_service.users
+                set data = _refined,
+                    email = _refined->>'email'
+            where id = _user.id;
+
+            -- build result with user id
+            select json_build_object(
+                'id', _user.id,
+                'old_version_id', _version.id,
+                'data', _refined
+            ) into _result;
 
             return _result;
         end;
@@ -252,7 +532,9 @@ CREATE FUNCTION current_platform_token() RETURNS uuid
     LANGUAGE plpgsql STABLE
     AS $$
         BEGIN
-          RETURN nullif(current_setting('request.jwt.claim.platform_token'), '')::uuid;
+          RETURN COALESCE(
+            current_setting('request.jwt.claim.platform_token', true)::uuid, 
+            current_setting('request.header.platform-code')::uuid);
         EXCEPTION
             WHEN others THEN
             RETURN NULL::integer;
@@ -288,6 +570,47 @@ END
 --
 
 COMMENT ON FUNCTION current_user_id() IS 'Returns the user_id decoded on jwt';
+
+
+--
+-- Name: force_any_of_roles(text[]); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION force_any_of_roles(roles text[]) RETURNS void
+    LANGUAGE plpgsql STABLE
+    AS $_$
+        declare
+        begin
+            if not core.has_any_of_roles($1) then
+                raise exception insufficient_privilege;
+            end if;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION force_any_of_roles(roles text[]); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION force_any_of_roles(roles text[]) IS 'raise insufficient_privilege when current role not in any of requested roles';
+
+
+--
+-- Name: force_ip_address(); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION force_ip_address() RETURNS text
+    LANGUAGE sql
+    AS $$
+        select current_setting('request.header.x-forwarded-for');
+    $$;
+
+
+--
+-- Name: FUNCTION force_ip_address(); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION force_ip_address() IS 'Get ip address form request header or raise error';
 
 
 --
@@ -327,6 +650,24 @@ COMMENT ON FUNCTION get_setting(character varying) IS 'Get a value from a core s
 
 
 --
+-- Name: has_any_of_roles(text[]); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION has_any_of_roles(roles text[]) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $$
+        select current_role = ANY(roles);
+    $$;
+
+
+--
+-- Name: FUNCTION has_any_of_roles(roles text[]); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION has_any_of_roles(roles text[]) IS 'check if current role in any of requested roles';
+
+
+--
 -- Name: is_owner_or_admin(integer); Type: FUNCTION; Schema: core; Owner: -
 --
 
@@ -355,7 +696,7 @@ CREATE FUNCTION is_owner_or_admin(bigint) RETURNS boolean
     AS $_$
         SELECT
             core.current_user_id() = $1
-            OR current_user = 'admin';
+            OR current_user = 'platform_user';
    $_$;
 
 
@@ -387,6 +728,17 @@ $_$;
 --
 
 COMMENT ON FUNCTION project_exists_on_platform(project_id bigint, platform_id integer) IS 'check if project id exists on platform';
+
+
+--
+-- Name: request_ip_adress(); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION request_ip_adress() RETURNS text
+    LANGUAGE sql
+    AS $$
+        select current_setting('request.header.x-forwarded-for', true);
+    $$;
 
 
 --
@@ -442,6 +794,29 @@ $$;
 
 
 --
+-- Name: user_exists_on_platform(bigint, integer); Type: FUNCTION; Schema: core; Owner: -
+--
+
+CREATE FUNCTION user_exists_on_platform(user_id bigint, platform_id integer) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $_$
+    select exists(
+        select true
+        from community_service.users u
+            where u.id = $1
+                and u.platform_id = $2
+    )
+$_$;
+
+
+--
+-- Name: FUNCTION user_exists_on_platform(user_id bigint, platform_id integer); Type: COMMENT; Schema: core; Owner: -
+--
+
+COMMENT ON FUNCTION user_exists_on_platform(user_id bigint, platform_id integer) IS 'Check if user_id exists on platform';
+
+
+--
 -- Name: verify(text, text, text); Type: FUNCTION; Schema: core; Owner: -
 --
 
@@ -454,6 +829,101 @@ CREATE FUNCTION verify(token text, secret text, algorithm text DEFAULT 'HS256'::
     r[3] = core.algorithm_sign(r[1] || '.' || r[2], secret, algorithm) AS valid
   FROM regexp_split_to_array(token, '\.') r;
 $$;
+
+
+SET search_path = core_validator, pg_catalog;
+
+--
+-- Name: is_empty(text); Type: FUNCTION; Schema: core_validator; Owner: -
+--
+
+CREATE FUNCTION is_empty(_value text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE
+    AS $$
+        select nullif(btrim(_value, ' '), '') is null;
+    $$;
+
+
+--
+-- Name: FUNCTION is_empty(_value text); Type: COMMENT; Schema: core_validator; Owner: -
+--
+
+COMMENT ON FUNCTION is_empty(_value text) IS 'check if a text is empty';
+
+
+--
+-- Name: raise_when_empty(text, text); Type: FUNCTION; Schema: core_validator; Owner: -
+--
+
+CREATE FUNCTION raise_when_empty(_value text, _label text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+        declare
+        begin
+            if nullif(btrim(_value, ' '), '') is null then
+                raise 'missing field %', _label;
+            end if;
+            
+            return btrim(_value, ' ');
+        end;
+    $$;
+
+
+--
+-- Name: FUNCTION raise_when_empty(_value text, _label text); Type: COMMENT; Schema: core_validator; Owner: -
+--
+
+COMMENT ON FUNCTION raise_when_empty(_value text, _label text) IS 'Raise when value::text is missing';
+
+
+SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: check_and_generate_payment_data(json); Type: FUNCTION; Schema: payment_service; Owner: -
+--
+
+CREATE FUNCTION check_and_generate_payment_data(data json) RETURNS json
+    LANGUAGE plpgsql STABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'current_ip', core_validator.raise_when_empty(($1->>'current_ip')::text, 'ip_address'),
+                'amount', core_validator.raise_when_empty((($1->>'amount')::integer)::text, 'amount'),
+                'payment_method', core_validator.raise_when_empty(lower(($1->>'payment_method')::text), 'payment_method'),
+                'customer', json_build_object(
+                    'name', core_validator.raise_when_empty(($1->'customer'->>'name')::text, 'name'),
+                    'email', core_validator.raise_when_empty(($1->'customer'->>'email')::text, 'email'),
+                    'document_number', core_validator.raise_when_empty(($1->'customer'->>'document_number')::text, 'document_number'),
+                    'address', json_build_object(
+                        'street', core_validator.raise_when_empty(($1->'customer'->'address'->>'street')::text, 'street'),
+                        'street_number', core_validator.raise_when_empty(($1->'customer'->'address'->>'street_number')::text, 'street_number'),
+                        'neighborhood', core_validator.raise_when_empty(($1->'customer'->'address'->>'neighborhood')::text, 'neighborhood'),
+                        'zipcode', core_validator.raise_when_empty(($1->'customer'->'address'->>'zipcode')::text, 'zipcode'),
+                        'country', core_validator.raise_when_empty(($1->'customer'->'address'->>'country')::text, 'country'),
+                        'state', core_validator.raise_when_empty(($1->'customer'->'address'->>'state')::text, 'state'),
+                        'city', core_validator.raise_when_empty(($1->'customer'->'address'->>'city')::text, 'city'),
+                        'complementary', ($1->'customer'->'address'->>'complementary')::text
+                    ),
+                    'phone', json_build_object(
+                        'ddi', core_validator.raise_when_empty(($1->'customer'->'phone'->>'ddi')::text, 'phone_ddi'),
+                        'ddd', core_validator.raise_when_empty(($1->'customer'->'phone'->>'ddd')::text, 'phone_ddd'),
+                        'number', core_validator.raise_when_empty(($1->'customer'->'phone'->>'number')::text, 'phone_number')
+                    )
+                )
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: FUNCTION check_and_generate_payment_data(data json); Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON FUNCTION check_and_generate_payment_data(data json) IS 'check and generate a json structure with correct payment data';
 
 
 SET search_path = payment_service_api, pg_catalog;
@@ -469,35 +939,110 @@ CREATE FUNCTION create_payment(data json) RETURNS json
             _result json;
             _payment payment_service.catalog_payments;
             _user_id bigint;
-            _project project_service.projects;
+            _user community_service.users;
+            _version payment_service.catalog_payment_versions;
+            _credit_card payment_service.credit_cards;
             _subscription payment_service.subscriptions;
+            _refined jsonb;
         begin
-            if current_role = 'platform_user' or current_role = 'admin' then
+            -- ensure that roles come from any permitted
+            perform core.force_any_of_roles('{platform_user, scoped_user}');
+
+            -- check roles to define how user_id is set
+            if current_role = 'platform_user' then
                 _user_id := ($1 ->> 'user_id')::bigint;
             else
                 _user_id := core.current_user_id();
             end if;
 
-            if _user_id is null then
-                raise exception 'missing user';
-            end if;
-
-            if ($1->>'project_id') is null OR not exists(select * from project_service.projects psp
-                where psp.id = ($1->>'project_id')::bigint
-                    and psp.platform_id = core.current_platform_id()) then
+            -- check if project exists on platform
+            if ($1->>'project_id')::bigint is null 
+                OR not core.project_exists_on_platform(($1->>'project_id')::bigint, core.current_platform_id()) then
                 raise exception 'project not found on platform';
             end if;
 
+            -- set user into variable
+            select * 
+            from community_service.users 
+            where id = _user_id
+                and platform_id = core.current_platform_id()
+            into _user;
+
+            -- check if user exists on current platform
+            if _user.id is null then
+                raise exception 'missing user';
+            end if;
+
+            -- fill ip address to received params
+            _refined := jsonb_set(($1)::jsonb, '{current_ip}'::text[], to_jsonb(core.force_ip_address()::text));
+
+            -- if user already has filled document_number/name/email should use then
+            if not core_validator.is_empty((_user.data->>'name')::text) then
+                _refined := jsonb_set(_refined, '{customer,name}', to_jsonb(_user.data->>'name'::text));
+            end if;
+
+            if not core_validator.is_empty((_user.data->>'email')::text) then
+                _refined := jsonb_set(_refined, '{customer,email}', to_jsonb(_user.data->>'email'::text));
+            end if;
+
+            if not core_validator.is_empty((_user.data->>'email')::text) then
+                _refined := jsonb_set(_refined, '{customer,document_number}', to_jsonb(_user.data->>'document_number'::text));
+            end if;
+
+            -- generate a base structure to payment json
+            _refined := (payment_service.check_and_generate_payment_data((_refined)::json))::jsonb;
+
+            -- if payment_method is credit_card should check for card_hash or card_id
+            if _refined->>'payment_method'::text = 'credit_card' then
+
+                -- fill with is_international
+                _refined := jsonb_set(_refined, '{is_international}'::text[], to_jsonb((coalesce($1->>'is_international')::text, 'false')::text));
+
+                -- fill with save_card
+                _refined := jsonb_set(_refined, '{save_card}'::text[], to_jsonb(coalesce(($1->>'save_card')::text, 'false')));
+
+                -- check if card_hash or card_id is present
+                if core_validator.is_empty((($1)->>'card_hash')::text) 
+                    and core_validator.is_empty((($1)->>'card_id')::text) then
+                    raise 'missing card_hash or card_id';
+                end if;
+
+                -- if has card_id check if user is card owner
+                if not core_validator.is_empty((($1)->>'card_id')::text) then
+                    select cc.* from payment_service.credit_cards cc 
+                    where cc.user_id = _user_id and cc.id = (($1)->>'card_id')::bigint
+                    into _credit_card;
+
+                    if _credit_card.id is null then
+                        raise 'invalid card_id';
+                    end if;
+
+                    _refined := jsonb_set(_refined, '{card_id}'::text[], to_jsonb(_credit_card.id::text));
+                    
+                elsif not core_validator.is_empty((($1)->>'card_hash')::text) then
+                    _refined := jsonb_set(_refined, '{card_hash}'::text[], to_jsonb($1->>'card_hash'::text));
+                end if;
+
+            end if;
+
+            -- insert payment in table
             insert into payment_service.catalog_payments (
                 platform_id, project_id, user_id, data, gateway
             ) values (
                 core.current_platform_id(),
                 ($1->>'project_id')::bigint,
                 _user_id,
-                $1,
+                _refined,
                 coalesce(($1->>'gateway')::text, 'pagarme')
             ) returning * into _payment;
+            
+            -- insert first payment version
+            insert into payment_service.catalog_payment_versions (
+                catalog_payment_id, data
+            ) values ( _payment.id, _payment.data )
+            returning * into _version;
 
+            -- check if payment is a subscription to create one
             if ($1->>'subscription')::boolean then
                 insert into payment_service.subscriptions (
                     platform_id, project_id, user_id
@@ -509,23 +1054,26 @@ CREATE FUNCTION create_payment(data json) RETURNS json
                     where id = _payment.id;
             end if;
 
+            -- build result json with payment_id and subscription_id
             select json_build_object(
                 'id', _payment.id,
-                'subscription_id', _subscription.id
+                'subscription_id', _subscription.id,
+                'old_version_id', _version.id,
+                'data', _payment.data::json
             ) into _result;
 
-            PERFORM pg_notify('process_payments_channel', _result::text);
+            -- notify to backend processor via listen
+            PERFORM pg_notify('process_payments_channel',
+                json_build_object(
+                    'id', _payment.id,
+                    'subscription_id', _payment.subscription_id,
+                    'created_at', _payment.created_at::timestamp
+                )::text
+            );
 
             return _result;
         end;
     $_$;
-
-
---
--- Name: FUNCTION create_payment(data json); Type: COMMENT; Schema: payment_service_api; Owner: -
---
-
-COMMENT ON FUNCTION create_payment(data json) IS 'Catalog new payment for processing and return id';
 
 
 SET search_path = platform_service, pg_catalog;
@@ -784,76 +1332,166 @@ $$;
 COMMENT ON FUNCTION sign_up(name text, email text, password text) IS 'Handles with creation of new platform users';
 
 
+SET search_path = project_service, pg_catalog;
+
+--
+-- Name: _serialize_project_basic_data(json); Type: FUNCTION; Schema: project_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_project_basic_data(json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'name', core_validator.raise_when_empty(($1->>'name')::text, 'name'),
+                'status', ($1->>'status'::text),
+                'permalink', core_validator.raise_when_empty(($1->>'permalink')::text, 'permalink'),
+                'mode', core_validator.raise_when_empty((($1->>'mode')::project_service.project_mode)::text, 'mode'),
+                'about_html', ($1->>'about_html')::text,
+                'budget_html', ($1->>'budget_html')::text,
+                'online_days', ($1->>'online_days')::integer,
+                'cover_image_versions', ($1->>'cover_image_versions')::json,
+                'card_info', json_build_object(
+                    'image_url', ($1->'card_info'->>'image_url')::text,
+                    'title', ($1->'card_info'->>'title')::text,
+                    'description', ($1->'card_info'->>'description')::text
+                ),
+                'video_info', json_build_object(
+                    'id', ($1->'video'->>'id')::text,
+                    'provider', ($1->'video'->>'provider')::text,
+                    'embed_url', ($1->'video'->>'embed_url')::text,
+                    'thumb_url', ($1->'video'->>'cover_url')::text
+                ),
+                'address', json_build_object(
+                    'state', ($1->'address'->>'state')::text,
+                    'city', ($1->'address'->>'city')::text
+                ),
+                'metadata', ($1->>'metadata')::json
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
+--
+-- Name: _serialize_project_basic_data(json, json); Type: FUNCTION; Schema: project_service; Owner: -
+--
+
+CREATE FUNCTION _serialize_project_basic_data(json, with_default json) RETURNS json
+    LANGUAGE plpgsql IMMUTABLE
+    AS $_$
+        declare
+            _result json;
+        begin
+            select json_build_object(
+                'current_ip', ($1->>'current_ip'),
+                'name', core_validator.raise_when_empty(coalesce(($1->>'name')::text, ($2->>'name')::text), 'name'),
+                'status', coalesce(($1->>'status'::text), ($2->>'status'::text)),
+                'permalink', core_validator.raise_when_empty(coalesce(($1->>'permalink')::text, ($2->>'permalink')::text), 'permalink'),
+                'mode', core_validator.raise_when_empty(coalesce((($1->>'mode')::project_service.project_mode)::text,(($2->>'mode')::project_service.project_mode)::text), 'mode'),
+                'about_html', coalesce(($1->>'about_html')::text, ($2->>'about_html')::text),
+                'budget_html', coalesce(($1->>'budget_html')::text, ($2->>'budget_html')::text),
+                'online_days', coalesce(($1->>'online_days')::integer, ($2->>'online_days')::integer),
+                'cover_image_versions', coalesce(($1->>'cover_image_versions'), ($2->>'cover_image_versions'))::json,
+                'card_info', json_build_object(
+                    'image_url', coalesce(($1->'card_info'->>'image_url'), ($2->'card_info'->>'image_url'))::text,
+                    'title', coalesce(($1->'card_info'->>'title'), ($2->'card_info'->>'title'))::text,
+                    'description', coalesce(($1->'card_info'->>'description'), ($2->'card_info'->>'description'))::text
+                ),
+                'video_info', json_build_object(
+                    'id', coalesce(($1->'video'->>'id'), ($2->'video'->>'id'))::text,
+                    'provider', coalesce(($1->'video'->>'provider'), ($2->'video'->>'provider'))::text,
+                    'embed_url', coalesce(($1->'video'->>'embed_url'), ($2->'video'->>'embed_url'))::text,
+                    'thumb_url', coalesce(($1->'video'->>'cover_url'), ($2->'video'->>'cover_url'))::text
+                ),
+                'address', json_build_object(
+                    'state', coalesce(($1->'address'->>'state'), ($2->'address'->>'state'))::text,
+                    'city', coalesce(($1->'address'->>'city'), ($2->'address'->>'city'))::text
+                ),
+                'metadata', ($1->>'metadata')::json
+            ) into _result;
+
+            return _result;
+        end;
+    $_$;
+
+
 SET search_path = project_service_api, pg_catalog;
 
 --
 -- Name: create_project(json); Type: FUNCTION; Schema: project_service_api; Owner: -
 --
 
-CREATE FUNCTION create_project(project json) RETURNS project_service.new_project_record
-    LANGUAGE plpgsql
-    AS $$
-    declare
-        _platform platform_service.platforms;
-        _user community_service.users;
-        _result project_service.new_project_record;
-    begin
-        select * from community_service.users cu
-            where cu.id = (project ->> 'user_id')::bigint
-                and cu.platform_id = core.current_platform_id()
-            into _user;
-
-            if _user is null then
-                raise exception 'invalid user id';
-            end if;
-
-            insert into project_service.projects (
-                platform_id, user_id, name, mode
-            ) values (core.current_platform_id(), _user.id, project ->> 'name', (project ->> 'mode')::project_service.project_mode)
-            returning id, name, mode, key into _result;
-
-            return _result;
-    end;
-$$;
-
-
---
--- Name: update_project(json); Type: FUNCTION; Schema: project_service_api; Owner: -
---
-
-CREATE FUNCTION update_project(project json) RETURNS json
+CREATE FUNCTION create_project(data json) RETURNS json
     LANGUAGE plpgsql
     AS $_$
     declare
-        _project project_service.projects;
+        _platform platform_service.platforms;
+        _user community_service.users;
         _result json;
+        _permalink text;
+        _refined jsonb;
+        _project project_service.projects;
+        _version project_service.project_versions;
     begin
-        if (($1->>'id')::bigint is null)
-            OR (not core.project_exists_on_platform(
-                    ($1->>'id')::bigint
-                    , core.current_platform_id()
-            ))
-        then
-            raise exception undefined_table;
+        -- ensure that roles come from any permitted
+        perform core.force_any_of_roles('{platform_user}');
+        
+        -- select and check if user is on same platform
+        select * from community_service.users cu
+            where cu.id = ($1 ->> 'user_id')::bigint
+                and cu.platform_id = core.current_platform_id()
+            into _user;
+
+        if _user.id is null then
+            raise exception 'invalid user id';
+        end if;
+        
+        -- check if permalink is provided
+        if core_validator.is_empty($1->>'permalink'::text) then
+            _permalink := unaccent(replace(replace(lower($1->>'name'),' ','_'), '-', '_'));
+        else
+            _permalink := unaccent(replace(replace(lower($1->>'permalink'),' ','_'), '-', '_'));
         end if;
 
-        select * from project_service.projects
-            where id = ($1->>'id')::bigint
-            into _project;
-
-        if not core.is_owner_or_admin(_project.user_id) then
-            raise exception insufficient_privilege;
-        end if;
-
-        insert into project_service.project_versions(project_id, data)
-            values (_project.id, _project.data);
-
-        update project_service.projects
-            set data = $1
-            where id = _project.id;
-
+        -- put first status on project
+        select jsonb_set($1::jsonb, '{status}'::text[], to_jsonb('draft'::text))
+            into _refined;
+        
+        -- put generated permalink into refined json
+        select jsonb_set(_refined, '{permalink}'::text[], to_jsonb(_permalink::text))
+            into _refined;
+        
+        -- put current request ip into refined json
+        select jsonb_set(_refined, '{current_ip}'::text[], to_jsonb(core.request_ip_adress()))
+            into _refined;
+        
+        -- redefined refined json with project basic serializer
+        select project_service._serialize_project_basic_data(_refined::json)::jsonb
+            into _refined;
+        
+        -- insert project 
+        insert into project_service.projects (
+            platform_id, user_id, permalink, name, mode, data
+        ) values (core.current_platform_id(), _user.id, _permalink, ($1 ->> 'name')::text, ($1 ->> 'mode')::project_service.project_mode, _refined)
+        returning * into _project;
+        
+        -- insert first version of project
+        insert into project_service.project_versions (
+            project_id, data
+        ) values (_project.id, _project.data)
+        returning * into _version;
+        
         select json_build_object(
-            'id', _project.id
+            'id', _project.id,
+            'old_version_id', _version.id,
+            'permalink', _project.permalink,
+            'mode', _project.mode,
+            'status', _project.status,
+            'data', _project.data            
         ) into _result;
 
         return _result;
@@ -862,10 +1500,100 @@ $_$;
 
 
 --
--- Name: FUNCTION update_project(project json); Type: COMMENT; Schema: project_service_api; Owner: -
+-- Name: update_project(json); Type: FUNCTION; Schema: project_service_api; Owner: -
 --
 
-COMMENT ON FUNCTION update_project(project json) IS 'update project data';
+CREATE FUNCTION update_project(data json) RETURNS json
+    LANGUAGE plpgsql
+    AS $_$
+    declare
+        _project project_service.projects;
+        _version project_service.project_versions;
+        _result json;
+        _refined jsonb;
+        _permalink text;
+    begin
+        -- ensure that roles come from any permitted
+        perform core.force_any_of_roles('{platform_user}');
+        
+        -- select project inside current platform
+        select * from project_service.projects
+            where id = ($1->>'id')::bigint and platform_id = core.current_platform_id()
+            into _project;
+            
+        if _project.id is null then
+            raise exception undefined_table;
+        end if;
+        
+        -- set default permalink
+        _permalink := _project.permalink;
+            
+        -- enable this when enable this funcion for scoped_user usage
+        -- if not core.is_owner_or_admin(_project.user_id) then
+        --     raise exception insufficient_privilege;
+        -- end if;
+
+        -- insert old version of project on new version
+        insert into project_service.project_versions(project_id, data)
+            values (_project.id, _project.data)
+        returning * into _version;
+        
+        -- check if permalink is provided
+        if not core_validator.is_empty($1->>'permalink'::text) and _project.status = 'draft' then
+            _permalink := unaccent(replace(replace(lower($1->>'permalink'),' ','_'), '-', '_'));
+        end if;
+        
+        -- put request json into refined
+        _refined := ($1)::jsonb;
+        
+        -- set default mode of project
+        _refined := jsonb_set(_refined, '{mode}'::text[], to_jsonb(_project.mode::text));
+        
+        -- check if permalink is mode is provided
+        if not core_validator.is_empty($1->>'mode'::text) and _project.status = 'draft' then
+            _refined := jsonb_set(_refined, '{mode}'::text[], to_jsonb($1->>'mode'::text));
+        end if;
+        
+        -- put permalink inside refined json
+        _refined := jsonb_set(_refined, '{permalink}'::text[], to_jsonb(_permalink::text));
+
+        -- put project_status
+        _refined := jsonb_set(_refined, '{status}'::text[], to_jsonb(_project.status::text));
+            
+        -- put current_ip
+        _refined := jsonb_set(_refined, '{current_ip}'::text[], to_jsonb(core.request_ip_adress()::text));
+        
+        -- generate basic struct with given data
+        _refined := project_service._serialize_project_basic_data(_refined::json, _project.data::json)::jsonb;
+        
+        -- update project with new generated data
+        update project_service.projects
+            set mode = (_refined ->> 'mode')::project_service.project_mode, 
+            name = (_refined ->> 'name')::text, 
+            permalink = (_refined ->> 'permalink')::text,
+            data = _refined
+            where id = _project.id
+            returning * into _project;
+
+        select json_build_object(
+            'id', _project.id,
+            'old_version_id', _version.id,
+            'permalink', _project.permalink,
+            'mode', _project.mode,
+            'status', _project.status,
+            'data', _project.data 
+        ) into _result;
+
+        return _result;
+    end;
+$_$;
+
+
+--
+-- Name: FUNCTION update_project(data json); Type: COMMENT; Schema: project_service_api; Owner: -
+--
+
+COMMENT ON FUNCTION update_project(data json) IS 'Update project data';
 
 
 SET search_path = public, pg_catalog;
@@ -912,15 +1640,12 @@ SET search_path = community_service, pg_catalog;
 CREATE TABLE users (
     platform_id integer NOT NULL,
     id bigint NOT NULL,
-    email text NOT NULL,
+    email public.email NOT NULL,
     password text NOT NULL,
-    name text NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     updated_at timestamp without time zone DEFAULT now() NOT NULL,
     data jsonb DEFAULT '{}'::jsonb NOT NULL,
     key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    CONSTRAINT users_email_check CHECK ((email ~* '^.+@.+\..+$'::text)),
-    CONSTRAINT users_name_check CHECK ((length(name) < 255)),
     CONSTRAINT users_password_check CHECK ((length(password) < 512))
 );
 
@@ -954,6 +1679,38 @@ COMMENT ON VIEW users_count IS 'Shows the number of users on actual platform';
 SET search_path = community_service, pg_catalog;
 
 --
+-- Name: user_versions; Type: TABLE; Schema: community_service; Owner: -
+--
+
+CREATE TABLE user_versions (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: user_versions_id_seq; Type: SEQUENCE; Schema: community_service; Owner: -
+--
+
+CREATE SEQUENCE user_versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: community_service; Owner: -
+--
+
+ALTER SEQUENCE user_versions_id_seq OWNED BY user_versions.id;
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE; Schema: community_service; Owner: -
 --
 
@@ -970,6 +1727,29 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: users; Type: VIEW; Schema: community_service_api; Owner: -
+--
+
+CREATE VIEW users AS
+ SELECT u.id,
+    (u.data ->> 'name'::text) AS name,
+    (u.data ->> 'public_name'::text) AS public_name,
+    (u.data ->> 'document_number'::text) AS document_number,
+    (u.data ->> 'document_type'::text) AS document_type,
+    (u.data ->> 'legal_account_type'::text) AS legal_account_type,
+    u.email,
+    ((u.data ->> 'address'::text))::jsonb AS address,
+    ((u.data ->> 'metadata'::text))::jsonb AS metadata,
+    ((u.data ->> 'bank_account'::text))::jsonb AS bank_account,
+    u.created_at,
+    u.updated_at
+   FROM community_service.users u
+  WHERE (u.platform_id = core.current_platform_id());
 
 
 SET search_path = core, pg_catalog;
@@ -1014,6 +1794,45 @@ ALTER SEQUENCE core_settings_id_seq OWNED BY core_settings.id;
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions; Type: TABLE; Schema: payment_service; Owner: -
+--
+
+CREATE TABLE catalog_payment_versions (
+    id bigint NOT NULL,
+    catalog_payment_id bigint NOT NULL,
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    created_at timestamp without time zone DEFAULT now() NOT NULL,
+    updated_at timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: TABLE catalog_payment_versions; Type: COMMENT; Schema: payment_service; Owner: -
+--
+
+COMMENT ON TABLE catalog_payment_versions IS 'store catalog payment versions when need to be updated';
+
+
+--
+-- Name: catalog_payment_versions_id_seq; Type: SEQUENCE; Schema: payment_service; Owner: -
+--
+
+CREATE SEQUENCE catalog_payment_versions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: catalog_payment_versions_id_seq; Type: SEQUENCE OWNED BY; Schema: payment_service; Owner: -
+--
+
+ALTER SEQUENCE catalog_payment_versions_id_seq OWNED BY catalog_payment_versions.id;
+
 
 --
 -- Name: catalog_payments; Type: TABLE; Schema: payment_service; Owner: -
@@ -1352,7 +2171,9 @@ CREATE TABLE projects (
     name text NOT NULL,
     mode project_mode NOT NULL,
     key uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    data jsonb DEFAULT '{}'::jsonb NOT NULL
+    data jsonb DEFAULT '{}'::jsonb NOT NULL,
+    status text DEFAULT 'draft'::text NOT NULL,
+    permalink text NOT NULL
 );
 
 
@@ -1397,6 +2218,13 @@ CREATE TABLE __diesel_schema_migrations (
 SET search_path = community_service, pg_catalog;
 
 --
+-- Name: user_versions id; Type: DEFAULT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY user_versions ALTER COLUMN id SET DEFAULT nextval('user_versions_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: community_service; Owner: -
 --
 
@@ -1413,6 +2241,13 @@ ALTER TABLE ONLY core_settings ALTER COLUMN id SET DEFAULT nextval('core_setting
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions id; Type: DEFAULT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payment_versions ALTER COLUMN id SET DEFAULT nextval('catalog_payment_versions_id_seq'::regclass);
+
 
 --
 -- Name: catalog_payments id; Type: DEFAULT; Schema: payment_service; Owner: -
@@ -1506,6 +2341,14 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: user_versions user_versions_pkey; Type: CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY user_versions
+    ADD CONSTRAINT user_versions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users users_key_key; Type: CONSTRAINT; Schema: community_service; Owner: -
 --
 
@@ -1540,6 +2383,14 @@ ALTER TABLE ONLY core_settings
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions catalog_payment_versions_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payment_versions
+    ADD CONSTRAINT catalog_payment_versions_pkey PRIMARY KEY (id);
+
 
 --
 -- Name: catalog_payments catalog_payments_pkey; Type: CONSTRAINT; Schema: payment_service; Owner: -
@@ -1665,6 +2516,14 @@ ALTER TABLE ONLY projects
     ADD CONSTRAINT projects_pkey PRIMARY KEY (id);
 
 
+--
+-- Name: projects unq_permalink_on_platform; Type: CONSTRAINT; Schema: project_service; Owner: -
+--
+
+ALTER TABLE ONLY projects
+    ADD CONSTRAINT unq_permalink_on_platform UNIQUE (platform_id, permalink);
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -1749,6 +2608,14 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON project_versions FOR EACH ROW EXE
 SET search_path = community_service, pg_catalog;
 
 --
+-- Name: user_versions user_versions_user_id_fkey; Type: FK CONSTRAINT; Schema: community_service; Owner: -
+--
+
+ALTER TABLE ONLY user_versions
+    ADD CONSTRAINT user_versions_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
 -- Name: users users_platform_id_fkey; Type: FK CONSTRAINT; Schema: community_service; Owner: -
 --
 
@@ -1757,6 +2624,14 @@ ALTER TABLE ONLY users
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions catalog_payment_versions_catalog_payment_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
+--
+
+ALTER TABLE ONLY catalog_payment_versions
+    ADD CONSTRAINT catalog_payment_versions_catalog_payment_id_fkey FOREIGN KEY (catalog_payment_id) REFERENCES catalog_payments(id);
+
 
 --
 -- Name: catalog_payments catalog_payments_platform_id_fkey; Type: FK CONSTRAINT; Schema: payment_service; Owner: -
@@ -1950,6 +2825,16 @@ GRANT USAGE ON SCHEMA core TO anonymous;
 
 
 --
+-- Name: core_validator; Type: ACL; Schema: -; Owner: -
+--
+
+GRANT USAGE ON SCHEMA core_validator TO scoped_user;
+GRANT USAGE ON SCHEMA core_validator TO platform_user;
+GRANT USAGE ON SCHEMA core_validator TO postgrest;
+GRANT USAGE ON SCHEMA core_validator TO admin;
+
+
+--
 -- Name: payment_service; Type: ACL; Schema: -; Owner: -
 --
 
@@ -2012,22 +2897,24 @@ GRANT USAGE ON SCHEMA project_service_api TO admin;
 SET search_path = community_service_api, pg_catalog;
 
 --
--- Name: generate_scoped_user_key(uuid); Type: ACL; Schema: community_service_api; Owner: -
+-- Name: create_scoped_user_session(bigint); Type: ACL; Schema: community_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO admin;
-GRANT ALL ON FUNCTION generate_scoped_user_key(user_key uuid) TO platform_user;
+GRANT ALL ON FUNCTION create_scoped_user_session(id bigint) TO platform_user;
 
-
-SET search_path = payment_service_api, pg_catalog;
 
 --
--- Name: create_payment(json); Type: ACL; Schema: payment_service_api; Owner: -
+-- Name: create_user(json); Type: ACL; Schema: community_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION create_payment(data json) TO scoped_user;
-GRANT ALL ON FUNCTION create_payment(data json) TO platform_user;
-GRANT ALL ON FUNCTION create_payment(data json) TO admin;
+GRANT ALL ON FUNCTION create_user(data json) TO platform_user;
+
+
+--
+-- Name: update_user(json); Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT ALL ON FUNCTION update_user(data json) TO platform_user;
 
 
 SET search_path = platform_service, pg_catalog;
@@ -2037,6 +2924,7 @@ SET search_path = platform_service, pg_catalog;
 --
 
 GRANT SELECT,INSERT ON TABLE platforms TO platform_user;
+GRANT SELECT ON TABLE platforms TO anonymous;
 GRANT SELECT,INSERT ON TABLE platforms TO admin;
 GRANT SELECT ON TABLE platforms TO scoped_user;
 
@@ -2106,9 +2994,7 @@ SET search_path = project_service_api, pg_catalog;
 -- Name: update_project(json); Type: ACL; Schema: project_service_api; Owner: -
 --
 
-GRANT ALL ON FUNCTION update_project(project json) TO scoped_user;
-GRANT ALL ON FUNCTION update_project(project json) TO platform_user;
-GRANT ALL ON FUNCTION update_project(project json) TO admin;
+GRANT ALL ON FUNCTION update_project(data json) TO platform_user;
 
 
 SET search_path = community_service, pg_catalog;
@@ -2117,10 +3003,10 @@ SET search_path = community_service, pg_catalog;
 -- Name: users; Type: ACL; Schema: community_service; Owner: -
 --
 
-GRANT SELECT ON TABLE users TO platform_user;
 GRANT SELECT ON TABLE users TO postgrest;
 GRANT SELECT ON TABLE users TO admin;
 GRANT SELECT ON TABLE users TO scoped_user;
+GRANT SELECT,INSERT,UPDATE ON TABLE users TO platform_user;
 GRANT SELECT ON TABLE users TO anonymous;
 
 
@@ -2135,6 +3021,39 @@ GRANT SELECT ON TABLE users_count TO admin;
 GRANT SELECT ON TABLE users_count TO scoped_user;
 
 
+SET search_path = community_service, pg_catalog;
+
+--
+-- Name: user_versions; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT SELECT,INSERT ON TABLE user_versions TO scoped_user;
+GRANT SELECT,INSERT ON TABLE user_versions TO platform_user;
+
+
+--
+-- Name: user_versions_id_seq; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE user_versions_id_seq TO platform_user;
+
+
+--
+-- Name: users_id_seq; Type: ACL; Schema: community_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE users_id_seq TO platform_user;
+
+
+SET search_path = community_service_api, pg_catalog;
+
+--
+-- Name: users; Type: ACL; Schema: community_service_api; Owner: -
+--
+
+GRANT SELECT ON TABLE users TO platform_user;
+
+
 SET search_path = core, pg_catalog;
 
 --
@@ -2147,6 +3066,22 @@ GRANT SELECT ON TABLE core_settings TO scoped_user;
 
 
 SET search_path = payment_service, pg_catalog;
+
+--
+-- Name: catalog_payment_versions; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT SELECT,INSERT ON TABLE catalog_payment_versions TO scoped_user;
+GRANT SELECT,INSERT ON TABLE catalog_payment_versions TO platform_user;
+
+
+--
+-- Name: catalog_payment_versions_id_seq; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE catalog_payment_versions_id_seq TO scoped_user;
+GRANT USAGE ON SEQUENCE catalog_payment_versions_id_seq TO platform_user;
+
 
 --
 -- Name: catalog_payments; Type: ACL; Schema: payment_service; Owner: -
@@ -2164,6 +3099,15 @@ GRANT SELECT,INSERT,UPDATE ON TABLE catalog_payments TO admin;
 GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO admin;
 GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO scoped_user;
 GRANT USAGE ON SEQUENCE catalog_payments_id_seq TO platform_user;
+
+
+--
+-- Name: credit_cards; Type: ACL; Schema: payment_service; Owner: -
+--
+
+GRANT SELECT ON TABLE credit_cards TO platform_user;
+GRANT SELECT ON TABLE credit_cards TO admin;
+GRANT SELECT ON TABLE credit_cards TO scoped_user;
 
 
 --
