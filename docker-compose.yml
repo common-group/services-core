@@ -45,14 +45,6 @@ services:
       - service_core_db
     links:
       - "service_core_db:service_core_db"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: "50M"
-        restart_policy:
-          condition: on-failure
     ports:
       - "3001:3000"
 
@@ -64,14 +56,6 @@ services:
       - service_core_db
     links:
       - "service_core_db:service_core_db"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: "50M"
-        restart_policy:
-          condition: on-failure
     ports:
       - "3002:3000"
 
@@ -83,14 +67,6 @@ services:
       - service_core_db
     links:
       - "service_core_db:service_core_db"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: "50M"
-        restart_policy:
-          condition: on-failure
     ports:
       - "3003:3000"
 
@@ -102,14 +78,6 @@ services:
       - service_core_db
     links:
       - "service_core_db:service_core_db"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: "50M"
-        restart_policy:
-          condition: on-failure
     ports:
       - "3004:3000"
 
@@ -121,13 +89,5 @@ services:
       - service_core_db
     links:
       - "service_core_db:service_core_db"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: "50M"
-        restart_policy:
-          condition: on-failure
     ports:
       - "3005:3000"
