@@ -9,6 +9,7 @@ import projectShareBox from './project-share-box';
 import projectFriends from './project-friends';
 import addressTag from './address-tag';
 import categoryTag from './category-tag';
+import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
@@ -88,7 +89,7 @@ const projectSidebar = {
 
         return m('#project-sidebar.aside', [
             m('.project-stats', [
-                m('.project-stats-inner', [
+                m(`.project-stats-inner${projectVM.isSubscription(project) ? '.dark' : null}`, [
                     m('.project-stats-info', [
                         m('.u-marginbottom-20', [
                             m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${project().pledged ? h.formatNumber(project().pledged) : '0'}`),
@@ -133,7 +134,7 @@ const projectSidebar = {
 
                         }, I18n.t('submit', I18nScope()))
                     ]),
-                    m('.back-project-btn-row-right', m.component(projectReminder, {
+                    projectVM.isSubscription(project) ? null : m('.back-project-btn-row-right', m.component(projectReminder, {
                         project,
                         type: 'link'
                     }))
@@ -146,9 +147,11 @@ const projectSidebar = {
             m('.project-share.w-hidden-main.w-hidden-medium', [
                 m.component(addressTag, { project }),
                 m.component(categoryTag, { project }),
-                m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-inline.btn-medium.btn-terciary', {
-                    onclick: ctrl.displayShareBox.toggle
-                }, 'Compartilhar este projeto')),
+                m('.u-marginbottom-30.u-text-center-small-only', 
+                    m(`button.btn.btn-inline.btn-medium.btn-terciary${projectVM.isSubscription(project) ? '.btn-terciary-negative' : ''}`, {
+                        onclick: ctrl.displayShareBox.toggle
+                    }, 'Compartilhar este projeto')
+                ),
                 ctrl.displayShareBox() ? m(projectShareBox, {
                     project,
                     displayShareBox: ctrl.displayShareBox
@@ -156,6 +159,7 @@ const projectSidebar = {
             ]),
             m('.user-c', m.component(projectUserCard, {
                 userDetails: args.userDetails,
+                isDark: projectVM.isSubscription(project),
                 project
             }))
         ]);

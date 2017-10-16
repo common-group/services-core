@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import projectReminder from './project-reminder';
+import projectVM from '../vms/project-vm';
 
 const projectTabs = {
     controller(args) {
@@ -100,7 +101,7 @@ const projectTabs = {
                                 m('.w-col.w-col-6.w-col-medium-4', {
                                     onclick: h.analytics.event({ cat: 'project_view', act: 'project_floatingreminder_click', project: project() })
                                 }, [
-                                    m.component(projectReminder, { project, type: 'button', hideTextOnMobile: true })
+                                    projectVM.isSubscription(project) ? null : m.component(projectReminder, { project, type: 'button', hideTextOnMobile: true })
                                 ])
                             ])
                         ] : '') : ''
