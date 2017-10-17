@@ -42,6 +42,15 @@ services:
       - service_core_db
       - dispatcher_redis
 
+  subscriptions_scheduler:
+    image: comum/payment-service:latest
+    env_file:
+      - ./compose_env/.subscriptions_scheduler.env
+    command: ["./scripts/subscription_scheduler.js"]
+    links:
+      - "service_core_db:service_core_db"
+    depends_on:
+      - service_core_db
 
   payment_service_api:
     image: postgrest/postgrest:v0.4.3.0
