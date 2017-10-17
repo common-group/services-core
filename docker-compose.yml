@@ -22,6 +22,14 @@ services:
     env_file:
       - ./compose_env/.service_core_db.env
 
+  # service just for apply migrations or seed
+  service_core_migrator:
+    image: comum/service-core:latest
+    env_file:
+      - ./compose_env/.service_core_migrator.env
+    links:
+        - "service_core_db:service_core_db"
+
   payment_processor_dispatcher:
     image: comum/payment-service:latest
     env_file:
