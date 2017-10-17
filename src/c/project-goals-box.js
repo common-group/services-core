@@ -22,6 +22,7 @@ const projectGoalsBox = {
     view(ctrl, args) {
         const goals = args.goalDetails(),
             currentGoalIndex = ctrl.currentGoalIndex;
+
         return m('div',
           m('.card.u-marginbottom-30.u-radius', [
               m('.w-clearfix', [

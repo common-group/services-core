@@ -34,7 +34,8 @@ const projectsShow = {
                 project,
                 rewardDetails: ctrl.rewardDetails,
                 userDetails: ctrl.userDetails,
-                projectContributions: ctrl.projectContributions
+                projectContributions: ctrl.projectContributions,
+                goalDetails: ctrl.goalDetails
             }),
             m.component(projectTabs, {
                 project,

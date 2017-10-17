@@ -57,6 +57,7 @@ const projectSidebar = {
         };
     },
     view(ctrl, args) {
+        // @TODO: remove all those things from the view
         const project = args.project,
             elapsed = project().elapsed_time,
             remaining = project().remaining_time,
@@ -85,19 +86,27 @@ const projectSidebar = {
                 };
 
                 return states[project().state];
-            };
+            },
+            isSub = projectVM.isSubscription(project);
 
         return m('#project-sidebar.aside', [
             m('.project-stats', [
-                m(`.project-stats-inner${projectVM.isSubscription(project) ? '.dark' : null}`, [
+                m(`.project-stats-inner${isSub ? '.dark' : null}`, [
                     m('.project-stats-info', [
                         m('.u-marginbottom-20', [
-                            m('#pledged.fontsize-largest.fontweight-semibold.u-text-center-small-only', `R$ ${project().pledged ? h.formatNumber(project().pledged) : '0'}`),
-                            m('.fontsize-small.u-text-center-small-only', [
-                                I18n.t('contributors_call', I18nScope()),
-                                m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
-                                (!project().expires_at && elapsed) ? ` em ${I18n.t(`datetime.distance_in_words.x_${elapsed.unit}`, { count: elapsed.total }, I18nScope())}` : ''
-                            ])
+                            m(`#pledged.${isSub ? 'fontsize-larger' : 'fontsize-largest'}.fontweight-semibold.u-text-center-small-only`, [
+                                `R$ ${project().pledged ? h.formatNumber(project().pledged) : '0'}`,
+                                isSub ? m('span.fontsize-large', ' por mês') : null
+                            ]),
+                            isSub ? m('.fontsize-small.u-text-center-small-only', [
+                                    I18n.t('subscribers_call', I18nScope()),
+                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
+                                ])
+                                : m('.fontsize-small.u-text-center-small-only', [
+                                    I18n.t('contributors_call', I18nScope()),
+                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
+                                    (!project().expires_at && elapsed) ? ` em ${I18n.t(`datetime.distance_in_words.x_${elapsed.unit}`, { count: elapsed.total }, I18nScope())}` : ''
+                                ])
                         ]),
                         m('.meter', [
                             m('#progressBar.meter-fill', {
@@ -106,7 +115,9 @@ const projectSidebar = {
                                 }
                             })
                         ]),
-                        m('.w-row.u-margintop-10', [
+                        isSub 
+                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${project().progress ? parseInt(project().progress) : '0'}% de R$${_.last(args.goalDetails()).value} por mês`)
+                        : m('.w-row.u-margintop-10', [
                             m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
                                 m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${project().progress ? parseInt(project().progress) : '0'}%`)
                             ]),
@@ -134,7 +145,7 @@ const projectSidebar = {
 
                         }, I18n.t('submit', I18nScope()))
                     ]),
-                    projectVM.isSubscription(project) ? null : m('.back-project-btn-row-right', m.component(projectReminder, {
+                    isSub ? null : m('.back-project-btn-row-right', m.component(projectReminder, {
                         project,
                         type: 'link'
                     }))

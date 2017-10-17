@@ -59,7 +59,8 @@ const projectHeader = {
                             })),
                             m('.w-col.w-col-4', m.component(projectSidebar, {
                                 project,
-                                userDetails: args.userDetails
+                                userDetails: args.userDetails,
+                                goalDetails: args.goalDetails,
                             }))
                         ])
                     ])

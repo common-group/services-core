@@ -29,7 +29,7 @@ const projectHighlight = {
                 m.component(addressTag, { project, isDark: isSub }),
                 m.component(categoryTag, { project, isDark: isSub })
             ]),
-            m('.project-blurb', project().headline),
+            !isSub ? m('.project-blurb', project().headline) : null,
             m('.project-share.w-hidden-small.w-hidden-tiny',
                 m('.u-marginbottom-30.u-text-center-small-only', [
                     m('.w-inline-block.fontcolor-secondary.fontsize-smaller.u-marginright-20',
