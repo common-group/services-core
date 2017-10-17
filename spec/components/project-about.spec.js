@@ -10,7 +10,8 @@ describe('ProjectAbout', () => {
             rewardDetail = RewardDetailsMockery()[0];
             let component = m.component(projectAbout, {
                     project: m.prop(projectDetail),
-                    rewardDetails: m.prop(RewardDetailsMockery())
+                    rewardDetails: m.prop(RewardDetailsMockery()),
+                    goalDetails: m.prop(GoalsMockery())
                 }),
                 view = component.view();
             $output = mq(view);

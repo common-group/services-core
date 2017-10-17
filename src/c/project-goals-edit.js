@@ -14,7 +14,7 @@ const projectGoalsEdit = {
         const showSuccess = m.prop(false);
         const error = m.prop(false);
 
-        projectGoalsVM.fetchGoals(args.projectId);
+        projectGoalsVM.fetchGoalsEdit(args.projectId);
 
         return {
             showSuccess,

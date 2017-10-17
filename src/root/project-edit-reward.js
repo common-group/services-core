@@ -138,7 +138,7 @@ const projectEditReward = {
                                                             errors: ctrl.errors,
                                                             user: ctrl.user(),
                                                             showSuccess: ctrl.showSuccess,
-                                                            project: project
+                                                            project
                                                         }) :
                                                         m(editRewardCard, {
                                                             project_id: args.project_id,
@@ -172,8 +172,8 @@ const projectEditReward = {
                                 I18n.t('reward_faq_sub_intro', I18nScope()),
                                 m('br'),
                                 m('br'),
-                                _.map(ctrl.tips, 
-                                    (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4) 
+                                _.map(ctrl.tips,
+                                    (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4)
                                         ? null : [
                                             m('.fontweight-semibold', tip.title),
                                             m.trust(tip.description),

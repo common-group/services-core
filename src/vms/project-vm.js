@@ -4,6 +4,7 @@ import postgrest from 'mithril-postgrest';
 import h from '../h';
 import models from '../models';
 import rewardVM from './reward-vm';
+import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
 
 const currentProject = m.prop(),
@@ -43,6 +44,7 @@ const fetchParallelData = (projectId, projectUserId) => {
     }
 
     rewardVM.fetchRewards(projectId);
+    projectGoalsVM.fetchGoals(projectId);
 };
 
 // FIXME: should work with data-parameters that don't have project struct
@@ -55,10 +57,10 @@ const getCurrentProject = () => {
         const jsonData = JSON.parse(data);
 
         const { projectId, projectUserId } = jsonData; // legacy
-        const { project_id, project_user_id}  = jsonData;
+        const { project_id, project_user_id } = jsonData;
 
         // fill currentProject when jsonData has id and mode (legacy code)
-        if(jsonData.id && jsonData.mode) {
+        if (jsonData.id && jsonData.mode) {
             currentProject(jsonData);
         }
 
@@ -104,13 +106,13 @@ const updateProject = (projectId, projectData) => m.request({
     config: h.setCsrfToken
 });
 
-const isSubscription = project => {
+const isSubscription = (project) => {
     if (_.isFunction(project)) {
         return project() ? project().mode === 'sub' : false;
     }
-    
+
     return project ? project.mode === 'sub' : false;
-}
+};
 
 
 const projectVM = {
@@ -119,6 +121,7 @@ const projectVM = {
     projectContributions,
     currentProject,
     rewardDetails: rewardVM.rewards,
+    goalDetails: projectGoalsVM.goals,
     routeToProject,
     setProjectPageTitle,
     init,

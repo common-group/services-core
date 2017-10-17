@@ -7,6 +7,7 @@ import projectHeaderTitle from './project-header-title';
 import userContributionDetail from './user-contribution-detail';
 import contributionVM from '../vms/contribution-vm';
 import userVM from '../vms/user-vm';
+import projectVM from '../vms/project-vm';
 
 const projectHeader = {
     controller(args) {
@@ -45,20 +46,23 @@ const projectHeader = {
 
         return (!_.isUndefined(project()) ? m('#project-header.project-with-background', { style: `background-image:url('${project().cover_image}');` }, [
             m(`.w-section.section-product.${project().mode}`),
-            m(projectHeaderTitle, {
-                project,
-                children: hasContribution
-            }),
-            m('.w-section.project-main', [
-                m('.w-container', [
-                    m('.w-row.project-main', [
-                        m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {
-                            project
-                        })),
-                        m('.w-col.w-col-4', m.component(projectSidebar, {
-                            project,
-                            userDetails: args.userDetails
-                        }))
+            m(`${projectVM.isSubscription(project) ? '.dark' : null}.project-main-container`, [
+                m(projectHeaderTitle, {
+                    project,
+                    children: hasContribution
+                }),
+                m(`.w-section.project-main${projectVM.isSubscription(project) ? '.transparent-background' : null}`, [
+                    m('.w-container', [
+                        m('.w-row', [
+                            m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {
+                                project
+                            })),
+                            m('.w-col.w-col-4', m.component(projectSidebar, {
+                                project,
+                                userDetails: args.userDetails,
+                                goalDetails: args.goalDetails,
+                            }))
+                        ])
                     ])
                 ])
             ])

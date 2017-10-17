@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import projectRewardList from './project-reward-list';
+import projectGoalsBox from './project-goals-box';
 import projectSuggestedContributions from './project-suggested-contributions';
 import projectContributions from './project-contributions';
 import projectAbout from './project-about';
@@ -17,13 +18,14 @@ const projectMain = {
                         post_id: args.post_id
                     },
                     tabs = {
-                        '#rewards': m('.w-col.w-col-12', m.component(projectRewardList, _.extend({}, {
+                        '#rewards': m('.w-col.w-col-12', [m.component(projectGoalsBox, { goalDetails: args.goalDetails }), m.component(projectRewardList, _.extend({}, {
                             rewardDetails: args.rewardDetails
-                        }, c_opts))),
+                        }, c_opts))]),
                         '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
                         '#contributions': m.component(projectContributions, c_opts),
                         '#about': m.component(projectAbout, _.extend({}, {
-                            rewardDetails: args.rewardDetails
+                            rewardDetails: args.rewardDetails,
+                            goalDetails: args.goalDetails
                         }, c_opts)),
                         '#comments': m.component(projectComments, c_opts),
                         '#posts': m.component(projectPosts, _.extend({}, {

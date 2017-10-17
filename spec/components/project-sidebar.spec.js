@@ -11,7 +11,8 @@ describe('ProjectSidebar', () => {
                 let projectDetail = m.prop(_.extend({}, ProjectDetailsMockery()[0], newState)),
                     component = m.component(projectSidebar, {
                         project: projectDetail,
-                        userDetails: m.prop([])
+                        userDetails: m.prop([]),
+                        goalDetails: m.prop([])
                     }),
                     ctrl = component.controller({
                         project: projectDetail,
