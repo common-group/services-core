@@ -29,25 +29,28 @@ const addGoal = (projectId) => {
     }));
 };
 
-const fetchGoals = projectId => goalsLoader(projectId).load().then((data) => {
-    _.map(data, (goal) => {
-        const goalProp = m.prop({
-            id: m.prop(goal.id),
-            project_id: m.prop(projectId),
-            editing: h.toggleProp(false, true),
-            value: m.prop(goal.value),
-            title: m.prop(goal.title),
-            description: m.prop(goal.description)
-        });
-        goals().push(goalProp);
-    });
+const fetchGoals = projectId => goalsLoader(projectId).load().then(goals);
 
+const fetchGoalsEdit = (projectId) => {
     if (_.isEmpty(goals())) {
-        addGoal(projectId);
+        goalsLoader(projectId).load().then((data) => {
+            _.map(data, (goal) => {
+                const goalProp = m.prop({
+                    id: m.prop(goal.id),
+                    project_id: m.prop(projectId),
+                    editing: h.toggleProp(false, true),
+                    value: m.prop(goal.value),
+                    title: m.prop(goal.title),
+                    description: m.prop(goal.description)
+                });
+                goals().push(goalProp);
+            });
+            if (_.isEmpty(goals())) {
+                addGoal(projectId);
+            }
+        });
     }
-}
-
-);
+};
 
 const createGoal = (projectId, goalData) => m.request({
     method: 'POST',
@@ -66,6 +69,7 @@ const updateGoal = (projectId, goalId, goalData) => m.request({
 const projectGoalsVM = {
     goals,
     fetchGoals,
+    fetchGoalsEdit,
     addGoal,
     updateGoal,
     createGoal,
