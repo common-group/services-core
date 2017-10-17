@@ -87,7 +87,8 @@ const projectSidebar = {
 
                 return states[project().state];
             },
-            isSub = projectVM.isSubscription(project);
+            isSub = projectVM.isSubscription(project),
+            goal = _.last(args.goalDetails()) || {value: '--'};
 
         return m('#project-sidebar.aside', [
             m('.project-stats', [
@@ -116,7 +117,7 @@ const projectSidebar = {
                             })
                         ]),
                         isSub 
-                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${project().progress ? parseInt(project().progress) : '0'}% de R$${_.last(args.goalDetails()).value} por mês`)
+                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${project().progress ? parseInt(project().progress) : '0'}% de R$${goal.value} por mês`)
                         : m('.w-row.u-margintop-10', [
                             m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
                                 m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${project().progress ? parseInt(project().progress) : '0'}%`)
