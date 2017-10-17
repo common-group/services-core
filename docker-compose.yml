@@ -24,7 +24,7 @@ services:
 
   # service just for apply migrations or seed
   service_core_migrator:
-    image: comum/service-core:latest
+    image: comum/services-core:latest
     env_file:
       - ./compose_env/.service_core_migrator.env
     links:
