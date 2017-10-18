@@ -7,6 +7,7 @@ const setRailsErrors = errors => railsErrors(errors);
 const errorGroups = {
     basics: ['public_name', 'permalink', 'category_id', 'city', 'public_tags', 'name'],
     goal: ['goal', 'online_days'],
+    goals: ['goals.size'],
     description: ['about_html'],
     budget: ['budget'],
     announce_expiration: ['online_days'],

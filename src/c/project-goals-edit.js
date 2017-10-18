@@ -5,19 +5,29 @@ import projectGoalEditCard from './project-goal-edit-card';
 import projectGoalCard from './project-goal-card';
 import projectGoalsVM from '../vms/project-goals-vm';
 import popNotification from './pop-notification';
+import generateErrorInstance from '../error';
+import railsErrorsVM from '../vms/rails-errors-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalsEdit = {
     controller(args) {
+        const e = generateErrorInstance();
+        const mapErrors = [
+                  ['goals', ['goals.size']]
+        ];
         const goals = projectGoalsVM.goals;
         const showSuccess = m.prop(false);
         const error = m.prop(false);
 
         projectGoalsVM.fetchGoalsEdit(args.projectId);
 
+        if (railsErrorsVM.railsErrors()) {
+            railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, e);
+        }
         return {
             showSuccess,
+            e,
             error,
             goals,
             addGoal: projectGoalsVM.addGoal
@@ -40,6 +50,7 @@ const projectGoalsEdit = {
                 m('.w-col.w-col-1'),
                 m('.w-col.w-col-10',
                     m('.w-form', [
+                        ctrl.e.inlineError('goals'),
                         m('div',
                             m(".card.card-terciary.medium.u-marginbottom-30[id='arrecadacao']", [
                                 m('.u-marginbottom-30', [
