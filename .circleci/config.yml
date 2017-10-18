@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:17.05.0-ce-git
+    branches:
+      only:
+        - master
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      # with credentials stored in the UI
+      - run: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      # build the application container
+      - run: docker build -t comum/payment-service:latest .
+      # deploy the container
+      - run: docker push comum/payment-service:latest
