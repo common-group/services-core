@@ -9,17 +9,10 @@ jobs:
           version: 17.05.0-ce
       - run: docker run -e POSTGRES_DB=service_core_test --name pg_default -p 5432:5432 -d postgres:9.6
       - run: docker build -t comum/services-core:latest .
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.5.0
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run: apk add --update ca-certificates openssl && update-ca-certificates
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:latest psql -U postgres -h pg_default -p 5432 -c "create user postgrest with password 'changeme';"
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:latest psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
-      - run: docker run -i --rm --link pg_default:localhost comum/services export TEST_DB_HOST=localhost TEST_DB_USER=postgres TEST_DB_PORT=5432 ./scripts/run_tests.sh
+      - run: docker run -i --rm --link pg_default:localhost -e "TEST_DB_HOST=localhost" -e "TEST_DB_USER=postgres" -e "TEST_DB_PORT=5432" comum/services-core ./scripts/run_tests.sh
   push_docker:
     docker:
       - image: docker:17.05.0-ce-git
