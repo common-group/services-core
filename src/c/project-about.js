@@ -2,6 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
+import projectVM from '../vms/project-vm';
 import projectRewardList from './project-reward-list';
 import projectGoalsBox from './project-goals-box';
 import projectReport from './project-report';
@@ -35,7 +36,7 @@ const projectAbout = {
                 ] : '',
                 m.component(projectReport)
             ]),
-            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [m(projectGoalsBox, { goalDetails: args.goalDetails }), !_.isEmpty(args.rewardDetails()) ? [
+            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [projectVM.isSubscription(project) ? m(projectGoalsBox, { goalDetails: args.goalDetails }) : '', !_.isEmpty(args.rewardDetails()) ? [
                 m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                 m.component(projectRewardList, {
                     project: args.project,

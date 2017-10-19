@@ -21,10 +21,10 @@ const projectGoalsBox = {
     },
     view(ctrl, args) {
         const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
-            title: 'N/A',
-            value: '',
-            description: ''
-        }],
+                title: 'N/A',
+                value: '',
+                description: ''
+            }],
             currentGoalIndex = ctrl.currentGoalIndex;
 
         return m('div',
