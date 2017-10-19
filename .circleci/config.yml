@@ -3,60 +3,45 @@ jobs:
   build:
     docker:
       - image: docker:17.05.0-ce-git
-    branches:
-      only:
-        - master
     steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: docker run -e POSTGRES_DB=service_core_test --name pg_default -p 5432:5432 -d postgres:9.6
+      - run: docker build -t comum/services-core:latest .
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.5.0
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run: docker run -i --rm --link pg_default:pg_default comum/services-core:latest psql -U postgres -h pg_default -p 5432 -c "create user postgrest with password 'changeme';"
+      - run: docker run -i --rm --link pg_default:pg_default comum/services-core:latest psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
+      - run: docker run -i --rm --link pg_default:localhost comum/services export TEST_DB_HOST=localhost TEST_DB_USER=postgres TEST_DB_PORT=5432 ./scripts/run_tests.sh
+  push_docker:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
       # with credentials stored in the UI
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       # build the application container
       - run: docker build -t comum/services-core:latest .
       # deploy the container
       - run: docker push comum/services-core:latest
-  test:
-    machine: 
-      image: circleci/classic:201709-01
-    steps:
-      - checkout
-      - run: sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
-      - run: wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-      - run: sudo apt-get update && sudo apt-get install python-pip curl libcurl4-openssl-dev postgresql-client-9.6
-      - run: pip install pyresttest
-
-      - run: docker run --name pg_default -p 5433:5432 -d postgres:9.6
-
-      - run:
-          name: install dockerize
-          command: sudo wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.5.0
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:5433 -timeout 1m
-
-      - run: sleep 10
-
-      - run: createdb -U postgres -h localhost -p 5433 service_core_test
-      - run: psql -U postgres -h localhost -p 5433 -c "create user postgrest with password 'changeme';"
-      - run: psql -U postgres -h localhost -p 5433 -c "alter user postgrest with superuser;"
-
-      - run: mkdir -p ./specs/logs
-      - run: cp -rf ./specs/postgrest/settings.config{.sample,}
-      - run: wget https://github.com/begriffs/postgrest/releases/download/v0.4.3.0/postgrest-v0.4.3.0-ubuntu.tar.xz -O ./specs/postgrest/postgrest-0.4.3.0-linux.tar.xz
-      - run: cd ./specs/postgrest && tar -xvf postgrest-0.4.3.0-linux.tar.xz
-      - run: cd ./specs/postgrest && mv postgrest postgrest-0.4.3.0-linux
-      - run: TEST_DB_HOST=localhost TEST_DB_USER=postgres TEST_DB_PORT=5433 ./scripts/run_tests.sh
 
 workflows:
   version: 2
-  build_and_test:
+  build-and-push:
     jobs:
-      - test
-      - build:
-        requires:
-          - test
-        filters:
-          branches:
-            only:
-              - master
-
+      - build
+      - push_docker:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
