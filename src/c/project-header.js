@@ -51,7 +51,7 @@ const projectHeader = {
                     project,
                     children: hasContribution
                 }),
-                m(`.w-section.project-main${projectVM.isSubscription(project) ? '.transparent-background' : null}`, [
+                m(`.w-section.project-main${projectVM.isSubscription(project) ? '.transparent-background' : ''}`, [
                     m('.w-container', [
                         m('.w-row', [
                             m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {

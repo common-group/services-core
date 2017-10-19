@@ -9,7 +9,7 @@ const projectHeaderTitle = {
         const project = args.project,
             isSub = projectVM.isSubscription(project);
         
-        return !_.isUndefined(project()) ? m(`.w-section.page-header${isSub ? '.transparent-background' : null}`, [
+        return !_.isUndefined(project()) ? m(`.w-section.page-header${isSub ? '.transparent-background' : ''}`, [
             m('.w-container', [
                 m('h1.u-text-center.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
                 !isSub ? m('h2.u-text-center.fontsize-base.lineheight-looser[itemprop="author"]', [

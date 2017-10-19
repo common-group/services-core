@@ -92,7 +92,7 @@ const projectSidebar = {
 
         return m('#project-sidebar.aside', [
             m('.project-stats', [
-                m(`.project-stats-inner${isSub ? '.dark' : null}`, [
+                m(`.project-stats-inner${isSub ? '.dark' : ''}`, [
                     m('.project-stats-info', [
                         m('.u-marginbottom-20', [
                             m(`#pledged.${isSub ? 'fontsize-larger' : 'fontsize-largest'}.fontweight-semibold.u-text-center-small-only`, [
