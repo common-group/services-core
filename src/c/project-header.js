@@ -43,10 +43,14 @@ const projectHeader = {
                     }))
                 ) : ''
         ]) : '';
+        const hasBackground = Boolean(project().cover_image);
 
-        return (!_.isUndefined(project()) ? m('#project-header.project-with-background', { style: `background-image:url('${project().cover_image}');` }, [
+        return (!_.isUndefined(project()) ? m('#project-header', [
             m(`.w-section.section-product.${project().mode}`),
-            m(`${projectVM.isSubscription(project) ? '.dark' : null}.project-main-container`, [
+            m(`${projectVM.isSubscription(project) ? '.dark' : ''}.project-main-container`,{
+                class: hasBackground ? 'project-with-background' : null,
+                style: hasBackground ? `background-image: linear-gradient(180deg, rgba(0, 4, 8, .89), rgba(0, 4, 8, .89)), url("${project().cover_image}");` : null
+            },[
                 m(projectHeaderTitle, {
                     project,
                     children: hasContribution
