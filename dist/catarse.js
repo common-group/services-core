@@ -8674,7 +8674,7 @@ var projectAbout = {
 
         return m('#project-about', [m('.project-about.w-col.w-col-8', {
             config: h.UIHelper()
-        }, [m('p.fontsize-base', [m('strong', 'O projeto')]), m('.fontsize-base[itemprop="about"]', m.trust(h.selfOrEmpty(project.about_html, '...'))), project.budget ? [m('p.fontsize-base.fontweight-semibold', 'Orçamento'), m('p.fontsize-base', m.trust(project.budget))] : '', m.component(projectReport)]), m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [m(projectGoalsBox, { goalDetails: args.goalDetails }), !_$1.isEmpty(args.rewardDetails()) ? [m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'), m.component(projectRewardList, {
+        }, [m('p.fontsize-base', [m('strong', 'O projeto')]), m('.fontsize-base[itemprop="about"]', m.trust(h.selfOrEmpty(project.about_html, '...'))), project.budget ? [m('p.fontsize-base.fontweight-semibold', 'Orçamento'), m('p.fontsize-base', m.trust(project.budget))] : '', m.component(projectReport)]), m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [projectVM.isSubscription(project) ? m(projectGoalsBox, { goalDetails: args.goalDetails }) : '', !_$1.isEmpty(args.rewardDetails()) ? [m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'), m.component(projectRewardList, {
             project: args.project,
             rewardDetails: args.rewardDetails
         }), fundingPeriod()] : [m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Sugestões de apoio'), m.component(projectSuggestedContributions, { project: args.project }), fundingPeriod()]])]);
@@ -8755,7 +8755,7 @@ var projectMain = {
                 post_id: args.post_id
             },
                 tabs = {
-                '#rewards': m('.w-col.w-col-12', [m.component(projectGoalsBox, { goalDetails: args.goalDetails }), m.component(projectRewardList, _$1.extend({}, {
+                '#rewards': m('.w-col.w-col-12', [projectVM.isSubscription(project) ? m.component(projectGoalsBox, { goalDetails: args.goalDetails }) : '', m.component(projectRewardList, _$1.extend({}, {
                     rewardDetails: args.rewardDetails
                 }, c_opts))]),
                 '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
