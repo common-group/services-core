@@ -1,11 +1,8 @@
 version: 2
 jobs:
-  build:
+  test:
     machine: 
       image: circleci/classic:201709-01
-    branches:
-      only:
-        - master
     steps:
       - checkout
       - run: sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
@@ -37,6 +34,12 @@ jobs:
       - run: cd ./specs/postgrest && mv postgrest postgrest-0.4.3.0-linux
       - run: TEST_DB_HOST=localhost TEST_DB_USER=postgres TEST_DB_PORT=5433 ./scripts/run_tests.sh
 
+  build:
+    docker:
+      - image: docker:17.05.0-ce-git
+    branches:
+      only:
+        - master
       # with credentials stored in the UI
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       # build the application container
