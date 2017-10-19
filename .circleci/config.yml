@@ -1,5 +1,18 @@
 version: 2
 jobs:
+  build:
+    docker:
+      - image: docker:17.05.0-ce-git
+    branches:
+      only:
+        - master
+    steps:
+      # with credentials stored in the UI
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      # build the application container
+      - run: docker build -t comum/services-core:latest .
+      # deploy the container
+      - run: docker push comum/services-core:latest
   test:
     machine: 
       image: circleci/classic:201709-01
@@ -34,15 +47,16 @@ jobs:
       - run: cd ./specs/postgrest && mv postgrest postgrest-0.4.3.0-linux
       - run: TEST_DB_HOST=localhost TEST_DB_USER=postgres TEST_DB_PORT=5433 ./scripts/run_tests.sh
 
-  build:
-    docker:
-      - image: docker:17.05.0-ce-git
-    branches:
-      only:
-        - master
-      # with credentials stored in the UI
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      # build the application container
-      - run: docker build -t comum/services-core:latest .
-      # deploy the container
-      - run: docker push comum/services-core:latest
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - build:
+        requires:
+          - test
+        filters:
+          branches:
+            only:
+              - master
+
