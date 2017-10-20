@@ -91,7 +91,7 @@ const projectSuccessfulOnboard = {
                              m('.fontsize-base.u-marginbottom-30', {
                                  config: ctrl.listenToReplace
                              }, m.trust(
-                                 I18n.t('finished.text', I18nScope({ link_news: `/projects/${args.project().id}/posts` })))),
+                                 I18n.t('finished.text', I18nScope({ link_news: `/projects/${args.project().id}/posts` , link_surveys: `/projects/${args.project().id}/surveys` })))),
                              //m('a.btn.btn-large.btn-inline', { href: `/users/${args.project().user_id}/edit#balance` }, I18n.t('start.cta', I18nScope()))
                          ])
                      ])
