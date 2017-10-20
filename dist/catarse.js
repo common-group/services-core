@@ -5228,7 +5228,7 @@ var projectSuccessfulOnboard = {
             }]
         }) : '', !lpa() && !lpt() ? m('.w-container', [m('.w-row.u-marginbottom-40', [m('.w-col.w-col-6.w-col-push-3', [m('.u-text-center', [m('img.u-marginbottom-20', { src: I18n$1.t('finished.icon', I18nScope$7()), width: 94 }), m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n$1.t('finished.title', I18nScope$7())), m('.fontsize-base.u-marginbottom-30', {
             config: ctrl.listenToReplace
-        }, m.trust(I18n$1.t('finished.text', I18nScope$7({ link_news: '/projects/' + args.project().id + '/posts' }))))])])])]) : h.loader()]);
+        }, m.trust(I18n$1.t('finished.text', I18nScope$7({ link_news: '/projects/' + args.project().id + '/posts', link_surveys: '/projects/' + args.project().id + '/surveys' }))))])])])]) : h.loader()]);
     }
 };
 
