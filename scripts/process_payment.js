@@ -19,25 +19,25 @@ async function init(stdin_data) {
         console.log(message);
         process.exit(code);
     };
-
+    const pg_client = new Client({
+        connectionString: process.env.PROCESS_PAYMENT_DATABASE_URL,
+        statement_timeout: 5000
+    });
+    await pg_client.connect();
     try {
-        const pg_client = new Client({
-            connectionString: process.env.PROCESS_PAYMENT_DATABASE_URL,
-            statement_timeout: 5000
-        });
-        await pg_client.connect();
-
         // fetch payment and user data to build context
         const res = await pg_client.query(
             `select
             row_to_json(cp.*) as payment_data,
             row_to_json(u.*) as user_data,
             row_to_json(p.*) as project_data,
-            row_to_json(o.*) as project_owner_data
+            row_to_json(o.*) as project_owner_data,
+            row_to_json(s.*) as subscription_data
         from payment_service.catalog_payments cp
             join community_service.users u on u.id = cp.user_id
             join project_service.projects p on p.id = cp.project_id
             join community_service.users o on o.id = p.user_id
+            left join payment_service.subscriptions s on s.id = cp.subscription_id
             where cp.id = $1::bigint`
             , [stdin_data.id]);
         if(_.isEmpty(res.rows)) {
@@ -48,6 +48,7 @@ async function init(stdin_data) {
         const user = res.rows[0].user_data;
         const project = res.rows[0].project_data;
         const project_owner = res.rows[0].project_owner_data;
+        const subscription = res.rows[0].subscription_data;
 
         const pagarme_client = await pagarme.client.connect({
             api_key: process.env.GATEWAY_API_KEY
@@ -72,6 +73,7 @@ async function init(stdin_data) {
             amount: payment.data.amount,
             payment_method: payment.data.payment_method,
             postback_url: process.env.POSTBACK_URL,
+            async: false,
             customer: {
                 name: customer.name,
                 email: customer.email,
@@ -219,26 +221,32 @@ async function init(stdin_data) {
             _.extend(transaction_data, payment_charge);
         }
 
-        const update_payment_sql = `update payment_service.catalog_payments
-                    set gateway_cached_data = $2::json,
-                        gateway_general_data = payment_service.__extractor_for_pagarme($2::json)
-                    where id = $1::bigint`;
-
         try {
-            const transaction = await pagarme_client.transactions.create(transaction_data);
-            console.log('created transaction with id ', transaction.id);
+            const transaction = await pagarme_client.
+                transactions.create(transaction_data);
+            console.log('created transaction with id ',
+                transaction.id);
 
             if (transaction.id) {
-                const payables = await pagarme_client.payables.find({ transactionId: transaction.id});
+                const payables = await pagarme_client.
+                    payables.find({ transactionId: transaction.id});
 
                 const result_transaction_data = {
                     transaction: transaction,
                     payables: payables
                 };
 
-                const insert_transaction = await pg_client.query(
-                    update_payment_sql
-                    , [payment.id, JSON.stringify(result_transaction_data)]);
+                // update payment with gateway payable and transaction data
+                await pg_client.query(
+                    `update payment_service.catalog_payments
+                    set gateway_cached_data = $2::json,
+                        gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::bigint`
+                    , [
+                        payment.id, 
+                        JSON.stringify(result_transaction_data)
+                    ]);
+
+                // if transaction is not on initial state should transition payment to new state
                 if (!_.includes(['processing', 'waiting_payment'], transaction.status)) {
                     await pg_client.query(
                         `select
@@ -249,16 +257,42 @@ async function init(stdin_data) {
                         payment.id,
                         transaction.status,
                         JSON.stringify(result_transaction_data)
-                    ]
-                    );
+                    ]);
+
+                    // if payment is paid or refused and have a subscription related should transition subscription to new status
+                    if (payment.subscription_id) {
+                        const transition_subscription_sql = `select payment_service.transition_to(s, ($2)::payment_service.subscription_status, payment_service.__extractor_for_pagarme(($3)::json))
+                        from payment_service.subscriptions s where s.id = ($1)::bigint`;
+                        // should active subscription when payment is paid
+                        if(transaction.status === 'paid') {
+                            await pg_client.query(
+                                transition_subscription_sql,
+                                [
+                                    payment.subscription_id,
+                                    'active',
+                                    JSON.stringify(result_transaction_data)
+                                ]
+                            );
+                        // should inactive subscription when refused andsubsciption is not started
+                        } else if(tansaction.status === 'refused' && subscription.status !== 'started') {
+                            const sub_transition = await pg_client.query(
+                                transition_subscription_sql,
+                                [
+                                    payment.subscription_id,
+                                    'inactive',
+                                    JSON.stringify(result_transaction_data)
+                                ]
+                            );
+                        }
+                    }
                 }
             } else {
                 console.log('not charged on gateway');
                 console.log(transaction);
             }
         } catch(err) {
-            console.log(err.errors);
-            if(err.response && err.response.errors) {
+            console.log(err);
+            if(err.errors && err.response && err.response.errors) {
                 await pg_client.query(
                     `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json
@@ -275,10 +309,11 @@ async function init(stdin_data) {
             }
         }
 
-        await pg_client.end();
         console.log('done');
     } catch (e) {
         console.log(e);
         exit(1, e);
+    } finally {
+        await pg_client.end();
     };
 };
