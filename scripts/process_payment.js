@@ -246,6 +246,26 @@ async function init(stdin_data) {
                         JSON.stringify(result_transaction_data)
                     ]);
 
+                // create credit card refence on db if save_card or subscriptions
+                if(transaction.card && (payment.data.save_card || payment.subscription_id)) {
+                    const saved_card_result = await pg_client.query(
+                    `insert into payment_service.credit_cards(platform_id, user_id, gateway, gateway_data) values ($1::integer, $2::bigint, 'pagarme', $3::jsonb) returning *`, [
+                        payment.platform_id,
+                        payment.user_id,
+                        JSON.stringify(transaction.card)
+                    ]);
+                    const card = saved_card_result.rows[0];
+
+                    //update subscription with credit card id
+                    if(payment.subscription_id) {
+                        await pg_client.query(
+                            `update payment_service.subscriptions
+                                set credit_card_id = $2::bigint
+                                where id = $1::bigint
+                            `, [payment.subscription_id, card.id]
+                        );
+                    }
+                }
                 // if transaction is not on initial state should transition payment to new state
                 if (!_.includes(['processing', 'waiting_payment'], transaction.status)) {
                     await pg_client.query(
