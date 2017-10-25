@@ -51,9 +51,19 @@ const projectSidebar = {
                 }
             };
 
+            const navigate = () => {
+                if(projectVM.isSubscription(args.project)) {
+                    m.route(`/projects/${project().project_id}/subscriptions/start`);
+                    return false;
+                }
+                h.navigateTo(`/projects/${project().project_id}/contributions/new`);
+                return false;
+            }
+
         return {
             animateProgress,
-            displayShareBox: h.toggleProp(false, true)
+            displayShareBox: h.toggleProp(false, true),
+            navigate
         };
     },
     view(ctrl, args) {
@@ -142,7 +152,7 @@ const projectSidebar = {
                                 cat: 'contribution_create',
                                 act: 'contribution_button_click',
                                 project: project()
-                            }, () => h.navigateTo(`/projects/${project().project_id}/contributions/new`))
+                            }, ctrl.navigate)
 
                         }, I18n.t('submit', I18nScope()))
                     ]),

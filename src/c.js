@@ -16,6 +16,8 @@ import projectsExplore from './root/projects-explore';
 import projectsHome from './root/projects-home';
 import projectsShow from './root/projects-show';
 import projectsContribution from './root/projects-contribution';
+import projectsSubscriptionContribution from './root/projects-subscription-contribution';
+import projectsSubscriptionCheckout from './root/projects-subscription-checkout';
 import usersShow from './root/users-show';
 import surveysShow from './root/surveys-show';
 import usersEdit from './root/users-edit';
@@ -70,6 +72,8 @@ const c = {
         ProjectsContribution: projectsContribution,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,
+        ProjectsSubscriptionContribution: projectsSubscriptionContribution,
+        ProjectsSubscriptionCheckout: projectsSubscriptionCheckout,
         ThankYou: thankYou,
         Publish: publish,
         Start: start,

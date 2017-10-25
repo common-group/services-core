@@ -48,6 +48,12 @@ const projectRewardCard = {
             } else {
                 vm.error('');
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
+                
+                if (projectVM.isSubscription(projectVM.currentProject())) {
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?reward_id=${vm.selectedReward().id}`);
+                    return false;
+                }
+
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
             }
 
