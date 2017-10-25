@@ -28,19 +28,9 @@ const ProjectContributionStateLegendModal = {
                 ],
                 failed: [
                     {
-                        label: translate('failed.pending_refund.label'),
-                        text: translate('failed.pending_refund.text'),
-                        i_class: '.fa.fa-circle-o.text-refunded'
-                    },
-                    {
                         label: translate('failed.refunded.label'),
                         text: translate('failed.refunded.text'),
                         i_class: '.fa.fa-circle.text-refunded'
-                    },
-                    {
-                        label: translate('failed.paid.label'),
-                        text: translate('failed.paid.text'),
-                        i_class: '.fa.fa-circle-o.text-error'
                     }
                 ],
                 successful: [
