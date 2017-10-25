@@ -3814,7 +3814,7 @@ vm$6.getAllBalanceTransfers = function (filterVM) {
  */
 var modalBox = {
     view: function view(ctrl, args) {
-        return m('.modal-backdrop', [m('.modal-dialog-outer', [m('.modal-dialog-inner.modal-dialog-small', [m('a.w-inline-block.fa.fa-lg.modal-close' + (args.hideCloseButton ? '' : '.fa-close') + '[href="javascript:void(0);"]', {
+        return m('.modal-backdrop', [m('.modal-dialog-outer', [m('.modal-dialog-inner.modal-dialog-small.fontcolor-primary', [m('a.w-inline-block.fa.fa-lg.modal-close' + (args.hideCloseButton ? '' : '.fa-close') + '[href="javascript:void(0);"]', {
             onclick: args.displayModal.toggle
         }), m.component(args.content[0], args.content[1])])])]);
     }
@@ -7546,7 +7546,7 @@ var projectShareBox = {
         };
     },
     view: function view(ctrl, args) {
-        return m('.pop-share', {
+        return m('.pop-share.fontcolor-primary', {
             style: 'display: block;'
         }, [m('.w-hidden-main.w-hidden-medium.w-clearfix', [m('a.btn.btn-small.btn-terciary.btn-inline.u-right', {
             onclick: args.displayShareBox.toggle
