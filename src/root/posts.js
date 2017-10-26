@@ -6,6 +6,7 @@ import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import postsPreview from '../c/posts-preview';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 import popNotification from '../c/pop-notification';
 
 const posts = {
@@ -86,7 +87,7 @@ const posts = {
                     deleteFormSubmit = () => el.submit();
                 }
             },
-              openedPercentage = post => (Math.floor((post.open_count / post.delivered_count) * 100) || 0);
+            openedPercentage = post => (Math.floor((post.open_count / post.delivered_count) * 100) || 0);
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
@@ -165,6 +166,7 @@ const posts = {
                     m('.w-row', [
                         m('.w-col.w-col-1'),
                         m('.w-col.w-col-10', [
+                            (projectVM.isSubscription(project) ? '' :
                             m('.u-marginbottom-60.u-text-center',
                                 m('._w-inline-block.card.fontsize-small.u-radius', [
                                     m('span.fa.fa-lightbulb-o',
@@ -175,7 +177,7 @@ const posts = {
                                         'falar com seus apoiadores agora mesmo!'
                                     )
                                 ])
-                            ),
+                            )),
                             m('.card.card-terciary.medium.u-marginbottom-80.w-form', [
                                 m('form', [
                                     m('label.field-label.fontweight-semibold',
