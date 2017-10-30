@@ -97,7 +97,7 @@ const rewardSelectCard = {
                     name: 'contribution[reward_id]'
                 }),
                 m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`,
-                    `R$ ${h.formatNumber(reward.minimum_value)} ou mais`
+                    `R$ ${h.formatNumber(reward.minimum_value)} ou mais${args.isSubscription ? ' por mês' : ''}`
                 ), !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
                     rewardVM.hasShippingOptions(reward) ?
                     m('.w-sub-col.w-col.w-col-4', [
@@ -119,7 +119,7 @@ const rewardSelectCard = {
                         class: rewardVM.hasShippingOptions(reward) ?
                             'w-col-4' : 'w-col-8'
                     }, [
-                        m('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio'),
+                        m('.fontcolor-secondary.u-marginbottom-10', `Valor do apoio${args.isSubscription ? ' mensal' : ''}`),
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                 m('.back-reward-input-reward.medium.placeholder',
@@ -162,14 +162,14 @@ const rewardSelectCard = {
                 ),
                 m('.back-reward-reward-description', [
                     m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description),
-                    m('.u-marginbottom-20.w-row', [!reward.deliver_at ? '' : m('.w-col.w-col-6', [
+                    m('.u-marginbottom-20.w-row', [!reward.deliver_at || args.isSubscription ? '' : m('.w-col.w-col-6', [
                         m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
                         m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
                     ]),
-                        (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
-                            m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
-                            m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
-                        ])
+                    args.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
+                        m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
+                        m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
+                    ])
                     ])
                 ])
             ])

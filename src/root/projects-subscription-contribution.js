@@ -60,7 +60,7 @@ const projectsSubscriptionContribution = {
                      m('.w-section.header-cont-new',
                         m('.w-container',
                             m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only',
-                                'Escolha a recompensa e em seguida o valor doaoisfaofih apoio'
+                                'Escolha a recompensa e em seguida o valor do apoio'
                             )
                         )
                     ),
@@ -71,7 +71,7 @@ const projectsSubscriptionContribution = {
                                 { onsubmit: ctrl.submitContribution }
                             , [
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
-                                _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, { reward }))
+                                _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, { reward, isSubscription: projectVM.isSubscription(project) }))
                             ])
                         )
                     ),
