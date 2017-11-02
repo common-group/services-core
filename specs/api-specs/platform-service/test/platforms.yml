@@ -5,7 +5,7 @@
 - test:
   - name: "Creating platform"
   - url: "/rpc/create_platform"
-  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOjk5OTl9.vqzoX2JmI5ZCKZNSCxeX-fns4p4x_r47gjD1qLYIC7Y', 'Content-Type': 'application/json'}
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOiI2ZDg3MGVkNy02NWM3LTQ0MTktYjc4Yi0zOTQ2ZTZmNmU2OTUifQ.YyXGSrPSTAqJWn4ILPkaDZAs7axadcUhC29wgrlusKc', 'Content-Type': 'application/json'}
   - method: "POST"
   - body: '{"name": "platform test"}'
   - expected_status: [200]
