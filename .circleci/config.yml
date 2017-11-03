@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: comum/docker-build-env:latest
     steps:
       - checkout
       - setup_remote_docker:
@@ -17,7 +17,7 @@ jobs:
       - run: docker run -i --rm --link pg_default:localhost -e "TEST_DB_HOST=localhost" -e="DB_NAME=services_core_test" -e "TEST_DB_USER=postgres" -e "TEST_DB_PORT=5432" comum/services-core bash -c './scripts/generate_dump_test_schema.sh && ./scripts/run_tests.sh'
   push_docker:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: comum/docker-build-env:latest
     steps:
       - checkout
       - setup_remote_docker:
@@ -28,6 +28,27 @@ jobs:
       - run: docker build -t comum/services-core:latest .
       # deploy the container
       - run: docker push comum/services-core:latest
+  deploy_sandbox:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add nodejs nodejs-npm bash
+      - run: npm install -g heroku-cli
+      - run: bash .circleci/setup-heroku.sh
+      - run: heroku container:login
+
+      - run: heroku container:push service_core --recursive -a services-core-db
+      - run: heroku run ./scripts/run_migrations.sh -a services-core-db --type=service_core
+
+      - run: heroku restart -a public-analytics-service-api
+      - run: heroku restart -a community-service-api
+      - run: heroku restart -a payment-service-api
+      - run: heroku restart -a project-service-api
+      - run: heroku restart -a platform-service-api
+
 
 workflows:
   version: 2
@@ -35,6 +56,12 @@ workflows:
     jobs:
       - build
       - push_docker:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_sandbox:
           requires:
             - build
           filters:
