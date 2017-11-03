@@ -38,7 +38,7 @@ async function init(stdin_data) {
             join project_service.projects p on p.id = cp.project_id
             join community_service.users o on o.id = p.user_id
             left join payment_service.subscriptions s on s.id = cp.subscription_id
-            where cp.id = $1::bigint`
+            where cp.id = $1::uuid`
             , [stdin_data.id]);
         if(_.isEmpty(res.rows)) {
             exit(1, 'payment not found');
@@ -240,7 +240,7 @@ async function init(stdin_data) {
                 await pg_client.query(
                     `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json,
-                        gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::bigint`
+                        gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::uuid`
                     , [
                         payment.id, 
                         JSON.stringify(result_transaction_data)
@@ -249,7 +249,7 @@ async function init(stdin_data) {
                 // create credit card refence on db if save_card or subscriptions
                 if(transaction.card && (payment.data.save_card || payment.subscription_id)) {
                     const saved_card_result = await pg_client.query(
-                    `insert into payment_service.credit_cards(platform_id, user_id, gateway, gateway_data) values ($1::integer, $2::bigint, 'pagarme', $3::jsonb) returning *`, [
+                    `insert into payment_service.credit_cards(platform_id, user_id, gateway, gateway_data) values ($1::uuid, $2::uuid, 'pagarme', $3::jsonb) returning *`, [
                         payment.platform_id,
                         payment.user_id,
                         JSON.stringify(transaction.card)
@@ -260,8 +260,8 @@ async function init(stdin_data) {
                     if(payment.subscription_id) {
                         await pg_client.query(
                             `update payment_service.subscriptions
-                                set credit_card_id = $2::bigint
-                                where id = $1::bigint
+                                set credit_card_id = $2::uuid
+                                where id = $1::uuid
                             `, [payment.subscription_id, card.id]
                         );
                     }
@@ -272,7 +272,7 @@ async function init(stdin_data) {
                         `select
                             payment_service.transition_to(p, ($2)::payment_service.payment_status, payment_service.__extractor_for_pagarme(($3)::json))
                         from payment_service.catalog_payments p
-                        where p.id = ($1)::bigint
+                        where p.id = ($1)::uuid
                     `, [
                         payment.id,
                         transaction.status,
@@ -282,7 +282,7 @@ async function init(stdin_data) {
                     // if payment is paid or refused and have a subscription related should transition subscription to new status
                     if (payment.subscription_id) {
                         const transition_subscription_sql = `select payment_service.transition_to(s, ($2)::payment_service.subscription_status, payment_service.__extractor_for_pagarme(($3)::json))
-                        from payment_service.subscriptions s where s.id = ($1)::bigint`;
+                        from payment_service.subscriptions s where s.id = ($1)::uuid`;
                         // should active subscription when payment is paid
                         if(transaction.status === 'paid') {
                             await pg_client.query(
@@ -316,13 +316,13 @@ async function init(stdin_data) {
                 await pg_client.query(
                     `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json
-                    where id = $1::bigint`
+                    where id = $1::uuid`
                     , [payment.id, JSON.stringify(err.response.errors)]);
                 await pg_client.query(`
                         select
                             payment_service.transition_to(p, ($2)::payment_service.payment_status, payment_service.__extractor_for_pagarme(($3)::json))
                         from payment_service.catalog_payments p
-                        where p.id = ($1)::bigint
+                        where p.id = ($1)::uuid
                 `, [payment.id, 'error', JSON.stringify(err.response.errors)]);
 
                 console.log(JSON.stringify(err.response.errors));
