@@ -13,6 +13,7 @@ jobs:
       - run: docker build -t comum/payment-service:latest .
       # deploy the container
       - run: docker push comum/payment-service:latest
+
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
@@ -37,12 +38,12 @@ workflows:
   build-and-push:
     jobs:
       - build
-          filters:
-            branches:
-              only: master
+        filters:
+          branches:
+            only: master
       - deploy_sandbox:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+        requires:
+          - build
+        filters:
+          branches:
+            only: master
