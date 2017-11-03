@@ -27,7 +27,7 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push payment_disptacher --recursive -a payment-dispatcher
+      - run: heroku container:push payment_dispatcher --recursive -a payment-dispatcher
       - run: heroku container:push subsription_scheduler --recursive -a subscription-scheduler
 
 
