@@ -37,13 +37,13 @@ workflows:
   version: 2
   build-and-push:
     jobs:
-      - build
-        filters:
-          branches:
-            only: master
+      - build:
+          filters:
+            branches:
+              only: master
       - deploy_sandbox:
-        requires:
-          - build
-        filters:
-          branches:
-            only: master
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
