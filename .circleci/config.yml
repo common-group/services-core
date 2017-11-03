@@ -11,7 +11,7 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       # with credentials stored in the UI
-      - run: docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       # build the application container
       - run: docker build -t comum/payment-service:latest .
       # deploy the container
