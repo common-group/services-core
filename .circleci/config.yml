@@ -26,8 +26,8 @@ jobs:
       - run: docker build -t comum/payment-service:latest .
       - run: bash .circleci/setup-heroku.sh
       - run: heroku container:login
-      - run: heroku container:push payment_disptacher --recursive -a payment-dispatcher
-      - run: heroku container:push subsription_scheduler --recursive -a subscription-scheduler
+      - run: cd ~/project && heroku container:push payment_disptacher --recursive -a payment-dispatcher
+      - run: cd ~/project && heroku container:push subsription_scheduler --recursive -a subscription-scheduler
 
 
 workflows:
