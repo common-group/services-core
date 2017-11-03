@@ -17,9 +17,6 @@ jobs:
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
-    branches:
-      only:
-        - master
     steps:
       - checkout
       - setup_remote_docker:
