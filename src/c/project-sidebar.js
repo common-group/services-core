@@ -51,14 +51,14 @@ const projectSidebar = {
                 }
             };
 
-            const navigate = () => {
-                if(projectVM.isSubscription(args.project)) {
-                    m.route(`/projects/${project().project_id}/subscriptions/start`);
-                    return false;
-                }
-                h.navigateTo(`/projects/${project().project_id}/contributions/new`);
+        const navigate = () => {
+            if (projectVM.isSubscription(args.project)) {
+                m.route(`/projects/${project().project_id}/subscriptions/start`);
                 return false;
             }
+            h.navigateTo(`/projects/${project().project_id}/contributions/new`);
+            return false;
+        };
 
         return {
             animateProgress,
@@ -98,7 +98,7 @@ const projectSidebar = {
                 return states[project().state];
             },
             isSub = projectVM.isSubscription(project),
-            goal = _.last(args.goalDetails()) || {value: '--'};
+            goal = _.last(args.goalDetails()) || { value: '--' };
 
         return m('#project-sidebar.aside', [
             m('.project-stats', [
@@ -110,9 +110,9 @@ const projectSidebar = {
                                 isSub ? m('span.fontsize-large', ' por mês') : null
                             ]),
                             isSub ? m('.fontsize-small.u-text-center-small-only', [
-                                    I18n.t('subscribers_call', I18nScope()),
-                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
-                                ])
+                                I18n.t('subscribers_call', I18nScope()),
+                                m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
+                            ])
                                 : m('.fontsize-small.u-text-center-small-only', [
                                     I18n.t('contributors_call', I18nScope()),
                                     m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
@@ -126,7 +126,7 @@ const projectSidebar = {
                                 }
                             })
                         ]),
-                        isSub 
+                        isSub
                         ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${project().progress ? parseInt(project().progress) : '0'}% de R$${goal.value} por mês`)
                         : m('.w-row.u-margintop-10', [
                             m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
@@ -154,7 +154,7 @@ const projectSidebar = {
                                 project: project()
                             }, ctrl.navigate)
 
-                        }, I18n.t('submit', I18nScope()))
+                        }, I18n.t(`submit_${project().mode}`, I18nScope()))
                     ]),
                     isSub ? null : m('.back-project-btn-row-right', m.component(projectReminder, {
                         project,
@@ -169,7 +169,7 @@ const projectSidebar = {
             m('.project-share.w-hidden-main.w-hidden-medium', [
                 m.component(addressTag, { project }),
                 m.component(categoryTag, { project }),
-                m('.u-marginbottom-30.u-text-center-small-only', 
+                m('.u-marginbottom-30.u-text-center-small-only',
                     m(`button.btn.btn-inline.btn-medium.btn-terciary${projectVM.isSubscription(project) ? '.btn-terciary-negative' : ''}`, {
                         onclick: ctrl.displayShareBox.toggle
                     }, 'Compartilhar este projeto')
