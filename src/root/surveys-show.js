@@ -99,6 +99,8 @@ const surveysShow = {
                     projectVM.fetchProject(survey().project_id);
                     rewardVM.rewardLoader(survey().reward_id).load().then(reward);
                     const surveyData = survey();
+                    countryName(surveyData.country_name);
+                    stateName(surveyData.state_name);
 
                     idVM.id(h.getUserID());
 
