@@ -50,7 +50,8 @@ const projectRewardCard = {
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
                 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?reward_id=${vm.selectedReward().id}`);
+                    vm.contributionValue(valueFloat);
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?reward_id=${vm.selectedReward().id}&contribution_value=${vm.contributionValue()}`);
                     return false;
                 }
 

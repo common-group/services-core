@@ -1,6 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
+import moment from 'moment';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
@@ -23,22 +24,17 @@ const projectsSubscriptionCheckout = {
             vm = paymentVM(),
             showPaymentForm = m.prop(false),
             addVM = m.prop(),
-            contribution = contributionVM.getCurrentContribution(),
-            reward = m.prop(contribution().reward),
-            value = contribution().value,
+            reward = m.prop(rewardVM.selectedReward()),
+            value = rewardVM.contributionValue(),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             isCnpj = m.prop(false),
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
-        const shippingFee = () => _.findWhere(rewardVM.fees(), {
-            id: contribution().shipping_fee_id
-        });
-
         const validateForm = () => {
             if (vm.validate()) {
-                vm.similityExecute(contribution().id);
+                // vm.similityExecute(contribution().id);
                 showPaymentForm(true);
             }
         };
@@ -83,14 +79,16 @@ const projectsSubscriptionCheckout = {
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
-        rewardVM.getFees(reward()).then(rewardVM.fees);
+
         vm.fetchUser().then(() => {
             addVM(addressVM({
                 data: vm.fields.address()
             }));
         });
-        vm.similityExecute(contribution().id);
+        // vm.similityExecute(contribution().id);
         projectVM.getCurrentProject();
+
+        const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
 
         return {
             addressChange,
@@ -98,7 +96,6 @@ const projectsSubscriptionCheckout = {
             fieldHasError,
             validateForm,
             showPaymentForm,
-            contribution,
             reward,
             value,
             addVM,
@@ -107,7 +104,7 @@ const projectsSubscriptionCheckout = {
             vm,
             user,
             project,
-            shippingFee,
+            lastDayOfNextMonth,
             isLongDescription,
             toggleDescription: h.toggleProp(false, true)
         };
@@ -133,7 +130,6 @@ const projectsSubscriptionCheckout = {
                         I18n.t('fields.anonymous', ctrl.scope())
                     )
                 ]),
-
                 (ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
                     m('div', [
                         m('span.fontweight-bold', [
@@ -310,7 +306,7 @@ const projectsSubscriptionCheckout = {
                         ) : ''),
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
                             vm: ctrl.vm,
-                            contribution_id: ctrl.contribution().id,
+                            // contribution_id: ctrl.contribution().id,
                             project_id: projectVM.currentProject().project_id,
                             user_id: user.id
                         }) : ''
@@ -328,6 +324,32 @@ const projectsSubscriptionCheckout = {
                                     'Editar'
                                 )
                             ]),
+                            m('.divider.u-marginbottom-10.u-margintop-10'),
+                            m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
+                                'Plano de pagamento'
+                            ),
+                            m('.fontsize-smaller',
+                                [
+                                    m('span.fontweight-semibold',
+                                        [
+                                            m('span.fa.fa-money.text-success'),
+                                            ' Cobrança hoje:'
+                                        ]
+                                    ),
+                                    `R$${formatedValue}`
+                                ]
+                            ),
+                            m('.fontsize-smaller.u-marginbottom-10',
+                                [
+                                    m('span.fontweight-semibold',
+                                        [
+                                            m('span.fa.fa-calendar-o.text-success'),
+                                            ' Próxima cobrança:'
+                                        ]
+                                    ),
+                                    ctrl.lastDayOfNextMonth()
+                                ]
+                            ),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
                             m('.back-payment-info-reward', [
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
@@ -358,38 +380,7 @@ const projectsSubscriptionCheckout = {
                                     m('span.fa.fa-angle-down', {
                                         class: ctrl.toggleDescription() ? 'reversed' : ''
                                     })
-                                ]) : '',
-                                ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
-                                    m('span.fontweight-semibold',
-                                        'Entrega prevista:'
-                                    ),
-                                    ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
-                                ]) : '',
-                                (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential') ?
-                                m('.fontcolor-secondary.fontsize-smallest', [
-                                    m('span.fontweight-semibold',
-                                        'Forma de envio: '
-                                    ),
-                                    I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {
-                                        scope: 'projects.contributions'
-                                    })
-                                ]) :
-                                '',
-                                m('div',
-                                    // ctrl.contribution().shipping_fee_id ? [
-                                    //     m('.divider.u-marginbottom-10.u-margintop-10'),
-                                    //     m('.fontsize-smaller.fontweight-semibold',
-                                    //         'Destino da recompensa:'
-                                    //     ),
-                                    //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                                    //         'Editar'
-                                    //     ),
-                                    //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
-                                    //         `${rewardVM.feeDestination(ctrl.reward(), ctrl.contribution().shipping_fee_id)}`
-                                    //     ),
-                                    //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(ctrl.contribution().shipping_fee_id).value : '...'})`)
-                                    // ] : ''
-                                )
+                                ]) : ''
                             ]),
                         ]),
                         m.component(faqBox, {
