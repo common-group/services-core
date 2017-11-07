@@ -28,7 +28,7 @@ const projectGoalsBox = {
             currentGoalIndex = ctrl.currentGoalIndex;
 
         return m('div',
-          m('.card.u-marginbottom-30.u-radius', [
+          m(`.card.u-marginbottom-30.u-radius${args.style}`, [
               m('.w-clearfix', [
                   m('.u-right', [
                       m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-left.w-button', { onclick: ctrl.previousGoal, class: currentGoalIndex() === 0 ? 'btn-desactivated' : '' }),
