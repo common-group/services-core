@@ -97,10 +97,14 @@ const projectDashboardMenu = {
                             : m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, [
                                 m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
                             ]), (project.is_published ? [
+                                projectVM.isSubscription(project) ?
+                                m(`a#dashboard_subscriptions_link[class="dashboard-nav-link-left ${h.locationActionMatch('subscriptions_report') ? 'selected' : ''}"][href="${projectRoute}/subscriptions_report"]`, [
+                                    m('span.fa.fa.fa-users.fa-lg.fa-fw'), I18n.t('subscriptions_tab', I18nScope())
+                                ]) :
                                 m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, [
                                     m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
                                 ]),
-                                m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
+                                m(`a#dashboard_posts_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
                                     m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
                                     I18n.t('posts_tab', I18nScope()),
                                     project.posts_count > 0 ?

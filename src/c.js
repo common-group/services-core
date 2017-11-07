@@ -11,6 +11,7 @@ import jobs from './root/jobs';
 import press from './root/press';
 import liveStatistics from './root/live-statistics';
 import projectsContributionReport from './root/projects-contribution-report';
+import projectsSubscriptionReport from './root/projects-subscription-report';
 import projectsDashboard from './root/projects-dashboard';
 import projectsExplore from './root/projects-explore';
 import projectsHome from './root/projects-home';
@@ -59,6 +60,7 @@ const c = {
         Jobs: jobs,
         LiveStatistics: liveStatistics,
         ProjectsContributionReport: projectsContributionReport,
+        ProjectsSubscriptionReport: projectsSubscriptionReport,
         ProjectsDashboard: projectsDashboard,
         ProjectsExplore: projectsExplore,
         ProjectsHome: projectsHome,
