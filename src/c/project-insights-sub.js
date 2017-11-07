@@ -1,11 +1,11 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import moment from 'moment';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectInviteCard from '../c/project-invite-card';
-import projectGoalsBox from './project-goals-box';
+import projectGoalsBoxDashboard from './project-goals-box-dashboard';
 import projectGoalsVM from '../vms/project-goals-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
@@ -31,15 +31,15 @@ const projectInsightsSub = {
             m('.dashboard-header.section-one-column', [
                 m('.u-marginbottom-30.u-text-center', [
                     m('.fontsize-larger.fontweight-semibold',
-                        'Olá, Universo HQ!'
+                        `Olá, ${project.user.public_name || project.user.name}!`
                     ),
                     m('.fontsize-smaller',
-                        'Este é o retrato de sua campanha hoje, 21 de agosto de 2017'
+                        `Este é o retrato de sua campanha hoje, ${moment().format('DD [de] MMMM [de] YYYY')}`
                     )
                 ]),
                 m('.w-container',
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        m.component(projectGoalsBox, { goalDetails: ctrl.projectGoalsVM.goals, style: '.flex-column.card-terciary.w-clearfix.u-marginbottom-10' }),
+                        m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals }),
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
                                 'Assinantes'
