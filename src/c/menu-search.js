@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import m from 'mithril';
 
 const menuSearch = {
@@ -27,7 +28,7 @@ const menuSearch = {
                       )
                 ]
               ),
-            m('a.w-inline-block.w-hidden-small.w-hidden-tiny.btn.btn-dark.btn-attached.postfix[href=\'#\'][id=\'pg_search_submit\']',
+            m('a.w-inline-block.w-hidden-small.w-hidden-tiny.btn.btn-dark.btn-attached.postfix[href=\'javascript:void(0);\'][id=\'pg_search_submit\']', { onclick: () => { $('#search-form').submit(); } },
                   m('img.header-lupa[alt=\'Lupa\'][data-pin-nopin=\'true\'][src=\'/assets/catarse_bootstrap/lupa.png\']')
               )
         ]);
