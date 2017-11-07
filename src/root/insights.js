@@ -1,12 +1,10 @@
 import m from 'mithril';
 import postgrest from 'mithril-postgrest';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import projectInsights from '../c/project-insights';
-
-const I18nScope = _.partial(h.i18nScope, 'projects.insights');
+import projectInsightsSub from '../c/project-insights-sub';
 
 const insights = {
     controller(args) {
@@ -46,7 +44,21 @@ const insights = {
             project.user.name = project.user.name || 'Realizador';
         }
 
-        return m('.project-insights', !ctrl.l() ? m(projectInsights, { args, project, l: ctrl.l, filtersVM: ctrl.filtersVM }) : h.loader());
+        return m('.project-insights', !ctrl.l() ? (
+            project.mode === 'sub' ?
+            m(projectInsightsSub, {
+                args,
+                project,
+                l: ctrl.l,
+                filtersVM: ctrl.filtersVM
+            }) :
+            m(projectInsights, {
+                args,
+                project,
+                l: ctrl.l,
+                filtersVM: ctrl.filtersVM
+            })
+        ) : h.loader());
     }
 };
 
