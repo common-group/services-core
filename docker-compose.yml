@@ -26,7 +26,10 @@ services:
 
   # service just for apply migrations or seed
   service_core_migrator:
-    image: comum/services-core:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # image: comum/services-core:latest
     env_file:
       - ./compose_env/.service_core_migrator.env
     links:
