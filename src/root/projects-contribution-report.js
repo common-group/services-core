@@ -58,17 +58,9 @@ const projectContributionReport = {
                     },
                     ],
                     failed: [{
-                        value: 'pending_refund',
-                        option: 'Reembolso em andamento'
-                    },
-                    {
                         value: 'refunded',
                         option: 'Reembolsado'
-                    },
-                    {
-                        value: 'paid',
-                        option: 'Reembolso não iniciado'
-                    },
+                    }
                     ],
                     successful: [{
                         value: 'paid',

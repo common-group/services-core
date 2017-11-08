@@ -60,7 +60,9 @@ const surveysShow = {
             sendAnswer = () => {
                 const data = {};
                 _.extend(data, {
-                    survey_address_answers_attributes: { addresses_attributes: fields().address() }
+                    survey_address_answers_attributes: {
+                        addresses_attributes: fields().address()
+                    }
                 });
                 _.extend(data, {
                     survey_open_question_answers_attributes: _.map(openQuestions(), question => ({
@@ -88,41 +90,48 @@ const surveysShow = {
                     showThanks.toggle();
                 });
             };
-        surveyLoader().load().then((data) => {
-            survey(_.first(data));
-            finished(!_.isEmpty(survey().finished_at));
-            answeredAt(survey().survey_answered_at);
-            projectVM.fetchProject(survey().project_id);
-            rewardVM.rewardLoader(survey().reward_id).load().then(reward);
-            const surveyData = survey();
+        const loadSurvey = (el, isInitialized) => {
+            if (!isInitialized) {
+                surveyLoader().load().then((data) => {
+                    survey(_.first(data));
+                    finished(!_.isEmpty(survey().finished_at));
+                    answeredAt(survey().survey_answered_at);
+                    projectVM.fetchProject(survey().project_id);
+                    rewardVM.rewardLoader(survey().reward_id).load().then(reward);
+                    const surveyData = survey();
+                    countryName(surveyData.country_name);
+                    stateName(surveyData.state_name);
 
-            idVM.id(h.getUserID());
+                    idVM.id(h.getUserID());
 
-            const lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+                    const lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
-            lUser.load().then((userData) => {
-                user(_.first(userData));
-                fields({
-                    address: m.prop(surveyData.address || _.omit(user().address, 'id') || {})
+                    lUser.load().then((userData) => {
+                        user(_.first(userData));
+                        fields({
+                            address: m.prop(surveyData.address || _.omit(user().address, 'id') || {})
+                        });
+                    });
+
+                    _.map(surveyData.open_questions, (question) => {
+                        openQuestions().push({
+                            question,
+                            value: m.prop(question.answer)
+                        });
+                    });
+                    _.map(surveyData.multiple_choice_questions, (question) => {
+                        multipleChoiceQuestions().push({
+                            question,
+                            value: m.prop(question.survey_question_choice_id)
+                        });
+                    });
                 });
-            });
-
-            _.map(surveyData.open_questions, (question) => {
-                openQuestions().push({
-                    question,
-                    value: m.prop(question.answer)
-                });
-            });
-            _.map(surveyData.multiple_choice_questions, (question) => {
-                multipleChoiceQuestions().push({
-                    question,
-                    value: m.prop(question.survey_question_choice_id)
-                });
-            });
-        });
+            }
+        };
 
         return {
             projectVM,
+            loadSurvey,
             countryName,
             stateName,
             user,
@@ -153,7 +162,9 @@ const surveysShow = {
             contactModalC = [ownerMessageContent, m.prop(project ? project.user : {})],
             profileImage = userVM.displayImage(user);
 
-        return m('.survey', (ctrl.displayModal() ? m.component(modalBox, {
+        return m('.survey', {
+            config: ctrl.loadSurvey
+        }, _.isEmpty(user) ? '' : [(ctrl.displayModal() ? m.component(modalBox, {
             displayModal: ctrl.displayModal,
             content: contactModalC
         }) : ''),
@@ -264,7 +275,9 @@ const surveysShow = {
                                 m('.fontsize-base.u-marginbottom-20',
                                     `${project.user.name}, do projeto ${project.name}, enviou algumas perguntas para que possa seguir com a produção e entrega da recompensa que você apoiou com R$${reward.minimum_value}:`
                                 ),
-                                m(rewardCardBig, { reward })
+                                m(rewardCardBig, {
+                                    reward
+                                })
                             ]),
                             m('.w-col.w-col-2')
                         ])
@@ -289,16 +302,15 @@ const surveysShow = {
                                                             },
                                                                 `envie uma mensagem para ${project.user.name}`
                                                             )
-                                                        )
-                                                      :
+                                                        ) :
                                                         m('span',
-                                                        ` Oooops! Esse questionário não está mais aberto para respostas desde o dia ${h.momentify(ctrl.survey().finished_at, 'DD/MM/YYYY')}. Nossa recomendação é que você `,
+                                                            ` Oooops! Esse questionário não está mais aberto para respostas desde o dia ${h.momentify(ctrl.survey().finished_at, 'DD/MM/YYYY')}. Nossa recomendação é que você `,
                                                             m('a.alt-link[href=\'javascript:void(0);\']', {
                                                                 onclick: ctrl.sendMessage
                                                             },
                                                                 `envie uma mensagem para ${project.user.name}`
                                                             ),
-                                                          ' para saber como é possível resolver o seu caso! ')
+                                                            ' para saber como é possível resolver o seu caso! ')
                                                     )
                                                 ])
                                             )
@@ -320,8 +332,7 @@ const surveysShow = {
                                 ])
                             )
                         )
-                ] :
-                [
+                ] : [
                     m('div',
                             m('.w-container',
                                 m('.w-row', [
@@ -337,16 +348,16 @@ const surveysShow = {
                                                         ` Você já enviou as respostas abaixo no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
                                                     ])
                                                 ) : ''),
-                                            (survey.confirm_address ?
-                                            [
+                                            (survey.confirm_address ? [
                                                 m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
-                                                I18n.t('delivery_address', addressScope())
-                                                ),
+                                                        I18n.t('delivery_address', addressScope())
+                                                    ),
                                                 m(addressForm, {
                                                     countryName,
                                                     stateName,
                                                     fields: ctrl.fields
-                                                })] :
+                                                })
+                                            ] :
                                                 ''),
                                             _.map(multipleChoiceQuestions, item =>
                                                 m('.u-marginbottom-30.w-form', [
@@ -355,8 +366,7 @@ const surveysShow = {
                                                     ),
                                                     m('.fontcolor-secondary.fontsize-smaller.u-marginbottom-20',
                                                         item.question.description
-                                                    ),
-                                                    [
+                                                    ), [
 
                                                         _.map(item.question.question_choices, choice =>
                                                             m('.fontsize-small.w-radio', [
@@ -411,7 +421,8 @@ const surveysShow = {
 
 
                 )
-            ]));
+            ])
+        ]);
     }
 };
 

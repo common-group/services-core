@@ -4,21 +4,24 @@
  *
  */
 import m from 'mithril';
+import _ from 'underscore';
 import postgrest from 'mithril-postgrest';
 import models from '../models';
 import h from '../h';
 import projectVM from '../vms/project-vm';
+import inlineError from './inline-error';
 
 const projectReport = {
     controller(args) {
-        let displayForm = h.toggleProp(false, true),
+        const displayForm = h.toggleProp(false, true),
             sendSuccess = m.prop(false),
             submitDisabled = m.prop(false),
             user = h.getUser() || {},
             email = m.prop(user.email),
             details = m.prop(''),
             reason = m.prop(''),
-            l = m.prop(false),
+            reasonError = m.prop(false),
+            detailsError = m.prop(false),
             storeReport = 'report',
             project = projectVM.currentProject(),
             hasPendingAction = project && (h.callStoredAction(storeReport) == project.project_id),
@@ -30,7 +33,24 @@ const projectReport = {
                     return h.navigateToDevise();
                 }
             },
+            validate = () => {
+                let ok = true;
+                detailsError(false);
+                reasonError(false);
+                if (_.isEmpty(reason())) {
+                    reasonError(true);
+                    ok = false;
+                }
+                if (_.isEmpty(details())) {
+                    detailsError(true);
+                    ok = false;
+                }
+                return ok;
+            },
             sendReport = () => {
+                if (!validate()) {
+                    return false;
+                }
                 submitDisabled(true);
                 const loaderOpts = models.projectReport.postOptions({
                     email: email(),
@@ -38,7 +58,7 @@ const projectReport = {
                     reason: reason(),
                     project_id: project.project_id
                 });
-                l = postgrest.loaderWithToken(loaderOpts);
+                const l = postgrest.loaderWithToken(loaderOpts);
 
                 l.load().then(sendSuccess(true));
                 submitDisabled(false);
@@ -63,15 +83,14 @@ const projectReport = {
             submitDisabled,
             sendReport,
             user,
-            email,
+            detailsError,
+            reasonError,
             details,
             reason
         };
     },
 
     view(ctrl, args) {
-        const user = ctrl.user;
-
         return m('.card.card-terciary.u-radius',
             [
                 m('.fontsize-small.u-marginbottom-20',
@@ -128,7 +147,10 @@ const projectReport = {
                                   )
                                       ]
                               ),
+                                  (ctrl.reasonError() ? m(inlineError, { message: 'Selecione um motivo' }) : ''),
                                   m('textarea.w-input.text-field.positive.u-marginbottom-30', { placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema', onchange: m.withAttr('value', ctrl.details) }),
+                                  m('.w-row',
+                                  (ctrl.detailsError() ? m(inlineError, { message: 'Informe os detalhes da denúncia' }) : '')),
                                   m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', { disabled: ctrl.submitDisabled() })
                               ]
                           )

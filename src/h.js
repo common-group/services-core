@@ -12,6 +12,7 @@ import replaceDiacritics from 'replaceDiacritics';
 const
     _dataCache : Object = {},
     hashMatch = (str: string): boolean => window.location.hash === str,
+    mobileScreen = (): boolean => window.screen && window.screen.width<=767,
     paramByName = (name: string): string => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
             regex = new RegExp(`[\\?&]${normalName}=([^&#]*)`),
@@ -923,6 +924,7 @@ export default {
     rewardRemaning,
     parseUrl,
     hashMatch,
+    mobileScreen,
     redrawHashChange,
     useAvatarOrDefault,
     locationActionMatch,
