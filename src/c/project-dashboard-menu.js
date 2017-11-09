@@ -111,9 +111,11 @@ const projectDashboardMenu = {
                                 m('span.badge', project.posts_count) :
                                 m('span.badge.badge-attention', 'Nenhuma')
                                 ]),
+
+                                (projectVM.isSubscription(project) ? '' :
                                 m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, [
                                     m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n.t('surveys_tab', I18nScope())
-                                ])
+                                ]))
                             ] : '')
                     ]),
                     m('.edit-project-div', [

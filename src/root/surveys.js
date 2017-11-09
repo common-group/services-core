@@ -7,6 +7,7 @@ import h from '../h';
 import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const surveyScope = _.partial(h.i18nScope, 'projects.dashboard_surveys');
@@ -147,7 +148,7 @@ const surveys = {
             );
         };
 
-        return (project ? m('.project-surveys',
+        return (project && !projectVM.isSubscription(project) ? m('.project-surveys',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project)
             }) : ''),

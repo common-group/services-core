@@ -31,35 +31,33 @@ const projectGoalsBoxDashboard = {
             }],
             currentGoalIndex = ctrl.currentGoalIndex;
 
-        return m('div',
-            m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius.w-clearfix', [
-                m('.u-right', [
-                    m('button.btn-inline.btn-terciary.fa.fa-angle-left.u-radius.w-inline-block', {
-                        onclick: ctrl.previousGoal,
-                        class: currentGoalIndex() === 0 ? 'btn-desactivated' : ''
-                    }),
-                    m('button.btn-inline.btn-terciary.fa.fa-angle-right.u-radius.w-inline-block', {
-                        onclick: ctrl.nextGoal,
-                        class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : ''
-                    })
-                ]),
-                m('.fontsize-small.u-marginbottom-10',
+        return m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius.w-clearfix', [
+            m('.u-right', [
+                m('button.btn-inline.btn-terciary.fa.fa-angle-left.u-radius.w-inline-block', {
+                    onclick: ctrl.previousGoal,
+                    class: currentGoalIndex() === 0 ? 'btn-desactivated' : ''
+                }),
+                m('button.btn-inline.btn-terciary.fa.fa-angle-right.u-radius.w-inline-block', {
+                    onclick: ctrl.nextGoal,
+                    class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : ''
+                })
+            ]),
+            m('.fontsize-small.u-marginbottom-10',
                     'Metas'
                 ),
-                m('.fontsize-largest.fontweight-semibold',
+            m('.fontsize-largest.fontweight-semibold',
                     '75%'
                 ),
-                m('.meter.u-marginbottom-10',
+            m('.meter.u-marginbottom-10',
                     m('.meter-fill')
                 ),
-                m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter',
+            m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter',
                     goals[currentGoalIndex()].title
                 ),
-                m('.fontcolor-secondary.fontsize-smallest',
+            m('.fontcolor-secondary.fontsize-smallest',
                     `R$0 de R$${goals[currentGoalIndex()].value} por mês`
                 )
-            ])
-        );
+        ]);
     }
 };
 

@@ -71,9 +71,9 @@ const projectInsightsSub = {
                         ])
                     ])
                 ),
-                (project.state === 'online' && !project.has_cancelation_request ? m.component(projectInviteCard, {
+                (project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
                     project
-                }) : ''),
+                })) : ''),
             ])
         ] : h.loader());
     }
