@@ -8,7 +8,7 @@ const projectInviteCard = {
     view(ctrl, args) {
         const project = args.project;
 
-        return m('.card.card-secondary.u-marginbottom-20.u-radius.w-clearfix', [
+        return m('.card.card-terciary.u-marginbottom-20.u-radius.w-clearfix', [
             m('.fontsize-base.fontweight-semibold.u-marginbottom-30.u-text-center', 'Convide seus amigos para apoiar sua campanha'),
             m('.w-row', [
                 m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [
