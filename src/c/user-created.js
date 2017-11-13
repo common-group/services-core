@@ -1,6 +1,6 @@
 import m from 'mithril';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -13,9 +13,9 @@ const userCreated = {
         const user_id = args.userId,
             showDraft = args.showDraft || false,
             error = m.prop(false),
-            pages = postgrest.paginationVM(models.project),
+            pages = catarse.paginationVM(models.project),
             loader = m.prop(true),
-            contextVM = postgrest.filtersVM({
+            contextVM = catarse.filtersVM({
                 project_user_id: 'eq',
                 state: 'in'
             });

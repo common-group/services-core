@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -8,11 +8,11 @@ import projectInsightsSub from '../c/project-insights-sub';
 
 const insights = {
     controller(args) {
-        const filtersVM = postgrest.filtersVM({
+        const filtersVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             projectDetails = m.prop([]),
-            loader = postgrest.loaderWithToken,
+            loader = catarse.loaderWithToken,
             setProjectId = () => {
                 try {
                     const project_id = m.route.param('project_id');

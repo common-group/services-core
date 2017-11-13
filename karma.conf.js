@@ -24,7 +24,7 @@ module.exports = function(config) {
       'spec/lib/analytics.js',
       'node_modules/mithril/mithril.js',
       'node_modules/underscore/underscore.js',
-      'bower_components/mithril-postgrest/mithril-postgrest.umd.js',
+      'node_modules/mithril-postgrest/dist/mithril-postgrest.js',
       'bower_components/chartjs/Chart.js',
       'node_modules/moment/moment.js',
       'node_modules/select/dist/select.js',

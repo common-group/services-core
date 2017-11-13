@@ -3,7 +3,7 @@ import _ from 'underscore';
 import moment from 'moment';
 import $ from 'jquery';
 import I18n from 'i18n-js';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import models from '../models';
 import paymentStatus from './payment-status';
 import h from '../h';
@@ -28,13 +28,13 @@ const projectContributionReportContentCard = {
                 }
                 return true;
             },
-            vm = postgrest.filtersVM({
+            vm = catarse.filtersVM({
                 contribution_id: 'eq'
             }),
             surveyLoader = () => {
                 vm.contribution_id(args.contribution().id);
 
-                return postgrest.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+                return catarse.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
             },
             survey = m.prop(),
             stateClass = (state) => {

@@ -3,7 +3,7 @@ import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 
 const inviteEmailsFromImport = {
     controller(args) {
@@ -24,7 +24,7 @@ const inviteEmailsFromImport = {
                 loading(true);
 
                 if (!_.isEmpty(checkedList)) {
-                    postgrest.loaderWithToken(
+                    catarse.loaderWithToken(
                           models.inviteProjectEmail.postOptions({
                               data: {
                                   project_id: args.project.project_id,

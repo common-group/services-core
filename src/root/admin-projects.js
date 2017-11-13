@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import projectListVM from '../vms/project-list-vm';
 import models from '../models';
 import projectFilterVM from '../vms/project-filter-vm';
@@ -18,7 +18,7 @@ const adminProjects = {
         const listVM = projectListVM,
             filterVM = projectFilterVM,
             categories = m.prop([]),
-            filters = postgrest.filtersVM,
+            filters = catarse.filtersVM,
             error = m.prop(''),
             filterBuilder = [{ // name
                 component: filterMain,

@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import projectVM from './project-vm';
 import h from '../h';
 import generateErrorInstance from '../error';
@@ -53,7 +53,7 @@ const updateProject = (project_id) => {
 };
 
 const loadCategoriesOptionsTo = (prop, selected) => {
-    const filters = postgrest.filtersVM;
+    const filters = catarse.filtersVM;
     models.category.getPage(filters({}).order({
         name: 'asc'
     }).parameters()).then((data) => {
@@ -68,7 +68,7 @@ const loadCategoriesOptionsTo = (prop, selected) => {
 };
 
 const generateSearchCity = (prop) => {
-    const filters = postgrest.filtersVM({
+    const filters = catarse.filtersVM({
         search_index: 'ilike'
     }).order({name: 'asc'});
 

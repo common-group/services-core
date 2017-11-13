@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
@@ -22,7 +22,7 @@ const start = {
             featuredProjects = m.prop([]),
             selectedCategoryIdx = m.prop(-1),
             startvm = startVM(I18n),
-            filters = postgrest.filtersVM,
+            filters = catarse.filtersVM,
             paneImages = startvm.panes,
             categoryvm = filters({
                 category_id: 'eq'
@@ -33,7 +33,7 @@ const start = {
             uservm = filters({
                 id: 'eq'
             }),
-            loader = postgrest.loader,
+            loader = catarse.loader,
             statsLoader = loader(models.statistic.getRowOptions()),
             loadCategories = () => models.category.getPage(filters({}).order({
                 name: 'asc'

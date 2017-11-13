@@ -1,9 +1,9 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../../src/api';
 import adminInputAction from '../../src/c/admin-input-action';
 
 describe('adminInputAction', () => {
-    let testModel = postgrest.model('test'),
+    let testModel = catarse.model('test'),
         item = {
             testKey: 'foo'
         },

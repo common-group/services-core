@@ -10,7 +10,7 @@
  * }
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -20,10 +20,10 @@ import loadMoreBtn from '../c/load-more-btn';
 const userFollows = {
     controller(args) {
         models.userFollow.pageSize(9);
-        const userFriendVM = postgrest.filtersVM({ user_id: 'eq' }),
+        const userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
             user = args.user,
             hash = m.prop(window.location.hash),
-            followsListVM = postgrest.paginationVM(models.userFollow,
+            followsListVM = catarse.paginationVM(models.userFollow,
                                                      'created_at.desc', {
                                                          Prefer: 'count=exact'
                                                      });

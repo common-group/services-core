@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -18,14 +18,14 @@ const posts = {
             titleHasError = m.prop(false),
             commentHasError = m.prop(false),
             projectPosts = m.prop(),
-            loader = postgrest.loaderWithToken,
+            loader = catarse.loaderWithToken,
             errors = m.prop(''),
             fields = {
                 title: m.prop(''),
                 comment_html: m.prop(''),
                 reward_id: m.prop('-1')
             },
-            filterVM = postgrest.filtersVM({
+            filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             validateTitle = () => {
@@ -91,7 +91,7 @@ const posts = {
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
-        const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
+        const listVM = catarse.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         listVM.load().then(projectPosts);

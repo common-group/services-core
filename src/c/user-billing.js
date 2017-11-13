@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import models from '../models';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -33,7 +33,7 @@ const userBilling = {
                 loader(false);
                 m.redraw();
             },
-            banksLoader = postgrest.loader(models.bank.getPageOptions()),
+            banksLoader = catarse.loader(models.bank.getPageOptions()),
             showSuccess = m.prop(false),
             showOtherBanks = h.toggleProp(false, true),
             showOtherBanksInput = m.prop(false),

@@ -1,9 +1,9 @@
 import m from 'mithril';
 import moment from 'moment';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 
 const projectFiltersVM = () => {
-    const filtersVM = postgrest.filtersVM,
+    const filtersVM = catarse.filtersVM,
         all = filtersVM({
             state: 'eq'
         }).state('online'),

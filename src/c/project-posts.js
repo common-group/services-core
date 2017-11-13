@@ -1,6 +1,6 @@
 import m from 'mithril';
 import I18n from 'i18n-js';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
@@ -9,8 +9,8 @@ const I18nScope = _.partial(h.i18nScope, 'projects.posts');
 
 const projectPosts = {
     controller(args) {
-        const listVM = postgrest.paginationVM(models.projectPostDetail),
-            filterVM = postgrest.filtersVM({
+        const listVM = catarse.paginationVM(models.projectPostDetail),
+            filterVM = catarse.filtersVM({
                 project_id: 'eq',
                 id: 'eq'
             });

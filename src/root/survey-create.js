@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
@@ -18,14 +18,14 @@ const surveyCreate = {
     controller(args) {
         const
             showError = m.prop(false),
-            loader = postgrest.loaderWithToken,
+            loader = catarse.loaderWithToken,
             showPreview = h.toggleProp(false, true),
             confirmAddress = surveyVM.confirmAddress,
             projectDetails = m.prop([]),
-            rewardFilterVM = postgrest.filtersVM({
+            rewardFilterVM = catarse.filtersVM({
                 id: 'eq'
             }),
-            filterVM = postgrest.filtersVM({
+            filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             {
@@ -35,7 +35,7 @@ const surveyCreate = {
 
         rewardFilterVM.id(reward_id);
         filterVM.project_id(project_id);
-        const rewardVM = postgrest.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
+        const rewardVM = catarse.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         const reward = m.prop([]);

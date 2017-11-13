@@ -3,14 +3,14 @@ import _ from 'underscore';
 import models from '../models';
 import userVM from '../vms/user-vm';
 import h from '../h';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const adminUserBalanceTransactionsList = {
     controller(args) {
         const userBalance = m.prop({}),
-              transactionsListVM = postgrest.paginationVM(
+              transactionsListVM = catarse.paginationVM(
                   models.balanceTransaction,
                   'created_at.desc',
                   { Prefer: 'count=exact'}

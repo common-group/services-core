@@ -17,7 +17,7 @@ import adminInputAction from './admin-input-action';
 import adminNotificationHistory from './admin-notification-history';
 import adminUserBalanceTransactionsList from './admin-user-balance-transactions-list';
 import h from '../h';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 
 const adminUserDetail = {
     controller(args) {

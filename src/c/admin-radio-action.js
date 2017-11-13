@@ -1,6 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
+import {catarse} from '../api';
 
 const adminRadioAction = {
     controller(args) {
@@ -25,16 +26,16 @@ const adminRadioAction = {
             selectedItem = builder.selectedItem || m.prop();
 
         setFilter[updateKey] = 'eq';
-        const setVM = postgrest.filtersVM(setFilter);
+        const setVM = catarse.filtersVM(setFilter);
         setVM[updateKey](updateKeyValue);
 
         getFilter[getKey] = 'eq';
-        const getVM = postgrest.filtersVM(getFilter);
+        const getVM = catarse.filtersVM(getFilter);
         getVM[getKey](getKeyValue);
 
-        const getLoader = postgrest.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
+        const getLoader = catarse.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
 
-        const setLoader = postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
+        const setLoader = catarse.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
         const updateItem = (data) => {
             if (data.length > 0) {

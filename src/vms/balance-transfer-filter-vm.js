@@ -1,10 +1,10 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
 import models from '../models';
 
-const vm = postgrest.filtersVM({
+const vm = catarse.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     transfer_id: 'eq',
@@ -42,7 +42,7 @@ vm.transferred_date.gte.toFilter = () => {
 
 vm.getAllBalanceTransfers = (filterVM) => {
     models.balanceTransfer.pageSize(false);
-    const allTransfers = postgrest.loaderWithToken(
+    const allTransfers = catarse.loaderWithToken(
         models.balanceTransfer.getPageOptions(filterVM.parameters())
     ).load();
     models.balanceTransfer.pageSize(9);

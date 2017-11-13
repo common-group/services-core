@@ -1,6 +1,6 @@
 import m from 'mithril';
 import userVM from '../vms/user-vm';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
@@ -16,7 +16,7 @@ const userBankForm = {
               user = args.user,
               bankAccount = m.prop({}),
               banks = m.prop(),
-              banksLoader = postgrest.loader(models.bank.getPageOptions()),
+              banksLoader = catarse.loader(models.bank.getPageOptions()),
               showOtherBanks = h.toggleProp(false, true),
               showOtherBanksInput = m.prop(false),
               popularBanks = [{

@@ -12,7 +12,7 @@ export default {
   globals: {
       chartjs: 'Chart',
       mithril: 'm',
-      'mithril-postgrest': 'postgrest',
+      'mithril-postgrest': 'Postgrest',
       moment: 'moment',
       'i18n-js': 'I18n',
       replaceDiacritics: 'replaceDiacritics',

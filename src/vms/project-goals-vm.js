@@ -1,11 +1,11 @@
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import m from 'mithril';
 import models from '../models';
 import h from '../h';
 
 const goals = m.prop([]),
-    vm = postgrest.filtersVM({
+    vm = catarse.filtersVM({
         project_id: 'eq'
     });
 
@@ -15,7 +15,7 @@ const goalsLoader = (projectId) => {
         value: 'asc'
     });
 
-    return postgrest.loaderWithToken(models.goalDetail.getPageOptions(vm.parameters()));
+    return catarse.loaderWithToken(models.goalDetail.getPageOptions(vm.parameters()));
 };
 
 const addGoal = (projectId) => {

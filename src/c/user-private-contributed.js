@@ -1,6 +1,6 @@
 import m from 'mithril';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -10,9 +10,9 @@ import userContributedList from './user-contributed-list';
 const userPrivateContributed = {
     controller(args) {
         const user_id = args.userId,
-            onlinePages = postgrest.paginationVM(models.userContribution),
-            successfulPages = postgrest.paginationVM(models.userContribution),
-            failedPages = postgrest.paginationVM(models.userContribution),
+            onlinePages = catarse.paginationVM(models.userContribution),
+            successfulPages = catarse.paginationVM(models.userContribution),
+            failedPages = catarse.paginationVM(models.userContribution),
             error = m.prop(false),
             loader = m.prop(true),
             handleError = () => {
@@ -20,7 +20,7 @@ const userPrivateContributed = {
                 loader(false);
                 m.redraw();
             },
-            contextVM = postgrest.filtersVM({
+            contextVM = catarse.filtersVM({
                 user_id: 'eq',
                 state: 'in',
                 project_state: 'in'

@@ -7,14 +7,14 @@
  */
 
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 
 const UserFollowBtn = {
     controller(args) {
         const following = m.prop((args.following || false)),
-            followVM = postgrest.filtersVM({ follow_id: 'eq' }),
+            followVM = catarse.filtersVM({ follow_id: 'eq' }),
             loading = m.prop(false),
             hover = m.prop(false),
             userFollowInsert = models.userFollow.postOptions({
@@ -26,7 +26,7 @@ const UserFollowBtn = {
                       followVM.parameters());
             })(),
             follow = () => {
-                const l = postgrest.loaderWithToken(userFollowInsert);
+                const l = catarse.loaderWithToken(userFollowInsert);
                 loading(true);
 
                 l.load().then(() => {
@@ -35,7 +35,7 @@ const UserFollowBtn = {
                 });
             },
             unfollow = () => {
-                const l = postgrest.loaderWithToken(userFollowDelete);
+                const l = catarse.loaderWithToken(userFollowDelete);
                 loading(true);
 
                 l.load().then(() => {
