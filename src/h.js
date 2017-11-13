@@ -7,7 +7,6 @@ import m from 'mithril';
 import {catarse} from './api';
 import CatarseAnalytics from 'CatarseAnalytics';
 import contributionVM from './vms/contribution-vm';
-import replaceDiacritics from 'replaceDiacritics';
 
 const
     _dataCache : Object = {},
