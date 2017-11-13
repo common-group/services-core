@@ -33,6 +33,8 @@ services:
     env_file:
       - ./compose_env/.service_core_migrator.env
     command: ["./scripts/run_migrations.sh"]
+    volumes: 
+      - ./migrations:/usr/app/migrations
     links:
         - "service_core_db:service_core_db"
 
