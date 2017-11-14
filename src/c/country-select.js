@@ -1,11 +1,11 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import models from '../models';
 
 const countrySelect = {
     controller(args) {
-        const countriesLoader = postgrest.loader(models.country.getPageOptions()),
+        const countriesLoader = catarse.loader(models.country.getPageOptions()),
             countries = m.prop(),
             defaultCountryID = args.defaultCountryID,
             defaultForeignCountryID = args.defaultForeignCountryID,

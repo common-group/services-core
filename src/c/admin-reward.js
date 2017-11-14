@@ -1,6 +1,6 @@
 import m from 'mithril';
 import h from '../h';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import models from '../models';
 
 const adminReward = {
@@ -15,7 +15,7 @@ const adminReward = {
                         args.contribution.shipping_fee_id
                     ).parameters());
 
-                l = postgrest.loaderWithToken(options);
+                l = catarse.loaderWithToken(options);
                 l.load().then(_.compose(shippingFee, _.first));
             }
 

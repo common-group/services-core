@@ -7,7 +7,7 @@
  * <div data-mithril="UsersBalance" data-parameters="{'user_id': 10}">
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import _ from 'underscore';
 import models from '../models';
 import userBalance from './user-balance';
@@ -15,7 +15,7 @@ import userBalanceTransactions from './user-balance-transactions';
 
 const userBalanceMain = {
     controller(args) {
-        const userIdVM = postgrest.filtersVM({ user_id: 'eq' });
+        const userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
         userIdVM.user_id(args.user_id);
 
@@ -34,7 +34,7 @@ const userBalanceMain = {
 
               // Handles with user balance transactions list data
             balanceTransactionManager = (() => {
-                const listVM = postgrest.paginationVM(
+                const listVM = catarse.paginationVM(
                       models.balanceTransaction, 'created_at.desc'),
                     load = () => {
                         listVM.firstPage(userIdVM.parameters());
@@ -49,7 +49,7 @@ const userBalanceMain = {
               // Handles with bank account to check
             bankAccountManager = (() => {
                 const collection = m.prop([]),
-                    loader = (() => postgrest.loaderWithToken(
+                    loader = (() => catarse.loaderWithToken(
                                 models.bankAccount.getRowOptions(
                                     userIdVM.parameters())))(),
                     load = () => {

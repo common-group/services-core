@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import models from '../models';
@@ -11,7 +11,7 @@ const I18nScope = _.partial(h.i18nScope, 'pages.start');
 const subProjectNew = {
     controller() {
         const categories = m.prop([]),
-            filters = postgrest.filtersVM,
+            filters = catarse.filtersVM,
             loadCategories = () => models.category.getPage(filters({}).order({
                 name: 'asc'
             }).parameters()).then(categories),

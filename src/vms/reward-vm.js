@@ -1,4 +1,4 @@
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import m from 'mithril';
 import models from '../models';
@@ -16,34 +16,34 @@ const error = m.prop(''),
     },
     contributionValue = m.prop(`${noReward.minimum_value},00`),
     selectedReward = m.prop(noReward),
-    vm = postgrest.filtersVM({
+    vm = catarse.filtersVM({
         project_id: 'eq'
     });
 
 const rewardsLoader = (projectId) => {
     vm.project_id(projectId);
 
-    return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
+    return catarse.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
 };
 
 const rewardLoader = (rewardId) => {
-    const rewardvm = postgrest.filtersVM({
+    const rewardvm = catarse.filtersVM({
         id: 'eq'
     });
     rewardvm.id(rewardId);
 
-    return postgrest.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
+    return catarse.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
 };
 
 const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
 
 const getFees = (reward) => {
-    const feesFilter = postgrest.filtersVM({
+    const feesFilter = catarse.filtersVM({
         reward_id: 'eq'
     });
 
     feesFilter.reward_id(reward.id);
-    const feesLoader = postgrest.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
+    const feesLoader = catarse.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
     return feesLoader.load();
 };
 
@@ -77,7 +77,7 @@ const selectReward = reward => () => {
 
 const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
 
-const statesLoader = postgrest.loader(models.state.getPageOptions());
+const statesLoader = catarse.loader(models.state.getPageOptions());
 const getStates = () => {
     statesLoader.load().then(states);
     return states;

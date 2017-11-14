@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
@@ -27,7 +27,7 @@ const projectInsights = {
             contributionsPerDay = m.prop([]),
             visitorsTotal = m.prop(0),
             visitorsPerDay = m.prop([]),
-            loader = postgrest.loaderWithToken;
+            loader = catarse.loaderWithToken;
 
         if (h.paramByName('online_success') === 'true') {
             displayModal.toggle();

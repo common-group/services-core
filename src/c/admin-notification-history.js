@@ -11,13 +11,14 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
+import {catarse} from '../api';
 
 const adminNotificationHistory = {
     controller(args) {
         const notifications = m.prop([]),
             getNotifications = (user) => {
                 const notification = models.notification;
-                notification.getPageWithToken(postgrest.filtersVM({
+                notification.getPageWithToken(catarse.filtersVM({
                     user_id: 'eq',
                     sent_at: 'is.null'
                 })

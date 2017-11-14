@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 import rewardVM from './reward-vm';
@@ -10,7 +10,7 @@ import userVM from './user-vm';
 const currentProject = m.prop(),
     userDetails = m.prop(),
     projectContributions = m.prop([]),
-    vm = postgrest.filtersVM({ project_id: 'eq' }),
+    vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
 
 const setProject = project_user_id => (data) => {
@@ -26,7 +26,7 @@ const setProject = project_user_id => (data) => {
 const init = (project_id, project_user_id) => {
     vm.project_id(project_id);
 
-    const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
+    const lProject = catarse.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
 
     fetchParallelData(project_id, project_user_id);
 
@@ -94,7 +94,7 @@ const setProjectPageTitle = () => {
 const fetchProject = (projectId, handlePromise = true, customProp = currentProject) => {
     idVM.id(projectId);
 
-    const lproject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
+    const lproject = catarse.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
 
     return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
 };

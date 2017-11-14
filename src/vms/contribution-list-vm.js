@@ -1,4 +1,5 @@
 import m from 'mithril';
+import {catarse} from '../api';
 import models from '../models';
 
-export default postgrest.paginationVM(models.contributionDetail, 'id.desc', { Prefer: 'count=exact' });
+export default catarse.paginationVM(models.contributionDetail, 'id.desc', { Prefer: 'count=exact' });

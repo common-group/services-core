@@ -9,7 +9,7 @@
  *  }
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import models from '../models';
 import h from '../h';
 import popNotification from './pop-notification';
@@ -18,7 +18,7 @@ const projectReminder = {
     controller(args) {
         let l = m.prop(false);
         const project = args.project,
-            filterVM = postgrest.filtersVM({
+            filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             storeReminderName = 'reminder',
@@ -31,7 +31,7 @@ const projectReminder = {
                 const loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
                     project_id: project().project_id
                 });
-                l = postgrest.loaderWithToken(loaderOpts);
+                l = catarse.loaderWithToken(loaderOpts);
 
                 l.load().then(() => {
                     project().in_reminder = !project().in_reminder;

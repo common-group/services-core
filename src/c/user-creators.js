@@ -10,7 +10,7 @@
  * }
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -20,7 +20,7 @@ import loadMoreBtn from '../c/load-more-btn';
 const userCreators = {
     controller() {
         models.creatorSuggestion.pageSize(9);
-        const creatorsListVM = postgrest.paginationVM(
+        const creatorsListVM = catarse.paginationVM(
             models.creatorSuggestion,
             'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
                 Prefer: 'count=exact'
@@ -28,7 +28,7 @@ const userCreators = {
         const allLoading = m.prop(false);
         const followAll = () => {
             allLoading(true);
-            const l = postgrest.loaderWithToken(models.followAllCreators.postOptions({}));
+            const l = catarse.loaderWithToken(models.followAllCreators.postOptions({}));
 
             l.load().then(() => {
                 creatorsListVM.firstPage();

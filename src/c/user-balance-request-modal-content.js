@@ -37,11 +37,11 @@ const userBalanceRequestModelContent = {
 
         const bankInput = m.prop(''),
               bankCode = m.prop('-1'),
-              vm = postgrest.filtersVM({ user_id: 'eq' }),
+              vm = catarse.filtersVM({ user_id: 'eq' }),
               balance = args.balance,
               loaderOpts = models.balanceTransfer.postOptions({
                   user_id: balance.user_id }),
-              requestLoader = postgrest.loaderWithToken(loaderOpts),
+              requestLoader = catarse.loaderWithToken(loaderOpts),
               loading = m.prop(false),
               displayDone = h.toggleProp(false, true),
               displayConfirmation = h.toggleProp(false, true),

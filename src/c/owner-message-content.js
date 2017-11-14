@@ -4,7 +4,7 @@
  *
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -42,7 +42,7 @@ const ownerMessageContent = {
                 to_user_id: userDetails().id
             });
 
-            l = postgrest.loaderWithToken(loaderOpts);
+            l = catarse.loaderWithToken(loaderOpts);
 
             l.load().then(sendSuccess(true));
 

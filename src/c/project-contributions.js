@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import models from '../models';
 import h from '../h';
 import projectDataTable from './project-data-table';
@@ -11,11 +11,11 @@ import userVM from '../vms/user-vm';
 const projectContributions = {
     controller(args) {
         const contributionsPerDay = m.prop([]),
-            listVM = postgrest.paginationVM(models.contributor),
-            filterStats = postgrest.filtersVM({
+            listVM = catarse.paginationVM(models.contributor),
+            filterStats = catarse.filtersVM({
                 project_id: 'eq'
             }),
-            filterVM = postgrest.filtersVM({
+            filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             groupedCollection = (collection = []) => {
@@ -44,7 +44,7 @@ const projectContributions = {
             listVM.firstPage(filterVM.parameters());
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
-        const lContributionsPerDay = postgrest.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
+        const lContributionsPerDay = catarse.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
 
         const contributionsPerLocationTable = [
@@ -64,10 +64,10 @@ const projectContributions = {
             return contributionsPerLocationTable.push(column);
         }) : [];
 
-        const lContributionsPerLocation = postgrest.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
+        const lContributionsPerLocation = catarse.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
         lContributionsPerLocation.load().then(buildPerLocationTable);
 
-        const lContributionsStats = postgrest.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
+        const lContributionsStats = catarse.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
         lContributionsStats.load().then(data => contributionsStats(_.first(data)));
 
         return {

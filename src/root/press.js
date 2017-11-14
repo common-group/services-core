@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
@@ -9,7 +9,7 @@ const I18nScope = _.partial(h.i18nScope, 'pages.press');
 const press = {
     controller() {
         const stats = m.prop([]);
-        const loader = postgrest.loader;
+        const loader = catarse.loader;
         const statsLoader = loader(models.statistic.getRowOptions());
 
         statsLoader.load().then(stats);

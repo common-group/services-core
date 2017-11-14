@@ -7,7 +7,7 @@
  * m.component(c.ProjectSuccessfulOnboard, {project: project})
  **/
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
@@ -20,11 +20,11 @@ const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
 
 const projectSuccessfulOnboard = {
     controller(args) {
-        const projectIdVM = postgrest.filtersVM({ project_id: 'eq' }),
+        const projectIdVM = catarse.filtersVM({ project_id: 'eq' }),
               projectAccounts = m.prop([]),
               projectTransfers = m.prop([]),
               showTaxModal = h.toggleProp(false, true),
-              loader = postgrest.loaderWithToken,
+              loader = catarse.loaderWithToken,
               listenToReplace = (element, isInitialized, context) => {
                   if (isInitialized) return;
 

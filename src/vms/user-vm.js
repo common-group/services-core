@@ -1,26 +1,26 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 import projectFilters from './project-filters-vm';
 
 const idVM = h.idVM,
     currentUser = m.prop({}),
-    createdVM = postgrest.filtersVM({ project_user_id: 'eq' });
+    createdVM = catarse.filtersVM({ project_user_id: 'eq' });
 
 const getUserCreatedProjects = (user_id, pageSize = 3) => {
     createdVM.project_user_id(user_id).order({ project_id: 'desc' });
 
     models.project.pageSize(pageSize);
 
-    const lUserCreated = postgrest.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
+    const lUserCreated = catarse.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
 
     return lUserCreated.load();
 };
 
 const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
-    const contextVM = postgrest.filtersVM({
+    const contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
 
@@ -28,37 +28,37 @@ const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
 
     models.contributor.pageSize(pageSize);
 
-    const lUserContributed = postgrest.loaderWithToken(
+    const lUserContributed = catarse.loaderWithToken(
         models.contributor.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
 
 const getUserBalance = (user_id) => {
-    const contextVM = postgrest.filtersVM({
+    const contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
     contextVM.user_id(user_id);
 
-    const loader = postgrest.loaderWithToken(
+    const loader = catarse.loaderWithToken(
         models.balance.getPageOptions(contextVM.parameters()));
     return loader.load();
 };
 
 const getUserBankAccount = (user_id) => {
-    const contextVM = postgrest.filtersVM({
+    const contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
 
     contextVM.user_id(user_id);
 
-    const lUserAccount = postgrest.loaderWithToken(
+    const lUserAccount = catarse.loaderWithToken(
         models.bankAccount.getPageOptions(contextVM.parameters()));
     return lUserAccount.load();
 };
 
 const getUserProjectReminders = (user_id) => {
-    const contextVM = postgrest.filtersVM({
+    const contextVM = catarse.filtersVM({
         user_id: 'eq',
         without_notification: 'eq'
     });
@@ -67,21 +67,21 @@ const getUserProjectReminders = (user_id) => {
 
     models.projectReminder;
 
-    const lUserReminders = postgrest.loaderWithToken(
+    const lUserReminders = catarse.loaderWithToken(
         models.projectReminder.getPageOptions(contextVM.parameters()));
 
     return lUserReminders.load();
 };
 
 const getMailMarketingLists = () => {
-    const l = postgrest.loaderWithToken(
+    const l = catarse.loaderWithToken(
         models.mailMarketingList.getPageOptions({order: 'id.asc' }));
 
     return l.load();
 };
 
 const getUserCreditCards = (user_id) => {
-    const contextVM = postgrest.filtersVM({
+    const contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
 
@@ -89,7 +89,7 @@ const getUserCreditCards = (user_id) => {
 
     models.userCreditCard.pageSize(false);
 
-    const lUserCards = postgrest.loaderWithToken(
+    const lUserCards = catarse.loaderWithToken(
         models.userCreditCard.getPageOptions(contextVM.parameters()));
 
     return lUserCards.load();
@@ -108,7 +108,7 @@ const toggleAnonymous = (projectId, contribution) => m.request({
 });
 
 const getUserContributedProjects = (user_id, pageSize = 3) => {
-    const contextVM = postgrest.filtersVM({
+    const contextVM = catarse.filtersVM({
         user_id: 'eq',
         state: 'in'
     });
@@ -119,7 +119,7 @@ const getUserContributedProjects = (user_id, pageSize = 3) => {
 
     models.userContribution.pageSize(pageSize);
 
-    const lUserContributed = postgrest.loaderWithToken(
+    const lUserContributed = catarse.loaderWithToken(
         models.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
@@ -128,7 +128,7 @@ const getUserContributedProjects = (user_id, pageSize = 3) => {
 const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     idVM.id(user_id);
 
-    const lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+    const lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
     return !handlePromise ? lUser.load() : lUser.load().then(_.compose(customProp, _.first));
 };
@@ -176,7 +176,7 @@ const getUserRecommendedProjects = (contribution) => {
 
     const loadPopular = () => {
         const filters = projectFilters().filters;
-        const popular = postgrest.loaderWithToken(
+        const popular = catarse.loaderWithToken(
             models.project.getPageOptions(
                 _.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())
             )
@@ -188,9 +188,9 @@ const getUserRecommendedProjects = (contribution) => {
     };
 
     const pushProject = ({ project_id }) => {
-        const project = postgrest.loaderWithToken(
+        const project = catarse.loaderWithToken(
             models.project.getPageOptions(
-                postgrest.filtersVM({ project_id: 'eq' })
+                catarse.filtersVM({ project_id: 'eq' })
                     .project_id(project_id)
                     .parameters()
             )
@@ -202,9 +202,9 @@ const getUserRecommendedProjects = (contribution) => {
         });
     };
 
-    const projects = postgrest.loaderWithToken(
+    const projects = catarse.loaderWithToken(
         models.recommendedProjects.getPageOptions(
-            postgrest.filtersVM({ user_id: 'eq' })
+            catarse.filtersVM({ user_id: 'eq' })
                 .user_id(user_id)
                 .parameters()
         )

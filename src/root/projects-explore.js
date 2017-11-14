@@ -7,7 +7,7 @@
  * <div data-mithril="ProjectsExplore">
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
@@ -23,7 +23,7 @@ const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
     controller(args) {
-        const filters = postgrest.filtersVM,
+        const filters = catarse.filtersVM,
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
             defaultFilter = h.paramByName('filter') || 'all',
@@ -99,7 +99,7 @@ const projectsExplore = {
                     search = h.paramByName('pg_search'),
 
                     searchProjects = () => {
-                        const l = postgrest.loaderWithToken(models.projectSearch.postOptions({ query: search })),
+                        const l = catarse.loaderWithToken(models.projectSearch.postOptions({ query: search })),
                             page = { // We build an object with the same interface as paginationVM
                                 collection: m.prop([]),
                                 isLoading: l,
@@ -111,7 +111,7 @@ const projectsExplore = {
                     },
 
                     loadProjects = () => {
-                        const pages = postgrest.paginationVM(models.project);
+                        const pages = catarse.paginationVM(models.project);
                         const parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                             open_for_contributions: 'desc',
                             state_order: 'asc',
@@ -124,7 +124,7 @@ const projectsExplore = {
                     },
 
                     loadFinishedProjects = () => {
-                        const pages = postgrest.paginationVM(models.finishedProject),
+                        const pages = catarse.paginationVM(models.finishedProject),
                             parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                                 state_order: 'asc',
                                 state: 'desc',

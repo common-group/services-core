@@ -1,7 +1,7 @@
 import m from 'mithril';
 import h from '../h';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import models from '../models';
 import popNotification from './pop-notification';
 import projectGoogleContactImport from './project-google-contact-import';
@@ -26,7 +26,7 @@ const projectEmailInvite = {
 
                     if (!_.isEmpty(emailList)) {
                         showSuccess(false);
-                        postgrest.loaderWithToken(
+                        catarse.loaderWithToken(
                               models.inviteProjectEmail.postOptions({
                                   data: {
                                       project_id: project.project_id,

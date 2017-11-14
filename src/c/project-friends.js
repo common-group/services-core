@@ -2,16 +2,16 @@ import m from 'mithril';
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 
 const projectFriends = {
     controller(args) {
         const project = args.project,
             friendsSample = m.prop([]),
-            listVM = postgrest.paginationVM(models.contributor, 'user_id.desc', {
+            listVM = catarse.paginationVM(models.contributor, 'user_id.desc', {
                 Prefer: 'count=exact'
             }),
-            filterVM = postgrest.filtersVM({
+            filterVM = catarse.filtersVM({
                 project_id: 'eq',
                 is_follow: 'eq'
             }).project_id(project.project_id).is_follow(true);

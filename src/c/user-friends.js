@@ -10,7 +10,7 @@
  * }
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -21,15 +21,15 @@ const userFriends = {
     controller(args) {
         models.userFriend.pageSize(9);
 
-        const userFriendVM = postgrest.filtersVM({ user_id: 'eq' }),
+        const userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
             user = args.user,
-            friendListVM = postgrest.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
+            friendListVM = catarse.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
                 Prefer: 'count=exact'
             }),
             allLoading = m.prop(false),
             followAll = () => {
                 allLoading(true);
-                const l = postgrest.loaderWithToken(models.followAllFriends.postOptions({}));
+                const l = catarse.loaderWithToken(models.followAllFriends.postOptions({}));
 
                 l.load().then(() => {
                     friendListVM.firstPage(userFriendVM.parameters());

@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 import landingSignup from '../c/landing-signup';
@@ -20,16 +20,16 @@ const Flex = {
                     h.discuss('https://catarse.me/flex', 'flex_page');
                 }
             },
-            flexVM = postgrest.filtersVM({
+            flexVM = catarse.filtersVM({
                 mode: 'eq',
                 state: 'eq',
                 recommended: 'eq'
             }),
-            statsLoader = postgrest.loaderWithToken(models.statistic.getRowOptions());
+            statsLoader = catarse.loaderWithToken(models.statistic.getRowOptions());
 
         flexVM.mode('flex').state('online').recommended(true);
 
-        const projectsLoader = postgrest.loader(models.project.getPageOptions(flexVM.parameters()));
+        const projectsLoader = catarse.loader(models.project.getPageOptions(flexVM.parameters()));
 
         statsLoader.load().then(stats);
 

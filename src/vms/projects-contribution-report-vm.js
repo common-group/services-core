@@ -1,10 +1,10 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
 import models from '../models';
 
-const vm = postgrest.filtersVM({
+const vm = catarse.filtersVM({
         full_text_index: '@@',
         state: 'in',
         reward_id: 'eq',
@@ -26,7 +26,7 @@ vm.full_text_index.toFilter = () => {
 
 vm.getAllContributions = (filterVM) => {
     models.projectContribution.pageSize(false);
-    const allContributions = postgrest.loaderWithToken(
+    const allContributions = catarse.loaderWithToken(
       models.projectContribution.getPageOptions(filterVM.parameters())).load();
     models.projectContribution.pageSize(9);
     return allContributions;
@@ -40,7 +40,7 @@ vm.updateStatus = data => m.request({
 });
 
 vm.withNullParameters = () => {
-    const withNullVm = postgrest.filtersVM({
+    const withNullVm = catarse.filtersVM({
         full_text_index: '@@',
         state: 'in',
         reward_id: 'is',

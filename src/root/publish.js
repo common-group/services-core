@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import I18n from 'i18n-js';
 import models from '../models';
 import h from '../h';
@@ -12,12 +12,12 @@ const I18nScope = _.partial(h.i18nScope, 'projects.publish');
 
 const publish = {
     controller(args) {
-        const filtersVM = postgrest.filtersVM({
+        const filtersVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             projectAccount = m.prop([]),
             projectDetails = m.prop([]),
-            loader = postgrest.loaderWithToken;
+            loader = catarse.loaderWithToken;
 
         filtersVM.project_id(args.root.getAttribute('data-id'));
 

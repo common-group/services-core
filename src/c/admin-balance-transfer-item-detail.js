@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import h from '../h';
 import userVM from '../vms/user-vm';
 import models from '../models';

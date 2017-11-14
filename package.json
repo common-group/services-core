@@ -58,11 +58,10 @@
   },
   "dependencies": {
     "chart.js": "1.0.2",
-    "diacritics": "^1.2.3",
     "i18n-js": "^1.0.0",
     "jquery": "^3.1.1",
     "mithril": "^0.2.4",
-    "mithril-postgrest": "^2.0.0",
+    "mithril-postgrest": "^3.0.0",
     "moment": "^2.13.0",
     "moment-timezone": "^0.5.4",
     "underscore": "^1.8.3"

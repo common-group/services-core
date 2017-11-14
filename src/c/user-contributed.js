@@ -1,6 +1,6 @@
 import m from 'mithril';
 import models from '../models';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api'
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -12,10 +12,10 @@ const userContributed = {
     controller(args) {
         const contributedProjects = m.prop(),
             user_id = args.userId,
-            pages = postgrest.paginationVM(models.project),
+            pages = catarse.paginationVM(models.project),
             error = m.prop(false),
             loader = m.prop(true),
-            contextVM = postgrest.filtersVM({
+            contextVM = catarse.filtersVM({
                 project_id: 'in'
             });
 

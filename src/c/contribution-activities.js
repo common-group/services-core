@@ -12,7 +12,7 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 
@@ -23,7 +23,7 @@ const contributionActivities = {
             resource = m.prop(),
             collectionIndex = m.prop(0),
             collectionSize = m.prop(),
-            collectionL = postgrest.loader(
+            collectionL = catarse.loader(
                   models.contributionActivity.getPageOptions()),
             nextResource = () => {
                 if ((collectionIndex() + 1) > collectionSize()) {

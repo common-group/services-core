@@ -1,7 +1,8 @@
 import m from 'mithril';
 import replaceDiacritics from 'replaceDiacritics';
+import {catarse} from '../api';
 
-const vm = postgrest.filtersVM({
+const vm = catarse.filtersVM({
         full_text_index: '@@',
         deactivated_at: 'is.null'
     }),

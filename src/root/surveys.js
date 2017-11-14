@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import moment from 'moment';
 import I18n from 'i18n-js';
@@ -14,8 +14,8 @@ const surveyScope = _.partial(h.i18nScope, 'projects.dashboard_surveys');
 
 const surveys = {
     controller(args) {
-        const loader = postgrest.loaderWithToken,
-            filterVM = postgrest.filtersVM({
+        const loader = catarse.loaderWithToken,
+            filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             {
@@ -45,10 +45,10 @@ const surveys = {
                     sentCount: '',
                     answeredCount: ''
                 });
-                const l = postgrest.loaderWithToken(models.sentSurveyCount.postOptions({
+                const l = catarse.loaderWithToken(models.sentSurveyCount.postOptions({
                     reward_id: reward.id
                 }));
-                const l2 = postgrest.loaderWithToken(models.answeredSurveyCount.postOptions({
+                const l2 = catarse.loaderWithToken(models.answeredSurveyCount.postOptions({
                     reward_id: reward.id
                 }));
 

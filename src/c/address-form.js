@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
@@ -14,7 +14,7 @@ const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 const addressForm = {
     controller(args) {
         const parsedErrors = args.parsedErrors;
-        const statesLoader = postgrest.loader(models.state.getPageOptions()),
+        const statesLoader = catarse.loader(models.state.getPageOptions()),
             data = args.fields().address(),
             vm = addressVM({
                 data

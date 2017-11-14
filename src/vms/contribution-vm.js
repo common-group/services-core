@@ -1,4 +1,4 @@
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import m from 'mithril';
 import moment from 'moment';
 import _ from 'underscore';
@@ -7,7 +7,7 @@ import models from '../models';
 const currentContribution = m.prop({});
 
 const getUserProjectContributions = (userId, projectId, states) => {
-    const vm = postgrest.filtersVM({
+    const vm = catarse.filtersVM({
         user_id: 'eq',
         project_id: 'eq',
         state: 'in'
@@ -17,7 +17,7 @@ const getUserProjectContributions = (userId, projectId, states) => {
     vm.project_id(projectId);
     vm.state(states);
 
-    const lProjectContributions = postgrest.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
+    const lProjectContributions = catarse.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
 
     return lProjectContributions.load();
 };

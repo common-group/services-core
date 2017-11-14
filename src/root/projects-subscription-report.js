@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import models from '../models';
 import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
@@ -13,7 +13,7 @@ const projectSubscriptionReport = {
 
         filterVM.project_id(args.project_id);
 
-        const lProject = postgrest.loaderWithToken(models.projectDetail.getPageOptions({
+        const lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
             project_id: `eq.${filterVM.project_id()}`
         }));
 

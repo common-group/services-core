@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import I18n from 'i18n-js';
 import models from '../models';
 import h from '../h';
@@ -38,13 +38,13 @@ const surveysShow = {
             sendMessage = () => {
                 displayModal(true);
             },
-            vm = postgrest.filtersVM({
+            vm = catarse.filtersVM({
                 contribution_id: 'eq'
             }),
             surveyLoader = () => {
                 vm.contribution_id(contributionId);
 
-                return postgrest.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+                return catarse.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
             },
             preview = () => {
                 if (survey().confirm_address) {
@@ -104,7 +104,7 @@ const surveysShow = {
 
                     idVM.id(h.getUserID());
 
-                    const lUser = postgrest.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+                    const lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
                     lUser.load().then((userData) => {
                         user(_.first(userData));
