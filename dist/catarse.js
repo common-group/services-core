@@ -1,4 +1,4 @@
-var c = (function (m,I18n$1,_$1,moment,$,postgrest$1,CatarseAnalytics$1,replaceDiacritics,Chart,select) {
+var c = (function (m,I18n$1,_$1,moment,$,Postgrest,CatarseAnalytics$1,replaceDiacritics$1,Chart,select) {
 'use strict';
 
 m = 'default' in m ? m['default'] : m;
@@ -6,72 +6,80 @@ I18n$1 = 'default' in I18n$1 ? I18n$1['default'] : I18n$1;
 _$1 = 'default' in _$1 ? _$1['default'] : _$1;
 moment = 'default' in moment ? moment['default'] : moment;
 $ = 'default' in $ ? $['default'] : $;
-postgrest$1 = 'default' in postgrest$1 ? postgrest$1['default'] : postgrest$1;
+Postgrest = 'default' in Postgrest ? Postgrest['default'] : Postgrest;
 CatarseAnalytics$1 = 'default' in CatarseAnalytics$1 ? CatarseAnalytics$1['default'] : CatarseAnalytics$1;
-replaceDiacritics = 'default' in replaceDiacritics ? replaceDiacritics['default'] : replaceDiacritics;
+replaceDiacritics$1 = 'default' in replaceDiacritics$1 ? replaceDiacritics$1['default'] : replaceDiacritics$1;
 Chart = 'default' in Chart ? Chart['default'] : Chart;
 select = 'default' in select ? select['default'] : select;
 
+var catarse$1 = new Postgrest();
+var catarseApiMeta = document.querySelector('[name="api-host"]');
+catarse$1.init(catarseApiMeta.getAttribute('content'), { method: 'GET', url: '/api_token' });
+
+var commonPayment = new Postgrest();
+var commonPaymentApiMeta = document.querySelector('[name="common-payment-api-host"]');
+commonPayment.init(commonPaymentApiMeta.getAttribute('content'), { method: 'GET', url: 'api_token/common' });
+
 var models = {
-    country: postgrest$1.model('countries'),
-    state: postgrest$1.model('states'),
-    contributionDetail: postgrest$1.model('contribution_details'),
-    contributionActivity: postgrest$1.model('contribution_activities'),
-    projectDetail: postgrest$1.model('project_details'),
-    userDetail: postgrest$1.model('user_details'),
-    balance: postgrest$1.model('balances'),
-    balanceTransaction: postgrest$1.model('balance_transactions'),
-    balanceTransfer: postgrest$1.model('balance_transfers'),
-    user: postgrest$1.model('users'),
-    survey: postgrest$1.model('surveys'),
-    userCreditCard: postgrest$1.model('user_credit_cards'),
-    bankAccount: postgrest$1.model('bank_accounts'),
-    bank: postgrest$1.model('banks'),
-    goalDetail: postgrest$1.model('goals'),
-    rewardDetail: postgrest$1.model('reward_details'),
-    projectReminder: postgrest$1.model('project_reminders'),
-    projectReport: postgrest$1.model('project_reports'),
-    contributions: postgrest$1.model('contributions'),
-    directMessage: postgrest$1.model('direct_messages'),
-    teamTotal: postgrest$1.model('team_totals'),
-    recommendedProjects: postgrest$1.model('recommended_projects'),
-    projectAccount: postgrest$1.model('project_accounts'),
-    projectAccountError: postgrest$1.model('project_account_errors'),
-    projectContribution: postgrest$1.model('project_contributions'),
-    projectContributiorsStat: postgrest$1.model('project_stat_contributors'),
-    projectPostDetail: postgrest$1.model('project_posts_details'),
-    projectContributionsPerDay: postgrest$1.model('project_contributions_per_day'),
-    projectContributionsPerLocation: postgrest$1.model('project_contributions_per_location'),
-    projectContributionsPerRef: postgrest$1.model('project_contributions_per_ref'),
-    projectVisitorsPerDay: postgrest$1.model('project_visitors_per_day'),
-    projectTransfer: postgrest$1.model('project_transfers'),
-    project: postgrest$1.model('projects'),
-    adminProject: postgrest$1.model('admin_projects'),
-    projectSearch: postgrest$1.model('rpc/project_search'),
-    publicTags: postgrest$1.model('public_tags'),
-    category: postgrest$1.model('categories'),
-    categoryTotals: postgrest$1.model('category_totals'),
-    categoryFollower: postgrest$1.model('category_followers'),
-    teamMember: postgrest$1.model('team_members'),
-    notification: postgrest$1.model('notifications'),
-    statistic: postgrest$1.model('statistics'),
-    successfulProject: postgrest$1.model('successful_projects'),
-    finishedProject: postgrest$1.model('finished_projects'),
-    userFriend: postgrest$1.model('user_friends'),
-    userFollow: postgrest$1.model('user_follows'),
-    followAllCreators: postgrest$1.model('rpc/follow_all_creators'),
-    sentSurveyCount: postgrest$1.model('rpc/sent_survey_count'),
-    answeredSurveyCount: postgrest$1.model('rpc/answered_survey_count'),
-    followAllFriends: postgrest$1.model('rpc/follow_all_friends'),
-    contributor: postgrest$1.model('contributors'),
-    userFollower: postgrest$1.model('user_followers'),
-    creatorSuggestion: postgrest$1.model('creator_suggestions'),
-    userContribution: postgrest$1.model('user_contributions'),
-    shippingFee: postgrest$1.model('shipping_fees'),
-    deleteProject: postgrest$1.model('rpc/delete_project'),
-    cancelProject: postgrest$1.model('rpc/cancel_project'),
-    city: postgrest$1.model('cities'),
-    mailMarketingList: postgrest$1.model('mail_marketing_lists')
+    country: catarse$1.model('countries'),
+    state: catarse$1.model('states'),
+    contributionDetail: catarse$1.model('contribution_details'),
+    contributionActivity: catarse$1.model('contribution_activities'),
+    projectDetail: catarse$1.model('project_details'),
+    userDetail: catarse$1.model('user_details'),
+    balance: catarse$1.model('balances'),
+    balanceTransaction: catarse$1.model('balance_transactions'),
+    balanceTransfer: catarse$1.model('balance_transfers'),
+    user: catarse$1.model('users'),
+    survey: catarse$1.model('surveys'),
+    userCreditCard: catarse$1.model('user_credit_cards'),
+    bankAccount: catarse$1.model('bank_accounts'),
+    bank: catarse$1.model('banks'),
+    goalDetail: catarse$1.model('goals'),
+    rewardDetail: catarse$1.model('reward_details'),
+    projectReminder: catarse$1.model('project_reminders'),
+    projectReport: catarse$1.model('project_reports'),
+    contributions: catarse$1.model('contributions'),
+    directMessage: catarse$1.model('direct_messages'),
+    teamTotal: catarse$1.model('team_totals'),
+    recommendedProjects: catarse$1.model('recommended_projects'),
+    projectAccount: catarse$1.model('project_accounts'),
+    projectAccountError: catarse$1.model('project_account_errors'),
+    projectContribution: catarse$1.model('project_contributions'),
+    projectContributiorsStat: catarse$1.model('project_stat_contributors'),
+    projectPostDetail: catarse$1.model('project_posts_details'),
+    projectContributionsPerDay: catarse$1.model('project_contributions_per_day'),
+    projectContributionsPerLocation: catarse$1.model('project_contributions_per_location'),
+    projectContributionsPerRef: catarse$1.model('project_contributions_per_ref'),
+    projectVisitorsPerDay: catarse$1.model('project_visitors_per_day'),
+    projectTransfer: catarse$1.model('project_transfers'),
+    project: catarse$1.model('projects'),
+    adminProject: catarse$1.model('admin_projects'),
+    projectSearch: catarse$1.model('rpc/project_search'),
+    publicTags: catarse$1.model('public_tags'),
+    category: catarse$1.model('categories'),
+    categoryTotals: catarse$1.model('category_totals'),
+    categoryFollower: catarse$1.model('category_followers'),
+    teamMember: catarse$1.model('team_members'),
+    notification: catarse$1.model('notifications'),
+    statistic: catarse$1.model('statistics'),
+    successfulProject: catarse$1.model('successful_projects'),
+    finishedProject: catarse$1.model('finished_projects'),
+    userFriend: catarse$1.model('user_friends'),
+    userFollow: catarse$1.model('user_follows'),
+    followAllCreators: catarse$1.model('rpc/follow_all_creators'),
+    sentSurveyCount: catarse$1.model('rpc/sent_survey_count'),
+    answeredSurveyCount: catarse$1.model('rpc/answered_survey_count'),
+    followAllFriends: catarse$1.model('rpc/follow_all_friends'),
+    contributor: catarse$1.model('contributors'),
+    userFollower: catarse$1.model('user_followers'),
+    creatorSuggestion: catarse$1.model('creator_suggestions'),
+    userContribution: catarse$1.model('user_contributions'),
+    shippingFee: catarse$1.model('shipping_fees'),
+    deleteProject: catarse$1.model('rpc/delete_project'),
+    cancelProject: catarse$1.model('rpc/cancel_project'),
+    city: catarse$1.model('cities'),
+    mailMarketingList: catarse$1.model('mail_marketing_lists')
 };
 
 models.teamMember.pageSize(40);
@@ -97,7 +105,7 @@ models.balanceTransfer.pageSize(9);
 var currentContribution = m.prop({});
 
 var getUserProjectContributions = function getUserProjectContributions(userId, projectId, states) {
-    var vm = postgrest$1.filtersVM({
+    var vm = catarse$1.filtersVM({
         user_id: 'eq',
         project_id: 'eq',
         state: 'in'
@@ -107,7 +115,7 @@ var getUserProjectContributions = function getUserProjectContributions(userId, p
     vm.project_id(projectId);
     vm.state(states);
 
-    var lProjectContributions = postgrest$1.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
+    var lProjectContributions = catarse$1.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
 
     return lProjectContributions.load();
 };
@@ -567,7 +575,7 @@ var toggleProp = function toggleProp(defaultState, alternateState) {
 
     return p;
 };
-var idVM = postgrest$1.filtersVM({
+var idVM = catarse$1.filtersVM({
     id: 'eq'
 });
 var getCurrentProject = function getCurrentProject() {
@@ -1305,9 +1313,9 @@ var h = {
     userSignedIn: userSignedIn
 };
 
-var userListVM = postgrest.paginationVM(models.user, 'id.desc', { Prefer: 'count=exact' });
+var userListVM = catarse$1.paginationVM(models.user, 'id.desc', { Prefer: 'count=exact' });
 
-var vm = postgrest.filtersVM({
+var vm = catarse$1.filtersVM({
     full_text_index: '@@',
     deactivated_at: 'is.null'
 });
@@ -1327,7 +1335,7 @@ vm.deactivated_at.toFilter = function () {
 
 vm.full_text_index.toFilter = function () {
     var filter = paramToString(vm.full_text_index());
-    return filter && replaceDiacritics(filter) || undefined;
+    return filter && replaceDiacritics$1(filter) || undefined;
 };
 
 var filterMain = {
@@ -1437,7 +1445,7 @@ var adminUserItem = {
 };
 
 var projectFiltersVM = function projectFiltersVM() {
-    var filtersVM = postgrest$1.filtersVM,
+    var filtersVM = catarse$1.filtersVM,
         all = filtersVM({
         state: 'eq'
     }).state('online'),
@@ -1558,7 +1566,7 @@ var projectFiltersVM = function projectFiltersVM() {
 
 var idVM$1 = h.idVM;
 var currentUser = m.prop({});
-var createdVM = postgrest$1.filtersVM({ project_user_id: 'eq' });
+var createdVM = catarse$1.filtersVM({ project_user_id: 'eq' });
 
 var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
@@ -1567,7 +1575,7 @@ var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
 
     models.project.pageSize(pageSize);
 
-    var lUserCreated = postgrest$1.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
+    var lUserCreated = catarse$1.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
 
     return lUserCreated.load();
 };
@@ -1575,7 +1583,7 @@ var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
 var getPublicUserContributedProjects = function getPublicUserContributedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
 
-    var contextVM = postgrest$1.filtersVM({
+    var contextVM = catarse$1.filtersVM({
         user_id: 'eq'
     });
 
@@ -1583,34 +1591,34 @@ var getPublicUserContributedProjects = function getPublicUserContributedProjects
 
     models.contributor.pageSize(pageSize);
 
-    var lUserContributed = postgrest$1.loaderWithToken(models.contributor.getPageOptions(contextVM.parameters()));
+    var lUserContributed = catarse$1.loaderWithToken(models.contributor.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
 
 var getUserBalance = function getUserBalance(user_id) {
-    var contextVM = postgrest$1.filtersVM({
+    var contextVM = catarse$1.filtersVM({
         user_id: 'eq'
     });
     contextVM.user_id(user_id);
 
-    var loader = postgrest$1.loaderWithToken(models.balance.getPageOptions(contextVM.parameters()));
+    var loader = catarse$1.loaderWithToken(models.balance.getPageOptions(contextVM.parameters()));
     return loader.load();
 };
 
 var getUserBankAccount = function getUserBankAccount(user_id) {
-    var contextVM = postgrest$1.filtersVM({
+    var contextVM = catarse$1.filtersVM({
         user_id: 'eq'
     });
 
     contextVM.user_id(user_id);
 
-    var lUserAccount = postgrest$1.loaderWithToken(models.bankAccount.getPageOptions(contextVM.parameters()));
+    var lUserAccount = catarse$1.loaderWithToken(models.bankAccount.getPageOptions(contextVM.parameters()));
     return lUserAccount.load();
 };
 
 var getUserProjectReminders = function getUserProjectReminders(user_id) {
-    var contextVM = postgrest$1.filtersVM({
+    var contextVM = catarse$1.filtersVM({
         user_id: 'eq',
         without_notification: 'eq'
     });
@@ -1619,19 +1627,19 @@ var getUserProjectReminders = function getUserProjectReminders(user_id) {
 
     models.projectReminder;
 
-    var lUserReminders = postgrest$1.loaderWithToken(models.projectReminder.getPageOptions(contextVM.parameters()));
+    var lUserReminders = catarse$1.loaderWithToken(models.projectReminder.getPageOptions(contextVM.parameters()));
 
     return lUserReminders.load();
 };
 
 var getMailMarketingLists = function getMailMarketingLists() {
-    var l = postgrest$1.loaderWithToken(models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
+    var l = catarse$1.loaderWithToken(models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
 
     return l.load();
 };
 
 var getUserCreditCards = function getUserCreditCards(user_id) {
-    var contextVM = postgrest$1.filtersVM({
+    var contextVM = catarse$1.filtersVM({
         user_id: 'eq'
     });
 
@@ -1639,7 +1647,7 @@ var getUserCreditCards = function getUserCreditCards(user_id) {
 
     models.userCreditCard.pageSize(false);
 
-    var lUserCards = postgrest$1.loaderWithToken(models.userCreditCard.getPageOptions(contextVM.parameters()));
+    var lUserCards = catarse$1.loaderWithToken(models.userCreditCard.getPageOptions(contextVM.parameters()));
 
     return lUserCards.load();
 };
@@ -1663,7 +1671,7 @@ var toggleAnonymous = function toggleAnonymous(projectId, contribution) {
 var getUserContributedProjects = function getUserContributedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
 
-    var contextVM = postgrest$1.filtersVM({
+    var contextVM = catarse$1.filtersVM({
         user_id: 'eq',
         state: 'in'
     });
@@ -1674,7 +1682,7 @@ var getUserContributedProjects = function getUserContributedProjects(user_id) {
 
     models.userContribution.pageSize(pageSize);
 
-    var lUserContributed = postgrest$1.loaderWithToken(models.userContribution.getPageOptions(contextVM.parameters()));
+    var lUserContributed = catarse$1.loaderWithToken(models.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
@@ -1685,7 +1693,7 @@ var fetchUser = function fetchUser(user_id) {
 
     idVM$1.id(user_id);
 
-    var lUser = postgrest$1.loaderWithToken(models.userDetail.getRowOptions(idVM$1.parameters()));
+    var lUser = catarse$1.loaderWithToken(models.userDetail.getRowOptions(idVM$1.parameters()));
 
     return !handlePromise ? lUser.load() : lUser.load().then(_$1.compose(customProp, _$1.first));
 };
@@ -1737,7 +1745,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
 
     var loadPopular = function loadPopular() {
         var filters = projectFiltersVM().filters;
-        var popular = postgrest$1.loaderWithToken(models.project.getPageOptions(_$1.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())));
+        var popular = catarse$1.loaderWithToken(models.project.getPageOptions(_$1.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())));
 
         loaders().push(popular);
 
@@ -1747,7 +1755,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
     var pushProject = function pushProject(_ref) {
         var project_id = _ref.project_id;
 
-        var project = postgrest$1.loaderWithToken(models.project.getPageOptions(postgrest$1.filtersVM({ project_id: 'eq' }).project_id(project_id).parameters()));
+        var project = catarse$1.loaderWithToken(models.project.getPageOptions(catarse$1.filtersVM({ project_id: 'eq' }).project_id(project_id).parameters()));
 
         loaders().push(project);
         project.load().then(function (data) {
@@ -1755,7 +1763,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
         });
     };
 
-    var projects = postgrest$1.loaderWithToken(models.recommendedProjects.getPageOptions(postgrest$1.filtersVM({ user_id: 'eq' }).user_id(user_id).parameters()));
+    var projects = catarse$1.loaderWithToken(models.recommendedProjects.getPageOptions(catarse$1.filtersVM({ user_id: 'eq' }).user_id(user_id).parameters()));
 
     projects.load().then(function (recommended) {
         if (recommended.length > 0) {
@@ -1892,7 +1900,7 @@ var adminInputAction = {
 
         h.idVM.id(item[builder.updateKey]);
 
-        var l = postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
+        var l = catarse$1.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
         var updateItem = function updateItem(res) {
             _.extend(item, res[0]);
@@ -1958,7 +1966,7 @@ var adminNotificationHistory = {
         var notifications = m.prop([]),
             getNotifications = function getNotifications(user) {
             var notification = models.notification;
-            notification.getPageWithToken(postgrest.filtersVM({
+            notification.getPageWithToken(catarse$1.filtersVM({
                 user_id: 'eq',
                 sent_at: 'is.null'
             }).user_id(user.id).sent_at(!null).order({
@@ -1984,7 +1992,7 @@ var I18nScope = _$1.partial(h.i18nScope, 'users.balance');
 var adminUserBalanceTransactionsList = {
     controller: function controller(args) {
         var userBalance = m.prop({}),
-            transactionsListVM = postgrest$1.paginationVM(models.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' });
+            transactionsListVM = catarse$1.paginationVM(models.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' });
 
         models.balanceTransaction.pageSize(2);
         userVM.getUserBalance(args.user_id).then(_$1.compose(userBalance, _$1.first));
@@ -2175,9 +2183,9 @@ var adminUsers = {
 };
 
 models.adminProject.pageSize(9);
-var projectListVM = postgrest.paginationVM(models.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
+var projectListVM = catarse$1.paginationVM(models.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
 
-var vm$1 = postgrest.filtersVM({
+var vm$1 = catarse$1.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     mode: 'eq',
@@ -2233,7 +2241,7 @@ vm$1.created_at.gte.toFilter = function () {
 
 vm$1.full_text_index.toFilter = function () {
     var filter = paramToString$1(vm$1.full_text_index());
-    return filter && replaceDiacritics(filter) || undefined;
+    return filter && replaceDiacritics$1(filter) || undefined;
 };
 
 var I18nScope$1 = _$1.partial(h.i18nScope, 'projects.card');
@@ -2280,23 +2288,23 @@ var noReward = {
 };
 var contributionValue = m.prop(noReward.minimum_value + ',00');
 var selectedReward = m.prop(noReward);
-var vm$3 = postgrest$1.filtersVM({
+var vm$3 = catarse$1.filtersVM({
     project_id: 'eq'
 });
 
 var rewardsLoader = function rewardsLoader(projectId) {
     vm$3.project_id(projectId);
 
-    return postgrest$1.loaderWithToken(models.rewardDetail.getPageOptions(vm$3.parameters()));
+    return catarse$1.loaderWithToken(models.rewardDetail.getPageOptions(vm$3.parameters()));
 };
 
 var rewardLoader = function rewardLoader(rewardId) {
-    var rewardvm = postgrest$1.filtersVM({
+    var rewardvm = catarse$1.filtersVM({
         id: 'eq'
     });
     rewardvm.id(rewardId);
 
-    return postgrest$1.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
+    return catarse$1.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
 };
 
 var fetchRewards = function fetchRewards(projectId) {
@@ -2304,12 +2312,12 @@ var fetchRewards = function fetchRewards(projectId) {
 };
 
 var getFees = function getFees(reward) {
-    var feesFilter = postgrest$1.filtersVM({
+    var feesFilter = catarse$1.filtersVM({
         reward_id: 'eq'
     });
 
     feesFilter.reward_id(reward.id);
-    var feesLoader = postgrest$1.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
+    var feesLoader = catarse$1.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
     return feesLoader.load();
 };
 
@@ -2345,7 +2353,7 @@ var selectReward = function selectReward(reward) {
 
 var applyMask$1 = _$1.compose(contributionValue, h.applyMonetaryMask);
 
-var statesLoader = postgrest$1.loader(models.state.getPageOptions());
+var statesLoader = catarse$1.loader(models.state.getPageOptions());
 var getStates = function getStates() {
     statesLoader.load().then(states);
     return states;
@@ -2494,7 +2502,7 @@ var rewardVM = {
 };
 
 var goals = m.prop([]);
-var vm$4 = postgrest$1.filtersVM({
+var vm$4 = catarse$1.filtersVM({
     project_id: 'eq'
 });
 
@@ -2504,7 +2512,7 @@ var goalsLoader = function goalsLoader(projectId) {
         value: 'asc'
     });
 
-    return postgrest$1.loaderWithToken(models.goalDetail.getPageOptions(vm$4.parameters()));
+    return catarse$1.loaderWithToken(models.goalDetail.getPageOptions(vm$4.parameters()));
 };
 
 var addGoal = function addGoal(projectId) {
@@ -2574,7 +2582,7 @@ var projectGoalsVM = {
 var currentProject$1 = m.prop();
 var userDetails = m.prop();
 var projectContributions = m.prop([]);
-var vm$2 = postgrest$1.filtersVM({ project_id: 'eq' });
+var vm$2 = catarse$1.filtersVM({ project_id: 'eq' });
 var idVM$2 = h.idVM;
 
 var setProject$1 = function setProject$1(project_user_id) {
@@ -2592,7 +2600,7 @@ var setProject$1 = function setProject$1(project_user_id) {
 var init = function init(project_id, project_user_id) {
     vm$2.project_id(project_id);
 
-    var lProject = postgrest$1.loaderWithToken(models.projectDetail.getRowOptions(vm$2.parameters()));
+    var lProject = catarse$1.loaderWithToken(models.projectDetail.getRowOptions(vm$2.parameters()));
 
     fetchParallelData(project_id, project_user_id);
 
@@ -2669,7 +2677,7 @@ var fetchProject = function fetchProject(projectId) {
 
     idVM$2.id(projectId);
 
-    var lproject = postgrest$1.loaderWithToken(models.projectDetail.getRowOptions(idVM$2.parameters()));
+    var lproject = catarse$1.loaderWithToken(models.projectDetail.getRowOptions(idVM$2.parameters()));
 
     return !handlePromise ? lproject.load() : lproject.load().then(_$1.compose(customProp, _$1.first));
 };
@@ -2752,16 +2760,16 @@ var adminRadioAction = {
             selectedItem = builder.selectedItem || m.prop();
 
         setFilter[updateKey] = 'eq';
-        var setVM = postgrest.filtersVM(setFilter);
+        var setVM = catarse$1.filtersVM(setFilter);
         setVM[updateKey](updateKeyValue);
 
         getFilter[getKey] = 'eq';
-        var getVM = postgrest.filtersVM(getFilter);
+        var getVM = catarse$1.filtersVM(getFilter);
         getVM[getKey](getKeyValue);
 
-        var getLoader = postgrest.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
+        var getLoader = catarse$1.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
 
-        var setLoader = postgrest.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
+        var setLoader = catarse$1.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
         var updateItem = function updateItem(data) {
             if (data.length > 0) {
@@ -2949,7 +2957,7 @@ var adminProjectDetail = {
                 opts = model.getRowOptions(h.idVM.id(project_id).parameters()),
                 project = m.prop({});
 
-            bankl = postgrest$1.loaderWithToken(opts);
+            bankl = catarse$1.loaderWithToken(opts);
 
             if (project_id) {
                 bankl.load().then(_$1.compose(project, _$1.first));
@@ -2964,7 +2972,7 @@ var adminProjectDetail = {
                 opts = model.getRowOptions(h.idVM.id(user_id).parameters()),
                 user = m.prop({});
 
-            l = postgrest$1.loaderWithToken(opts);
+            l = catarse$1.loaderWithToken(opts);
 
             if (user_id) {
                 l.load().then(_$1.compose(user, _$1.first));
@@ -3072,7 +3080,7 @@ var adminProjects = {
         var listVM = projectListVM,
             filterVM = vm$1,
             categories = m.prop([]),
-            filters = postgrest$1.filtersVM,
+            filters = catarse$1.filtersVM,
             error = m.prop(''),
             filterBuilder = [{ // name
             component: filterMain,
@@ -3237,9 +3245,9 @@ var adminProjects = {
     }
 };
 
-var contributionListVM = postgrest.paginationVM(models.contributionDetail, 'id.desc', { Prefer: 'count=exact' });
+var contributionListVM = catarse$1.paginationVM(models.contributionDetail, 'id.desc', { Prefer: 'count=exact' });
 
-var vm$5 = postgrest$1.filtersVM({
+var vm$5 = catarse$1.filtersVM({
     full_text_index: '@@',
     delivery_status: 'eq',
     state: 'eq',
@@ -3271,7 +3279,7 @@ vm$5.created_at.gte.toFilter = function () {
 
 vm$5.full_text_index.toFilter = function () {
     var filter = paramToString$2(vm$5.full_text_index());
-    return filter && replaceDiacritics(filter) || undefined;
+    return filter && replaceDiacritics$1(filter) || undefined;
 };
 
 var adminProject = {
@@ -3488,7 +3496,7 @@ var adminReward = {
             if (args.contribution.shipping_fee_id) {
                 var options = models.shippingFee.getRowOptions(h.idVM.id(args.contribution.shipping_fee_id).parameters());
 
-                l = postgrest$1.loaderWithToken(options);
+                l = catarse$1.loaderWithToken(options);
                 l.load().then(_.compose(shippingFee, _.first));
             }
 
@@ -3518,7 +3526,7 @@ var adminContributionDetail = {
                 opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
                 reward = m.prop({});
 
-            l = postgrest$1.loaderWithToken(opts);
+            l = catarse$1.loaderWithToken(opts);
 
             if (reward_id) {
                 l.load().then(_$1.compose(reward, _$1.first));
@@ -3756,9 +3764,9 @@ var adminContributions = {
     }
 };
 
-var balanceTransferListVM = postgrest.paginationVM(models.balanceTransfer, 'created_at.asc', { Prefer: 'count=exact' });
+var balanceTransferListVM = catarse$1.paginationVM(models.balanceTransfer, 'created_at.asc', { Prefer: 'count=exact' });
 
-var vm$6 = postgrest$1.filtersVM({
+var vm$6 = catarse$1.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     transfer_id: 'eq',
@@ -3796,7 +3804,7 @@ vm$6.transferred_date.gte.toFilter = function () {
 
 vm$6.getAllBalanceTransfers = function (filterVM) {
     models.balanceTransfer.pageSize(false);
-    var allTransfers = postgrest$1.loaderWithToken(models.balanceTransfer.getPageOptions(filterVM.parameters())).load();
+    var allTransfers = catarse$1.loaderWithToken(models.balanceTransfer.getPageOptions(filterVM.parameters())).load();
     models.balanceTransfer.pageSize(9);
     return allTransfers;
 };
@@ -4272,10 +4280,10 @@ var projectFriends = {
     controller: function controller(args) {
         var project = args.project,
             friendsSample = m.prop([]),
-            listVM = postgrest$1.paginationVM(models.contributor, 'user_id.desc', {
+            listVM = catarse$1.paginationVM(models.contributor, 'user_id.desc', {
             Prefer: 'count=exact'
         }),
-            filterVM = postgrest$1.filtersVM({
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq',
             is_follow: 'eq'
         }).project_id(project.project_id).is_follow(true);
@@ -4464,16 +4472,16 @@ var Flex = {
                 h.discuss('https://catarse.me/flex', 'flex_page');
             }
         },
-            flexVM = postgrest$1.filtersVM({
+            flexVM = catarse$1.filtersVM({
             mode: 'eq',
             state: 'eq',
             recommended: 'eq'
         }),
-            statsLoader = postgrest$1.loaderWithToken(models.statistic.getRowOptions());
+            statsLoader = catarse$1.loaderWithToken(models.statistic.getRowOptions());
 
         flexVM.mode('flex').state('online').recommended(true);
 
-        var projectsLoader = postgrest$1.loader(models.project.getPageOptions(flexVM.parameters()));
+        var projectsLoader = catarse$1.loader(models.project.getPageOptions(flexVM.parameters()));
 
         statsLoader.load().then(stats);
 
@@ -4769,7 +4777,7 @@ var projectDashboardMenu = {
         ctrl.body.className = ctrl.bodyToggleForNav();
         return m('#project-nav', [m('.project-nav-wrapper', [m('nav.w-section.dashboard-nav.side', [m('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [m('img.thumb-project-dashboard[src="' + (project ? ctrl.projectThumb(project) : '/assets/thumb-project.png') + '"][width="114"]'), m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name), m('img.u-margintop-10[src="/assets/catarse_bootstrap/badge-' + project.mode + '-h.png"]', {
             width: projectVM.isSubscription(project) ? 130 : 80
-        })]), m('#info-links.u-marginbottom-20', [project.state === 'draft' && projectVM.isSubscription(project) ? m('a#dashboard_home_link[class="' + editLinkClass('#start') + '"][href="' + editRoute + '#start"]', [m('span.fa.fa-info.fa-lg.fa-fw'), I18n$1.t('draft_start_tab', I18nScope$6())]) : m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n$1.t('start_tab', I18nScope$6())]), project.is_published ? [projectVM.isSubscription(project) ? m('a#dashboard_subscriptions_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('subscriptions_report') ? 'selected' : '') + '"][href="' + projectRoute + '/subscriptions_report"]', [m('span.fa.fa.fa-users.fa-lg.fa-fw'), I18n$1.t('subscriptions_tab', I18nScope$6())]) : m('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('contributions_report') ? 'selected' : '') + '"][href="' + projectRoute + '/contributions_report"]', [m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n$1.t('reports_tab', I18nScope$6())]), m('a#dashboard_posts_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + '"][href="' + projectRoute + '/posts"]', [m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n$1.t('posts_tab', I18nScope$6()), project.posts_count > 0 ? m('span.badge', project.posts_count) : m('span.badge.badge-attention', 'Nenhuma')]), m('a#dashboard_surveys_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('surveys') ? 'selected' : '') + '"][href="' + projectRoute + '/surveys"]', [m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n$1.t('surveys_tab', I18nScope$6())])] : '']), m('.edit-project-div', [!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
+        })]), m('#info-links.u-marginbottom-20', [project.state === 'draft' && projectVM.isSubscription(project) ? m('a#dashboard_home_link[class="' + editLinkClass('#start') + '"][href="' + editRoute + '#start"]', [m('span.fa.fa-info.fa-lg.fa-fw'), I18n$1.t('draft_start_tab', I18nScope$6())]) : m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', [m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n$1.t('start_tab', I18nScope$6())]), project.is_published ? [projectVM.isSubscription(project) ? m('a#dashboard_subscriptions_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('subscriptions_report') ? 'selected' : '') + '"][href="' + projectRoute + '/subscriptions_report"]', [m('span.fa.fa.fa-users.fa-lg.fa-fw'), I18n$1.t('subscriptions_tab', I18nScope$6())]) : m('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('contributions_report') ? 'selected' : '') + '"][href="' + projectRoute + '/contributions_report"]', [m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n$1.t('reports_tab', I18nScope$6())]), m('a#dashboard_posts_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + '"][href="' + projectRoute + '/posts"]', [m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n$1.t('posts_tab', I18nScope$6()), project.posts_count > 0 ? m('span.badge', project.posts_count) : m('span.badge.badge-attention', 'Nenhuma')]), projectVM.isSubscription(project) ? '' : m('a#dashboard_surveys_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('surveys') ? 'selected' : '') + '"][href="' + projectRoute + '/surveys"]', [m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n$1.t('surveys_tab', I18nScope$6())])] : '']), m('.edit-project-div', [!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
             onclick: ctrl.editLinksToggle.toggle
         }, [m('span.fa.fa-pencil.fa-fw.fa-lg'), I18n$1.t('edit_project', I18nScope$6())]), ctrl.editLinksToggle() ? m('#edit-menu-items', [m('#dashboard-links', [!project.is_published || project.is_admin_role ? [m('a#basics_link[class="' + editLinkClass('#basics') + '"][href="' + editRoute + '#basics"]', railsErrorsVM.errorsFor('basics'), I18n$1.t('basics_tab', linksScope())), project.mode === 'sub' ? m('a#goals_link[class="' + editLinkClass('#goals') + '"][href="' + editRoute + '#goals"]', railsErrorsVM.errorsFor('goals'), I18n$1.t('goals_tab', linksScope())) : m('a#goal_link[class="' + editLinkClass('#goal') + '"][href="' + editRoute + '#goal"]', railsErrorsVM.errorsFor('goal'), I18n$1.t('goal_tab', linksScope()))] : '', m('a#description_link[class="' + editLinkClass('#description') + '"][href="' + editRoute + '#description"]', railsErrorsVM.errorsFor('description'), I18n$1.t('description_tab', linksScope())), projectVM.isSubscription(project) ? null : m('a#video_link[class="' + editLinkClass('#video') + '"][href="' + editRoute + '#video"]', [railsErrorsVM.errorsFor('video'), 'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')]), projectVM.isSubscription(project) ? null : m('a#budget_link[class="' + editLinkClass('#budget') + '"][href="' + editRoute + '#budget"]', railsErrorsVM.errorsFor('budget'), I18n$1.t('budget_tab', linksScope())), m('a#card_link[class="' + editLinkClass('#card') + '"][href="' + editRoute + '#card"]', railsErrorsVM.errorsFor('card'), I18n$1.t('card_tab_' + project.mode, linksScope())), m('a#dashboard_reward_link[class="' + editLinkClass('#reward') + '"][href="' + editRoute + '#reward"]', [railsErrorsVM.errorsFor('reward'), 'Recompensas', optionalOpt]), m('a#dashboard_user_about_link[class="' + editLinkClass('#user_about') + '"][href="' + editRoute + '#user_about"]', railsErrorsVM.errorsFor('user_about'), I18n$1.t('about_you_tab', linksScope())), project.is_published || project.state === 'draft' || project.is_admin_role ? [m('a#dashboard_user_settings_link[class="' + editLinkClass('#user_settings') + '"][href="' + editRoute + '#user_settings"]', railsErrorsVM.errorsFor('user_settings'), I18n$1.t('account_tab', linksScope()))] : '', !project.is_published ? [m('a#dashboard_preview_link[class="' + editLinkClass('#preview') + '"][href="' + editRoute + '#preview"]', [m('span.fa.fa-fw.fa-eye.fa-lg'), I18n$1.t('preview_tab', linksScope())])] : ''])]) : '', !project.is_published && ctrl.showPublish() ? [ctrl.validating() ? h.loader() : m('.btn-send-draft-fixed', project.mode === 'aon' ? [project.state === 'draft' ? m('button.btn.btn-medium', {
             onclick: ctrl.validatePublish
@@ -4872,7 +4880,7 @@ var deleteProjectModalContent = {
                 var loaderOpts = models.deleteProject.postOptions({
                     _project_id: args.project.project_id
                 });
-                l = postgrest$1.loaderWithToken(loaderOpts);
+                l = catarse$1.loaderWithToken(loaderOpts);
                 l.load().then(function () {
                     deleteSuccess(true);
                 }).catch(function (err) {
@@ -5174,11 +5182,11 @@ var I18nScope$7 = _.partial(h.i18nScope, 'projects.successful_onboard');
 
 var projectSuccessfulOnboard = {
     controller: function controller(args) {
-        var projectIdVM = postgrest$1.filtersVM({ project_id: 'eq' }),
+        var projectIdVM = catarse$1.filtersVM({ project_id: 'eq' }),
             projectAccounts = m.prop([]),
             projectTransfers = m.prop([]),
             showTaxModal = h.toggleProp(false, true),
-            loader = postgrest$1.loaderWithToken,
+            loader = catarse$1.loaderWithToken,
             listenToReplace = function listenToReplace(element, isInitialized, context) {
             if (isInitialized) return;
 
@@ -5328,7 +5336,7 @@ var projectInviteCard = {
     view: function view(ctrl, args) {
         var project = args.project;
 
-        return m('.card.card-secondary.u-marginbottom-20.u-radius.w-clearfix', [m('.fontsize-base.fontweight-semibold.u-marginbottom-30.u-text-center', 'Convide seus amigos para apoiar sua campanha'), m('.w-row', [m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [m.component(facebookButton, { url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights', medium: true })]), m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [m.component(facebookButton, { messenger: true, url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share_insights', medium: true })]), m('.w-col.w-col-4', [m('.w-form', [m('form[data-name=\'Email Form 2\'][id=\'email-form-2\'][name=\'email-form-2\']', [m.component(copyTextInput, { value: h.projectFullPermalink(project) + '?ref=project_link' })])])])])]);
+        return m('.card.card-terciary.u-marginbottom-20.u-radius.w-clearfix', [m('.fontsize-base.fontweight-semibold.u-marginbottom-30.u-text-center', 'Convide seus amigos para apoiar sua campanha'), m('.w-row', [m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [m.component(facebookButton, { url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights', medium: true })]), m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [m.component(facebookButton, { messenger: true, url: h.projectFullPermalink(project) + '?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share_insights', medium: true })]), m('.w-col.w-col-4', [m('.w-form', [m('form[data-name=\'Email Form 2\'][id=\'email-form-2\'][name=\'email-form-2\']', [m.component(copyTextInput, { value: h.projectFullPermalink(project) + '?ref=project_link' })])])])])]);
     }
 };
 
@@ -5341,7 +5349,7 @@ var projectInsights = {
             contributionsPerDay = m.prop([]),
             visitorsTotal = m.prop(0),
             visitorsPerDay = m.prop([]),
-            loader = postgrest$1.loaderWithToken;
+            loader = catarse$1.loaderWithToken;
 
         if (h.paramByName('online_success') === 'true') {
             displayModal.toggle();
@@ -5512,13 +5520,13 @@ var projectGoalsBoxDashboard = {
         }],
             currentGoalIndex = ctrl.currentGoalIndex;
 
-        return m('div', m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius.w-clearfix', [m('.u-right', [m('button.btn-inline.btn-terciary.fa.fa-angle-left.u-radius.w-inline-block', {
+        return m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius.w-clearfix', [m('.u-right', [m('button.btn-inline.btn-terciary.fa.fa-angle-left.u-radius.w-inline-block', {
             onclick: ctrl.previousGoal,
             class: currentGoalIndex() === 0 ? 'btn-desactivated' : ''
         }), m('button.btn-inline.btn-terciary.fa.fa-angle-right.u-radius.w-inline-block', {
             onclick: ctrl.nextGoal,
             class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : ''
-        })]), m('.fontsize-small.u-marginbottom-10', 'Metas'), m('.fontsize-largest.fontweight-semibold', '75%'), m('.meter.u-marginbottom-10', m('.meter-fill')), m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter', goals[currentGoalIndex()].title), m('.fontcolor-secondary.fontsize-smallest', 'R$0 de R$' + goals[currentGoalIndex()].value + ' por m\xEAs')]));
+        })]), m('.fontsize-small.u-marginbottom-10', 'Metas'), m('.fontsize-largest.fontweight-semibold', '75%'), m('.meter.u-marginbottom-10', m('.meter-fill')), m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter', goals[currentGoalIndex()].title), m('.fontcolor-secondary.fontsize-smallest', 'R$0 de R$' + goals[currentGoalIndex()].value + ' por m\xEAs')]);
     }
 };
 
@@ -5539,19 +5547,19 @@ var projectInsightsSub = {
 
         return m('.project-insights', !args.l() ? [m('.w-section.section-product.' + project.mode), project.is_owner_or_admin ? m.component(projectDashboardMenu, {
             project: m.prop(project)
-        }) : '', m('.dashboard-header.section-one-column', [m('.u-marginbottom-30.u-text-center', [m('.fontsize-larger.fontweight-semibold', 'Ol\xE1, ' + (project.user.public_name || project.user.name) + '!'), m('.fontsize-smaller', 'Este \xE9 o retrato de sua campanha hoje, ' + moment().format('DD [de] MMMM [de] YYYY'))]), m('.w-container', m('.flex-row.u-marginbottom-40.u-text-center-small-only', [m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals }), m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Assinantes'), m('.fontsize-largest.fontweight-semibold', '112')]), m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), m('.fontsize-largest.fontweight-semibold', 'R$10.560')]), m('.card.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', ['Saldo', m.trust('&nbsp;'), ' ', m("a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='http://catarse.webflow.io/banco/saldo-assinatura']", 'Sacar')]), m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', 'R$2.500')])])), project.state === 'online' && !project.has_cancelation_request ? m.component(projectInviteCard, {
+        }) : '', m('.dashboard-header.section-one-column', [m('.u-marginbottom-30.u-text-center', [m('.fontsize-larger.fontweight-semibold', 'Ol\xE1, ' + (project.user.public_name || project.user.name) + '!'), m('.fontsize-smaller', 'Este \xE9 o retrato de sua campanha hoje, ' + moment().format('DD [de] MMMM [de] YYYY'))]), m('.w-container', m('.flex-row.u-marginbottom-40.u-text-center-small-only', [m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals }), m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Assinantes'), m('.fontsize-largest.fontweight-semibold', '112')]), m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), m('.fontsize-largest.fontweight-semibold', 'R$10.560')]), m('.card.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', ['Saldo', m.trust('&nbsp;'), ' ', m("a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='http://catarse.webflow.io/banco/saldo-assinatura']", 'Sacar')]), m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', 'R$2.500')])])), project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
             project: project
-        }) : ''])] : h.loader());
+        })) : ''])] : h.loader());
     }
 };
 
 var insights = {
     controller: function controller(args) {
-        var filtersVM = postgrest$1.filtersVM({
+        var filtersVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             projectDetails = m.prop([]),
-            loader = postgrest$1.loaderWithToken,
+            loader = catarse$1.loaderWithToken,
             setProjectId = function setProjectId() {
             try {
                 var project_id = m.route.param('project_id');
@@ -5659,14 +5667,14 @@ var posts = {
             titleHasError = m.prop(false),
             commentHasError = m.prop(false),
             projectPosts = m.prop(),
-            loader = postgrest$1.loaderWithToken,
+            loader = catarse$1.loaderWithToken,
             errors = m.prop(''),
             fields = {
             title: m.prop(''),
             comment_html: m.prop(''),
             reward_id: m.prop('-1')
         },
-            filterVM = postgrest$1.filtersVM({
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             validateTitle = function validateTitle() {
@@ -5742,7 +5750,7 @@ var posts = {
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
-        var listVM = postgrest$1.loaderWithToken(models.projectPostDetail.getPageOptions(_$1.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
+        var listVM = catarse$1.loaderWithToken(models.projectPostDetail.getPageOptions(_$1.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         listVM.load().then(projectPosts);
@@ -5834,8 +5842,8 @@ var surveyScope = _$1.partial(h.i18nScope, 'projects.dashboard_surveys');
 
 var surveys = {
     controller: function controller(args) {
-        var loader = postgrest$1.loaderWithToken,
-            filterVM = postgrest$1.filtersVM({
+        var loader = catarse$1.loaderWithToken,
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             project_id = args.project_id,
@@ -5864,10 +5872,10 @@ var surveys = {
                     sentCount: '',
                     answeredCount: ''
                 });
-                var l = postgrest$1.loaderWithToken(models.sentSurveyCount.postOptions({
+                var l = catarse$1.loaderWithToken(models.sentSurveyCount.postOptions({
                     reward_id: reward.id
                 }));
-                var l2 = postgrest$1.loaderWithToken(models.answeredSurveyCount.postOptions({
+                var l2 = catarse$1.loaderWithToken(models.answeredSurveyCount.postOptions({
                     reward_id: reward.id
                 }));
 
@@ -5921,7 +5929,7 @@ var surveys = {
             }, [m('div', 'NÃO'), m('.toggle-btn.toggle-btn--off')])), m('.u-right', [m('.fontcolor-secondary.fontsize-mini.lineheight-tighter', 'Finalizado em:'), m('.fontcolor-secondary.fontsize-mini.lineheight-tighter', h.momentify(reward.survey_finished_at, 'DD/MM/YYYY'))])]));
         };
 
-        return project ? m('.project-surveys', project.is_owner_or_admin ? m.component(projectDashboardMenu, {
+        return project && !projectVM.isSubscription(project) ? m('.project-surveys', project.is_owner_or_admin ? m.component(projectDashboardMenu, {
             project: m.prop(project)
         }) : '', m('.section', m('.w-container', m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', [m('.fontsize-larger.fontweight-semibold.lineheight-looser.u-text-center', I18n$1.t('title', surveyScope())), m('.fontsize-base.u-text-center', I18n$1.t('subtitle', surveyScope())), m('.u-margintop-20.u-text-center', m('.w-inline-block.card.fontsize-small.u-radius', [m('span.fa.fa-lightbulb-o', ''), m.trust('&nbsp;'), m.trust(I18n$1.t('help_link', surveyScope()))]))]), m('.w-col.w-col-2')]))), m('.divider'), m('.before-footer.bg-gray.section', m('.w-container', [project.state === 'online' ? m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', m('.card.card-message.u-marginbottom-40.u-radius', m('.fontsize-base', [m('span.fa.fa-exclamation-circle', ''), I18n$1.t('online_explanation', surveyScope())]))), m('.w-col.w-col-2')]) : '', m('.table-outer.u-marginbottom-60', [m('.fontweight-semibold.header.table-row.w-hidden-small.w-hidden-tiny.w-row', [m('.table-col.w-col.w-col-3', m('div', 'Recompensa')), m('.table-col.w-col.w-col-9', m('.w-row', [m('.u-text-center-big-only.w-col.w-col-4.w-col-small-4.w-col-tiny-4', m('.w-row', [m('.w-col.w-col-6', m('div', 'Enviados')), m('.w-col.w-col-6', m('div', 'Respondidos'))])), m('.u-text-center-big-only.w-col.w-col-5.w-col-small-5.w-col-tiny-5', m('div', 'Resultados')), m('.w-clearfix.w-col.w-col-3.w-col-small-3.w-col-tiny-3', m('.u-right'))]))]), m('.fontsize-small.table-inner', [_$1.map(ctrl.rewardVM.rewards(), function (reward) {
             return m('.table-row.w-row', [m('.table-col.w-col.w-col-3', [m('.fontsize-base.fontweight-semibold', 'R$ ' + reward.minimum_value + ' ou mais'), m('.fontsize-smallest.fontweight-semibold', reward.title), m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', reward.description.substring(0, 90) + '...'), m('.fontcolor-secondary.fontsize-smallest', [m('span.fontcolor-terciary', 'Entrega prevista:'), m.trust('&nbsp;'), h.momentify(reward.deliver_at, 'MMMM/YYYY')]), m('.fontcolor-secondary.fontsize-smallest', [m('span.fontcolor-terciary', 'Envio:'), m.trust('&nbsp;'), I18n$1.t('shipping_options.' + reward.shipping_options, I18nScope$12())])]), m('.table-col.w-col.w-col-9', m('.u-margintop-20.w-row', [m('.u-text-center-big-only.w-col.w-col-4.w-col-small-4.w-col-tiny-4', m('.w-row', [m('.w-col.w-col-6', !canBeCreated(reward) && !cannotBeCreated(reward) ? m('.fontsize-base', [m('span.fa.fa-paper-plane.fontcolor-terciary', ' '), ' ' + reward.sentCount]) : ''), m('.w-col.w-col-6', !canBeCreated(reward) && !cannotBeCreated(reward) ? m('.fontsize-base', [m('span.fa.fa-check-circle.fontcolor-terciary', ''), ' ' + reward.answeredCount, m('span.fontcolor-secondary', '(' + (reward.sentCount === 0 ? '0' : Math.floor(reward.answeredCount / reward.sentCount * 100)) + '%)')]) : '')])), m('.u-text-center-big-only.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
@@ -6187,14 +6195,14 @@ var I18nScope$13 = _$1.partial(h.i18nScope, 'projects.reward_fields');
 var surveyCreate = {
     controller: function controller(args) {
         var showError = m.prop(false),
-            loader = postgrest$1.loaderWithToken,
+            loader = catarse$1.loaderWithToken,
             showPreview = h.toggleProp(false, true),
             confirmAddress = surveyVM.confirmAddress,
             projectDetails = m.prop([]),
-            rewardFilterVM = postgrest$1.filtersVM({
+            rewardFilterVM = catarse$1.filtersVM({
             id: 'eq'
         }),
-            filterVM = postgrest$1.filtersVM({
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             project_id = args.project_id,
@@ -6203,7 +6211,7 @@ var surveyCreate = {
 
         rewardFilterVM.id(reward_id);
         filterVM.project_id(project_id);
-        var rewardVM = postgrest$1.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
+        var rewardVM = catarse$1.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         var reward = m.prop([]);
@@ -6320,7 +6328,7 @@ var I18nScope$17 = _$1.partial(h.i18nScope, 'pages.press');
 var press = {
     controller: function controller() {
         var stats = m.prop([]);
-        var loader = postgrest$1.loader;
+        var loader = catarse$1.loader;
         var statsLoader = loader(models.statistic.getRowOptions());
 
         statsLoader.load().then(stats);
@@ -6420,13 +6428,13 @@ var projectContributionReportContentCard = {
             }
             return true;
         },
-            vm = postgrest$1.filtersVM({
+            vm = catarse$1.filtersVM({
             contribution_id: 'eq'
         }),
             surveyLoader = function surveyLoader() {
             vm.contribution_id(args.contribution().id);
 
-            return postgrest$1.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            return catarse$1.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
         },
             survey = m.prop(),
             stateClass = function stateClass(state) {
@@ -6510,7 +6518,7 @@ var projectContributionReportContentCard = {
     }
 };
 
-var vm$7 = postgrest$1.filtersVM({
+var vm$7 = catarse$1.filtersVM({
     full_text_index: '@@',
     state: 'in',
     reward_id: 'eq',
@@ -6529,12 +6537,12 @@ vm$7.order({
 
 vm$7.full_text_index.toFilter = function () {
     var filter = paramToString$4(vm$7.full_text_index());
-    return filter && replaceDiacritics(filter) || undefined;
+    return filter && replaceDiacritics$1(filter) || undefined;
 };
 
 vm$7.getAllContributions = function (filterVM) {
     models.projectContribution.pageSize(false);
-    var allContributions = postgrest$1.loaderWithToken(models.projectContribution.getPageOptions(filterVM.parameters())).load();
+    var allContributions = catarse$1.loaderWithToken(models.projectContribution.getPageOptions(filterVM.parameters())).load();
     models.projectContribution.pageSize(9);
     return allContributions;
 };
@@ -6549,7 +6557,7 @@ vm$7.updateStatus = function (data) {
 };
 
 vm$7.withNullParameters = function () {
-    var withNullVm = postgrest$1.filtersVM({
+    var withNullVm = catarse$1.filtersVM({
         full_text_index: '@@',
         state: 'in',
         reward_id: 'is',
@@ -6807,7 +6815,7 @@ var ProjectContributionDeliveryLegendModal = {
 
 var projectContributionReport = {
     controller: function controller(args) {
-        var listVM = postgrest$1.paginationVM(models.projectContribution, 'id.desc', {
+        var listVM = catarse$1.paginationVM(models.projectContribution, 'id.desc', {
             Prefer: 'count=exact'
         }),
             filterVM = vm$7,
@@ -6962,10 +6970,10 @@ var projectContributionReport = {
 
         filterVM.project_id(args.project_id);
 
-        var lReward = postgrest$1.loaderWithToken(models.rewardDetail.getPageOptions({
+        var lReward = catarse$1.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: 'eq.' + filterVM.project_id()
         }));
-        var lProject = postgrest$1.loaderWithToken(models.projectDetail.getPageOptions({
+        var lProject = catarse$1.loaderWithToken(models.projectDetail.getPageOptions({
             project_id: 'eq.' + filterVM.project_id()
         }));
 
@@ -7052,7 +7060,7 @@ var projectSubscriptionReport = {
 
         filterVM.project_id(args.project_id);
 
-        var lProject = postgrest$1.loaderWithToken(models.projectDetail.getPageOptions({
+        var lProject = catarse$1.loaderWithToken(models.projectDetail.getPageOptions({
             project_id: 'eq.' + filterVM.project_id()
         }));
 
@@ -7166,7 +7174,7 @@ var I18nScope$21 = _$1.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 var projectsExplore = {
     controller: function controller(args) {
-        var filters = postgrest$1.filtersVM,
+        var filters = catarse$1.filtersVM,
             projectFiltersVM$$1 = projectFiltersVM(),
             filtersMap = projectFiltersVM$$1.filters,
             defaultFilter = h.paramByName('filter') || 'all',
@@ -7253,7 +7261,7 @@ var projectsExplore = {
                 filter = filterFromRoute() || currentFilter(),
                 search$$1 = h.paramByName('pg_search'),
                 searchProjects = function searchProjects() {
-                var l = postgrest$1.loaderWithToken(models.projectSearch.postOptions({ query: search$$1 })),
+                var l = catarse$1.loaderWithToken(models.projectSearch.postOptions({ query: search$$1 })),
                     page = { // We build an object with the same interface as paginationVM
                     collection: m.prop([]),
                     isLoading: l,
@@ -7268,7 +7276,7 @@ var projectsExplore = {
                 return page;
             },
                 loadProjects = function loadProjects() {
-                var pages = postgrest$1.paginationVM(models.project);
+                var pages = catarse$1.paginationVM(models.project);
                 var parameters = _$1.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                     open_for_contributions: 'desc',
                     state_order: 'asc',
@@ -7280,7 +7288,7 @@ var projectsExplore = {
                 return pages;
             },
                 loadFinishedProjects = function loadFinishedProjects() {
-                var pages = postgrest$1.paginationVM(models.finishedProject),
+                var pages = catarse$1.paginationVM(models.finishedProject),
                     parameters = _$1.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                     state_order: 'asc',
                     state: 'desc',
@@ -7573,11 +7581,11 @@ var I18nScope$22 = _$1.partial(h.i18nScope, 'projects.home');
 var projectsHome = {
     controller: function controller(args) {
         var sample6 = _$1.partial(_$1.sample, _$1, 6),
-            loader = postgrest$1.loaderWithToken,
+            loader = catarse$1.loaderWithToken,
             project = models.project,
             filters = projectFiltersVM().filters,
-            userFriendVM = postgrest$1.filtersVM({ user_id: 'eq' }),
-            friendListVM = postgrest$1.paginationVM(models.userFriend, 'user_id.desc', {
+            userFriendVM = catarse$1.filtersVM({ user_id: 'eq' }),
+            friendListVM = catarse$1.paginationVM(models.userFriend, 'user_id.desc', {
             Prefer: 'count=exact'
         }),
             currentUser = h.getUser() || {},
@@ -7786,7 +7794,7 @@ var projectReminder = {
     controller: function controller(args) {
         var l = m.prop(false);
         var project = args.project,
-            filterVM = postgrest$1.filtersVM({
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             storeReminderName = 'reminder',
@@ -7799,7 +7807,7 @@ var projectReminder = {
             var loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
                 project_id: project().project_id
             });
-            l = postgrest$1.loaderWithToken(loaderOpts);
+            l = catarse$1.loaderWithToken(loaderOpts);
 
             l.load().then(function () {
                 project().in_reminder = !project().in_reminder;
@@ -7883,7 +7891,7 @@ var ownerMessageContent = {
                 to_user_id: userDetails().id
             });
 
-            l = postgrest$1.loaderWithToken(loaderOpts);
+            l = catarse$1.loaderWithToken(loaderOpts);
 
             l.load().then(sendSuccess(true));
 
@@ -7945,7 +7953,7 @@ var ownerMessageContent = {
 var UserFollowBtn = {
     controller: function controller(args) {
         var following = m.prop(args.following || false),
-            followVM = postgrest$1.filtersVM({ follow_id: 'eq' }),
+            followVM = catarse$1.filtersVM({ follow_id: 'eq' }),
             loading = m.prop(false),
             hover = m.prop(false),
             userFollowInsert = models.userFollow.postOptions({
@@ -7956,7 +7964,7 @@ var UserFollowBtn = {
             return models.userFollow.deleteOptions(followVM.parameters());
         }(),
             follow = function follow() {
-            var l = postgrest$1.loaderWithToken(userFollowInsert);
+            var l = catarse$1.loaderWithToken(userFollowInsert);
             loading(true);
 
             l.load().then(function () {
@@ -7965,7 +7973,7 @@ var UserFollowBtn = {
             });
         },
             unfollow = function unfollow() {
-            var l = postgrest$1.loaderWithToken(userFollowDelete);
+            var l = catarse$1.loaderWithToken(userFollowDelete);
             loading(true);
 
             l.load().then(function () {
@@ -8585,7 +8593,7 @@ var projectReport = {
                 reason: reason(),
                 project_id: project.project_id
             });
-            var l = postgrest$1.loaderWithToken(loaderOpts);
+            var l = catarse$1.loaderWithToken(loaderOpts);
 
             l.load().then(sendSuccess(true));
             submitDisabled(false);
@@ -8691,11 +8699,11 @@ var projectSuggestedContributions = {
 var projectContributions$1 = {
     controller: function controller(args) {
         var contributionsPerDay = m.prop([]),
-            listVM = postgrest$1.paginationVM(models.contributor),
-            filterStats = postgrest$1.filtersVM({
+            listVM = catarse$1.paginationVM(models.contributor),
+            filterStats = catarse$1.filtersVM({
             project_id: 'eq'
         }),
-            filterVM = postgrest$1.filtersVM({
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             groupedCollection = function groupedCollection() {
@@ -8724,7 +8732,7 @@ var projectContributions$1 = {
             listVM.firstPage(filterVM.parameters());
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
-        var lContributionsPerDay = postgrest$1.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
+        var lContributionsPerDay = catarse$1.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
 
         var contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
@@ -8740,10 +8748,10 @@ var projectContributions$1 = {
             }) : [];
         };
 
-        var lContributionsPerLocation = postgrest$1.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
+        var lContributionsPerLocation = catarse$1.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
         lContributionsPerLocation.load().then(buildPerLocationTable);
 
-        var lContributionsStats = postgrest$1.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
+        var lContributionsStats = catarse$1.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
         lContributionsStats.load().then(function (data) {
             return contributionsStats(_$1.first(data));
         });
@@ -8853,8 +8861,8 @@ var I18nScope$26 = _$1.partial(h.i18nScope, 'projects.posts');
 
 var projectPosts = {
     controller: function controller(args) {
-        var listVM = postgrest$1.paginationVM(models.projectPostDetail),
-            filterVM = postgrest$1.filtersVM({
+        var listVM = catarse$1.paginationVM(models.projectPostDetail),
+            filterVM = catarse$1.filtersVM({
             project_id: 'eq',
             id: 'eq'
         });
@@ -10582,7 +10590,7 @@ var paymentForm = {
 
 var countrySelect = {
     controller: function controller(args) {
-        var countriesLoader = postgrest$1.loader(models.country.getPageOptions()),
+        var countriesLoader = catarse$1.loader(models.country.getPageOptions()),
             countries = m.prop(),
             defaultCountryID = args.defaultCountryID,
             defaultForeignCountryID = args.defaultForeignCountryID,
@@ -10632,7 +10640,7 @@ var I18nScope$36 = _$1.partial(h.i18nScope, 'activerecord.attributes.address');
 var addressForm = {
     controller: function controller(args) {
         var parsedErrors = args.parsedErrors;
-        var statesLoader = postgrest$1.loader(models.state.getPageOptions()),
+        var statesLoader = catarse$1.loader(models.state.getPageOptions()),
             data = args.fields().address(),
             vm = addressVM({
             data: data
@@ -11093,9 +11101,9 @@ var userCreated = {
         var user_id = args.userId,
             showDraft = args.showDraft || false,
             error = m.prop(false),
-            pages = postgrest$1.paginationVM(models.project),
+            pages = catarse$1.paginationVM(models.project),
             loader = m.prop(true),
-            contextVM = postgrest$1.filtersVM({
+            contextVM = catarse$1.filtersVM({
             project_user_id: 'eq',
             state: 'in'
         });
@@ -11145,10 +11153,10 @@ var userContributed = {
     controller: function controller(args) {
         var contributedProjects = m.prop(),
             user_id = args.userId,
-            pages = postgrest$1.paginationVM(models.project),
+            pages = catarse$1.paginationVM(models.project),
             error = m.prop(false),
             loader = m.prop(true),
-            contextVM = postgrest$1.filtersVM({
+            contextVM = catarse$1.filtersVM({
             project_id: 'in'
         });
 
@@ -11342,13 +11350,13 @@ var surveysShow = {
             sendMessage = function sendMessage() {
             displayModal(true);
         },
-            vm = postgrest$1.filtersVM({
+            vm = catarse$1.filtersVM({
             contribution_id: 'eq'
         }),
             surveyLoader = function surveyLoader() {
             vm.contribution_id(contributionId);
 
-            return postgrest$1.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            return catarse$1.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
         },
             preview = function preview() {
             if (survey().confirm_address) {
@@ -11413,7 +11421,7 @@ var surveysShow = {
 
                     idVM.id(h.getUserID());
 
-                    var lUser = postgrest$1.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+                    var lUser = catarse$1.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
                     lUser.load().then(function (userData) {
                         user(_$1.first(userData));
@@ -12022,9 +12030,9 @@ var userContributedList = {
 var userPrivateContributed = {
     controller: function controller(args) {
         var user_id = args.userId,
-            onlinePages = postgrest$1.paginationVM(models.userContribution),
-            successfulPages = postgrest$1.paginationVM(models.userContribution),
-            failedPages = postgrest$1.paginationVM(models.userContribution),
+            onlinePages = catarse$1.paginationVM(models.userContribution),
+            successfulPages = catarse$1.paginationVM(models.userContribution),
+            failedPages = catarse$1.paginationVM(models.userContribution),
             error = m.prop(false),
             loader = m.prop(true),
             handleError = function handleError() {
@@ -12032,7 +12040,7 @@ var userPrivateContributed = {
             loader(false);
             m.redraw();
         },
-            contextVM = postgrest$1.filtersVM({
+            contextVM = catarse$1.filtersVM({
             user_id: 'eq',
             state: 'in',
             project_state: 'in'
@@ -12524,7 +12532,7 @@ var userBankForm = {
             user = args.user,
             bankAccount = m.prop({}),
             banks = m.prop(),
-            banksLoader = postgrest$1.loader(models.bank.getPageOptions()),
+            banksLoader = catarse$1.loader(models.bank.getPageOptions()),
             showOtherBanks = h.toggleProp(false, true),
             showOtherBanksInput = m.prop(false),
             popularBanks = [{
@@ -12697,11 +12705,11 @@ var userBalanceRequestModelContent = {
 
         var bankInput = m.prop(''),
             bankCode = m.prop('-1'),
-            vm = postgrest.filtersVM({ user_id: 'eq' }),
+            vm = catarse.filtersVM({ user_id: 'eq' }),
             balance = args.balance,
             loaderOpts = models.balanceTransfer.postOptions({
             user_id: balance.user_id }),
-            requestLoader = postgrest.loaderWithToken(loaderOpts),
+            requestLoader = catarse.loaderWithToken(loaderOpts),
             loading = m.prop(false),
             displayDone = h.toggleProp(false, true),
             displayConfirmation = h.toggleProp(false, true),
@@ -12882,7 +12890,7 @@ var userBalanceTransactions = {
  */
 var userBalanceMain = {
     controller: function controller(args) {
-        var userIdVM = postgrest$1.filtersVM({ user_id: 'eq' });
+        var userIdVM = catarse$1.filtersVM({ user_id: 'eq' });
 
         userIdVM.user_id(args.user_id);
 
@@ -12902,7 +12910,7 @@ var userBalanceMain = {
 
         // Handles with user balance transactions list data
         balanceTransactionManager = function () {
-            var listVM = postgrest$1.paginationVM(models.balanceTransaction, 'created_at.desc'),
+            var listVM = catarse$1.paginationVM(models.balanceTransaction, 'created_at.desc'),
                 load = function load() {
                 listVM.firstPage(userIdVM.parameters());
             };
@@ -12918,7 +12926,7 @@ var userBalanceMain = {
         bankAccountManager = function () {
             var collection = m.prop([]),
                 loader = function () {
-                return postgrest$1.loaderWithToken(models.bankAccount.getRowOptions(userIdVM.parameters()));
+                return catarse$1.loaderWithToken(models.bankAccount.getRowOptions(userIdVM.parameters()));
             }(),
                 load = function load() {
                 loader.load().then(collection);
@@ -13432,7 +13440,7 @@ var updateProject$2 = function updateProject$2(project_id) {
 };
 
 var loadCategoriesOptionsTo = function loadCategoriesOptionsTo(prop, selected) {
-    var filters = postgrest$1.filtersVM;
+    var filters = catarse$1.filtersVM;
     models.category.getPage(filters({}).order({
         name: 'asc'
     }).parameters()).then(function (data) {
@@ -13447,7 +13455,7 @@ var loadCategoriesOptionsTo = function loadCategoriesOptionsTo(prop, selected) {
 };
 
 var generateSearchCity = function generateSearchCity(prop) {
-    var filters = postgrest$1.filtersVM({
+    var filters = catarse$1.filtersVM({
         search_index: 'ilike'
     }).order({ name: 'asc' });
 
@@ -13461,7 +13469,7 @@ var generateSearchCity = function generateSearchCity(prop) {
 
     return function (event) {
         var value = event.currentTarget.value;
-        filters.search_index(replaceDiacritics(value));
+        filters.search_index(replaceDiacritics$1(value));
         fields$3.city_name(value);
 
         models.city.getPage(filters.parameters()).then(function (data) {
@@ -15494,12 +15502,12 @@ var I18nScope$58 = _$1.partial(h.i18nScope, 'projects.publish');
 
 var publish = {
     controller: function controller(args) {
-        var filtersVM = postgrest$1.filtersVM({
+        var filtersVM = catarse$1.filtersVM({
             project_id: 'eq'
         }),
             projectAccount = m.prop([]),
             projectDetails = m.prop([]),
-            loader = postgrest$1.loaderWithToken;
+            loader = catarse$1.loaderWithToken;
 
         filtersVM.project_id(args.root.getAttribute('data-id'));
 
@@ -15602,7 +15610,7 @@ var start = {
             featuredProjects = m.prop([]),
             selectedCategoryIdx = m.prop(-1),
             startvm = startVM(I18n$1),
-            filters = postgrest$1.filtersVM,
+            filters = catarse$1.filtersVM,
             paneImages = startvm.panes,
             categoryvm = filters({
             category_id: 'eq'
@@ -15613,7 +15621,7 @@ var start = {
             uservm = filters({
             id: 'eq'
         }),
-            loader = postgrest$1.loader,
+            loader = catarse$1.loader,
             statsLoader = loader(models.statistic.getRowOptions()),
             loadCategories = function loadCategories() {
             return models.category.getPage(filters({}).order({
@@ -15868,7 +15876,7 @@ var menuProfile = {
             userDetails = m.prop({}),
             user_id = args.user.user_id,
             userBalance = m.prop(0),
-            userIdVM = postgrest.filtersVM({ user_id: 'eq' });
+            userIdVM = catarse$1.filtersVM({ user_id: 'eq' });
 
         var userName = function userName() {
             var name = userVM.displayName(userDetails());
@@ -15984,15 +15992,15 @@ var userFriends = {
     controller: function controller(args) {
         models.userFriend.pageSize(9);
 
-        var userFriendVM = postgrest$1.filtersVM({ user_id: 'eq' }),
+        var userFriendVM = catarse$1.filtersVM({ user_id: 'eq' }),
             user = args.user,
-            friendListVM = postgrest$1.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
+            friendListVM = catarse$1.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
             Prefer: 'count=exact'
         }),
             allLoading = m.prop(false),
             followAll = function followAll() {
             allLoading(true);
-            var l = postgrest$1.loaderWithToken(models.followAllFriends.postOptions({}));
+            var l = catarse$1.loaderWithToken(models.followAllFriends.postOptions({}));
 
             l.load().then(function () {
                 friendListVM.firstPage(userFriendVM.parameters());
@@ -16036,10 +16044,10 @@ var userFriends = {
 var userFollows = {
     controller: function controller(args) {
         models.userFollow.pageSize(9);
-        var userFriendVM = postgrest$1.filtersVM({ user_id: 'eq' }),
+        var userFriendVM = catarse$1.filtersVM({ user_id: 'eq' }),
             user = args.user,
             hash = m.prop(window.location.hash),
-            followsListVM = postgrest$1.paginationVM(models.userFollow, 'created_at.desc', {
+            followsListVM = catarse$1.paginationVM(models.userFollow, 'created_at.desc', {
             Prefer: 'count=exact'
         });
 
@@ -16074,11 +16082,11 @@ var userFollows = {
 var userFollowers = {
     controller: function controller(args) {
         models.userFollower.pageSize(9);
-        var followersListVM = postgrest$1.paginationVM(models.userFollower, 'following.asc,created_at.desc', {
+        var followersListVM = catarse$1.paginationVM(models.userFollower, 'following.asc,created_at.desc', {
             Prefer: 'count=exact'
         }),
             user = args.user,
-            userIdVM = postgrest$1.filtersVM({ follow_id: 'eq' });
+            userIdVM = catarse$1.filtersVM({ follow_id: 'eq' });
 
         userIdVM.follow_id(user.user_id);
 
@@ -16111,13 +16119,13 @@ var userFollowers = {
 var userCreators = {
     controller: function controller() {
         models.creatorSuggestion.pageSize(9);
-        var creatorsListVM = postgrest$1.paginationVM(models.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
+        var creatorsListVM = catarse$1.paginationVM(models.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
             Prefer: 'count=exact'
         });
         var allLoading = m.prop(false);
         var followAll = function followAll() {
             allLoading(true);
-            var l = postgrest$1.loaderWithToken(models.followAllCreators.postOptions({}));
+            var l = catarse$1.loaderWithToken(models.followAllCreators.postOptions({}));
 
             l.load().then(function () {
                 creatorsListVM.firstPage();
@@ -16259,7 +16267,7 @@ var I18nScope$61 = _$1.partial(h.i18nScope, 'pages.start');
 var subProjectNew = {
     controller: function controller() {
         var categories = m.prop([]),
-            filters = postgrest$1.filtersVM,
+            filters = catarse$1.filtersVM,
             loadCategories = function loadCategories() {
             return models.category.getPage(filters({}).order({
                 name: 'asc'
@@ -16425,5 +16433,5 @@ var c = {
 
 return c;
 
-}(m,I18n,_,moment,$,postgrest,CatarseAnalytics,replaceDiacritics,Chart,select));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsifQ==
+}(m,I18n,_,moment,$,Postgrest,CatarseAnalytics,replaceDiacritics,Chart,select));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjpudWxsLCJzb3VyY2VzIjpbXSwic291cmNlc0NvbnRlbnQiOltdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
