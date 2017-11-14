@@ -1,6 +1,7 @@
-import {catarse} from './api';
+import { catarse, commonAnalytics } from './api';
 
 const models = {
+    projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     contributionDetail: catarse.model('contribution_details'),

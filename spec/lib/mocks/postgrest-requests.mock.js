@@ -12,6 +12,11 @@ commonPaymentApiMeta.content = 'https://payment.common.io';
 commonPaymentApiMeta.name = 'common-payment-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonPaymentApiMeta);
 
+const commonAnalyticsApiMeta = document.createElement('meta');
+commonAnalyticsApiMeta.content = 'https://analytics.common.io';
+commonAnalyticsApiMeta.name = 'common-analytics-api-host';
+document.getElementsByTagName('head')[0].appendChild(commonAnalyticsApiMeta);
+
 // const apiPrefix = "https://api.catarse.me";
 // catarse.init(apiPrefix, {method: "GET", url: "/api_token"});
 
