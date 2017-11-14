@@ -1,5 +1,6 @@
 insert into core.core_settings(name, value)
-    values ('jwt_secret', 'bUH75katNm6Yj0iPSchcgUuTwYAzZr7C');
+    values ('jwt_secret', 'bUH75katNm6Yj0iPSchcgUuTwYAzZr7C'),
+    ('subscription_interval', '1 month');
 
 insert into platform_service.users(id, name, email, password)
     values ('6d870ed7-65c7-4419-b78b-3946e6f6e695', 'Demo platform account', 'demo@demo.com', crypt('123456', gen_salt('bf')));
