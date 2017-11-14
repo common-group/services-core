@@ -21,7 +21,8 @@ const projectInsightsSub = {
         };
     },
     view(ctrl, args) {
-        const project = args.project;
+        const project = args.project,
+            subscribersDetails = args.subscribersDetails;
 
         return m('.project-insights', !args.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -39,13 +40,13 @@ const projectInsightsSub = {
                 ]),
                 m('.w-container',
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals }),
+                        m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals, amount: subscribersDetails.amount_paid_for_valid_period }),
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
                                 'Assinantes'
                             ),
                             m('.fontsize-largest.fontweight-semibold',
-                                '112'
+                                subscribersDetails.total_subscriptions
                             )
                         ]),
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
@@ -53,7 +54,7 @@ const projectInsightsSub = {
                                 'Receita Mensal'
                             ),
                             m('.fontsize-largest.fontweight-semibold',
-                                'R$10.560'
+                                `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [

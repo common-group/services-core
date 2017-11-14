@@ -4,7 +4,6 @@ import h from '../h';
 
 const projectGoalsBoxDashboard = {
     controller(args) {
-        // @TODO make dynamic
         const currentGoalIndex = m.prop(0);
         const nextGoal = () => {
             if (currentGoalIndex() < args.goalDetails().length - 1) {
@@ -29,7 +28,8 @@ const projectGoalsBoxDashboard = {
                 value: '',
                 description: ''
             }],
-            currentGoalIndex = ctrl.currentGoalIndex;
+            currentGoalIndex = ctrl.currentGoalIndex,
+            goalPercentage = (args.amount / goals[currentGoalIndex()].value) * 100;
 
         return m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius.w-clearfix', [
             m('.u-right', [
@@ -46,16 +46,20 @@ const projectGoalsBoxDashboard = {
                     'Metas'
                 ),
             m('.fontsize-largest.fontweight-semibold',
-                    '75%'
+                    `${goalPercentage}%`
                 ),
             m('.meter.u-marginbottom-10',
-                    m('.meter-fill')
+                    m('.meter-fill', {
+                        style: {
+                            width: `${(goalPercentage > 100 ? 100 : goalPercentage)}%`
+                        }
+                    })
                 ),
             m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter',
                     goals[currentGoalIndex()].title
                 ),
             m('.fontcolor-secondary.fontsize-smallest',
-                    `R$0 de R$${goals[currentGoalIndex()].value} por mês`
+                    `R${args.amount} de R$${goals[currentGoalIndex()].value} por mês`
                 )
         ]);
     }

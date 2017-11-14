@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse, commonAnalytics } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -12,6 +12,7 @@ const insights = {
                 project_id: 'eq'
             }),
             projectDetails = m.prop([]),
+            subscribersDetails = m.prop([]),
             loader = catarse.loaderWithToken,
             setProjectId = () => {
                 try {
@@ -25,20 +26,32 @@ const insights = {
 
         setProjectId();
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters()));
-        l.load().then(projectDetails);
 
+        l.load().then((data) => {
+            projectDetails(data);
+            const l2 = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
+                id: _.first(data).common_id
+            }));
+            l2.load().then(subscribersDetails);
+        });
         return {
             l,
             filtersVM,
+            subscribersDetails,
             projectDetails
         };
     },
     view(ctrl, args) {
         const project = _.first(ctrl.projectDetails()) || {
-            user: {
-                name: 'Realizador'
-            }
-        };
+                user: {
+                    name: 'Realizador'
+                }
+            },
+            subscribersDetails = _.first(ctrl.subscribersDetails()) || {
+                amount_paid_for_valid_period: 0,
+                total_subscriptions: 0,
+                total_subscribers: 0
+            };
 
         if (!ctrl.l()) {
             project.user.name = project.user.name || 'Realizador';
@@ -48,6 +61,7 @@ const insights = {
             project.mode === 'sub' ?
             m(projectInsightsSub, {
                 args,
+                subscribersDetails,
                 project,
                 l: ctrl.l,
                 filtersVM: ctrl.filtersVM
