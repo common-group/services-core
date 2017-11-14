@@ -14,8 +14,7 @@ async function init() {
     try {
         // fetch payment and user data to build context
         const res = await pool.query(
-            `select payment_service.subscriptions_charge($1::interval)`
-            , [process.env.SUBSCRIPTION_INTERVAL]);
+            `select payment_service.subscriptions_charge()`);
 
         console.log(res.rows[0]);
     } catch (e) {
