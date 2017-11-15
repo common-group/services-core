@@ -1,0 +1,27 @@
+
+---
+- config:
+  - testset: "/subscriptions"
+
+- test:
+  - name: "List subscriptions with platform api_key"
+  - url: "/subscriptions"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "GET"
+  - expected_status: [200]
+
+
+- test:
+  - name: "List subscriptions with scoped_user api_key"
+  - url: "/subscriptions"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOiJiYjhmNDQ3OC1kZjQxLTQxMWMtOGVkNy0xMmMwMzQwNDRjMGUifQ.9eKVBoik7ByLB0Ewag48sYMlVQVW7eSQkDxPcrKEICE', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "GET"
+  - expected_status: [200]
+
+- test:
+  - name: "List subscriptions without auth"
+  - url: "/subscriptions"
+  - method: "GET"
+  - expected_status: [401]
+
+

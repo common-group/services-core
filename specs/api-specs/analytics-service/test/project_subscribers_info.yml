@@ -1,0 +1,44 @@
+
+---
+- config:
+  - testset: "/rpc/project_subscribers_info"
+
+- test:
+  - name: "Get project subscribers info with platform api_key"
+  - url: "/rpc/project_subscribers_info"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{"id": "52273d0a-1610-4f48-9239-e96e5861c3d3"}'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "amount_paid_for_valid_period", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "total_subscribers", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "total_subscriptions", comparator: "regex", expected: ".*"}
+
+
+- test:
+  - name: "Get project subscribers info with scoped_user api_key"
+  - url: "/rpc/project_subscribers_info"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOiJiYjhmNDQ3OC1kZjQxLTQxMWMtOGVkNy0xMmMwMzQwNDRjMGUifQ.9eKVBoik7ByLB0Ewag48sYMlVQVW7eSQkDxPcrKEICE', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{"id": "52273d0a-1610-4f48-9239-e96e5861c3d3"}'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "amount_paid_for_valid_period", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "total_subscribers", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "total_subscriptions", comparator: "regex", expected: ".*"}
+
+- test:
+  - name: "Get project subscribers info withut auth"
+  - url: "/rpc/project_subscribers_info"
+  - method: "POST"
+  - headers: {'Platform-Code': 'a28be766-bb36-4821-82ec-768d2634d78b', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - body: '{"id": "52273d0a-1610-4f48-9239-e96e5861c3d3"}'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "amount_paid_for_valid_period", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "total_subscribers", comparator: "regex", expected: ".*"}
+    - compare: {jsonpath_mini: "total_subscriptions", comparator: "regex", expected: ".*"}
+
+
+
