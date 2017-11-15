@@ -5511,7 +5511,7 @@ var insights = {
             project_id: 'eq'
         }),
             projectDetails = m.prop([]),
-            subscribersDetails = m.prop([]),
+            subscribersDetails = m.prop(),
             loader = catarse$1.loaderWithToken,
             setProjectId = function setProjectId() {
             try {
@@ -5546,7 +5546,7 @@ var insights = {
                 name: 'Realizador'
             }
         },
-            subscribersDetails = _$1.first(ctrl.subscribersDetails()) || {
+            subscribersDetails = ctrl.subscribersDetails() || {
             amount_paid_for_valid_period: 0,
             total_subscriptions: 0,
             total_subscribers: 0
