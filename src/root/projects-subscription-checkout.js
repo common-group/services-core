@@ -306,9 +306,9 @@ const projectsSubscriptionCheckout = {
                         ) : ''),
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
                             vm: ctrl.vm,
-                            // contribution_id: ctrl.contribution().id,
                             project_id: projectVM.currentProject().project_id,
-                            user_id: user.id
+                            user_id: user.id,
+                            isSubscription: true
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
@@ -336,7 +336,7 @@ const projectsSubscriptionCheckout = {
                                             ' Cobrança hoje:'
                                         ]
                                     ),
-                                    `R$${formatedValue}`
+                                    `R$ ${formatedValue}`
                                 ]
                             ),
                             m('.fontsize-smaller.u-marginbottom-10',
@@ -344,7 +344,7 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-calendar-o.text-success'),
-                                            ' Próxima cobrança:'
+                                            ' Próxima cobrança: '
                                         ]
                                     ),
                                     ctrl.lastDayOfNextMonth()

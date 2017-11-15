@@ -4,165 +4,172 @@ import I18n from 'i18n-js';
 import h from '../h';
 import tooltip from './tooltip';
 import creditCardVM from '../vms/credit-card-vm';
+import projectVM from '../vms/project-vm';
 import creditCardInput from './credit-card-input';
 import inlineError from './inline-error';
+import commonPaymentVM from '../vms/common-payment-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const paymentCreditCard = {
-    controller(args) {
-        const vm = args.vm,
-            loadingInstallments = m.prop(true),
-            loadingSavedCreditCards = m.prop(true),
-            selectedCreditCard = m.prop({ id: -1 }),
-            selectedInstallment = m.prop('1'),
-            showForm = m.prop(false),
-            creditCardType = m.prop('unknown'),
-            documentMask = _.partial(h.mask, '999.999.999-99'),
-            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
+controller(args) {
+    const vm = args.vm,
+        loadingInstallments = m.prop(true),
+        loadingSavedCreditCards = m.prop(true),
+        selectedCreditCard = m.prop({ id: -1 }),
+        selectedInstallment = m.prop('1'),
+        showForm = m.prop(false),
+        creditCardType = m.prop('unknown'),
+        documentMask = _.partial(h.mask, '999.999.999-99'),
+        documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
 
-        const onSubmit = () => {
-            if (selectedCreditCard().id === -1) {
-                checkExpiry();
-                checkcvv();
-                checkCreditCard();
-                checkCreditCardName();
+    const onSubmit = () => {
+        vm.creditCardFields.errors([]);
+        
+        if (selectedCreditCard().id === -1) {
+            checkExpiry();
+            checkcvv();
+            checkCreditCard();
+            checkCreditCardName();
+        }
+
+        if (vm.creditCardFields.errors().length === 0) {
+            if (args.isSubscription) {
+                commonPaymentVM.sendPayment(selectedCreditCard, vm.fields); 
             } else {
-                vm.creditCardFields.errors([]);
-            }
-
-            if (vm.creditCardFields.errors().length === 0) {
                 vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
             }
+        }
 
-            return false;
-        };
+        return false;
+    };
 
-        const handleValidity = (isValid, errorObj) => {
-            if (!isValid) {
-                vm.creditCardFields.errors().push(errorObj);
-            } else {
-                const errorsWithout = _.reject(vm.creditCardFields.errors(), err => _.isEqual(err, errorObj));
-                vm.creditCardFields.errors(errorsWithout);
-            }
-        };
+    const handleValidity = (isValid, errorObj) => {
+        if (!isValid) {
+            vm.creditCardFields.errors().push(errorObj);
+        } else {
+            const errorsWithout = _.reject(vm.creditCardFields.errors(), err => _.isEqual(err, errorObj));
+            vm.creditCardFields.errors(errorsWithout);
+        }
+    };
 
-        const checkcvv = () => {
-            const isValid = creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType()),
-                errorObj = { field: 'cvv', message: I18n.t('errors.inline.creditcard_cvv', scope()) };
+    const checkcvv = () => {
+        const isValid = creditCardVM.validateCardcvv(vm.creditCardFields.cvv(), creditCardType()),
+            errorObj = { field: 'cvv', message: I18n.t('errors.inline.creditcard_cvv', scope()) };
 
-            handleValidity(isValid, errorObj);
-        };
+        handleValidity(isValid, errorObj);
+    };
 
-        const checkExpiry = () => {
-            const isValid = creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear()),
-                errorObj = { field: 'expiry', message: I18n.t('errors.inline.creditcard_expiry', scope()) };
+    const checkExpiry = () => {
+        const isValid = creditCardVM.validateCardExpiry(vm.creditCardFields.expMonth(), vm.creditCardFields.expYear()),
+            errorObj = { field: 'expiry', message: I18n.t('errors.inline.creditcard_expiry', scope()) };
 
-            handleValidity(isValid, errorObj);
-        };
+        handleValidity(isValid, errorObj);
+    };
 
-        const checkCreditCard = () => {
-            const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number()),
-                errorObj = { field: 'number', message: I18n.t('errors.inline.creditcard_number', scope()) };
+    const checkCreditCard = () => {
+        const isValid = creditCardVM.validateCardNumber(vm.creditCardFields.number()),
+            errorObj = { field: 'number', message: I18n.t('errors.inline.creditcard_number', scope()) };
 
-            handleValidity(isValid, errorObj);
-        };
+        handleValidity(isValid, errorObj);
+    };
 
-        const checkCardOwnerDocument = () => {
-            const document = vm.creditCardFields.cardOwnerDocument(),
-                striped = String(document).replace(/[\.|\-|\/]*/g, '');
-            let isValid = false,
-                errorMessage = '';
+    const checkCardOwnerDocument = () => {
+        const document = vm.creditCardFields.cardOwnerDocument(),
+            striped = String(document).replace(/[\.|\-|\/]*/g, '');
+        let isValid = false,
+            errorMessage = '';
 
-            if (document.length > 14) {
-                isValid = h.validateCnpj(document);
-                errorMessage = 'CNPJ inválido.';
-            } else {
-                isValid = h.validateCpf(striped);
-                errorMessage = 'CPF inválido.';
-            }
+        if (document.length > 14) {
+            isValid = h.validateCnpj(document);
+            errorMessage = 'CNPJ inválido.';
+        } else {
+            isValid = h.validateCpf(striped);
+            errorMessage = 'CPF inválido.';
+        }
 
-            handleValidity(isValid, { field: 'cardOwnerDocument', message: errorMessage });
-        };
+        handleValidity(isValid, { field: 'cardOwnerDocument', message: errorMessage });
+    };
 
-        const checkCreditCardName = () => {
-            const trimmedString = vm.creditCardFields.name().replace(/ /g, '');
-            const charsOnly = /^[a-zA-Z]*$/;
-            const errorObj = { field: 'name', message: I18n.t('errors.inline.creditcard_name', scope()) };
-            const isValid = !(_.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
+    const checkCreditCardName = () => {
+        const trimmedString = vm.creditCardFields.name().replace(/ /g, '');
+        const charsOnly = /^[a-zA-Z]*$/;
+        const errorObj = { field: 'name', message: I18n.t('errors.inline.creditcard_name', scope()) };
+        const isValid = !(_.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
-            handleValidity(isValid, errorObj);
-        };
+        handleValidity(isValid, errorObj);
+    };
 
-        const applyCreditCardNameMask = _.compose(vm.creditCardFields.name, h.noNumbersMask);
+    const applyCreditCardNameMask = _.compose(vm.creditCardFields.name, h.noNumbersMask);
 
-        const applyCvvMask = (value) => {
-            const setValue = h.numbersOnlyMask(value.substr(0, 4));
+    const applyCvvMask = (value) => {
+        const setValue = h.numbersOnlyMask(value.substr(0, 4));
 
-            return vm.creditCardFields.cvv(setValue);
-        };
+        return vm.creditCardFields.cvv(setValue);
+    };
 
-        const applyDocumentMask = (value) => {
-            if (value.length > 14) {
-                vm.creditCardFields.cardOwnerDocument(documentCompanyMask(value));
-            } else {
-                vm.creditCardFields.cardOwnerDocument(documentMask(value));
-            }
-        };
+    const applyDocumentMask = (value) => {
+        if (value.length > 14) {
+            vm.creditCardFields.cardOwnerDocument(documentCompanyMask(value));
+        } else {
+            vm.creditCardFields.cardOwnerDocument(documentMask(value));
+        }
+    };
 
 
-        const fieldHasError = (fieldName) => {
-            const fieldWithError = _.findWhere(vm.creditCardFields.errors(), { field: fieldName });
+    const fieldHasError = (fieldName) => {
+        const fieldWithError = _.findWhere(vm.creditCardFields.errors(), { field: fieldName });
 
-            return fieldWithError ? m.component(inlineError, { message: fieldWithError.message }) : '';
-        };
+        return fieldWithError ? m.component(inlineError, { message: fieldWithError.message }) : '';
+    };
 
-        const buildTooltip = tooltipText => m.component(tooltip, {
-            el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
-            text: tooltipText,
-            width: 380
-        });
+    const buildTooltip = tooltipText => m.component(tooltip, {
+        el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
+        text: tooltipText,
+        width: 380
+    });
 
-        const isCreditCardSelected = (card, idx) => selectedCreditCard() === card;
+    const isCreditCardSelected = (card, idx) => selectedCreditCard() === card;
 
-        const loadPagarme = (el, isInit) => {
-            if (!isInit) {
-                const script = document.createElement('script');
-                script.src = '//assets.pagar.me/js/pagarme.min.js';
-                document.body.appendChild(script);
-                script.onload = () => {
-                    vm.pagarme(window.PagarMe);
-                };
-            }
-        };
+    const loadPagarme = (el, isInit) => {
+        if (!isInit) {
+            const script = document.createElement('script');
+            script.src = '//assets.pagar.me/js/pagarme.min.js';
+            document.body.appendChild(script);
+            script.onload = () => {
+                vm.pagarme(window.PagarMe);
+            };
+        }
+    };
 
-        const selectCreditCard = (card) => {
-            selectedCreditCard(card);
+    const selectCreditCard = (card) => {
+        selectedCreditCard(card);
 
-            if (card.id === -1) {
-                showForm(true);
-            } else {
-                showForm(false);
-            }
-        };
+        if (card.id === -1) {
+            showForm(true);
+        } else {
+            showForm(false);
+        }
+    };
 
-        const scope = attr => vm.isInternational()
-                   ? I18nIntScope(attr)
-                   : I18nScope(attr);
-
+    const scope = attr => vm.isInternational()
+               ? I18nIntScope(attr)
+               : I18nScope(attr);
+    console.log('eh subscription?', projectVM.isSubscription());
+    if (!args.isSubscription) {
         vm.getInstallments(args.contribution_id)
             .then(() => {
                 loadingInstallments(false);
                 m.redraw();
             });
-
-        vm.getSavedCreditCards(args.user_id)
-            .then((savedCards) => {
-                loadingSavedCreditCards(false);
-                selectCreditCard(savedCards[0]);
-                m.redraw();
-            });
+    }
+    vm.getSavedCreditCards(args.user_id)
+        .then((savedCards) => {
+            loadingSavedCreditCards(false);
+            selectCreditCard(savedCards[0]);
+            m.redraw();
+        });
 
         return {
             vm,
@@ -346,7 +353,7 @@ const paymentCreditCard = {
                             )
                         ])
                     ]),
-                    (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' : m('.w-row', [
+                    projectVM.isSubscription() || (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' : m('.w-row', [
                         m('.w-col.w-col-6', [
                             m('label.field-label.fontweight-semibold[for="split"]',
                                 I18n.t('credit_card.installments', ctrl.scope())
