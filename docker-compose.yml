@@ -39,7 +39,10 @@ services:
         - "service_core_db:service_core_db"
 
   payment_processor_dispatcher:
-    image: comum/payment-service:latest
+    build:
+      context: ../payment-service-api
+      dockerfile: Dockerfile
+    # image: comum/payment-service:latest
     env_file:
       - ./compose_env/.payment_processor_dispatcher.env
     command: ["./dispatchers/payment_processor_dispatcher"]
@@ -51,7 +54,9 @@ services:
       - dispatcher_redis
 
   subscriptions_scheduler:
-    image: comum/payment-service:latest
+    build:
+      context: ../payment-service-api
+      dockerfile: Dockerfile
     env_file:
       - ./compose_env/.subscriptions_scheduler.env
     command: ["./scripts/subscription_scheduler.js"]
