@@ -29,7 +29,7 @@
 
 - test:
   - name: "Creating platform without auth"
-  - url: "/rpc/create_project"
+  - url: "/rpc/project"
   - method: "POST"
   - body: '{"data": {"name": "platform test"}}'
   - headers: {'Content-Type': 'application/json'}
