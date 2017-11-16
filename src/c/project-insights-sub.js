@@ -7,6 +7,7 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectInviteCard from '../c/project-invite-card';
 import projectGoalsBoxDashboard from './project-goals-box-dashboard';
 import projectGoalsVM from '../vms/project-goals-vm';
+import userVM from '../vms/user-vm.js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -15,14 +16,17 @@ const projectInsightsSub = {
         const filtersVM = args.filtersVM;
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
+        const balanceLoader = userVM.getUserBalance(args.project.user_id);
 
         return {
-            projectGoalsVM
+            projectGoalsVM,
+            balanceLoader
         };
     },
     view(ctrl, args) {
         const project = args.project,
-            subscribersDetails = args.subscribersDetails;
+            subscribersDetails = args.subscribersDetails,
+            balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
 
         return m('.project-insights', !args.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -62,12 +66,12 @@ const projectInsightsSub = {
                                 'Saldo',
                                 m.trust('&nbsp;'),
                                 ' ',
-                                m("a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='http://catarse.webflow.io/banco/saldo-assinatura']",
+                                m(`a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='/users/${project.user_id}/edit#balance']`,
                                     'Sacar'
                                 )
                             ]),
                             m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10',
-                                'R$2.500'
+                                (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '' )
                             )
                         ])
                     ])
