@@ -27,7 +27,7 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push hook_service --recursive -a hook-service-api
+      - run: heroku container:push web --recursive -a hook-service-api
 
 
 workflows:
