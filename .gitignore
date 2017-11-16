@@ -15,3 +15,4 @@ compose_env/.service_core_migrator.env
 compose_env/.service_core_db.env
 compose_env/.subscriptions_scheduler.env
 specs/database/schema.sql
+compose_env/.hook_service_api.env
