@@ -54,7 +54,7 @@ AS $function$
                     raise 'reward not found: %', ($1->>'reward_id');
                 end if;
                 
-                if ($1->>'amount'::decimal) < (_reward.data->>'minimum_value')::decimal then
+                if ($1->>'amount')::decimal < (_reward.data->>'minimum_value')::decimal then
                     raise 'payment amount is bellow of reward minimum %', (_reward.data->>'minimum_value')::decimal;
                 end if;
             end if;
