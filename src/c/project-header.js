@@ -47,10 +47,10 @@ const projectHeader = {
 
         return (!_.isUndefined(project()) ? m('#project-header', [
             m(`.w-section.section-product.${project().mode}`),
-            m(`${projectVM.isSubscription(project) ? '.dark' : ''}.project-main-container`,{
+            m(`${projectVM.isSubscription(project) ? '.dark' : ''}.project-main-container`, {
                 class: hasBackground ? 'project-with-background' : null,
                 style: hasBackground ? `background-image: linear-gradient(180deg, rgba(0, 4, 8, .89), rgba(0, 4, 8, .89)), url("${project().cover_image}");` : null
-            },[
+            }, [
                 m(projectHeaderTitle, {
                     project,
                     children: hasContribution
@@ -63,6 +63,7 @@ const projectHeader = {
                             })),
                             m('.w-col.w-col-4', m.component(projectSidebar, {
                                 project,
+                                subscriptionData: args.subscriptionData,
                                 userDetails: args.userDetails,
                                 goalDetails: args.goalDetails,
                             }))
