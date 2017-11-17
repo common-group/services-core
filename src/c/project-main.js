@@ -19,13 +19,14 @@ const projectMain = {
                         post_id: args.post_id
                     },
                     tabs = {
-                        '#rewards': m('.w-col.w-col-12', [projectVM.isSubscription(project) ? m.component(projectGoalsBox, { goalDetails: args.goalDetails }) : '', m.component(projectRewardList, _.extend({}, {
+                        '#rewards': m('.w-col.w-col-12', [projectVM.isSubscription(project) ? m.component(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : '', m.component(projectRewardList, _.extend({}, {
                             rewardDetails: args.rewardDetails
                         }, c_opts))]),
                         '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
                         '#contributions': m.component(projectContributions, c_opts),
                         '#about': m.component(projectAbout, _.extend({}, {
                             rewardDetails: args.rewardDetails,
+                            subscriptionData: args.subscriptionData,
                             goalDetails: args.goalDetails
                         }, c_opts)),
                         '#comments': m.component(projectComments, c_opts),

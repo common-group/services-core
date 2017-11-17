@@ -32,6 +32,7 @@ const projectsShow = {
         }, project() ? [
             m.component(projectHeader, {
                 project,
+                subscriptionData: ctrl.subscriptionData,
                 rewardDetails: ctrl.rewardDetails,
                 userDetails: ctrl.userDetails,
                 projectContributions: ctrl.projectContributions,
@@ -45,6 +46,7 @@ const projectsShow = {
                 project,
                 post_id: args.post_id,
                 rewardDetails: ctrl.rewardDetails,
+                subscriptionData: ctrl.subscriptionData,
                 goalDetails: ctrl.goalDetails,
                 userDetails: ctrl.userDetails,
                 projectContributions: ctrl.projectContributions

@@ -98,7 +98,11 @@ const projectSidebar = {
                 return states[project().state];
             },
             isSub = projectVM.isSubscription(project),
-            goal = _.last(args.goalDetails()) || { value: '--' };
+            goal = _.last(args.goalDetails()) || { value: '--' },
+            subscriptionData = args.subscriptionData(),
+            pledged = isSub ? subscriptionData.amount_paid_for_valid_period : project().pledged,
+            progress = isSub ? (subscriptionData.amount_paid_for_valid_period / goal.value) * 100 : project().progress,
+            totalContributors = isSub ? subscriptionData.total_subscriptions : project().total_contributors;
 
         return m('#project-sidebar.aside', [
             m('.project-stats', [
@@ -106,31 +110,31 @@ const projectSidebar = {
                     m('.project-stats-info', [
                         m('.u-marginbottom-20', [
                             m(`#pledged.${isSub ? 'fontsize-larger' : 'fontsize-largest'}.fontweight-semibold.u-text-center-small-only`, [
-                                `R$ ${project().pledged ? h.formatNumber(project().pledged) : '0'}`,
+                                `R$ ${pledged ? h.formatNumber(pledged) : '0'}`,
                                 isSub ? m('span.fontsize-large', ' por mês') : null
                             ]),
                             isSub ? m('.fontsize-small.u-text-center-small-only', [
                                 I18n.t('subscribers_call', I18nScope()),
-                                m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
+                                m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: totalContributors }))),
                             ])
                                 : m('.fontsize-small.u-text-center-small-only', [
                                     I18n.t('contributors_call', I18nScope()),
-                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: project().total_contributors }))),
+                                    m('span#contributors.fontweight-semibold', I18n.t('contributors_count', I18nScope({ count: totalContributors }))),
                                     (!project().expires_at && elapsed) ? ` em ${I18n.t(`datetime.distance_in_words.x_${elapsed.unit}`, { count: elapsed.total }, I18nScope())}` : ''
                                 ])
                         ]),
                         m('.meter', [
                             m('#progressBar.meter-fill', {
                                 style: {
-                                    width: `${project().progress}%`
+                                    width: `${progress}%`
                                 }
                             })
                         ]),
                         isSub
-                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${project().progress ? parseInt(project().progress) : '0'}% de R$${goal.value} por mês`)
+                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${progress ? parseInt(progress) : '0'}% de R$${goal.value} por mês`)
                         : m('.w-row.u-margintop-10', [
                             m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                                m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${project().progress ? parseInt(project().progress) : '0'}%`)
+                                m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${progress ? parseInt(progress) : '0'}%`)
                             ]),
                             m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
                                 m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [

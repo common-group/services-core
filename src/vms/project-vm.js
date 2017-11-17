@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse, commonAnalytics } from '../api';
 import h from '../h';
 import models from '../models';
 import rewardVM from './reward-vm';
@@ -9,12 +9,36 @@ import userVM from './user-vm';
 
 const currentProject = m.prop(),
     userDetails = m.prop(),
+    subscriptionData = m.prop({
+        amount_paid_for_valid_period: 0,
+        total_subscriptions: 0,
+        total_subscribers: 0
+    }),
     projectContributions = m.prop([]),
     vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
 
+const isSubscription = (project) => {
+    if (_.isFunction(project)) {
+        return project() ? project().mode === 'sub' : false;
+    }
+
+    return project ? project.mode === 'sub' : false;
+};
+
+const fetchSubData = (projectUuid) => {
+    const lproject = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({ id: projectUuid }));
+
+    lproject.load().then((data) => {
+        subscriptionData(data || subscriptionData());
+    });
+};
+
 const setProject = project_user_id => (data) => {
     currentProject(_.first(data));
+    if (isSubscription(currentProject())) {
+        fetchSubData(currentProject().common_id);
+    }
 
     if (!project_user_id) {
         userVM.fetchUser(currentProject().user_id, true, userDetails);
@@ -99,20 +123,13 @@ const fetchProject = (projectId, handlePromise = true, customProp = currentProje
     return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
 };
 
+
 const updateProject = (projectId, projectData) => m.request({
     method: 'PUT',
     url: `/projects/${projectId}.json`,
     data: { project: projectData },
     config: h.setCsrfToken
 });
-
-const isSubscription = (project) => {
-    if (_.isFunction(project)) {
-        return project() ? project().mode === 'sub' : false;
-    }
-
-    return project ? project.mode === 'sub' : false;
-};
 
 
 const projectVM = {
@@ -126,6 +143,8 @@ const projectVM = {
     setProjectPageTitle,
     init,
     fetchProject,
+    fetchSubData,
+    subscriptionData,
     updateProject,
     isSubscription
 };

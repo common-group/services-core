@@ -4,7 +4,7 @@ import h from '../h';
 
 const projectGoalsBox = {
     controller(args) {
-        // @TODO make dynamic
+        const subscriptionData = args.subscriptionData();
         const currentGoalIndex = m.prop(0);
         const nextGoal = () => {
             if (currentGoalIndex() < args.goalDetails().length - 1) {
@@ -17,7 +17,7 @@ const projectGoalsBox = {
                 m.redraw();
             }
         };
-        return { currentGoalIndex, nextGoal, previousGoal };
+        return { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
     },
     view(ctrl, args) {
         const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
@@ -25,7 +25,9 @@ const projectGoalsBox = {
                 value: '',
                 description: ''
             }],
-            currentGoalIndex = ctrl.currentGoalIndex;
+            subscriptionData = ctrl.subscriptionData,
+            currentGoalIndex = ctrl.currentGoalIndex,
+            goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
 
         return m('div',
           m(`.card.u-marginbottom-30.u-radius${args.style}`, [
@@ -48,10 +50,14 @@ const projectGoalsBox = {
               ]),
               m('.u-marginbottom-10', [
                   m('.meter',
-                    m('.meter-fill')
+                    m('.meter-fill', {
+                        style: {
+                            width: `${(goalPercentage > 100 ? 100 : goalPercentage)}%`
+                        }
+                    })
                 ),
                   m('.fontsize-smaller.fontweight-semibold.u-margintop-10',
-                    `R$0 de R$${goals[currentGoalIndex()].value} por mês`
+                    `R$${subscriptionData.amount_paid_for_valid_period} de R$${goals[currentGoalIndex()].value} por mês`
                 )
               ]),
               m('.fontsize-smaller', [
