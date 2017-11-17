@@ -373,28 +373,23 @@ async function init(stdin_data) {
             return true;
         } catch(err) {
             await client.query("ROLLBACK;");
-            raven_report(err, basic_raven_context);
-            if(err.errors && err.response && err.response.errors) {
-                try {
-                    await client.query("BEGIN");
-                    await pg_client.query(
-                        `update payment_service.catalog_payments
+            if(err.response && err.response.errors) {
+                await client.query("BEGIN");
+                await client.query(
+                    `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json
                     where id = $1::uuid`
-                        , [payment.id, JSON.stringify(err.response.errors)]);
-                    await pg_client.query(`
+                    , [payment.id, JSON.stringify(err.response.errors)]);
+                await client.query(`
                         select
                             payment_service.transition_to(p, ($2)::payment_service.payment_status, ($3)::json)
                         from payment_service.catalog_payments p
                         where p.id = ($1)::uuid
                 `, [payment.id, 'error', JSON.stringify(err.response.errors)]);
-                    await client.query("COMMIT;");
-                } catch (e) {
-                    await client.query("ROLLBACK;");
-                    raven_report(e, basic_raven_context);
-                }
+                await client.query("COMMIT;");
             }
 
+            raven_report(err, basic_raven_context);
             throw err;
         }
     } catch (e) {
