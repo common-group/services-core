@@ -14,14 +14,12 @@ const pool = new Pool({
 });
 
 if(process.env.SENTRY_DSN) {
-    console.log('init raven');
     Raven.config(process.env.SENTRY_DSN).install();
 };
 
 
 getStdin().then(str => {
     if(str !== null && str !== "") {
-        console.log('node received', str);
         try {
             const json_message = JSON.parse(str);
             init(json_message)
@@ -29,27 +27,22 @@ getStdin().then(str => {
                     console.log(ok);
                     process.exitCode = 0;
                     return true;
-                    //exit(0, ok);
                 })
                 .catch((e) => {
                     console.log(e);
                     process.exitCode = 1;
                     return false;
-                    //exit(1, e);
                 });
         } catch (e) {
             process.exitCode = 1;
             console.log(e);
             return false;
         }
+    } else {
+        console.log('invalid stdin');
+        process.exit(1);
     }
 });
-
-function exit(code, message) {
-    console.log(message);
-    process.exit(code);
-};
-
 
 function raven_report(e, context_opts) {
     if(process.env.SENTRY_DSN) {
@@ -72,10 +65,13 @@ function raven_report(e, context_opts) {
 
 async function init(stdin_data) {
     const client = await pool.connect()
+    let basic_raven_context = {};
 
-    // fetch payment and user data to build context
-    const res = await client.query(
-        `select
+    try {
+
+        // fetch payment and user data to build context
+        const res = await client.query(
+            `select
             row_to_json(cp.*) as payment_data,
             row_to_json(u.*) as user_data,
             row_to_json(p.*) as project_data,
@@ -87,26 +83,27 @@ async function init(stdin_data) {
             join community_service.users o on o.id = p.user_id
             left join payment_service.subscriptions s on s.id = cp.subscription_id
             where cp.id = $1::uuid`
-        , [stdin_data.id]);
-    if(_.isEmpty(res.rows)) {
-        throw "Payment not found";
-    }
+            , [stdin_data.id]);
 
-    const payment = res.rows[0].payment_data;
-    const user = res.rows[0].user_data;
-    const project = res.rows[0].project_data;
-    const project_owner = res.rows[0].project_owner_data;
-    const subscription = res.rows[0].subscription_data;
+        if(_.isEmpty(res.rows)) {
+            throw "Payment not found";
+            return false;
+        };
 
-    const basic_raven_context = {
-        user: {
-            id: user.id,
-            payment_id: payment.id,
-            subscription_id: payment.subscription_id
-        }
-    };
+        const payment = res.rows[0].payment_data;
+        const user = res.rows[0].user_data;
+        const project = res.rows[0].project_data;
+        const project_owner = res.rows[0].project_owner_data;
+        const subscription = res.rows[0].subscription_data;
 
-    try {
+        let basic_raven_context = {
+            user: {
+                id: user.id,
+                payment_id: payment.id,
+                subscription_id: payment.subscription_id
+            }
+        };
+
         await client.query('BEGIN');
 
         const pagarme_client = await pagarme.client.connect({
@@ -366,7 +363,6 @@ async function init(stdin_data) {
                     }
                 }
 
-                console.log('before commit');
                 await client.query("COMMIT;");
             } else {
                 console.log('not charged on gateway');
