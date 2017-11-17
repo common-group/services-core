@@ -1,33 +1,81 @@
 #!/usr/local/bin/node
 'use strict';
 
-const {Client} = require('pg');
+const {Pool, Client} = require('pg');
 const pagarme = require('pagarme');
 const getStdin = require('get-stdin');
 const _ = require('lodash');
+const Raven = require('raven');
+
+const pool = new Pool({
+    connectionString: process.env.PROCESS_PAYMENT_DATABASE_URL,
+    statement_timeout: (process.env.STATEMENT_TIMEOUT || 5000),
+    max: 3
+});
+
+if(process.env.SENTRY_DSN) {
+    console.log('init raven');
+    Raven.config(process.env.SENTRY_DSN).install();
+};
+
 
 getStdin().then(str => {
     if(str !== null && str !== "") {
-        init(JSON.parse(str))
-            .then(void(0))
-            .catch(void(0));
+        console.log('node received', str);
+        try {
+            const json_message = JSON.parse(str);
+            init(json_message)
+                .then((ok) => {
+                    console.log(ok);
+                    process.exitCode = 0;
+                    return true;
+                    //exit(0, ok);
+                })
+                .catch((e) => {
+                    console.log(e);
+                    process.exitCode = 1;
+                    return false;
+                    //exit(1, e);
+                });
+        } catch (e) {
+            process.exitCode = 1;
+            console.log(e);
+            return false;
+        }
     }
 });
 
-async function init(stdin_data) {
-    const exit = (code, message) => {
-        console.log(message);
-        process.exit(code);
+function exit(code, message) {
+    console.log(message);
+    process.exit(code);
+};
+
+
+function raven_report(e, context_opts) {
+    if(process.env.SENTRY_DSN) {
+        Raven.context(function () {
+            if(context_opts) {
+                Raven.setContext(context_opts);
+            };
+
+            Raven.captureException(e, (sendErr, event) => {
+                if(sendErr) {
+                    console.log('error on log to sentry')
+                } else {
+                    console.log('raven logged event', event);
+                }
+            });
+        });
     };
-    const pg_client = new Client({
-        connectionString: process.env.PROCESS_PAYMENT_DATABASE_URL,
-        statement_timeout: 5000
-    });
-    await pg_client.connect();
-    try {
-        // fetch payment and user data to build context
-        const res = await pg_client.query(
-            `select
+};
+
+
+async function init(stdin_data) {
+    const client = await pool.connect()
+
+    // fetch payment and user data to build context
+    const res = await client.query(
+        `select
             row_to_json(cp.*) as payment_data,
             row_to_json(u.*) as user_data,
             row_to_json(p.*) as project_data,
@@ -39,16 +87,27 @@ async function init(stdin_data) {
             join community_service.users o on o.id = p.user_id
             left join payment_service.subscriptions s on s.id = cp.subscription_id
             where cp.id = $1::uuid`
-            , [stdin_data.id]);
-        if(_.isEmpty(res.rows)) {
-            exit(1, 'payment not found');
-        }
+        , [stdin_data.id]);
+    if(_.isEmpty(res.rows)) {
+        throw "Payment not found";
+    }
 
-        const payment = res.rows[0].payment_data;
-        const user = res.rows[0].user_data;
-        const project = res.rows[0].project_data;
-        const project_owner = res.rows[0].project_owner_data;
-        const subscription = res.rows[0].subscription_data;
+    const payment = res.rows[0].payment_data;
+    const user = res.rows[0].user_data;
+    const project = res.rows[0].project_data;
+    const project_owner = res.rows[0].project_owner_data;
+    const subscription = res.rows[0].subscription_data;
+
+    const basic_raven_context = {
+        user: {
+            id: user.id,
+            payment_id: payment.id,
+            subscription_id: payment.subscription_id
+        }
+    };
+
+    try {
+        await client.query('BEGIN');
 
         const pagarme_client = await pagarme.client.connect({
             api_key: process.env.GATEWAY_API_KEY
@@ -237,7 +296,7 @@ async function init(stdin_data) {
                 };
 
                 // update payment with gateway payable and transaction data
-                await pg_client.query(
+                let res1 = await client.query(
                     `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json,
                         gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::uuid`
@@ -248,7 +307,7 @@ async function init(stdin_data) {
 
                 // create credit card refence on db if save_card or subscriptions
                 if(transaction.card && (payment.data.save_card || payment.subscription_id)) {
-                    const saved_card_result = await pg_client.query(
+                    const saved_card_result = await client.query(
                     `insert into payment_service.credit_cards(platform_id, user_id, gateway, gateway_data) values ($1::uuid, $2::uuid, 'pagarme', $3::jsonb) returning *`, [
                         payment.platform_id,
                         payment.user_id,
@@ -258,7 +317,7 @@ async function init(stdin_data) {
 
                     //update subscription with credit card id
                     if(payment.subscription_id) {
-                        await pg_client.query(
+                        await client.query(
                             `update payment_service.subscriptions
                                 set credit_card_id = $2::uuid
                                 where id = $1::uuid
@@ -268,7 +327,7 @@ async function init(stdin_data) {
                 }
                 // if transaction is not on initial state should transition payment to new state
                 if (!_.includes(['processing', 'waiting_payment'], transaction.status)) {
-                    await pg_client.query(
+                    await client.query(
                         `select
                             payment_service.transition_to(p, ($2)::payment_service.payment_status, payment_service.__extractor_for_pagarme(($3)::json))
                         from payment_service.catalog_payments p
@@ -285,7 +344,7 @@ async function init(stdin_data) {
                         from payment_service.subscriptions s where s.id = ($1)::uuid`;
                         // should active subscription when payment is paid
                         if(transaction.status === 'paid') {
-                            await pg_client.query(
+                            await client.query(
                                 transition_subscription_sql,
                                 [
                                     payment.subscription_id,
@@ -295,7 +354,7 @@ async function init(stdin_data) {
                             );
                         // should inactive subscription when refused andsubsciption is not started
                         } else if(tansaction.status === 'refused' && subscription.status !== 'started') {
-                            const sub_transition = await pg_client.query(
+                            const sub_transition = await client.query(
                                 transition_subscription_sql,
                                 [
                                     payment.subscription_id,
@@ -306,34 +365,46 @@ async function init(stdin_data) {
                         }
                     }
                 }
+
+                console.log('before commit');
+                await client.query("COMMIT;");
             } else {
                 console.log('not charged on gateway');
                 console.log(transaction);
+                await client.query("ROLLBACK;");
             }
+
+            return true;
         } catch(err) {
-            console.log(err);
+            await client.query("ROLLBACK;");
+            raven_report(err, basic_raven_context);
             if(err.errors && err.response && err.response.errors) {
-                await pg_client.query(
-                    `update payment_service.catalog_payments
+                try {
+                    await client.query("BEGIN");
+                    await pg_client.query(
+                        `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json
                     where id = $1::uuid`
-                    , [payment.id, JSON.stringify(err.response.errors)]);
-                await pg_client.query(`
+                        , [payment.id, JSON.stringify(err.response.errors)]);
+                    await pg_client.query(`
                         select
-                            payment_service.transition_to(p, ($2)::payment_service.payment_status, payment_service.__extractor_for_pagarme(($3)::json))
+                            payment_service.transition_to(p, ($2)::payment_service.payment_status, ($3)::json)
                         from payment_service.catalog_payments p
                         where p.id = ($1)::uuid
                 `, [payment.id, 'error', JSON.stringify(err.response.errors)]);
-
-                console.log(JSON.stringify(err.response.errors));
+                    await client.query("COMMIT;");
+                } catch (e) {
+                    await client.query("ROLLBACK;");
+                    raven_report(e, basic_raven_context);
+                }
             }
-        }
 
-        console.log('done');
+            throw err;
+        }
     } catch (e) {
-        console.log(e);
-        exit(1, e);
+        raven_report(e, basic_raven_context);
+        throw e;
     } finally {
-        await pg_client.end();
+        client.release();
     };
 };

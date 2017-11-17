@@ -1,9 +1,8 @@
 #!/usr/local/bin/node
 'use strict';
 
-const {Pool, Client} = require('pg');
+const { Pool } = require('pg');
 const pagarme = require('pagarme');
-const _ = require('lodash');
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
