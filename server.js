@@ -3,7 +3,30 @@ const process = require('process');
 const bodyParser = require('body-parser');
 const pagarme = require('pagarme');
 const R = require('ramda');
-const {Pool, Client} = require('pg');
+const {Pool} = require('pg');
+const Raven = require('raven');
+
+if(process.env.SENTRY_DSN) {
+    Raven.config(process.env.SENTRY_DSN).install();
+};
+
+function raven_report(e, context_opts) {
+    if(process.env.SENTRY_DSN) {
+        Raven.context(function () {
+            if(context_opts) {
+                Raven.setContext(context_opts);
+            };
+
+            Raven.captureException(e, (sendErr, event) => {
+                if(sendErr) {
+                    console.log('error on log to sentry')
+                } else {
+                    console.log('raven logged event', event);
+                }
+            });
+        });
+    };
+};
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -140,6 +163,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 resp.status(400).send("invalid signature");
             }
         } catch (err) {
+            raven_capture(err, {});
             console.log('Error on get pagarme client ', err);
         }
     };
