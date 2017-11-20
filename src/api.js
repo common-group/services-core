@@ -6,7 +6,7 @@ catarse.init(catarseApiMeta.getAttribute('content'), { method: 'GET', url: '/api
 
 const commonPayment = new Postgrest();
 const commonPaymentApiMeta = document.querySelector('[name="common-payment-api-host"]');
-commonPayment.init(commonPaymentApiMeta.getAttribute('content'), { method: 'GET', url: 'api_token/common' });
+commonPayment.init(commonPaymentApiMeta.getAttribute('content'), { method: 'GET', url: '/api_token/common' });
 
 const commonAnalytics = new Postgrest();
 const commonAnalyticsApiMeta = document.querySelector('[name="common-analytics-api-host"]');
