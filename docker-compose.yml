@@ -62,6 +62,8 @@ services:
     env_file:
       - ./compose_env/.subscriptions_scheduler.env
     command: ["./scripts/subscription_scheduler.js"]
+    volumes:
+      - ../payment-service-api/:/usr/app
     links:
       - "service_core_db:service_core_db"
     depends_on:
@@ -74,6 +76,8 @@ services:
     env_file:
       - ./compose_env/.hook_service_api.env
     command: ["npm", "start", "server.js"]
+    volumes:
+      - ../hook-service-api/:/usr/app
     links:
       - "service_core_db:service_core_db"
     depends_on:
