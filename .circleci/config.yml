@@ -14,6 +14,22 @@ jobs:
       # deploy the container
       - run: docker push comum/payment-service:latest
 
+  deploy_production:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add nodejs nodejs-npm bash
+      - run: npm install -g heroku-cli
+      - run: docker build -t comum/payment-service:latest .
+      - run: bash .circleci/setup-heroku.sh
+
+      - run: heroku container:login
+      - run: heroku container:push payment_dispatcher --recursive -a $PRODUCTION_PAYMENT_DISPATCHER_APP
+      - run: heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCIPTION_SCHEDULER_APP
+
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
@@ -27,8 +43,8 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push payment_dispatcher --recursive -a payment-dispatcher
-      - run: heroku container:push subscriptions_scheduler --recursive -a subscription-scheduler
+      - run: heroku container:push payment_dispatcher --recursive -a $SANDBOX_PAYMENT_DISPATCHER_APP
+      - run: heroku container:push subscriptions_scheduler --recursive -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
 
 
 workflows:
@@ -40,6 +56,12 @@ workflows:
             branches:
               only: master
       - deploy_sandbox:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_production:
           requires:
             - build
           filters:
