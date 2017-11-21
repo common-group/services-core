@@ -56,7 +56,7 @@ const userSubscriptionBox = {
     view(ctrl) {
         const subscription = ctrl.subscription;
 
-        return (!_.isEmpty(subscription) /*&& !_.isEmpty(subscription.project)*/ ? m('div',
+        return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
             (ctrl.displayModal() && !_.isEmpty(ctrl.contactModalInfo())
                 ? m.component(modalBox, {
                     displayModal: ctrl.displayModal,
