@@ -28,7 +28,7 @@ jobs:
 
       - run: heroku container:login
       - run: heroku container:push payment_dispatcher --recursive -a $PRODUCTION_PAYMENT_DISPATCHER_APP
-      - run: heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCIPTION_SCHEDULER_APP
+      - run: heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
 
   deploy_sandbox:
     docker:
