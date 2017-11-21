@@ -10,6 +10,24 @@ if(process.env.SENTRY_DSN) {
     Raven.config(process.env.SENTRY_DSN).install();
 };
 
+function raven_report(e, context_opts) {
+    if(process.env.SENTRY_DSN) {
+        Raven.context(function () {
+            if(context_opts) {
+                Raven.setContext(context_opts);
+            };
+
+            Raven.captureException(e, (sendErr, event) => {
+                if(sendErr) {
+                    console.log('error on log to sentry')
+                } else {
+                    console.log('raven logged event', event);
+                }
+            });
+        });
+    };
+};
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     statement_timeout: (process.env.STATEMENT_TIMEOUT || 5000)
@@ -27,7 +45,7 @@ server.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     verify: function(req, res, buf, encoding) {
         req.rawBody = buf.toString(encoding);
     }
-}));
+})); 
 
 
 server.get('/', (req, res) => {
@@ -35,24 +53,6 @@ server.get('/', (req, res) => {
 });
 
 server.post('/postbacks/:gateway_name', async (req, resp) => {
-
-    function raven_report(e, context_opts) {
-        if(process.env.SENTRY_DSN) {
-            Raven.context(function () {
-                if(context_opts) {
-                    Raven.setContext(context_opts);
-                };
-
-                Raven.captureException(e, (sendErr, event) => {
-                    if(sendErr) {
-                        console.log('error on log to sentry')
-                    } else {
-                        console.log('raven logged event', event);
-                    }
-                });
-            });
-        };
-    };
     if(req.params.gateway_name === 'pagarme') {
         try {
             let gateway_client = await pagarme.client.connect({
@@ -163,7 +163,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 resp.status(400).send("invalid signature");
             }
         } catch (err) {
-            raven_capture(err, {});
+            raven_report(err, {});
             console.log('Error on get pagarme client ', err);
         }
     };
