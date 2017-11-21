@@ -14,6 +14,21 @@ jobs:
       # deploy the container
       - run: docker push comum/hook-service:latest
 
+  deploy_production:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add nodejs nodejs-npm bash
+      - run: npm install -g heroku-cli
+      - run: docker build -t comum/hook-service:latest .
+      - run: bash .circleci/setup-heroku.sh
+
+      - run: heroku container:login
+      - run: heroku container:push web --recursive -a $PRODUCTION_HOOK_SERVICE_API_APP
+
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
@@ -27,7 +42,7 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push web --recursive -a hook-service-api
+      - run: heroku container:push web --recursive -a $SANDBOX_HOOK_SERVICE_API
 
 
 workflows:
@@ -39,6 +54,12 @@ workflows:
             branches:
               only: master
       - deploy_sandbox:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_production:
           requires:
             - build
           filters:
