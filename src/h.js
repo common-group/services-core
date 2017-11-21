@@ -22,7 +22,22 @@ const
     setMomentifyLocale = (): void => {
         moment.locale('pt', {
             months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
-            monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_')
+            monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_'),
+            relativeTime : {
+                future : 'em %s',
+                past : 'há %s',
+                s : 'segundos',
+                m : 'um minuto',
+                mm : '%d minutos',
+                h : 'uma hora',
+                hh : '%d horas',
+                d : 'um dia',
+                dd : '%d dias',
+                M : 'um mês',
+                MM : '%d meses',
+                y : 'um ano',
+                yy : '%d anos'
+            }
         });
     },
     existy = (x: any): boolean => x != null,
