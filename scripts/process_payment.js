@@ -1,7 +1,7 @@
 #!/usr/local/bin/node
 'use strict';
 
-const {Pool, Client} = require('pg');
+const {Pool} = require('pg');
 const pagarme = require('pagarme');
 const getStdin = require('get-stdin');
 const _ = require('lodash');
@@ -293,7 +293,7 @@ async function init(stdin_data) {
                 };
 
                 // update payment with gateway payable and transaction data
-                let res1 = await client.query(
+                await client.query(
                     `update payment_service.catalog_payments
                     set gateway_cached_data = $2::json,
                         gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::uuid`
