@@ -59,7 +59,7 @@ const projectGoalsBoxDashboard = {
                     goals[currentGoalIndex()].title
                 ),
             m('.fontcolor-secondary.fontsize-smallest',
-                    `R${args.amount} de R$${goals[currentGoalIndex()].value} por mês`
+                    `R$${args.amount} de R$${goals[currentGoalIndex()].value} por mês`
                 )
         ]);
     }
