@@ -40,9 +40,13 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
       - run: heroku container:login
 
-      - run: heroku container:push service_core --recursive -a $PROD_SERVICE_CORE_DB_APP
-      - run: heroku run ./scripts/run_migrations.sh -a $PROD_SERVICE_CORE_DB_APP --type=service_core
-
+      - run: heroku container:push service_core --recursive -a $PRODUCTION_SERVICE_CORE_DB_APP
+      - run: heroku run ./scripts/run_migrations.sh -a $PRODUCTION_SERVICE_CORE_DB_APP --type=service_core
+      - run: heroku restart -a $PRODUCTION_ANALYTICS_API_APP
+      - run: heroku restart -a $PRODUCTION_COMMUNITY_API_APP
+      - run: heroku restart -a $PRODUCTION_PAYMENT_API_APP
+      - run: heroku restart -a $PRODUCTION_PROJECT_API_APP
+      - run: heroku restart -a $PRODUCTION_PLATFORM_API_APP
 
 
   deploy_sandbox:
