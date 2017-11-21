@@ -46,7 +46,7 @@ const projectGoalsBoxDashboard = {
                     'Metas'
                 ),
             m('.fontsize-largest.fontweight-semibold',
-                    `${goalPercentage}%`
+                    `${Math.floor(goalPercentage)}%`
                 ),
             m('.meter.u-marginbottom-10',
                     m('.meter-fill', {
