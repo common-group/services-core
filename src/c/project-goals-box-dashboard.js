@@ -46,7 +46,7 @@ const projectGoalsBoxDashboard = {
                     'Metas'
                 ),
             m('.fontsize-largest.fontweight-semibold',
-                    `${goalPercentage}%`
+                    `${Math.floor(goalPercentage)}%`
                 ),
             m('.meter.u-marginbottom-10',
                     m('.meter-fill', {
@@ -59,7 +59,7 @@ const projectGoalsBoxDashboard = {
                     goals[currentGoalIndex()].title
                 ),
             m('.fontcolor-secondary.fontsize-smallest',
-                    `R${args.amount} de R$${goals[currentGoalIndex()].value} por mês`
+                    `R$${args.amount} de R$${goals[currentGoalIndex()].value} por mês`
                 )
         ]);
     }
