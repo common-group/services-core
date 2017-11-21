@@ -24,14 +24,14 @@ const userSubscriptionBox = {
             }).project_id(subscription.project_external_id),
             lProj = catarse.loaderWithToken(models.project.getRowOptions(filterProjVM.parameters()));
         
-        lProj.load().then(function(pr){
-            subscription.project = pr[0];
+        lProj.load().then(function(arr){
+            subscription.project = arr[0];
             contactModalInfo({
                 id: subscription.project.project_user_id,
                 name: subscription.project.owner_name,
                 project_id: subscription.project.project_id
             });
-            console.log('subscription1:', JSON.stringify(subscription, null, 2));
+            // console.log('subscription1:', JSON.stringify(subscription, null, 2));
         });
 
         if (subscription.reward_external_id) {
@@ -40,9 +40,9 @@ const userSubscriptionBox = {
                 }).id(subscription.reward_external_id),
                 lRew = catarse.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
 
-            lRew.load().then(function(r) {
-                subscription.reward = r[0];
-                console.log('subscription2:', JSON.stringify(subscription, null, 2));
+            lRew.load().then(function(arr) {
+                subscription.reward = arr[0];
+                // console.log('subscription2:', JSON.stringify(subscription, null, 2));
             });
         }
 
@@ -56,7 +56,7 @@ const userSubscriptionBox = {
     view(ctrl) {
         const subscription = ctrl.subscription;
 
-        return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
+        return (!_.isEmpty(subscription) /*&& !_.isEmpty(subscription.project)*/ ? m('div',
             (ctrl.displayModal() && !_.isEmpty(ctrl.contactModalInfo())
                 ? m.component(modalBox, {
                     displayModal: ctrl.displayModal,
@@ -134,7 +134,8 @@ const userSubscriptionBox = {
                             m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
                                 'Sua assinatura está suspensa por falta de pagamento'
-                            ])
+                            ]),
+                            m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
                         ] : subscription.status === 'canceled' ? [
                             m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
