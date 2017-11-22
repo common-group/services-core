@@ -2,17 +2,19 @@ import m from 'mithril';
 import projectHeader from '../../src/c/project-header';
 
 describe('ProjectHeader', () => {
-    let $output, projectDetail, rewardDetails;
+    let $output, projectDetail, rewardDetails, goalDetails;
 
     describe('view', () => {
         beforeAll(() => {
             projectDetail = m.prop(ProjectDetailsMockery()[0]);
             rewardDetails = m.prop(RewardDetailsMockery());
+            goalDetails = m.prop(GoalsMockery());
             $output = mq(m.component(projectHeader, {
                 project: projectDetail,
                 userDetails: m.prop([]),
                 projectContributions: m.prop([]),
-                rewardDetails: rewardDetails
+                rewardDetails: rewardDetails,
+                goalDetails
             }));
         });
 

@@ -9,7 +9,7 @@ const projectShareBox = {
         };
     },
     view(ctrl, args) {
-        return m('.pop-share', {
+        return m('.pop-share.fontcolor-primary', {
             style: 'display: block;'
         }, [
             m('.w-hidden-main.w-hidden-medium.w-clearfix', [

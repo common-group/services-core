@@ -13,12 +13,12 @@ const projectEditGoal = {
     },
 
     view(ctrl, args) {
-        return (ctrl.user() && ctrl.project() ? m(projectGoalEdit, {
+        return (ctrl.user() && ctrl.project() ? (ctrl.project().mode === 'sub' ? '' : m(projectGoalEdit, {
             user: ctrl.user(),
             userId: args.user_id,
             projectId: args.project_id,
             project: ctrl.project()
-        }) : m('div', h.loader()));
+        })) : m('div', h.loader()));
     }
 };
 

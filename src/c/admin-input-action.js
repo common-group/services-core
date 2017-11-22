@@ -1,5 +1,6 @@
 import m from 'mithril';
 import h from '../h';
+import {catarse} from '../api';
 
 const adminInputAction = {
     controller(args) {
@@ -15,7 +16,7 @@ const adminInputAction = {
 
         h.idVM.id(item[builder.updateKey]);
 
-        const l = postgrest.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
+        const l = catarse.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
         const updateItem = function (res) {
             _.extend(item, res[0]);

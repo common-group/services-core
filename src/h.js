@@ -4,10 +4,9 @@ import _ from 'underscore';
 import moment from 'moment';
 import $ from 'jquery';
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from './api';
 import CatarseAnalytics from 'CatarseAnalytics';
 import contributionVM from './vms/contribution-vm';
-import replaceDiacritics from 'replaceDiacritics';
 
 const
     _dataCache : Object = {},
@@ -263,7 +262,7 @@ const
         return p;
     },
 
-    idVM: Function = postgrest.filtersVM({
+    idVM: Function = catarse.filtersVM({
         id: 'eq'
     }),
 

@@ -1,19 +1,44 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import { catarse, commonAnalytics } from '../api';
 import h from '../h';
 import models from '../models';
 import rewardVM from './reward-vm';
+import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
 
 const currentProject = m.prop(),
     userDetails = m.prop(),
+    subscriptionData = m.prop({
+        amount_paid_for_valid_period: 0,
+        total_subscriptions: 0,
+        total_subscribers: 0
+    }),
     projectContributions = m.prop([]),
-    vm = postgrest.filtersVM({ project_id: 'eq' }),
+    vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
+
+const isSubscription = (project) => {
+    if (_.isFunction(project)) {
+        return project() ? project().mode === 'sub' : false;
+    }
+
+    return project ? project.mode === 'sub' : false;
+};
+
+const fetchSubData = (projectUuid) => {
+    const lproject = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({ id: projectUuid }));
+
+    lproject.load().then((data) => {
+        subscriptionData(data || subscriptionData());
+    });
+};
 
 const setProject = project_user_id => (data) => {
     currentProject(_.first(data));
+    if (isSubscription(currentProject())) {
+        fetchSubData(currentProject().common_id);
+    }
 
     if (!project_user_id) {
         userVM.fetchUser(currentProject().user_id, true, userDetails);
@@ -25,7 +50,7 @@ const setProject = project_user_id => (data) => {
 const init = (project_id, project_user_id) => {
     vm.project_id(project_id);
 
-    const lProject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
+    const lProject = catarse.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
 
     fetchParallelData(project_id, project_user_id);
 
@@ -43,6 +68,7 @@ const fetchParallelData = (projectId, projectUserId) => {
     }
 
     rewardVM.fetchRewards(projectId);
+    projectGoalsVM.fetchGoals(projectId);
 };
 
 // FIXME: should work with data-parameters that don't have project struct
@@ -55,10 +81,10 @@ const getCurrentProject = () => {
         const jsonData = JSON.parse(data);
 
         const { projectId, projectUserId } = jsonData; // legacy
-        const { project_id, project_user_id}  = jsonData;
+        const { project_id, project_user_id } = jsonData;
 
         // fill currentProject when jsonData has id and mode (legacy code)
-        if(jsonData.id && jsonData.mode) {
+        if (jsonData.id && jsonData.mode) {
             currentProject(jsonData);
         }
 
@@ -92,10 +118,11 @@ const setProjectPageTitle = () => {
 const fetchProject = (projectId, handlePromise = true, customProp = currentProject) => {
     idVM.id(projectId);
 
-    const lproject = postgrest.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
+    const lproject = catarse.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
 
     return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
 };
+
 
 const updateProject = (projectId, projectData) => m.request({
     method: 'PUT',
@@ -111,11 +138,15 @@ const projectVM = {
     projectContributions,
     currentProject,
     rewardDetails: rewardVM.rewards,
+    goalDetails: projectGoalsVM.goals,
     routeToProject,
     setProjectPageTitle,
     init,
     fetchProject,
-    updateProject
+    fetchSubData,
+    subscriptionData,
+    updateProject,
+    isSubscription
 };
 
 export default projectVM;

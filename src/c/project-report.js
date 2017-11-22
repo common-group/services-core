@@ -5,7 +5,7 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import models from '../models';
 import h from '../h';
 import projectVM from '../vms/project-vm';
@@ -58,7 +58,7 @@ const projectReport = {
                     reason: reason(),
                     project_id: project.project_id
                 });
-                const l = postgrest.loaderWithToken(loaderOpts);
+                const l = catarse.loaderWithToken(loaderOpts);
 
                 l.load().then(sendSuccess(true));
                 submitDisabled(false);

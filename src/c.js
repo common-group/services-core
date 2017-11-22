@@ -11,11 +11,14 @@ import jobs from './root/jobs';
 import press from './root/press';
 import liveStatistics from './root/live-statistics';
 import projectsContributionReport from './root/projects-contribution-report';
+import projectsSubscriptionReport from './root/projects-subscription-report';
 import projectsDashboard from './root/projects-dashboard';
 import projectsExplore from './root/projects-explore';
 import projectsHome from './root/projects-home';
 import projectsShow from './root/projects-show';
 import projectsContribution from './root/projects-contribution';
+import projectsSubscriptionContribution from './root/projects-subscription-contribution';
+import projectsSubscriptionCheckout from './root/projects-subscription-checkout';
 import usersShow from './root/users-show';
 import surveysShow from './root/surveys-show';
 import usersEdit from './root/users-edit';
@@ -29,6 +32,7 @@ import menu from './root/menu';
 import footer from './root/footer';
 import FollowFoundFriends from './root/follow-found-friends';
 import thankYou from './root/thank-you';
+import subProjectNew from './root/sub-project-new';
 import CheckEmail from './root/check-email';
 import projectEditUserAbout from './root/project-edit-user-about';
 import projectEditReward from './root/project-edit-reward';
@@ -38,6 +42,7 @@ import projectEditDescription from './root/project-edit-description';
 import projectEditBudget from './root/project-edit-budget';
 import projectEditVideo from './root/project-edit-video';
 import projectEditGoal from './root/project-edit-goal';
+import projectEditGoals from './root/project-edit-goals';
 import projectEditCard from './root/project-edit-card';
 import copyTextInput from './c/copy-text-input';
 
@@ -55,6 +60,7 @@ const c = {
         Jobs: jobs,
         LiveStatistics: liveStatistics,
         ProjectsContributionReport: projectsContributionReport,
+        ProjectsSubscriptionReport: projectsSubscriptionReport,
         ProjectsDashboard: projectsDashboard,
         ProjectsExplore: projectsExplore,
         ProjectsHome: projectsHome,
@@ -63,10 +69,13 @@ const c = {
         SurveysShow: surveysShow,
         UsersEdit: usersEdit,
         ProjectEdit: projectEdit,
+        SubProjectNew: subProjectNew,
         SurveyCreate: surveyCreate,
         ProjectsContribution: projectsContribution,
         ProjectsPayment: projectsPayment,
         ProjectsReward: projectsReward,
+        ProjectsSubscriptionContribution: projectsSubscriptionContribution,
+        ProjectsSubscriptionCheckout: projectsSubscriptionCheckout,
         ThankYou: thankYou,
         Publish: publish,
         Start: start,
@@ -84,6 +93,7 @@ const c = {
         projectEditBudget,
         projectEditVideo,
         projectEditGoal,
+        projectEditGoals,
         projectEditCard
     }
 };

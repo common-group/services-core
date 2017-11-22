@@ -4,7 +4,7 @@
  *
  */
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 
@@ -21,7 +21,7 @@ const deleteProjectModalContent = {
                 const loaderOpts = models.deleteProject.postOptions({
                     _project_id: args.project.project_id
                 });
-                l = postgrest.loaderWithToken(loaderOpts);
+                l = catarse.loaderWithToken(loaderOpts);
                 l.load().then(() => {
                     deleteSuccess(true);
                 }).catch((err) => {

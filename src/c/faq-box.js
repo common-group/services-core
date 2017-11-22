@@ -49,20 +49,23 @@ const faqBox = {
         };
     },
     view(ctrl, args) {
+        const image = args.mode === 'sub' 
+            ? m('div', m('img.u-marginbottom-10[width="130"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'))
+            : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
+                m('img[width=\'30\']', {
+                    src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
+                })
+            );
         return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius',
             [
                 m('.w-row.u-marginbottom-30',
                     [
-                        m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
-                         m('img[width=\'30\']', {
-                             src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
-                         })
-                     ),
+                        image, 
                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
-                         m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
-                             I18n.t(`${ctrl.tKey()}.description`, I18nScope())
-                         )
-                     )
+                            m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
+                                I18n.t(`${ctrl.tKey()}.description`, I18nScope())
+                            )
+                        )
                     ]
              ),
                 m('.u-marginbottom-20.fontsize-small.fontweight-semibold',

@@ -1,7 +1,9 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
+import projectVM from '../vms/project-vm';
 import projectRewardList from './project-reward-list';
+import projectGoalsBox from './project-goals-box';
 import projectSuggestedContributions from './project-suggested-contributions';
 import projectContributions from './project-contributions';
 import projectAbout from './project-about';
@@ -17,14 +19,15 @@ const projectMain = {
                         post_id: args.post_id
                     },
                     tabs = {
-                        '#rewards': m('.w-col.w-col-12', m.component(projectRewardList, _.extend({}, {
-                            rewardDetails: args.rewardDetails,
-                            showReport: true
-                        }, c_opts))),
+                        '#rewards': m('.w-col.w-col-12', [projectVM.isSubscription(project) ? m.component(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : '', m.component(projectRewardList, _.extend({}, {
+                            rewardDetails: args.rewardDetails
+                        }, c_opts))]),
                         '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
                         '#contributions': m.component(projectContributions, c_opts),
                         '#about': m.component(projectAbout, _.extend({}, {
-                            rewardDetails: args.rewardDetails
+                            rewardDetails: args.rewardDetails,
+                            subscriptionData: args.subscriptionData,
+                            goalDetails: args.goalDetails
                         }, c_opts)),
                         '#comments': m.component(projectComments, c_opts),
                         '#posts': m.component(projectPosts, _.extend({}, {
@@ -40,7 +43,7 @@ const projectMain = {
                 hash(window.location.hash);
 
                 if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
-                    return tabs[h.mobileScreen()?'#rewards':'#about'];
+                    return tabs[h.mobileScreen() ? '#rewards' : '#about'];
                 }
 
                 return tabs[hash()];

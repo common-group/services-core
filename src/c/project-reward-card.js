@@ -48,6 +48,13 @@ const projectRewardCard = {
             } else {
                 vm.error('');
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
+                
+                if (projectVM.isSubscription(projectVM.currentProject())) {
+                    vm.contributionValue(valueFloat);
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?reward_id=${vm.selectedReward().id}&contribution_value=${vm.contributionValue()}`);
+                    return false;
+                }
+
                 h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${vm.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
             }
 
@@ -90,7 +97,8 @@ const projectRewardCard = {
         // FIXME: MISSING ADJUSTS
         // - add draft admin modifications
         const reward = ctrl.reward,
-            project = args.project;
+            project = args.project,
+            isSub = projectVM.isSubscription(project);
         return m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
             onclick: h.analytics.event({
                 cat: 'contribution_create',
@@ -104,12 +112,12 @@ const projectRewardCard = {
             }, ctrl.selectReward(reward)),
             config: ctrl.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
         }, [
-            reward.minimum_value >= 100 ? m('.tag-circle-installment', [
+            reward.minimum_value >= 100 && !isSub ? m('.tag-circle-installment', [
                 m('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'),
                 m('.fontsize-mini.lineheight-tightest', 's/ juros')
             ]) : '',
             m('.u-marginbottom-20', [
-                m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais`)
+                m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`)
             ]),
             m('.fontsize-smaller.fontweight-semibold',
                     reward.title
@@ -130,7 +138,7 @@ const projectRewardCard = {
                     class: ctrl.isRewardDescriptionExtended() ? 'reversed' : ''
                 })
             ]) : '',
-            m('.u-marginbottom-20.w-row', [
+            isSub ? null : m('.u-marginbottom-20.w-row', [
                 m('.w-col.w-col-6', !_.isEmpty(reward.deliver_at) ? [
                     m('.fontcolor-secondary.fontsize-smallest',
                         m('span', 'Entrega prevista:')
@@ -160,7 +168,11 @@ const projectRewardCard = {
                     ])
                 ]))
             ] : '',
-            m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', h.pluralize(reward.paid_count, ' apoio', ' apoios')),
+            m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', 
+                h.pluralize.apply(
+                    null,
+                    isSub ? [reward.paid_count, ' assinante', ' assinantes'] : [reward.paid_count, ' apoio', ' apoios'])
+            ),
             reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [
                 m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))
             ]) : '',
@@ -191,7 +203,7 @@ const projectRewardCard = {
                             )
                         ]) : '',
                         m('.fontcolor-secondary.u-marginbottom-10',
-                            'Valor do apoio'
+                            `Valor do apoio${isSub ? ' mensal' : ''}`
                         ),
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',

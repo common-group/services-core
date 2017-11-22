@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../../src/api';
 import adminList from '../../src/c/admin-list';
 
 describe('adminList', () => {
@@ -22,9 +22,9 @@ describe('adminList', () => {
                 return m('');
             }
         };
-        model = postgrest.model('items');
+        model = catarse.model('items');
         vm = {
-            list: postgrest.paginationVM(model),
+            list: catarse.paginationVM(model),
             error: m.prop()
         };
         listParameters = {

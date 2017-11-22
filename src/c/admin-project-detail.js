@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 import adminInputAction from './admin-input-action';
@@ -17,7 +17,7 @@ const adminProjectDetail = {
                 opts = model.getRowOptions(h.idVM.id(project_id).parameters()),
                 project = m.prop({});
 
-            bankl = postgrest.loaderWithToken(opts);
+            bankl = catarse.loaderWithToken(opts);
 
             if (project_id) {
                 bankl.load().then(_.compose(project, _.first));
@@ -32,7 +32,7 @@ const adminProjectDetail = {
                 opts = model.getRowOptions(h.idVM.id(user_id).parameters()),
                 user = m.prop({});
 
-            l = postgrest.loaderWithToken(opts);
+            l = catarse.loaderWithToken(opts);
 
             if (user_id) {
                 l.load().then(_.compose(user, _.first));

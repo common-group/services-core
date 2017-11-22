@@ -1,11 +1,12 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import postsPreview from '../c/posts-preview';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 import popNotification from '../c/pop-notification';
 
 const posts = {
@@ -17,14 +18,14 @@ const posts = {
             titleHasError = m.prop(false),
             commentHasError = m.prop(false),
             projectPosts = m.prop(),
-            loader = postgrest.loaderWithToken,
+            loader = catarse.loaderWithToken,
             errors = m.prop(''),
             fields = {
                 title: m.prop(''),
                 comment_html: m.prop(''),
                 reward_id: m.prop('-1')
             },
-            filterVM = postgrest.filtersVM({
+            filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             validateTitle = () => {
@@ -86,11 +87,11 @@ const posts = {
                     deleteFormSubmit = () => el.submit();
                 }
             },
-              openedPercentage = post => (Math.floor((post.open_count / post.delivered_count) * 100) || 0);
+            openedPercentage = post => (Math.floor((post.open_count / post.delivered_count) * 100) || 0);
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
-        const listVM = postgrest.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
+        const listVM = catarse.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         listVM.load().then(projectPosts);
@@ -165,6 +166,7 @@ const posts = {
                     m('.w-row', [
                         m('.w-col.w-col-1'),
                         m('.w-col.w-col-10', [
+                            (projectVM.isSubscription(project) ? '' :
                             m('.u-marginbottom-60.u-text-center',
                                 m('._w-inline-block.card.fontsize-small.u-radius', [
                                     m('span.fa.fa-lightbulb-o',
@@ -175,7 +177,7 @@ const posts = {
                                         'falar com seus apoiadores agora mesmo!'
                                     )
                                 ])
-                            ),
+                            )),
                             m('.card.card-terciary.medium.u-marginbottom-80.w-form', [
                                 m('form', [
                                     m('label.field-label.fontweight-semibold',

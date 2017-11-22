@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import h from '../h';
 import models from '../models';
 import adminInputAction from './admin-input-action';
@@ -19,7 +19,7 @@ const adminContributionDetail = {
                 opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
                 reward = m.prop({});
 
-            l = postgrest.loaderWithToken(opts);
+            l = catarse.loaderWithToken(opts);
 
             if (reward_id) {
                 l.load().then(_.compose(reward, _.first));

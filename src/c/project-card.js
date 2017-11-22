@@ -58,6 +58,9 @@ const projectCard = {
         const isFinished = project => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
 
         const cardCopy = (project) => {
+            if (projectVM.isSubscription(project)) {
+                return m('img.product-label[src="https://s3.amazonaws.com/cdn.catarse/assets/assinatura-label.png"]')
+            }
             if (project.expires_at) {
                 return isFinished(project) ? [
                     m('.fontsize-smaller.fontweight-loose', 'Encerrado'),
@@ -130,7 +133,7 @@ const projectCard = {
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
                                 m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
-                                m('.fontsize-smallest.lineheight-tightest', 'Levantados')
+                                m('.fontsize-smallest.lineheight-tightest', I18n.t(`pledged.${project.mode}`, I18nScope()))
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', ctrl.cardCopy(project)),
                         ])

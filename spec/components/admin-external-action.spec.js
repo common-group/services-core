@@ -1,9 +1,9 @@
 import models from '../../src/models';
 import adminExternalAction from '../../src/c/admin-external-action';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../../src/api';
 
 describe('adminExternalAction', () => {
-    var testModel = postgrest.model('reloadAction'),
+    var testModel = catarse.model('reloadAction'),
         item = {
             testKey: 'foo'
         },

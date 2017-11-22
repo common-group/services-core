@@ -3,6 +3,7 @@ import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
 import models from '../models';
+import {catarse} from '../api';
 
 const menuProfile = {
     controller(args) {
@@ -11,7 +12,7 @@ const menuProfile = {
             userDetails = m.prop({}),
             user_id = args.user.user_id,
             userBalance = m.prop(0),
-            userIdVM = postgrest.filtersVM({ user_id: 'eq' });
+            userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
         const userName = () => {
             const name = userVM.displayName(userDetails());

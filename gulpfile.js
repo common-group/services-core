@@ -30,7 +30,7 @@ var rollupGlobals = {
     CatarseAnalytics: 'CatarseAnalytics',
     chartjs: 'Chart',
     replaceDiacritics: 'replaceDiacritics',
-    'mithril-postgrest': 'postgrest',
+    'mithril-postgrest': 'Postgrest',
     'i18n-js': 'I18n'
 };
 

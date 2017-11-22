@@ -4,10 +4,12 @@ import _ from 'underscore';
 import h from '../h';
 import shippingFeeInput from '../c/shipping-fee-input';
 import rewardVM from '../vms/reward-vm';
+import projectVM from '../vms/project-vm';
 
 const editRewardCard = {
     controller(args) {
-        const reward = args.reward(),
+        const project = projectVM.getCurrentProject(),
+            reward = args.reward(),
             destroyed = m.prop(false),
             acceptNumeric = (e) => {
                 reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
@@ -143,6 +145,7 @@ const editRewardCard = {
             saveReward,
             destroyed,
             states,
+            project,
             reward,
             fees
         };
@@ -206,7 +209,7 @@ const editRewardCard = {
                             )
                         ])
                     ]),
-                    m('.w-row', [
+                    ctrl.project.mode === 'sub' ? null : m('.w-row', [
                         m('.w-col.w-col-5',
                             m('label.fontsize-smaller',
                                 'Previsão de entrega:'
@@ -266,8 +269,8 @@ const editRewardCard = {
                             'Descrição não pode ficar em branco'
                         )
                     ]),
-                    ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '', ,
-                    m('.u-marginbottom-30.w-row', [
+                    ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+                    ctrl.project.mode === 'sub' ? null : m('.u-marginbottom-30.w-row', [
                         m('.w-col.w-col-3',
                             m("label.fontsize-smaller[for='field-2']",
                                 'Tipo de entrega'

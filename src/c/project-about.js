@@ -2,7 +2,9 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
+import projectVM from '../vms/project-vm';
 import projectRewardList from './project-reward-list';
+import projectGoalsBox from './project-goals-box';
 import projectReport from './project-report';
 import projectSuggestedContributions from './project-suggested-contributions';
 
@@ -34,7 +36,7 @@ const projectAbout = {
                 ] : '',
                 m.component(projectReport)
             ]),
-            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', !_.isEmpty(args.rewardDetails()) ? [
+            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [projectVM.isSubscription(project) ? m(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : '', !_.isEmpty(args.rewardDetails()) ? [
                 m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                 m.component(projectRewardList, {
                     project: args.project,
@@ -44,7 +46,7 @@ const projectAbout = {
                 m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Sugestões de apoio'),
                 m.component(projectSuggestedContributions, { project: args.project }),
                 fundingPeriod()
-            ])
+            ]])
         ]);
     }
 };

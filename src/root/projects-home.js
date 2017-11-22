@@ -1,5 +1,5 @@
 import m from 'mithril';
-import postgrest from 'mithril-postgrest';
+import {catarse} from '../api';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
@@ -16,11 +16,11 @@ const I18nScope = _.partial(h.i18nScope, 'projects.home');
 const projectsHome = {
     controller(args) {
         const sample6 = _.partial(_.sample, _, 6),
-            loader = postgrest.loaderWithToken,
+            loader = catarse.loaderWithToken,
             project = models.project,
             filters = projectFilters().filters,
-            userFriendVM = postgrest.filtersVM({ user_id: 'eq' }),
-            friendListVM = postgrest.paginationVM(models.userFriend, 'user_id.desc', {
+            userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
+            friendListVM = catarse.paginationVM(models.userFriend, 'user_id.desc', {
                 Prefer: 'count=exact'
             }),
             currentUser = h.getUser() || {},

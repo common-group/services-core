@@ -7,6 +7,7 @@ import projectHeaderTitle from './project-header-title';
 import userContributionDetail from './user-contribution-detail';
 import contributionVM from '../vms/contribution-vm';
 import userVM from '../vms/user-vm';
+import projectVM from '../vms/project-vm';
 
 const projectHeader = {
     controller(args) {
@@ -42,23 +43,31 @@ const projectHeader = {
                     }))
                 ) : ''
         ]) : '';
+        const hasBackground = Boolean(project().cover_image);
 
         return (!_.isUndefined(project()) ? m('#project-header', [
             m(`.w-section.section-product.${project().mode}`),
-            m(projectHeaderTitle, {
-                project,
-                children: hasContribution
-            }),
-            m('.w-section.project-main', [
-                m('.w-container', [
-                    m('.w-row.project-main', [
-                        m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {
-                            project
-                        })),
-                        m('.w-col.w-col-4', m.component(projectSidebar, {
-                            project,
-                            userDetails: args.userDetails
-                        }))
+            m(`${projectVM.isSubscription(project) ? '.dark' : ''}.project-main-container`, {
+                class: hasBackground ? 'project-with-background' : null,
+                style: hasBackground ? `background-image: linear-gradient(180deg, rgba(0, 4, 8, .82), rgba(0, 4, 8, .82)), url("${project().cover_image}");` : null
+            }, [
+                m(projectHeaderTitle, {
+                    project,
+                    children: hasContribution
+                }),
+                m(`.w-section.project-main${projectVM.isSubscription(project) ? '.transparent-background' : ''}`, [
+                    m('.w-container', [
+                        m('.w-row', [
+                            m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {
+                                project
+                            })),
+                            m('.w-col.w-col-4', m.component(projectSidebar, {
+                                project,
+                                subscriptionData: args.subscriptionData,
+                                userDetails: args.userDetails,
+                                goalDetails: args.goalDetails,
+                            }))
+                        ])
                     ])
                 ])
             ])
