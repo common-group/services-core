@@ -87,7 +87,7 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: develop
       - deploy_production:
           requires:
             - build
