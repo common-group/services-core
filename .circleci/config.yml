@@ -7,6 +7,16 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
+      # build the application container
+      - run: docker build -t comum/payment-service:latest .
+
+  push_image:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
       # with credentials stored in the UI
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       # build the application container
@@ -52,6 +62,9 @@ workflows:
   build-and-push:
     jobs:
       - build:
+      - push_image:
+          requires:
+            - build
           filters:
             branches:
               only: master
@@ -60,7 +73,7 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: develop
       - deploy_production:
           requires:
             - build
