@@ -1,18 +1,32 @@
 import m from 'mithril';
 import _ from 'underscore';
-import { catarse } from '../api';
+import { catarse, commonPayment } from '../api';
 import models from '../models';
 import h from '../h';
+import loadMoreBtn from '../c/load-more-btn';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
-import projectSubscriptionsVM from '../vms/project-subscriptions-vm';
 
 const projectSubscriptionReport = {
     controller(args) {
         const filterVM = projectsContributionReportVM,
+            error = m.prop(false),
+            loader = m.prop(true),
+            handleError = () => {
+                error(true);
+                loader(false);
+                m.redraw();
+            },
+            subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', {
+                Prefer: 'count=exact'
+            }),
+            contextSubVM = catarse.filtersVM({
+                status: 'in'
+            }),
             project = m.prop([{}]);
 
+        contextSubVM.status(['started', 'active', 'inactive', 'canceled', 'error']);
         filterVM.project_id(args.project_id);
 
         const lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
@@ -20,19 +34,22 @@ const projectSubscriptionReport = {
         }));
 
         lProject.load().then((data) => {
-            projectSubscriptionsVM.fetchSubscriptions(data.common_id);
+            subscriptions.firstPage(contextSubVM.parameters()).then(() => {
+                loader(false);
+            }).catch(handleError);
             project(data);
         });
 
         return {
             filterVM,
-            projectSubscriptionsVM,
+            subscriptions,
             lProject,
             project
         };
     },
     view(ctrl) {
-        console.log(ctrl.projectSubscriptionsVM.subscriptions());
+        const subsCollection = ctrl.subscriptions.collection();
+        console.log(subsCollection);
         if (!ctrl.lProject()) {
             return m('div', [
                 m.component(projectDashboardMenu, {
@@ -59,7 +76,7 @@ const projectSubscriptionReport = {
                                 m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-7',
                                     m('.w-inline-block.fontsize-base.u-marginright-10', [
                                         m('span.fontweight-semibold',
-                                            '99999'
+                                            ctrl.subscriptions.total()
                                         ),
                                         ' assinantes',
                                         m.trust('&nbsp;')
@@ -111,22 +128,18 @@ const projectSubscriptionReport = {
                                 ])
                             ),
                             m('.fontsize-small', [
-                                _.map(ctrl.projectSubscriptionsVM.subscriptions(), subscription =>
+                                _.map(subsCollection, subscription =>
                                     m(dashboardSubscriptionCard, { subscription }))
-
                             ])
                         ])
                     ]),
                     m('.bg-gray.section',
                         m('.w-container',
                             m('.u-marginbottom-60.w-row', [
-                                m('.w-col.w-col-5'),
-                                m('.w-col.w-col-2',
-                                    m("a.btn.btn-medium.btn-terciary[href='#']",
-                                        'Carregar mais'
-                                    )
-                                ),
-                                m('.w-col.w-col-5')
+                                m(loadMoreBtn, {
+                                    collection: ctrl.subscriptions,
+                                    cssClass: '.w-col-push-4'
+                                })
                             ])
                         )
                     )

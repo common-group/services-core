@@ -15,7 +15,7 @@ const subscriptionsLoader = (uuID) => {
         created_at: 'desc'
     });
 
-    return commonPayment.loaderWithToken(models.projectSubscriptions.getPageOptions(vm.parameters()));
+    return commonPayment.loaderWithToken(models.userSubscription.getPageOptions(vm.parameters()));
 };
 
 const fetchSubscriptions = uuID => subscriptionsLoader(uuID).load().then(subscriptions);
