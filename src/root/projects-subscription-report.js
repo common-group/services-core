@@ -49,7 +49,6 @@ const projectSubscriptionReport = {
     },
     view(ctrl) {
         const subsCollection = ctrl.subscriptions.collection();
-        console.log(subsCollection);
         if (!ctrl.lProject()) {
             return m('div', [
                 m.component(projectDashboardMenu, {
