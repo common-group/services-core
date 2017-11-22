@@ -34,7 +34,6 @@ const projectsSubscriptionCheckout = {
 
         const validateForm = () => {
             if (vm.validate()) {
-                // vm.similityExecute(contribution().id);
                 showPaymentForm(true);
             }
         };
@@ -85,7 +84,6 @@ const projectsSubscriptionCheckout = {
                 data: vm.fields.address()
             }));
         });
-        // vm.similityExecute(contribution().id);
         projectVM.getCurrentProject();
 
         const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
@@ -152,7 +150,7 @@ const projectsSubscriptionCheckout = {
                         m('.fontsize-larger.text-success.u-left',
                             `R$ ${formatedValue}`
                         ),
-                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                             'Editar'
                         )
                     ]),
@@ -242,15 +240,6 @@ const projectsSubscriptionCheckout = {
 
                                     ]) : ''),
 
-                                m('.card.card-terciary.u-marginbottom-30.u-radius.w-form',
-                                    m(nationalityRadio, {
-                                        fields: addVM.fields,
-                                        defaultCountryID: addVM.defaultCountryID,
-                                        defaultForeignCountryID: addVM.defaultForeignCountryID,
-                                        international: addVM.international
-                                    })
-                                ),
-
                                 (user.name && user.owner_document) ? '' : m('.card.card-terciary.u-radius.u-marginbottom-40', [
                                     (m('.w-row', [
                                         m('.w-col.w-col-7.w-sub-col', [
@@ -267,7 +256,7 @@ const projectsSubscriptionCheckout = {
                                             }),
                                             ctrl.fieldHasError('completeName')
                                         ]),
-                                        m('.w-col.w-col-5', (addVM.international() ? '' : [
+                                        m('.w-col.w-col-5', [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
                                                 I18n.t('fields.owner_document', ctrl.scope())
                                             ),
@@ -279,7 +268,7 @@ const projectsSubscriptionCheckout = {
                                                 value: ctrl.vm.fields.ownerDocument()
                                             }),
                                             ctrl.fieldHasError('ownerDocument')
-                                        ])),
+                                        ]),
                                     ])),
                                     anonymousCheckbox
                                 ]),
@@ -288,8 +277,9 @@ const projectsSubscriptionCheckout = {
                                     m(addressForm, {
                                         addressFields: addVM.fields,
                                         fields: m.prop(ctrl.vm.fields),
-                                        international: addVM.international,
-                                        hideNationality: true
+                                        international: false,
+                                        hideNationality: true,
+                                        disableInternational: true
                                     })
                                 )
                             ])
