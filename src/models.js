@@ -1,4 +1,4 @@
-import { catarse, commonAnalytics } from './api';
+import { catarse, commonPayment, commonAnalytics } from './api';
 
 const models = {
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
@@ -56,6 +56,7 @@ const models = {
     userFollower: catarse.model('user_followers'),
     creatorSuggestion: catarse.model('creator_suggestions'),
     userContribution: catarse.model('user_contributions'),
+    userSubscription: commonPayment.model('subscriptions'),
     shippingFee: catarse.model('shipping_fees'),
     deleteProject: catarse.model('rpc/delete_project'),
     cancelProject: catarse.model('rpc/cancel_project'),
@@ -82,6 +83,7 @@ models.recommendedProjects.pageSize(3);
 models.bank.pageSize(400);
 models.city.pageSize(200);
 models.balanceTransfer.pageSize(9);
+models.userSubscription.pageSize(9);
 
 
 export default models;

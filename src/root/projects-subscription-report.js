@@ -1,16 +1,32 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse, commonPayment } from '../api';
 import models from '../models';
 import h from '../h';
+import loadMoreBtn from '../c/load-more-btn';
 import projectDashboardMenu from '../c/project-dashboard-menu';
+import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 
 const projectSubscriptionReport = {
     controller(args) {
         const filterVM = projectsContributionReportVM,
+            error = m.prop(false),
+            loader = m.prop(true),
+            handleError = () => {
+                error(true);
+                loader(false);
+                m.redraw();
+            },
+            subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', {
+                Prefer: 'count=exact'
+            }),
+            contextSubVM = catarse.filtersVM({
+                status: 'in'
+            }),
             project = m.prop([{}]);
 
+        contextSubVM.status(['started', 'active', 'inactive', 'canceled', 'error']);
         filterVM.project_id(args.project_id);
 
         const lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
@@ -18,16 +34,21 @@ const projectSubscriptionReport = {
         }));
 
         lProject.load().then((data) => {
+            subscriptions.firstPage(contextSubVM.parameters()).then(() => {
+                loader(false);
+            }).catch(handleError);
             project(data);
         });
 
         return {
             filterVM,
+            subscriptions,
             lProject,
             project
         };
     },
     view(ctrl) {
+        const subsCollection = ctrl.subscriptions.collection();
         if (!ctrl.lProject()) {
             return m('div', [
                 m.component(projectDashboardMenu, {
@@ -54,7 +75,7 @@ const projectSubscriptionReport = {
                                 m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-7',
                                     m('.w-inline-block.fontsize-base.u-marginright-10', [
                                         m('span.fontweight-semibold',
-                                            '99999'
+                                            ctrl.subscriptions.total()
                                         ),
                                         ' assinantes',
                                         m.trust('&nbsp;')
@@ -63,7 +84,7 @@ const projectSubscriptionReport = {
                                 m('.w-col.w-col-5',
                                     m("a.alt-link.fontsize-small.u-right[data-ix='show-dropdown'][href='#']", [
                                         m('span.fa.fa-download',
-                                            '.'
+                                            ''
                                         ),
                                         ' Baixar relatórios'
                                     ])
@@ -106,477 +127,18 @@ const projectSubscriptionReport = {
                                 ])
                             ),
                             m('.fontsize-small', [
-                                m('div',
-                                    m('.card.table-row',
-                                        m('.w-row', [
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.w-row', [
-                                                    m('.w-col.w-col-3',
-                                                        m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                    ),
-                                                    m('.w-col.w-col-9', [
-                                                        m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                            'Humberto Oliveira'
-                                                        ),
-                                                        m('.fontcolor-secondary.fontsize-smallest',
-                                                            'email@email.com'
-                                                        )
-                                                    ])
-                                                ])
-                                            ),
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.fontsize-smaller',
-                                                    'R$10: Acesso a alguma coisa e...'
-                                                )
-                                            ),
-                                            m('.table-col.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$10'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                    m('span.fa.fa-barcode',
-                                                        '.'
-                                                    ),
-                                                    ' Boleto'
-                                                ])
-                                            ]),
-                                            m('.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$100'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                    '10 meses'
-                                                )
-                                            ]),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller',
-                                                    '10/01/2017'
-                                                )
-                                            ),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller', [
-                                                    m('span.fa.fa-circle.text-success',
-                                                        '.'
-                                                    ),
-                                                    ' Ativa'
-                                                ])
-                                            )
-                                        ])
-                                    )
-                                ),
-                                m('.card',
-                                    m('.w-row', [
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.w-row', [
-                                                m('.w-col.w-col-3',
-                                                    m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                ),
-                                                m('.w-col.w-col-9', [
-                                                    m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                        'Humberto Oliveira'
-                                                    ),
-                                                    m('.fontcolor-secondary.fontsize-smallest',
-                                                        'email@email.com'
-                                                    )
-                                                ])
-                                            ])
-                                        ),
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.fontsize-smaller',
-                                                'R$10: Acesso a alguma coisa e...'
-                                            )
-                                        ),
-                                        m('.table-col.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$15'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                m('span.fa.fa-barcode',
-                                                    '.'
-                                                ),
-                                                ' Boleto'
-                                            ])
-                                        ]),
-                                        m('.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$0'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                '0 meses'
-                                            )
-                                        ]),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller')
-                                        ),
-                                        m('.w-col.w-col-2', [
-                                            m('.fontsize-smaller', [
-                                                m('span.fa.fa-circle.text-waiting',
-                                                    '.'
-                                                ),
-                                                ' Iniciada'
-                                            ]),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                'em 10/01/2017'
-                                            )
-                                        ])
-                                    ])
-                                ),
-                                m('.card',
-                                    m('.w-row', [
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.w-row', [
-                                                m('.w-col.w-col-3',
-                                                    m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                ),
-                                                m('.w-col.w-col-9', [
-                                                    m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                        'Humberto Oliveira'
-                                                    ),
-                                                    m('.fontcolor-secondary.fontsize-smallest',
-                                                        'email@email.com'
-                                                    )
-                                                ])
-                                            ])
-                                        ),
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.fontsize-smaller',
-                                                'R$10: Acesso a alguma coisa e...'
-                                            )
-                                        ),
-                                        m('.table-col.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$15'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                m('span.fa.fa-barcode',
-                                                    '.'
-                                                ),
-                                                ' Boleto'
-                                            ])
-                                        ]),
-                                        m('.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$150'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                '10 meses'
-                                            )
-                                        ]),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller',
-                                                '10/01/2017'
-                                            )
-                                        ),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller', [
-                                                m('span.fa.fa-circle.text-success',
-                                                    '.'
-                                                ),
-                                                ' Ativa'
-                                            ])
-                                        )
-                                    ])
-                                ),
-                                m('.card',
-                                    m('.w-row', [
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.w-row', [
-                                                m('.w-col.w-col-3',
-                                                    m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                ),
-                                                m('.w-col.w-col-9', [
-                                                    m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                        'Humberto Oliveira'
-                                                    ),
-                                                    m('.fontcolor-secondary.fontsize-smallest',
-                                                        'email@email.com'
-                                                    )
-                                                ])
-                                            ])
-                                        ),
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.fontsize-smaller',
-                                                'R$10: Acesso a alguma coisa e...'
-                                            )
-                                        ),
-                                        m('.table-col.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$15'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                m('span.fa.fa-barcode',
-                                                    '.'
-                                                ),
-                                                ' Boleto'
-                                            ])
-                                        ]),
-                                        m('.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$150'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                '10 meses'
-                                            )
-                                        ]),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller',
-                                                '10/01/2017'
-                                            )
-                                        ),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller', [
-                                                m('span.fa.fa-circle.text-error',
-                                                    '.'
-                                                ),
-                                                ' Inativa'
-                                            ])
-                                        )
-                                    ])
-                                ),
-                                m('.card',
-                                    m('.w-row', [
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.w-row', [
-                                                m('.w-col.w-col-3',
-                                                    m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                ),
-                                                m('.w-col.w-col-9', [
-                                                    m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                        'Humberto Oliveira'
-                                                    ),
-                                                    m('.fontcolor-secondary.fontsize-smallest',
-                                                        'email@email.com'
-                                                    )
-                                                ])
-                                            ])
-                                        ),
-                                        m('.table-col.w-col.w-col-3',
-                                            m('.fontsize-smaller',
-                                                'R$10: Acesso a alguma coisa e...'
-                                            )
-                                        ),
-                                        m('.table-col.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$15'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                m('span.fa.fa-barcode',
-                                                    '.'
-                                                ),
-                                                ' Boleto'
-                                            ])
-                                        ]),
-                                        m('.w-col.w-col-1', [
-                                            m('.fontsize-smaller',
-                                                'R$150'
-                                            ),
-                                            m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                '10 meses'
-                                            )
-                                        ]),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller',
-                                                '10/01/2017'
-                                            )
-                                        ),
-                                        m('.w-col.w-col-2',
-                                            m('.fontsize-smaller', [
-                                                m('span.fa.fa-times-circle.text-error',
-                                                    '.'
-                                                ),
-                                                ' Cancelada'
-                                            ])
-                                        )
-                                    ])
-                                ),
-                                m('div', [
-                                    m('.card.table-row',
-                                        m('.w-row', [
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.w-row', [
-                                                    m('.w-col.w-col-3',
-                                                        m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                    ),
-                                                    m('.w-col.w-col-9', [
-                                                        m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                            'Humberto Oliveira'
-                                                        ),
-                                                        m('.fontcolor-secondary.fontsize-smallest',
-                                                            'email@email.com'
-                                                        )
-                                                    ])
-                                                ])
-                                            ),
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.fontsize-smaller',
-                                                    'R$10: Acesso a alguma coisa e...'
-                                                )
-                                            ),
-                                            m('.table-col.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$10'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                    m('span.fa.fa-credit-card',
-                                                        '.'
-                                                    ),
-                                                    m.trust('&nbsp;'),
-                                                    'CC'
-                                                ])
-                                            ]),
-                                            m('.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$100'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                    '10 meses'
-                                                )
-                                            ]),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller',
-                                                    '10/01/2017'
-                                                )
-                                            ),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller', [
-                                                    m('span.fa.fa-circle.text-success',
-                                                        '.'
-                                                    ),
-                                                    ' Ativa'
-                                                ])
-                                            )
-                                        ])
-                                    ),
-                                    m('.card.table-row',
-                                        m('.w-row', [
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.w-row', [
-                                                    m('.w-col.w-col-3',
-                                                        m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                    ),
-                                                    m('.w-col.w-col-9', [
-                                                        m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                            'Humberto Oliveira'
-                                                        ),
-                                                        m('.fontcolor-secondary.fontsize-smallest',
-                                                            'email@email.com'
-                                                        )
-                                                    ])
-                                                ])
-                                            ),
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.fontsize-smaller',
-                                                    'R$10: Acesso a alguma coisa e...'
-                                                )
-                                            ),
-                                            m('.table-col.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$10'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                    m('span.fa.fa-credit-card',
-                                                        '.'
-                                                    ),
-                                                    m.trust('&nbsp;'),
-                                                    'CC'
-                                                ])
-                                            ]),
-                                            m('.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$100'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                    '10 meses'
-                                                )
-                                            ]),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller',
-                                                    '10/01/2017'
-                                                )
-                                            ),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller', [
-                                                    m('span.fa.fa-circle.text-error',
-                                                        '.'
-                                                    ),
-                                                    ' Inativa'
-                                                ])
-                                            )
-                                        ])
-                                    )
-                                ]),
-                                m('div',
-                                    m('.card.table-row',
-                                        m('.w-row', [
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.w-row', [
-                                                    m('.w-col.w-col-3',
-                                                        m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
-                                                    ),
-                                                    m('.w-col.w-col-9', [
-                                                        m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                                            'Humberto Oliveira'
-                                                        ),
-                                                        m('.fontcolor-secondary.fontsize-smallest',
-                                                            'email@email.com'
-                                                        )
-                                                    ])
-                                                ])
-                                            ),
-                                            m('.table-col.w-col.w-col-3',
-                                                m('.fontsize-smaller',
-                                                    'R$10: Acesso a alguma coisa e...'
-                                                )
-                                            ),
-                                            m('.table-col.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$10'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                                                    m('span.fa.fa-credit-card',
-                                                        '.'
-                                                    ),
-                                                    m.trust('&nbsp;'),
-                                                    'CC'
-                                                ])
-                                            ]),
-                                            m('.w-col.w-col-1', [
-                                                m('.fontsize-smaller',
-                                                    'R$100'
-                                                ),
-                                                m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                                                    '10 meses'
-                                                )
-                                            ]),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller',
-                                                    '10/01/2017'
-                                                )
-                                            ),
-                                            m('.w-col.w-col-2',
-                                                m('.fontsize-smaller', [
-                                                    m('span.fa.fa-circle.text-success',
-                                                        '.'
-                                                    ),
-                                                    ' Ativa'
-                                                ])
-                                            )
-                                        ])
-                                    )
-                                )
+                                _.map(subsCollection, subscription =>
+                                    m(dashboardSubscriptionCard, { subscription }))
                             ])
                         ])
                     ]),
                     m('.bg-gray.section',
                         m('.w-container',
                             m('.u-marginbottom-60.w-row', [
-                                m('.w-col.w-col-5'),
-                                m('.w-col.w-col-2',
-                                    m("a.btn.btn-medium.btn-terciary[href='#']",
-                                        'Carregar mais'
-                                    )
-                                ),
-                                m('.w-col.w-col-5')
+                                m(loadMoreBtn, {
+                                    collection: ctrl.subscriptions,
+                                    cssClass: '.w-col-push-4'
+                                })
                             ])
                         )
                     )
