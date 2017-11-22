@@ -2,12 +2,39 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import I18n from 'i18n-js';
+import { catarse } from '../api';
+import models from '../models';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCard = {
     controller(args) {
+        const subscription = args.subscription,
+            reward = m.prop(),
+            user = m.prop();
+
+        if (subscription.user_external_id) {
+            const filterUserVM = catarse.filtersVM({
+                    id: 'eq'
+                }).id(subscription.user_external_id),
+                lU = catarse.loaderWithToken(models.userDetail.getRowOptions(filterUserVM.parameters()));
+
+            lU.load().then((data) => {
+                user(_.first(data));
+            });
+        }
+
+        if (subscription.reward_external_id) {
+            const filterRewVM = catarse.filtersVM({
+                    id: 'eq'
+                }).id(subscription.reward_external_id),
+                lRew = catarse.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
+
+            lRew.load().then((data) => {
+                reward(_.first(data));
+            });
+        }
         const statusClass = {
             active: 'fa-circle.text-success',
             started: 'fa-circle.text-waiting',
@@ -22,6 +49,8 @@ const dashboardSubscriptionCard = {
         };
         return {
             statusClass,
+            reward,
+            user,
             paymentClass
         };
     },
@@ -35,7 +64,7 @@ const dashboardSubscriptionCard = {
                 m('.table-col.w-col.w-col-3',
                     m('.w-row', [
                         m('.w-col.w-col-3',
-                            m("img.u-marginbottom-10.user-avatar[src='https://daks2k3a4ib2z.cloudfront.net/5991cfb722e8860001b12d51/5991cfb722e8860001b12e29_humberto-avatar.JPG']")
+                            m(`img.u-marginbottom-10.user-avatar[src='${_.isEmpty(ctrl.user()) ? '' : h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)}']`)
                         ),
                         m('.w-col.w-col-9', [
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
@@ -49,7 +78,7 @@ const dashboardSubscriptionCard = {
                 ),
                 m('.table-col.w-col.w-col-3',
                     m('.fontsize-smaller',
-                        'R$10: Acesso a alguma coisa e...'
+                        _.isEmpty(ctrl.reward()) ? '' : `${ctrl.reward().description.substring(0, 20)}...`
                     )
                 ),
                 m('.table-col.w-col.w-col-1', [
