@@ -3,6 +3,7 @@ import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import userContributedBox from '../c/user-contributed-box';
+import userSubscriptionBox from '../c/user-subscription-box';
 import loadMoreBtn from './load-more-btn';
 
 const I18nScope = _.partial(h.i18nScope, 'users.show.contributions');
@@ -18,6 +19,7 @@ const userContributedList = {
     },
     view(ctrl, args) {
         const collection = args.collection,
+            isSubscription = args.isSubscription,
             pagination = args.pagination,
             hideSurveys = ctrl.hideSurveys,
             title = ctrl.title;
@@ -47,13 +49,19 @@ const userContributedList = {
                         (!hideSurveys ?
                             m('.w-col.w-col-2',
                                 m('.fontsize-small.fontweight-semibold',
-                                    I18n.t('survey_col', I18nScope())
+                                    (isSubscription ? '' : I18n.t('survey_col', I18nScope()))
                                 )
                             ) : '')
                     ]),
-                    _.map(collection, contribution => m(userContributedBox, {
-                        contribution
-                    })),
+                    (!isSubscription ? 
+                        _.map(collection, contribution => m(userContributedBox, {
+                            contribution
+                        }))
+                    :
+                        _.map(collection, subscription => m(userSubscriptionBox, {
+                            subscription
+                        }))
+                    ),
                     m('.w-row.u-marginbottom-40.u-margintop-30', [
                         m(loadMoreBtn, {
                             collection: pagination,

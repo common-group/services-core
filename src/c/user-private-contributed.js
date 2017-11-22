@@ -1,6 +1,6 @@
 import m from 'mithril';
 import models from '../models';
-import {catarse} from '../api';
+import {catarse, commonPayment} from '../api';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -10,6 +10,7 @@ import userContributedList from './user-contributed-list';
 const userPrivateContributed = {
     controller(args) {
         const user_id = args.userId,
+            subscriptions = commonPayment.paginationVM(models.userSubscription),
             onlinePages = catarse.paginationVM(models.userContribution),
             successfulPages = catarse.paginationVM(models.userContribution),
             failedPages = catarse.paginationVM(models.userContribution),
@@ -24,12 +25,23 @@ const userPrivateContributed = {
                 user_id: 'eq',
                 state: 'in',
                 project_state: 'in'
+            }),
+            contextSubVM = catarse.filtersVM({
+                status: 'in'
             });
 
+        models.userSubscription.pageSize(9);
         models.userContribution.pageSize(9);
-        contextVM.user_id(user_id).order({
+
+        contextSubVM.status(['started', 'active', 'inactive', 'canceled', 'error']).order({
             created_at: 'desc'
-        }).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
+        });
+
+        subscriptions.firstPage(contextSubVM.parameters()).then(() => {
+            loader(false);
+        }).catch(handleError);
+
+        contextVM.order({created_at: 'desc'}).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 
         contextVM.project_state(['online', 'waiting_funds']);
         onlinePages.firstPage(contextVM.parameters()).then(() => {
@@ -47,6 +59,7 @@ const userPrivateContributed = {
         }).catch(handleError);
 
         return {
+            subscriptions,
             onlinePages,
             successfulPages,
             failedPages,
@@ -55,14 +68,15 @@ const userPrivateContributed = {
         };
     },
     view(ctrl, args) {
-        const onlineCollection = ctrl.onlinePages.collection(),
+        const subsCollection = ctrl.subscriptions.collection(),
+            onlineCollection = ctrl.onlinePages.collection(),
             successfulCollection = ctrl.successfulPages.collection(),
             failedCollection = ctrl.failedPages.collection();
 
         return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m.component(inlineError, {
             message: 'Erro ao carregar os projetos.'
         }) : ctrl.loader() ? h.loader() :
-            (_.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
+            (_.isEmpty(subsCollection) && _.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
             m('.w-container',
                 m('.w-row.u-margintop-30.u-text-center', [
                     m('.w-col.w-col-3'),
@@ -91,6 +105,12 @@ const userPrivateContributed = {
                 ])
             ) :
             [
+                m.component(userContributedList, {
+                    title: 'Assinaturas',
+                    collection: subsCollection,
+                    isSubscription: true,
+                    pagination: ctrl.subscriptions
+                }),
                 m.component(userContributedList, {
                     title: 'Projetos em andamento',
                     collection: onlineCollection,

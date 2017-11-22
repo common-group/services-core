@@ -12,6 +12,11 @@ commonPaymentApiMeta.content = 'https://payment.common.io';
 commonPaymentApiMeta.name = 'common-payment-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonPaymentApiMeta);
 
+const commonProjectApiMeta = document.createElement('meta');
+commonProjectApiMeta.content = 'https://project.common.io';
+commonProjectApiMeta.name = 'common-project-api-host';
+document.getElementsByTagName('head')[0].appendChild(commonProjectApiMeta);
+
 const commonAnalyticsApiMeta = document.createElement('meta');
 commonAnalyticsApiMeta.content = 'https://analytics.common.io';
 commonAnalyticsApiMeta.name = 'common-analytics-api-host';
