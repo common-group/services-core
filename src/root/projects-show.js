@@ -2,7 +2,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
-import rewardVM from '../vms/reward-vm';
 import projectHeader from '../c/project-header';
 import projectTabs from '../c/project-tabs';
 import projectMain from '../c/project-main';
@@ -29,7 +28,7 @@ const projectsShow = {
 
         return m('.project-show', {
             config: ctrl.setProjectPageTitle()
-        }, project() ? [
+        }, project() && (!ctrl.isSubscription(project()) || ctrl.subscriptionData()) ? [
             m.component(projectHeader, {
                 project,
                 subscriptionData: ctrl.subscriptionData,

@@ -9,11 +9,7 @@ import userVM from './user-vm';
 
 const currentProject = m.prop(),
     userDetails = m.prop(),
-    subscriptionData = m.prop({
-        amount_paid_for_valid_period: 0,
-        total_subscriptions: 0,
-        total_subscribers: 0
-    }),
+    subscriptionData = m.prop(),
     projectContributions = m.prop([]),
     vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
@@ -30,7 +26,11 @@ const fetchSubData = (projectUuid) => {
     const lproject = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({ id: projectUuid }));
 
     lproject.load().then((data) => {
-        subscriptionData(data || subscriptionData());
+        subscriptionData(data || {
+            amount_paid_for_valid_period: 0,
+            total_subscriptions: 0,
+            total_subscribers: 0
+        });
     });
 };
 
