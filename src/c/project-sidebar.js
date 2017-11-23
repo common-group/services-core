@@ -99,7 +99,7 @@ const projectSidebar = {
             },
             isSub = projectVM.isSubscription(project),
             subscriptionData = args.subscriptionData ? args.subscriptionData() : m.prop(),
-            goal = _.find(args.goalDetails(), g => g.value >= subscriptionData.amount_paid_for_valid_period) || _.last(args.goalDetails()) || { value: '--' },
+            goal = (isSub ? _.find(args.goalDetails(), g => g.value >= subscriptionData.amount_paid_for_valid_period) : _.last(args.goalDetails())) || { value: '--' },
             pledged = isSub ? subscriptionData.amount_paid_for_valid_period : project().pledged,
             progress = isSub ? (subscriptionData.amount_paid_for_valid_period / goal.value) * 100 : project().progress,
             totalContributors = isSub ? subscriptionData.total_subscriptions : project().total_contributors;
