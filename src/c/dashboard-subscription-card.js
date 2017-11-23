@@ -86,10 +86,10 @@ const dashboardSubscriptionCard = {
                         `R$${h.formatNumber(subscription.amount / 100, 0, 3)}`
                     ),
                     m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                        m(`span.fa.${paymentClass[subscription.checkout_data.payment_method]}`,
+                        m(`span.fa.${paymentClass[subscription.payment_method]}`,
                             ''
                         ),
-                        I18n.t(subscription.checkout_data.payment_method, I18nScope())
+                        I18n.t(subscription.payment_method, I18nScope())
                     ])
                 ]),
                 m('.w-col.w-col-1', [
