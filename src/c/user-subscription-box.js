@@ -92,7 +92,7 @@ const userSubscriptionBox = {
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
                         m('.fontsize-base.fontweight-semibold.lineheight-looser',
-                            `R$ ${h.formatNumber(parseFloat(subscription.checkout_data.amount) / 100)} por mês`
+                            `R$ ${h.formatNumber(parseFloat((subscription.checkout_data||subscription).amount) / 100)} por mês`
                         ),
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                             `Assinante há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
@@ -103,7 +103,7 @@ const userSubscriptionBox = {
                                     I18n.t('status', contributionScope())
                                 ),
                                 m('.fontsize-smallest',
-                                    (subscription.checkout_data.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
+                                    ( (subscription.checkout_data&&subscription.checkout_data.payment_method) === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
                                 ),
                                 (contributionVM.canShowReceipt(subscription) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${subscription.project.id}/contributions/${subscription.contribution_id}/receipt'][target='__blank']`,
