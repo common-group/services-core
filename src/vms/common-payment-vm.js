@@ -1,4 +1,5 @@
 import projectVM from '../vms/project-vm';
+import addressVM from '../vms/address-vm';
 import models from '../models';
 import h from '../h';
 
@@ -25,10 +26,14 @@ const sendPayment = (creditCardFields, selectedCreditCard, fields) => {
     window.PagarMe.encryption_key = encryptionKey;
     const card = setNewCreditCard(creditCardFields);
 
+    const customer = fields.fields;
+    const address = customer.address();
+    const phone_ddd = address.phone_number.match(/\(([^)]*)\)/)[1];
+    const phone_number = address.phone_number.substr(5, address.phone_number.length);
+
     card.generateHash(cardHash => {
         const payload = {
             subscription: true,
-            fields: fields.isInternational(),
             save_card: false,
             user_id: '1e1be82f-4481-4cdd-bc1f-34fd145b528b',
             project_id: '0143689b-f75c-4a8b-93ca-1d461e2ff89c',
@@ -37,9 +42,25 @@ const sendPayment = (creditCardFields, selectedCreditCard, fields) => {
             payment_method: 'credit_card',
             card_hash: cardHash,
             customer: {
-                name: fields.fields.completeName(),
-                document_number: fields.fields.ownerDocument(),
-                address: fields.fields.address(),
+                name: customer.completeName(),
+                document_number: customer.ownerDocument(),
+                address: {
+                    neighborhood: address.address_neighbourhood,
+                    street: address.address_street,
+                    street_number: address.address_number,
+                    zipcode: address.address_zip_code,
+                    // country: address.address_country_name,
+                    country: 'Brasil',
+                    // state: address.address_state_name,
+                    state: address.address_state,
+                    city: address.address_city,
+                    complementary: address.address_complement,
+                },
+                phone: {
+                    ddi: '55',
+                    ddd: phone_ddd,
+                    number: phone_number
+                }
             }
         };
 

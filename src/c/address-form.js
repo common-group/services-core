@@ -105,7 +105,10 @@ const addressForm = {
             }
         };
 
-        statesLoader.load().then(states);
+        statesLoader.load().then((data) => {
+            states(data);
+            addressVM().states(states());
+        });
         return {
             lookupZipCode,
             zipCodeErrorMessage,
