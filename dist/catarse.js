@@ -12,9 +12,9 @@ replaceDiacritics$1 = replaceDiacritics$1 && replaceDiacritics$1.hasOwnProperty(
 Chart = Chart && Chart.hasOwnProperty('default') ? Chart['default'] : Chart;
 select = select && select.hasOwnProperty('default') ? select['default'] : select;
 
-var catarse$1 = new Postgrest();
+var catarse = new Postgrest();
 var catarseApiMeta = document.querySelector('[name="api-host"]');
-catarse$1.init(catarseApiMeta.getAttribute('content'), { method: 'GET', url: '/api_token' });
+catarse.init(catarseApiMeta.getAttribute('content'), { method: 'GET', url: '/api_token' });
 
 var commonPayment = new Postgrest();
 var commonPaymentApiMeta = document.querySelector('[name="common-payment-api-host"]');
@@ -30,66 +30,66 @@ commonAnalytics.init(commonAnalyticsApiMeta.getAttribute('content'), { method: '
 
 var models = {
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
-    country: catarse$1.model('countries'),
-    state: catarse$1.model('states'),
-    contributionDetail: catarse$1.model('contribution_details'),
-    contributionActivity: catarse$1.model('contribution_activities'),
-    projectDetail: catarse$1.model('project_details'),
-    userDetail: catarse$1.model('user_details'),
-    balance: catarse$1.model('balances'),
-    balanceTransaction: catarse$1.model('balance_transactions'),
-    balanceTransfer: catarse$1.model('balance_transfers'),
-    user: catarse$1.model('users'),
-    survey: catarse$1.model('surveys'),
-    userCreditCard: catarse$1.model('user_credit_cards'),
-    bankAccount: catarse$1.model('bank_accounts'),
-    bank: catarse$1.model('banks'),
-    goalDetail: catarse$1.model('goals'),
-    rewardDetail: catarse$1.model('reward_details'),
-    projectReminder: catarse$1.model('project_reminders'),
-    projectReport: catarse$1.model('project_reports'),
-    contributions: catarse$1.model('contributions'),
-    directMessage: catarse$1.model('direct_messages'),
-    teamTotal: catarse$1.model('team_totals'),
-    recommendedProjects: catarse$1.model('recommended_projects'),
-    projectAccount: catarse$1.model('project_accounts'),
-    projectAccountError: catarse$1.model('project_account_errors'),
-    projectContribution: catarse$1.model('project_contributions'),
-    projectContributiorsStat: catarse$1.model('project_stat_contributors'),
-    projectPostDetail: catarse$1.model('project_posts_details'),
-    projectContributionsPerDay: catarse$1.model('project_contributions_per_day'),
-    projectContributionsPerLocation: catarse$1.model('project_contributions_per_location'),
-    projectContributionsPerRef: catarse$1.model('project_contributions_per_ref'),
-    projectVisitorsPerDay: catarse$1.model('project_visitors_per_day'),
-    projectTransfer: catarse$1.model('project_transfers'),
-    project: catarse$1.model('projects'),
-    adminProject: catarse$1.model('admin_projects'),
-    projectSearch: catarse$1.model('rpc/project_search'),
-    publicTags: catarse$1.model('public_tags'),
-    category: catarse$1.model('categories'),
-    categoryTotals: catarse$1.model('category_totals'),
-    categoryFollower: catarse$1.model('category_followers'),
-    teamMember: catarse$1.model('team_members'),
-    notification: catarse$1.model('notifications'),
-    statistic: catarse$1.model('statistics'),
-    successfulProject: catarse$1.model('successful_projects'),
-    finishedProject: catarse$1.model('finished_projects'),
-    userFriend: catarse$1.model('user_friends'),
-    userFollow: catarse$1.model('user_follows'),
-    followAllCreators: catarse$1.model('rpc/follow_all_creators'),
-    sentSurveyCount: catarse$1.model('rpc/sent_survey_count'),
-    answeredSurveyCount: catarse$1.model('rpc/answered_survey_count'),
-    followAllFriends: catarse$1.model('rpc/follow_all_friends'),
-    contributor: catarse$1.model('contributors'),
-    userFollower: catarse$1.model('user_followers'),
-    creatorSuggestion: catarse$1.model('creator_suggestions'),
-    userContribution: catarse$1.model('user_contributions'),
+    country: catarse.model('countries'),
+    state: catarse.model('states'),
+    contributionDetail: catarse.model('contribution_details'),
+    contributionActivity: catarse.model('contribution_activities'),
+    projectDetail: catarse.model('project_details'),
+    userDetail: catarse.model('user_details'),
+    balance: catarse.model('balances'),
+    balanceTransaction: catarse.model('balance_transactions'),
+    balanceTransfer: catarse.model('balance_transfers'),
+    user: catarse.model('users'),
+    survey: catarse.model('surveys'),
+    userCreditCard: catarse.model('user_credit_cards'),
+    bankAccount: catarse.model('bank_accounts'),
+    bank: catarse.model('banks'),
+    goalDetail: catarse.model('goals'),
+    rewardDetail: catarse.model('reward_details'),
+    projectReminder: catarse.model('project_reminders'),
+    projectReport: catarse.model('project_reports'),
+    contributions: catarse.model('contributions'),
+    directMessage: catarse.model('direct_messages'),
+    teamTotal: catarse.model('team_totals'),
+    recommendedProjects: catarse.model('recommended_projects'),
+    projectAccount: catarse.model('project_accounts'),
+    projectAccountError: catarse.model('project_account_errors'),
+    projectContribution: catarse.model('project_contributions'),
+    projectContributiorsStat: catarse.model('project_stat_contributors'),
+    projectPostDetail: catarse.model('project_posts_details'),
+    projectContributionsPerDay: catarse.model('project_contributions_per_day'),
+    projectContributionsPerLocation: catarse.model('project_contributions_per_location'),
+    projectContributionsPerRef: catarse.model('project_contributions_per_ref'),
+    projectVisitorsPerDay: catarse.model('project_visitors_per_day'),
+    projectTransfer: catarse.model('project_transfers'),
+    project: catarse.model('projects'),
+    adminProject: catarse.model('admin_projects'),
+    projectSearch: catarse.model('rpc/project_search'),
+    publicTags: catarse.model('public_tags'),
+    category: catarse.model('categories'),
+    categoryTotals: catarse.model('category_totals'),
+    categoryFollower: catarse.model('category_followers'),
+    teamMember: catarse.model('team_members'),
+    notification: catarse.model('notifications'),
+    statistic: catarse.model('statistics'),
+    successfulProject: catarse.model('successful_projects'),
+    finishedProject: catarse.model('finished_projects'),
+    userFriend: catarse.model('user_friends'),
+    userFollow: catarse.model('user_follows'),
+    followAllCreators: catarse.model('rpc/follow_all_creators'),
+    sentSurveyCount: catarse.model('rpc/sent_survey_count'),
+    answeredSurveyCount: catarse.model('rpc/answered_survey_count'),
+    followAllFriends: catarse.model('rpc/follow_all_friends'),
+    contributor: catarse.model('contributors'),
+    userFollower: catarse.model('user_followers'),
+    creatorSuggestion: catarse.model('creator_suggestions'),
+    userContribution: catarse.model('user_contributions'),
     userSubscription: commonPayment.model('subscriptions'),
-    shippingFee: catarse$1.model('shipping_fees'),
-    deleteProject: catarse$1.model('rpc/delete_project'),
-    cancelProject: catarse$1.model('rpc/cancel_project'),
-    city: catarse$1.model('cities'),
-    mailMarketingList: catarse$1.model('mail_marketing_lists')
+    shippingFee: catarse.model('shipping_fees'),
+    deleteProject: catarse.model('rpc/delete_project'),
+    cancelProject: catarse.model('rpc/cancel_project'),
+    city: catarse.model('cities'),
+    mailMarketingList: catarse.model('mail_marketing_lists')
 };
 
 models.teamMember.pageSize(40);
@@ -116,7 +116,7 @@ models.userSubscription.pageSize(9);
 var currentContribution = m.prop({});
 
 var getUserProjectContributions = function getUserProjectContributions(userId, projectId, states) {
-    var vm = catarse$1.filtersVM({
+    var vm = catarse.filtersVM({
         user_id: 'eq',
         project_id: 'eq',
         state: 'in'
@@ -126,7 +126,7 @@ var getUserProjectContributions = function getUserProjectContributions(userId, p
     vm.project_id(projectId);
     vm.state(states);
 
-    var lProjectContributions = catarse$1.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
+    var lProjectContributions = catarse.loaderWithToken(models.userContribution.getPageOptions(vm.parameters()));
 
     return lProjectContributions.load();
 };
@@ -558,7 +558,7 @@ var toggleProp = function toggleProp(defaultState, alternateState) {
 
     return p;
 };
-var idVM = catarse$1.filtersVM({
+var idVM = catarse.filtersVM({
     id: 'eq'
 });
 var getCurrentProject = function getCurrentProject() {
@@ -1292,9 +1292,9 @@ var h = {
     userSignedIn: userSignedIn
 };
 
-var userListVM = catarse$1.paginationVM(models.user, 'id.desc', { Prefer: 'count=exact' });
+var userListVM = catarse.paginationVM(models.user, 'id.desc', { Prefer: 'count=exact' });
 
-var vm = catarse$1.filtersVM({
+var vm = catarse.filtersVM({
     full_text_index: '@@',
     deactivated_at: 'is.null'
 });
@@ -1424,7 +1424,7 @@ var adminUserItem = {
 };
 
 var projectFiltersVM = function projectFiltersVM() {
-    var filtersVM = catarse$1.filtersVM,
+    var filtersVM = catarse.filtersVM,
         all = filtersVM({
         state: 'eq'
     }).state('online'),
@@ -1545,7 +1545,7 @@ var projectFiltersVM = function projectFiltersVM() {
 
 var idVM$1 = h.idVM;
 var currentUser = m.prop({});
-var createdVM = catarse$1.filtersVM({ project_user_id: 'eq' });
+var createdVM = catarse.filtersVM({ project_user_id: 'eq' });
 
 var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
@@ -1554,7 +1554,7 @@ var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
 
     models.project.pageSize(pageSize);
 
-    var lUserCreated = catarse$1.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
+    var lUserCreated = catarse.loaderWithToken(models.project.getPageOptions(createdVM.parameters()));
 
     return lUserCreated.load();
 };
@@ -1562,7 +1562,7 @@ var getUserCreatedProjects = function getUserCreatedProjects(user_id) {
 var getPublicUserContributedProjects = function getPublicUserContributedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
 
-    var contextVM = catarse$1.filtersVM({
+    var contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
 
@@ -1570,34 +1570,34 @@ var getPublicUserContributedProjects = function getPublicUserContributedProjects
 
     models.contributor.pageSize(pageSize);
 
-    var lUserContributed = catarse$1.loaderWithToken(models.contributor.getPageOptions(contextVM.parameters()));
+    var lUserContributed = catarse.loaderWithToken(models.contributor.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
 
 var getUserBalance = function getUserBalance(user_id) {
-    var contextVM = catarse$1.filtersVM({
+    var contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
     contextVM.user_id(user_id);
 
-    var loader = catarse$1.loaderWithToken(models.balance.getPageOptions(contextVM.parameters()));
+    var loader = catarse.loaderWithToken(models.balance.getPageOptions(contextVM.parameters()));
     return loader.load();
 };
 
 var getUserBankAccount = function getUserBankAccount(user_id) {
-    var contextVM = catarse$1.filtersVM({
+    var contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
 
     contextVM.user_id(user_id);
 
-    var lUserAccount = catarse$1.loaderWithToken(models.bankAccount.getPageOptions(contextVM.parameters()));
+    var lUserAccount = catarse.loaderWithToken(models.bankAccount.getPageOptions(contextVM.parameters()));
     return lUserAccount.load();
 };
 
 var getUserProjectReminders = function getUserProjectReminders(user_id) {
-    var contextVM = catarse$1.filtersVM({
+    var contextVM = catarse.filtersVM({
         user_id: 'eq',
         without_notification: 'eq'
     });
@@ -1606,19 +1606,19 @@ var getUserProjectReminders = function getUserProjectReminders(user_id) {
 
     models.projectReminder;
 
-    var lUserReminders = catarse$1.loaderWithToken(models.projectReminder.getPageOptions(contextVM.parameters()));
+    var lUserReminders = catarse.loaderWithToken(models.projectReminder.getPageOptions(contextVM.parameters()));
 
     return lUserReminders.load();
 };
 
 var getMailMarketingLists = function getMailMarketingLists() {
-    var l = catarse$1.loaderWithToken(models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
+    var l = catarse.loaderWithToken(models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
 
     return l.load();
 };
 
 var getUserCreditCards = function getUserCreditCards(user_id) {
-    var contextVM = catarse$1.filtersVM({
+    var contextVM = catarse.filtersVM({
         user_id: 'eq'
     });
 
@@ -1626,7 +1626,7 @@ var getUserCreditCards = function getUserCreditCards(user_id) {
 
     models.userCreditCard.pageSize(false);
 
-    var lUserCards = catarse$1.loaderWithToken(models.userCreditCard.getPageOptions(contextVM.parameters()));
+    var lUserCards = catarse.loaderWithToken(models.userCreditCard.getPageOptions(contextVM.parameters()));
 
     return lUserCards.load();
 };
@@ -1650,7 +1650,7 @@ var toggleAnonymous = function toggleAnonymous(projectId, contribution) {
 var getUserContributedProjects = function getUserContributedProjects(user_id) {
     var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
 
-    var contextVM = catarse$1.filtersVM({
+    var contextVM = catarse.filtersVM({
         user_id: 'eq',
         state: 'in'
     });
@@ -1661,7 +1661,7 @@ var getUserContributedProjects = function getUserContributedProjects(user_id) {
 
     models.userContribution.pageSize(pageSize);
 
-    var lUserContributed = catarse$1.loaderWithToken(models.userContribution.getPageOptions(contextVM.parameters()));
+    var lUserContributed = catarse.loaderWithToken(models.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
@@ -1672,7 +1672,7 @@ var fetchUser = function fetchUser(user_id) {
 
     idVM$1.id(user_id);
 
-    var lUser = catarse$1.loaderWithToken(models.userDetail.getRowOptions(idVM$1.parameters()));
+    var lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM$1.parameters()));
 
     return !handlePromise ? lUser.load() : lUser.load().then(_$1.compose(customProp, _$1.first));
 };
@@ -1724,7 +1724,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
 
     var loadPopular = function loadPopular() {
         var filters = projectFiltersVM().filters;
-        var popular = catarse$1.loaderWithToken(models.project.getPageOptions(_$1.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())));
+        var popular = catarse.loaderWithToken(models.project.getPageOptions(_$1.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())));
 
         loaders().push(popular);
 
@@ -1734,7 +1734,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
     var pushProject = function pushProject(_ref) {
         var project_id = _ref.project_id;
 
-        var project = catarse$1.loaderWithToken(models.project.getPageOptions(catarse$1.filtersVM({ project_id: 'eq' }).project_id(project_id).parameters()));
+        var project = catarse.loaderWithToken(models.project.getPageOptions(catarse.filtersVM({ project_id: 'eq' }).project_id(project_id).parameters()));
 
         loaders().push(project);
         project.load().then(function (data) {
@@ -1742,7 +1742,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
         });
     };
 
-    var projects = catarse$1.loaderWithToken(models.recommendedProjects.getPageOptions(catarse$1.filtersVM({ user_id: 'eq' }).user_id(user_id).parameters()));
+    var projects = catarse.loaderWithToken(models.recommendedProjects.getPageOptions(catarse.filtersVM({ user_id: 'eq' }).user_id(user_id).parameters()));
 
     projects.load().then(function (recommended) {
         if (recommended.length > 0) {
@@ -1879,7 +1879,7 @@ var adminInputAction = {
 
         h.idVM.id(item[builder.updateKey]);
 
-        var l = catarse$1.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
+        var l = catarse.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
         var updateItem = function updateItem(res) {
             _.extend(item, res[0]);
@@ -1945,7 +1945,7 @@ var adminNotificationHistory = {
         var notifications = m.prop([]),
             getNotifications = function getNotifications(user) {
             var notification = models.notification;
-            notification.getPageWithToken(catarse$1.filtersVM({
+            notification.getPageWithToken(catarse.filtersVM({
                 user_id: 'eq',
                 sent_at: 'is.null'
             }).user_id(user.id).sent_at(!null).order({
@@ -1971,7 +1971,7 @@ var I18nScope = _$1.partial(h.i18nScope, 'users.balance');
 var adminUserBalanceTransactionsList = {
     controller: function controller(args) {
         var userBalance = m.prop({}),
-            transactionsListVM = catarse$1.paginationVM(models.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' });
+            transactionsListVM = catarse.paginationVM(models.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' });
 
         models.balanceTransaction.pageSize(2);
         userVM.getUserBalance(args.user_id).then(_$1.compose(userBalance, _$1.first));
@@ -2162,9 +2162,9 @@ var adminUsers = {
 };
 
 models.adminProject.pageSize(9);
-var projectListVM = catarse$1.paginationVM(models.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
+var projectListVM = catarse.paginationVM(models.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
 
-var vm$1 = catarse$1.filtersVM({
+var vm$1 = catarse.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     mode: 'eq',
@@ -2267,23 +2267,23 @@ var noReward = {
 };
 var contributionValue = m.prop(noReward.minimum_value + ',00');
 var selectedReward = m.prop(noReward);
-var vm$3 = catarse$1.filtersVM({
+var vm$3 = catarse.filtersVM({
     project_id: 'eq'
 });
 
 var rewardsLoader = function rewardsLoader(projectId) {
     vm$3.project_id(projectId);
 
-    return catarse$1.loaderWithToken(models.rewardDetail.getPageOptions(vm$3.parameters()));
+    return catarse.loaderWithToken(models.rewardDetail.getPageOptions(vm$3.parameters()));
 };
 
 var rewardLoader = function rewardLoader(rewardId) {
-    var rewardvm = catarse$1.filtersVM({
+    var rewardvm = catarse.filtersVM({
         id: 'eq'
     });
     rewardvm.id(rewardId);
 
-    return catarse$1.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
+    return catarse.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
 };
 
 var fetchRewards = function fetchRewards(projectId) {
@@ -2291,12 +2291,12 @@ var fetchRewards = function fetchRewards(projectId) {
 };
 
 var getFees = function getFees(reward) {
-    var feesFilter = catarse$1.filtersVM({
+    var feesFilter = catarse.filtersVM({
         reward_id: 'eq'
     });
 
     feesFilter.reward_id(reward.id);
-    var feesLoader = catarse$1.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
+    var feesLoader = catarse.loader(models.shippingFee.getPageOptions(feesFilter.parameters()));
     return feesLoader.load();
 };
 
@@ -2332,7 +2332,7 @@ var selectReward = function selectReward(reward) {
 
 var applyMask$1 = _$1.compose(contributionValue, h.applyMonetaryMask);
 
-var statesLoader = catarse$1.loader(models.state.getPageOptions());
+var statesLoader = catarse.loader(models.state.getPageOptions());
 var getStates = function getStates() {
     statesLoader.load().then(states);
     return states;
@@ -2481,7 +2481,7 @@ var rewardVM = {
 };
 
 var goals = m.prop([]);
-var vm$4 = catarse$1.filtersVM({
+var vm$4 = catarse.filtersVM({
     project_id: 'eq'
 });
 
@@ -2491,7 +2491,7 @@ var goalsLoader = function goalsLoader(projectId) {
         value: 'asc'
     });
 
-    return catarse$1.loaderWithToken(models.goalDetail.getPageOptions(vm$4.parameters()));
+    return catarse.loaderWithToken(models.goalDetail.getPageOptions(vm$4.parameters()));
 };
 
 var addGoal = function addGoal(projectId) {
@@ -2560,13 +2560,9 @@ var projectGoalsVM = {
 
 var currentProject$1 = m.prop();
 var userDetails = m.prop();
-var subscriptionData = m.prop({
-    amount_paid_for_valid_period: 0,
-    total_subscriptions: 0,
-    total_subscribers: 0
-});
+var subscriptionData = m.prop();
 var projectContributions = m.prop([]);
-var vm$2 = catarse$1.filtersVM({ project_id: 'eq' });
+var vm$2 = catarse.filtersVM({ project_id: 'eq' });
 var idVM$2 = h.idVM;
 
 var isSubscription = function isSubscription(project) {
@@ -2581,7 +2577,11 @@ var fetchSubData = function fetchSubData(projectUuid) {
     var lproject = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({ id: projectUuid }));
 
     lproject.load().then(function (data) {
-        subscriptionData(data || subscriptionData());
+        subscriptionData(data || {
+            amount_paid_for_valid_period: 0,
+            total_subscriptions: 0,
+            total_subscribers: 0
+        });
     });
 };
 
@@ -2603,7 +2603,7 @@ var setProject$1 = function setProject(project_user_id) {
 var init = function init(project_id, project_user_id) {
     vm$2.project_id(project_id);
 
-    var lProject = catarse$1.loaderWithToken(models.projectDetail.getRowOptions(vm$2.parameters()));
+    var lProject = catarse.loaderWithToken(models.projectDetail.getRowOptions(vm$2.parameters()));
 
     fetchParallelData(project_id, project_user_id);
 
@@ -2680,7 +2680,7 @@ var fetchProject = function fetchProject(projectId) {
 
     idVM$2.id(projectId);
 
-    var lproject = catarse$1.loaderWithToken(models.projectDetail.getRowOptions(idVM$2.parameters()));
+    var lproject = catarse.loaderWithToken(models.projectDetail.getRowOptions(idVM$2.parameters()));
 
     return !handlePromise ? lproject.load() : lproject.load().then(_$1.compose(customProp, _$1.first));
 };
@@ -2757,16 +2757,16 @@ var adminRadioAction = {
             selectedItem = builder.selectedItem || m.prop();
 
         setFilter[updateKey] = 'eq';
-        var setVM = catarse$1.filtersVM(setFilter);
+        var setVM = catarse.filtersVM(setFilter);
         setVM[updateKey](updateKeyValue);
 
         getFilter[getKey] = 'eq';
-        var getVM = catarse$1.filtersVM(getFilter);
+        var getVM = catarse.filtersVM(getFilter);
         getVM[getKey](getKeyValue);
 
-        var getLoader = catarse$1.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
+        var getLoader = catarse.loaderWithToken(builder.getModel.getPageOptions(getVM.parameters()));
 
-        var setLoader = catarse$1.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
+        var setLoader = catarse.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
         var updateItem = function updateItem(data) {
             if (data.length > 0) {
@@ -2954,7 +2954,7 @@ var adminProjectDetail = {
                 opts = model.getRowOptions(h.idVM.id(project_id).parameters()),
                 project = m.prop({});
 
-            bankl = catarse$1.loaderWithToken(opts);
+            bankl = catarse.loaderWithToken(opts);
 
             if (project_id) {
                 bankl.load().then(_$1.compose(project, _$1.first));
@@ -2969,7 +2969,7 @@ var adminProjectDetail = {
                 opts = model.getRowOptions(h.idVM.id(user_id).parameters()),
                 user = m.prop({});
 
-            l = catarse$1.loaderWithToken(opts);
+            l = catarse.loaderWithToken(opts);
 
             if (user_id) {
                 l.load().then(_$1.compose(user, _$1.first));
@@ -3077,7 +3077,7 @@ var adminProjects = {
         var listVM = projectListVM,
             filterVM = vm$1,
             categories = m.prop([]),
-            filters = catarse$1.filtersVM,
+            filters = catarse.filtersVM,
             error = m.prop(''),
             filterBuilder = [{ // name
             component: filterMain,
@@ -3242,9 +3242,9 @@ var adminProjects = {
     }
 };
 
-var contributionListVM = catarse$1.paginationVM(models.contributionDetail, 'id.desc', { Prefer: 'count=exact' });
+var contributionListVM = catarse.paginationVM(models.contributionDetail, 'id.desc', { Prefer: 'count=exact' });
 
-var vm$5 = catarse$1.filtersVM({
+var vm$5 = catarse.filtersVM({
     full_text_index: '@@',
     delivery_status: 'eq',
     state: 'eq',
@@ -3493,7 +3493,7 @@ var adminReward = {
             if (args.contribution.shipping_fee_id) {
                 var options = models.shippingFee.getRowOptions(h.idVM.id(args.contribution.shipping_fee_id).parameters());
 
-                l = catarse$1.loaderWithToken(options);
+                l = catarse.loaderWithToken(options);
                 l.load().then(_.compose(shippingFee, _.first));
             }
 
@@ -3523,7 +3523,7 @@ var adminContributionDetail = {
                 opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
                 reward = m.prop({});
 
-            l = catarse$1.loaderWithToken(opts);
+            l = catarse.loaderWithToken(opts);
 
             if (reward_id) {
                 l.load().then(_$1.compose(reward, _$1.first));
@@ -3761,9 +3761,9 @@ var adminContributions = {
     }
 };
 
-var balanceTransferListVM = catarse$1.paginationVM(models.balanceTransfer, 'created_at.asc', { Prefer: 'count=exact' });
+var balanceTransferListVM = catarse.paginationVM(models.balanceTransfer, 'created_at.asc', { Prefer: 'count=exact' });
 
-var vm$6 = catarse$1.filtersVM({
+var vm$6 = catarse.filtersVM({
     full_text_index: '@@',
     state: 'eq',
     transfer_id: 'eq',
@@ -3801,7 +3801,7 @@ vm$6.transferred_date.gte.toFilter = function () {
 
 vm$6.getAllBalanceTransfers = function (filterVM) {
     models.balanceTransfer.pageSize(false);
-    var allTransfers = catarse$1.loaderWithToken(models.balanceTransfer.getPageOptions(filterVM.parameters())).load();
+    var allTransfers = catarse.loaderWithToken(models.balanceTransfer.getPageOptions(filterVM.parameters())).load();
     models.balanceTransfer.pageSize(9);
     return allTransfers;
 };
@@ -4277,10 +4277,10 @@ var projectFriends = {
     controller: function controller(args) {
         var project = args.project,
             friendsSample = m.prop([]),
-            listVM = catarse$1.paginationVM(models.contributor, 'user_id.desc', {
+            listVM = catarse.paginationVM(models.contributor, 'user_id.desc', {
             Prefer: 'count=exact'
         }),
-            filterVM = catarse$1.filtersVM({
+            filterVM = catarse.filtersVM({
             project_id: 'eq',
             is_follow: 'eq'
         }).project_id(project.project_id).is_follow(true);
@@ -4469,16 +4469,16 @@ var Flex = {
                 h.discuss('https://catarse.me/flex', 'flex_page');
             }
         },
-            flexVM = catarse$1.filtersVM({
+            flexVM = catarse.filtersVM({
             mode: 'eq',
             state: 'eq',
             recommended: 'eq'
         }),
-            statsLoader = catarse$1.loaderWithToken(models.statistic.getRowOptions());
+            statsLoader = catarse.loaderWithToken(models.statistic.getRowOptions());
 
         flexVM.mode('flex').state('online').recommended(true);
 
-        var projectsLoader = catarse$1.loader(models.project.getPageOptions(flexVM.parameters()));
+        var projectsLoader = catarse.loader(models.project.getPageOptions(flexVM.parameters()));
 
         statsLoader.load().then(stats);
 
@@ -4877,7 +4877,7 @@ var deleteProjectModalContent = {
                 var loaderOpts = models.deleteProject.postOptions({
                     _project_id: args.project.project_id
                 });
-                l = catarse$1.loaderWithToken(loaderOpts);
+                l = catarse.loaderWithToken(loaderOpts);
                 l.load().then(function () {
                     deleteSuccess(true);
                 }).catch(function (err) {
@@ -5168,11 +5168,11 @@ var I18nScope$7 = _.partial(h.i18nScope, 'projects.successful_onboard');
 
 var projectSuccessfulOnboard = {
     controller: function controller(args) {
-        var projectIdVM = catarse$1.filtersVM({ project_id: 'eq' }),
+        var projectIdVM = catarse.filtersVM({ project_id: 'eq' }),
             projectAccounts = m.prop([]),
             projectTransfers = m.prop([]),
             showTaxModal = h.toggleProp(false, true),
-            loader = catarse$1.loaderWithToken,
+            loader = catarse.loaderWithToken,
             listenToReplace = function listenToReplace(element, isInitialized, context) {
             if (isInitialized) return;
 
@@ -5335,7 +5335,7 @@ var projectInsights = {
             contributionsPerDay = m.prop([]),
             visitorsTotal = m.prop(0),
             visitorsPerDay = m.prop([]),
-            loader = catarse$1.loaderWithToken;
+            loader = catarse.loaderWithToken;
 
         if (h.paramByName('online_success') === 'true') {
             displayModal.toggle();
@@ -5549,12 +5549,12 @@ var projectInsightsSub = {
 
 var insights = {
     controller: function controller(args) {
-        var filtersVM = catarse$1.filtersVM({
+        var filtersVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             projectDetails = m.prop([]),
             subscribersDetails = m.prop(),
-            loader = catarse$1.loaderWithToken,
+            loader = catarse.loaderWithToken,
             setProjectId = function setProjectId() {
             try {
                 var project_id = m.route.param('project_id');
@@ -5675,14 +5675,14 @@ var posts = {
             titleHasError = m.prop(false),
             commentHasError = m.prop(false),
             projectPosts = m.prop(),
-            loader = catarse$1.loaderWithToken,
+            loader = catarse.loaderWithToken,
             errors = m.prop(''),
             fields = {
             title: m.prop(''),
             comment_html: m.prop(''),
             reward_id: m.prop('-1')
         },
-            filterVM = catarse$1.filtersVM({
+            filterVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             validateTitle = function validateTitle() {
@@ -5758,7 +5758,7 @@ var posts = {
 
         models.projectPostDetail.pageSize(false);
         filterVM.project_id(project_id);
-        var listVM = catarse$1.loaderWithToken(models.projectPostDetail.getPageOptions(_$1.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
+        var listVM = catarse.loaderWithToken(models.projectPostDetail.getPageOptions(_$1.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         listVM.load().then(projectPosts);
@@ -5850,8 +5850,8 @@ var surveyScope = _$1.partial(h.i18nScope, 'projects.dashboard_surveys');
 
 var surveys = {
     controller: function controller(args) {
-        var loader = catarse$1.loaderWithToken,
-            filterVM = catarse$1.filtersVM({
+        var loader = catarse.loaderWithToken,
+            filterVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             project_id = args.project_id,
@@ -5880,10 +5880,10 @@ var surveys = {
                     sentCount: '',
                     answeredCount: ''
                 });
-                var l = catarse$1.loaderWithToken(models.sentSurveyCount.postOptions({
+                var l = catarse.loaderWithToken(models.sentSurveyCount.postOptions({
                     reward_id: reward.id
                 }));
-                var l2 = catarse$1.loaderWithToken(models.answeredSurveyCount.postOptions({
+                var l2 = catarse.loaderWithToken(models.answeredSurveyCount.postOptions({
                     reward_id: reward.id
                 }));
 
@@ -6203,14 +6203,14 @@ var I18nScope$13 = _$1.partial(h.i18nScope, 'projects.reward_fields');
 var surveyCreate = {
     controller: function controller(args) {
         var showError = m.prop(false),
-            loader = catarse$1.loaderWithToken,
+            loader = catarse.loaderWithToken,
             showPreview = h.toggleProp(false, true),
             confirmAddress = surveyVM.confirmAddress,
             projectDetails = m.prop([]),
-            rewardFilterVM = catarse$1.filtersVM({
+            rewardFilterVM = catarse.filtersVM({
             id: 'eq'
         }),
-            filterVM = catarse$1.filtersVM({
+            filterVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             project_id = args.project_id,
@@ -6219,7 +6219,7 @@ var surveyCreate = {
 
         rewardFilterVM.id(reward_id);
         filterVM.project_id(project_id);
-        var rewardVM = catarse$1.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
+        var rewardVM = catarse.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
         var reward = m.prop([]);
@@ -6336,7 +6336,7 @@ var I18nScope$17 = _$1.partial(h.i18nScope, 'pages.press');
 var press = {
     controller: function controller() {
         var stats = m.prop([]);
-        var loader = catarse$1.loader;
+        var loader = catarse.loader;
         var statsLoader = loader(models.statistic.getRowOptions());
 
         statsLoader.load().then(stats);
@@ -6436,13 +6436,13 @@ var projectContributionReportContentCard = {
             }
             return true;
         },
-            vm = catarse$1.filtersVM({
+            vm = catarse.filtersVM({
             contribution_id: 'eq'
         }),
             surveyLoader = function surveyLoader() {
             vm.contribution_id(args.contribution().id);
 
-            return catarse$1.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            return catarse.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
         },
             survey = m.prop(),
             stateClass = function stateClass(state) {
@@ -6526,7 +6526,7 @@ var projectContributionReportContentCard = {
     }
 };
 
-var vm$7 = catarse$1.filtersVM({
+var vm$7 = catarse.filtersVM({
     full_text_index: '@@',
     state: 'in',
     reward_id: 'eq',
@@ -6550,7 +6550,7 @@ vm$7.full_text_index.toFilter = function () {
 
 vm$7.getAllContributions = function (filterVM) {
     models.projectContribution.pageSize(false);
-    var allContributions = catarse$1.loaderWithToken(models.projectContribution.getPageOptions(filterVM.parameters())).load();
+    var allContributions = catarse.loaderWithToken(models.projectContribution.getPageOptions(filterVM.parameters())).load();
     models.projectContribution.pageSize(9);
     return allContributions;
 };
@@ -6565,7 +6565,7 @@ vm$7.updateStatus = function (data) {
 };
 
 vm$7.withNullParameters = function () {
-    var withNullVm = catarse$1.filtersVM({
+    var withNullVm = catarse.filtersVM({
         full_text_index: '@@',
         state: 'in',
         reward_id: 'is',
@@ -6823,7 +6823,7 @@ var ProjectContributionDeliveryLegendModal = {
 
 var projectContributionReport = {
     controller: function controller(args) {
-        var listVM = catarse$1.paginationVM(models.projectContribution, 'id.desc', {
+        var listVM = catarse.paginationVM(models.projectContribution, 'id.desc', {
             Prefer: 'count=exact'
         }),
             filterVM = vm$7,
@@ -6978,10 +6978,10 @@ var projectContributionReport = {
 
         filterVM.project_id(args.project_id);
 
-        var lReward = catarse$1.loaderWithToken(models.rewardDetail.getPageOptions({
+        var lReward = catarse.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: 'eq.' + filterVM.project_id()
         }));
-        var lProject = catarse$1.loaderWithToken(models.projectDetail.getPageOptions({
+        var lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
             project_id: 'eq.' + filterVM.project_id()
         }));
 
@@ -7091,10 +7091,10 @@ var dashboardSubscriptionCard = {
             user = m.prop();
 
         if (subscription.user_external_id) {
-            var filterUserVM = catarse$1.filtersVM({
+            var filterUserVM = catarse.filtersVM({
                 id: 'eq'
             }).id(subscription.user_external_id),
-                lU = catarse$1.loaderWithToken(models.userDetail.getRowOptions(filterUserVM.parameters()));
+                lU = catarse.loaderWithToken(models.userDetail.getRowOptions(filterUserVM.parameters()));
 
             lU.load().then(function (data) {
                 user(_$1.first(data));
@@ -7102,10 +7102,10 @@ var dashboardSubscriptionCard = {
         }
 
         if (subscription.reward_external_id) {
-            var filterRewVM = catarse$1.filtersVM({
+            var filterRewVM = catarse.filtersVM({
                 id: 'eq'
             }).id(subscription.reward_external_id),
-                lRew = catarse$1.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
+                lRew = catarse.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
 
             lRew.load().then(function (data) {
                 reward(_$1.first(data));
@@ -7135,7 +7135,7 @@ var dashboardSubscriptionCard = {
             statusClass = ctrl.statusClass,
             paymentClass = ctrl.paymentClass;
 
-        return m('.card', m('.w-row', [m('.table-col.w-col.w-col-3', m('.w-row', [m('.w-col.w-col-3', m('img.u-marginbottom-10.user-avatar[src=\'' + (_$1.isEmpty(ctrl.user()) ? '' : h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)) + '\']')), m('.w-col.w-col-9', [m('.fontsize-smaller.fontweight-semibold.lineheight-tighter', subscription.checkout_data.customer.name), m('.fontcolor-secondary.fontsize-smallest', subscription.checkout_data.customer.email)])])), m('.table-col.w-col.w-col-3', m('.fontsize-smaller', _$1.isEmpty(ctrl.reward()) ? '' : ctrl.reward().description.substring(0, 20) + '...')), m('.table-col.w-col.w-col-1', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.amount / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [m('span.fa.' + paymentClass[subscription.checkout_data.payment_method], ''), I18n$1.t(subscription.checkout_data.payment_method, I18nScope$21())])]), m('.w-col.w-col-1', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.total_paid / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', subscription.paid_count + ' meses')]), m('.w-col.w-col-2', m('.fontsize-smaller', subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : '')), m('.w-col.w-col-2', m('.fontsize-smaller', [m('span.fa.' + statusClass[subscription.status], ' '), I18n$1.t('status.' + subscription.status, I18nScope$21())]), subscription.status === 'started' ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', 'em ' + moment(subscription.created_at).format('DD/MM/YYYY')) : '')]));
+        return m('.card', ctrl.user() ? m('.w-row', [m('.table-col.w-col.w-col-3', m('.w-row', [m('.w-col.w-col-3', m('img.u-marginbottom-10.user-avatar[src=\'' + h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail) + '\']')), m('.w-col.w-col-9', [m('.fontsize-smaller.fontweight-semibold.lineheight-tighter', ctrl.user().name), m('.fontcolor-secondary.fontsize-smallest', ctrl.user().email)])])), m('.table-col.w-col.w-col-3', m('.fontsize-smaller', _$1.isEmpty(ctrl.reward()) ? '' : ctrl.reward().description.substring(0, 20) + '...')), m('.table-col.w-col.w-col-1', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.amount / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [m('span.fa.' + paymentClass[subscription.payment_method], ''), I18n$1.t(subscription.payment_method, I18nScope$21())])]), m('.w-col.w-col-1', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.total_paid / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', subscription.paid_count + ' meses')]), m('.w-col.w-col-2', m('.fontsize-smaller', subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : '')), m('.w-col.w-col-2', m('.fontsize-smaller', [m('span.fa.' + statusClass[subscription.status], ' '), I18n$1.t('status.' + subscription.status, I18nScope$21())]), subscription.status === 'started' ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', 'em ' + moment(subscription.created_at).format('DD/MM/YYYY')) : '')]) : '');
     }
 };
 
@@ -7152,7 +7152,7 @@ var projectSubscriptionReport = {
             subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', {
             Prefer: 'count=exact'
         }),
-            contextSubVM = catarse$1.filtersVM({
+            contextSubVM = catarse.filtersVM({
             status: 'in'
         }),
             project = m.prop([{}]);
@@ -7160,7 +7160,7 @@ var projectSubscriptionReport = {
         contextSubVM.status(['started', 'active', 'inactive', 'canceled', 'error']);
         filterVM.project_id(args.project_id);
 
-        var lProject = catarse$1.loaderWithToken(models.projectDetail.getPageOptions({
+        var lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
             project_id: 'eq.' + filterVM.project_id()
         }));
 
@@ -7284,7 +7284,7 @@ var I18nScope$22 = _$1.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 var projectsExplore = {
     controller: function controller(args) {
-        var filters = catarse$1.filtersVM,
+        var filters = catarse.filtersVM,
             projectFiltersVM$$1 = projectFiltersVM(),
             filtersMap = projectFiltersVM$$1.filters,
             defaultFilter = h.paramByName('filter') || 'all',
@@ -7371,7 +7371,7 @@ var projectsExplore = {
                 filter = filterFromRoute() || currentFilter(),
                 search$$1 = h.paramByName('pg_search'),
                 searchProjects = function searchProjects() {
-                var l = catarse$1.loaderWithToken(models.projectSearch.postOptions({ query: search$$1 })),
+                var l = catarse.loaderWithToken(models.projectSearch.postOptions({ query: search$$1 })),
                     page = { // We build an object with the same interface as paginationVM
                     collection: m.prop([]),
                     isLoading: l,
@@ -7386,7 +7386,7 @@ var projectsExplore = {
                 return page;
             },
                 loadProjects = function loadProjects() {
-                var pages = catarse$1.paginationVM(models.project);
+                var pages = catarse.paginationVM(models.project);
                 var parameters = _$1.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                     open_for_contributions: 'desc',
                     state_order: 'asc',
@@ -7398,7 +7398,7 @@ var projectsExplore = {
                 return pages;
             },
                 loadFinishedProjects = function loadFinishedProjects() {
-                var pages = catarse$1.paginationVM(models.finishedProject),
+                var pages = catarse.paginationVM(models.finishedProject),
                     parameters = _$1.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                     state_order: 'asc',
                     state: 'desc',
@@ -7691,11 +7691,11 @@ var I18nScope$23 = _$1.partial(h.i18nScope, 'projects.home');
 var projectsHome = {
     controller: function controller(args) {
         var sample6 = _$1.partial(_$1.sample, _$1, 6),
-            loader = catarse$1.loaderWithToken,
+            loader = catarse.loaderWithToken,
             project = models.project,
             filters = projectFiltersVM().filters,
-            userFriendVM = catarse$1.filtersVM({ user_id: 'eq' }),
-            friendListVM = catarse$1.paginationVM(models.userFriend, 'user_id.desc', {
+            userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
+            friendListVM = catarse.paginationVM(models.userFriend, 'user_id.desc', {
             Prefer: 'count=exact'
         }),
             currentUser = h.getUser() || {},
@@ -7904,7 +7904,7 @@ var projectReminder = {
     controller: function controller(args) {
         var l = m.prop(false);
         var project = args.project,
-            filterVM = catarse$1.filtersVM({
+            filterVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             storeReminderName = 'reminder',
@@ -7917,7 +7917,7 @@ var projectReminder = {
             var loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
                 project_id: project().project_id
             });
-            l = catarse$1.loaderWithToken(loaderOpts);
+            l = catarse.loaderWithToken(loaderOpts);
 
             l.load().then(function () {
                 project().in_reminder = !project().in_reminder;
@@ -8001,7 +8001,7 @@ var ownerMessageContent = {
                 to_user_id: userDetails().id
             });
 
-            l = catarse$1.loaderWithToken(loaderOpts);
+            l = catarse.loaderWithToken(loaderOpts);
 
             l.load().then(sendSuccess(true));
 
@@ -8063,7 +8063,7 @@ var ownerMessageContent = {
 var UserFollowBtn = {
     controller: function controller(args) {
         var following = m.prop(args.following || false),
-            followVM = catarse$1.filtersVM({ follow_id: 'eq' }),
+            followVM = catarse.filtersVM({ follow_id: 'eq' }),
             loading = m.prop(false),
             hover = m.prop(false),
             userFollowInsert = models.userFollow.postOptions({
@@ -8074,7 +8074,7 @@ var UserFollowBtn = {
             return models.userFollow.deleteOptions(followVM.parameters());
         }(),
             follow = function follow() {
-            var l = catarse$1.loaderWithToken(userFollowInsert);
+            var l = catarse.loaderWithToken(userFollowInsert);
             loading(true);
 
             l.load().then(function () {
@@ -8083,7 +8083,7 @@ var UserFollowBtn = {
             });
         },
             unfollow = function unfollow() {
-            var l = catarse$1.loaderWithToken(userFollowDelete);
+            var l = catarse.loaderWithToken(userFollowDelete);
             loading(true);
 
             l.load().then(function () {
@@ -8263,9 +8263,9 @@ var projectSidebar = {
         },
             isSub = projectVM.isSubscription(project),
             subscriptionData = args.subscriptionData ? args.subscriptionData() : m.prop(),
-            goal = _$1.find(args.goalDetails(), function (g) {
+            goal = (isSub ? _$1.find(args.goalDetails(), function (g) {
             return g.value >= subscriptionData.amount_paid_for_valid_period;
-        }) || _$1.last(args.goalDetails()) || { value: '--' },
+        }) : _$1.last(args.goalDetails())) || { value: '--' },
             pledged = isSub ? subscriptionData.amount_paid_for_valid_period : project().pledged,
             progress = isSub ? subscriptionData.amount_paid_for_valid_period / goal.value * 100 : project().progress,
             totalContributors = isSub ? subscriptionData.total_subscriptions : project().total_contributors;
@@ -8410,10 +8410,10 @@ var userSubscriptionBox = {
             displayModal = h.toggleProp(false, true),
             contactModalInfo = m.prop({});
 
-        var filterProjVM = catarse$1.filtersVM({
+        var filterProjVM = catarse.filtersVM({
             project_id: 'eq'
         }).project_id(subscription.project_external_id),
-            lProj = catarse$1.loaderWithToken(models.project.getRowOptions(filterProjVM.parameters()));
+            lProj = catarse.loaderWithToken(models.project.getRowOptions(filterProjVM.parameters()));
 
         lProj.load().then(function (arr) {
             subscription.project = arr[0];
@@ -8426,10 +8426,10 @@ var userSubscriptionBox = {
         });
 
         if (subscription.reward_external_id) {
-            var filterRewVM = catarse$1.filtersVM({
+            var filterRewVM = catarse.filtersVM({
                 id: 'eq'
             }).id(subscription.reward_external_id),
-                lRew = catarse$1.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
+                lRew = catarse.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
 
             lRew.load().then(function (arr) {
                 subscription.reward = arr[0];
@@ -8454,7 +8454,7 @@ var userSubscriptionBox = {
             onclick: function onclick() {
                 ctrl.displayModal.toggle();
             }
-        }, I18n$1.t('contact_author', contributionScope$2()))]), m('.u-marginbottom-20.w-col.w-col-3', [m('.fontsize-base.fontweight-semibold.lineheight-looser', 'R$ ' + h.formatNumber(parseFloat(subscription.checkout_data.amount) / 100) + ' por m\xEAs'), m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold', 'Assinante h\xE1 ' + moment(subscription.created_at).locale('pt').fromNow(true)), m('.w-embed', m('div', [m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', I18n$1.t('status', contributionScope$2())), m('.fontsize-smallest', subscription.checkout_data.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito'), contributionVM.canShowReceipt(subscription) ? m('a.alt-link.u-margintop-10[href=\'/projects/' + subscription.project.id + '/contributions/' + subscription.contribution_id + '/receipt\'][target=\'__blank\']', I18n$1.t('show_receipt', contributionScope$2())) : '', subscription.gateway_data && contributionVM.canShowSlip(subscription) ? m('a.alt-link.u-margintop-10[href=\'' + subscription.gateway_data.boleto_url + '\'][target=\'__blank\']', I18n$1.t('print_slip', contributionScope$2())) : '', subscription.gateway_data && contributionVM.canGenerateSlip(subscription) ? m('a.alt-link.u-margintop-10[href=\'/projects/' + subscription.project.id + '/contributions/' + subscription.contribution_id + '/second_slip\'][target=\'__blank\']', I18n$1.t('slip_copy', contributionScope$2())) : '']))]), m('.u-marginbottom-20.w-col.w-col-3', [subscription.reward ? [m('.fontsize-smallest.fontweight-semibold', subscription.reward.title), m('p.fontcolor-secondary.fontsize-smallest', m.trust(h.simpleFormat(subscription.reward.description.substring(0, 90) + ' (...)')))] : subscription.reward_external_id ? null : ' ' + I18n$1.t('no_reward', contributionScope$2()) + ' ']), m('.u-marginbottom-10.u-text-center.w-col.w-col-3', subscription.status === 'inactive' ? [m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [m('span.fa.fa-exclamation-triangle'), 'Sua assinatura está suspensa por falta de pagamento']), m('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start' + (subscription.reward_external_id ? '?reward_id=' + subscription.reward_external_id : '') + ']', 'Assinar novamente')] : subscription.status === 'canceled' ? [m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [m('span.fa.fa-exclamation-triangle'), ' Você cancelou sua assinatura'])] : null)])]) : m('div', '');
+        }, I18n$1.t('contact_author', contributionScope$2()))]), m('.u-marginbottom-20.w-col.w-col-3', [m('.fontsize-base.fontweight-semibold.lineheight-looser', 'R$ ' + h.formatNumber(parseFloat((subscription.checkout_data || subscription).amount) / 100) + ' por m\xEAs'), m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold', 'Assinante h\xE1 ' + moment(subscription.created_at).locale('pt').fromNow(true)), m('.w-embed', m('div', [m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold', I18n$1.t('status', contributionScope$2())), m('.fontsize-smallest', (subscription.checkout_data && subscription.checkout_data.payment_method) === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito'), contributionVM.canShowReceipt(subscription) ? m('a.alt-link.u-margintop-10[href=\'/projects/' + subscription.project.id + '/contributions/' + subscription.contribution_id + '/receipt\'][target=\'__blank\']', I18n$1.t('show_receipt', contributionScope$2())) : '', subscription.gateway_data && contributionVM.canShowSlip(subscription) ? m('a.alt-link.u-margintop-10[href=\'' + subscription.gateway_data.boleto_url + '\'][target=\'__blank\']', I18n$1.t('print_slip', contributionScope$2())) : '', subscription.gateway_data && contributionVM.canGenerateSlip(subscription) ? m('a.alt-link.u-margintop-10[href=\'/projects/' + subscription.project.id + '/contributions/' + subscription.contribution_id + '/second_slip\'][target=\'__blank\']', I18n$1.t('slip_copy', contributionScope$2())) : '']))]), m('.u-marginbottom-20.w-col.w-col-3', [subscription.reward ? [m('.fontsize-smallest.fontweight-semibold', subscription.reward.title), m('p.fontcolor-secondary.fontsize-smallest', m.trust(h.simpleFormat(subscription.reward.description.substring(0, 90) + ' (...)')))] : subscription.reward_external_id ? null : ' ' + I18n$1.t('no_reward', contributionScope$2()) + ' ']), m('.u-marginbottom-10.u-text-center.w-col.w-col-3', subscription.status === 'inactive' ? [m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [m('span.fa.fa-exclamation-triangle'), 'Sua assinatura está suspensa por falta de pagamento']), m('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start' + (subscription.reward_external_id ? '?reward_id=' + subscription.reward_external_id : '') + ']', 'Assinar novamente')] : subscription.status === 'canceled' ? [m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [m('span.fa.fa-exclamation-triangle'), ' Você cancelou sua assinatura'])] : null)])]) : m('div', '');
     }
 };
 
@@ -8809,7 +8809,7 @@ var projectReport = {
                 reason: reason(),
                 project_id: project.project_id
             });
-            var l = catarse$1.loaderWithToken(loaderOpts);
+            var l = catarse.loaderWithToken(loaderOpts);
 
             l.load().then(sendSuccess(true));
             submitDisabled(false);
@@ -8928,11 +8928,11 @@ var projectSuggestedContributions = {
 var projectContributions$1 = {
     controller: function controller(args) {
         var contributionsPerDay = m.prop([]),
-            listVM = catarse$1.paginationVM(models.contributor),
-            filterStats = catarse$1.filtersVM({
+            listVM = catarse.paginationVM(models.contributor),
+            filterStats = catarse.filtersVM({
             project_id: 'eq'
         }),
-            filterVM = catarse$1.filtersVM({
+            filterVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             groupedCollection = function groupedCollection() {
@@ -8961,7 +8961,7 @@ var projectContributions$1 = {
             listVM.firstPage(filterVM.parameters());
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
-        var lContributionsPerDay = catarse$1.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
+        var lContributionsPerDay = catarse.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
         lContributionsPerDay.load().then(contributionsPerDay);
 
         var contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
@@ -8977,10 +8977,10 @@ var projectContributions$1 = {
             }) : [];
         };
 
-        var lContributionsPerLocation = catarse$1.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
+        var lContributionsPerLocation = catarse.loader(models.projectContributionsPerLocation.getRowOptions(filterStats.parameters()));
         lContributionsPerLocation.load().then(buildPerLocationTable);
 
-        var lContributionsStats = catarse$1.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
+        var lContributionsStats = catarse.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
         lContributionsStats.load().then(function (data) {
             return contributionsStats(_$1.first(data));
         });
@@ -9090,8 +9090,8 @@ var I18nScope$28 = _$1.partial(h.i18nScope, 'projects.posts');
 
 var projectPosts = {
     controller: function controller(args) {
-        var listVM = catarse$1.paginationVM(models.projectPostDetail),
-            filterVM = catarse$1.filtersVM({
+        var listVM = catarse.paginationVM(models.projectPostDetail),
+            filterVM = catarse.filtersVM({
             project_id: 'eq',
             id: 'eq'
         });
@@ -9208,7 +9208,7 @@ var projectsShow = {
 
         return m('.project-show', {
             config: ctrl.setProjectPageTitle()
-        }, project() ? [m.component(projectHeader, {
+        }, project() && (!ctrl.isSubscription(project()) || ctrl.subscriptionData()) ? [m.component(projectHeader, {
             project: project,
             subscriptionData: ctrl.subscriptionData,
             rewardDetails: ctrl.rewardDetails,
@@ -10822,7 +10822,7 @@ var paymentForm = {
 
 var countrySelect = {
     controller: function controller(args) {
-        var countriesLoader = catarse$1.loader(models.country.getPageOptions()),
+        var countriesLoader = catarse.loader(models.country.getPageOptions()),
             countries = m.prop(),
             defaultCountryID = args.defaultCountryID,
             defaultForeignCountryID = args.defaultForeignCountryID,
@@ -10872,7 +10872,7 @@ var I18nScope$38 = _$1.partial(h.i18nScope, 'activerecord.attributes.address');
 var addressForm = {
     controller: function controller(args) {
         var parsedErrors = args.parsedErrors;
-        var statesLoader = catarse$1.loader(models.state.getPageOptions()),
+        var statesLoader = catarse.loader(models.state.getPageOptions()),
             data = args.fields().address(),
             vm = addressVM({
             data: data
@@ -11312,9 +11312,9 @@ var userCreated = {
         var user_id = args.userId,
             showDraft = args.showDraft || false,
             error = m.prop(false),
-            pages = catarse$1.paginationVM(models.project),
+            pages = catarse.paginationVM(models.project),
             loader = m.prop(true),
-            contextVM = catarse$1.filtersVM({
+            contextVM = catarse.filtersVM({
             project_user_id: 'eq',
             state: 'in'
         });
@@ -11364,10 +11364,10 @@ var userContributed = {
     controller: function controller(args) {
         var contributedProjects = m.prop(),
             user_id = args.userId,
-            pages = catarse$1.paginationVM(models.project),
+            pages = catarse.paginationVM(models.project),
             error = m.prop(false),
             loader = m.prop(true),
-            contextVM = catarse$1.filtersVM({
+            contextVM = catarse.filtersVM({
             project_id: 'in'
         });
 
@@ -11561,13 +11561,13 @@ var surveysShow = {
             sendMessage = function sendMessage() {
             displayModal(true);
         },
-            vm = catarse$1.filtersVM({
+            vm = catarse.filtersVM({
             contribution_id: 'eq'
         }),
             surveyLoader = function surveyLoader() {
             vm.contribution_id(contributionId);
 
-            return catarse$1.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
+            return catarse.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
         },
             preview = function preview() {
             if (survey().confirm_address) {
@@ -11632,7 +11632,7 @@ var surveysShow = {
 
                     idVM.id(h.getUserID());
 
-                    var lUser = catarse$1.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
+                    var lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
                     lUser.load().then(function (userData) {
                         user(_$1.first(userData));
@@ -12247,9 +12247,9 @@ var userPrivateContributed = {
     controller: function controller(args) {
         var user_id = args.userId,
             subscriptions = commonPayment.paginationVM(models.userSubscription),
-            onlinePages = catarse$1.paginationVM(models.userContribution),
-            successfulPages = catarse$1.paginationVM(models.userContribution),
-            failedPages = catarse$1.paginationVM(models.userContribution),
+            onlinePages = catarse.paginationVM(models.userContribution),
+            successfulPages = catarse.paginationVM(models.userContribution),
+            failedPages = catarse.paginationVM(models.userContribution),
             error = m.prop(false),
             loader = m.prop(true),
             handleError = function handleError() {
@@ -12257,12 +12257,12 @@ var userPrivateContributed = {
             loader(false);
             m.redraw();
         },
-            contextVM = catarse$1.filtersVM({
+            contextVM = catarse.filtersVM({
             user_id: 'eq',
             state: 'in',
             project_state: 'in'
         }),
-            contextSubVM = catarse$1.filtersVM({
+            contextSubVM = catarse.filtersVM({
             status: 'in'
         });
 
@@ -12767,7 +12767,7 @@ var userBankForm = {
             user = args.user,
             bankAccount = m.prop({}),
             banks = m.prop(),
-            banksLoader = catarse$1.loader(models.bank.getPageOptions()),
+            banksLoader = catarse.loader(models.bank.getPageOptions()),
             showOtherBanks = h.toggleProp(false, true),
             showOtherBanksInput = m.prop(false),
             popularBanks = [{
@@ -13125,7 +13125,7 @@ var userBalanceTransactions = {
  */
 var userBalanceMain = {
     controller: function controller(args) {
-        var userIdVM = catarse$1.filtersVM({ user_id: 'eq' });
+        var userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
         userIdVM.user_id(args.user_id);
 
@@ -13145,7 +13145,7 @@ var userBalanceMain = {
 
         // Handles with user balance transactions list data
         balanceTransactionManager = function () {
-            var listVM = catarse$1.paginationVM(models.balanceTransaction, 'created_at.desc'),
+            var listVM = catarse.paginationVM(models.balanceTransaction, 'created_at.desc'),
                 load = function load() {
                 listVM.firstPage(userIdVM.parameters());
             };
@@ -13161,7 +13161,7 @@ var userBalanceMain = {
         bankAccountManager = function () {
             var collection = m.prop([]),
                 loader = function () {
-                return catarse$1.loaderWithToken(models.bankAccount.getRowOptions(userIdVM.parameters()));
+                return catarse.loaderWithToken(models.bankAccount.getRowOptions(userIdVM.parameters()));
             }(),
                 load = function load() {
                 loader.load().then(collection);
@@ -13675,7 +13675,7 @@ var updateProject$2 = function updateProject(project_id) {
 };
 
 var loadCategoriesOptionsTo = function loadCategoriesOptionsTo(prop, selected) {
-    var filters = catarse$1.filtersVM;
+    var filters = catarse.filtersVM;
     models.category.getPage(filters({}).order({
         name: 'asc'
     }).parameters()).then(function (data) {
@@ -13690,7 +13690,7 @@ var loadCategoriesOptionsTo = function loadCategoriesOptionsTo(prop, selected) {
 };
 
 var generateSearchCity = function generateSearchCity(prop) {
-    var filters = catarse$1.filtersVM({
+    var filters = catarse.filtersVM({
         search_index: 'ilike'
     }).order({ name: 'asc' });
 
@@ -15751,12 +15751,12 @@ var I18nScope$60 = _$1.partial(h.i18nScope, 'projects.publish');
 
 var publish = {
     controller: function controller(args) {
-        var filtersVM = catarse$1.filtersVM({
+        var filtersVM = catarse.filtersVM({
             project_id: 'eq'
         }),
             projectAccount = m.prop([]),
             projectDetails = m.prop([]),
-            loader = catarse$1.loaderWithToken;
+            loader = catarse.loaderWithToken;
 
         filtersVM.project_id(args.root.getAttribute('data-id'));
 
@@ -15859,7 +15859,7 @@ var start = {
             featuredProjects = m.prop([]),
             selectedCategoryIdx = m.prop(-1),
             startvm = startVM(I18n$1),
-            filters = catarse$1.filtersVM,
+            filters = catarse.filtersVM,
             paneImages = startvm.panes,
             categoryvm = filters({
             category_id: 'eq'
@@ -15870,7 +15870,7 @@ var start = {
             uservm = filters({
             id: 'eq'
         }),
-            loader = catarse$1.loader,
+            loader = catarse.loader,
             statsLoader = loader(models.statistic.getRowOptions()),
             loadCategories = function loadCategories() {
             return models.category.getPage(filters({}).order({
@@ -16125,7 +16125,7 @@ var menuProfile = {
             userDetails = m.prop({}),
             user_id = args.user.user_id,
             userBalance = m.prop(0),
-            userIdVM = catarse$1.filtersVM({ user_id: 'eq' });
+            userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
         var userName = function userName() {
             var name = userVM.displayName(userDetails());
@@ -16281,15 +16281,15 @@ var userFriends = {
     controller: function controller(args) {
         models.userFriend.pageSize(9);
 
-        var userFriendVM = catarse$1.filtersVM({ user_id: 'eq' }),
+        var userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
             user = args.user,
-            friendListVM = catarse$1.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
+            friendListVM = catarse.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
             Prefer: 'count=exact'
         }),
             allLoading = m.prop(false),
             followAll = function followAll() {
             allLoading(true);
-            var l = catarse$1.loaderWithToken(models.followAllFriends.postOptions({}));
+            var l = catarse.loaderWithToken(models.followAllFriends.postOptions({}));
 
             l.load().then(function () {
                 friendListVM.firstPage(userFriendVM.parameters());
@@ -16333,10 +16333,10 @@ var userFriends = {
 var userFollows = {
     controller: function controller(args) {
         models.userFollow.pageSize(9);
-        var userFriendVM = catarse$1.filtersVM({ user_id: 'eq' }),
+        var userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
             user = args.user,
             hash = m.prop(window.location.hash),
-            followsListVM = catarse$1.paginationVM(models.userFollow, 'created_at.desc', {
+            followsListVM = catarse.paginationVM(models.userFollow, 'created_at.desc', {
             Prefer: 'count=exact'
         });
 
@@ -16371,11 +16371,11 @@ var userFollows = {
 var userFollowers = {
     controller: function controller(args) {
         models.userFollower.pageSize(9);
-        var followersListVM = catarse$1.paginationVM(models.userFollower, 'following.asc,created_at.desc', {
+        var followersListVM = catarse.paginationVM(models.userFollower, 'following.asc,created_at.desc', {
             Prefer: 'count=exact'
         }),
             user = args.user,
-            userIdVM = catarse$1.filtersVM({ follow_id: 'eq' });
+            userIdVM = catarse.filtersVM({ follow_id: 'eq' });
 
         userIdVM.follow_id(user.user_id);
 
@@ -16408,13 +16408,13 @@ var userFollowers = {
 var userCreators = {
     controller: function controller() {
         models.creatorSuggestion.pageSize(9);
-        var creatorsListVM = catarse$1.paginationVM(models.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
+        var creatorsListVM = catarse.paginationVM(models.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
             Prefer: 'count=exact'
         });
         var allLoading = m.prop(false);
         var followAll = function followAll() {
             allLoading(true);
-            var l = catarse$1.loaderWithToken(models.followAllCreators.postOptions({}));
+            var l = catarse.loaderWithToken(models.followAllCreators.postOptions({}));
 
             l.load().then(function () {
                 creatorsListVM.firstPage();
@@ -16556,7 +16556,7 @@ var I18nScope$63 = _$1.partial(h.i18nScope, 'pages.start');
 var subProjectNew = {
     controller: function controller() {
         var categories = m.prop([]),
-            filters = catarse$1.filtersVM,
+            filters = catarse.filtersVM,
             loadCategories = function loadCategories() {
             return models.category.getPage(filters({}).order({
                 name: 'asc'
