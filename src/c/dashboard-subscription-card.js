@@ -59,19 +59,19 @@ const dashboardSubscriptionCard = {
             statusClass = ctrl.statusClass,
             paymentClass = ctrl.paymentClass;
 
-        return m('.card',
+        return m('.card', ctrl.user() ?
             m('.w-row', [
                 m('.table-col.w-col.w-col-3',
                     m('.w-row', [
                         m('.w-col.w-col-3',
-                            m(`img.u-marginbottom-10.user-avatar[src='${_.isEmpty(ctrl.user()) ? '' : h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)}']`)
+                            m(`img.u-marginbottom-10.user-avatar[src='${h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)}']`)
                         ),
                         m('.w-col.w-col-9', [
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                subscription.checkout_data.customer.name
+                                ctrl.user().name
                             ),
                             m('.fontcolor-secondary.fontsize-smallest',
-                                subscription.checkout_data.customer.email
+                                ctrl.user().email
                             )
                         ])
                     ])
@@ -116,7 +116,7 @@ const dashboardSubscriptionCard = {
                         `em ${moment(subscription.created_at).format('DD/MM/YYYY')}`
                     ) : ''
                 )
-            ])
+            ]) : ''
         );
     }
 };
