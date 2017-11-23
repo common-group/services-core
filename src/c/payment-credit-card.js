@@ -23,7 +23,7 @@ const paymentCreditCard = {
             creditCardType = m.prop('unknown'),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
-
+        console.log(vm);
         const onSubmit = () => {
             vm.creditCardFields.errors([]);
             
@@ -36,7 +36,7 @@ const paymentCreditCard = {
 
             if (vm.creditCardFields.errors().length === 0) {
                 if (args.isSubscription) {
-                    commonPaymentVM.sendPayment(vm.creditCardFields, selectedCreditCard, vm.fields); 
+                    commonPaymentVM.sendPayment(vm.creditCardFields, selectedCreditCard, vm); 
                 } else {
                     vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
                 }
