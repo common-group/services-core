@@ -9,6 +9,7 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
+import {catarse} from '../api'
 import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
