@@ -13,6 +13,7 @@ const insights = {
             }),
             projectDetails = m.prop([]),
             subscribersDetails = m.prop(),
+            load = m.prop(false),
             loader = catarse.loaderWithToken,
             setProjectId = () => {
                 try {
@@ -32,10 +33,11 @@ const insights = {
             const l2 = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
                 id: _.first(data).common_id
             }));
-            l2.load().then(subscribersDetails);
+            l2.load().then((subData) => { subscribersDetails(subData); load(true); });
         });
         return {
             l,
+            load,
             filtersVM,
             subscribersDetails,
             projectDetails
@@ -59,13 +61,14 @@ const insights = {
 
         return m('.project-insights', !ctrl.l() ? (
             project.mode === 'sub' ?
+            ctrl.load() ?
             m(projectInsightsSub, {
                 args,
                 subscribersDetails,
                 project,
                 l: ctrl.l,
                 filtersVM: ctrl.filtersVM
-            }) :
+            }) : '' :
             m(projectInsights, {
                 args,
                 project,

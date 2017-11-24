@@ -44,7 +44,8 @@ const projectInsightsSub = {
                 ]),
                 m('.w-container',
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals, amount: subscribersDetails.amount_paid_for_valid_period }),
+                        subscribersDetails && !_.isEmpty(ctrl.projectGoalsVM.goals()) ?
+                        m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals, amount: subscribersDetails.amount_paid_for_valid_period }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
                                 'Assinantes'
@@ -71,7 +72,7 @@ const projectInsightsSub = {
                                 )
                             ]),
                             m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10',
-                                (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '' )
+                                (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '')
                             )
                         ])
                     ])
