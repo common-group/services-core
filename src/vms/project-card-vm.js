@@ -10,7 +10,8 @@ const fields = {
     headline: m.prop(''),
     uploaded_image: m.prop(''),
     cover_image: m.prop(''),
-    upload_files: m.prop(undefined)
+    upload_files_targets: m.prop({}),
+    upload_files: m.prop(new FormData())
 };
 
 const fillFields = (data) => {
@@ -29,15 +30,18 @@ const reloadCurrentProject = () => {
 };
 
 const prepareForUpload = (event, target) => {
-    const formData = new FormData();
+    const formData = fields.upload_files();
     if (event.target.files[0]) {
         formData.append(target, event.target.files[0]);
+        fields.upload_files_targets()[target] = true;
+    } else {
+        formData.delete(target);
+        delete fields.upload_files_targets()[target];
     }
-    fields.upload_files(formData);
 };
 
 const uploadImage = (project_id) => {
-    if (_.isUndefined(fields.upload_files())) {
+    if (_.isEmpty(fields.upload_files_targets())) {
         const deferred = m.deferred();
         deferred.resolve({});
         return deferred.promise;
