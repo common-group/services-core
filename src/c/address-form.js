@@ -107,7 +107,7 @@ const addressForm = {
 
         statesLoader.load().then((data) => {
             states(data);
-            addressVM().states(states());
+            addressVM.states(states());
         });
         return {
             lookupZipCode,

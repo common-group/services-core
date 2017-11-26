@@ -1,10 +1,12 @@
+import m from 'mithril';
+import I18n from 'i18n-js';
 import projectVM from '../vms/project-vm';
 import addressVM from '../vms/address-vm';
 import models from '../models';
 import h from '../h';
 
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const {commonPayment} = models;
-console.log('models', models);
 const sendPaymentRequest = (data) => commonPayment.postWithToken({data}, null, {
     'X-forwarded-For': '127.0.0.1'
 });
@@ -19,25 +21,29 @@ const setNewCreditCard = (creditCardFields) => {
     return creditCard;
 };
 
-const sendPayment = (creditCardFields, selectedCreditCard, fields) => {
+const sendCreditCardPayment = (selectedCreditCard, fields, subscriptionData) => {
+    fields.isLoading(true);
+    m.redraw();
+
     const meta = _.first(document.querySelectorAll('[name=pagarme-encryption-key]'));
     const encryptionKey = meta.getAttribute('content');
 
     window.PagarMe.encryption_key = encryptionKey;
-    const card = setNewCreditCard(creditCardFields);
+    const card = setNewCreditCard(fields.creditCardFields);
 
     const customer = fields.fields;
     const address = customer.address();
-    const phone_ddd = address.phone_number.match(/\(([^)]*)\)/)[1];
-    const phone_number = address.phone_number.substr(5, address.phone_number.length);
+    const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
+    const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
+    const addressState = _.findWhere(addressVM.states(), {id: address.state_id});
+    const addressCountry = _.findWhere(addressVM.countries(), {id: address.country_id});
 
     card.generateHash(cardHash => {
         const payload = {
             subscription: true,
             save_card: false,
-            user_id: '1e1be82f-4481-4cdd-bc1f-34fd145b528b',
-            project_id: '0143689b-f75c-4a8b-93ca-1d461e2ff89c',
-            // reward_id: 'fields.reward_uuid()',
+            user_id: subscriptionData.userCommonId,
+            project_id: subscriptionData.projectCommonId,
             amount: 100,
             payment_method: 'credit_card',
             card_hash: cardHash,
@@ -49,28 +55,40 @@ const sendPayment = (creditCardFields, selectedCreditCard, fields) => {
                     street: address.address_street,
                     street_number: address.address_number,
                     zipcode: address.address_zip_code,
-                    // country: address.address_country_name,
+                    //TOdO: remove hard-coded country when international support is added on the back-end
                     country: 'Brasil',
-                    // state: address.address_state_name,
-                    state: address.address_state,
+                    state: addressState.acronym,
                     city: address.address_city,
                     complementary: address.address_complement,
                 },
                 phone: {
                     ddi: '55',
-                    ddd: phone_ddd,
-                    number: phone_number
+                    ddd: phoneDdd,
+                    number: phoneNumber
                 }
             }
         };
 
-        sendPaymentRequest(payload);
+        if (subscriptionData.rewardCommonId) {
+            _.extend(payload, {reward_id: subscriptionData.rewardCommonId});
+        }
+
+        sendPaymentRequest(payload)
+            .then(() => {
+                alert('Payment Successful!');
+            })
+            .catch((data) => {
+                const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+                fields.isLoading(false);
+                fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
+                m.redraw();
+            });
     });
 
 };
 
 const commonPaymentVM = {
-    sendPayment
+    sendCreditCardPayment
 };
 
 export default commonPaymentVM;

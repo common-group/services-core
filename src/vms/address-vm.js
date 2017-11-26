@@ -30,4 +30,7 @@ const addressVM = (args) => {
     };
 };
 
+addressVM.states = states;
+addressVM.countries = countries;
+
 export default addressVM;

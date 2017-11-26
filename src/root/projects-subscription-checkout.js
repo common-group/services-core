@@ -298,6 +298,9 @@ const projectsSubscriptionCheckout = {
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
                             user_id: user.id,
+                            reward_common_id: ctrl.reward().common_id,
+                            project_common_id: projectVM.currentProject().common_id,
+                            user_common_id: user.common_id,
                             isSubscription: true
                         }) : ''
                     ]),

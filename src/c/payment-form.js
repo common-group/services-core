@@ -54,9 +54,9 @@ const paymentForm = {
                         m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299c6ef96a6e44489a7a07_boleto.png\'][width=\'48\']')
                     ]) : m('.flex-column')
                 ]), !ctrl.isSlip() ? m('#credit-card-section', [
-                    m.component(paymentCreditCard, { vm: args.vm, isSubscription: args.isSubscription, contribution_id: args.contribution_id, project_id: args.project_id, user_id: args.user_id })
+                    m.component(paymentCreditCard, args)
                 ]) : !args.vm.isInternational() ? m('#boleto-section', [
-                m.component(paymentSlip, { vm: args.vm, isSubscription: args.isSubscription, contribution_id: args.contribution_id, project_id: args.project_id })
+                m.component(paymentSlip, args)
             ]) : ''
         ]);
     }
