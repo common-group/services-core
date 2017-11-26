@@ -4,7 +4,8 @@ import h from '../h';
 
 const projectGoalsBoxDashboard = {
     controller(args) {
-        const currentGoalIndex = m.prop(0);
+        const initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value >= args.amount) : 0;
+        const currentGoalIndex = m.prop(initialGoalIndex);
         const nextGoal = () => {
             if (currentGoalIndex() < args.goalDetails().length - 1) {
                 currentGoalIndex((currentGoalIndex() + 1));
@@ -16,6 +17,9 @@ const projectGoalsBoxDashboard = {
                 m.redraw();
             }
         };
+        if (currentGoalIndex() === -1) {
+            currentGoalIndex(args.goalDetails().length - 1);
+        }
         return {
             currentGoalIndex,
             nextGoal,
