@@ -76,12 +76,12 @@ const dashboardSubscriptionCard = {
                         ])
                     ])
                 ),
-                m('.table-col.w-col.w-col-3',
+                m('.table-col.w-col.w-col-2',
                     m('.fontsize-smaller',
                         _.isEmpty(ctrl.reward()) ? '' : `${ctrl.reward().description.substring(0, 20)}...`
                     )
                 ),
-                m('.table-col.w-col.w-col-1', [
+                m('.table-col.w-col.w-col-1.u-text-center', [
                     m('.fontsize-smaller',
                         `R$${h.formatNumber(subscription.amount / 100, 0, 3)}`
                     ),
@@ -92,7 +92,7 @@ const dashboardSubscriptionCard = {
                         I18n.t(subscription.payment_method, I18nScope())
                     ])
                 ]),
-                m('.w-col.w-col-1', [
+                m('.w-col.w-col-2.u-text-center', [
                     m('.fontsize-smaller',
                         `R$${h.formatNumber(subscription.total_paid / 100, 0, 3)}`
                     ),
@@ -100,12 +100,12 @@ const dashboardSubscriptionCard = {
                         `${subscription.paid_count} meses`
                     )
                 ]),
-                m('.w-col.w-col-2',
+                m('.w-col.w-col-2.u-text-center',
                     m('.fontsize-smaller',
                         subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : ''
                     )
                 ),
-                m('.w-col.w-col-2',
+                m('.w-col.w-col-2.u-text-center',
                     m('.fontsize-smaller', [
                         m(`span.fa.${statusClass[subscription.status]}`,
                             ' '
