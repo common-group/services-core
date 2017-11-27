@@ -90,7 +90,9 @@ const projectCardEdit = {
                                     label_hint: I18n.t('cover_image_hint', I18nScope()),
                                     children: [
                                         m('span.hint',
-                                            m(`img[alt="Imagem de fundo"][src="${vm.fields.cover_image()}"]`)
+                                            (vm.fields.cover_image()
+                                            ? m(`img[alt="Imagem de fundo"][src="${vm.fields.cover_image()}"]`)
+                                            : 'Imagem de fundo')
                                         ),
                                         m('input.file.optional.w-input.text-field[id="project_cover_image"][name="project[cover_image]"][type="file"]', {
                                             class: vm.e.hasError('cover_image') ? 'error' : false,
