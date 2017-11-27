@@ -17,13 +17,15 @@ const fields = {
 const fillFields = (data) => {
     fields.headline(data.headline || '');
     fields.cover_image(data.cover_image || '');
+    fields.upload_files_targets({});
+    fields.upload_files(new FormData());
     currentProject(data);
 };
 
 const reloadCurrentProject = () => {
     if (currentProject().id) {
         projectVM.fetchProject(currentProject().id, false).then((data) => {
-            currentProject(_.first(data));
+            fillFields(_.first(data));
             m.redraw();
         });
     }
@@ -32,6 +34,7 @@ const reloadCurrentProject = () => {
 const prepareForUpload = (event, target) => {
     const formData = fields.upload_files();
     if (event.target.files[0]) {
+        if (formData.delete) formData.delete(target);
         formData.append(target, event.target.files[0]);
         fields.upload_files_targets()[target] = true;
     } else {
