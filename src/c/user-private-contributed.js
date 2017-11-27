@@ -10,6 +10,7 @@ import userContributedList from './user-contributed-list';
 const userPrivateContributed = {
     controller(args) {
         const user_id = args.userId,
+            userCommonId = args.user && args.user.common_id,
             subscriptions = commonPayment.paginationVM(models.userSubscription),
             onlinePages = catarse.paginationVM(models.userContribution),
             successfulPages = catarse.paginationVM(models.userContribution),
@@ -27,13 +28,14 @@ const userPrivateContributed = {
                 project_state: 'in'
             }),
             contextSubVM = catarse.filtersVM({
+                user_id: 'eq',
                 status: 'in'
             });
 
         models.userSubscription.pageSize(9);
         models.userContribution.pageSize(9);
 
-        contextSubVM.status(['started', 'active', 'inactive', 'canceled', 'error']).order({
+        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'error']).order({
             created_at: 'desc'
         });
 
