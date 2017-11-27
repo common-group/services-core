@@ -23,7 +23,7 @@ const projectHeader = {
                     .then(args.projectContributions);
             } else {
                 subscriptionVM
-                    .getUserProjectSubscriptions(project().common_id, ['started', 'active'])
+                    .getUserProjectSubscriptions(args.userDetails().common_id, project().common_id, ['started', 'active'])
                     .then(projectSubscriptions);
             }
         }

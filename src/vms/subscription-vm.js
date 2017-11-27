@@ -4,13 +4,14 @@ import _ from 'underscore';
 import models from '../models';
 
 
-const getUserProjectSubscriptions = (projectId, status) => {
+const getUserProjectSubscriptions = (userId, projectId, status) => {
     const vm = commonPayment.filtersVM({
+        user_id: 'eq',
         project_id: 'eq',
         status: 'in'
     });
 
-    // vm.user_id(userId);
+    vm.user_id(userId);
     vm.project_id(projectId);
     vm.status(status);
 
