@@ -1,4 +1,4 @@
-import {catarse} from '../api';
+import { catarse, commonProject } from '../api';
 import _ from 'underscore';
 import m from 'mithril';
 import models from '../models';
@@ -36,6 +36,12 @@ const rewardLoader = (rewardId) => {
 };
 
 const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
+
+const fetchCommonRewards = (projectId) => {
+    vm.project_id(projectId);
+    const l = commonProject.loaderWithToken(models.projectReward.getPageOptions(vm.parameters()));
+    l.load().then(rewards);
+};
 
 const getFees = (reward) => {
     const feesFilter = catarse.filtersVM({
@@ -198,6 +204,7 @@ const rewardVM = {
     applyMask,
     noReward,
     fetchRewards,
+    fetchCommonRewards,
     selectReward,
     getSelectedReward,
     selectedReward,

@@ -1,7 +1,8 @@
-import { catarse, commonPayment, commonAnalytics } from './api';
+import { catarse, commonPayment, commonAnalytics, commonProject } from './api';
 
 const models = {
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
+    projectReward: commonProject.model('rewards'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     contributionDetail: catarse.model('contribution_details'),
@@ -79,6 +80,7 @@ models.state.pageSize(false);
 models.publicTags.pageSize(false);
 models.projectContribution.pageSize(9);
 models.contributor.pageSize(9);
+models.projectReward.pageSize(false);
 models.recommendedProjects.pageSize(3);
 models.bank.pageSize(400);
 models.city.pageSize(200);
