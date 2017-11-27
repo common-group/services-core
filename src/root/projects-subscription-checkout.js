@@ -24,13 +24,35 @@ const projectsSubscriptionCheckout = {
             vm = paymentVM(),
             showPaymentForm = m.prop(false),
             addVM = m.prop(),
-            reward = m.prop(rewardVM.selectedReward()),
-            value = rewardVM.contributionValue(),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             isCnpj = m.prop(false),
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
+
+        let reward = m.prop(rewardVM.selectedReward());
+        let value;
+
+        if (_.isString(rewardVM.contributionValue())) {
+            value = h.monetaryToFloat(rewardVM.contributionValue);
+        } else {
+            value = rewardVM.contributionValue()
+        }
+
+        const valueParam = h.getParams('contribution_value');
+        const rewardIdParam = h.getParams('reward_id'); 
+
+        if (valueParam) {
+            value = rewardVM.contributionValue(Number(valueParam));
+        }
+
+        if (rewardIdParam && (rewardIdParam !== String(reward().id))) {
+            rewardVM.fetchRewards(h.getCurrentProject().project_id).then(() => {
+                reward(_.findWhere(rewardVM.rewards(), {id: Number(rewardIdParam)}));
+                rewardVM.selectedReward(reward());
+                m.redraw();
+            });
+        }
 
         const validateForm = () => {
             if (vm.validate()) {
@@ -111,7 +133,7 @@ const projectsSubscriptionCheckout = {
         const user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),
-            formatedValue = h.formatNumber(Number(ctrl.value), 2, 3),
+            formatedValue = h.formatNumber(ctrl.value, 2, 3),
             anonymousCheckbox = m('.w-row', [
                 m('.w-checkbox.w-clearfix', [
                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
@@ -301,7 +323,8 @@ const projectsSubscriptionCheckout = {
                             reward_common_id: ctrl.reward().common_id,
                             project_common_id: projectVM.currentProject().common_id,
                             user_common_id: user.common_id,
-                            isSubscription: true
+                            isSubscription: true,
+                            value: ctrl.value
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
@@ -313,7 +336,9 @@ const projectsSubscriptionCheckout = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                    {config: m.route}
+                                    ,
                                     'Editar'
                                 )
                             ]),

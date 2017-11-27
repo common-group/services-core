@@ -24,17 +24,16 @@ const projectsSubscriptionContribution = {
             projectVM.rewardDetails()
         );
 
-        const submitContribution = () => {
+        const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
 
             if (valueFloat < rewardVM.selectedReward().minimum_value) {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value}`);
             } else {
                 rewardVM.error('');
-                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueFloat}`);
+                const currentRewardId = rewardVM.selectedReward().id;
+                m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? '&reward_id=' + currentRewardId : ''}`);
             }
-
-            return false;
         };
 
         projectVM.getCurrentProject();
@@ -67,10 +66,9 @@ const projectsSubscriptionContribution = {
                      m('.section', m('.w-container', m('.w-row', [
                         m('.w-col.w-col-8',
                         m('.w-form.back-reward-form',
-                            m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/pt/projects/${project().id}/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]`,
+                            m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/projects/${project().id}/subscriptions/checkout"][id="contribution_form"][method="get"]`,
                                 { onsubmit: ctrl.submitContribution }
                             , [
-                                m('input[name="utf8"][type="hidden"][value="✓"]'),
                                 _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, { reward, isSubscription: projectVM.isSubscription(project) }))
                             ])
                         )

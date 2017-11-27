@@ -656,7 +656,13 @@ const
             }
         };
     },
-    monetaryToFloat = (propValue: Function): number => parseFloat(propValue().replace('.', '').replace(',', '.')),
+    monetaryToFloat = (propValue: Function): number => {
+        if (_.isNumber(propValue())) {
+            return parseFloat(propValue());
+        }
+
+        return parseFloat(propValue().replace('.', '').replace(',', '.'));
+    },
 
     applyMonetaryMask = (number: number): string => {
         let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),

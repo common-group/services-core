@@ -30,8 +30,13 @@ const rewardSelectCard = {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value, 2, 3)}`);
             } else {
                 rewardVM.error('');
-                const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
-                h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
+                if (args.isSubscription) {
+                    const currentRewardId = rewardVM.selectedReward().id;
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? '&reward_id=' + currentRewardId : ''}`);
+                } else {
+                    const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
+                    h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
+                }
             }
 
             event.stopPropagation();

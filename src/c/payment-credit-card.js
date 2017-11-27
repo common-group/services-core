@@ -36,12 +36,13 @@ const paymentCreditCard = {
 
             if (vm.creditCardFields.errors().length === 0) {
                 if (args.isSubscription) {
-                    const subscriptionData = {
+                    const commonData = {
                         rewardCommonId: args.reward_common_id,
                         userCommonId: args.user_common_id,
                         projectCommonId: args.project_common_id,
+                        amount: args.value * 100
                     };
-                    commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, subscriptionData); 
+                    commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData); 
                 } else {
                     vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
                 }

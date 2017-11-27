@@ -21,7 +21,7 @@ const setNewCreditCard = (creditCardFields) => {
     return creditCard;
 };
 
-const sendCreditCardPayment = (selectedCreditCard, fields, subscriptionData) => {
+const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     fields.isLoading(true);
     m.redraw();
 
@@ -41,10 +41,10 @@ const sendCreditCardPayment = (selectedCreditCard, fields, subscriptionData) => 
     card.generateHash(cardHash => {
         const payload = {
             subscription: true,
-            save_card: false,
-            user_id: subscriptionData.userCommonId,
-            project_id: subscriptionData.projectCommonId,
-            amount: 100,
+            save_card: fields.creditCardFields.save(),
+            user_id: commonData.userCommonId,
+            project_id: commonData.projectCommonId,
+            amount: commonData.amount,
             payment_method: 'credit_card',
             card_hash: cardHash,
             customer: {
@@ -69,8 +69,8 @@ const sendCreditCardPayment = (selectedCreditCard, fields, subscriptionData) => 
             }
         };
 
-        if (subscriptionData.rewardCommonId) {
-            _.extend(payload, {reward_id: subscriptionData.rewardCommonId});
+        if (commonData.rewardCommonId) {
+            _.extend(payload, {reward_id: commonData.rewardCommonId});
         }
 
         sendPaymentRequest(payload)
