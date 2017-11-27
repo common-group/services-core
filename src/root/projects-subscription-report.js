@@ -81,14 +81,6 @@ const projectSubscriptionReport = {
                                         m.trust('&nbsp;')
                                     ])
                                 ),
-                                m('.w-col.w-col-5',
-                                    m("a.alt-link.fontsize-small.u-right[data-ix='show-dropdown'][href='#']", [
-                                        m('span.fa.fa-download',
-                                            ''
-                                        ),
-                                        ' Baixar relatórios'
-                                    ])
-                                )
                             ])
                         ),
                         m('.u-marginbottom-60', [
@@ -99,27 +91,27 @@ const projectSubscriptionReport = {
                                             'Assinante'
                                         )
                                     ),
-                                    m('.table-col.w-col.w-col-3',
+                                    m('.table-col.w-col.w-col-2',
                                         m('div',
                                             'Recompensa'
                                         )
                                     ),
-                                    m('.table-col.w-col.w-col-1',
+                                    m('.table-col.w-col.w-col-1.u-text-center',
                                         m('div',
                                             'Apoio mensal'
                                         )
                                     ),
-                                    m('.table-col.w-col.w-col-1',
+                                    m('.table-col.w-col.w-col-2.u-text-center',
                                         m('div',
                                             'Total apoiado'
                                         )
                                     ),
-                                    m('.table-col.w-col.w-col-2',
+                                    m('.table-col.w-col.w-col-2.u-text-center',
                                         m('div',
                                             'Último apoio'
                                         )
                                     ),
-                                    m('.table-col.w-col.w-col-2',
+                                    m('.table-col.w-col.w-col-2.u-text-center',
                                         m('div',
                                             'Status da Assinatura'
                                         )
