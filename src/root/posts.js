@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -59,11 +59,16 @@ const posts = {
             },
             project_id = args.project_id,
             projectDetails = m.prop([]),
-            rewardText = (rewardId) => {
+            rewardText = (rewardId, project) => {
+                // @TODO move non-sub rewards to common API
+                if (projectVM.isSubscription(project)) {
+                    const reward = _.find(rewardVM.rewards(), r => String(r.external_id) === String(rewardId));
+                    return `Assinantes da recompensa R$${reward.data.minimum_value} - ${reward.data.title ? reward.data.title : `${reward.data.description.substring(0, 70)}...`}`;
+                }
                 const reward = _.find(rewardVM.rewards(), r => String(r.id) === String(rewardId));
                 return `Apoiadores da recompensa R$${reward.minimum_value} - ${reward.title ? reward.title : `${reward.description.substring(0, 70)}...`}`;
             },
-            showRecipientes = (post) => {
+            showRecipientes = (post, project) => {
                 if (post.recipients === 'public') {
                     return 'Todo mundo (apoiadores e não apoiadores)';
                 } else if (post.recipients === 'backers') {
@@ -71,7 +76,7 @@ const posts = {
                 }
                 const reward = _.find(rewardVM.rewards(), r => r.id === post.reward_id);
                 if (reward) {
-                    return rewardText(reward.id);
+                    return rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id);
                 }
                 return '...';
             },
@@ -97,9 +102,14 @@ const posts = {
         listVM.load().then(projectPosts);
 
 
-        rewardVM.fetchRewards(project_id);
-
-        l.load().then(projectDetails);
+        l.load().then((data) => {
+            projectDetails(data);
+            if (projectVM.isSubscription(_.first(projectDetails()))) {
+                rewardVM.fetchCommonRewards(_.first(projectDetails()).common_id);
+            } else {
+                rewardVM.fetchRewards(project_id);
+            }
+        });
 
         return {
             listVM,
@@ -125,7 +135,7 @@ const posts = {
     },
     view(ctrl) {
         const project = _.first(ctrl.projectDetails()),
-            paidRewards = _.filter(rewardVM.rewards(), reward => reward.paid_count > 0);
+            paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);
 
         return (project ? m('.project-posts',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
@@ -140,7 +150,7 @@ const posts = {
                 comment_html: ctrl.fields.comment_html,
                 title: ctrl.fields.title,
                 reward_id: ctrl.fields.reward_id(),
-                rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id()) : null
+                rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id(), project) : null
             }) : [
                 m(`.w-section.section-product.${project.mode}`),
                 (ctrl.showSuccess() ? m.component(popNotification, {
@@ -194,8 +204,8 @@ const posts = {
                                         m('option[value=\'0\']',
                                             'Todos os apoiadores'
                                         ),
-                                        (_.map(paidRewards, reward => m(`option[value='${reward.id}']`,
-                                              ctrl.rewardText(reward.id)
+                                        (_.map(paidRewards, reward => m(`option[value='${projectVM.isSubscription(project) ? reward.external_id : reward.id}']`,
+                                              ctrl.rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project)
                                             )))
                                     ]),
                                     m('label.field-label.fontweight-semibold',
@@ -266,7 +276,7 @@ const posts = {
                                                 m('span.fontweight-semibold',
                                                         'Destinatários: '
                                                     ),
-                                                ctrl.showRecipientes(post)
+                                                ctrl.showRecipientes(post, project)
                                             ])
                                         ]),
                                         m('.table-col.u-text-center.w-col.w-col-3',
