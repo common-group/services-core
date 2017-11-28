@@ -22,11 +22,12 @@ const projectSubscriptionReport = {
                 Prefer: 'count=exact'
             }),
             contextSubVM = catarse.filtersVM({
-                status: 'in'
+                status: 'in',
+                project_id: 'eq'
             }),
             project = m.prop([{}]);
 
-        contextSubVM.status(['started', 'active', 'inactive', 'canceled', 'error']);
+        contextSubVM.status(['started', 'active', 'inactive']);
         filterVM.project_id(args.project_id);
 
         const lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
@@ -34,6 +35,7 @@ const projectSubscriptionReport = {
         }));
 
         lProject.load().then((data) => {
+            contextSubVM.project_id(_.first(data).common_id);
             subscriptions.firstPage(contextSubVM.parameters()).then(() => {
                 loader(false);
             }).catch(handleError);
