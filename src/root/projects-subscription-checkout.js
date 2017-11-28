@@ -24,17 +24,38 @@ const projectsSubscriptionCheckout = {
             vm = paymentVM(),
             showPaymentForm = m.prop(false),
             addVM = m.prop(),
-            reward = m.prop(rewardVM.selectedReward()),
-            value = rewardVM.contributionValue(),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             isCnpj = m.prop(false),
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
+        let reward = m.prop(rewardVM.selectedReward());
+        let value;
+
+        if (_.isString(rewardVM.contributionValue())) {
+            value = h.monetaryToFloat(rewardVM.contributionValue);
+        } else {
+            value = rewardVM.contributionValue()
+        }
+
+        const valueParam = h.getParams('contribution_value');
+        const rewardIdParam = h.getParams('reward_id'); 
+
+        if (valueParam) {
+            value = rewardVM.contributionValue(Number(valueParam));
+        }
+
+        if (rewardIdParam && (rewardIdParam !== String(reward().id))) {
+            rewardVM.fetchRewards(h.getCurrentProject().project_id).then(() => {
+                reward(_.findWhere(rewardVM.rewards(), {id: Number(rewardIdParam)}));
+                rewardVM.selectedReward(reward());
+                m.redraw();
+            });
+        }
+
         const validateForm = () => {
             if (vm.validate()) {
-                // vm.similityExecute(contribution().id);
                 showPaymentForm(true);
             }
         };
@@ -85,7 +106,6 @@ const projectsSubscriptionCheckout = {
                 data: vm.fields.address()
             }));
         });
-        // vm.similityExecute(contribution().id);
         projectVM.getCurrentProject();
 
         const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
@@ -113,7 +133,7 @@ const projectsSubscriptionCheckout = {
         const user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),
-            formatedValue = h.formatNumber(Number(ctrl.value), 2, 3),
+            formatedValue = h.formatNumber(ctrl.value, 2, 3),
             anonymousCheckbox = m('.w-row', [
                 m('.w-checkbox.w-clearfix', [
                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
@@ -152,7 +172,7 @@ const projectsSubscriptionCheckout = {
                         m('.fontsize-larger.text-success.u-left',
                             `R$ ${formatedValue}`
                         ),
-                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
                             'Editar'
                         )
                     ]),
@@ -242,15 +262,6 @@ const projectsSubscriptionCheckout = {
 
                                     ]) : ''),
 
-                                m('.card.card-terciary.u-marginbottom-30.u-radius.w-form',
-                                    m(nationalityRadio, {
-                                        fields: addVM.fields,
-                                        defaultCountryID: addVM.defaultCountryID,
-                                        defaultForeignCountryID: addVM.defaultForeignCountryID,
-                                        international: addVM.international
-                                    })
-                                ),
-
                                 (user.name && user.owner_document) ? '' : m('.card.card-terciary.u-radius.u-marginbottom-40', [
                                     (m('.w-row', [
                                         m('.w-col.w-col-7.w-sub-col', [
@@ -267,7 +278,7 @@ const projectsSubscriptionCheckout = {
                                             }),
                                             ctrl.fieldHasError('completeName')
                                         ]),
-                                        m('.w-col.w-col-5', (addVM.international() ? '' : [
+                                        m('.w-col.w-col-5', [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
                                                 I18n.t('fields.owner_document', ctrl.scope())
                                             ),
@@ -279,7 +290,7 @@ const projectsSubscriptionCheckout = {
                                                 value: ctrl.vm.fields.ownerDocument()
                                             }),
                                             ctrl.fieldHasError('ownerDocument')
-                                        ])),
+                                        ]),
                                     ])),
                                     anonymousCheckbox
                                 ]),
@@ -288,8 +299,9 @@ const projectsSubscriptionCheckout = {
                                     m(addressForm, {
                                         addressFields: addVM.fields,
                                         fields: m.prop(ctrl.vm.fields),
-                                        international: addVM.international,
-                                        hideNationality: true
+                                        international: false,
+                                        hideNationality: true,
+                                        disableInternational: true
                                     })
                                 )
                             ])
@@ -306,9 +318,13 @@ const projectsSubscriptionCheckout = {
                         ) : ''),
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
                             vm: ctrl.vm,
-                            // contribution_id: ctrl.contribution().id,
                             project_id: projectVM.currentProject().project_id,
-                            user_id: user.id
+                            user_id: user.id,
+                            reward_common_id: ctrl.reward().common_id,
+                            project_common_id: projectVM.currentProject().common_id,
+                            user_common_id: user.common_id,
+                            isSubscription: true,
+                            value: ctrl.value
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
@@ -320,7 +336,9 @@ const projectsSubscriptionCheckout = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                    {config: m.route}
+                                    ,
                                     'Editar'
                                 )
                             ]),
@@ -336,7 +354,7 @@ const projectsSubscriptionCheckout = {
                                             ' Cobrança hoje:'
                                         ]
                                     ),
-                                    `R$${formatedValue}`
+                                    `R$ ${formatedValue}`
                                 ]
                             ),
                             m('.fontsize-smaller.u-marginbottom-10',
@@ -344,7 +362,7 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-calendar-o.text-success'),
-                                            ' Próxima cobrança:'
+                                            ' Próxima cobrança: '
                                         ]
                                     ),
                                     ctrl.lastDayOfNextMonth()

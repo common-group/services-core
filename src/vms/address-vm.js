@@ -1,5 +1,6 @@
 import m from 'mithril';
-
+const states = m.prop([]);
+const countries = m.prop([]);
 const addressVM = (args) => {
     const data = args.data;
     const international = m.prop();
@@ -23,8 +24,13 @@ const addressVM = (args) => {
         international,
         defaultCountryID,
         defaultForeignCountryID,
-        fields
+        fields,
+        states,
+        countries
     };
 };
+
+addressVM.states = states;
+addressVM.countries = countries;
 
 export default addressVM;

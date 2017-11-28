@@ -4,8 +4,10 @@ import I18n from 'i18n-js';
 import h from '../h';
 import tooltip from './tooltip';
 import creditCardVM from '../vms/credit-card-vm';
+import projectVM from '../vms/project-vm';
 import creditCardInput from './credit-card-input';
 import inlineError from './inline-error';
+import commonPaymentVM from '../vms/common-payment-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
@@ -23,17 +25,27 @@ const paymentCreditCard = {
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
 
         const onSubmit = () => {
+            vm.creditCardFields.errors([]);
+            
             if (selectedCreditCard().id === -1) {
                 checkExpiry();
                 checkcvv();
                 checkCreditCard();
                 checkCreditCardName();
-            } else {
-                vm.creditCardFields.errors([]);
             }
 
             if (vm.creditCardFields.errors().length === 0) {
-                vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
+                if (args.isSubscription) {
+                    const commonData = {
+                        rewardCommonId: args.reward_common_id,
+                        userCommonId: args.user_common_id,
+                        projectCommonId: args.project_common_id,
+                        amount: args.value * 100
+                    };
+                    commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData); 
+                } else {
+                    vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
+                }
             }
 
             return false;
@@ -151,18 +163,19 @@ const paymentCreditCard = {
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
 
-        vm.getInstallments(args.contribution_id)
-            .then(() => {
-                loadingInstallments(false);
-                m.redraw();
-            });
-
+        if (!args.isSubscription) {
+            vm.getInstallments(args.contribution_id)
+                .then(() => {
+                    loadingInstallments(false);
+                    m.redraw();
+                });
+        }
         vm.getSavedCreditCards(args.user_id)
             .then((savedCards) => {
                 loadingSavedCreditCards(false);
                 selectCreditCard(savedCards[0]);
                 m.redraw();
-            });
+        });
 
         return {
             vm,
@@ -208,15 +221,15 @@ const paymentCreditCard = {
                         onclick: () => ctrl.selectCreditCard(card)
                     }, [
                         m('.w-col.w-col-1.w-sub-col',
-                                    m('.w-radio.w-clearfix.back-payment-credit-card-radio-field',
-                                        m('input', {
-                                            checked: ctrl.isCreditCardSelected(card, idx),
-                                            name: 'payment_subscription_card',
-                                            type: 'radio',
-                                            value: card.card_key
-                                        })
-                                    )
-                                ),
+                            m('.w-radio.w-clearfix.back-payment-credit-card-radio-field',
+                                m('input', {
+                                    checked: ctrl.isCreditCardSelected(card, idx),
+                                    name: 'payment_subscription_card',
+                                    type: 'radio',
+                                    value: card.card_key
+                                })
+                            )
+                        ),
                         card.id === -1 ? m('.w-col.w-col-11',
                                         m('.fontsize-small.fontweight-semibold.fontcolor-secondary', I18n.t('credit_card.use_another', ctrl.scope()))
                                     ) : [
@@ -346,7 +359,7 @@ const paymentCreditCard = {
                             )
                         ])
                     ]),
-                    (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' : m('.w-row', [
+                    projectVM.isSubscription() || (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' : m('.w-row', [
                         m('.w-col.w-col-6', [
                             m('label.field-label.fontweight-semibold[for="split"]',
                                 I18n.t('credit_card.installments', ctrl.scope())

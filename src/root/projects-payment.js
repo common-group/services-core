@@ -243,7 +243,6 @@ const projectsPayment = {
                                             ])
                                         ]),
                                         anonymousCheckbox
-
                                     ]) : ''),
 
                                 m('.card.card-terciary.u-marginbottom-30.u-radius.w-form',

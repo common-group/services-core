@@ -14,7 +14,7 @@ const error = m.prop(''),
         shipping_options: null,
         minimum_value: 10
     },
-    contributionValue = m.prop(`${noReward.minimum_value},00`),
+    contributionValue = m.prop(noReward.minimum_value),
     selectedReward = m.prop(noReward),
     vm = catarse.filtersVM({
         project_id: 'eq'

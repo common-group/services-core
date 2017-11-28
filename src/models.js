@@ -3,6 +3,8 @@ import { catarse, commonPayment, commonAnalytics, commonProject } from './api';
 const models = {
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
     projectReward: commonProject.model('rewards'),
+    projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
+    commonPayment: commonPayment.model('rpc/pay'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     contributionDetail: catarse.model('contribution_details'),

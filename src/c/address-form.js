@@ -40,7 +40,7 @@ const addressForm = {
             zipcodeMask = _.partial(h.mask, '99999-999'),
             applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = args.international || vm.international;
+            international = args.disableInternational ? m.prop(false) : args.international || vm.international;
 
         const checkPhone = () => {
             let hasError = false;
@@ -105,7 +105,10 @@ const addressForm = {
             }
         };
 
-        statesLoader.load().then(states);
+        statesLoader.load().then((data) => {
+            states(data);
+            addressVM.states(states());
+        });
         return {
             lookupZipCode,
             zipCodeErrorMessage,
@@ -157,7 +160,7 @@ const addressForm = {
             // @TODO move to another component
             (international() ?
                 m('form', [
-                    m(countrySelect, {
+                    args.disableInternational ? '' : m(countrySelect, {
                         countryName: args.countryName,
                         fields,
                         international,
@@ -226,7 +229,7 @@ const addressForm = {
                 ]) :
                 m('.w-form', [
                     m('div', [
-                        m(countrySelect, {
+                        args.disableInternational ? null : m(countrySelect, {
                             countryName: args.countryName,
                             fields,
                             international,
