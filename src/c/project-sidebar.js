@@ -99,9 +99,9 @@ const projectSidebar = {
             },
             isSub = projectVM.isSubscription(project),
             subscriptionData = args.subscriptionData ? args.subscriptionData() : m.prop(),
-            goal = (isSub ? _.find(args.goalDetails(), g => g.value >= subscriptionData.amount_paid_for_valid_period) : _.last(args.goalDetails())) || { value: '--' },
+            subGoal = _.find(args.goalDetails(), g => g.value >= subscriptionData.amount_paid_for_valid_period) || _.last(args.goalDetails()) || { value: '--' },
             pledged = isSub ? subscriptionData.amount_paid_for_valid_period : project().pledged,
-            progress = isSub ? (subscriptionData.amount_paid_for_valid_period / goal.value) * 100 : project().progress,
+            progress = isSub ? (subscriptionData.amount_paid_for_valid_period / subGoal.value) * 100 : project().progress,
             totalContributors = isSub ? subscriptionData.total_subscriptions : project().total_contributors;
 
         return m('#project-sidebar.aside', [
@@ -131,7 +131,7 @@ const projectSidebar = {
                             })
                         ]),
                         isSub
-                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${progress ? parseInt(progress) : '0'}% de R$${goal.value} por mês`)
+                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${progress ? parseInt(progress) : '0'}% de R$${subGoal.value} por mês`)
                         : m('.w-row.u-margintop-10', [
                             m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
                                 m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${progress ? parseInt(progress) : '0'}%`)
