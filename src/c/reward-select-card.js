@@ -27,12 +27,12 @@ const rewardSelectCard = {
             if (!selectedDestination() && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
-                rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value, 2, 3)}`);
+                rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} ${projectVM.isSubscription(projectVM.currentProject()) ? '' : `+ frete R$${h.formatNumber(shippingFee.value, 2, 3)}`}`);
             } else {
                 rewardVM.error('');
                 if (args.isSubscription) {
                     const currentRewardId = rewardVM.selectedReward().id;
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? '&reward_id=' + currentRewardId : ''}`);
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}`);
                 } else {
                     const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
                     h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
@@ -171,10 +171,10 @@ const rewardSelectCard = {
                         m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
                         m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
                     ]),
-                    args.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
-                        m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
-                        m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
-                    ])
+                        args.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
+                            m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
+                            m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
+                        ])
                     ])
                 ])
             ])

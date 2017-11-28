@@ -44,11 +44,11 @@ const projectRewardCard = {
             if (!selectedDestination() && rewardVM.hasShippingOptions(vm.selectedReward())) {
                 vm.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < vm.selectedReward().minimum_value + shippingFee.value) {
-                vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} + frete R$${h.formatNumber(shippingFee.value, 2, 3)}`);
+                vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} ${projectVM.isSubscription(projectVM.currentProject()) ? '' : `+ frete R$${h.formatNumber(shippingFee.value, 2, 3)}`} `);
             } else {
                 vm.error('');
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
-                
+
                 if (projectVM.isSubscription(projectVM.currentProject())) {
                     vm.contributionValue(valueFloat);
                     m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?reward_id=${vm.selectedReward().id}&contribution_value=${vm.contributionValue()}`);
@@ -168,7 +168,7 @@ const projectRewardCard = {
                     ])
                 ]))
             ] : '',
-            m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', 
+            m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
                 h.pluralize.apply(
                     null,
                     isSub ? [reward.paid_count, ' assinante', ' assinantes'] : [reward.paid_count, ' apoio', ' apoios'])
