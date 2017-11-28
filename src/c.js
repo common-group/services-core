@@ -1,5 +1,6 @@
 import adminUsers from './root/admin-users';
 import adminProjects from './root/admin-projects';
+import adminNotifications from './root/admin-notifications';
 import adminContributions from './root/admin-contributions';
 import adminBalanceTranfers from './root/admin-balance-tranfers';
 import flex from './root/flex';
@@ -51,6 +52,7 @@ const c = {
         AdminUsers: adminUsers,
         AdminProjects: adminProjects,
         AdminContributions: adminContributions,
+        AdminNotifications: adminNotifications,
         AdminBalanceTranfers: adminBalanceTranfers,
         ClipboardCopy: copyTextInput,
         Flex: flex,
