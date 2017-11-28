@@ -3,7 +3,7 @@ import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
 import models from '../models';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const menuProfile = {
     controller(args) {
@@ -151,6 +151,11 @@ const menuProfile = {
                                                 m('li.lineheight-looser',
                                                     m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/projects\']',
                                                         'Admin projetos'
+                                                    )
+                                                ),
+                                                m('li.lineheight-looser',
+                                                    m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/notifications\']',
+                                                        'Admin notificações'
                                                     )
                                                 ),
                                                 m('li.lineheight-looser',
