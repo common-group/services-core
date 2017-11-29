@@ -41,7 +41,6 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     card.generateHash(cardHash => {
         const payload = {
             subscription: true,
-            save_card: fields.creditCardFields.save(),
             user_id: commonData.userCommonId,
             project_id: commonData.projectCommonId,
             amount: commonData.amount,
@@ -75,7 +74,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
 
         sendPaymentRequest(payload)
             .then(() => {
-                alert('Payment Successful!');
+                m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
             })
             .catch((data) => {
                 const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
