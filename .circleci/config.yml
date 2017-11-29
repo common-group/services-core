@@ -1,0 +1,80 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      # build the application container
+      - run: docker build -t comum/notification-service:latest .
+
+  push_image:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      # with credentials stored in the UI
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      # build the application container
+      - run: docker build -t comum/notification-service:latest .
+      # deploy the container
+      - run: docker push comum/notification-service:latest
+
+  deploy_production:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add nodejs nodejs-npm bash
+      - run: npm install -g heroku-cli
+      - run: docker build -t comum/notification-service:latest .
+      - run: bash .circleci/setup-heroku.sh
+
+      - run: heroku container:login
+      - run: heroku container:push notification_dispatcher --recursive -a $PRODUCTION_NOTIFICATION_DISPATCHER_APP
+
+  deploy_sandbox:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add nodejs nodejs-npm bash
+      - run: npm install -g heroku-cli
+      - run: docker build -t comum/notification-service:latest .
+      - run: bash .circleci/setup-heroku.sh
+
+      - run: heroku container:login
+      - run: heroku container:push notification_dispatcher --recursive -a $SANDBOX_NOTIFICATION_DISPATCHER_APP
+
+
+workflows:
+  version: 2
+  build-and-push:
+    jobs:
+      - build
+      - push_image:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_sandbox:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - deploy_production:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
