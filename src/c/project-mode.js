@@ -34,7 +34,7 @@ const projectMode = {
 
         return mode === 'sub' ? m(`#${mode}`, [
                 !_.isEmpty(project) ? m(`img.u-marginbottom-10[src="${modeImgSrc}"][width='130']`) : '',
-                m('.fontsize-smallest.lineheight-tighter', 'Assine esse projeto mensalmente e receba recompensas exclusivas.')
+                m('.fontsize-smallest.lineheight-tighter', 'Assine esse projeto mensalmente.')
             ]) : m(`#${mode}.w-row`, [
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [
                 !_.isEmpty(project) ? m(`img[src="${modeImgSrc}"][width='30']`) : ''
