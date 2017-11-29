@@ -170,12 +170,17 @@ const paymentCreditCard = {
                     m.redraw();
                 });
         }
-        vm.getSavedCreditCards(args.user_id)
-            .then((savedCards) => {
-                loadingSavedCreditCards(false);
-                selectCreditCard(savedCards[0]);
-                m.redraw();
-        });
+
+        if (!args.hideSave) {
+            vm.getSavedCreditCards(args.user_id)
+                .then(savedCards => {
+                    loadingSavedCreditCards(false);
+                    selectCreditCard(savedCards[0]);
+                    m.redraw();
+                });
+        } else {
+            showForm(true);
+        }        
 
         return {
             vm,
@@ -215,7 +220,7 @@ const paymentCreditCard = {
             m('form[name="email-form"]', {
                 onsubmit: ctrl.onSubmit
             }, [
-                (!ctrl.loadingSavedCreditCards() && (ctrl.savedCreditCards().length > 1)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
+                (!args.hideSave && !ctrl.loadingSavedCreditCards() && (ctrl.savedCreditCards().length > 1)) ? m('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40',
                     _.map(ctrl.savedCreditCards(), (card, idx) => m(`div#credit-card-record-${idx}.w-row.creditcard-records`, {
                         style: 'cursor:pointer;',
                         onclick: () => ctrl.selectCreditCard(card)
@@ -251,7 +256,7 @@ const paymentCreditCard = {
                                     )
                                     ]
                     ]))
-                ) : ctrl.loadingSavedCreditCards() ? m('.fontsize-small.u-marginbottom-40', I18n.t('credit_card.loading', ctrl.scope())) : '',
+                ) : !args.hideSave && ctrl.loadingSavedCreditCards() ? m('.fontsize-small.u-marginbottom-40', I18n.t('credit_card.loading', ctrl.scope())) : '',
                 !ctrl.showForm() ? '' : m('#credit-card-payment-form.u-marginbottom-40', [
                     m('div#credit-card-name', [
                         m('.w-row', [
@@ -373,7 +378,7 @@ const paymentCreditCard = {
                         ]),
                         m('.w-col.w-col-6')
                     ]),
-                    m('.w-checkbox.w-clearfix', [
+                    args.hideSave ? '' : m('.w-checkbox.w-clearfix', [
                         m('input#payment_save_card.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
                             onchange: m.withAttr('checked', ctrl.creditCard.save),
                             checked: ctrl.creditCard.save()
