@@ -48,7 +48,7 @@ const projectInsightsSub = {
                         m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals, amount: subscribersDetails.amount_paid_for_valid_period }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
-                                'Assinantes'
+                                'Assinantes ativos'
                             ),
                             m('.fontsize-largest.fontweight-semibold',
                                 subscribersDetails.total_subscriptions
