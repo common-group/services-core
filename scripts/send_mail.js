@@ -42,6 +42,7 @@ getStdin().then(str => {
                 });
         } catch (e) {
             process.exitCode = 1;
+            raven_report(e, {});
             console.log(e);
             return false;
         }
