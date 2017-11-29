@@ -5,6 +5,10 @@
   "main": "main.js",
   "dependencies": {
     "@sendgrid/mail": "^6.1.4",
+    "get-stdin": "^5.0.1",
+    "liquidjs": "^2.0.2",
+    "pg": "^7.4.0",
+    "ramda": "^0.25.0",
     "raven": "^2.2.1"
   },
   "devDependencies": {},
