@@ -2,12 +2,15 @@ import m from 'mithril';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
+import I18n from 'i18n-js';
 import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import postsPreview from '../c/posts-preview';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 import popNotification from '../c/pop-notification';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const posts = {
     controller(args) {
@@ -70,13 +73,13 @@ const posts = {
             },
             showRecipientes = (post, project) => {
                 if (post.recipients === 'public') {
-                    return 'Todo mundo (apoiadores e não apoiadores)';
+                    return I18n.t(`everyone_${project.mode}`, I18nScope());
                 } else if (post.recipients === 'backers') {
-                    return 'Todos os apoiadores';
+                    return I18n.t(`backers_${project.mode}`, I18nScope());
                 }
-                const reward = _.find(rewardVM.rewards(), r => r.id === post.reward_id);
+                const reward = _.find(rewardVM.rewards(), r => (projectVM.isSubscription(project) ? r.external_id : r.id) == post.reward_id);
                 if (reward) {
-                    return rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id);
+                    return rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project);
                 }
                 return '...';
             },
@@ -147,6 +150,7 @@ const posts = {
                 errors: ctrl.errors,
                 showPreview: ctrl.showPreview,
                 project_id: ctrl.project_id,
+                mode: project.mode,
                 comment_html: ctrl.fields.comment_html,
                 title: ctrl.fields.title,
                 reward_id: ctrl.fields.reward_id(),
@@ -154,7 +158,7 @@ const posts = {
             }) : [
                 m(`.w-section.section-product.${project.mode}`),
                 (ctrl.showSuccess() ? m.component(popNotification, {
-                    message: 'Mensagem enviada com sucesso'
+                    message: I18n.t('successful', I18nScope())
                 }) : ''),
                 (ctrl.showError() ? m.component(popNotification, {
                     message: ctrl.errors(),
@@ -166,7 +170,7 @@ const posts = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6',
                                 m('.fontsize-larger.fontweight-semibold.lineheight-tight',
-                                    'Envie uma novidade para seus apoiadores'
+                                    I18n.t(`send_a_message_${project.mode}`, I18nScope())
                                 )
                             ),
                             m('.w-col.w-col-3')
@@ -199,10 +203,10 @@ const posts = {
                                         m('option[value=\'-1\']', {
                                             selected: true
                                         },
-                                            'Todo mundo (apoiadores e não apoiadores)'
+                                            I18n.t(`everyone_${project.mode}`, I18nScope())
                                         ),
                                         m('option[value=\'0\']',
-                                            'Todos os apoiadores'
+                                            I18n.t(`backers_${project.mode}`, I18nScope())
                                         ),
                                         (_.map(paidRewards, reward => m(`option[value='${projectVM.isSubscription(project) ? reward.external_id : reward.id}']`,
                                               ctrl.rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project)
@@ -231,7 +235,7 @@ const posts = {
                                             m('button.btn.btn-large', {
                                                 onclick: ctrl.togglePreview
                                             },
-                                                'Pré-visualizar'
+                                                I18n.t('preview', I18nScope())
                                             )
                                         ),
                                         m('.w-col.w-col-3')
