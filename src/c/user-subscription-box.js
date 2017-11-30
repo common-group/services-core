@@ -97,13 +97,25 @@ const userSubscriptionBox = {
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
+                        m('.u-marginbottom-10', [
+                            m(`span.fa.fa-circle.text-${{
+                                started: 'waiting',
+                                active:  'success'
+                            }[subscription.status] || 'error'}`),
+                            {
+                                started:  ' Iniciada',
+                                active:   ' Ativa',
+                                inactive: ' Inativa',
+                                canceled: ' Cancelada',
+                                deleted:  ' Apagada'
+                            }[subscription.status] || ' Erro',
+                            m.trust('&nbsp;&nbsp;&nbsp;'),
+                            ( (subscription.payment_method||(subscription.checkout_data&&subscription.checkout_data.payment_method)) === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
+                        ]),
                         m('.w-embed',
                             m('div', [
                                 m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold',
                                     I18n.t('status', contributionScope())
-                                ),
-                                m('.fontsize-smallest',
-                                    ( (subscription.checkout_data&&subscription.checkout_data.payment_method) === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
                                 ),
                                 (contributionVM.canShowReceipt(subscription) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${subscription.project.id}/contributions/${subscription.contribution_id}/receipt'][target='__blank']`,
