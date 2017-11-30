@@ -95,7 +95,7 @@ const userSubscriptionBox = {
                             `R$ ${h.formatNumber(parseFloat((subscription.checkout_data||subscription).amount) / 100)} por mês`
                         ),
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
-                            `Assinante há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
+                            `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
                         m('.w-embed',
                             m('div', [
