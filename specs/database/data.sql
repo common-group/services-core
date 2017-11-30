@@ -44,3 +44,10 @@ select payment_service.transition_to(cp, 'paid', '{"test": true}'::json)
     from payment_service.catalog_payments cp
         where cp.id = 'cf5dc490-b5bc-4211-8e08-b49219977938'; -- transition payment to paid
 
+insert into notification_service.notification_global_templates
+    (label, subject, template) values 
+    (
+        'paid_subscription_payment', 
+        'subject {{project_name}}', 
+        '<p>template {{user_name}}</p>'
+    );
