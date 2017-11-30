@@ -17,3 +17,4 @@ compose_env/.subscriptions_scheduler.env
 specs/database/schema.sql
 compose_env/.hook_service_api.env
 compose_env/.notification_dispatcher.env
+compose_env/.notification_service_api.env
