@@ -95,15 +95,27 @@ const userSubscriptionBox = {
                             `R$ ${h.formatNumber(parseFloat((subscription.checkout_data||subscription).amount) / 100)} por mês`
                         ),
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
-                            `Assinante há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
+                            `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
+                        m('.u-marginbottom-10', [
+                            m(`span.fa.fa-circle.text-${{
+                                started: 'waiting',
+                                active:  'success'
+                            }[subscription.status] || 'error'}`),
+                            {
+                                started:  ' Iniciada',
+                                active:   ' Ativa',
+                                inactive: ' Inativa',
+                                canceled: ' Cancelada',
+                                deleted:  ' Apagada'
+                            }[subscription.status] || ' Erro',
+                            m.trust('&nbsp;&nbsp;&nbsp;'),
+                            ( (subscription.payment_method||(subscription.checkout_data&&subscription.checkout_data.payment_method)) === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
+                        ]),
                         m('.w-embed',
                             m('div', [
                                 m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold',
                                     I18n.t('status', contributionScope())
-                                ),
-                                m('.fontsize-smallest',
-                                    ( (subscription.checkout_data&&subscription.checkout_data.payment_method) === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
                                 ),
                                 (contributionVM.canShowReceipt(subscription) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${subscription.project.id}/contributions/${subscription.contribution_id}/receipt'][target='__blank']`,
@@ -130,18 +142,27 @@ const userSubscriptionBox = {
                         )))] : (subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `))
                     ]),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
+                        (subscription.status === 'started' ? [
+                            m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                m('span.fa.fa-exclamation-triangle'),
+                                m.trust('&nbsp;'),
+                                'Aguardando confirmação do pagamento'
+                            ])
+                        ] :
                         (subscription.status === 'inactive' ? [
                             m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
+                                m.trust('&nbsp;'),
                                 'Sua assinatura está suspensa por falta de pagamento'
                             ]),
                             m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
                         ] : subscription.status === 'canceled' ? [
                             m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
+                                m.trust('&nbsp;'),
                                 ' Você cancelou sua assinatura'
                             ])
-                        ] : null)
+                        ] : null))
                     )
                 ])
             ]
