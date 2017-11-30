@@ -324,7 +324,8 @@ const projectsSubscriptionCheckout = {
                             project_common_id: projectVM.currentProject().common_id,
                             user_common_id: user.common_id,
                             isSubscription: true,
-                            value: ctrl.value
+                            value: ctrl.value,
+                            hideSave: true,
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [

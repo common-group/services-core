@@ -28,7 +28,7 @@ const projectsShow = {
 
         return m('.project-show', {
             config: ctrl.setProjectPageTitle()
-        }, project() && (!ctrl.isSubscription(project()) || ctrl.subscriptionData()) ? [
+        }, project() ? [
             m.component(projectHeader, {
                 project,
                 subscriptionData: ctrl.subscriptionData,

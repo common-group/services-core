@@ -23,6 +23,7 @@ export { default as ProjectsShow } from './root/projects-show';
 export { default as ProjectsContribution } from './root/projects-contribution';
 export { default as ProjectsSubscriptionContribution } from './root/projects-subscription-contribution';
 export { default as ProjectsSubscriptionCheckout } from './root/projects-subscription-checkout';
+export { default as ProjectsSubscriptionThankYou } from './root/projects-subscription-thank-you';
 export { default as UsersShow } from './root/users-show';
 export { default as SurveysShow } from './root/surveys-show';
 export { default as UsersEdit } from './root/users-edit';

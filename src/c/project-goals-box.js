@@ -4,7 +4,9 @@ import h from '../h';
 
 const projectGoalsBox = {
     controller(args) {
-        const subscriptionData = args.subscriptionData(),
+        const subscriptionData = args.subscriptionData() || {
+                amount_paid_for_valid_period: 0
+            },
             initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value >= subscriptionData.amount_paid_for_valid_period) : 0,
             currentGoalIndex = m.prop(initialGoalIndex),
             nextGoal = () => {

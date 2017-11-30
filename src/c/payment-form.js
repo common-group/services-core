@@ -56,7 +56,7 @@ const paymentForm = {
                 ]), !ctrl.isSlip() ? m('#credit-card-section', [
                     m.component(paymentCreditCard, args)
                 ]) : !args.vm.isInternational() ? m('#boleto-section', [
-                m.component(paymentSlip, args)
+                    m.component(paymentSlip, args)
             ]) : ''
         ]);
     }
