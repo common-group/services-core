@@ -38,7 +38,7 @@ const projectSubscriptionReport = {
                         onchange: submit,
                         name: 'reward_external_id',
                         vm: filterVM.reward_external_id,
-                        wrapper_class: '.w-sub-col.w-col.w-col-3',
+                        wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: []
                     }
                 },
@@ -46,11 +46,11 @@ const projectSubscriptionReport = {
                     label: 'status_filter',
                     component: FilterDropdown,
                     data: {
-                        label: 'Status',
+                        label: 'Status da assinatura',
                         onchange: submit,
                         name: 'status',
                         vm: filterVM.status,
-                        wrapper_class: '.w-sub-col.w-col.w-col-3',
+                        wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: [{
                             value: '',
                             option: 'Todos'
@@ -78,7 +78,7 @@ const projectSubscriptionReport = {
                         onchange: submit,
                         name: 'payment_method',
                         vm: filterVM.payment_method,
-                        wrapper_class: '.w-sub-col.w-col.w-col-3',
+                        wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: [{
                             value: '',
                             option: 'Todos'
@@ -193,7 +193,7 @@ const projectSubscriptionReport = {
                                 onsubmit: ctrl.submit
                             },
                                 m('.u-margintop-20.w-row', [
-                                    m('.w-col.w-col-8',
+                                    m('.w-col.w-col-8.w-col-push-2.u-text-center',
                                         m('.w-row', [
                                             m.component(statusFilter.component, statusFilter.data),
                                             m.component(rewardFilter.component, rewardFilter.data),
