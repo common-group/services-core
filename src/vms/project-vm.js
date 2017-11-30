@@ -14,7 +14,7 @@ const currentProject = m.prop(),
     vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
 
-const isSubscription = (project) => {
+const isSubscription = (project = currentProject) => {
     if (_.isFunction(project)) {
         return project() ? project().mode === 'sub' : false;
     }

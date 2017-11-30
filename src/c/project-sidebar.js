@@ -131,17 +131,17 @@ const projectSidebar = {
                             })
                         ]),
                         isSub
-                        ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${progress ? parseInt(progress) : '0'}% de R$${subGoal.value} por mês`)
-                        : m('.w-row.u-margintop-10', [
-                            m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                                m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${progress ? parseInt(progress) : '0'}%`)
-                            ]),
-                            m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
-                                m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [
-                                    m('span.fontweight-semibold', remaining.total), I18n.t(`remaining_time.${remaining.unit}`, I18nScope({ count: remaining.total }))
-                                ] : '')
+                            ? m('.fontsize-smaller.fontweight-semibold.u-margintop-10', `${progress ? parseInt(progress) : '0'}% de R$${subGoal.value} por mês`)
+                            : m('.w-row.u-margintop-10', [
+                                m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
+                                    m('.fontsize-small.fontweight-semibold.lineheight-tighter', `${progress ? parseInt(progress) : '0'}%`)
+                                ]),
+                                m('.w-col.w-col-7.w-col-small-6.w-col-tiny-6.w-clearfix', [
+                                    m('.u-right.fontsize-small.lineheight-tighter', remaining && remaining.total ? [
+                                        m('span.fontweight-semibold', remaining.total), I18n.t(`remaining_time.${remaining.unit}`, I18nScope({ count: remaining.total }))
+                                    ] : '')
+                                ])
                             ])
-                        ])
                     ]),
                     m('.w-row', [
                         m.component(projectMode, {

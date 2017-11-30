@@ -25,7 +25,7 @@ const projectsShow = {
     },
     view(ctrl, args) {
         const project = ctrl.currentProject;
-        console.log('about to render: ', project());
+
         return m('.project-show', {
             config: ctrl.setProjectPageTitle()
         }, project() ? [

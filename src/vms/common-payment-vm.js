@@ -86,8 +86,63 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
 
 };
 
+const sendSlipPayment = (fields, commonData) => {
+    fields.isLoading(true);
+    m.redraw();
+
+    const customer = fields.fields;
+    const address = customer.address();
+    const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
+    const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
+    const addressState = _.findWhere(addressVM.states(), {id: address.state_id});
+    const addressCountry = _.findWhere(addressVM.countries(), {id: address.country_id});
+    const payload = {
+        subscription: true,
+        user_id: commonData.userCommonId,
+        project_id: commonData.projectCommonId,
+        amount: commonData.amount,
+        payment_method: 'boleto',
+        customer: {
+            name: customer.completeName(),
+            document_number: customer.ownerDocument(),
+            address: {
+                neighborhood: address.address_neighbourhood,
+                street: address.address_street,
+                street_number: address.address_number,
+                zipcode: address.address_zip_code,
+                //TOdO: remove hard-coded country when international support is added on the back-end
+                country: 'Brasil',
+                state: addressState.acronym,
+                city: address.address_city,
+                complementary: address.address_complement,
+            },
+            phone: {
+                ddi: '55',
+                ddd: phoneDdd,
+                number: phoneNumber
+            }
+        }
+    };
+
+    if (commonData.rewardCommonId) {
+        _.extend(payload, {reward_id: commonData.rewardCommonId});
+    }
+
+    sendPaymentRequest(payload)
+        .then(() => {
+            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
+        })
+        .catch((data) => {
+            const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+            fields.isLoading(false);
+            fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
+            m.redraw();
+        });
+};
+
 const commonPaymentVM = {
-    sendCreditCardPayment
+    sendCreditCardPayment,
+    sendSlipPayment
 };
 
 export default commonPaymentVM;
