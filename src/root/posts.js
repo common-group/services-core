@@ -63,7 +63,7 @@ const posts = {
                 // @TODO move non-sub rewards to common API
                 if (projectVM.isSubscription(project)) {
                     const reward = _.find(rewardVM.rewards(), r => String(r.external_id) === String(rewardId));
-                    return `Assinantes da recompensa R$${reward.data.minimum_value} - ${reward.data.title ? reward.data.title : `${reward.data.description.substring(0, 70)}...`}`;
+                    return `Assinantes da recompensa R$${reward.data.minimum_value / 100} - ${reward.data.title ? reward.data.title : `${reward.data.description.substring(0, 70)}...`}`;
                 }
                 const reward = _.find(rewardVM.rewards(), r => String(r.id) === String(rewardId));
                 return `Apoiadores da recompensa R$${reward.minimum_value} - ${reward.title ? reward.title : `${reward.description.substring(0, 70)}...`}`;
