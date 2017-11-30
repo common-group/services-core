@@ -130,18 +130,27 @@ const userSubscriptionBox = {
                         )))] : (subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `))
                     ]),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
+                        (subscription.status === 'started' ? [
+                            m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                m('span.fa.fa-exclamation-triangle'),
+                                m.trust('&nbsp;'),
+                                'Aguardando confirmação do pagamento'
+                            ])
+                        ] :
                         (subscription.status === 'inactive' ? [
                             m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
+                                m.trust('&nbsp;'),
                                 'Sua assinatura está suspensa por falta de pagamento'
                             ]),
                             m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
                         ] : subscription.status === 'canceled' ? [
                             m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
+                                m.trust('&nbsp;'),
                                 ' Você cancelou sua assinatura'
                             ])
-                        ] : null)
+                        ] : null))
                     )
                 ])
             ]
