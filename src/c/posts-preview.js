@@ -1,5 +1,9 @@
 import m from 'mithril';
+import moment from 'moment';
 import h from '../h';
+import I18n from 'i18n-js';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const postsPreview = {
     controller(args) {
@@ -53,7 +57,7 @@ const postsPreview = {
                 ),
                 ' e ficará ',
                 m('span.fontweight-semibold',
-                'visível na plataforma somente para esses apoiadores.'
+                I18n.t(`backers_only_${args.mode}`, I18nScope())
                 )
             ]) :
             args.reward_id === '-1' ?
@@ -62,7 +66,7 @@ const postsPreview = {
                 m('span.fontweight-semibold',
                     'enviada por email para todos'
                 ),
-                ' os apoiadores e ficará ',
+                I18n.t(`all_backers_${args.mode}`, I18nScope()),
                 m('span.fontweight-semibold',
                     'visível publicamente '
                 ),
@@ -70,13 +74,12 @@ const postsPreview = {
             ]) :
             m('.fontsize-small.u-marginbottom-30', [
                 m('span', ' A novidade acima será  '),
-                m('span.fontweight-semibold', 'enviada por email para todos os apoiadores'),
+                m('span.fontweight-semibold', I18n.t(`email_backers_${args.mode}`, I18nScope())),
                 m('span', ' e ficará '),
                 m('span.fontweight-semibold', 'visível somente para esses na plataforma.')
             ]);
 
         return m('div', [
-
             m('.dashboard-header.u-text-center',
                 m('.w-container',
                     m('.w-row', [
@@ -96,7 +99,7 @@ const postsPreview = {
                         m('.w-col.w-col-1'),
                         m('.u-marginbottom-30.u-margintop-30.w-col.w-col-10.w-hidden-small.w-hidden-tiny', [
                             m('.fontcolor-secondary.fontsize-small.u-text-center',
-                                '16/01/2017'
+                                moment().format('DD/MM/YYYY')
                             ),
                             m('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center',
                                 title
