@@ -36,7 +36,7 @@ const projectAbout = {
                 ] : '',
                 m.component(projectReport)
             ]),
-            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [projectVM.isSubscription(project) ? m(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : '', !_.isEmpty(args.rewardDetails()) ? [
+            m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [projectVM.isSubscription(project) ? args.subscriptionData() ? m(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : h.loader() : '', !_.isEmpty(args.rewardDetails()) ? [
                 m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                 m.component(projectRewardList, {
                     project: args.project,

@@ -36,7 +36,7 @@ const projectGoalsBox = {
             currentGoalIndex = ctrl.currentGoalIndex,
             goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
 
-        return m('div', args.subscriptionData() ?
+        return m('div',
           m(`.card.u-marginbottom-30.u-radius${args.style}`, [
               m('.w-clearfix', [
                   m('.u-right', [
@@ -70,7 +70,7 @@ const projectGoalsBox = {
               m('.fontsize-smaller', [
                   goals[currentGoalIndex()].description
               ])
-          ]) : h.loader());
+          ]));
     }
 };
 
