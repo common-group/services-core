@@ -29,7 +29,9 @@ const fetchSubData = (projectUuid) => {
         subscriptionData(data || {
             amount_paid_for_valid_period: 0,
             total_subscriptions: 0,
-            total_subscribers: 0
+            total_subscribers: 0,
+            new_percent: 0,
+            returning_percent: 0
         });
     });
 };
