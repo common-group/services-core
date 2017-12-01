@@ -6,7 +6,7 @@ import models from '../models';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
-const {commonPayment} = models;
+const {commonPayment, commonPaymentInfo} = models;
 const sendPaymentRequest = (data) => commonPayment.postWithToken({data}, null, {
     'X-forwarded-For': '127.0.0.1'
 });
@@ -140,9 +140,16 @@ const sendSlipPayment = (fields, commonData) => {
         });
 };
 
+const paymentInfo = (paymentId) => {
+    return commonPaymentInfo.postWithToken({id: paymentId}, null, {
+        'X-forwarded-For': '127.0.0.1'
+    });
+};
+
 const commonPaymentVM = {
     sendCreditCardPayment,
-    sendSlipPayment
+    sendSlipPayment,
+    paymentInfo
 };
 
 export default commonPaymentVM;
