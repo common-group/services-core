@@ -79,7 +79,7 @@ const projectTabs = {
                                 onclick: h.analytics.event({
                                     cat: 'project_view', act: 'project_contributions_view', project: project() })
                             }, [
-                                'Apoiadores ',
+                                projectVM.isSubscription(project) ? 'Assinantes ' : 'Apoiadores ',
                                 m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
                             ]),
                             m(`a[id="comments-link"][class="dashboard-nav-link mf ${(h.hashMatch('#comments') ? 'selected' : '')}"][href="#comments"]`, {

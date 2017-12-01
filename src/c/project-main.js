@@ -16,7 +16,8 @@ const projectMain = {
             displayTabContent = (project) => {
                 const c_opts = {
                         project,
-                        post_id: args.post_id
+                        post_id: args.post_id,
+                        subscriptionData: args.subscriptionData
                     },
                     tabs = {
                         '#rewards': m('.w-col.w-col-12', [projectVM.isSubscription(project) ? m.component(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : '', m.component(projectRewardList, _.extend({}, {

@@ -1,17 +1,18 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api'
+import { catarse, commonProject } from '../api';
 import models from '../models';
 import h from '../h';
 import projectDataTable from './project-data-table';
 import projectDataChart from './project-data-chart';
 import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
+import projectVM from '../vms/project-vm';
 
 const projectContributions = {
     controller(args) {
         const contributionsPerDay = m.prop([]),
-            listVM = catarse.paginationVM(models.contributor),
+            listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
             filterStats = catarse.filtersVM({
                 project_id: 'eq'
             }),
@@ -20,7 +21,7 @@ const projectContributions = {
             }),
             groupedCollection = (collection = []) => {
                 let grouped = [
-                      []
+                        []
                     ],
                     group = 0;
 
@@ -37,7 +38,7 @@ const projectContributions = {
             },
             contributionsStats = m.prop({});
 
-        filterVM.project_id(args.project().project_id);
+        filterVM.project_id(projectVM.isSubscription(args.project()) ? args.project().common_id : args.project().project_id);
         filterStats.project_id(args.project().project_id);
 
         if (!listVM.collection().length) {
@@ -55,7 +56,7 @@ const projectContributions = {
 
             column.push(contribution.state_acronym || 'Outro/other');
             column.push(contribution.total_contributions);
-            column.push([contribution.total_contributed, [// Adding row with custom comparator => read project-data-table description
+            column.push([contribution.total_contributed, [ // Adding row with custom comparator => read project-data-table description
                 m(`input[type="hidden"][value="${contribution.total_contributed}"`),
                 'R$ ',
                 h.formatNumber(contribution.total_contributed, 2, 3),
@@ -84,53 +85,53 @@ const projectContributions = {
     },
     view(ctrl, args) {
         const list = ctrl.listVM,
-            stats = ctrl.contributionsStats(),
+            stats = projectVM.isSubscription(args.project()) ? args.subscriptionData() : ctrl.contributionsStats(),
             groupedCollection = ctrl.groupedCollection(list.collection());
 
         return m('#project_contributions', m('#contributions_top', [
             m('.section.w-section',
-              m('.w-container',
-                m('.w-row', ctrl.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
-                    m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', [
-                        m('.fontsize-megajumbo',
-                          stats.total
-                         ),
-                        m('.fontsize-large',
-                          'pessoas apoiam este projeto'
-                         )
-                    ]),
-                    m('.w-col.w-col-6',
-                      m('.card.card-terciary.u-radius',
-                        m('.w-row', [
-                            m('.u-marginbottom-20.w-col.w-sub-col.w-col-6.w-col-small-6', [
-                                m('.fontweight-semibold.u-marginbottom-10',
-                                  'Apoiadores novos'
-                                 ),
-                                m('.fontsize-largest.u-marginbottom-10',
-                                  `${Math.floor(stats.new_percent)}%`
-                                 ),
-                                m('.fontsize-smallest',
-                                  'apoiadores que nunca tinham apoiado um projeto no Catarse'
-                                 )
+                    m('.w-container',
+                        m('.w-row', ctrl.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
+                            m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', [
+                                m('.fontsize-megajumbo',
+                                    projectVM.isSubscription(args.project()) ? stats.total_subscriptions : stats.total
+                                ),
+                                m('.fontsize-large',
+                                    'pessoas apoiam este projeto'
+                                )
                             ]),
-                            m('.w-col.w-sub-col.w-col-6.w-col-small-6', [
-                                m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
-                                m('.fontweight-semibold.u-marginbottom-10',
-                                  'Apoiadores recorrentes'
-                                 ),
-                                m('.fontsize-largest.u-marginbottom-10',
-                                  `${Math.ceil(stats.returning_percent)}%`
-                                 ),
-                                m('.fontsize-smallest',
-                                  'apoiadores que já tinham apoiado um projeto no Catarse'
-                                 )
-                            ])
-                        ])
-                       )
-                     )
-                ] : '')
-               )
-             ),
+                            m('.w-col.w-col-6',
+                                m('.card.card-terciary.u-radius',
+                                    m('.w-row', [
+                                        m('.u-marginbottom-20.w-col.w-sub-col.w-col-6.w-col-small-6', [
+                                            m('.fontweight-semibold.u-marginbottom-10',
+                                                'Apoiadores novos'
+                                            ),
+                                            m('.fontsize-largest.u-marginbottom-10',
+                                                `${Math.floor(stats.new_percent)}%`
+                                            ),
+                                            m('.fontsize-smallest',
+                                                'apoiadores que nunca tinham apoiado um projeto no Catarse'
+                                            )
+                                        ]),
+                                        m('.w-col.w-sub-col.w-col-6.w-col-small-6', [
+                                            m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
+                                            m('.fontweight-semibold.u-marginbottom-10',
+                                                'Apoiadores recorrentes'
+                                            ),
+                                            m('.fontsize-largest.u-marginbottom-10',
+                                                `${Math.ceil(stats.returning_percent)}%`
+                                            ),
+                                            m('.fontsize-smallest',
+                                                'apoiadores que já tinham apoiado um projeto no Catarse'
+                                            )
+                                        ])
+                                    ])
+                                )
+                            )
+                        ] : '')
+                    )
+                ),
             m('.divider.w-section'),
             m('.section.w-section', m('.w-container', [
                 m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', 'Apoiadores'),
@@ -163,7 +164,10 @@ const projectContributions = {
                         m('.btn-bottom-card.w-row', [
                             m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
                             m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
-                                m(UserFollowBtn, { follow_id: contribution.user_id, following: contribution.is_follow })
+                                m(UserFollowBtn, {
+                                    follow_id: contribution.user_id,
+                                    following: contribution.is_follow
+                                })
                             ]),
                             m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3')
                         ])
@@ -172,37 +176,38 @@ const projectContributions = {
                 ]))))),
                 m('.w-row.u-marginbottom-40.u-margintop-20', [
                     m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?
-                                                      list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                                          onclick: list.nextPage
-                                                      }, 'Carregar mais') : h.loader(),
+                            list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
+                                onclick: list.nextPage
+                            }, 'Carregar mais') : h.loader(),
                     ])
                 ])
             ]))
         ]),
-                 m('.before-footer.bg-gray.section.w-section', m('.w-container', [
-                     m('.w-row.u-marginbottom-60', [
-                         m('.w-col.w-col-12.u-text-center', {
-                             style: {
-                                 'min-height': '300px'
-                             }
-                         }, [!ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
-                             collection: ctrl.contributionsPerDay,
-                             label: 'R$ arrecadados por dia',
-                             dataKey: 'total_amount',
-                             xAxis: item => h.momentify(item.paid_at),
-                             emptyState: 'Apoios não contabilizados'
-                         }) : h.loader()]),
-                     ]),
-                     m('.w-row',
-                       m('.w-col.w-col-12.u-text-center', [
-                           m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os apoios'),
-                           (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
-                               table: ctrl.contributionsPerLocationTable,
-                               defaultSortIndex: -2
-                           }) : '' : h.loader())
-                       ])
-                      )
-                 ])));
+            (projectVM.isSubscription(args.project()) ? '' :
+            m('.before-footer.bg-gray.section.w-section', m('.w-container', [
+                m('.w-row.u-marginbottom-60', [
+                    m('.w-col.w-col-12.u-text-center', {
+                        style: {
+                            'min-height': '300px'
+                        }
+                    }, [!ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                        collection: ctrl.contributionsPerDay,
+                        label: 'R$ arrecadados por dia',
+                        dataKey: 'total_amount',
+                        xAxis: item => h.momentify(item.paid_at),
+                        emptyState: 'Apoios não contabilizados'
+                    }) : h.loader()]),
+                ]),
+                m('.w-row',
+                    m('.w-col.w-col-12.u-text-center', [
+                        m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os apoios'),
+                        (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
+                            table: ctrl.contributionsPerLocationTable,
+                            defaultSortIndex: -2
+                        }) : '' : h.loader())
+                    ])
+                )
+            ]))));
     }
 };
 
