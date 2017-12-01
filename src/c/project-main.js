@@ -1,12 +1,10 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import projectVM from '../vms/project-vm';
-import projectRewardList from './project-reward-list';
-import projectGoalsBox from './project-goals-box';
 import projectSuggestedContributions from './project-suggested-contributions';
 import projectContributions from './project-contributions';
 import projectAbout from './project-about';
+import projectRewards from './project-rewards';
 import projectComments from './project-comments';
 import projectPosts from './project-posts';
 
@@ -20,9 +18,7 @@ const projectMain = {
                         subscriptionData: args.subscriptionData
                     },
                     tabs = {
-                        '#rewards': m('.w-col.w-col-12', [projectVM.isSubscription(project) ? m.component(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : '', m.component(projectRewardList, _.extend({}, {
-                            rewardDetails: args.rewardDetails
-                        }, c_opts))]),
+                        '#rewards': m(projectRewards, { c_opts, project, goalDetails: args.goalDetails, subscriptionData: args.subscriptionData, rewardDetails: args.rewardDetails }),
                         '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
                         '#contributions': m.component(projectContributions, c_opts),
                         '#about': m.component(projectAbout, _.extend({}, {
