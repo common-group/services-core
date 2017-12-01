@@ -110,7 +110,7 @@ const userSubscriptionBox = {
                                 deleted:  ' Apagada'
                             }[subscription.status] || ' Erro',
                             m.trust('&nbsp;&nbsp;&nbsp;'),
-                            ( (subscription.payment_method||(subscription.checkout_data&&subscription.checkout_data.payment_method)) === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
+                            ( subscription.payment_method === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
                         ]),
                         m('.w-embed',
                             m('div', [
