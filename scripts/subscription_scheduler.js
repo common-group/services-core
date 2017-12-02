@@ -9,7 +9,7 @@ const pool = new Pool({
     statement_timeout: (process.env.STATEMENT_TIMEOUT || 5000)
 });
 
-async function init() {
+async function subscriptions_charge() {
     try {
         // fetch payment and user data to build context
         const res = await pool.query(
@@ -21,14 +21,44 @@ async function init() {
     };
 };
 
-const recursive_init = () => {
-    setTimeout(() => {
-        console.log('checking for subscriptions');
-        init()
-            .then(void(0))
-            .catch(void(0));
-        recursive_init();
-    }, (process.env.SET_INTERVAL || 60000))
+async function subscriptions_gateway_error_rescue_charge() {
+    try {
+        // fetch payment and user data to build context
+        const res = await pool.query(
+            `select payment_service.subscriptions_server_error_rescue_charge()`);
+
+        console.log(res.rows[0]);
+    } catch (e) {
+        console.log(e);
+    };
 };
 
-recursive_init();
+const recursive_calls = () => {
+
+    const rec_charge = () => {
+        setTimeout(() => {
+            console.log('checking for subscriptions to charge');
+
+            subscriptions_charge()
+                .then(void(0))
+                .catch(void(0));
+            rec_charge();
+        }, (process.env.SET_INTERVAL || 60000))
+    };
+
+    const rec_errors_charge = () => {
+        setTimeout(() => {
+            console.log('checking for subscriptions gateway errors to charge');
+            subscriptions_gateway_error_rescue_charge()
+                .then(void(0))
+                .catch(void(0));
+            rec_errors_charge();
+        }, (process.env.SET_INTERVAL || 60000))
+    };
+
+    rec_charge();
+    rec_errors_charge()
+
+};
+
+recursive_calls();
