@@ -552,7 +552,7 @@ const
         };
 
         return (el, isInitialized) => {
-            if (!isInitialized) {
+            if (!isInitialized && el.hash) {
                 setTrigger(el, el.hash.slice(1));
             }
         };
