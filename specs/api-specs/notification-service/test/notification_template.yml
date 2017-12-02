@@ -1,0 +1,66 @@
+
+---
+- config:
+  - testset: "/rpc/notification_template"
+- test:
+  - name: "Save modified version of template with platform api key"
+  - url: "/rpc/notification_template"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{
+    "data": {
+      "label": "paid_subscription_payment",
+      "subject": "foo {{user_name}}",
+      "template": "template {{user_name}}"
+    }
+  }'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "label", comparator: "str_eq", expected: 'paid_subscription_payment'}
+    - compare: {jsonpath_mini: "subject", comparator: "str_eq", expected: 'foo {{user_name}}'}
+    - compare: {jsonpath_mini: "template", comparator: "str_eq", expected: 'template {{user_name}}'}
+
+- test:
+  - name: "Save modified version of template with scoped user without admin scope"
+  - url: "/rpc/notification_template"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOiJiYjhmNDQ3OC1kZjQxLTQxMWMtOGVkNy0xMmMwMzQwNDRjMGUifQ.9eKVBoik7ByLB0Ewag48sYMlVQVW7eSQkDxPcrKEICE', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{
+    "data": {
+      "label": "paid_subscription_payment",
+      "subject": "foo {{user_name}}",
+      "template": "template {{user_name}}"
+    }
+  }'
+  - expected_status: [403]
+
+
+- test:
+  - name: "Save modified version of template with scoped user with admin scope"
+  - url: "/rpc/notification_template"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOiJiYjhmNDQ3OC1kZjQxLTQxMWMtOGVkNy0xMmMwMzQwNDRjMGUiLCJzY29wZXMiOlsiYWRtaW4iXX0.DlrH2AetB7JSsYXrY647bHGN12sTN4MwbeQOZidISVc', 'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
+  - method: "POST"
+  - body: '{
+    "data": {
+      "label": "paid_subscription_payment",
+      "subject": "foo {{user_name}}",
+      "template": "template {{user_name}}"
+    }
+  }'
+  - expected_status: [200]
+
+
+- test:
+  - name: "Save modified version of template without auth"
+  - url: "/rpc/notification_template"
+  - method: "POST"
+  - body: '{
+    "data": {
+      "label": "paid_subscription_payment",
+      "subject": "foo {{user_name}}",
+      "template": "template {{user_name}}"
+    }
+  }'
+  - expected_status: [401]
+
+

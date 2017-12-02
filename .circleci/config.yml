@@ -47,6 +47,7 @@ jobs:
       - run: heroku restart -a $PRODUCTION_PAYMENT_API_APP
       - run: heroku restart -a $PRODUCTION_PROJECT_API_APP
       - run: heroku restart -a $PRODUCTION_PLATFORM_API_APP
+      - run: heroku restart -a $PRODUCTION_NOTIFICATION_API_APP
 
 
   deploy_sandbox:
@@ -69,6 +70,7 @@ jobs:
       - run: heroku restart -a $SANDBOX_PAYMENT_API_APP
       - run: heroku restart -a $SANDBOX_PROJECT_API_APP
       - run: heroku restart -a $SANDBOX_PLATFORM_API_APP
+      - run: heroku restart -a $SANDBOX_NOTIFICATION_API_APP
 
 
 workflows:
