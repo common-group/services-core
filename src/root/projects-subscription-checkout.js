@@ -97,7 +97,7 @@ const projectsSubscriptionCheckout = {
 
         const isLongDescription = reward => reward.description && reward.description.length > 110;
 
-        const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
+        const lastDayOfNextMonth = () => moment().add(1, 'months').format('D/MMMM');
 
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
