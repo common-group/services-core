@@ -140,7 +140,7 @@ const userSubscriptionBox = {
                             m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                 m('span.fa.fa-exclamation-triangle'),
                                 m.trust('&nbsp;'),
-                                'Sua assinatura está suspensa por falta de pagamento'
+                                'Sua assinatura está inativa por falta de pagamento'
                             ]),
                             m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
                         ] : subscription.status === 'canceled' ? [
