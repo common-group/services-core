@@ -33,31 +33,51 @@ async function subscriptions_gateway_error_rescue_charge() {
     };
 };
 
+async function refuse_expired_slip_payments() {
+    try {
+        // fetch payment and user data to build context
+        const res = await pool.query(
+            `select payment_service.refuse_expired_slip_payments()`);
+
+        console.log(res.rows[0]);
+    } catch (e) {
+        console.log(e);
+    };
+};
+
 const recursive_calls = () => {
 
     const rec_charge = () => {
         setTimeout(() => {
             console.log('checking for subscriptions to charge');
 
-            subscriptions_charge()
-                .then(void(0))
-                .catch(void(0));
-            rec_charge();
-        }, (process.env.SET_INTERVAL || 60000))
+            subscriptions_charge().then(() => {
+                rec_charge();
+            })
+        }, (process.env.SET_INTERVAL || 60000));
     };
 
     const rec_errors_charge = () => {
         setTimeout(() => {
             console.log('checking for subscriptions gateway errors to charge');
-            subscriptions_gateway_error_rescue_charge()
-                .then(void(0))
-                .catch(void(0));
-            rec_errors_charge();
-        }, (process.env.SET_INTERVAL || 60000))
+            subscriptions_gateway_error_rescue_charge().then(() => {
+                rec_errors_charge();
+            });
+        }, (process.env.SET_INTERVAL || 60000));
     };
 
+    const refuse_expired = () => {
+        setTimeout(() => {
+            console.log('checking for expired slip payments');
+            refuse_expired_slip_payments().then(() => {
+                refuse_expired();
+            });
+        }, (process.env.SET_INTERVAL || 60000));
+    }
+
     rec_charge();
-    rec_errors_charge()
+    rec_errors_charge();
+    refuse_expired();
 
 };
 
