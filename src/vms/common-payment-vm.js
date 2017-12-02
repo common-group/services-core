@@ -7,8 +7,17 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const {commonPayment, commonPaymentInfo} = models;
-const sendPaymentRequest = (data) => commonPayment.postWithToken({data}, null, {
+const sendPaymentRequest = data => commonPayment.postWithToken({data}, null, {
     'X-forwarded-For': '127.0.0.1'
+});
+
+const updateUser = user => m.request({
+    method: 'PUT',
+    url: `/users/${user.id}.json`,
+    data: {
+        user
+    },
+    config: h.setCsrfToken
 });
 
 const setNewCreditCard = (creditCardFields) => {
@@ -68,22 +77,35 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
             }
         };
 
+        const userPayload = {
+            id: h.getUser().id,
+            document_number: customer.ownerDocument(),
+            name: customer.completeName(),
+            address_street: address.address_street,
+            address_neighbourhood: address.address_neighbourhood,
+            street_number: address.street_number,
+            address_zip_code: address.address_zip_code,
+            address_city: address.address_city,
+            address_complement: address.address_complement,
+            phone_number: address.phone_number
+        };
+    
         if (commonData.rewardCommonId) {
             _.extend(payload, {reward_id: commonData.rewardCommonId});
         }
-
-        sendPaymentRequest(payload)
-            .then(() => {
-                m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
-            })
-            .catch((data) => {
-                const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
-                fields.isLoading(false);
-                fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
-                m.redraw();
-            });
+    
+        Promise.all([
+            sendPaymentRequest(payload),
+            updateUser(userPayload)
+        ]).then(() => {
+            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
+        }).catch((data) => {
+            const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+            fields.isLoading(false);
+            fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
+            m.redraw();
+        });
     });
-
 };
 
 const sendSlipPayment = (fields, commonData) => {
@@ -124,20 +146,34 @@ const sendSlipPayment = (fields, commonData) => {
         }
     };
 
+    const userPayload = {
+        id: h.getUser().id,
+        document_number: customer.ownerDocument(),
+        name: customer.completeName(),
+        address_street: address.address_street,
+        address_neighbourhood: address.address_neighbourhood,
+        street_number: address.street_number,
+        address_zip_code: address.address_zip_code,
+        address_city: address.address_city,
+        address_complement: address.address_complement,
+        phone_number: address.phone_number
+    };
+
     if (commonData.rewardCommonId) {
         _.extend(payload, {reward_id: commonData.rewardCommonId});
     }
 
-    sendPaymentRequest(payload)
-        .then(() => {
-            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
-        })
-        .catch((data) => {
-            const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
-            fields.isLoading(false);
-            fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
-            m.redraw();
-        });
+    Promise.all([
+        sendPaymentRequest(payload),
+        updateUser(userPayload)
+    ]).then(() => {
+        m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
+    }).catch((data) => {
+        const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+        fields.isLoading(false);
+        fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
+        m.redraw();
+    });
 };
 
 const paymentInfo = (paymentId) => {
