@@ -51,7 +51,8 @@ const projectRewardCard = {
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
                     vm.contributionValue(valueFloat);
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?reward_id=${vm.selectedReward().id}&contribution_value=${vm.contributionValue()}`);
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, {contribution_value: valueFloat, reward_id: vm.selectedReward().id});
+
                     return false;
                 }
 

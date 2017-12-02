@@ -32,7 +32,7 @@ const rewardSelectCard = {
                 rewardVM.error('');
                 if (args.isSubscription) {
                     const currentRewardId = rewardVM.selectedReward().id;
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}`);
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, {contribution_value: valueFloat, reward_id: currentRewardId});
                 } else {
                     const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
                     h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);

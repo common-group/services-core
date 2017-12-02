@@ -97,6 +97,8 @@ const projectsSubscriptionCheckout = {
 
         const isLongDescription = reward => reward.description && reward.description.length > 110;
 
+        const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
+
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
@@ -106,9 +108,8 @@ const projectsSubscriptionCheckout = {
                 data: vm.fields.address()
             }));
         });
+        
         projectVM.getCurrentProject();
-
-        const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
 
         return {
             addressChange,
@@ -162,71 +163,73 @@ const projectsSubscriptionCheckout = {
                 ) : '')
             ]);
 
-        return m('#project-payment.w-section.w-clearfix.section', (addVM && !_.isEmpty(project)) ? [
-            m('.w-col',
-                m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
-                    m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                        I18n.t('selected_reward.value', ctrl.scope())
-                    ),
-                    m('.w-clearfix', [
-                        m('.fontsize-larger.text-success.u-left',
-                            `R$ ${formatedValue}`
+        return m('#project-payment', (addVM && !_.isEmpty(project)) ? [
+            m(`.w-section.section-product.${projectVM.currentProject().mode}`),
+            m('.w-section.w-clearfix.section', [
+                m('.w-col',
+                    m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
+                        m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
+                            I18n.t('selected_reward.value', ctrl.scope())
                         ),
-                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                            'Editar'
-                        )
-                    ]),
-                    m('.divider.u-marginbottom-10.u-margintop-10'),
-                    m('.back-payment-info-reward', [
-                        m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                            I18n.t('selected_reward.reward', ctrl.scope())
-                        ),
-                        m('.fontsize-smallest.fontweight-semibold',
-                            ctrl.reward().title
-                        ),
-                        m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
-                            class: ctrl.isLongDescription(ctrl.reward()) ?
-                                    ctrl.toggleDescription() ? 'extended' : '' : 'extended'
-                        }, ctrl.reward().description ?
-                            ctrl.reward().description :
-                            m.trust(
-                                I18n.t('selected_reward.review_without_reward_html',
-                                    ctrl.scope(
-                                        _.extend({
-                                            value: formatedValue
-                                        })
+                        m('.w-clearfix', [
+                            m('.fontsize-larger.text-success.u-left',
+                                `R$ ${formatedValue}`
+                            ),
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                'Editar'
+                            )
+                        ]),
+                        m('.divider.u-marginbottom-10.u-margintop-10'),
+                        m('.back-payment-info-reward', [
+                            m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
+                                I18n.t('selected_reward.reward', ctrl.scope())
+                            ),
+                            m('.fontsize-smallest.fontweight-semibold',
+                                ctrl.reward().title
+                            ),
+                            m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+                                class: ctrl.isLongDescription(ctrl.reward()) ?
+                                        ctrl.toggleDescription() ? 'extended' : '' : 'extended'
+                            }, ctrl.reward().description ?
+                                ctrl.reward().description :
+                                m.trust(
+                                    I18n.t('selected_reward.review_without_reward_html',
+                                        ctrl.scope(
+                                            _.extend({
+                                                value: formatedValue
+                                            })
+                                        )
                                     )
                                 )
-                            )
-                        ),
-                        ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
-                            onclick: ctrl.toggleDescription.toggle
-                        }, [
-                            ctrl.toggleDescription() ? 'menos ' : 'mais ',
-                            m('span.fa.fa-angle-down', {
-                                class: ctrl.toggleDescription() ? 'reversed' : ''
-                            })
-                        ]) : '',
-                        ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
-                            m('span.fontweight-semibold',
-                                'Entrega prevista:'
                             ),
-                            ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
-                        ]) : '',
-                        (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential') ?
-                        m('.fontcolor-secondary.fontsize-smallest', [
-                            m('span.fontweight-semibold',
-                                'Forma de envio: '
-                            ),
-                            I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {
-                                scope: 'projects.contributions'
-                            })
-                        ]) :
-                        ''
+                            ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                                onclick: ctrl.toggleDescription.toggle
+                            }, [
+                                ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                                m('span.fa.fa-angle-down', {
+                                    class: ctrl.toggleDescription() ? 'reversed' : ''
+                                })
+                            ]) : '',
+                            ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
+                                m('span.fontweight-semibold',
+                                    'Entrega prevista:'
+                                ),
+                                ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
+                            ]) : '',
+                            (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential') ?
+                            m('.fontcolor-secondary.fontsize-smallest', [
+                                m('span.fontweight-semibold',
+                                    'Forma de envio: '
+                                ),
+                                I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {
+                                    scope: 'projects.contributions'
+                                })
+                            ]) :
+                            ''
+                        ])
                     ])
-                ])
-            ),
-
+                )
+            ]),
             m('.w-container',
                 m('.w-row', [
                     m('.w-col.w-col-8', [

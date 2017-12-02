@@ -90,12 +90,13 @@ const getCurrentProject = () => {
             currentProject(jsonData);
         }
 
-        m.redraw(true);
-
         init((project_id || projectId), (project_user_id || projectUserId));
+
+        m.redraw();
 
         return currentProject();
     }
+
     return false;
 };
 
