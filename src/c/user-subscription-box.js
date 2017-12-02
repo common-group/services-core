@@ -6,6 +6,7 @@ import moment from 'moment';
 import models from '../models';
 import {catarse} from '../api';
 import contributionVM from '../vms/contribution-vm';
+import commonPaymentVM from '../vms/common-payment-vm';
 import ownerMessageContent from '../c/owner-message-content';
 import modalBox from '../c/modal-box';
 import userVM from '../vms/user-vm';
@@ -33,6 +34,12 @@ const userSubscriptionBox = {
             });
             // console.log('subscription1:', JSON.stringify(subscription, null, 2));
         });
+
+        if (subscription.status === 'started' && subscription.payment_method === 'boleto' && subscription.last_payment_id) {
+            commonPaymentVM.paymentInfo(subscription.last_payment_id).then(function(info) {
+                subscription.boleto_url = info.boleto_url;
+            });
+        }
 
         if (subscription.reward_external_id) {
             const filterRewVM = catarse.filtersVM({
@@ -110,29 +117,8 @@ const userSubscriptionBox = {
                                 deleted:  ' Apagada'
                             }[subscription.status] || ' Erro',
                             m.trust('&nbsp;&nbsp;&nbsp;'),
-                            ( (subscription.payment_method||(subscription.checkout_data&&subscription.checkout_data.payment_method)) === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
-                        ]),
-                        m('.w-embed',
-                            m('div', [
-                                m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold',
-                                    I18n.t('status', contributionScope())
-                                ),
-                                (contributionVM.canShowReceipt(subscription) ?
-                                    m(`a.alt-link.u-margintop-10[href='/projects/${subscription.project.id}/contributions/${subscription.contribution_id}/receipt'][target='__blank']`,
-                                        I18n.t('show_receipt', contributionScope())
-                                    ) : ''),
-
-                                (subscription.gateway_data && contributionVM.canShowSlip(subscription) ?
-                                    m(`a.alt-link.u-margintop-10[href='${subscription.gateway_data.boleto_url}'][target='__blank']`,
-                                        I18n.t('print_slip', contributionScope())
-                                    ) : ''),
-
-                                (subscription.gateway_data && contributionVM.canGenerateSlip(subscription) ?
-                                    m(`a.alt-link.u-margintop-10[href='/projects/${subscription.project.id}/contributions/${subscription.contribution_id}/second_slip'][target='__blank']`,
-                                        I18n.t('slip_copy', contributionScope())
-                                    ) : '')
-                            ])
-                        )
+                            ( subscription.payment_method === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
+                        ])
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
                         (subscription.reward ? [m('.fontsize-smallest.fontweight-semibold',
@@ -147,7 +133,8 @@ const userSubscriptionBox = {
                                 m('span.fa.fa-exclamation-triangle'),
                                 m.trust('&nbsp;'),
                                 'Aguardando confirmação do pagamento'
-                            ])
+                            ]),
+                            (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
                         ] :
                         (subscription.status === 'inactive' ? [
                             m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
