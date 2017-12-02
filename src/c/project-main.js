@@ -7,6 +7,7 @@ import projectAbout from './project-about';
 import projectRewards from './project-rewards';
 import projectComments from './project-comments';
 import projectPosts from './project-posts';
+import projectVM from '../vms/project-vm';
 
 const projectMain = {
     controller(args) {
@@ -47,6 +48,8 @@ const projectMain = {
             };
 
         h.redrawHashChange();
+
+        projectVM.checkSubscribeAction();
 
         return {
             displayTabContent,

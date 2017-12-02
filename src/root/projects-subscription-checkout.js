@@ -30,6 +30,11 @@ const projectsSubscriptionCheckout = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
+        if (_.isNull(currentUserID)) {
+            projectVM.storeSubscribeAction(m.route());
+            h.navigateToDevise();
+        }
+
         let reward = m.prop(rewardVM.selectedReward());
         let value;
 
@@ -99,10 +104,6 @@ const projectsSubscriptionCheckout = {
 
         const lastDayOfNextMonth = () => moment().add(1, 'months').endOf('month').format('D/MMMM');
 
-        if (_.isNull(currentUserID)) {
-            return h.navigateToDevise();
-        }
-
         vm.fetchUser().then(() => {
             addVM(addressVM({
                 data: vm.fields.address()
@@ -163,7 +164,7 @@ const projectsSubscriptionCheckout = {
                 ) : '')
             ]);
 
-        return m('#project-payment', (addVM && !_.isEmpty(project)) ? [
+        return m('#project-payment', (addVM && user && !_.isEmpty(project)) ? [
             m(`.w-section.section-product.${projectVM.currentProject().mode}`),
             m('.w-section.w-clearfix.section', [
                 m('.w-col',
