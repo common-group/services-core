@@ -134,6 +134,18 @@ const updateProject = (projectId, projectData) => m.request({
     config: h.setCsrfToken
 });
 
+const subscribeActionKey = 'subscribeProject';
+const storeSubscribeAction = (route) => {
+    h.storeAction(subscribeActionKey, route);
+};
+
+const checkSubscribeAction = () => {
+    const actionRoute = h.callStoredAction(subscribeActionKey);
+    if (actionRoute) {
+        m.route(actionRoute);
+    }
+};
+
 
 const projectVM = {
     userDetails,
@@ -149,7 +161,9 @@ const projectVM = {
     fetchSubData,
     subscriptionData,
     updateProject,
-    isSubscription
+    isSubscription,
+    storeSubscribeAction,
+    checkSubscribeAction
 };
 
 export default projectVM;

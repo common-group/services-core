@@ -52,8 +52,8 @@ const
     getRandomInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1)) + min,
 
     storeAction = (action: string, value: string) => {
-        if (!sessionStorage.getItem(action)) {
-            return sessionStorage.setItem(action, String(value));
+        if (!localStorage.getItem(action)) {
+            return localStorage.setItem(action, String(value));
         }
     },
 
@@ -67,10 +67,10 @@ const
     },
 
     callStoredAction = (action: string): ?string => {
-        const item = sessionStorage.getItem(action);
+        const item = localStorage.getItem(action);
 
         if (item) {
-            sessionStorage.removeItem(action);
+            localStorage.removeItem(action);
             return item;
         }
         return null;
