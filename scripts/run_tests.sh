@@ -73,7 +73,7 @@ do
     ./specs/postgrest/$postgrest_bin ./specs/postgrest/settings.config > specs/logs/postgrest.log 2>&1 &
 
     echo "Running tests for $service_name"
-    sleep 2
+    sleep 4
     for test_file in $service_dir/test/*.yml
     do
         echo ""
