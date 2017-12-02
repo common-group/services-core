@@ -322,6 +322,20 @@ async function init(stdin_data) {
                         );
                     }
                 }
+                if(payment.subscription_id && transaction.payment_method === 'boleto' && _.includes(['processing', 'waiting_payment'], transaction.status)) {
+                    try {
+                        await client.query(
+                            `select notification_service.notify('slip_subscription_payment', json_build_object('relations', json_build_object(
+                        'catalog_payment_id', $1::uuid,
+                        'subscription_id', $2::uuid,
+                        'project_id', $3::uuid,
+                        'reward_id', $4::uuid,
+                        'user_id', $5::uuid
+                    )))`, [payment.id, payment.subscription_id, payment.project_id, payment.reward_id, payment.user_id]);
+                    } catch (e) {
+                        console.log('failed notify', e);
+                    }
+                }
                 // if transaction is not on initial state should transition payment to new state
                 if (!_.includes(['processing', 'waiting_payment'], transaction.status)) {
                     await client.query(
