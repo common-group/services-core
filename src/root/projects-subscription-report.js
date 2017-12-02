@@ -85,7 +85,7 @@ const projectSubscriptionReport = {
                         },
                         {
                             value: 'credit_card',
-                            option: 'C.C'
+                            option: 'Cartão de crédito'
                         },
                         {
                             value: 'boleto',
