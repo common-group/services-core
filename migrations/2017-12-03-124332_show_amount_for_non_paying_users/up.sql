@@ -1,6 +1,5 @@
 -- Your SQL goes here
 
-
 CREATE OR REPLACE VIEW payment_service_api.subscriptions AS
  SELECT s.id,
     s.project_id,
@@ -17,7 +16,7 @@ CREATE OR REPLACE VIEW payment_service_api.subscriptions AS
             ELSE NULL::bigint::numeric
         END AS total_paid,
     s.status,
-    payment_service.paid_transition_at(ROW(last_paid_payment.id, last_paid_payment.platform_id, last_paid_payment.project_id, last_paid_payment.user_id, last_paid_payment.subscription_id, last_paid_payment.reward_id, last_paid_payment.data, last_paid_payment.gateway, last_paid_payment.gateway_cached_data, last_paid_payment.created_at, last_paid_payment.updated_at, last_paid_payment.common_contract_data, last_paid_payment.gateway_general_data, last_paid_payment.status, last_paid_payment.external_id, last_paid_payment.error_retry_at)) AS paid_at,
+    payment_service.paid_transition_at(last_paid_payment.*) AS paid_at,
     payment_service.paid_transition_at(ROW(last_paid_payment.id, last_paid_payment.platform_id, last_paid_payment.project_id, last_paid_payment.user_id, last_paid_payment.subscription_id, last_paid_payment.reward_id, last_paid_payment.data, last_paid_payment.gateway, last_paid_payment.gateway_cached_data, last_paid_payment.created_at, last_paid_payment.updated_at, last_paid_payment.common_contract_data, last_paid_payment.gateway_general_data, last_paid_payment.status, last_paid_payment.external_id, last_paid_payment.error_retry_at)) + core.get_setting('subscription_interval'::character varying)::interval AS next_charge_at,
         CASE
             WHEN core.is_owner_or_admin(s.user_id) THEN (s.checkout_data - 'card_id'::text - 'card_hash'::text - 'current_ip'::text) || jsonb_build_object('customer', ((s.checkout_data ->> 'customer'::text)::jsonb) || jsonb_build_object('name', u.data ->> 'name'::text, 'email', u.data ->> 'email'::text, 'document_number', u.data ->> 'document_number'::text))
@@ -42,42 +41,12 @@ CREATE OR REPLACE VIEW payment_service_api.subscriptions AS
             count(1) FILTER (WHERE cp.status = 'refused'::payment_service.payment_status) AS refused_count
            FROM payment_service.catalog_payments cp
           WHERE cp.subscription_id = s.id) stats ON true
-     LEFT JOIN LATERAL ( SELECT cp.id,
-            cp.platform_id,
-            cp.project_id,
-            cp.user_id,
-            cp.subscription_id,
-            cp.reward_id,
-            cp.data,
-            cp.gateway,
-            cp.gateway_cached_data,
-            cp.created_at,
-            cp.updated_at,
-            cp.common_contract_data,
-            cp.gateway_general_data,
-            cp.status,
-            cp.external_id,
-            cp.error_retry_at
+     LEFT JOIN LATERAL ( SELECT cp.*
            FROM payment_service.catalog_payments cp
           WHERE cp.subscription_id = s.id AND cp.status = 'paid'::payment_service.payment_status
           ORDER BY cp.created_at DESC
          LIMIT 1) last_paid_payment ON true
-     LEFT JOIN LATERAL ( SELECT cp.id,
-            cp.platform_id,
-            cp.project_id,
-            cp.user_id,
-            cp.subscription_id,
-            cp.reward_id,
-            cp.data,
-            cp.gateway,
-            cp.gateway_cached_data,
-            cp.created_at,
-            cp.updated_at,
-            cp.common_contract_data,
-            cp.gateway_general_data,
-            cp.status,
-            cp.external_id,
-            cp.error_retry_at
+     LEFT JOIN LATERAL ( SELECT cp.*
            FROM payment_service.catalog_payments cp
           WHERE cp.subscription_id = s.id
           ORDER BY cp.created_at DESC
