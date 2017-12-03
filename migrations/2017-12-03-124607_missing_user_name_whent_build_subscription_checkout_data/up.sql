@@ -136,4 +136,4 @@ AS $function$
             
             return _result;
         end;
-    $function$
+    $function$;
