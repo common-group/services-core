@@ -43,6 +43,7 @@ const projectTabs = {
         const project = args.project,
             rewards = args.rewardDetails;
 
+
         const mainClass = (!ctrl.isFixed() || project().is_owner_or_admin) ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
 
         return m('nav-wrapper', project() ? [
@@ -78,10 +79,14 @@ const projectTabs = {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
                                     cat: 'project_view', act: 'project_contributions_view', project: project() })
-                            }, [
-                                projectVM.isSubscription(project) ? 'Assinantes ' : 'Apoiadores ',
+                            }, projectVM.isSubscription(project) ? [
+                                'Assinantes ',
+                                m('span.badge.w-hidden-small.w-hidden-tiny', args.subscriptionData() ? args.subscriptionData().total_subscriptions : '-')
+                            ] : [
+                                'Apoiadores ',
                                 m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
-                            ]),
+                            ]
+                            ),
                             m(`a[id="comments-link"][class="dashboard-nav-link mf ${(h.hashMatch('#comments') ? 'selected' : '')}"][href="#comments"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({

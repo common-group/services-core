@@ -39,6 +39,7 @@ const projectsShow = {
             }),
             m.component(projectTabs, {
                 project,
+                subscriptionData: ctrl.subscriptionData,
                 rewardDetails: ctrl.rewardDetails
             }),
             m.component(projectMain, {
