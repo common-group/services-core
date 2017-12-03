@@ -1,4 +1,3 @@
-
 -- Start transaction and plan the tests.
 BEGIN;
 SELECT plan(2);
