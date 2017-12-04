@@ -5,26 +5,38 @@ import h from '../h';
 import facebookButton from '../c/facebook-button';
 import projectShareBox from '../c/project-share-box';
 import projectRow from '../c/project-row';
-import userVM from '../vms/user-vm';
-import projectVM from '../vms/project-vm';
+import UserVM from '../vms/user-vm';
+import ProjectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
-
 const ProjectsSubscriptionThankYou = {
     controller(args) {
-        const recommendedProjects = userVM.getUserRecommendedProjects();
+        const paymentMethod = h.getParams('payment_method');
         const projectId = h.getParams('project_id');
-
-        projectVM.fetchProject(projectId);
+        const project = m.prop({});
+        const projectUser = m.prop();
+        const recommendedProjects = UserVM.getUserRecommendedProjects();
+        
+        ProjectVM
+            .fetchProject(projectId, false)
+            .then(projectData => {
+                project(_.first(projectData));
+                return UserVM.fetchUser(project().user.id, false);
+            })
+            .then(projectUserData => projectUser(_.first(projectUserData)));
 
         return {
             displayShareBox: h.toggleProp(false, true),
-            recommendedProjects
+            recommendedProjects,
+            paymentMethod,
+            project,
+            projectUser
         };
     },
     view(ctrl, args) {
-        const project = projectVM.currentProject();
+        const project = ctrl.project();
         const user = h.getUser();
+        const projectUser = ctrl.projectUser();
 
         return m('#thank-you', !project ? h.loader() : [
             m('.page-header.u-marginbottom-30',
@@ -32,7 +44,7 @@ const ProjectsSubscriptionThankYou = {
                     m('.w-row',
                         m('.w-col.w-col-10.w-col-push-1', [
                             m('.u-marginbottom-20.u-text-center',
-                                m(`img.big.thumb.u-round[src='${project.user_thumb}']`)
+                                projectUser ? m(`img.big.thumb.u-round[src='${projectUser.profile_img_thumbnail}']`) : h.loader()
                             ),
                             m('#thank-you.u-text-center', [
                                 m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
@@ -40,7 +52,10 @@ const ProjectsSubscriptionThankYou = {
                                 ),
                                 m('.fontsize-base.u-marginbottom-40',
                                     m.trust(
-                                        I18n.t('thank_you.thank_you_text_html',
+                                        I18n.t(
+                                            ctrl.paymentMethod === 'credit_card' 
+                                                ? 'thank_you.thank_you_text_html'
+                                                : 'thank_you.thank_you_slip_text_html',
                                             I18nScope({
                                                 total: project.total_contributions,
                                                 email: user.email,
