@@ -98,7 +98,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
             sendPaymentRequest(payload),
             updateUser(userPayload)
         ]).then(() => {
-            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
+            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=credit_card`);
         }).catch((data) => {
             const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
             fields.isLoading(false);
@@ -167,7 +167,7 @@ const sendSlipPayment = (fields, commonData) => {
         sendPaymentRequest(payload),
         updateUser(userPayload)
     ]).then(() => {
-        m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}`);
+        m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=boleto`);
     }).catch((data) => {
         const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
         fields.isLoading(false);
