@@ -1,5 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import { catarse, commonProject } from '../api';
 import models from '../models';
 import h from '../h';
@@ -8,6 +9,8 @@ import projectDataChart from './project-data-chart';
 import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectContributions = {
     controller(args) {
@@ -97,7 +100,7 @@ const projectContributions = {
                                     projectVM.isSubscription(args.project()) ? stats.total_subscriptions : stats.total
                                 ),
                                 m('.fontsize-large',
-                                    'pessoas apoiam este projeto'
+                                    I18n.t(`people_back.${args.project().mode}`, I18nScope())
                                 )
                             ]),
                             m('.w-col.w-col-6',
@@ -105,25 +108,25 @@ const projectContributions = {
                                     m('.w-row', [
                                         m('.u-marginbottom-20.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                             m('.fontweight-semibold.u-marginbottom-10',
-                                                'Apoiadores novos'
+                                                I18n.t(`new_backers.${args.project().mode}`, I18nScope())
                                             ),
                                             m('.fontsize-largest.u-marginbottom-10',
                                                 `${Math.floor(stats.new_percent)}%`
                                             ),
                                             m('.fontsize-smallest',
-                                                'apoiadores que nunca tinham apoiado um projeto no Catarse'
+                                                I18n.t(`new_backers_explanation.${args.project().mode}`, I18nScope())
                                             )
                                         ]),
                                         m('.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                             m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
                                             m('.fontweight-semibold.u-marginbottom-10',
-                                                'Apoiadores recorrentes'
+                                                I18n.t(`recurring_backers.${args.project().mode}`, I18nScope())
                                             ),
                                             m('.fontsize-largest.u-marginbottom-10',
                                                 `${Math.ceil(stats.returning_percent)}%`
                                             ),
                                             m('.fontsize-smallest',
-                                                'apoiadores que já tinham apoiado um projeto no Catarse'
+                                                I18n.t(`recurring_backers_explanation.${args.project().mode}`, I18nScope())
                                             )
                                         ])
                                     ])
@@ -134,7 +137,7 @@ const projectContributions = {
                 ),
             m('.divider.w-section'),
             m('.section.w-section', m('.w-container', [
-                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', 'Apoiadores'),
+                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', I18n.t(`backers.${args.project().mode}`, I18nScope())),
                 m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, contribution => m('.project-contribution-item.w-col.w-col-4', [
                         // here new card
                     m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
