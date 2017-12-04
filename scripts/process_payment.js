@@ -6,6 +6,7 @@ const pagarme = require('pagarme');
 const getStdin = require('get-stdin');
 const _ = require('lodash');
 const Raven = require('raven');
+const { DateTime } = require('luxon');
 
 const pool = new Pool({
     connectionString: process.env.PROCESS_PAYMENT_DATABASE_URL,
@@ -275,6 +276,21 @@ async function init(stdin_data) {
             });
 
             _.extend(transaction_data, payment_charge);
+        } else {
+            const expirationDate = (accTime, plusDays) => {
+                let time = (accTime||DateTime.local()).setZone(
+                    'America/Sao_Paulo'
+                ).plus({days: plusDays});
+
+                if(_.includes(['6', '7'], time.toFormat('E'))) {
+                    return expirationDate(time, 2);
+                } else {
+                    return time.toISO();
+                }
+            };
+
+            transaction_data['boleto_expiration_date'] = expirationDate(
+                DateTime.local(), 2);
         }
 
         try {
