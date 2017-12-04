@@ -73,6 +73,9 @@ const projectInsightsSub = {
                             ]),
                             m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10',
                                 (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '')
+                            ),
+                            m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
+                                'O saldo demora até 20 mins após o pagamento para ser atualizado.'
                             )
                         ])
                     ])
