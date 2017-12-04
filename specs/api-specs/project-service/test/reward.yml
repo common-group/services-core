@@ -81,6 +81,7 @@
   - name: "Update a reward using anonymous"
   - url: "/rpc/reward"
   - method: "POST"
+  - header: { 'Platform-Code': 'a28be766-bb36-4821-82ec-768d2634d78b', 'X-Forwarded-For': '127.0.0.1' }
   - body: '{ "data": { "id": "c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d",  "title": "updated title"} }'
-  - expected_status: [401]
+  - expected_status: [404]
 

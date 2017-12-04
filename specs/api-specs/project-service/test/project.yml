@@ -63,5 +63,6 @@
   - name: "Update a project using anonymous"
   - url: "/rpc/project"
   - method: "POST"
+  - header: { 'Platform-Code': 'a28be766-bb36-4821-82ec-768d2634d78b', 'X-Forwarded-For': '127.0.0.1' }
   - body: '{ "data": { "id": "52273d0a-1610-4f48-9239-e96e5861c3d3",  "name": "updated name"} }'
-  - expected_status: [401]
+  - expected_status: [404]
