@@ -59,7 +59,7 @@ const projectsSubscriptionContribution = {
                      m('.w-section.header-cont-new',
                         m('.w-container',
                             m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only',
-                                'Escolha a recompensa e em seguida o valor do apoio'
+                                'Escolha a recompensa e em seguida o valor do apoio mensal'
                             )
                         )
                     ),
