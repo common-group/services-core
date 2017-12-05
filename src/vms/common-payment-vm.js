@@ -79,15 +79,19 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
 
         const userPayload = {
             id: h.getUser().id,
-            document_number: customer.ownerDocument(),
+            cpf: customer.ownerDocument(),
             name: customer.completeName(),
-            address_street: address.address_street,
-            address_neighbourhood: address.address_neighbourhood,
-            street_number: address.street_number,
-            address_zip_code: address.address_zip_code,
-            address_city: address.address_city,
-            address_complement: address.address_complement,
-            phone_number: address.phone_number
+            address_attributes: {
+                country_id: address.country_id,
+                state_id: address.state_id,
+                address_street: address.address_street,
+                address_neighbourhood: address.address_neighbourhood,
+                address_number: address.address_number,
+                address_zip_code: address.address_zip_code,
+                address_city: address.address_city,
+                address_complement: address.address_complement,
+                phone_number: address.phone_number
+            }
         };
     
         if (commonData.rewardCommonId) {
@@ -148,15 +152,19 @@ const sendSlipPayment = (fields, commonData) => {
 
     const userPayload = {
         id: h.getUser().id,
-        document_number: customer.ownerDocument(),
+        cpf: customer.ownerDocument(),
         name: customer.completeName(),
-        address_street: address.address_street,
-        address_neighbourhood: address.address_neighbourhood,
-        street_number: address.street_number,
-        address_zip_code: address.address_zip_code,
-        address_city: address.address_city,
-        address_complement: address.address_complement,
-        phone_number: address.phone_number
+        address_attributes: {
+            country_id: address.country_id,
+            state_id: address.state_id,
+            address_street: address.address_street,
+            address_neighbourhood: address.address_neighbourhood,
+            address_number: address.address_number,
+            address_zip_code: address.address_zip_code,
+            address_city: address.address_city,
+            address_complement: address.address_complement,
+            phone_number: address.phone_number
+        }
     };
 
     if (commonData.rewardCommonId) {
