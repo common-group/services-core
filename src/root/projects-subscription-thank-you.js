@@ -11,8 +11,8 @@ import ProjectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const ProjectsSubscriptionThankYou = {
     controller(args) {
-        const paymentMethod = h.getParams('payment_method');
-        const projectId = h.getParams('project_id');
+        const paymentMethod = m.route.param('payment_method');
+        const projectId = m.route.param('project_id');
         const project = m.prop({});
         const projectUser = m.prop();
         const recommendedProjects = UserVM.getUserRecommendedProjects();
