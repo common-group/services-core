@@ -127,10 +127,9 @@ const projectDashboardMenu = {
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
                                     m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), I18n.t('basics_tab', linksScope())),
-                                    (project.mode === 'sub' ?
-                                      m(`a#goals_link[class="${editLinkClass('#goals')}"][href="${editRoute}#goals"]`, railsErrorsVM.errorsFor('goals'), I18n.t('goals_tab', linksScope())) :
-                                    m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), I18n.t('goal_tab', linksScope()))),
+                                    projectVM.isSubscription(project) ? '' : m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), I18n.t('goal_tab', linksScope())),
                                 ] : ''),
+                                projectVM.isSubscription(project) ? m(`a#goals_link[class="${editLinkClass('#goals')}"][href="${editRoute}#goals"]`, railsErrorsVM.errorsFor('goals'), I18n.t('goals_tab', linksScope())) : '',
                                 m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description"]`, railsErrorsVM.errorsFor('description'), I18n.t('description_tab', linksScope())),
                                 projectVM.isSubscription(project) ? null : m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
