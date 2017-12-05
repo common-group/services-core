@@ -75,6 +75,8 @@ const projectTabs = {
                                 'Novidades ',
                                 m('span.badge', project() ? project().posts_count : '')
                             ]),
+                            // hide temporarily
+                            projectVM.isSubscription(project) ? '' :
                             m(`a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ${(h.hashMatch('#contributions') ? 'selected' : '')}"][href="#contributions"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
