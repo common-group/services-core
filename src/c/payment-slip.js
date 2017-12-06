@@ -14,7 +14,7 @@ const paymentSlip = {
             loading = m.prop(false),
             error = m.prop(false),
             completed = m.prop(false);
-        
+
         const buildSlip = () => {
             loading(true);
             m.redraw();
@@ -65,6 +65,9 @@ const paymentSlip = {
                                         m('a.alt-link[href=\'/pt/terms-of-use\']',
                                     'Termos de Uso '
                                 ),
+                                (projectVM.isSubscription() ?
+                                m('a.alt-link[href=\'https://suporte.catarse.me/hc/pt-br/articles/115005588243\'][target=\'_blank\']', ', Regras do Catarse Assinaturas ')
+                                : ''),
                                         'e ',
                                         m('a.alt-link[href=\'/pt/privacy-policy\']',
                                     'Política de Privacidade'
