@@ -30,6 +30,30 @@ const setNewCreditCard = (creditCardFields) => {
     return creditCard;
 };
 
+const userPayload = (customer, address) => ({
+    id: h.getUser().id,
+    cpf: customer.ownerDocument(),
+    name: customer.completeName(),
+    address_attributes: {
+        country_id: address.country_id,
+        state_id: address.state_id,
+        address_street: address.address_street,
+        address_neighbourhood: address.address_neighbourhood,
+        address_number: address.address_number,
+        address_zip_code: address.address_zip_code,
+        address_city: address.address_city,
+        address_complement: address.address_complement,
+        phone_number: address.phone_number
+    }
+});
+
+const displayError = (data) => {
+    const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+    fields.isLoading(false);
+    fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
+    m.redraw();
+};
+
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     fields.isLoading(true);
     m.redraw();
@@ -76,39 +100,16 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
                 }
             }
         };
-
-        const userPayload = {
-            id: h.getUser().id,
-            cpf: customer.ownerDocument(),
-            name: customer.completeName(),
-            address_attributes: {
-                country_id: address.country_id,
-                state_id: address.state_id,
-                address_street: address.address_street,
-                address_neighbourhood: address.address_neighbourhood,
-                address_number: address.address_number,
-                address_zip_code: address.address_zip_code,
-                address_city: address.address_city,
-                address_complement: address.address_complement,
-                phone_number: address.phone_number
-            }
-        };
     
         if (commonData.rewardCommonId) {
             _.extend(payload, {reward_id: commonData.rewardCommonId});
         }
-    
-        Promise.all([
-            sendPaymentRequest(payload),
-            updateUser(userPayload)
-        ]).then(() => {
-            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=credit_card`);
-        }).catch((data) => {
-            const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
-            fields.isLoading(false);
-            fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
-            m.redraw();
-        });
+  
+        const sendPayment = () => sendPaymentRequest(payload);
+        updateUser(userPayload(customer, address))
+            .then(sendPayment)
+            .then(() => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=credit_card`))
+            .catch(displayError);
     });
 };
 
@@ -150,38 +151,17 @@ const sendSlipPayment = (fields, commonData) => {
         }
     };
 
-    const userPayload = {
-        id: h.getUser().id,
-        cpf: customer.ownerDocument(),
-        name: customer.completeName(),
-        address_attributes: {
-            country_id: address.country_id,
-            state_id: address.state_id,
-            address_street: address.address_street,
-            address_neighbourhood: address.address_neighbourhood,
-            address_number: address.address_number,
-            address_zip_code: address.address_zip_code,
-            address_city: address.address_city,
-            address_complement: address.address_complement,
-            phone_number: address.phone_number
-        }
-    };
+    
 
     if (commonData.rewardCommonId) {
         _.extend(payload, {reward_id: commonData.rewardCommonId});
     }
 
-    Promise.all([
-        sendPaymentRequest(payload),
-        updateUser(userPayload)
-    ]).then(() => {
-        m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=boleto`);
-    }).catch((data) => {
-        const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
-        fields.isLoading(false);
-        fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
-        m.redraw();
-    });
+    const sendPayment = () => sendPaymentRequest(payload);
+    updateUser(userPayload(customer, address))
+        .then(sendPayment)
+        .then(() => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=credit_card`))
+        .catch(displayError);
 };
 
 const paymentInfo = (paymentId) => {
