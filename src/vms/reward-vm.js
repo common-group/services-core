@@ -186,7 +186,7 @@ const updateReward = (projectId, rewardId, rewardData) => m.request({
     config: h.setCsrfToken
 });
 
-const canEdit = (reward, projectState, user) => (user || {}).is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count() <= 0 && reward.waiting_payment_count() <= 0));
+const canEdit = (reward, projectState, user) => (user || {}).is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count() <= 0 && (_.isFunction(reward.waiting_payment_count) ? reward.waiting_payment_count() <= 0 : true)));
 
 const canAdd = (projectState, user) => (user || {}).is_admin || projectState === 'draft' || projectState === 'online';
 
