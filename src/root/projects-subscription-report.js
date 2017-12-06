@@ -10,6 +10,16 @@ import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
 import projectsSubscriptionReportVM from '../vms/projects-subscription-report-vm';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 
+const statusCustomFilter = {
+    view: () => m('span', [
+        'Status da assinatura ',
+        m('a.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary', {
+            href: 'https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#status',
+            target: '_blank'
+        })
+    ])
+};
+
 const projectSubscriptionReport = {
     controller(args) {
         const filterVM = projectsSubscriptionReportVM,
@@ -46,7 +56,10 @@ const projectSubscriptionReport = {
                     label: 'status_filter',
                     component: FilterDropdown,
                     data: {
-                        label: 'Status da assinatura',
+                        custom_label: [
+                            statusCustomFilter,
+                            null
+                        ],
                         onchange: submit,
                         name: 'status',
                         vm: filterVM.status,
