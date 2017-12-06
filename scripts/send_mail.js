@@ -86,6 +86,7 @@ async function init(stdin_data) {
     let msg = {
         to: (process.env.INTERCEPT_TO ? process.env.INTERCEPT_TO : stdin_data.mail_config.to),
         from: (stdin_data.mail_config.from || process.env.DEFAULT_FROM),
+        fromname: (stdin_data.mail_config.from_name || process.env.DEFAULT_FROM_NAME),
         subject: subject_html,
         html: content_html,
         headers: {
