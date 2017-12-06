@@ -6,7 +6,7 @@ const commonRequestHeader = { 'Platform-Code': platformToken };
 
 const apiInit = (api, apiMeta, authUrl, globalHeader) => {
     api.init(apiMeta.getAttribute('content'), { method: 'GET', url: authUrl }, globalHeader);
-}
+};
 
 const catarse = new Postgrest();
 const catarseApiMeta = document.querySelector('[name="api-host"]');
@@ -24,4 +24,8 @@ const commonAnalytics = new Postgrest();
 const commonAnalyticsApiMeta = document.querySelector('[name="common-analytics-api-host"]');
 apiInit(commonAnalytics, commonAnalyticsApiMeta, '/api_token/common', commonRequestHeader);
 
-export { catarse, commonPayment, commonProject, commonAnalytics };
+const commonNotification = new Postgrest();
+const commonNotificationApiMeta = document.querySelector('[name="common-notification-api-host"]');
+apiInit(commonNotification, commonNotificationApiMeta, '/api_token/common', commonRequestHeader);
+
+export { catarse, commonPayment, commonProject, commonAnalytics, commonNotification };
