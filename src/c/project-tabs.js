@@ -7,7 +7,8 @@ import projectVM from '../vms/project-vm';
 const projectTabs = {
     controller(args) {
         const isFixed = m.prop(false),
-            originalPosition = m.prop(-1);
+            originalPosition = m.prop(-1),
+            project = args.project;
 
         const fixOnScroll = el => () => {
             const viewportOffset = el.getBoundingClientRect();
@@ -34,9 +35,24 @@ const projectTabs = {
             }
         };
 
+        const navigate = (event) => {
+            event.preventDefault();
+
+            if (projectVM.isSubscription(project)) {
+                m.route(`/projects/${project().project_id}/subscriptions/start`);
+                return false;
+            }
+
+            
+            h.navigateTo(`/projects/${project().project_id}/contributions/new`);
+            
+            return false;
+        };
+
         return {
             navDisplay,
-            isFixed
+            isFixed,
+            navigate
         };
     },
     view(ctrl, args) {
@@ -100,7 +116,11 @@ const projectTabs = {
                         ]),
                         project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions ? [
                             m('.w-row.project-nav-back-button', [
-                                m('.w-col.w-col-6.w-col-medium-8', [
+                                projectVM.isSubscription(project) ? m('.w-col.w-col-12', [
+                                    m(`a.w-button.btn[href="/projects/${project().project_id}/subscriptions/start"]`, {
+                                        onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, ctrl.navigate)
+                                    }, 'Apoiar ‍este projeto')
+                                ]): m('.w-col.w-col-6.w-col-medium-8', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/contributions/new"]`, {
                                         onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() })
                                     }, 'Apoiar ‍este projeto')

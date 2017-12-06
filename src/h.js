@@ -626,7 +626,7 @@ const
             return fn;
         }
 
-        return () => {
+        return (data) => {
             try {
                 if (!eventObj.project) { eventObj.project = getCurrentProject(); }
                 if (!eventObj.user) { eventObj.user = getUser(); }
@@ -634,7 +634,7 @@ const
             } catch (e) {
                 //console.error('[h.analyticsEvent] error:', e);
             }
-            fn();
+            fn(data);
         };
     },
     _analyticsOneTimeEventFired = {},
