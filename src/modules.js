@@ -33,7 +33,7 @@ export { default as ProjectsReward } from './root/projects-reward';
 export { default as Publish } from './root/publish';
 export { default as Start } from './root/start';
 export { default as Team } from './root/team';
-export { default as followFoundFriends } from './root/follow-found-friends';
+export { default as FollowFoundFriends } from './root/follow-found-friends';
 export { default as ThankYou } from './root/thank-you';
 export { default as SubProjectNew } from './root/sub-project-new';
 export { default as ProjectEditUserAbout } from './root/project-edit-user-about';
