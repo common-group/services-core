@@ -379,8 +379,9 @@ async function init(stdin_data) {
                                     JSON.stringify(result_transaction_data)
                                 ]
                             );
-                        // should inactive subscription when refused andsubsciption is not started
-                        } else if(transaction.status === 'refused' && subscription.status !== 'started') {
+                        // should inactive subscription when refused
+                        } else if(transaction.status === 'refused') {
+                            // && subscription.status !== 'started'
                             const sub_transition = await client.query(
                                 transition_subscription_sql,
                                 [
