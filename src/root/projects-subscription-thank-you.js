@@ -70,7 +70,7 @@ const ProjectsSubscriptionThankYou = {
                                 )
                             ]),
                             m('.w-row', [
-                                m('.w-hidden-small.w-hidden-tiny', [
+                                m('.w-hidden-small.w-hidden-tiny', _.isEmpty(project) ? h.loader() : [
                                     m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
                                         url: `https://www.catarse.me/${project.permalink}?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`,
                                         big: true
