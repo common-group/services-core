@@ -26,7 +26,7 @@ const paymentCreditCard = {
 
         const onSubmit = () => {
             vm.creditCardFields.errors([]);
-            
+
             if (selectedCreditCard().id === -1) {
                 checkExpiry();
                 checkcvv();
@@ -42,7 +42,7 @@ const paymentCreditCard = {
                         projectCommonId: args.project_common_id,
                         amount: args.value * 100
                     };
-                    commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData); 
+                    commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData);
                 } else {
                     vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
                 }
@@ -173,14 +173,14 @@ const paymentCreditCard = {
 
         if (!args.hideSave) {
             vm.getSavedCreditCards(args.user_id)
-                .then(savedCards => {
+                .then((savedCards) => {
                     loadingSavedCreditCards(false);
                     selectCreditCard(savedCards[0]);
                     m.redraw();
                 });
         } else {
             showForm(true);
-        }        
+        }
 
         return {
             vm,
@@ -395,7 +395,7 @@ const paymentCreditCard = {
                         ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: I18n.t('credit_card.finish_payment', ctrl.scope()) }),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30',
                             m.trust(
-                                I18n.t('credit_card.terms_of_use_agreement', ctrl.scope())
+                                I18n.t(args.isSubscription ? 'credit_card.terms_of_use_agreement_sub' : 'credit_card.terms_of_use_agreement', ctrl.scope())
                             )
                         )
                     ])
