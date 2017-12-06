@@ -146,7 +146,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                             // active subscription when current_status is paid
                             await pool.query(subscription_transition_sql
                                 , [subscription.id, 'active', JSON.stringify(req.body)]);
-                        } else if (current_status === 'refused' && subscription.status != 'started') {
+                        } else if (current_status === 'refused') {
                             // inactive subscription when payment is refused
                             await pool.query(subscription_transition_sql
                                 , [subscription.id, 'inactive', JSON.stringify(req.body)]);
