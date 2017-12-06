@@ -18,3 +18,4 @@ specs/database/schema.sql
 compose_env/.hook_service_api.env
 compose_env/.notification_dispatcher.env
 compose_env/.notification_service_api.env
+compose_env/.catarse_api.env
