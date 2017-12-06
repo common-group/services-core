@@ -1,9 +1,11 @@
 import m from 'mithril';
 import _ from 'underscore';
+import I18n from 'i18n-js';
 import h from '../h';
 import projectReminder from './project-reminder';
 import projectVM from '../vms/project-vm';
 
+const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectTabs = {
     controller(args) {
         const isFixed = m.prop(false),
@@ -45,7 +47,7 @@ const projectTabs = {
 
             
             h.navigateTo(`/projects/${project().project_id}/contributions/new`);
-            
+
             return false;
         };
 
@@ -119,7 +121,7 @@ const projectTabs = {
                                 projectVM.isSubscription(project) ? m('.w-col.w-col-12', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/subscriptions/start"]`, {
                                         onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, ctrl.navigate)
-                                    }, 'Apoiar ‍este projeto')
+                                    }, I18n.t(`submit_${project().mode}`, I18nScope()))
                                 ]): m('.w-col.w-col-6.w-col-medium-8', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/contributions/new"]`, {
                                         onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() })
