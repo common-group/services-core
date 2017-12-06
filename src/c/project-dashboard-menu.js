@@ -56,8 +56,7 @@ const projectDashboardMenu = {
             editLinksToggle.toggle(false);
         }
 
-        // temporary
-        if (args.hidePublish || (projectVM.isSubscription(args.project()) && !args.project().is_admin_role)) {
+        if (args.hidePublish) {
             showPublish.toggle(false);
         }
 
