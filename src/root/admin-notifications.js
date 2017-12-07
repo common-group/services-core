@@ -126,7 +126,7 @@ const adminNotifications = {
 					)
 				),
 				m('.divider'),
-				m('.before-footer.bg-gray.section',
+				m('.u-marginbottom-80.bg-gray.section',
 					(selectedItem ? m('.w-container',
 						m('.w-row', [
 							m('.w-col.w-col-6', [
