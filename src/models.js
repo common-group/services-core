@@ -2,7 +2,7 @@ import { catarse, commonPayment, commonAnalytics, commonProject, commonNotificat
 
 const models = {
     notificationTemplates: commonNotification.model('notification_templates'),
-    commonNotificationTemplate: commonNotification.model('rpc/notification_templates'),
+    commonNotificationTemplate: commonNotification.model('rpc/notification_template'),
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
     projectReward: commonProject.model('rewards'),
     projectSubscriber: commonProject.model('subscribers'),
@@ -91,6 +91,7 @@ models.bank.pageSize(400);
 models.city.pageSize(200);
 models.balanceTransfer.pageSize(9);
 models.userSubscription.pageSize(9);
+models.notificationTemplates.pageSize(200);
 
 
 export default models;
