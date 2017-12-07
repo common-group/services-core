@@ -23,6 +23,7 @@ var tests = ['spec/components/**/*.spec.js', 'spec/helpers/**/*.spec.js', 'src/*
 
 var rollupGlobals = {
     underscore: '_',
+    liquidjs: 'Liquid',
     moment: 'moment',
     mithril: 'm',
     jquery: '$',

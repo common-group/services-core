@@ -17,6 +17,7 @@ export default {
       'i18n-js': 'I18n',
       replaceDiacritics: 'replaceDiacritics',
       select: 'select',
-      underscore: '_'
+      underscore: '_',
+      liquidjs: 'Liquid'
   }
 };

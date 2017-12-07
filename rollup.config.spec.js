@@ -15,6 +15,7 @@ export default {
       underscore: '_',
       moment: 'moment',
       mithril: 'm',
+      liquidjs: 'Liquid',
       'chartjs': 'Chart',
       'replaceDiacritics': 'replaceDiacritics',
       'mithril-postgrest': 'Postgrest',
