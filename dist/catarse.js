@@ -1435,7 +1435,7 @@ var adminNotifications = {
 			});
 			maped.unshift(m("option[value='']", 'Selecione uma notificação'));
 			return maped;
-		}())])])), m('.w-col.w-col-3')]))), m('.divider'), m('.before-footer.bg-gray.section', selectedItem ? m('.w-container', m('.w-row', [m('.w-col.w-col-6', [m('.fontsize-base.fontweight-semibold.u-marginbottom-20.u-text-center', [m('span.fa.fa-code', ''), 'HTML']), m('.w-form', [m('form', [m('.u-marginbottom-20.w-row', [m('.w-col.w-col-2', m('label.fontsize-small', 'Label')), m('.w-col.w-col-10', m('.fontsize-small', selectedItem.label))]), m('.w-row', [m('.w-col.w-col-2', m('label.fontsize-small', 'Subject')), m('.w-col.w-col-10', m('input.positive.text-field.w-input', {
+		}())])])), m('.w-col.w-col-3')]))), m('.divider'), m('.u-marginbottom-80.bg-gray.section', selectedItem ? m('.w-container', m('.w-row', [m('.w-col.w-col-6', [m('.fontsize-base.fontweight-semibold.u-marginbottom-20.u-text-center', [m('span.fa.fa-code', ''), 'HTML']), m('.w-form', [m('form', [m('.u-marginbottom-20.w-row', [m('.w-col.w-col-2', m('label.fontsize-small', 'Label')), m('.w-col.w-col-10', m('.fontsize-small', selectedItem.label))]), m('.w-row', [m('.w-col.w-col-2', m('label.fontsize-small', 'Subject')), m('.w-col.w-col-10', m('input.positive.text-field.w-input', {
 			value: ctrl.selectedItemSubjectTemplate(),
 			oninput: m.withAttr('value', function (v) {
 				ctrl.selectedItemSubjectTemplate(v);
