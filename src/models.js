@@ -1,6 +1,8 @@
-import { catarse, commonPayment, commonAnalytics, commonProject } from './api';
+import { catarse, commonPayment, commonAnalytics, commonProject, commonNotification } from './api';
 
 const models = {
+    notificationTemplates: commonNotification.model('notification_templates'),
+    commonNotificationTemplate: commonNotification.model('rpc/notification_templates'),
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
     projectReward: commonProject.model('rewards'),
     projectSubscriber: commonProject.model('subscribers'),
