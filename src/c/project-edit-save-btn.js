@@ -3,7 +3,9 @@ import h from '../h';
 
 const projectEditSaveBtn = {
     view(ctrl, args) {
-        return m('.w-section.save-draft-btn-section', [
+        return m('.w-section.save-draft-btn-section', {
+            style: (args.hideMarginLeft ? { 'margin-left': 0 } : '')
+        }, [
             m('.w-row', [
                 m('.w-col.w-col-4.w-col-push-4',
                   (args.loading() ? h.loader() : [
