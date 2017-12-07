@@ -167,7 +167,7 @@ const projectSubscriptionReport = {
             project
         };
     },
-    view(ctrl) {
+    view(ctrl, args) {
         const subsCollection = ctrl.subscriptions.collection(),
             filterBuilder = ctrl.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {
@@ -223,7 +223,7 @@ const projectSubscriptionReport = {
                     m('.w-container', [
                         m('div',
                             m('.w-row', [
-                                m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-7',
+                                m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6',
                                     m('.w-inline-block.fontsize-base.u-marginright-10', [
                                         m('span.fontweight-semibold',
                                             ctrl.subscriptions.total()
@@ -232,6 +232,26 @@ const projectSubscriptionReport = {
                                         m.trust('&nbsp;')
                                     ])
                                 ),
+                                m('.w-col.w-col-3',
+                                  m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.xls']`,
+                                      [
+                                          m('span.fa.fa-download',
+                                        m.trust('&nbsp;')
+                                      ),
+                                          'Baixar relatório em XLS'
+                                      ]
+                                  )
+                                ),
+                                m('.w-col.w-col-3',
+                                  m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.csv']`,
+                                      [
+                                          m('span.fa.fa-download',
+                                        m.trust('&nbsp;')
+                                      ),
+                                          'Baixar relatório em CSV'
+                                      ]
+                                  )
+                                )
                             ])
                         ),
                         m('.u-marginbottom-60', [
