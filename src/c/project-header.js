@@ -16,6 +16,10 @@ const projectHeader = {
             currentUser = h.getUser(),
             projectSubscriptions = m.prop();
 
+        const hasSubscription = () => {
+            return !_.isEmpty(projectSubscriptions()) && _.findWhere(projectSubscriptions(), {project_id: project().common_id});
+        };
+
         if (h.isProjectPage() && currentUser && !_.isUndefined(project())) {
             if (!projectVM.isSubscription(project)) {
                 contributionVM
@@ -29,17 +33,19 @@ const projectHeader = {
         }
 
         return {
-            projectContributions: args.projectContributions,
+            hasSubscription,
             projectSubscriptions,
+            projectContributions: args.projectContributions,
             showContributions: h.toggleProp(false, true)
         };
     },
     view(ctrl, args) {
         const project = args.project,
             rewardDetails = args.rewardDetails;
+
         const hasContribution = (
-            (!_.isEmpty(ctrl.projectContributions()) || !_.isEmpty(ctrl.projectSubscriptions()))
-                ? m(`.card.card-terciary.u-radius.u-margintop-20${projectVM.isSubscription(project)?'.fontcolor-primary':''}`, [
+            (!_.isEmpty(ctrl.projectContributions()) || ctrl.hasSubscription())
+                ? m(`.card.card-terciary.u-radius.u-margintop-20${projectVM.isSubscription(project) ? '.fontcolor-primary' : ''}`, [
                     m('.fontsize-small.u-text-center', [
                         m('span.fa.fa-thumbs-up'),
                         (!projectVM.isSubscription(project) ? ' Você é apoiador deste projeto! ' : ' Você é assinante deste projeto! '),
