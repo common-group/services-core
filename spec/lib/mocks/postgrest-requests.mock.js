@@ -22,6 +22,11 @@ commonAnalyticsApiMeta.content = 'https://analytics.common.io';
 commonAnalyticsApiMeta.name = 'common-analytics-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonAnalyticsApiMeta);
 
+const commonNotificationApiMeta = document.createElement('meta');
+commonNotificationApiMeta.content = 'https://notification.common.io';
+commonNotificationApiMeta.name = 'common-notification-api-host';
+document.getElementsByTagName('head')[0].appendChild(commonNotificationApiMeta);
+
 // const apiPrefix = "https://api.catarse.me";
 // catarse.init(apiPrefix, {method: "GET", url: "/api_token"});
 

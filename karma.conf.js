@@ -24,6 +24,7 @@ module.exports = function(config) {
       'spec/lib/analytics.js',
       'node_modules/mithril/mithril.js',
       'node_modules/underscore/underscore.js',
+      'node_modules/liquidjs/dist/liquid.js',
       'node_modules/mithril-postgrest/dist/mithril-postgrest.js',
       'node_modules/chart.js/Chart.js',
       'node_modules/moment/moment.js',
