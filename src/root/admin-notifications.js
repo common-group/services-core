@@ -1,8 +1,49 @@
 import m from 'mithril';
+import h from '../h';
+import _ from 'underscore';
+import { catarse, commonNotification } from '../api';
+import models from '../models';
+import Liquid from 'liquidjs';
 
 const adminNotifications = {
-    controller() {},
+    controller() {
+        const templates = commonNotification.paginationVM(
+            models.notificationTemplates, 'label.asc'),
+            engine = Liquid(),
+            loaderTemp = m.prop(true),
+            selectedItem = m.prop(),
+            templateDefaultVars = {
+                user: {
+                    name: 'test name user'
+                }
+            },
+            changeSelectedTo = (collection) => {
+                return (evt) => {
+                    const item = _.find(collection,  {label: evt.target.value}),
+                        tpl = item.template || item.default_template;
+
+                    engine.parseAndRender(tpl, templateDefaultVars)
+                        .then((html) => {
+                            item.renderedTemplate = html;
+                            selectedItem(item);
+                            m.redraw();
+                        });
+                };
+            };
+
+        templates.firstPage({}).then(() => { loaderTemp(false); });
+
+        return {
+            templates,
+            selectedItem,
+            changeSelectedTo,
+            loaderTemp
+        };
+    },
     view(ctrl) {
+        const templatesCollection = ctrl.templates.collection(),
+            selectedItem = ctrl.selectedItem();
+
         return m('#notifications-admin', [m('.section',
                 m('.w-container',
                     m('.w-row', [
@@ -13,20 +54,20 @@ const adminNotifications = {
                                     m('.fontsize-larger.u-marginbottom-10.u-text-center',
                                         'Notificações'
                                     ),
-                                    m('select.medium.text-field.w-select', [
-                                        m("option[value='']",
-                                            'Selecione uma notificação'
-                                        ),
-                                        m("option[value='First']",
-                                            'First Choice'
-                                        ),
-                                        m("option[value='Second']",
-                                            'Second Choice'
-                                        ),
-                                        m("option[value='Third']",
-                                            'Third Choice'
-                                        )
-                                    ])
+                                    (ctrl.loaderTemp() && !_.isEmpty(templatesCollection) ? h.loader() : m(
+                                        'select.medium.text-field.w-select', { 
+                                            oninput: ctrl.changeSelectedTo(templatesCollection)
+                                        }, (() => {
+                                            const maped = _.map(
+                                                templatesCollection, 
+                                                (item) => {
+                                                    return m("option", { value: item.label }, item.label);
+                                                }
+                                            );
+                                            maped.unshift(m("option[value='']", 'Selecione uma notificação'));
+                                            return maped;
+                                        })())
+                                    )
                                 ])
                             ])
                         ),
@@ -36,7 +77,7 @@ const adminNotifications = {
             ),
             m('.divider'),
             m('.before-footer.bg-gray.section',
-                m('.w-container',
+                (selectedItem ? m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-6', [
                             m('.fontsize-base.fontweight-semibold.u-marginbottom-20.u-text-center', [
@@ -55,7 +96,7 @@ const adminNotifications = {
                                         ),
                                         m('.w-col.w-col-10',
                                             m('.fontsize-small',
-                                                'label_identificador'
+                                                selectedItem.label
                                             )
                                         )
                                     ]),
@@ -66,7 +107,9 @@ const adminNotifications = {
                                             )
                                         ),
                                         m('.w-col.w-col-10',
-                                            m('input.positive.text-field.w-input')
+                                            m('input.positive.text-field.w-input', {
+                                                value: selectedItem.subject || selectedItem.default_subject
+                                            })
                                         )
                                     ]),
                                     m('label.fontsize-small', [
@@ -75,21 +118,21 @@ const adminNotifications = {
                                             'Ver variáveis'
                                         )
                                     ]),
-                                    m('textarea.positive.text-field.w-input')
+                                    m('textarea.positive.text-field.w-input',
+                                        selectedItem.template|| selectedItem.default_template
+                                    )
                                 ])
                             ])
                         ]),
                         m('.w-col.w-col-6', [
                             m('.fontsize-base.fontweight-semibold.u-marginbottom-20.u-text-center', [
-                                m('span.fa.fa-eye',
-                                    ''
-                                ),
+                                m('span.fa.fa-eye', ''),
                                 'Visualização'
                             ]),
-                            m('.card.u-radius')
+                            m('.card.u-radius', m.trust(selectedItem.renderedTemplate))
                         ])
                     ])
-                )
+                ) : '')
             )
         ]);
     }
