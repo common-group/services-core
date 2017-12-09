@@ -23,7 +23,7 @@ begin
                     'document_number', (case 
                     when $1::jsonb ?| '{customer_document_number}' then
                         $1->>'customer_document_number'::text
-                    else '889.851.228-78' end) ,
+                    else '88985122878' end) ,
                         'address', json_build_object(
                             'street', (case 
                             when $1::jsonb ?| '{customer_address_street}' then
