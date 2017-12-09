@@ -11,8 +11,6 @@ BEGIN;
 
     prepare pay_with_data as select * from payment_service_api.pay(__json_data_payment($1::json));
 
-    savepoint init;
-
     create or replace function test_pay_with_anon()
     returns setof text language plpgsql as $$
     declare
