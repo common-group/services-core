@@ -1,6 +1,7 @@
 BEGIN;
     -- insert seed data for basic user/platform/project/reward
     \i /specs/sql-support/insert_platform_user_project.sql
+    \i /specs/sql-support/payment_json_build_helpers.sql
 
     select plan(12);
 
@@ -8,46 +9,7 @@ BEGIN;
         'payment_service_api', 'pay', ARRAY['json'], 'json' 
     );
 
-    create or replace function _json_data_payment(json) returns json
-    language plpgsql as $$
-    declare
-    data json;
-    begin
-        data := json_build_object(
-            'subscription', false,
-            'user_id', 'd44378a2-3637-447c-9f57-dc20fff574db',
-            'project_id', '52273d0a-1610-4f48-9239-e96e5861c3d3',
-            'amount', 2400,
-            'payment_method', 'boleto',
-            'customer', json_build_object(
-                'name', 'Teste da silva',
-                'email', 'test@test.com',
-                'document_number', coalesce($1->>'customer_document_number'::text, '889.851.228-78'),
-                'address', json_build_object(
-                    'street', 'Rua lorem ipsum',
-                    'street_number', '200',
-                    'neighborhood', 'bairro',
-                    'zipcode', '33600000',
-                    'city', 'Lorem ipsum',
-                    'state', 'MG',
-                    'country', 'Brasil',
-                    'complementary', 'complement'
-                ),
-                'phone', json_build_object(
-                    'ddi', '55',
-                    'ddd', '21',
-                    'number', '982402833'
-                )
-            )
-        );
-
-        data := (data::jsonb || $1::jsonb)::json;
-
-        return data;
-    end;
-    $$;
-
-    prepare pay_with_data as select * from payment_service_api.pay(_json_data_payment($1::json));
+    prepare pay_with_data as select * from payment_service_api.pay(__json_data_payment($1::json));
 
     savepoint init;
 
