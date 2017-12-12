@@ -6,8 +6,7 @@ import models from '../models';
 import h from '../h';
 import projectDataTable from './project-data-table';
 import projectDataChart from './project-data-chart';
-import UserFollowBtn from './user-follow-btn';
-import userVM from '../vms/user-vm';
+import projectContributorCard from './project-contributor-card';
 import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
@@ -15,37 +14,46 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const projectContributions = {
     controller(args) {
         const contributionsPerDay = m.prop([]),
-            listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
-            filterStats = catarse.filtersVM({
-                project_id: 'eq'
-            }),
-            filterVM = catarse.filtersVM({
-                project_id: 'eq'
-            }),
-            groupedCollection = (collection = []) => {
-                let grouped = [
-                        []
-                    ],
-                    group = 0;
+              listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
+              filterStats = catarse.filtersVM({
+                  project_id: 'eq'
+              }),
+              subFilterVM = catarse.filtersVM({
+                  status: 'in',
+                  project_id: 'eq'
+              }),
+              filterVM = catarse.filtersVM({
+                  project_id: 'eq'
+              }),
+              groupedCollection = (collection = []) => {
+                  let grouped = [
+                      []
+                  ],
+                      group = 0;
 
-                _.map(collection, (item, index) => {
-                    if (grouped[group].length >= 3) {
-                        group += 1;
-                        grouped[group] = [];
-                    }
+                  _.map(collection, (item, index) => {
+                      if (grouped[group].length >= 3) {
+                          group += 1;
+                          grouped[group] = [];
+                      }
 
-                    grouped[group].push(item);
-                });
+                      grouped[group].push(item);
+                  });
 
-                return grouped;
-            },
-            contributionsStats = m.prop({});
+                  return grouped;
+              },
+              contributionsStats = m.prop({});
 
-        filterVM.project_id(projectVM.isSubscription(args.project()) ? args.project().common_id : args.project().project_id);
+        if (projectVM.isSubscription(args.project())) {
+            subFilterVM.project_id(args.project().common_id).status('active');
+        } else {
+            filterVM.project_id(args.project().project_id);
+        }
+
         filterStats.project_id(args.project().project_id);
 
         if (!listVM.collection().length) {
-            listVM.firstPage(filterVM.parameters());
+            listVM.firstPage(projectVM.isSubscription(args.project()) ? subFilterVM.parameters() : filterVM.parameters());
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
         const lContributionsPerDay = catarse.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
@@ -139,43 +147,7 @@ const projectContributions = {
             m('.section.w-section', m('.w-container', [
                 m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', I18n.t(`backers.${args.project().mode}`, I18nScope())),
                 m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, contribution => m('.project-contribution-item.w-col.w-col-4', [
-                        // here new card
-                    m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
-                        m(`a[href="/users/${contribution.user_id}"][style="display: block;"]`, {
-                            onclick: h.analytics.event({
-                                cat: 'project_view',
-                                act: 'project_backer_link',
-                                lbl: contribution.user_id,
-                                project: args.project()
-                            })
-                        }, [
-                            m(`img.thumb.u-marginbottom-10.u-round[src="${!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg'}"]`)
-                        ]),
-                        m(`a.fontsize-base.fontweight-semibold.lineheigh-tight.link-hidden-dark[href="/users/${contribution.user_id}"]`, {
-                            onclick: h.analytics.event({
-                                cat: 'project_view',
-                                act: 'project_backer_link',
-                                lbl: contribution.user_id,
-                                project: args.project()
-                            })
-                        }, userVM.displayName(contribution.data)),
-                        m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${h.selfOrEmpty(contribution.data.city)}, ${h.selfOrEmpty(contribution.data.state)}`),
-                        m('.fontsize-smaller', [
-                            m('span.fontweight-semibold', contribution.data.total_contributed_projects), ' apoiados  |  ',
-                            m('span.fontweight-semibold', contribution.data.total_published_projects), ' criado'
-                        ]),
-                        m('.btn-bottom-card.w-row', [
-                            m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
-                            m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6', [
-                                m(UserFollowBtn, {
-                                    follow_id: contribution.user_id,
-                                    following: contribution.is_follow
-                                })
-                            ]),
-                            m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3')
-                        ])
-                    ])
-                        // new card
+                    m(projectContributorCard, { project: args.project, contribution, isSubscription: projectVM.isSubscription(args.project()) })
                 ]))))),
                 m('.w-row.u-marginbottom-40.u-margintop-20', [
                     m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?

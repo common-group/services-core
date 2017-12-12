@@ -45,7 +45,7 @@ const projectTabs = {
                 return false;
             }
 
-            
+
             h.navigateTo(`/projects/${project().project_id}/contributions/new`);
 
             return false;
@@ -93,8 +93,6 @@ const projectTabs = {
                                 'Novidades ',
                                 m('span.badge', project() ? project().posts_count : '')
                             ]),
-                            // hide temporarily
-                            projectVM.isSubscription(project) ? '' :
                             m(`a[id="contributions-link"][class="w-hidden-small w-hidden-tiny dashboard-nav-link mf ${(h.hashMatch('#contributions') ? 'selected' : '')}"][href="#contributions"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
@@ -122,7 +120,7 @@ const projectTabs = {
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/subscriptions/start"]`, {
                                         onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, ctrl.navigate)
                                     }, I18n.t(`submit_${project().mode}`, I18nScope()))
-                                ]): m('.w-col.w-col-6.w-col-medium-8', [
+                                ]) : m('.w-col.w-col-6.w-col-medium-8', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/contributions/new"]`, {
                                         onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() })
                                     }, 'Apoiar ‍este projeto')
