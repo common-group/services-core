@@ -8,13 +8,16 @@ const projectContributorCard = {
     controller(args) {
         const userDetails = m.prop({}),
             user_id = args.contribution.user_external_id;
-        if (_.isEmpty(args.contribution.data.profile_img_thumbnail)) {
-            userVM.fetchUser(user_id, true, userDetails).then((data) => {
+        if (args.isSubscription) {
+            userVM.fetchUser(user_id, true, userDetails).then(() => {
                 args.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
-            }
-            );
+                args.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
+                args.contribution.data.total_published_projects += userDetails().total_published_projects;
+            });
         }
-        return { userDetails };
+        return {
+            userDetails
+        };
     },
     view(ctrl, args) {
         const contribution = args.contribution;
