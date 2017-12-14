@@ -69,10 +69,10 @@ const dashboardSubscriptionCard = {
                         m('.w-col.w-col-9', [
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
                                 ctrl.user().name
-                            ),
+                             ),
                             m('.fontcolor-secondary.fontsize-smallest',
-                                ctrl.user().email
-                            )
+                              subscription.user_email
+                             )
                         ])
                     ])
                 ),
