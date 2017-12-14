@@ -1,6 +1,8 @@
 import m from 'mithril';
 import I18n from 'i18n-js';
-import {catarse} from '../api';
+import {
+    catarse
+} from '../api';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
@@ -40,7 +42,9 @@ const projectPosts = {
         const list = ctrl.listVM,
             project = args.project() || {};
 
-        return m('#posts.project-posts.w-section', { config: ctrl.scrollTo }, [
+        return m('#posts.project-posts.w-section', {
+            config: ctrl.scrollTo
+        }, [
             m('.w-container.u-margintop-20', [
                 (project.is_owner_or_admin ? [
                     (!list.isLoading()) ?
@@ -53,43 +57,65 @@ const projectPosts = {
                         ])
                     ])
                 ] : ''), (_.map(list.collection(), post => m('.w-row', [
-                    m('.w-col.w-col-1'),
-                    m('.w-col.w-col-10', [
-                        m('.post', [
-                            m('.u-marginbottom-60 .w-clearfix', [
-                                m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
-                                m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
-                                    m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
+                    _.isEmpty(post.comment_html) ?
+                    m('.card.card-message.u-radius.card-big.u-text-center.u-marginbottom-10', [
+                        m('.fa.fa-lock.fa-3x.fontcolor-secondary',
+                            ''
+                        ),
+                        project.mode === 'sub' ? [
+                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                `Post exclusivo para assinantes${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
+                            ),
+                            m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
+                                'Acessar esse post'
+                            )
+                        ] : [
+                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                `Post exclusivo para apoiadores${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
+                            ),
+                            m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
+                              'Acessar esse post'
+                            )
+                        ]
+
+                    ]) : [m('.w-col.w-col-1'),
+                        m('.w-col.w-col-10', [
+                            m('.post', [
+                                m('.u-marginbottom-60 .w-clearfix', [
+                                    m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
+                                    m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
+                                        m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
+                                    ]),
+                                    (m('.fontsize-base', m.trust(post.comment_html)))
                                 ]),
-                                    (!_.isEmpty(post.comment_html) ? m('.fontsize-base', m.trust(post.comment_html)) : m('.fontsize-base', `Post exclusivo para apoiadores${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}.`))
-                            ]),
-                            m('.divider.u-marginbottom-60')
-                        ])
-                    ]),
-                    m('.w-col.w-col-1')
+                                m('.divider.u-marginbottom-60')
+                            ])
+                        ]),
+                        m('.w-col.w-col-1')
+                    ]
                 ]))),
                 m('.w-row', [
                     (!_.isUndefined(args.post_id) ? '' :
                         (!list.isLoading() ?
                             (list.collection().length === 0 && args.projectContributions().length === 0) ?
-                                !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
-                                    m('p.fontsize-base',
-                                        m.trust(
-                                            I18n.t('empty',
-                                                I18nScope({
-                                                    project_user_name: args.userDetails().name,
-                                                    project_id: project.project_id
-                                                })
-                                            )
+                            !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
+                                m('p.fontsize-base',
+                                    m.trust(
+                                        I18n.t('empty',
+                                            I18nScope({
+                                                project_user_name: args.userDetails().name,
+                                                project_id: project.project_id
+                                            })
                                         )
                                     )
-                                ) : ''
-                            : m('.w-col.w-col-2.w-col-push-5',
+                                )
+                            ) : '' :
+                            m('.w-col.w-col-2.w-col-push-5',
                                 (list.isLastPage() ?
-                                    list.collection().length === 0 ? 'Nenhuma novidade.' : ''
-                                 : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                     onclick: list.nextPage
-                                 }, 'Carregar mais'))
+                                    list.collection().length === 0 ? 'Nenhuma novidade.' : '' :
+                                    m('button#load-more.btn.btn-medium.btn-terciary', {
+                                        onclick: list.nextPage
+                                    }, 'Carregar mais'))
                             ) :
                             m('.w-col.w-col-2.w-col-push-5', h.loader())
                         ))
