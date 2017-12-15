@@ -10,6 +10,7 @@ const editRewardCard = {
     controller(args) {
         const project = projectVM.getCurrentProject(),
             reward = args.reward(),
+            minimumValue = projectVM.isSubscription(project) ? 5 : 10,
             destroyed = m.prop(false),
             acceptNumeric = (e) => {
                 reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
@@ -18,7 +19,10 @@ const editRewardCard = {
             confirmDelete = () => {
                 const r = confirm('Você tem certeza?');
                 if (r) {
-                    if (reward.newReward) { destroyed(true); return false; }
+                    if (reward.newReward) {
+                        destroyed(true);
+                        return false;
+                    }
                     return m.request({
                         method: 'DELETE',
                         url: `/projects/${args.project_id}/rewards/${reward.id()}`,
@@ -50,15 +54,19 @@ const editRewardCard = {
                     args.error(true);
                     descriptionError(true);
                 }
-                if (!reward.minimum_value() || parseInt(reward.minimum_value()) < 10) {
+                if (!reward.minimum_value() || parseInt(reward.minimum_value()) < minimumValue) {
                     args.error(true);
                     minimumValueError(true);
                 }
                 _.map(fees(), (fee) => {
-                    _.extend(fee, { error: false });
+                    _.extend(fee, {
+                        error: false
+                    });
                     if (fee.destination() === null) {
                         args.error(true);
-                        _.extend(fee, { error: true });
+                        _.extend(fee, {
+                            error: true
+                        });
                     }
                 });
             },
@@ -67,7 +75,12 @@ const editRewardCard = {
                 if (args.error()) {
                     return false;
                 }
-                const shippingFees = _.map(fees(), fee => ({ _destroy: fee.deleted(), id: fee.id(), value: fee.value(), destination: fee.destination() }));
+                const shippingFees = _.map(fees(), fee => ({
+                    _destroy: fee.deleted(),
+                    id: fee.id(),
+                    value: fee.value(),
+                    destination: fee.destination()
+                }));
                 const data = {
                     title: reward.title(),
                     project_id: args.project_id,
@@ -121,7 +134,9 @@ const editRewardCard = {
             });
 
             if (!reward.newReward) {
-                rewardVM.getFees({ id: reward.id() }).then((feeData) => {
+                rewardVM.getFees({
+                    id: reward.id()
+                }).then((feeData) => {
                     _.map(feeData, (fee) => {
                         const feeProp = {
                             id: m.prop(fee.id),
@@ -137,6 +152,7 @@ const editRewardCard = {
 
         return {
             minimumValueError,
+            minimumValue,
             deliverAtError,
             descriptionError,
             confirmDelete,
@@ -202,7 +218,7 @@ const editRewardCard = {
                                     })
                                 )
                             ]),
-                            ctrl.minimumValueError() ? inlineError('Valor deve ser igual ou superior a R$10.') : '',
+                            ctrl.minimumValueError() ? inlineError(`Valor deve ser igual ou superior a R$${ctrl.minimumValue}.`) : '',
 
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_minimum_value']",
                                 'Informe um valor mínimo maior ou igual a 10'
@@ -227,9 +243,9 @@ const editRewardCard = {
                                             }
                                         }, [
                                             _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
-                                                value: monthIndex + 1,
-                                                selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
-                                            },
+                                                    value: monthIndex + 1,
+                                                    selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
+                                                },
                                                 h.capitalize(month)
                                             ))
                                         ]),
@@ -241,9 +257,9 @@ const editRewardCard = {
                                         }, [
                                             _.map(_.range(moment().year(), moment().year() + 6), year =>
                                                 m('option', {
-                                                    value: year,
-                                                    selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
-                                                },
+                                                        value: year,
+                                                        selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
+                                                    },
                                                     year
                                                 )
                                             )
@@ -303,20 +319,20 @@ const editRewardCard = {
 
                                     // state fees
                                     (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
-                                        fee,
-                                        fees: ctrl.fees,
-                                        feeIndex,
-                                        states: ctrl.states
-                                    }),
+                                            fee,
+                                            fees: ctrl.fees,
+                                            feeIndex,
+                                            states: ctrl.states
+                                        }),
 
                                     ])),
                                     m('.u-margintop-20',
                                         m("a.alt-link[href='#']", {
-                                            onclick: () => {
-                                                ctrl.fees().push(newFee);
-                                                return false;
-                                            }
-                                        },
+                                                onclick: () => {
+                                                    ctrl.fees().push(newFee);
+                                                    return false;
+                                                }
+                                            },
                                             'Adicionar destino'
                                         )
                                     )
@@ -325,12 +341,12 @@ const editRewardCard = {
                     ]),
                     m('.w-row.u-margintop-30', [
                         m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
-                                m('a.w-button.btn.btn-small', {
-                                    onclick: () => {
-                                        ctrl.saveReward();
-                                    }
-                                }, 'Salvar')
-                            ),
+                            m('a.w-button.btn.btn-small', {
+                                onclick: () => {
+                                    ctrl.saveReward();
+                                }
+                            }, 'Salvar')
+                        ),
                         (reward.newReward ? '' :
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                                 m('a.w-button.btn-terciary.btn.btn-small.reward-close-button', {
@@ -341,7 +357,9 @@ const editRewardCard = {
                             )),
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                             m('input[type=\'hidden\'][value=\'false\']'),
-                            m('a.remove_fields.existing', { onclick: ctrl.confirmDelete },
+                            m('a.remove_fields.existing', {
+                                    onclick: ctrl.confirmDelete
+                                },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
                             )
                         ])

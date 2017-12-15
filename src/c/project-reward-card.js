@@ -61,7 +61,7 @@ const projectRewardCard = {
 
             return false;
         };
-        const isRewardOpened = () => vm.selectedReward().id === reward.id;
+        const isRewardOpened = () => vm.selectedReward() && vm.selectedReward().id === reward.id;
         const isRewardDescriptionExtended = () => descriptionExtended() === reward.id;
         const isLongDescription = () => reward.description.length > 110;
         if (h.getStoredObject(storeKey)) {

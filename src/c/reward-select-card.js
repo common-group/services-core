@@ -10,7 +10,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const rewardSelectCard = {
     controller(args) {
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
-        const isSelected = currentReward => _.isEmpty(rewardVM.rewards()) || currentReward.id === rewardVM.selectedReward().id;
+        const isSelected = currentReward => rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id;
         const selectedDestination = m.prop('');
         const queryRewardId = h.getParams('reward_id');
         const queryRewardValue = h.getParams('value');
@@ -32,7 +32,10 @@ const rewardSelectCard = {
                 rewardVM.error('');
                 if (args.isSubscription) {
                     const currentRewardId = rewardVM.selectedReward().id;
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, {contribution_value: valueFloat, reward_id: currentRewardId});
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, {
+                        contribution_value: valueFloat,
+                        reward_id: currentRewardId
+                    });
                 } else {
                     const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
                     h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
@@ -57,8 +60,8 @@ const rewardSelectCard = {
             if (_.isEmpty(reward)) {
                 return {
                     id: null,
-                    description: 'Obrigado. Eu só quero ajudar o projeto.',
-                    minimum_value: 10,
+                    description: '',
+                    minimum_value: 5,
                     shipping_options: null,
                     row_order: -999999
                 };
@@ -93,15 +96,15 @@ const rewardSelectCard = {
         const reward = ctrl.normalReward(args.reward);
 
         return (h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
-            class: ctrl.isSelected(reward) ? 'selected' : '',
-            onclick: ctrl.selectReward(reward)
-        },
+                class: ctrl.isSelected(reward) ? 'selected' : '',
+                onclick: ctrl.selectReward(reward)
+            },
             m(`label[for="contribution_reward_id_${reward.id}"]`, [
                 m(`input.radio_buttons.optional.w-input.text-field.w-radio-input.back-reward-radio-button[id="contribution_reward_id_${reward.id}"][type="radio"][value="${reward.id}"]`, {
                     checked: ctrl.isSelected(reward),
                     name: 'contribution[reward_id]'
                 }),
-                m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`,
+                m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`, !reward.id ? 'Apoiar sem recompensa' :
                     `R$ ${h.formatNumber(reward.minimum_value)} ou mais${args.isSubscription ? ' por mês' : ''}`
                 ), !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
                     rewardVM.hasShippingOptions(reward) ?
@@ -110,10 +113,12 @@ const rewardSelectCard = {
                             'Local de entrega'
                         ),
                         m('select.positive.text-field.w-select', {
-                            onchange: m.withAttr('value', ctrl.selectDestination)
-                        },
+                                onchange: m.withAttr('value', ctrl.selectDestination)
+                            },
                             _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
-                                option => m('option', { value: option.value }, [
+                                option => m('option', {
+                                    value: option.value
+                                }, [
                                     `${option.name} `,
                                     option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
                                 ])
@@ -168,9 +173,9 @@ const rewardSelectCard = {
                 m('.back-reward-reward-description', [
                     m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description),
                     m('.u-marginbottom-20.w-row', [!reward.deliver_at || args.isSubscription ? '' : m('.w-col.w-col-6', [
-                        m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
-                        m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
-                    ]),
+                            m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
+                            m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
+                        ]),
                         args.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
                             m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
@@ -178,7 +183,7 @@ const rewardSelectCard = {
                     ])
                 ])
             ])
-                                                  ));
+        ));
     }
 };
 
