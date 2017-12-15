@@ -1,4 +1,7 @@
-import { catarse, commonProject } from '../api';
+import {
+    catarse,
+    commonProject
+} from '../api';
 import _ from 'underscore';
 import m from 'mithril';
 import models from '../models';
@@ -10,12 +13,12 @@ const error = m.prop(''),
     fees = m.prop([]),
     noReward = {
         id: null,
-        description: 'Obrigado. Eu só quero ajudar o projeto.',
+        description: '',
         shipping_options: null,
         minimum_value: 10
     },
     contributionValue = m.prop(noReward.minimum_value),
-    selectedReward = m.prop(noReward),
+    selectedReward = m.prop(),
     vm = catarse.filtersVM({
         project_id: 'eq'
     });
@@ -73,7 +76,11 @@ const selectReward = reward => () => {
     if (selectedReward() !== reward) {
         error('');
         selectedReward(reward);
-        contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
+        if (reward.id) {
+            contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
+        } else { // no reward 
+            contributionValue(h.applyMonetaryMask('$10,00'));
+        }
 
         if (reward.id) {
             getFees(reward).then(fees);
@@ -118,7 +125,9 @@ const locationOptions = (reward, destination) => {
         const feeInternational = _.findWhere(fees(), {
             destination: 'international'
         });
-        if (feeInternational) { fee = feeInternational.value; }
+        if (feeInternational) {
+            fee = feeInternational.value;
+        }
         options(_.union([{
             value: 'international',
             name: 'Outside Brazil',
@@ -128,7 +137,11 @@ const locationOptions = (reward, destination) => {
 
     options(
         _.union(
-            [{ value: '', name: 'Selecione Opção', fee: 0 }],
+            [{
+                value: '',
+                name: 'Selecione Opção',
+                fee: 0
+            }],
             options()
         )
     );
@@ -142,12 +155,16 @@ const shippingFeeById = feeId => _.findWhere(fees(), {
 
 const getOtherNationalStates = () => _.reject(
     states(),
-    state => !_.isUndefined(_.findWhere(fees(), { destination: state.acronym }))
+    state => !_.isUndefined(_.findWhere(fees(), {
+        destination: state.acronym
+    }))
 );
 
 const feeDestination = (reward, feeId) => {
     const fee = shippingFeeById(feeId) || {};
-    const feeState = _.findWhere(states(), { acronym: fee.destination });
+    const feeState = _.findWhere(states(), {
+        acronym: fee.destination
+    });
 
     if (feeState) {
         return feeState.acronym;
@@ -163,7 +180,9 @@ const shippingFeeForCurrentReward = (selectedDestination) => {
         destination: selectedDestination()
     });
 
-    if (!currentFee && _.findWhere(states(), { acronym: selectedDestination() })) {
+    if (!currentFee && _.findWhere(states(), {
+            acronym: selectedDestination()
+        })) {
         currentFee = _.findWhere(fees(), {
             destination: 'others'
         });
@@ -175,14 +194,18 @@ const shippingFeeForCurrentReward = (selectedDestination) => {
 const createReward = (projectId, rewardData) => m.request({
     method: 'POST',
     url: `/projects/${projectId}/rewards.json`,
-    data: { reward: rewardData },
+    data: {
+        reward: rewardData
+    },
     config: h.setCsrfToken
 });
 
 const updateReward = (projectId, rewardId, rewardData) => m.request({
     method: 'PATCH',
     url: `/projects/${projectId}/rewards/${rewardId}.json`,
-    data: { reward: rewardData },
+    data: {
+        reward: rewardData
+    },
     config: h.setCsrfToken
 });
 
