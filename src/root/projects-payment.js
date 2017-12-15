@@ -83,7 +83,9 @@ const projectsPayment = {
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
-        rewardVM.getFees(reward()).then(rewardVM.fees);
+        if(reward() && !_.isNull(reward().id)) {
+            rewardVM.getFees(reward()).then(rewardVM.fees);
+        }
         vm.fetchUser().then(() => {
             addVM(addressVM({
                 data: vm.fields.address()
@@ -364,7 +366,7 @@ const projectsPayment = {
                                     ),
                                     ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
                                 ]) : '',
-                                (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential') ?
+                                (ctrl.reward() && (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential')) ?
                                 m('.fontcolor-secondary.fontsize-smallest', [
                                     m('span.fontweight-semibold',
                                         'Forma de envio: '
