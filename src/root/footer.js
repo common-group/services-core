@@ -79,33 +79,38 @@ const footer = {
                                                 m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']',
                                                     ' Central de Suporte'
                                                 ),                                                
-                                                m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
-                                                    ' Contato'
-                                                ),
+                                                h.getUser() ?
+                                                    m('a.link-footer[href=\'https://suporte.catarse.me/hc/pt-br/signin?return_to=https%3A%2F%2Fsuporte.catarse.me%2Fhc%2Fpt-br%2Frequests%2Fnew&locale=19\'][target="_BLANK"]',
+                                                      ' Contato'
+                                                     )
+                                                    :
+                                                    m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
+                                                      ' Contato'
+                                                     ),
                                                 m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
-                                                    [
-                                                        'Escola Catarse',
-                                                        m.trust('&nbsp;'),
-                                                        m('span.badge.badge-success',
-                                                            'Novidade‍'
-                                                        )
-                                                    ]
-                                                ),                                                
+                                                  [
+                                                      'Escola Catarse',
+                                                      m.trust('&nbsp;'),
+                                                      m('span.badge.badge-success',
+                                                        'Novidade‍'
+                                                       )
+                                                  ]
+                                                 ),                                                
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
-                                                    ' Nossa Taxa'
-                                                ),
+                                                  ' Nossa Taxa'
+                                                 ),
                                                 m('a.link-footer[href=\'http://pesquisa.catarse.me/\']',
-                                                    ' Retrato FC Brasil 2013/2014'
-                                                ),
+                                                  ' Retrato FC Brasil 2013/2014'
+                                                 ),
                                                 m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']',
-                                                    ' Responsabilidades e Segurança'
-                                                ),                                                
+                                                  ' Responsabilidades e Segurança'
+                                                 ),                                                
                                                 m('a.link-footer[href=\'/pt/terms-of-use\']',
-                                                    ' Termos de uso'
-                                                ),
+                                                  ' Termos de uso'
+                                                 ),
                                                 m('a.link-footer[href=\'/pt/privacy-policy\']',
-                                                    ' Política de privacidade'
-                                                )
+                                                  ' Política de privacidade'
+                                                 )
                                             ]
                                         ),
                                         m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn',
