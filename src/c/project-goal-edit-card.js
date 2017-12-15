@@ -9,10 +9,12 @@ const projectGoalEditCard = {
             descriptionError = m.prop(false),
             titleError = m.prop(false),
             valueError = m.prop(false),
+            currentError = m.prop(false),
             validate = () => {
                 args.error(false);
                 descriptionError(false);
                 valueError(false);
+                currentError(false);
                 if (_.isEmpty(goal.title())) {
                     args.error(true);
                     titleError(true);
@@ -24,6 +26,10 @@ const projectGoalEditCard = {
                 if (!goal.value() || parseInt(goal.value()) < 10) {
                     args.error(true);
                     valueError(true);
+                }
+                if (parseInt(goal.value()) >= 10 && parseInt(goal.value()) <= args.currentGoal().value()) {
+                    args.error(true);
+                    currentError(true);
                 }
             };
         const destroyed = m.prop(false);
@@ -83,6 +89,7 @@ const projectGoalEditCard = {
             descriptionError,
             titleError,
             valueError,
+            currentError,
             acceptNumeric,
             destroyed,
             saveGoal
@@ -113,7 +120,7 @@ const projectGoalEditCard = {
                             ),
                             m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6',
                                 m("input.positive.postfix.text-field.w-input[type='text']", {
-                                    class: ctrl.valueError() ? 'error' : false,
+                                    class: ctrl.valueError() || ctrl.currentError() ? 'error' : false,
                                     value: goal.value(),
                                     oninput: e => ctrl.acceptNumeric(e),
                                     onchange: m.withAttr('value', goal.value)
@@ -124,6 +131,7 @@ const projectGoalEditCard = {
                 ]),
 
                 ctrl.valueError() ? inlineError('A meta deve ser igual ou superior a R$10') : '',
+                ctrl.currentError() ? inlineError('A meta deve ser igual ou superior a meta atual') : '',
                 m('.w-row', [
                     m('.w-col.w-col-6',
                         m('.fontsize-small',
