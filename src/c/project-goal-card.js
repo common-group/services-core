@@ -2,7 +2,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
-import projectGoalsVM from '../vms/project-goals-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
@@ -10,6 +9,7 @@ const projectGoalCard = {
     controller(args) {},
     view(ctrl, args) {
         const goal = args.goal();
+        const currentGoal = args.currentGoal;
 
         return m('.card.u-marginbottom-30',
             m('.w-row', [
@@ -18,15 +18,24 @@ const projectGoalCard = {
                         `Meta: R$${goal.value()}`
                     ),
                     m('.fontsize-small.fontweight-semibold',
-                      goal.title()
+                        goal.title()
                     ),
                     m('p.fontcolor-secondary.fontsize-small', [
                         goal.description()
                     ])
                 ]),
-                m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
-                    m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-edit.fa-lg', { onclick: goal.editing.toggle })
-                )
+
+                (currentGoal()) ? [
+                    (
+                        goal.value() > currentGoal().value() ?
+                        m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
+                            m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-edit.fa-lg', {
+                                onclick: goal.editing.toggle
+                            })
+                        ) : ''
+                    )
+                ] :
+                ''
             ])
         );
     }

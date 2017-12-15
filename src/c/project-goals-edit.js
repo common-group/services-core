@@ -1,6 +1,10 @@
 import m from 'mithril';
+import models from '../models';
 import _ from 'underscore';
 import h from '../h';
+import {
+    commonAnalytics
+} from '../api';
 import projectGoalEditCard from './project-goal-edit-card';
 import projectGoalCard from './project-goal-card';
 import projectGoalsVM from '../vms/project-goals-vm';
@@ -14,9 +18,20 @@ const projectGoalsEdit = {
     controller(args) {
         const e = generateErrorInstance();
         const mapErrors = [
-                  ['goals', ['goals.size']]
+            ['goals', ['goals.size']]
         ];
         const goals = projectGoalsVM.goals;
+
+        const l = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
+            id: args.project.common_id
+        }));
+
+        const currentGoal = m.prop();
+        const subscribersDetails = m.prop({});
+        l.load().then((subData) => {
+            subscribersDetails(subData);
+            currentGoal(goals().length > 0 ? _.find(_.sortBy(goals(), g => g().value()), goal => goal().value() > subscribersDetails().amount_paid_for_valid_period)() : _.last(goals())());
+        });
         const showSuccess = m.prop(false);
         const error = m.prop(false);
 
@@ -30,6 +45,7 @@ const projectGoalsEdit = {
             e,
             error,
             goals,
+            currentGoal,
             addGoal: projectGoalsVM.addGoal
         };
     },
@@ -68,11 +84,13 @@ const projectGoalsEdit = {
                                         return m(projectGoalEditCard, {
                                             goal,
                                             showSuccess,
+                                            currentGoal: ctrl.currentGoal,
                                             error
                                         });
                                     }
                                     return m(projectGoalCard, {
-                                        goal
+                                        goal,
+                                        currentGoal: ctrl.currentGoal
                                     });
                                 }),
                                 m('button.btn.btn-large.btn-message', {
