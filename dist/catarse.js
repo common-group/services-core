@@ -5160,7 +5160,9 @@ var projectDashboardMenu = {
         var optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
 
         ctrl.body.className = ctrl.bodyToggleForNav();
-        return m('#project-nav', [m('.project-nav-wrapper', [m('nav.w-section.dashboard-nav.side', [m('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', [m('img.thumb-project-dashboard[src="' + (project ? ctrl.projectThumb(project) : '/assets/thumb-project.png') + '"][width="114"]'), m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name), m('img.u-margintop-10[src="/assets/catarse_bootstrap/badge-' + project.mode + '-h.png"]', {
+        return m('#project-nav', [m('.project-nav-wrapper', [m('nav.w-section.dashboard-nav.side', [m('a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="' + (project.is_published ? '/' + project.permalink : editRoute + '#preview') + '"]', {
+            onclick: projectVM.routeToProject(project, args.ref)
+        }, [m('img.thumb-project-dashboard[src="' + (project ? ctrl.projectThumb(project) : '/assets/thumb-project.png') + '"][width="114"]'), m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name), m('img.u-margintop-10[src="/assets/catarse_bootstrap/badge-' + project.mode + '-h.png"]', {
             width: projectVM.isSubscription(project) ? 130 : 80
         })]), m('#info-links.u-marginbottom-20', [project.state === 'draft' && projectVM.isSubscription(project) ? m('a#dashboard_home_link[class="' + editLinkClass('#start') + '"][href="' + editRoute + '#start"]', [m('span.fa.fa-info.fa-lg.fa-fw'), I18n$1.t('draft_start_tab', I18nScope$7())]) : m('a#dashboard_home_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('insights') ? 'selected' : '') + '"][href="' + projectRoute + '/insights"]', {
             config: m.route
@@ -5168,9 +5170,7 @@ var projectDashboardMenu = {
             config: m.route
         }, [m('span.fa.fa.fa-users.fa-lg.fa-fw'), I18n$1.t('subscriptions_tab', I18nScope$7())]) : m('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('contributions_report') ? 'selected' : '') + '"][href="' + projectRoute + '/contributions_report"]', {
             config: m.route
-        }, [m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n$1.t('reports_tab', I18nScope$7())]), m('a#dashboard_posts_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + '"][href="' + projectRoute + '/posts"]', {
-            config: m.route
-        }, [m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n$1.t('posts_tab', I18nScope$7()), project.posts_count > 0 ? m('span.badge', project.posts_count) : m('span.badge.badge-attention', 'Nenhuma')]), projectVM.isSubscription(project) ? '' : m('a#dashboard_surveys_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('surveys') ? 'selected' : '') + '"][href="' + projectRoute + '/surveys"]', {
+        }, [m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n$1.t('reports_tab', I18nScope$7())]), m('a#dashboard_posts_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('posts') ? 'selected' : '') + '"][href="' + projectRoute + '/posts"]', [m('span.fa.fa-bullhorn.fa-fw.fa-lg'), I18n$1.t('posts_tab', I18nScope$7()), project.posts_count > 0 ? m('span.badge', project.posts_count) : m('span.badge.badge-attention', 'Nenhuma')]), projectVM.isSubscription(project) ? '' : m('a#dashboard_surveys_link[class="dashboard-nav-link-left ' + (h.locationActionMatch('surveys') ? 'selected' : '') + '"][href="' + projectRoute + '/surveys"]', {
             config: m.route
         }, [m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n$1.t('surveys_tab', I18nScope$7())])] : '']), m('.edit-project-div', [!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
             onclick: ctrl.editLinksToggle.toggle
