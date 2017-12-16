@@ -2,13 +2,13 @@ BEGIN;
     -- import __json_data_payment from helpers
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(35);
+    select plan(32);
     -- check function signature
     SELECT function_returns(
-        'payment_service', '_serialize_payment_basic_data', ARRAY['json'], 'json' 
+        'payment_service', '_serialize_subscription_basic_data', ARRAY['json'], 'json' 
     );
 
-    prepare generate_data as select * from payment_service._serialize_payment_basic_data(__json_data_payment($1::json));
+    prepare generate_data as select * from payment_service._serialize_subscription_basic_data(__json_data_payment($1::json));
 
     create or replace function test_serialize_with_valid_data()
     returns setof text language plpgsql as $$
@@ -21,12 +21,12 @@ BEGIN;
         _expected := __json_data_payment('{}'::json);
 
         -- check serialized structure
-        _result := payment_service._serialize_payment_basic_data(_expected);
+        _result := payment_service._serialize_subscription_basic_data(_expected);
 
         return next is(_result ->> 'amount', _expected ->> 'amount');
+        return next is((_result ->> 'is_international')::boolean, false);
         return next is(_result ->> 'payment_method', _expected ->> 'payment_method');
         return next is(_result -> 'customer' ->> 'name', _expected -> 'customer' ->> 'name');
-        return next is(_result -> 'customer' ->> 'email', _expected -> 'customer' ->> 'email');
         return next is(_result -> 'customer' ->> 'document_number', _expected -> 'customer' ->> 'document_number');
         return next is(_result -> 'customer' -> 'address' ->> 'street', _expected -> 'customer' -> 'address' ->> 'street');
         return next is(_result -> 'customer' -> 'address' ->> 'street_number', _expected -> 'customer' -> 'address' ->> 'street_number');
@@ -39,6 +39,7 @@ BEGIN;
         return next is(_result -> 'customer' -> 'phone' ->> 'ddi', _expected -> 'customer' -> 'phone' ->> 'ddi');
         return next is(_result -> 'customer' -> 'phone' ->> 'ddd', _expected -> 'customer' -> 'phone' ->> 'ddd');
         return next is(_result -> 'customer' -> 'phone' ->> 'number', _expected -> 'customer' -> 'phone' ->> 'number');
+
     end;
     $$;
     select test_serialize_with_valid_data();
@@ -49,18 +50,6 @@ BEGIN;
     begin
         -- test with invalid params
         -- should raise for missing any parameters that should be required
-        return next throws_matching(
-            'EXECUTE generate_data(''{"current_ip": null}'')',
-            '.+ip_address',
-            'raise whem missing ip_address'
-        );
-
-        return next throws_matching(
-            'EXECUTE generate_data(''{"anonymous": null}'')',
-            '.+anonymous',
-            'raise whem missing anonymous'
-        );
-
         return next throws_matching(
             'EXECUTE generate_data(''{"amount": null}'')',
             '.+amount',
@@ -73,13 +62,7 @@ BEGIN;
             'raise whem missing payment_method'
         );
 
-        return next throws_matching(
-            'EXECUTE generate_data(''{"customer_email": null}'')',
-            '.+email',
-            'raise whem missing email'
-        );
-
-        return next throws_matching(
+       return next throws_matching(
             'EXECUTE generate_data(''{"customer_name": null}'')',
             '.+name',
             'raise whem missing name'
@@ -87,7 +70,7 @@ BEGIN;
 
         return next throws_matching(
             'EXECUTE generate_data(''{"customer_document_number": null}'')',
-            '.+document_number',
+            '.+document number',
             'raise whem missing document_number'
         );
 
