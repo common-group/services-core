@@ -81,7 +81,9 @@ const projectDashboardMenu = {
         return m('#project-nav', [
             m('.project-nav-wrapper', [
                 m('nav.w-section.dashboard-nav.side', [
-                    m(`a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="${project.is_published ? `/${project.permalink}` : `${editRoute}#preview`}"]`, [
+                    m(`a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="${project.is_published ? `/${project.permalink}` : `${editRoute}#preview`}"]`, {
+                        onclick: projectVM.routeToProject(project, args.ref)
+                    }, [
                         m(`img.thumb-project-dashboard[src="${project ? ctrl.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
                         m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"]`, {
@@ -109,9 +111,7 @@ const projectDashboardMenu = {
                             }, [
                                 m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
                             ]),
-                            m(`a#dashboard_posts_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, {
-                                config: m.route
-                            }, [
+                            m(`a#dashboard_posts_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
                                 m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
                                 I18n.t('posts_tab', I18nScope()),
                                 project.posts_count > 0 ?
