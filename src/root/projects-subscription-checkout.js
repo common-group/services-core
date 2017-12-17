@@ -35,7 +35,7 @@ const projectsSubscriptionCheckout = {
             h.navigateToDevise();
         }
 
-        let reward = m.prop(rewardVM.selectedReward());
+        let reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
         let value;
 
         if (_.isString(rewardVM.contributionValue())) {
@@ -177,8 +177,8 @@ const projectsSubscriptionCheckout = {
                                 `R$ ${formatedValue}`
                             ),
                             m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
-                                'Editar'
-                            )
+                              'Editar'
+                             )
                         ]),
                         m('.divider.u-marginbottom-10.u-margintop-10'),
                         m('.back-payment-info-reward', [
