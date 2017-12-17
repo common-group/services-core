@@ -51,7 +51,7 @@ const projectsSubscriptionCheckout = {
             value = rewardVM.contributionValue(Number(valueParam));
         }
 
-        if (rewardIdParam && (rewardIdParam !== String(reward().id))) {
+        if (rewardIdParam) {
             rewardVM.fetchRewards(h.getCurrentProject().project_id).then(() => {
                 reward(_.findWhere(rewardVM.rewards(), {id: Number(rewardIdParam)}));
                 rewardVM.selectedReward(reward());
