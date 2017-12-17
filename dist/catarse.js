@@ -12028,7 +12028,7 @@ var projectsSubscriptionCheckout = {
             h.navigateToDevise();
         }
 
-        var reward = m.prop(rewardVM.selectedReward());
+        var reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
         var value = void 0;
 
         if (_$1.isString(rewardVM.contributionValue())) {
