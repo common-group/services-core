@@ -160,7 +160,7 @@ const sendSlipPayment = (fields, commonData) => {
     const sendPayment = () => sendPaymentRequest(payload);
     updateUser(userPayload(customer, address))
         .then(sendPayment)
-        .then(() => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=credit_card`))
+        .then(() => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=boleto`))
         .catch(displayError);
 };
 
