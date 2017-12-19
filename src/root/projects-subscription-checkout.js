@@ -254,7 +254,7 @@ const projectsSubscriptionCheckout = {
                                             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
                                                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
                                                     (project ? 'Dados do apoiador ' : 'Dados do usuário '),
-                                                    m(`a.alt-link[href="/not-my-account${project ? `?project_id=${project.project_id}` : ''}${ctrl.reward() ? `&reward_id=${ctrl.reward().id}` : ''}${ctrl.value ? `&value=${ctrl.value * 100}` : ''}"]`, 'Não é você?')
+                                                    m(`a.alt-link[href="/not-my-account?redirect_to=${encodeURIComponent(m.route())}"]`, 'Não é você?')
                                                 ]),
                                                 m('.fontsize-base.fontweight-semibold', user.name),
                                                 (user.owner_document ?
