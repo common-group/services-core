@@ -30,7 +30,9 @@ const projectGoalsEdit = {
         const subscribersDetails = m.prop({});
         l.load().then((subData) => {
             subscribersDetails(subData);
-            currentGoal(goals().length > 0 ? _.find(_.sortBy(goals(), g => g().value()), goal => goal().value() > subscribersDetails().amount_paid_for_valid_period)() : _.last(goals())());
+            const sortedGoals = _.sortBy(goals(), g => g().value()),
+                nextGoal = _.find(sortedGoals, goal => goal().value() > subscribersDetails().amount_paid_for_valid_period);
+            currentGoal(nextGoal());
         });
         const showSuccess = m.prop(false);
         const error = m.prop(false);

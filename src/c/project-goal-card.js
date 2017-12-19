@@ -25,7 +25,7 @@ const projectGoalCard = {
                     ])
                 ]),
 
-                (currentGoal()) ? [
+                currentGoal() ? [
                     (
                         goal.value() > currentGoal().value() ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
