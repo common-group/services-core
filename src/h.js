@@ -912,6 +912,14 @@ const
             scripts[i].parentNode.removeChild(scripts[i]);
         }
         return div.innerHTML;
+    },
+    sleep = (milliseconds: integer) => {
+        const start = new Date().getTime();
+        for (let i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
     };
 
 setMomentifyLocale();
@@ -920,6 +928,7 @@ closeModal();
 checkReminder();
 
 export default {
+    sleep,
     stripScripts,
     authenticityParam,
     authenticityToken,
