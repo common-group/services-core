@@ -4,9 +4,6 @@
 // receive a complete json with template_vars and notification bodies
 // {
 //   id: uuid,
-//   subject_template: liquid_template_string,
-//   content_template: liquid_template_string,
-//   template_vars: json object,
 //   mail_config: {
 //      to: 'email@email.com',
 //      from: 'email@email.com',
@@ -15,6 +12,7 @@
 //   }
 // }
 
+const {Pool} = require('pg');
 const getStdin = require('get-stdin');
 const R = require('ramda');
 const sgMail = require('@sendgrid/mail');
@@ -24,6 +22,12 @@ const Raven = require('raven');
 if(process.env.SENTRY_DSN) {
     Raven.config(process.env.SENTRY_DSN).install();
 };
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    statement_timeout: (process.env.STATEMENT_TIMEOUT || 5000),
+    max: 3
+});
 
 getStdin().then(str => {
     if(str !== null && str !== "") {
@@ -73,15 +77,41 @@ function raven_report(e, context_opts) {
 
 
 async function init(stdin_data) {
+    const client = await pool.connect();
     const engine = Liquid();
-    console.log('received ', stdin_data);
+    console.log('received stdin data: ', stdin_data);
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+    const res = await client.query(
+        `select
+            row_to_json(n.*) as notification_data,
+            row_to_json(ngt.*) as notification_global_template_data,
+            row_to_json(nt.*) as notification_template_data,
+            notification_service._generate_template_vars_from_relations((n.data ->> 'relations')::json) as template_vars
+        from notification_service.notifications n
+            join notification_service.notification_global_templates ngt on ngt.id = n.notification_global_template_id
+            left join notification_service.notification_templates nt on nt.id = n.notification_template_id
+            where n.id = $1::uuid`
+        , [stdin_data.id]);
+
+    console.log('res', res);
+
+    const notification = res.rows[0].notification_data;
+    const notification_global_template = res.rows[0].notification_global_template_data;
+    const notification_template = res.rows[0].notification_template_data;
+    const template_vars = res.rows[0].template_vars;
+
+    const subject_template = notification_template && notification_template.id ? notification_template.subject : notification_global_template.subject;
+    const content_template = notification_template && notification_template.id ? notification_template.template : notification_global_template.template;
+    console.log(subject_template);
+    console.log(content_template);
+
+
     const subject_html = await engine.parseAndRender(
-        stdin_data.subject_template, stdin_data.template_vars);
+        subject_template, template_vars);
 
     const content_html = await engine.parseAndRender(
-        stdin_data.content_template, stdin_data.template_vars);
+        content_template, template_vars);
 
     let msg = {
         to: (process.env.INTERCEPT_TO ? process.env.INTERCEPT_TO : stdin_data.mail_config.to),
