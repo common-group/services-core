@@ -40,8 +40,11 @@ getStdin().then(str => {
                     return true;
                 })
                 .catch((e) => {
-                    console.log(e);
+                    console.log('errrr', e);
                     process.exitCode = 1;
+                    setInterval(() => {
+                        process.exit(1);
+                    }, 2000)
                     return false;
                 });
         } catch (e) {
@@ -128,15 +131,21 @@ async function init(stdin_data) {
         msg.reply_to = stdin_data.mail_config.reply_to;
     };
 
-    let sent = sgMail.send(msg);
-    sent.then(
-        (success) => {
-            console.log(success[0].headers['x-message-id']);
-            return success[0];
-        },
-        (failed) => {
-            console.log('failed', failed)
-            throw failed;
-        }
-    );
+    try {
+        let sent = await sgMail.send(msg);
+        console.log(sent);
+    } catch (e) {
+        throw e;
+    }
+    
+    // sent.then(
+    //     (success) => {
+    //         console.log(success[0].headers['x-message-id']);
+    //         return success[0];
+    //     },
+    //     (failed) => {
+    //         console.log('failed', failed)
+    //         throw failed;
+    //     }
+    // );
 };
