@@ -4,10 +4,13 @@ import I18n from 'i18n-js';
 import h from '../h';
 import moment from 'moment';
 import models from '../models';
-import {catarse} from '../api';
+import {
+    catarse
+} from '../api';
 import contributionVM from '../vms/contribution-vm';
 import commonPaymentVM from '../vms/common-payment-vm';
 import ownerMessageContent from '../c/owner-message-content';
+import cancelSubscriptionContent from '../c/cancel-subscription-content';
 import modalBox from '../c/modal-box';
 import userVM from '../vms/user-vm';
 
@@ -16,16 +19,17 @@ const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userSubscriptionBox = {
     controller(args) {
-        const subscription=args.subscription,
+        const subscription = args.subscription,
             displayModal = h.toggleProp(false, true),
+            displayCancelModal = h.toggleProp(false, true),
             contactModalInfo = m.prop({});
 
         const filterProjVM = catarse.filtersVM({
                 project_id: 'eq'
             }).project_id(subscription.project_external_id),
             lProj = catarse.loaderWithToken(models.project.getRowOptions(filterProjVM.parameters()));
-        
-        lProj.load().then(function(arr){
+
+        lProj.load().then(function(arr) {
             subscription.project = arr[0];
             contactModalInfo({
                 id: subscription.project.project_user_id,
@@ -56,6 +60,7 @@ const userSubscriptionBox = {
         return {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
+            displayCancelModal,
             subscription,
             contactModalInfo
         };
@@ -64,8 +69,17 @@ const userSubscriptionBox = {
         const subscription = ctrl.subscription;
 
         return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
-            (ctrl.displayModal() && !_.isEmpty(ctrl.contactModalInfo())
-                ? m.component(modalBox, {
+            (ctrl.displayCancelModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
+                m.component(modalBox, {
+                    displayModal: ctrl.displayCancelModal,
+                    content: [cancelSubscriptionContent, {
+                        displayModal: ctrl.displayCancelModal,
+                        subscription
+                    }]
+                }) : ''
+            ),
+            (ctrl.displayModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
+                m.component(modalBox, {
                     displayModal: ctrl.displayModal,
                     content: [ownerMessageContent, ctrl.contactModalInfo]
                 }) : ''
@@ -79,21 +93,19 @@ const userSubscriptionBox = {
                                 )
                             ),
                             m('.w-col.w-col-8',
-                                m('.fontsize-small.fontweight-semibold.lineheight-tight',
-                                    [
-                                        m(`a.link-hidden[href='/${subscription.project.permalink}']`,
-                                            subscription.project.project_name
-                                        ),
-                                        m('img[alt="Badge Assinatura"][src="/assets/catarse_bootstrap/badge-sub-h.png"]')                                    
-                                    ]
-                                )
+                                m('.fontsize-small.fontweight-semibold.lineheight-tight', [
+                                    m(`a.link-hidden[href='/${subscription.project.permalink}']`,
+                                        subscription.project.project_name
+                                    ),
+                                    m('img[alt="Badge Assinatura"][src="/assets/catarse_bootstrap/badge-sub-h.png"]')
+                                ])
                             )
                         ]),
                         m("a.btn.btn-edit.btn-inline.btn-small.w-button[href='javascript:void(0);']", {
-                            onclick: () => {
-                                ctrl.displayModal.toggle();
-                            }
-                        },
+                                onclick: () => {
+                                    ctrl.displayModal.toggle();
+                                }
+                            },
                             I18n.t('contact_author', contributionScope())
                         )
                     ]),
@@ -105,19 +117,20 @@ const userSubscriptionBox = {
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
                         m('.u-marginbottom-10', [
-                            m(`span.fa.fa-circle.text-${{
+                            m(`span.fa.fa-${{canceled: 'times-', canceling: 'times-'}[subscription.status] || ''}circle${subscription.status === 'canceling' ? '-o' : ''}.text-${{
                                 started: 'waiting',
                                 active:  'success'
                             }[subscription.status] || 'error'}`),
                             {
-                                started:  ' Iniciada',
-                                active:   ' Ativa',
+                                started: ' Iniciada',
+                                active: ' Ativa',
                                 inactive: ' Inativa',
                                 canceled: ' Cancelada',
-                                deleted:  ' Apagada'
+                                canceling: ' Cancelamento solicitado',
+                                deleted: ' Apagada'
                             }[subscription.status] || ' Erro',
                             m.trust('&nbsp;&nbsp;&nbsp;'),
-                            ( subscription.payment_method === 'credit_card' ? [ m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [ m('span.fa.fa-barcode'), ' Boleto'])
+                            (subscription.payment_method === 'credit_card' ? [m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [m('span.fa.fa-barcode'), ' Boleto'])
                         ])
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
@@ -129,32 +142,54 @@ const userSubscriptionBox = {
                     ]),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
                         (subscription.status === 'started' ? [
-                            m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
-                                m('span.fa.fa-exclamation-triangle'),
-                                m.trust('&nbsp;'),
-                                'Aguardando confirmação do pagamento'
-                            ]),
-                            (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
-                        ] :
-                        (subscription.status === 'inactive' ? [
-                            m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
-                                m('span.fa.fa-exclamation-triangle'),
-                                m.trust('&nbsp;'),
-                                'Sua assinatura está inativa por falta de pagamento'
-                            ]),
-                            m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
-                        ] : subscription.status === 'canceled' ? [
-                            m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
-                                m('span.fa.fa-exclamation-triangle'),
-                                m.trust('&nbsp;'),
-                                ' Você cancelou sua assinatura'
-                            ])
-                        ] : null))
+                                m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                    m('span.fa.fa-exclamation-triangle'),
+                                    m.trust('&nbsp;'),
+                                    'Aguardando confirmação do pagamento'
+                                ]),
+                                (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
+                            ] :
+                            (subscription.status === 'inactive' ? [
+                                    m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                        m('span.fa.fa-exclamation-triangle'),
+                                        m.trust('&nbsp;'),
+                                        'Sua assinatura está inativa por falta de pagamento'
+                                    ]),
+                                    m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
+                                ] : subscription.status === 'canceled' ? [
+                                    m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                        m('span.fa.fa-exclamation-triangle'),
+                                        m.trust('&nbsp;'),
+                                        ' Você cancelou sua assinatura'
+                                    ])
+                                ] : subscription.status === 'canceling' ?
+                                m(".u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error",
+                                    m("div", [
+                                        m("span.fa.fa-exclamation-triangle",
+                                            " "
+                                        ),
+                                        ` Sua assinatura será cancelada no dia ${h.momentify( subscription.next_charge_at, 'DD/MM/YYYY' )}. Até lá, ela ainda será considerada ativa.`
+                                    ])
+                                ) : (subscription.status === 'active' ? [
+                                    // m("div", 
+                                    //   m("a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button[href='/contributions/assinatura/change/change-assinatura-pledge']", 
+                                    //     "Editar assinatura"
+                                    //    )
+                                    //  ),
+                                    m("a.fontsize-smallest.link-hidden-light", {
+                                            onclick: () => {
+                                                ctrl.displayCancelModal.toggle();
+                                            }
+                                        },
+                                        "Cancelar assinatura"
+                                    )
+                                ] : null)
+
+                            ))
                     )
                 ])
             ]
-        ) : m('div', '')
-        );
+        ) : m('div', ''));
     }
 };
 

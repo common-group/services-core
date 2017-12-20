@@ -2,7 +2,9 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import I18n from 'i18n-js';
-import { catarse } from '../api';
+import {
+    catarse
+} from '../api';
 import models from '../models';
 import h from '../h';
 
@@ -40,6 +42,7 @@ const dashboardSubscriptionCard = {
             started: 'fa-circle.text-waiting',
             inactive: 'fa-circle.text-error',
             canceled: 'fa-times-circle.text-error',
+            canceling: 'fa-times-circle-o.text-error',
             deleted: 'fa-circle.text-error',
             error: 'fa-circle.text-error'
         };
@@ -69,10 +72,10 @@ const dashboardSubscriptionCard = {
                         m('.w-col.w-col-9', [
                             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
                                 ctrl.user().name
-                             ),
+                            ),
                             m('.fontcolor-secondary.fontsize-smallest',
-                              subscription.user_email
-                             )
+                                subscription.user_email
+                            )
                         ])
                     ])
                 ),
