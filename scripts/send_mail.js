@@ -37,25 +37,26 @@ getStdin().then(str => {
                 .then((ok) => {
                     console.log(ok);
                     process.exitCode = 0;
+                    process.exit(0);
                     return true;
                 })
                 .catch((e) => {
                     console.log('errrr', e);
                     process.exitCode = 1;
-                    setInterval(() => {
-                        process.exit(1);
-                    }, 2000)
+                    process.exit(1);
                     return false;
                 });
         } catch (e) {
             process.exitCode = 1;
             raven_report(e, {});
             console.log(e);
+            process.exit(1);
             return false;
         }
     } else {
         console.log('invalid stdin');
         process.exitCode = 1;
+        process.exit(1);
         return false;
     }
 });
@@ -92,12 +93,10 @@ async function init(stdin_data) {
             row_to_json(nt.*) as notification_template_data,
             notification_service._generate_template_vars_from_relations((n.data ->> 'relations')::json) as template_vars
         from notification_service.notifications n
-            join notification_service.notification_global_templates ngt on ngt.id = n.notification_global_template_id
+            left join notification_service.notification_global_templates ngt on ngt.id = n.notification_global_template_id
             left join notification_service.notification_templates nt on nt.id = n.notification_template_id
             where n.id = $1::uuid`
         , [stdin_data.id]);
-
-    console.log('res', res);
 
     const notification = res.rows[0].notification_data;
     const notification_global_template = res.rows[0].notification_global_template_data;
