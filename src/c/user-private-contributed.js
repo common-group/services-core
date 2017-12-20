@@ -35,7 +35,7 @@ const userPrivateContributed = {
         models.userSubscription.pageSize(9);
         models.userContribution.pageSize(9);
 
-        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'error']).order({
+        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
             created_at: 'desc'
         });
 

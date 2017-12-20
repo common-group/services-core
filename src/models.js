@@ -7,6 +7,7 @@ const models = {
     projectReward: commonProject.model('rewards'),
     projectSubscriber: commonProject.model('subscribers'),
     commonPayment: commonPayment.model('rpc/pay'),
+    cancelSubscription: commonPayment.model('rpc/cancel_subscription'),
     commonPaymentInfo: commonPayment.model('rpc/payment_info'),
     country: catarse.model('countries'),
     state: catarse.model('states'),

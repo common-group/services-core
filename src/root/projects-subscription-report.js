@@ -77,10 +77,14 @@ const projectSubscriptionReport = {
                             option: 'Iniciada'
                         },
                         {
+                            value: 'canceling',
+                            option: 'Cancelamento solicitado'
+                        },
+                        {
                             value: 'inactive',
                             option: 'Inativa'
                         }
-                        ]
+                                 ]
                     }
                 },
                 {
