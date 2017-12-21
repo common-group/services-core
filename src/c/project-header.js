@@ -27,7 +27,7 @@ const projectHeader = {
                     .then(args.projectContributions);
             } else {
                 subscriptionVM
-                    .getUserProjectSubscriptions(currentUser.common_id, project().common_id, ['started', 'active'])
+                    .getUserProjectSubscriptions(currentUser.common_id, project().common_id, ['started', 'active', 'canceling'])
                     .then(projectSubscriptions);
             }
         }
