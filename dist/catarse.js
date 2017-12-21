@@ -9374,7 +9374,7 @@ var projectHeader = {
             if (!projectVM.isSubscription(project)) {
                 contributionVM.getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund']).then(args.projectContributions);
             } else {
-                subscriptionVM.getUserProjectSubscriptions(currentUser.common_id, project().common_id, ['started', 'active']).then(projectSubscriptions);
+                subscriptionVM.getUserProjectSubscriptions(currentUser.common_id, project().common_id, ['started', 'active', 'canceling']).then(projectSubscriptions);
             }
         }
 
