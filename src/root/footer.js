@@ -16,6 +16,15 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Bem-vindo'
                                                 ),
+                                                m('a.link-footer[href=\'http://crowdfunding.catarse.me/quem-somos?ref=ctrse_footer\']',
+                                                  [
+                                                      'Quem Somos',
+                                                      m.trust('&nbsp;'),
+                                                      m('span.badge.badge-success',
+                                                        'Novidade‍'
+                                                       )
+                                                  ]
+                                                 ),                                               
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
                                                     ' Como funciona'
                                                 ),                                                
@@ -28,9 +37,6 @@ const footer = {
                                                         m.trust('&lt;'),
                                                         '3'
                                                     ]
-                                                ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/jobs\']',
-                                                    ' Trabalhe conosco'
                                                 ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
@@ -88,13 +94,7 @@ const footer = {
                                                       ' Contato'
                                                      ),
                                                 m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
-                                                  [
-                                                      'Escola Catarse',
-                                                      m.trust('&nbsp;'),
-                                                      m('span.badge.badge-success',
-                                                        'Novidade‍'
-                                                       )
-                                                  ]
+                                                  ' Escola Catarse'
                                                  ),                                                
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
                                                   ' Nossa Taxa'
@@ -122,22 +122,10 @@ const footer = {
                                                     ' Comece seu projeto'
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',
-                                                    [
-                                                        'Música no Catarse',
-                                                        m.trust('&nbsp;'),
-                                                        m('span.badge.badge-success',
-                                                            'Novidade'
-                                                        )
-                                                    ]
+                                                    ' Música no Catarse'
                                                 ),
                                                 m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']',
-                                                    [
-                                                        'Publicações Independentes',
-                                                        m.trust('&nbsp;'),
-                                                        m('span.badge.badge-success',
-                                                            'Novidade'
-                                                        )
-                                                    ]
+                                                    ' Publicações Independentes'
                                                 ),
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Apoie projetos no Catarse'
