@@ -177,7 +177,7 @@ const getPaymentInfoUntilNoError = ({id}) => {
                 if(!_.isNull(infoR.gateway_errors)) {
                     return promise.reject({message: infoR.gateway_errors})
                 } else {
-                    h.sleep(2000);
+                    h.sleep(4000);
                     return requestInfo(promise);
                 }
             }
