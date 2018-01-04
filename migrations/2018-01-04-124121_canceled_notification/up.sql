@@ -2,7 +2,7 @@
 
 insert into notification_service.notification_global_templates
     (label, subject, template) values 
-    ('canceled_subscription_payment', 'Assinatura Cancelada: sua assinatura do projeto {{project.name}} foi cancelada!',
+    ('canceled_subscription', 'Assinatura Cancelada: sua assinatura do projeto {{project.name}} foi cancelada!',
     '<p>Olá, {{user.name}}!</p>
     <p>Sua assinatura do projeto {{project.name}} foi <strong>cancelada</strong>.</p>
     <p>Isso quer dizer que você <strong>não receberá novas cobranças, não terá acesso às novidades exclusivas</strong> para assinantes do projeto e <strong>perderá o direito ao recebimento de recompensas futuras</strong>.</p>
