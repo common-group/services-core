@@ -2,8 +2,9 @@ BEGIN;
     -- insert seed data for basic user/platform/project/reward
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
+    -- \i /specs/sql-support/insert_global_notifications.sql
 
-    select plan(3);
+    select plan(4);
 
     insert into core.core_settings(name, value) values ('subscription_interval', '1 month');
 
@@ -16,6 +17,7 @@ BEGIN;
     as $$
         declare
             _subscription payment_service.subscriptions;
+            _canceled_notification notification_service.notifications;
         begin
 
             -- generate subscription
@@ -33,6 +35,17 @@ BEGIN;
                 into _subscription;
 
             return next ok(_subscription.status = 'canceled', 'should turn status to canceled');
+
+            -- get canceled notification
+            select n.* from notification_service.notifications n
+                join notification_service.notification_global_templates ngt 
+                    on ngt.id = n.notification_global_template_id
+                where n.user_id = _subscription.user_id
+                    and ngt.label = 'canceled_subscription'
+                    and (n.data -> 'relations' ->> 'subscription_id')::uuid = _subscription.id
+                into _canceled_notification;
+
+            return next ok(_canceled_notification.id is not null, 'should have a canceled_subscription notification');
 
         end;
     $$;
