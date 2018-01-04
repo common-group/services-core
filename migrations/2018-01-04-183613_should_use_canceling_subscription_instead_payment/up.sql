@@ -103,3 +103,5 @@ AS $function$
             return true;
         end;
     $function$;
+
+grant insert, select on notification_service.notifications to admin, platform_user, scoped_user;
