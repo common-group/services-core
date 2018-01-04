@@ -301,7 +301,7 @@ const start = {
                                             m('.fontsize-base.flex-column.fontcolor-secondary',
                                               [
                                                     I18n.t('mode.sub.info_2', I18nScope()),
-                                                    m.trust(I18n.t('mode.sub', I18nScope()))
+                                                    m.trust(I18n.t('mode.sub.more_link', I18nScope()))
                                               ]
                                             )
                                         ]
