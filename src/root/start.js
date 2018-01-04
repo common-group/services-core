@@ -264,7 +264,7 @@ const start = {
                                     m('.flex-column.card.u-radius.u-marginbottom-30',
                                         [
                                             m('.u-text-center.u-marginbottom-30',
-                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632f334ec8a367d341b4bba_badge-aon.png\']')
+                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/57ba58b4846cc19e60acdd5b/5a4e2fd4056b6a0001013595_aon-badge.png\']')
                                             ),
                                             m('.fontsize-large.flex-column.u-marginbottom-20',
                                                 [
@@ -280,7 +280,7 @@ const start = {
                                     m('.flex-column.card.u-radius.u-marginbottom-30',
                                         [
                                             m('.u-text-center.u-marginbottom-30',
-                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/5632ebacd092957f34eaea9c_badge-flex.png\']')
+                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/57ba58b4846cc19e60acdd5b/5a4e2fd48aff0400011446b8_flex-badge.png\']')
                                             ),
                                             m('.fontsize-large.flex-column.u-marginbottom-20',
                                                 I18n.t('mode.flex.info', I18nScope())
@@ -289,7 +289,23 @@ const start = {
                                                 I18n.t('mode.flex.info_2', I18nScope())
                                             )
                                         ]
-                                    )
+                                    ),
+                                    m('.flex-column.card.u-radius.u-marginbottom-30.card-secondary',
+                                        [
+                                            m('.u-text-center.u-marginbottom-30',
+                                                m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/57ba58b4846cc19e60acdd5b/5a4e2fd4872fe200012f7fed_ass-badge.png\']')
+                                            ),
+                                            m('.fontsize-large.flex-column.u-marginbottom-20',
+                                                I18n.t('mode.sub.info', I18nScope())
+                                            ),
+                                            m('.fontsize-base.flex-column.fontcolor-secondary',
+                                              [
+                                                    I18n.t('mode.sub.info_2', I18nScope()),
+                                                    m.trust(I18n.t('mode.sub.more_link', I18nScope()))
+                                              ]
+                                            )
+                                        ]
+                                    )                            
                                 ]
                             )
                         ),
