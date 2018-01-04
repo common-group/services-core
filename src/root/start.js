@@ -296,12 +296,12 @@ const start = {
                                                 m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/57ba58b4846cc19e60acdd5b/5a4e2fd4872fe200012f7fed_ass-badge.png\']')
                                             ),
                                             m('.fontsize-large.flex-column.u-marginbottom-20',
-                                                I18n.t('mode.ass.info', I18nScope())
+                                                I18n.t('mode.sub.info', I18nScope())
                                             ),
                                             m('.fontsize-base.flex-column.fontcolor-secondary',
                                               [
-                                                    I18n.t('mode.ass.info_2', I18nScope()),
-                                                    m.trust(I18n.t('mode.ass_link', I18nScope()))
+                                                    I18n.t('mode.sub.info_2', I18nScope()),
+                                                    m.trust(I18n.t('mode.sub', I18nScope()))
                                               ]
                                             )
                                         ]
