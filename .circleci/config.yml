@@ -32,7 +32,7 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add nodejs nodejs-npm bash
-      - run: npm install -g heroku-cli@6.14.38
+      - run: npm install -g heroku-cli
       - run: docker build -t comum/payment-service:latest .
       - run: bash .circleci/setup-heroku.sh
 
@@ -48,7 +48,7 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add nodejs nodejs-npm bash
-      - run: npm install -g heroku-cli@6.14.38
+      - run: npm install -g heroku-cli
       - run: docker build -t comum/payment-service:latest .
       - run: bash .circleci/setup-heroku.sh
 
