@@ -5,6 +5,7 @@ export { default as Footer } from './root/footer';
 export { default as CheckEmail } from './root/check-email';
 export { default as AdminUsers } from './root/admin-users';
 export { default as AdminContributions } from './root/admin-contributions';
+export { default as AdminSubscriptions } from './root/admin-subscriptions';
 export { default as AdminBalanceTranfers } from './root/admin-balance-tranfers';
 export { default as Flex } from './root/flex';
 export { default as Insights } from './root/insights';
