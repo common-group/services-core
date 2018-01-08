@@ -8,26 +8,29 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectTabs = {
     controller(args) {
-        const isFixed = m.prop(false),
+        const fixedNavClass = 'project-nav-fixed',
+            isFixed = m.prop(false),
             originalPosition = m.prop(-1),
             project = args.project;
 
         const fixOnScroll = el => () => {
             const viewportOffset = el.getBoundingClientRect();
+            
 
-            if (window.scrollY <= originalPosition()) {
+            if (window.scrollY <= originalPosition() && isFixed()) {
                 originalPosition(-1);
                 isFixed(false);
-                m.redraw();
+                el.classList.remove(fixedNavClass);
             }
 
             if (viewportOffset.top < 0 || (window.scrollY > originalPosition() && originalPosition() > 0)) {
                 if (!isFixed()) {
                     originalPosition(window.scrollY);
                     isFixed(true);
-                    m.redraw();
+                    el.classList.add(fixedNavClass);
                 }
             }
+
         };
 
         const navDisplay = (el, isInitialized) => {
@@ -45,7 +48,6 @@ const projectTabs = {
                 return false;
             }
 
-
             h.navigateTo(`/projects/${project().project_id}/contributions/new`);
 
             return false;
@@ -61,11 +63,8 @@ const projectTabs = {
         const project = args.project,
             rewards = args.rewardDetails;
 
-
-        const mainClass = (!ctrl.isFixed() || project().is_owner_or_admin) ? '.w-section.project-nav' : '.w-section.project-nav.project-nav-fixed';
-
         return m('nav-wrapper', project() ? [
-            m(mainClass, {
+            m('.w-section.project-nav', {
                 config: ctrl.navDisplay
             }, [
                 m('.w-container', [
