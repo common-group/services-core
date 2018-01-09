@@ -9,13 +9,18 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsShow = {
     controller(args) {
-        const { project_id, project_user_id } = args;
+        const { project_id, project_user_id, post_id } = args;
 
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
         } else {
             projectVM.getCurrentProject();
         }
+
+        if (post_id) {
+            window.location.hash = '#posts';
+        }
+
         try {
             h.analytics.windowScroll({ cat: 'project_view', act: 'project_page_scroll', project: project_id ? { id: project_id, user_id: project_user_id } : null });
             h.analytics.event({ cat: 'project_view', act: 'project_page_view', project: project_id ? { id: project_id, user_id: project_user_id } : null }).call();
