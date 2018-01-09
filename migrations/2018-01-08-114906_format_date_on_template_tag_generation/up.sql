@@ -2,7 +2,7 @@
 create or replace function core.fmt_datetime(t timestamp) returns text
 language sql
 as $$
-    select to_char(core.zone_timestamp(t::timestamp without time zone), 'DD/MM/YYYY HH:MM:SS');
+    select to_char(core.zone_timestamp(t::timestamp without time zone), 'DD/MM/YYYY HH24:MI:SS');
 $$;
 CREATE OR REPLACE FUNCTION notification_service._generate_template_vars_from_relations(json)
  RETURNS json
