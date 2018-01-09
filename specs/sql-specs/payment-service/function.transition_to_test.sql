@@ -50,4 +50,6 @@ BEGIN;
         end;
     $$;
     select test_subscription_transition_canceling_to_canceled();
+
+    SELECT * FROM finish();
 ROLLBACK;

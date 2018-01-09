@@ -65,4 +65,6 @@ BEGIN;
     $$;
 
     select test_cancel_subscriptions();
+
+    SELECT * FROM finish();
 ROLLBACK;

@@ -35,4 +35,6 @@ BEGIN;
     $$;
 
     select test_paid_transition_at();
+
+    SELECT * FROM finish();
 ROLLBACK;

@@ -36,4 +36,6 @@ BEGIN;
     $$;
 
     select test_chargedback_transition_at();
+
+    SELECT * FROM finish();
 ROLLBACK;
