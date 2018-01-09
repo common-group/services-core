@@ -24,7 +24,7 @@ const adminSubscriptionItem = {
         };
     },
     view(ctrl, args) {
-        console.log(args.item);
+        // console.log(args.item);
         return m(
             '.w-row',
             _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [

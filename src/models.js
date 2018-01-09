@@ -9,6 +9,7 @@ const models = {
     commonPayment: commonPayment.model('rpc/pay'),
     cancelSubscription: commonPayment.model('rpc/cancel_subscription'),
     commonPaymentInfo: commonPayment.model('rpc/payment_info'),
+    commonPayments: commonPayment.model('payments'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     contributionDetail: catarse.model('contribution_details'),
