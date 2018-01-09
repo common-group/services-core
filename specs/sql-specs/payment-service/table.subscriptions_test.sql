@@ -52,4 +52,5 @@ BEGIN;
         'payment_service', 'credit_cards', 'id'
     );
 
+    SELECT * FROM finish();
 ROLLBACK;

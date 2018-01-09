@@ -27,4 +27,6 @@ BEGIN;
         'payment_service', 'subscription_status_transitions', 'subscription_id',
         'payment_service', 'subscriptions', 'id'
     );
+
+    SELECT * FROM finish();
 ROLLBACK;

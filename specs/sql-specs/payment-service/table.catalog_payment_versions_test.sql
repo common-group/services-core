@@ -26,4 +26,5 @@ BEGIN;
         'payment_service', 'catalog_payments', 'id'
     );
 
+    SELECT * FROM finish();
 ROLLBACK;

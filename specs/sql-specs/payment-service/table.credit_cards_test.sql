@@ -34,4 +34,6 @@ BEGIN;
         'payment_service', 'credit_cards', 'user_id',
         'community_service', 'users', 'id'
     );
+
+    SELECT * FROM finish();
 ROLLBACK;

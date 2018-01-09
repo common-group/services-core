@@ -35,4 +35,6 @@ BEGIN;
     $$;
 
     select test_refunded_transition_at();
+
+    SELECT * FROM finish();
 ROLLBACK;
