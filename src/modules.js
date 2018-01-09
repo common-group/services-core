@@ -16,6 +16,7 @@ export { default as Press } from './root/press';
 export { default as LiveStatistics } from './root/live-statistics';
 export { default as ProjectsContributionReport } from './root/projects-contribution-report';
 export { default as ProjectsSubscriptionReport } from './root/projects-subscription-report';
+export { default as ProjectsSubscriptionReportDownload } from './root/projects-subscription-report-download';
 export { default as ProjectsDashboard } from './root/projects-dashboard';
 export { default as ProjectsExplore } from './root/projects-explore';
 export { default as ProjectsHome } from './root/projects-home';

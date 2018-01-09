@@ -1,6 +1,9 @@
 import m from 'mithril';
 import _ from 'underscore';
-import { catarse, commonPayment } from '../api';
+import {
+    catarse,
+    commonPayment
+} from '../api';
 import models from '../models';
 import h from '../h';
 import loadMoreBtn from '../c/load-more-btn';
@@ -39,8 +42,7 @@ const projectSubscriptionReport = {
 
                 return false;
             },
-            filterBuilder = [
-                {
+            filterBuilder = [{
                     label: 'reward_filter',
                     component: FilterDropdown,
                     data: {
@@ -65,26 +67,26 @@ const projectSubscriptionReport = {
                         vm: filterVM.status,
                         wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: [{
-                            value: '',
-                            option: 'Todos'
-                        },
-                        {
-                            value: 'active',
-                            option: 'Ativa'
-                        },
-                        {
-                            value: 'started',
-                            option: 'Iniciada'
-                        },
-                        {
-                            value: 'canceling',
-                            option: 'Cancelamento solicitado'
-                        },
-                        {
-                            value: 'inactive',
-                            option: 'Inativa'
-                        }
-                                 ]
+                                value: '',
+                                option: 'Todos'
+                            },
+                            {
+                                value: 'active',
+                                option: 'Ativa'
+                            },
+                            {
+                                value: 'started',
+                                option: 'Iniciada'
+                            },
+                            {
+                                value: 'canceling',
+                                option: 'Cancelamento solicitado'
+                            },
+                            {
+                                value: 'inactive',
+                                option: 'Inativa'
+                            }
+                        ]
                     }
                 },
                 {
@@ -97,17 +99,17 @@ const projectSubscriptionReport = {
                         vm: filterVM.payment_method,
                         wrapper_class: '.w-sub-col.w-col.w-col-4',
                         options: [{
-                            value: '',
-                            option: 'Todos'
-                        },
-                        {
-                            value: 'credit_card',
-                            option: 'Cartão de crédito'
-                        },
-                        {
-                            value: 'boleto',
-                            option: 'Boleto'
-                        }
+                                value: '',
+                                option: 'Todos'
+                            },
+                            {
+                                value: 'credit_card',
+                                option: 'Cartão de crédito'
+                            },
+                            {
+                                value: 'boleto',
+                                option: 'Boleto'
+                            }
                         ]
                     }
                 }
@@ -207,8 +209,8 @@ const projectSubscriptionReport = {
                     m('.w-container',
                         m('.w-form', [
                             m('form', {
-                                onsubmit: ctrl.submit
-                            },
+                                    onsubmit: ctrl.submit
+                                },
                                 m('.u-margintop-20.w-row', [
                                     m('.w-col.w-col-8.w-col-push-2.u-text-center',
                                         m('.w-row', [
@@ -236,25 +238,15 @@ const projectSubscriptionReport = {
                                         m.trust('&nbsp;')
                                     ])
                                 ),
-                                m('.w-col.w-col-3',
-                                  m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.xls']`,
-                                      [
-                                          m('span.fa.fa-download',
-                                        m.trust('&nbsp;')
-                                      ),
-                                          'Baixar relatório em XLS'
-                                      ]
-                                  )
-                                ),
-                                m('.w-col.w-col-3',
-                                  m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.csv']`,
-                                      [
-                                          m('span.fa.fa-download',
-                                        m.trust('&nbsp;')
-                                      ),
-                                          'Baixar relatório em CSV'
-                                      ]
-                                  )
+                                m('.w-col.w-col-6',
+                                    m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_download']`, {
+                                        config: m.route
+                                    }, [
+                                        m('span.fa.fa-download',
+                                            m.trust('&nbsp;')
+                                        ),
+                                        'Baixar relatórios'
+                                    ])
                                 )
                             ])
                         ),
@@ -295,7 +287,9 @@ const projectSubscriptionReport = {
                             ),
                             m('.fontsize-small', [
                                 _.map(subsCollection, subscription =>
-                                    m(dashboardSubscriptionCard, { subscription }))
+                                    m(dashboardSubscriptionCard, {
+                                        subscription
+                                    }))
                             ])
                         ])
                     ]),
