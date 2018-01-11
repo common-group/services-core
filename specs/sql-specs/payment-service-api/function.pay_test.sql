@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(12);
+    select plan(17);
 
     SELECT function_returns(
         'payment_service_api', 'pay', ARRAY['json'], 'json' 
@@ -92,7 +92,62 @@ BEGIN;
         return next ok(_count_expected = 1, 'should persist a payment to scoped_user');
     end;
     $$;
+
     select test_pay_with_scoped_user();
+
+    create or replace function test_repay_error_with_scoped_user()
+    returns setof text language plpgsql as $$
+    declare
+        _payment payment_service.catalog_payments;
+        _pay_response json;
+    begin
+        -- test valid data with scoped_user
+        set local role scoped_user;
+        set local request.jwt.claim.platform_token to 'a28be766-bb36-4821-82ec-768d2634d78b';
+        set local request.jwt.claim.user_id to 'bb8f4478-df41-411c-8ed7-12c034044c0e';
+        set local "request.header.x-forwarded-for" to '127.0.0.1'; -- ip header should be found
+
+        -- generate payment
+        insert into payment_service.catalog_payments
+            (id, gateway, platform_id, user_id, project_id, data) 
+                values ('7642bff3-95db-467b-9576-eb23f43ab8ee', 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}')
+            returning * into _payment;
+
+        return next throws_matching('EXECUTE pay_with_data(''{"payment_id": "7642bff3-95db-467b-9576-eb23f43ab8ee"}'')', 'cant pay this payment' ,'cant repay when not my payment');
+
+        -- update payment to my user
+        update payment_service.catalog_payments
+            set user_id = __seed_second_user_id()
+            where id = _payment.id
+            returning * into _payment;
+
+        return next throws_matching('EXECUTE pay_with_data(''{"payment_id": "7642bff3-95db-467b-9576-eb23f43ab8ee"}'')', 'cant pay this payment' ,'cant repay when not in error status');
+
+        -- update payment to error status
+        update payment_service.catalog_payments
+            set status = 'error'
+            where id = _payment.id
+            returning * into _payment;
+
+        -- should exeute pay
+        return next lives_ok('EXECUTE pay_with_data(''{"payment_id": "7642bff3-95db-467b-9576-eb23f43ab8ee", "subscription": true}'')', 'scoped_user can call pay');
+        
+        -- reload payment
+        select * from payment_service.catalog_payments
+            where id = _payment.id
+            into _payment;
+
+        return next is(_payment.status, 'pending', 'put payment in pending again');
+        return next ok(_payment.subscription_id is null, 'should not generate a subscriptin');
+
+        --select * from payment_service_api.pay(
+        --    __json_data_payment()
+        --) into _pay_response;
+    end;
+    $$;
+
+    select test_repay_error_with_scoped_user();
+
 
     select * from finish();
 
