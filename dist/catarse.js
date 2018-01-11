@@ -15971,7 +15971,7 @@ var dashboardRewardCard = {
         }, 'Cancelar')), m('.w-clearfix.w-col.w-col-4')])]]))), ctrl.limitError() ? m(inlineError, {
             message: 'Limite deve ser maior que quantidade de apoios.'
         }) : '',,]), m('.u-margintop-20', [m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold', I18n$1.t('reward_link_label', I18nScope$63())), m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n$1.t('reward_link_hint', I18nScope$63())), m('.w-form', m('.w-col.w-col-6', m.component(copyTextInput, {
-            value: 'https://www.catarse.me/pt/projects/' + project.project_id + '/contributions/new?reward_id=' + reward.id()
+            value: 'https://www.catarse.me/pt/projects/' + project.project_id + '/' + (isSubscription ? 'subscriptions/start' : 'contributions/new') + '?reward_id=' + reward.id()
         })))])]);
     }
 };
