@@ -18,6 +18,8 @@ language sql immutable as $$ select 'c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d'::uuid
 
 
 -- database seed data
+insert into core.core_settings(name, value)
+    values ('subscription_interval', '1 month');
 -- add platform
 insert into platform_service.platforms(id, name, token) values (__seed_platform_id(), 'demo platform', __seed_platform_token());
 

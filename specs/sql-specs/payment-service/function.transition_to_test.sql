@@ -6,8 +6,6 @@ BEGIN;
 
     select plan(4);
 
-    insert into core.core_settings(name, value) values ('subscription_interval', '1 month');
-
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.catalog_payments', 'payment_service.payment_status', 'json'], 'boolean');
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.subscriptions', 'payment_service.subscription_status', 'json'], 'boolean');
 
