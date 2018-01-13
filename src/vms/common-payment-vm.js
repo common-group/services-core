@@ -48,10 +48,41 @@ const userPayload = (customer, address) => ({
 });
 
 const displayError = (fields) => (data) => {
-    const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+    const errorMsg = data.message || I18n.t('submission.encryption_error', I18nScope());
     fields.isLoading(false);
     fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
     m.redraw();
+};
+
+const paymentInfo = (paymentId) => {
+    return commonPaymentInfo.postWithToken({id: paymentId}, null, {
+        'X-forwarded-For': '127.0.0.1'
+    });
+};
+
+const requestInfo = (promise, paymentInfoId) => {
+    paymentInfo(paymentInfoId).then((infoR) => {
+        if(_.isNull(infoR.gateway_payment_method) || _.isUndefined(infoR.gateway_payment_method)) {
+            if(!_.isNull(infoR.gateway_errors)) {
+                return promise.reject({message: infoR.gateway_errors})
+            } 
+
+            h.sleep(4000);
+
+            return requestInfo(promise);
+        }
+
+        promise.resolve(
+            m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${infoR.gateway_payment_method}`)
+        );
+    }).catch(() => promise.reject({}));
+};
+
+const getPaymentInfoUntilNoError = ({paymentInfoId}) => {
+    let p = m.deferred();
+    requestInfo(p, paymentInfoId);
+
+    return p.promise;
 };
 
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
@@ -151,8 +182,6 @@ const sendSlipPayment = (fields, commonData) => {
         }
     };
 
-    
-
     if (commonData.rewardCommonId) {
         _.extend(payload, {reward_id: commonData.rewardCommonId});
     }
@@ -162,35 +191,6 @@ const sendSlipPayment = (fields, commonData) => {
         .then(sendPayment)
         .then(getPaymentInfoUntilNoError)
         .catch(displayError(fields));
-};
-
-const paymentInfo = (paymentId) => {
-    return commonPaymentInfo.postWithToken({id: paymentId}, null, {
-        'X-forwarded-For': '127.0.0.1'
-    });
-};
-
-const getPaymentInfoUntilNoError = ({id}) => {
-    const requestInfo = (promise) => {
-        paymentInfo(id).then((infoR) => {
-            if(_.isNull(infoR.gateway_payment_method) || _.isUndefined(infoR.gateway_payment_method)) {
-                if(!_.isNull(infoR.gateway_errors)) {
-                    return promise.reject({message: infoR.gateway_errors})
-                } else {
-                    h.sleep(4000);
-                    return requestInfo(promise);
-                }
-            }
-
-            promise.resolve(
-                m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${infoR.gateway_payment_method}`));
-
-        });
-    };
-
-    let p = m.deferred();
-    requestInfo(p);
-    return p.promise;
 };
 
 const commonPaymentVM = {
