@@ -4,8 +4,6 @@ BEGIN;
     \i /specs/sql-support/payment_json_build_helpers.sql
 
     select plan(5);
-
-    insert into core.core_settings(name, value) values ('subscription_interval', '1 month');
     
     prepare cancel_subscriptions as select * from payment_service.cancel_subscriptions();
 
