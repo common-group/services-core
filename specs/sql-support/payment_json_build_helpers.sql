@@ -10,7 +10,8 @@ begin
         'user_id', 'd44378a2-3637-447c-9f57-dc20fff574db',
         'project_id', '52273d0a-1610-4f48-9239-e96e5861c3d3',
         'amount', 2400,
-        'payment_method', 'boleto',
+        'credit_card_owner_document', ($1->>'credit_card_owner_document')::text,
+        'payment_method', coalesce(($1->>'payment_method')::text, 'boleto'),
         'customer', json_build_object(
             'name', (case 
             when $1::jsonb ?| '{customer_name}' then
