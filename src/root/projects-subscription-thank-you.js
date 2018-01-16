@@ -116,7 +116,11 @@ const ProjectsSubscriptionThankYou = {
                 )
             ),
             ctrl.error() 
-                ? m('p', I18n.translate('thank_you.thank_you_error', I18nScope()))
+                ? m('.w-row',
+                    m('.w-col.w-col-8.w-col-offset-2',
+                        m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', I18n.translate('thank_you.thank_you_error', I18nScope()))
+                    )
+                )
                 : ctrl.paymentData().boleto_url
                     ? m('.w-row',
                         m('.w-col.w-col-8.w-col-offset-2',

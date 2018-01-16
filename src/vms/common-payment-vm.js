@@ -61,9 +61,9 @@ const paymentInfo = (paymentId) => {
 };
 
 
-let retries = 3;
+let retries = 10;
 const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`)
-const requestInfo = (promise, paymentInfoId) => {
+const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
     paymentInfo(paymentInfoId).then((infoR) => {
         if(_.isNull(infoR.gateway_payment_method) || _.isUndefined(infoR.gateway_payment_method)) {
             if(!_.isNull(infoR.gateway_errors)) {
@@ -75,18 +75,18 @@ const requestInfo = (promise, paymentInfoId) => {
             retries = retries - 1;
 
             return retries > 0
-                ? requestInfo(promise, paymentInfoId)
-                : promise.resolve(resolvePayment(infoR.gateway_payment_method, false, paymentInfoId));
+                ? requestInfo(promise, paymentInfoId, defaultPaymentMethod)
+                : promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId));
         }
 
         promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentInfoId));
     }).catch(() => promise.reject({}));
 };
 
-const getPaymentInfoUntilNoError = ({id}) => {
+const getPaymentInfoUntilNoError = (paymentMethod) => ({id}) => {
     let p = m.deferred();
 
-    requestInfo(p, id);
+    requestInfo(p, id, paymentMethod);
 
     return p.promise;
 };
@@ -145,7 +145,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
         const sendPayment = () => sendPaymentRequest(payload);
         updateUser(userPayload(customer, address))
             .then(sendPayment)
-            .then(getPaymentInfoUntilNoError)
+            .then(getPaymentInfoUntilNoError(payload.payment_method))
             .catch(displayError(fields));
     });
 };
@@ -195,7 +195,7 @@ const sendSlipPayment = (fields, commonData) => {
     const sendPayment = () => sendPaymentRequest(payload);
     updateUser(userPayload(customer, address))
         .then(sendPayment)
-        .then(getPaymentInfoUntilNoError)
+        .then(getPaymentInfoUntilNoError(payload.payment_method))
         .catch(displayError(fields));
 };
 
