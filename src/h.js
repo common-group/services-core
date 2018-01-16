@@ -913,13 +913,12 @@ const
         }
         return div.innerHTML;
     },
-    sleep = (milliseconds: integer) => {
-        const start = new Date().getTime();
-        for (let i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > milliseconds){
-                break;
-            }
-        }
+    sleep = (time: number) => {
+        const p = m.deferred();
+
+        setTimeout(p.resolve, time);
+
+        return p.promise;
     };
 
 setMomentifyLocale();
