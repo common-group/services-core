@@ -241,6 +241,7 @@ const userVM = {
     displayName,
     fetchUser,
     getCurrentUser,
+    currentUser,
     getMailMarketingLists
 };
 
