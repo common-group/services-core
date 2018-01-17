@@ -20,8 +20,14 @@ import userVM from '../vms/user-vm';
 
 const adminSubscriptionUser = {
     controller(args) {
-        const user = userVM.getCurrentUser();
-        return { user };
+        const user = m.prop({});
+        console.log(args.item.user_external_id);
+        userVM.fetchUser(args.item.user_external_id, false).then((data) => {
+            user(_.first(data));
+        });
+        return {
+            user
+        };
     },
     view(ctrl, args) {
         const item = args.item,
@@ -33,7 +39,10 @@ const adminSubscriptionUser = {
               };
 
         const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${item.checkout_data.customer.email}`);
-        return ctrl.user() ? m.component(adminUser, { item: user, additional_data: additionalData }) : h.loader();
+        return ctrl.user() ? m.component(adminUser, {
+            item: user,
+            additional_data: additionalData
+        }) : h.loader();
     }
 };
 

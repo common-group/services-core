@@ -7,6 +7,7 @@ import h from '../h';
 
 const vm = commonPayment.filtersVM({
         status: 'eq',
+        full_text_index: '@@',
         payment_method: 'eq'
     }),
 
@@ -20,5 +21,10 @@ vm.payment_method('');
 vm.order({
     id: 'desc'
 });
+
+vm.full_text_index.toFilter = function() {
+    const filter = paramToString(vm.full_text_index());
+    return filter && replaceDiacritics(filter) || undefined;
+};
 
 export default vm;

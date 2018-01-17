@@ -7,13 +7,20 @@ import adminFilter from '../c/admin-filter';
 import adminSubscriptionItem from '../c/admin-subscription-item';
 import adminSubscriptionDetail from '../c/admin-subscription-detail';
 import filterDropdown from '../c/filter-dropdown';
+import filterMain from '../c/filter-main';
 
 const adminSubscriptions = {
     controller() {
         let listVM = subscriptionListVM,
             filterVM = subscriptionFilterVM,
             error = m.prop(''),
-            filterBuilder = [{ // state
+            filterBuilder = [{ // name
+                component: filterMain,
+                data: {
+                    vm: filterVM.full_text_index,
+                    placeholder: 'Busque por projeto, permalink, email, nome do realizador...',
+                },
+            },{ // state
                 component: filterDropdown,
                 data: {
                     label: 'Com o estado',
@@ -69,10 +76,12 @@ const adminSubscriptions = {
     },
 
     view(ctrl) {
+        const label = 'Assinaturas';
         return m('#admin-root-subscriptions', [
             m.component(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
+                label,
                 submit: ctrl.submit
             }),
             m.component(adminList, {
