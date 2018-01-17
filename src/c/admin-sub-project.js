@@ -14,7 +14,7 @@ const adminSubProject = {
         const project = ctrl.projectVM.currentProject();
         return m('.w-row.admin-project', project ? [
             m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [
-                m(`img.thumb-project.u-radius[src=${project.thumb_image}][width=50]`)
+                m(`img.thumb-project.u-radius[src=${project.large_image}][width=50]`)
             ]),
             m('.w-col.w-col-9.w-col-small-9', [
                 m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-10', [

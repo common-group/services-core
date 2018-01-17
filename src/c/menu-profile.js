@@ -154,9 +154,14 @@ const menuProfile = {
                                                     )
                                                 ),
                                                 m('li.lineheight-looser',
-                                                    m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/notifications\']',
-                                                        'Admin notificações'
-                                                    )
+                                                  m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/subscriptions\']',
+                                                    'Admin assinaturas'
+                                                   )
+                                                 ),
+                                                m('li.lineheight-looser',
+                                                  m('a.alt-link.fontsize-smaller[href=\'/pt/new-admin#/notifications\']',
+                                                    'Admin notificações'
+                                                   )
                                                 ),
                                                 m('li.lineheight-looser',
                                                     m('a.alt-link.fontsize-smaller[href=\'/pt/dbhero\']',
