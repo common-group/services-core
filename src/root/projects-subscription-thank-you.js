@@ -7,30 +7,43 @@ import projectShareBox from '../c/project-share-box';
 import projectRow from '../c/project-row';
 import UserVM from '../vms/user-vm';
 import ProjectVM from '../vms/project-vm';
+import CommonPaymentVM from '../vms/common-payment-vm.js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const ProjectsSubscriptionThankYou = {
     controller(args) {
         const paymentMethod = m.route.param('payment_method');
+        const paymentConfirmed = JSON.parse(m.route.param('payment_confirmed'));
+        const paymentId = m.route.param('payment_id');
+        const paymentData = m.prop({});
+        const error = m.prop(false);
         const projectId = m.route.param('project_id');
         const project = m.prop({});
         const projectUser = m.prop();
         const recommendedProjects = UserVM.getUserRecommendedProjects();
         
+        if (paymentId) {
+            CommonPaymentVM.paymentInfo(paymentId).then(paymentData).catch(() => error(true));
+        }
+
         ProjectVM
             .fetchProject(projectId, false)
             .then(projectData => {
                 project(_.first(projectData));
                 return UserVM.fetchUser(project().user.id, false);
             })
-            .then(projectUserData => projectUser(_.first(projectUserData)));
+            .then(projectUserData => projectUser(_.first(projectUserData)))
+            .catch(() => error(true));
 
         return {
             displayShareBox: h.toggleProp(false, true),
             recommendedProjects,
             paymentMethod,
+            paymentConfirmed,
             project,
-            projectUser
+            projectUser,
+            paymentData,
+            error
         };
     },
     view(ctrl, args) {
@@ -54,8 +67,8 @@ const ProjectsSubscriptionThankYou = {
                                     m.trust(
                                         I18n.t(
                                             ctrl.paymentMethod === 'credit_card' 
-                                                ? 'thank_you.thank_you_text_html'
-                                                : 'thank_you.thank_you_slip_text_html',
+                                            ? 'thank_you.thank_you_text_html'
+                                            : ctrl.paymentConfirmed ? 'thank_you_slip.thank_you_text_html' : 'thank_you.thank_you_slip_unconfirmed_text_html',
                                             I18nScope({
                                                 total: project.total_contributions,
                                                 email: user.email,
@@ -102,17 +115,34 @@ const ProjectsSubscriptionThankYou = {
                     )
                 )
             ),
-            m('.section.u-marginbottom-40',
-                m('.w-container', [
-                    m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
-                        I18n.t('thank_you.project_recommendations', I18nScope())
-                    ),
-                    m.component(projectRow, {
-                        collection: ctrl.recommendedProjects,
-                        ref: 'ctrse_thankyou_r'
-                    })
-                ])
-            )
+            ctrl.error() 
+                ? m('.w-row',
+                    m('.w-col.w-col-8.w-col-offset-2',
+                        m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', I18n.translate('thank_you.thank_you_error', I18nScope()))
+                    )
+                )
+                : ctrl.paymentData().boleto_url
+                    ? m('.w-row',
+                        m('.w-col.w-col-8.w-col-offset-2',
+                            m('iframe.slip', {
+                                src: ctrl.paymentData().boleto_url,
+                                width: '100%',
+                                height: '905px',
+                                frameborder: '0',
+                                style: 'overflow: hidden;'
+                            })
+                        )
+                    ) : m('.section.u-marginbottom-40',
+                        m('.w-container', [
+                            m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
+                                I18n.t('thank_you.project_recommendations', I18nScope())
+                            ),
+                            m.component(projectRow, {
+                                collection: ctrl.recommendedProjects,
+                                ref: 'ctrse_thankyou_r'
+                            })
+                        ])
+                    )
         ]);
     }
 };

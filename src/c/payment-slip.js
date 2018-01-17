@@ -35,6 +35,7 @@ const paymentSlip = {
         };
 
         return {
+            vm,
             buildSlip,
             slipPaymentDate,
             loading,
@@ -54,11 +55,13 @@ const paymentSlip = {
                             ),
                             m('.w-row',
                                 m('.w-col.w-col-8.w-col-push-2', [
-                                    ctrl.loading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
+                                    ctrl.vm.isLoading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
                                         onclick: ctrl.buildSlip,
                                         value: 'Imprimir Boleto',
                                         type: 'submit'
                                     }),
+
+                                    !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
                                     ctrl.error() ? m.component(inlineError, { message: ctrl.error() }) : '',
                                     m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                                         'Ao apoiar, você concorda com os ',

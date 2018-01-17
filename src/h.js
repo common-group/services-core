@@ -912,6 +912,13 @@ const
             scripts[i].parentNode.removeChild(scripts[i]);
         }
         return div.innerHTML;
+    },
+    sleep = (time: number) => {
+        const p = m.deferred();
+
+        setTimeout(p.resolve, time);
+
+        return p.promise;
     };
 
 setMomentifyLocale();
@@ -920,6 +927,7 @@ closeModal();
 checkReminder();
 
 export default {
+    sleep,
     stripScripts,
     authenticityParam,
     authenticityToken,
