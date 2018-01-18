@@ -13,6 +13,9 @@ language sql immutable as $$ select 'bb8f4478-df41-411c-8ed7-12c034044c0e'::uuid
 create or replace function __seed_project_id() returns uuid
 language sql immutable as $$ select '52273d0a-1610-4f48-9239-e96e5861c3d3'::uuid $$;
 
+create or replace function __seed_aon_project_id() returns uuid
+language sql immutable as $$ select '23112a89-6179-47cf-9360-09892228e40d'::uuid $$;
+
 create or replace function __seed_reward_id() returns uuid
 language sql immutable as $$ select 'c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d'::uuid $$;
 
@@ -29,7 +32,9 @@ insert into community_service.users(platform_id, id, email, password, key, data)
 (__seed_platform_id(), __seed_second_user_id(), 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63', json_build_object('name', 'test community user 02')::jsonb);
 
 -- add project
-insert into project_service.projects(id, platform_id, user_id, name, mode, permalink, data) values (__seed_project_id(), __seed_platform_id(), __seed_second_user_id(), 'test project 01', 'sub', 'test_project', json_build_object('name', 'test project 01'));
+insert into project_service.projects(id, platform_id, user_id, name, mode, permalink, data) 
+    values (__seed_project_id(), __seed_platform_id(), __seed_second_user_id(), 'test project 01', 'sub', 'test_project', json_build_object('name', 'test project 01')),
+    (__seed_aon_project_id(), __seed_platform_id(), __seed_second_user_id(), 'test project 02', 'aon', 'test_project_aon', json_build_object('name', 'test project aon'));
 
 -- add reward to project
 insert into project_service.rewards(id, project_id, platform_id, data) 
