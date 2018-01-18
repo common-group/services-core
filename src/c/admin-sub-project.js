@@ -1,17 +1,21 @@
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 
 const adminSubProject = {
     controller(args) {
-        projectVM.fetchProject(args.item.project_external_id);
+        const project = m.prop({});
+        projectVM.fetchProject(args.item.project_external_id, false).then((data) => {
+            project(_.first(data));
+        });
         return {
-            projectVM
+            project
         };
     },
 
     view(ctrl, args) {
-        const project = ctrl.projectVM.currentProject();
+        const project = ctrl.project();
         return m('.w-row.admin-project', project ? [
             m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [
                 m(`img.thumb-project.u-radius[src=${project.large_image}][width=50]`)
