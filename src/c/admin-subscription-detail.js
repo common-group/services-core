@@ -25,21 +25,18 @@ const adminSubscriptionDetail = {
         };
 
         const loadPayments = () => {
-            const model = models.commonPayments,
-                filterVM = commonPayment.filtersVM({
-                    subscription_id: 'eq'
-                });
+
+            const filterVM = commonPayment.filtersVM({
+                subscription_id: 'eq'
+            }), payments = m.prop([]);
 
             filterVM.subscription_id(args.key);
-            const opts = model.getRowOptions(filterVM.parameters()),
-                payments = m.prop([]);
 
-            l = commonPayment.loaderWithToken(opts);
+            models.commonPayments.pageSize(false);
+            const lUserPayments = commonPayment.loaderWithToken(
+                models.commonPayments.getPageOptions(filterVM.parameters()));
 
-            l.load().then((data) => {
-                payments(data);
-            });
-
+            lUserPayments.load().then(payments);
 
             return payments;
         };
