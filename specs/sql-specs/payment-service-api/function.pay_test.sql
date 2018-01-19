@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(19);
+    select plan(20);
 
     SELECT function_returns(
         'payment_service_api', 'pay', ARRAY['json'], 'json' 
@@ -34,6 +34,9 @@ BEGIN;
         -- ip header should be found
         return next throws_matching('EXECUTE pay_with_data(''{}'')', '.+x-forwarded-for', 'should raise when ip header not found');
         set local "request.header.x-forwarded-for" to '127.0.0.1'; 
+
+        -- should not valid when project is not sub
+        return next throws_matching('EXECUTE pay_with_data(''{"project_id": "'||__seed_aon_project_id()||'"}'')', 'only_sub_projects', 'should raise when project is not sub mode');
 
         -- test valid data with platform_user
         return next lives_ok('EXECUTE pay_with_data(''{"external_id": "1234"}'')', 'platform_user can call pay');
