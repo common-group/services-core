@@ -71,7 +71,7 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
     paymentInfo(paymentInfoId).then((infoR) => {
         if(_.isNull(infoR.gateway_payment_method) || _.isUndefined(infoR.gateway_payment_method)) {
             if(!_.isNull(infoR.gateway_errors)) {
-                return promise.reject({message: infoR.gateway_errors})
+                return promise.reject(_.first(infoR.gateway_errors));
             } 
 
             return h.sleep(4000).then(() => {
@@ -107,8 +107,8 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     const address = customer.address();
     const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
     const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
-    const addressState = _.findWhere(addressVM.states(), {id: address.state_id});
-    const addressCountry = _.findWhere(addressVM.countries(), {id: address.country_id});
+    const addressState = _.findWhere(addressVM.states(), {id: address.state_id}) || {};
+    const addressCountry = _.findWhere(addressVM.countries(), {id: address.country_id}) || {};
 
     card.generateHash(cardHash => {
         const payload = {
