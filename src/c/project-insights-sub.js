@@ -26,9 +26,9 @@ const projectInsightsSub = {
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekSubscriptions);
 
-        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled', 'canceling'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekTransitions);
-        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled', 'canceling'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekTransitions);
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
@@ -44,6 +44,12 @@ const projectInsightsSub = {
         };
     },
     view(ctrl, args) {
+        const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
+        const sumTransitionAmount = list => _.reduce(list, (memo, sub) => memo + (sub.data.checkout_data.amount / 100), 0);
+        const weekSum = sumAmount(ctrl.weekSubscriptions());
+        const lastWeekSum = sumAmount(ctrl.lastWeekSubscriptions());
+        const canceledWeekSum = sumTransitionAmount(ctrl.weekTransitions());
+        const canceledLastWeekSum = sumTransitionAmount(ctrl.lastWeekTransitions());
         const project = args.project,
             subscribersDetails = args.subscribersDetails,
             balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
@@ -105,17 +111,44 @@ const projectInsightsSub = {
                     (project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
                         project
                     })) : ''),
-                    m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        m(insightsInfoBox, {
-                            label: 'Novos Assinantes',
-                            newInfo: ctrl.weekSubscriptions,
-                            oldInfo: ctrl.lastWeekSubscriptions
-                        }),
-                        m(insightsInfoBox, {
-                            label: 'Assinantes perdidos',
-                            newInfo: ctrl.weekTransitions,
-                            oldInfo: ctrl.lastWeekTransitions
-                        }),
+
+                    m('.u-marginbottom-60', [
+                        m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
+                            'Assinaturas'
+                        ),
+                        m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
+                            m(insightsInfoBox, {
+                                label: 'Novos Assinantes',
+                                info: ctrl.weekSubscriptions().length,
+                                newCount: ctrl.weekSubscriptions().length,
+                                oldCount: ctrl.lastWeekSubscriptions().length
+                            }),
+                            m(insightsInfoBox, {
+                                label: 'Assinantes perdidos',
+                                info: ctrl.weekTransitions().length,
+                                newCount: ctrl.weekTransitions().length,
+                                oldCount: ctrl.lastWeekTransitions().lenght
+                            })
+                        ])
+                    ]),
+                    m('.u-marginbottom-60', [
+                        m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
+                            'Receita'
+                        ),
+                        m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
+                            m(insightsInfoBox, {
+                                label: 'Nova receita',
+                                info: `R$${weekSum}`,
+                                newCount: weekSum,
+                                oldCount: lastWeekSum
+                            }),
+                            m(insightsInfoBox, {
+                                label: 'Receita perdida',
+                                info: `R$${canceledWeekSum}`,
+                                newCount: canceledWeekSum,
+                                oldCount: canceledLastWeekSum
+                            })
+                        ])
                     ])
                 ])
             ])
