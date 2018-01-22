@@ -26,9 +26,9 @@ const projectInsightsSub = {
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekSubscriptions);
 
-        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled', 'canceling'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekTransitions);
-        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled', 'canceling'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekTransitions);
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
@@ -51,8 +51,8 @@ const projectInsightsSub = {
         const canceledWeekSum = sumTransitionAmount(ctrl.weekTransitions());
         const canceledLastWeekSum = sumTransitionAmount(ctrl.lastWeekTransitions());
         const project = args.project,
-            subscribersDetails = args.subscribersDetails,
-            balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
+              subscribersDetails = args.subscribersDetails,
+              balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
 
         return m('.project-insights', !args.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -62,34 +62,34 @@ const projectInsightsSub = {
             m('.dashboard-header.section-one-column', [
                 m('.u-marginbottom-30.u-text-center', [
                     m('.fontsize-larger.fontweight-semibold',
-                        `Olá, ${project.user.public_name || project.user.name}!`
-                    ),
+                      `Olá, ${project.user.public_name || project.user.name}!`
+                     ),
                     m('.fontsize-smaller',
-                        `Este é o retrato de sua campanha hoje, ${moment().format('DD [de] MMMM [de] YYYY')}`
-                    )
+                      `Este é o retrato de sua campanha hoje, ${moment().format('DD [de] MMMM [de] YYYY')}`
+                     )
                 ]),
                 m('.w-container', [
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                         subscribersDetails && !_.isEmpty(ctrl.projectGoalsVM.goals()) ?
-                        m.component(projectGoalsBoxDashboard, {
-                            goalDetails: ctrl.projectGoalsVM.goals,
-                            amount: subscribersDetails.amount_paid_for_valid_period
-                        }) : '',
+                            m.component(projectGoalsBoxDashboard, {
+                                goalDetails: ctrl.projectGoalsVM.goals,
+                                amount: subscribersDetails.amount_paid_for_valid_period
+                            }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
-                                'Assinantes ativos'
-                            ),
+                              'Assinantes ativos'
+                             ),
                             m('.fontsize-largest.fontweight-semibold',
-                                subscribersDetails.total_subscriptions
-                            )
+                              subscribersDetails.total_subscriptions
+                             )
                         ]),
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
-                                'Receita Mensal'
-                            ),
+                              'Receita Mensal'
+                             ),
                             m('.fontsize-largest.fontweight-semibold',
-                                `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
-                            )
+                              `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
+                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10', [
@@ -97,15 +97,15 @@ const projectInsightsSub = {
                                 m.trust('&nbsp;'),
                                 ' ',
                                 m(`a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='/users/${project.user_id}/edit#balance']`,
-                                    'Sacar'
-                                )
+                                  'Sacar'
+                                 )
                             ]),
                             m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10',
-                                (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '')
-                            ),
+                              (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '')
+                             ),
                             m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
-                                'O saldo demora até 20 mins após o pagamento para ser atualizado.'
-                            )
+                              'O saldo demora até 20 mins após o pagamento para ser atualizado.'
+                             )
                         ])
                     ]),
                     (project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
@@ -114,8 +114,8 @@ const projectInsightsSub = {
 
                     m('.u-marginbottom-60', [
                         m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
-                            'Assinaturas'
-                        ),
+                          'Assinaturas'
+                         ),
                         m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                             m(insightsInfoBox, {
                                 label: 'Novos Assinantes',
@@ -133,8 +133,8 @@ const projectInsightsSub = {
                     ]),
                     m('.u-marginbottom-60', [
                         m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
-                            'Receita'
-                        ),
+                          'Receita'
+                         ),
                         m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
