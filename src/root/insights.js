@@ -30,10 +30,12 @@ const insights = {
 
         l.load().then((data) => {
             projectDetails(data);
-            const l2 = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
-                id: _.first(data).common_id
-            }));
-            l2.load().then((subData) => { subscribersDetails(subData); load(true); });
+            if(_.first(data).mode === 'sub') {
+                const l2 = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
+                    id: _.first(data).common_id
+                }));
+                l2.load().then((subData) => { subscribersDetails(subData); load(true); });
+            }
         });
         return {
             l,

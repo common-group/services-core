@@ -65,6 +65,7 @@ const models = {
     creatorSuggestion: catarse.model('creator_suggestions'),
     userContribution: catarse.model('user_contributions'),
     userSubscription: commonPayment.model('subscriptions'),
+    subscriptionTransition: commonPayment.model('subscription_status_transitions'),
     shippingFee: catarse.model('shipping_fees'),
     deleteProject: catarse.model('rpc/delete_project'),
     cancelProject: catarse.model('rpc/cancel_project'),
@@ -74,6 +75,7 @@ const models = {
 
 models.teamMember.pageSize(40);
 models.rewardDetail.pageSize(false);
+models.subscriptionTransition.pageSize(false);
 models.shippingFee.pageSize(false);
 models.projectReminder.pageSize(false);
 models.goalDetail.pageSize(false);
