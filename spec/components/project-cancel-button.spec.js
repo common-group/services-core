@@ -9,8 +9,9 @@ describe('ProjectCancelButton', () => {
         beforeAll(() => {
             project = ProjectMockery()[0];
             $output = mq(m.component(projectCancelButton, {
+                project,
                 category: {
-                    project: project
+                    project
                 }
             }));
         });

@@ -18,7 +18,7 @@ const projectCancelButton = {
         return m('div', [
             (ctrl.displayCancelModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayCancelModal,
-                content: [cancelProjectModalContent, { displayModal: ctrl.displayCancelModal }]
+                content: [cancelProjectModalContent, { displayModal: ctrl.displayCancelModal, project: args.project }]
             }) : ''),
             m('.w-row.before-footer',
               m('.w-col.w-col-12',
