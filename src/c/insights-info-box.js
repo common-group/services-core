@@ -7,9 +7,9 @@ const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const insightsInfoBox = {
     view(ctrl, args) {
-        const newCount = args.newInfo().length,
-            oldCount = args.oldInfo().length,
-            countIncrease = oldCount > 0 ? Math.floor(((newCount - oldCount) / oldCount) * 100) : null;
+        const newCount = args.newCount,
+              oldCount = args.oldCount,
+              countIncrease = oldCount > 0 ? Math.floor(((newCount - oldCount) / oldCount) * 100) : null;
 
         return m('.flex-column.card.u-radius.u-marginbottom-10', [
             m('div',
@@ -19,8 +19,8 @@ const insightsInfoBox = {
                 'Últimos 7 dias'
             ),
             m('.fontsize-largest.fontweight-semibold',
-                args.newInfo().length
-            ),
+              args.info
+             ),
             oldCount > 0 ?
             m(`.fontsize-small.fontweight-semibold.lineheight-tighter.text-${newCount >= oldCount ? 'success' : 'error'}`, [
                 m(`span.fa.fa-arrow-${newCount >= oldCount ? 'up' : 'down'}`,
