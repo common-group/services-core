@@ -19,6 +19,9 @@ language sql immutable as $$ select '23112a89-6179-47cf-9360-09892228e40d'::uuid
 create or replace function __seed_reward_id() returns uuid
 language sql immutable as $$ select 'c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d'::uuid $$;
 
+create or replace function __seed_reward_120_id() returns uuid
+language sql immutable as $$ select '77d15096-200c-4189-9222-8a45483db0d0'::uuid $$;
+
 
 -- database seed data
 insert into core.core_settings(name, value)
@@ -40,6 +43,16 @@ insert into project_service.projects(id, platform_id, user_id, name, mode, perma
 insert into project_service.rewards(id, project_id, platform_id, data) 
 values (__seed_reward_id(), __seed_project_id(), __seed_platform_id(), json_build_object('current_ip', '127.0.0.1',
         'minimum_value', 1200::decimal,
+        'maximum_contributions', 0,
+        'shipping_options', 'free'::project_service.shipping_options_enum,
+        'deliver_at', ('2 months'::interval + now())::timestamp,
+        'row_order',  1,
+        'title', 'test title reward',
+        'description', 'test reward description',
+        'metadata', '{}'::json
+)::jsonb),
+(__seed_reward_120_id(), __seed_project_id(), __seed_platform_id(), json_build_object('current_ip', '127.0.0.1',
+        'minimum_value', 12000::decimal,
         'maximum_contributions', 0,
         'shipping_options', 'free'::project_service.shipping_options_enum,
         'deliver_at', ('2 months'::interval + now())::timestamp,
