@@ -6,19 +6,39 @@ import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectInviteCard from '../c/project-invite-card';
 import projectGoalsBoxDashboard from './project-goals-box-dashboard';
+import insightsInfoBox from './insights-info-box';
 import projectGoalsVM from '../vms/project-goals-vm';
-import userVM from '../vms/user-vm.js';
+import subscriptionVM from '../vms/subscription-vm';
+import userVM from '../vms/user-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsightsSub = {
     controller(args) {
         const filtersVM = args.filtersVM;
+        const weekSubscriptions = m.prop({});
+        const lastWeekSubscriptions = m.prop({});
+        const weekTransitions = m.prop({});
+        const lastWeekTransitions = m.prop({});
+
+        subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+            .then(weekSubscriptions);
+        subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .then(lastWeekSubscriptions);
+
+        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+            .then(weekTransitions);
+        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .then(lastWeekTransitions);
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
         const balanceLoader = userVM.getUserBalance(args.project.user_id);
 
         return {
+            weekSubscriptions,
+            lastWeekSubscriptions,
+            weekTransitions,
+            lastWeekTransitions,
             projectGoalsVM,
             balanceLoader
         };
@@ -42,10 +62,13 @@ const projectInsightsSub = {
                         `Este é o retrato de sua campanha hoje, ${moment().format('DD [de] MMMM [de] YYYY')}`
                     )
                 ]),
-                m('.w-container',
+                m('.w-container', [
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                         subscribersDetails && !_.isEmpty(ctrl.projectGoalsVM.goals()) ?
-                        m.component(projectGoalsBoxDashboard, { goalDetails: ctrl.projectGoalsVM.goals, amount: subscribersDetails.amount_paid_for_valid_period }) : '',
+                        m.component(projectGoalsBoxDashboard, {
+                            goalDetails: ctrl.projectGoalsVM.goals,
+                            amount: subscribersDetails.amount_paid_for_valid_period
+                        }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
                                 'Assinantes ativos'
@@ -78,11 +101,23 @@ const projectInsightsSub = {
                                 'O saldo demora até 20 mins após o pagamento para ser atualizado.'
                             )
                         ])
+                    ]),
+                    (project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
+                        project
+                    })) : ''),
+                    m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
+                        m(insightsInfoBox, {
+                            label: 'Novos Assinantes',
+                            newInfo: ctrl.weekSubscriptions,
+                            oldInfo: ctrl.lastWeekSubscriptions
+                        }),
+                        m(insightsInfoBox, {
+                            label: 'Assinantes perdidos',
+                            newInfo: ctrl.weekTransitions,
+                            oldInfo: ctrl.lastWeekTransitions
+                        }),
                     ])
-                ),
-                (project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
-                    project
-                })) : ''),
+                ])
             ])
         ] : h.loader());
     }
