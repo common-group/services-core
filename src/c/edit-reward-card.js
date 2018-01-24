@@ -75,21 +75,25 @@ const editRewardCard = {
                 if (args.error()) {
                     return false;
                 }
-                const shippingFees = _.map(fees(), fee => ({
-                    _destroy: fee.deleted(),
-                    id: fee.id(),
-                    value: fee.value(),
-                    destination: fee.destination()
-                }));
                 const data = {
                     title: reward.title(),
                     project_id: args.project_id,
                     shipping_options: reward.shipping_options(),
                     minimum_value: reward.minimum_value(),
                     description: reward.description(),
-                    shipping_fees_attributes: shippingFees,
                     deliver_at: reward.deliver_at()
                 };
+                if (reward.shipping_options() === 'national' || reward.shipping_options() === 'international') {
+                    const shippingFees = _.map(fees(), fee => ({
+                        _destroy: fee.deleted(),
+                        id: fee.id(),
+                        value: fee.value(),
+                        destination: fee.destination()
+                    }));
+                    _.extend(data, {
+                        shipping_fees_attributes: shippingFees
+                    });
+                }
                 if (reward.newReward) {
                     rewardVM.createReward(args.project_id, data).then((r) => {
                         args.showSuccess(true);
