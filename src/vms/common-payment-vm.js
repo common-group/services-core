@@ -6,10 +6,13 @@ import models from '../models';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+const paymentInfoId = m.prop();
 const {commonPayment, commonPaymentInfo} = models;
-const sendPaymentRequest = data => commonPayment.postWithToken({data}, null, {
-    'X-forwarded-For': '127.0.0.1'
-});
+const sendPaymentRequest = data => commonPayment.postWithToken(
+    {data: _.extend({}, data, {payment_id: paymentInfoId()})},
+    null,
+    {'X-forwarded-For': '127.0.0.1'}
+);
 
 const updateUser = user => m.request({
     method: 'PUT',
@@ -60,7 +63,6 @@ const paymentInfo = (paymentId) => {
     });
 };
 
-
 let retries = 10;
 const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`)
 const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
@@ -87,6 +89,8 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
 
 const getPaymentInfoUntilNoError = (paymentMethod) => ({id}) => {
     let p = m.deferred();
+
+    paymentInfoId(id);
 
     requestInfo(p, id, paymentMethod);
 
