@@ -1,6 +1,4 @@
 -- Your SQL goes here
-grant select on payment_service.credit_cards to platform_user, scoped_user;
-grant select on payment_service_api.credit_cards to platform_user, scoped_user;
 create or replace view payment_service_api.credit_cards as
 select
 card.id,
@@ -24,3 +22,5 @@ card.gateway,
 		case current_role
 		when 'platform_user' then true
 		else card.user_id = core.current_user_id() end);
+grant select on payment_service.credit_cards to platform_user, scoped_user;
+grant select on payment_service_api.credit_cards to platform_user, scoped_user;
