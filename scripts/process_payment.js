@@ -319,7 +319,7 @@ async function init(stdin_data) {
                     ]);
 
                 // create credit card refence on db if save_card or subscriptions
-                if(transaction.card && (payment.data.save_card || payment.subscription_id)) {
+                if(transaction.card && (payment.data.save_card || (subscription.credit_card_id && payment.subscription_id))) {
                     const saved_card_result = await client.query(
                     `insert into payment_service.credit_cards(platform_id, user_id, gateway, gateway_data) values ($1::uuid, $2::uuid, 'pagarme', $3::jsonb) returning *`, [
                         payment.platform_id,
