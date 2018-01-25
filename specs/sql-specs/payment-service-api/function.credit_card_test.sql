@@ -17,7 +17,6 @@ BEGIN;
             _result json;
         begin
             set local role platform_user;
-            EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_first_user_id()||'''';
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
 
             return next throws_like(
