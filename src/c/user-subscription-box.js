@@ -38,7 +38,7 @@ const userSubscriptionBox = {
             });
         });
 
-        if (subscription.status === 'started' && subscription.payment_method === 'boleto' && subscription.last_payment_id) {
+        if (subscription.payment_method === 'boleto' && subscription.last_payment_id) {
             commonPaymentVM.paymentInfo(subscription.last_payment_id).then(function(info) {
                 subscription.boleto_url = info.boleto_url;
                 subscription.boleto_expiration_date = info.boleto_expiration_date;
