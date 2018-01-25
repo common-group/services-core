@@ -37,6 +37,7 @@ createuser -h $DB_HOST -p $DB_PORT -U $DB_USER --no-login platform_user > /dev/n
 createuser -h $DB_HOST -p $DB_PORT -U $DB_USER --no-login scoped_user > /dev/null 2>&1
 createuser -h $DB_HOST -p $DB_PORT -U $DB_USER --no-login admin > /dev/null 2>&1
 createuser -h $DB_HOST -p $DB_PORT -U $DB_USER --no-login anonymous > /dev/null 2>&1
+createuser -h $DB_HOST -p $DB_PORT -U $DB_USER --no-login catarse_fdw > /dev/null 2>&1
 createuser -h $DB_HOST -p $DB_PORT -U $DB_USER postgrest -g admin -g platform_user -g scoped_user -g anonymous > /dev/null 2>&1
 
 echo "Initiating database schema..."

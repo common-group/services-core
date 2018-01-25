@@ -171,6 +171,7 @@
 
 - test:
   - name: 'Anonymous user cannot call this function'
+  - headers: {'Content-Type': 'application/json', 'X-Forwarded-For': '127.0.0.1'}
   - url: "/rpc/pay"
   - method: "POST"
   - body: '{"data": 

@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(18);
+    select plan(20);
 
     SELECT function_returns(
         'payment_service_api', 'pay', ARRAY['json'], 'json' 
@@ -71,28 +71,37 @@ BEGIN;
         -- test document cpf validation
         return next throws_matching('EXECUTE pay_with_data(''{"customer_document_number": "987.264.123-23"}'')', 'invalid_document' ,'should be error when document_number is invalid');
 
-        -- should exeute pay
+        -- test card document cpf validation
+        return next throws_matching('EXECUTE pay_with_data(''{"card_hash": "foo_hash_card", "payment_method": "credit_card", "credit_card_owner_document": "987.264.123-23"}'')', 'invalid_card_owner_document' ,'should be error when credit_card_owner_document is invalid');
+
+        -- should exeute pay with boleto
         return next lives_ok('EXECUTE pay_with_data(''{"external_id":"12345"}'')', 'scoped_user can call pay');
+
+        -- should exeute pay with credit_card
+        return next lives_ok('EXECUTE pay_with_data(''{"credit_card_owner_document": "", "external_id":"12346", "card_hash": "foo_card_hash", "payment_method": "credit_card"}'')', 'scoped_user can call pay with credit card');
 
         -- check if payment for user is generated
         select count(1) from payment_service.catalog_payments
         where user_id = 'd44378a2-3637-447c-9f57-dc20fff574db'
         and platform_id = '8187a11e-6fa5-4561-a5e5-83329236fbd6'
         into _count_expected;
-        return next ok(_count_expected = 1, 'should add more payment to passed user_id when is not the same of scoped_user request');
+        return next is(
+            _count_expected::numeric,
+            1::numeric, 
+            'should not add more payment to passed user_id when is not the same of scoped_user request');
 
         -- check if external id is ignored
         select count(1) from payment_service.catalog_payments
-        where external_id = '12345'
+        where external_id in('12345', '12346')
         and platform_id = '8187a11e-6fa5-4561-a5e5-83329236fbd6'
         into _count_expected;
-        return next ok(_count_expected = 0, 'should ignore external_id when scoped_user');
+        return next is(_count_expected::numeric, 0::numeric, 'should ignore external_id when scoped_user');
 
         select count(1) from payment_service.catalog_payments
         where user_id = 'bb8f4478-df41-411c-8ed7-12c034044c0e'
         and platform_id = '8187a11e-6fa5-4561-a5e5-83329236fbd6'
         into _count_expected;
-        return next ok(_count_expected = 1, 'should persist a payment to scoped_user');
+        return next is(_count_expected::numeric, 2::numeric, 'should persist payments to scoped_user');
     end;
     $$;
 

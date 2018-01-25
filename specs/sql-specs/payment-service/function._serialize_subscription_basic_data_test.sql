@@ -2,13 +2,45 @@ BEGIN;
     -- import __json_data_payment from helpers
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(32);
+    select plan(48);
     -- check function signature
     SELECT function_returns(
         'payment_service', '_serialize_subscription_basic_data', ARRAY['json'], 'json' 
     );
 
     prepare generate_data as select * from payment_service._serialize_subscription_basic_data(__json_data_payment($1::json));
+
+    create or replace function test_serialize_with_default_data()
+    returns setof text language plpgsql as $$
+    declare
+        _result json;
+        _default_data json;
+        _expected json;
+    begin
+        _expected := __json_data_payment('{}'::json);
+        _default_data := payment_service._serialize_subscription_basic_data(_expected);
+        _result := payment_service._serialize_subscription_basic_data(__json_data_payment('{"payment_method": "credit_card"}'::json), _default_data);
+
+        -- should change the payment method and mantain another fields with default
+        return next is(_result ->> 'payment_method', 'credit_card');
+        return next is(_result ->> 'amount', _default_data ->> 'amount');
+        return next is((_result ->> 'is_international')::boolean, (_default_data ->> 'is_international')::boolean);
+        return next is(_result -> 'customer' ->> 'name', _default_data -> 'customer' ->> 'name');
+        return next is(_result -> 'customer' ->> 'document_number', _default_data -> 'customer' ->> 'document_number');
+        return next is(_result -> 'customer' -> 'address' ->> 'street', _default_data -> 'customer' -> 'address' ->> 'street');
+        return next is(_result -> 'customer' -> 'address' ->> 'street_number', _default_data -> 'customer' -> 'address' ->> 'street_number');
+        return next is(_result -> 'customer' -> 'address' ->> 'neighborhood', _default_data -> 'customer' -> 'address' ->> 'neighborhood');
+        return next is(_result -> 'customer' -> 'address' ->> 'zipcode', _default_data -> 'customer' -> 'address' ->> 'zipcode');
+        return next is(_result -> 'customer' -> 'address' ->> 'country', _default_data -> 'customer' -> 'address' ->> 'country');
+        return next is(_result -> 'customer' -> 'address' ->> 'state', _default_data -> 'customer' -> 'address' ->> 'state');
+        return next is(_result -> 'customer' -> 'address' ->> 'city', _default_data -> 'customer' -> 'address' ->> 'city');
+        return next is(_result -> 'customer' -> 'address' ->> 'complementary', _default_data -> 'customer' -> 'address' ->> 'complementary');
+        return next is(_result -> 'customer' -> 'phone' ->> 'ddi', _default_data -> 'customer' -> 'phone' ->> 'ddi');
+        return next is(_result -> 'customer' -> 'phone' ->> 'ddd', _default_data -> 'customer' -> 'phone' ->> 'ddd');
+        return next is(_result -> 'customer' -> 'phone' ->> 'number', _default_data -> 'customer' -> 'phone' ->> 'number');
+    end;
+    $$;
+    select * from test_serialize_with_default_data();
 
     create or replace function test_serialize_with_valid_data()
     returns setof text language plpgsql as $$
