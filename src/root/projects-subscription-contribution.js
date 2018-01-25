@@ -24,6 +24,8 @@ const projectsSubscriptionContribution = {
             projectVM.rewardDetails()
         );
 
+        const isEdit = m.prop(m.route.param('subscription_id'));
+
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
             const currentRewardId = rewardVM.selectedReward().id;
@@ -39,6 +41,7 @@ const projectsSubscriptionContribution = {
         projectVM.getCurrentProject();
 
         return {
+            isEdit,
             project: projectVM.currentProject,
             paymentVM: paymentVM(),
             submitContribution,
@@ -47,6 +50,7 @@ const projectsSubscriptionContribution = {
     },
     view(ctrl, args) {
         const project = ctrl.project;
+        const faq = ctrl.paymentVM.faq(ctrl.isEdit() ? `${project().mode}_edit` : project().mode);
 
         return m('#contribution-new', !_.isEmpty(project()) ? [
             m(`.w-section.section-product.${project().mode}`),
@@ -57,9 +61,11 @@ const projectsSubscriptionContribution = {
             ),
             m('.w-section.header-cont-new',
                 m('.w-container',
-                    m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only',
-                        'Escolha a recompensa e em seguida o valor do apoio mensal'
-                    )
+                    ctrl.isEdit()
+                        ? [
+                            m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_edit_title', I18nScope())),
+                            m('.fontsize-base', I18n.t('subscription_edit_subtitle', I18nScope()))
+                        ] : m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_start_title', I18nScope())) 
                 )
             ),
             m('.section', m('.w-container', m('.w-row', [
@@ -85,8 +91,9 @@ const projectsSubscriptionContribution = {
                     m.component(faqBox, {
                         mode: project().mode,
                         vm: ctrl.paymentVM,
-                        faq: ctrl.paymentVM.faq(project().mode),
-                        projectUserId: args.project_user_id
+                        faq,
+                        projectUserId: args.project_user_id,
+                        isEdit: ctrl.isEdit()
                     })
                 ])
             ])))
