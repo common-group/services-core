@@ -26,6 +26,7 @@ const usersEdit = {
                         user
                     }),
                     '#about_me': m(userAboutEdit, {
+                        hideDisableAcc: false,
                         userId,
                         user
                     }),
