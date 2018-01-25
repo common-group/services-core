@@ -145,8 +145,8 @@ const projectInsightsSub = {
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                    `R$${averageRevenue}`
-                                )
+                                  `R$${h.formatNumber( averageRevenue, 2, 3 )}`
+                                 )
 
                             ]),
                             m(insightsInfoBox, {
