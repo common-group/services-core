@@ -22,6 +22,8 @@ language sql immutable as $$ select 'c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d'::uuid
 create or replace function __seed_reward_120_id() returns uuid
 language sql immutable as $$ select '77d15096-200c-4189-9222-8a45483db0d0'::uuid $$;
 
+create or replace function __seed_first_user_credit_card_id() returns uuid
+language sql immutable as $$ select 'bc29a0c2-271d-4e51-90fa-debd79ab54c0'::uuid $$;
 
 -- database seed data
 insert into core.core_settings(name, value)
@@ -61,3 +63,5 @@ values (__seed_reward_id(), __seed_project_id(), __seed_platform_id(), json_buil
         'description', 'test reward description',
         'metadata', '{}'::json
 )::jsonb);
+
+insert into payment_service.credit_cards (id, platform_id, user_id, gateway, gateway_data) values (__seed_first_user_credit_card_id(), __seed_platform_id(), __seed_first_user_id(), 'pagarme', '{"id": "card_cjabxiw0m01zeq06ga5498dsu", "brand": "visa", "valid": true, "object": "card", "country": "UNITED STATES", "fingerprint": "cj5bw4cio00000j23jx5l60cq", "holder_name": "AMENORI", "last_digits": "1111", "date_created": "2017-11-23T03:39:37.750Z", "date_updated": "2017-11-23T03:39:41.155Z", "first_digits": "411111", "expiration_date": "1225"}'::jsonb);
