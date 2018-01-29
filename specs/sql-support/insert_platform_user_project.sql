@@ -10,6 +10,9 @@ language sql immutable as $$ select 'd44378a2-3637-447c-9f57-dc20fff574db'::uuid
 create or replace function __seed_second_user_id() returns uuid
 language sql immutable as $$ select 'bb8f4478-df41-411c-8ed7-12c034044c0e'::uuid $$;
 
+create or replace function __seed_third_user_id() returns uuid
+language sql immutable as $$ select '76cf1927-c8cf-4f12-a2d2-c594a3736894'::uuid $$;
+
 create or replace function __seed_project_id() returns uuid
 language sql immutable as $$ select '52273d0a-1610-4f48-9239-e96e5861c3d3'::uuid $$;
 
@@ -34,7 +37,8 @@ insert into platform_service.platforms(id, name, token) values (__seed_platform_
 -- add users to community
 insert into community_service.users(platform_id, id, email, password, key, data) values
 (__seed_platform_id(), __seed_first_user_id(), 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f', json_build_object('name', 'test community user 01')::jsonb), 
-(__seed_platform_id(), __seed_second_user_id(), 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63', json_build_object('name', 'test community user 02')::jsonb);
+(__seed_platform_id(), __seed_second_user_id(), 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63', json_build_object('name', 'test community user 02')::jsonb),
+(__seed_platform_id(), __seed_third_user_id(), 'test_community_user_03@test.com', crypt('123456', gen_salt('bf')), '60667ced-8fd4-4ad1-a761-d1ff7009d44b', json_build_object('name', 'test community user 03')::jsonb);
 
 -- add project
 insert into project_service.projects(id, platform_id, user_id, name, mode, permalink, data) 
