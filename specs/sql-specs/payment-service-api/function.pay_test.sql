@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(20);
+    select plan(23);
 
     SELECT function_returns(
         'payment_service_api', 'pay', ARRAY['json'], 'json' 
@@ -61,6 +61,8 @@ BEGIN;
     returns setof text language plpgsql as $$
     declare
     _count_expected numeric default 0;
+    _generated_payment payment_service.catalog_payments;
+    _generated_subscription payment_service.subscriptions;
     begin
         -- test valid data with scoped_user
         set local role scoped_user;
@@ -77,8 +79,8 @@ BEGIN;
         -- should exeute pay with boleto
         return next lives_ok('EXECUTE pay_with_data(''{"external_id":"12345"}'')', 'scoped_user can call pay');
 
-        -- should exeute pay with credit_card
-        return next lives_ok('EXECUTE pay_with_data(''{"credit_card_owner_document": "", "external_id":"12346", "card_hash": "foo_card_hash", "payment_method": "credit_card"}'')', 'scoped_user can call pay with credit card');
+        -- should exeute pay with credit_card and generate a subscription
+        return next lives_ok('EXECUTE pay_with_data(''{"credit_card_owner_document": "", "external_id":"12346", "card_hash": "foo_card_hash", "payment_method": "credit_card", "anonymous": true, "subscription": true}'')', 'scoped_user can call pay with credit card');
 
         -- check if payment for user is generated
         select count(1) from payment_service.catalog_payments
@@ -102,6 +104,18 @@ BEGIN;
         and platform_id = '8187a11e-6fa5-4561-a5e5-83329236fbd6'
         into _count_expected;
         return next is(_count_expected::numeric, 2::numeric, 'should persist payments to scoped_user');
+
+        select * from payment_service.catalog_payments
+        where user_id = 'bb8f4478-df41-411c-8ed7-12c034044c0e'
+            and data ->> 'payment_method'::text = 'credit_card'
+        order by created_at desc limit 1
+        into _generated_payment;
+        return next is((_generated_payment.data->>'anonymous')::boolean, true, 'should mark with anonymous the last payment');
+        return next is((_generated_payment.subscription_id is not null), true, 'should generate a subscription on payment');
+
+        select * from payment_service.subscriptions where id = _generated_payment.subscription_id
+        into _generated_subscription;
+        return next is((_generated_subscription.checkout_data->>'anonymous')::boolean, true, 'should generate subscription with anon in checkout data');
     end;
     $$;
 
