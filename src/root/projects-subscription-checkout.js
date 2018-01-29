@@ -30,6 +30,8 @@ const projectsSubscriptionCheckout = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
+        const isEdit = m.prop(m.route.param('subscription_id'));
+
         if (_.isNull(currentUserID)) {
             projectVM.storeSubscribeAction(m.route());
             h.navigateToDevise();
@@ -123,6 +125,7 @@ const projectsSubscriptionCheckout = {
             addVM,
             scope,
             isCnpj,
+            isEdit,
             vm,
             user,
             project,
@@ -323,6 +326,7 @@ const projectsSubscriptionCheckout = {
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
+                            isSubscriptionEdit: ctrl.isEdit,
                             user_id: user.id,
                             reward_common_id: ctrl.reward().common_id,
                             project_common_id: projectVM.currentProject().common_id,
@@ -370,7 +374,9 @@ const projectsSubscriptionCheckout = {
                                             ' Próxima cobrança: '
                                         ]
                                     ),
-                                    ctrl.lastDayOfNextMonth()
+                                    ctrl.isEdit()
+                                        ? I18n.t('subscription_edit.invoice_none', I18nScope())
+                                        : ctrl.lastDayOfNextMonth()
                                 ]
                             ),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
@@ -409,7 +415,7 @@ const projectsSubscriptionCheckout = {
                         m.component(faqBox, {
                             mode: project.mode,
                             vm: ctrl.vm,
-                            faq: ctrl.vm.faq(project.mode),
+                            faq: ctrl.vm.faq(ctrl.isEdit() ? `${project.mode}_edit` : project.mode),
                             projectUserId: project.user_id
                         })
                     ])

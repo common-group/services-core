@@ -7,6 +7,8 @@ import creditCardVM from '../vms/credit-card-vm';
 import projectVM from '../vms/project-vm';
 import creditCardInput from './credit-card-input';
 import inlineError from './inline-error';
+import subscriptionEditModal from './subscription-edit-modal';
+
 import commonPaymentVM from '../vms/common-payment-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
@@ -15,6 +17,10 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 const paymentCreditCard = {
     controller(args) {
         const vm = args.vm,
+            isSubscriptionEdit = args.isSubscriptionEdit,
+            subscriptionEditConfirmed = m.prop(false),
+            confirmSubscriptionChanges = m.prop(false),
+            showSubscriptionModal = m.prop(false),
             loadingInstallments = m.prop(true),
             loadingSavedCreditCards = m.prop(true),
             selectedCreditCard = m.prop({ id: -1 }),
@@ -23,6 +29,30 @@ const paymentCreditCard = {
             creditCardType = m.prop('unknown'),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
+
+        const sendSubscriptionPayment = (selectedCreditCard, vm, commonData) => {
+            if (!isSubscriptionEdit()) {
+                commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData);
+
+                return false;
+            }
+
+            if (!subscriptionEditConfirmed()) {
+                showSubscriptionModal(false);
+
+                return false;
+            }
+
+            const data = _.extend({}, commonData, {subscription_id: args.subscriptionId()});
+
+            commonPaymentVM.sendCreditCardPayment(
+                selectedCreditCard,
+                vm, 
+                data
+            );
+
+            return false;
+        };
 
         const onSubmit = () => {
             vm.creditCardFields.errors([]);
@@ -42,7 +72,7 @@ const paymentCreditCard = {
                         projectCommonId: args.project_common_id,
                         amount: args.value * 100
                     };
-                    commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData);
+                    sendSubscriptionpayment(selectedCreditCard, vm, commonData);
                 } else {
                     vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
                 }
@@ -208,7 +238,8 @@ const paymentCreditCard = {
             expYears: vm.expYearOptions(),
             loadPagarme,
             scope,
-            showForm
+            showForm,
+            showSubscriptionModal
         };
     },
     view(ctrl, args) {
@@ -392,14 +423,19 @@ const paymentCreditCard = {
                     m('.w-col.w-col-8.w-col-push-2', [
                         !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
                             m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
-                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: I18n.t('credit_card.finish_payment', ctrl.scope()) }),
+                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: 
+                            args.isSubscriptionEdit()
+                                ? I18n.t('credit_card_subscription_edit.finish_payment', ctrl.scope())
+                                : I18n.t('credit_card.finish_payment', ctrl.scope())
+                        }),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30',
                             m.trust(
                                 I18n.t(args.isSubscription ? 'credit_card.terms_of_use_agreement_sub' : 'credit_card.terms_of_use_agreement', ctrl.scope())
                             )
                         )
                     ])
-                ])
+                ]),
+                ctrl.showSubscriptionModal() ? m(subscriptionEditModal, args) : null
             ])
         ]);
     }
