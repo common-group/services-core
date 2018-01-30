@@ -102,6 +102,7 @@ const projectsShow = {
             m.component(projectMain, {
                 project,
                 post_id: args.post_id,
+                hasSubscription: ctrl.hasSubscription,
                 rewardDetails: projectVM.rewardDetails,
                 subscriptionData: projectVM.subscriptionData,
                 goalDetails: projectVM.goalDetails,

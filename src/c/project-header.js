@@ -13,9 +13,9 @@ import projectVM from '../vms/project-vm';
 const projectHeader = {
     controller(args) {
         const project = args.project,
-            currentUser = h.getUser(),
-            userProjectSubscriptions = args.userProjectSubscriptions,
-            hasSubscription = args.hasSubscription;
+              currentUser = h.getUser(),
+              userProjectSubscriptions = args.userProjectSubscriptions,
+              hasSubscription = args.hasSubscription;
 
         if (h.isProjectPage() && currentUser && !_.isUndefined(project())) {
             if (!projectVM.isSubscription(project)) {
