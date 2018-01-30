@@ -26,8 +26,9 @@ const projectHeader = {
                     .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
                     .then(args.projectContributions);
             } else {
+                const statuses = ['started', 'active', 'canceling', 'canceled', 'inactive'];
                 subscriptionVM
-                    .getUserProjectSubscriptions(currentUser.common_id, project().common_id, ['started', 'active', 'canceling'])
+                    .getUserProjectSubscriptions(currentUser.common_id, project().common_id, statuses)
                     .then(projectSubscriptions);
             }
         }
