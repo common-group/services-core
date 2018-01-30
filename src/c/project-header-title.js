@@ -11,6 +11,7 @@ const projectHeaderTitle = {
         
         return !_.isUndefined(project()) ? m(`.w-section.page-header${isSub ? '.transparent-background' : ''}`, [
             m('.w-container', [
+                args.children,
                 m('h1.u-text-center.fontsize-larger.fontweight-semibold.project-name[itemprop="name"]', h.selfOrEmpty(project().name || project().project_name)),
                 !isSub ? m('h2.u-text-center.fontsize-base.lineheight-looser[itemprop="author"]', [
                     'por ',
@@ -19,8 +20,7 @@ const projectHeaderTitle = {
                     m('.w-col.w-col-6.w-col-push-3',
                         m('p.fontsize-small.lineheight-tight.u-margintop-10.u-text-center', project().headline)
                     )
-                ),
-                args.children
+                )
             ])
         ]) : m('div', '');
     }
