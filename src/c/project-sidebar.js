@@ -149,7 +149,7 @@ const projectSidebar = {
                         })
                     ])
                 ]),
-                (project().open_for_contributions ? m('.back-project-btn-div', [
+                (project().open_for_contributions && !args.hasSubscription ? m('.back-project-btn-div', [
                     m('.back-project--btn-row', [
                         m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]', {
                             onclick: h.analytics.event({

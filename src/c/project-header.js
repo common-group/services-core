@@ -14,60 +14,52 @@ const projectHeader = {
     controller(args) {
         const project = args.project,
             currentUser = h.getUser(),
-            projectSubscriptions = m.prop();
-
-        const hasSubscription = () => {
-            return !_.isEmpty(projectSubscriptions()) && _.findWhere(projectSubscriptions(), {project_id: project().common_id});
-        };
+            userProjectSubscriptions = args.userProjectSubscriptions,
+            hasSubscription = args.hasSubscription;
 
         if (h.isProjectPage() && currentUser && !_.isUndefined(project())) {
             if (!projectVM.isSubscription(project)) {
                 contributionVM
                     .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
                     .then(args.projectContributions);
-            } else {
-                const statuses = ['started', 'active', 'canceling', 'canceled', 'inactive'];
-                subscriptionVM
-                    .getUserProjectSubscriptions(currentUser.common_id, project().common_id, statuses)
-                    .then(projectSubscriptions);
             }
         }
 
         return {
             hasSubscription,
-            projectSubscriptions,
+            userProjectSubscriptions,
             projectContributions: args.projectContributions,
             showContributions: h.toggleProp(false, true)
         };
     },
     view(ctrl, args) {
         const project = args.project,
-            rewardDetails = args.rewardDetails;
+              rewardDetails = args.rewardDetails;
 
         const hasContribution = (
-            (!_.isEmpty(ctrl.projectContributions()) || ctrl.hasSubscription())
-                ? m(`.card.card-terciary.u-radius.u-marginbottom-40${projectVM.isSubscription(project) ? '.fontcolor-primary' : ''}`, [
-                    m('.fontsize-small.u-text-center', [
-                        m('span.fa.fa-thumbs-up'),
-                        m('span.fontweight-semibold', (!projectVM.isSubscription(project) ? ' Você é apoiador deste projeto! ' : ' Você tem uma assinatura neste projeto! ')),
-                        m('a.alt-link[href=\'javascript:void(0);\']', {
-                            onclick: ctrl.showContributions.toggle
-                        }, 'Detalhes')
-                    ]),
-                    ctrl.showContributions() ? m('.u-margintop-20.w-row',
-                            (!projectVM.isSubscription(project)
-                                ? _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, {
-                                    contribution,
-                                    rewardDetails
-                                }))
-                                : _.map(ctrl.projectSubscriptions(), subscription => m.component(userSubscriptionDetail, {
-                                    subscription,
-                                    project: project()
-                                }))
-                            )
-                        ) : ''
-                ])
-            : '');
+            (!_.isEmpty(ctrl.projectContributions()) || ctrl.hasSubscription()) ?
+            m(`.card.card-terciary.u-radius.u-marginbottom-40${projectVM.isSubscription(project) ? '.fontcolor-primary' : ''}`, [
+                m('.fontsize-small.u-text-center', [
+                    m('span.fa.fa-thumbs-up'),
+                    m('span.fontweight-semibold', (!projectVM.isSubscription(project) ? ' Você é apoiador deste projeto! ' : ' Você tem uma assinatura neste projeto! ')),
+                    m('a.alt-link[href=\'javascript:void(0);\']', {
+                        onclick: ctrl.showContributions.toggle
+                    }, 'Detalhes')
+                ]),
+                ctrl.showContributions() ? m('.u-margintop-20.w-row',
+                    (!projectVM.isSubscription(project) ?
+                        _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, {
+                            contribution,
+                            rewardDetails
+                        })) :
+                        _.map(ctrl.userProjectSubscriptions(), subscription => m.component(userSubscriptionDetail, {
+                            subscription,
+                            project: project()
+                        }))
+                    )
+                ) : ''
+            ]) :
+            '');
         const hasBackground = Boolean(project().cover_image);
 
         return (!_.isUndefined(project()) ? m('#project-header', [
@@ -88,9 +80,10 @@ const projectHeader = {
                             })),
                             m('.w-col.w-col-4', m.component(projectSidebar, {
                                 project,
+                                hasSubscription: ctrl.hasSubscription(),
                                 subscriptionData: args.subscriptionData,
                                 userDetails: args.userDetails,
-                                goalDetails: args.goalDetails,
+                                goalDetails: args.goalDetails
                             }))
                         ])
                     ])
