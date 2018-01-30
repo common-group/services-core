@@ -117,6 +117,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     card.generateHash(cardHash => {
         const payload = {
             subscription: true,
+            anonymous: customer.anonymous(),
             user_id: commonData.userCommonId,
             project_id: commonData.projectCommonId,
             amount: commonData.amount,
@@ -169,6 +170,7 @@ const sendSlipPayment = (fields, commonData) => {
     const addressCountry = _.findWhere(addressVM.countries(), {id: address.country_id});
     const payload = {
         subscription: true,
+        anonymous: customer.anonymous(),
         user_id: commonData.userCommonId,
         project_id: commonData.projectCommonId,
         amount: commonData.amount,
