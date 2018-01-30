@@ -30,7 +30,8 @@ const projectsSubscriptionCheckout = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
-        const isEdit = m.prop(m.route.param('subscription_id'));
+        const subscriptionId = m.prop(m.route.param('subscription_id'));
+        const isEdit = m.prop(Boolean(subscriptionId()));
 
         if (_.isNull(currentUserID)) {
             projectVM.storeSubscribeAction(m.route());
@@ -126,6 +127,7 @@ const projectsSubscriptionCheckout = {
             scope,
             isCnpj,
             isEdit,
+            subscriptionId,
             vm,
             user,
             project,
@@ -327,7 +329,9 @@ const projectsSubscriptionCheckout = {
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
                             isSubscriptionEdit: ctrl.isEdit,
+                            subscriptionId: ctrl.subscriptionId,
                             user_id: user.id,
+                            reward: ctrl.reward,
                             reward_common_id: ctrl.reward().common_id,
                             project_common_id: projectVM.currentProject().common_id,
                             user_common_id: user.common_id,

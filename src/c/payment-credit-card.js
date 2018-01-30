@@ -38,7 +38,7 @@ const paymentCreditCard = {
             }
 
             if (!subscriptionEditConfirmed()) {
-                showSubscriptionModal(false);
+                showSubscriptionModal(true);
 
                 return false;
             }
@@ -72,7 +72,7 @@ const paymentCreditCard = {
                         projectCommonId: args.project_common_id,
                         amount: args.value * 100
                     };
-                    sendSubscriptionpayment(selectedCreditCard, vm, commonData);
+                    sendSubscriptionPayment(selectedCreditCard, vm, commonData);
                 } else {
                     vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
                 }
@@ -239,7 +239,9 @@ const paymentCreditCard = {
             loadPagarme,
             scope,
             showForm,
-            showSubscriptionModal
+            showSubscriptionModal,
+            sendSubscriptionPayment,
+            subscriptionEditConfirmed
         };
     },
     view(ctrl, args) {
@@ -435,7 +437,15 @@ const paymentCreditCard = {
                         )
                     ])
                 ]),
-                ctrl.showSubscriptionModal() ? m(subscriptionEditModal, args) : null
+                ctrl.showSubscriptionModal() 
+                    ? m(subscriptionEditModal,
+                        {
+                            args,
+                            pay: ctrl.sendSubscriptionPayment,
+                            showModal: ctrl.showSubscriptionModal,
+                            confirm: ctrl.subscriptionEditConfirmed
+                        }
+                    ) : null
             ])
         ]);
     }
