@@ -1,5 +1,5 @@
 BEGIN;
-    SELECT plan(20);
+    SELECT plan(21);
 
     -- check if table is present
     SELECT has_table('payment_service'::name, 'subscriptions'::name);
@@ -50,6 +50,13 @@ BEGIN;
     SELECT fk_ok( 
         'payment_service', 'subscriptions', 'credit_card_id',
         'payment_service', 'credit_cards', 'id'
+    );
+
+    select has_trigger(
+        'payment_service',
+        'subscriptions',
+        'subscription_update_search_index',
+        'should have a trigger to set search index on insert or update'
     );
 
     SELECT * FROM finish();
