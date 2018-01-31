@@ -19,12 +19,10 @@ BEGIN;
                 ('canceled', (now() - '1 month + 4 days'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{}'::json)::jsonb)
                 returning * into _subscription;
 
-            return next throws_like(
-                'EXECUTE generate_new_catalog_payment('''||_subscription||''')',
-                'subscription_canceled',
-                'Should raise error when subscription is in canceled status'
-            );
-
+            select * from payment_service.generate_new_catalog_payment(_subscription);
+        exception 
+            when others then
+                return next is(SQLERRM, 'subscription_canceled', 'should raise subsription_canceled');
         end;
     $$;
     select * from test_generate_with_canceled_status();
@@ -41,12 +39,10 @@ BEGIN;
                 ('canceling', (now() - '1 month + 4 days'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{}'::json)::jsonb)
                 returning * into _subscription;
 
-            return next throws_like(
-                'EXECUTE generate_new_catalog_payment('''||_subscription||''')',
-                'subscription_canceled',
-                'Should raise error when subscription in canceling status'
-            );
-
+            select * from payment_service.generate_new_catalog_payment(_subscription);
+        exception 
+            when others then
+                return next is(SQLERRM, 'subscription_canceled', 'should raise subsription_canceled');
         end;
     $$;
     select * from test_generate_with_canceling_status();
@@ -105,11 +101,10 @@ BEGIN;
                 (created_at, status, gateway, platform_id, user_id, project_id, subscription_id, data)  values
                 ((now() - '15 days'::interval), 'paid', 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), _subscription.id, _subscription.checkout_data);
 
-            return next throws_like(
-                'EXECUTE generate_new_catalog_payment('''||_subscription||''')',
-                'not_in_time_to_charge',
-                'Should raise error when have paid payment in time on subscription'
-            );
+            select * from payment_service.generate_new_catalog_payment(_subscription);
+        exception 
+            when others then
+                return next is(SQLERRM, 'not_in_time_to_charge', 'Should raise error when have paid payment in time on subscription');
 
         end;
     $$;
@@ -132,11 +127,10 @@ BEGIN;
                 (status, gateway, platform_id, user_id, project_id, subscription_id, data)  values
                 ('pending', 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), _subscription.id, _subscription.checkout_data);
 
-            return next throws_like(
-                'EXECUTE generate_new_catalog_payment('''||_subscription||''')',
-                'pending_payment_to_process',
-                'Should raise error when have pending payment on subscription'
-            );
+            select * from payment_service.generate_new_catalog_payment(_subscription);
+        exception 
+            when others then
+                return next is(SQLERRM, 'pending_payment_to_process', 'Should raise error when have pending payment on subscription');
 
         end;
     $$;
