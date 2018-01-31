@@ -113,7 +113,7 @@ const projectTabs = {
                                 project() ? m(`fb:comments-count[href="http://www.catarse.me/${project().permalink}"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]`, m.trust('&nbsp;')) : '-'
                             ]),
                         ]),
-                        project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions ? [
+                        project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions && !args.hasSubscription() ? [
                             m('.w-row.project-nav-back-button', [
                                 projectVM.isSubscription(project) ? m('.w-col.w-col-12', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/subscriptions/start"]`, {

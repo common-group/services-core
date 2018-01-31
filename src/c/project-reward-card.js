@@ -100,7 +100,7 @@ const projectRewardCard = {
         const reward = ctrl.reward,
             project = args.project,
             isSub = projectVM.isSubscription(project);
-        return m(`div[class="${h.rewardSouldOut(reward) ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
+        return m(`div[class="${h.rewardSouldOut(reward) || args.hasSubscription() ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
             onclick: h.analytics.event({
                 cat: 'contribution_create',
                 act: 'contribution_reward_click',
@@ -121,15 +121,15 @@ const projectRewardCard = {
                 m('.fontsize-base.fontweight-semibold', `R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`)
             ]),
             m('.fontsize-smaller.fontweight-semibold',
-                    reward.title
-                ),
+              reward.title
+             ),
 
             m(`.fontsize-smaller.reward-description${h.rewardSouldOut(reward) ? '' : '.fontcolor-secondary'}`, {
                 class: ctrl.isLongDescription()
-                         ? ctrl.isRewardOpened()
-                            ? `opened ${ctrl.isRewardDescriptionExtended() ? 'extended' : ''}`
-                            : ''
-                         : 'opened extended'
+                    ? ctrl.isRewardOpened()
+                    ? `opened ${ctrl.isRewardDescriptionExtended() ? 'extended' : ''}`
+                    : ''
+                : 'opened extended'
             }, m.trust(h.simpleFormat(h.strip(reward.description)))),
             ctrl.isLongDescription() && ctrl.isRewardOpened() ? m('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
                 onclick: () => ctrl.toggleDescriptionExtended(reward.id)
@@ -142,21 +142,21 @@ const projectRewardCard = {
             isSub ? null : m('.u-marginbottom-20.w-row', [
                 m('.w-col.w-col-6', !_.isEmpty(reward.deliver_at) ? [
                     m('.fontcolor-secondary.fontsize-smallest',
-                        m('span', 'Entrega prevista:')
-                    ),
+                      m('span', 'Entrega prevista:')
+                     ),
                     m('.fontsize-smallest',
-                        h.momentify(reward.deliver_at, 'MMM/YYYY')
-                    )
+                      h.momentify(reward.deliver_at, 'MMM/YYYY')
+                     )
                 ] : ''),
                 m('.w-col.w-col-6', rewardVM.hasShippingOptions(reward) || reward.shipping_options === 'presential' ? [
                     m('.fontcolor-secondary.fontsize-smallest',
-                        m('span',
-                            'Envio:'
-                        )
-                    ),
+                      m('span',
+                        'Envio:'
+                       )
+                     ),
                     m('.fontsize-smallest',
-                        I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
-                    )
+                      I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
+                     )
                 ] : '')
             ]),
             reward.maximum_contributions > 0 ? [
@@ -170,14 +170,14 @@ const projectRewardCard = {
                 ]))
             ] : '',
             m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
-                h.pluralize.apply(
-                    null,
-                    isSub ? [reward.paid_count, ' assinante', ' assinantes'] : [reward.paid_count, ' apoio', ' apoios'])
-            ),
+              h.pluralize.apply(
+                  null,
+                  isSub ? [reward.paid_count, ' assinante', ' assinantes'] : [reward.paid_count, ' apoio', ' apoios'])
+             ),
             reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [
                 m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))
             ]) : '',
-            project.open_for_contributions && !h.rewardSouldOut(reward) ? [
+            project.open_for_contributions && !h.rewardSouldOut(reward) && !args.hasSubscription() ? [
                 ctrl.isRewardOpened() ? m('.w-form', [
                     m('form.u-margintop-30', {
                         onsubmit: ctrl.submitContribution
@@ -185,38 +185,38 @@ const projectRewardCard = {
                         m('.divider.u-marginbottom-20'),
                         rewardVM.hasShippingOptions(reward) ? m('div', [
                             m('.fontcolor-secondary.u-marginbottom-10',
-                                'Local de entrega'
-                            ),
+                              'Local de entrega'
+                             ),
                             m('select.positive.text-field.w-select', {
                                 onchange: m.withAttr('value', ctrl.selectDestination),
                                 value: ctrl.selectedDestination()
                             },
-                                _.map(
-                                    ctrl.locationOptions(reward, ctrl.selectedDestination),
-                                    option => m('option',
-                                        { selected: option.value === ctrl.selectedDestination(), value: option.value },
-                                        [
-                                            `${option.name} `,
-                                            option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
-                                        ]
-                                    )
-                                )
-                            )
+                              _.map(
+                                  ctrl.locationOptions(reward, ctrl.selectedDestination),
+                                  option => m('option',
+                                              { selected: option.value === ctrl.selectedDestination(), value: option.value },
+                                              [
+                                                  `${option.name} `,
+                                                  option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
+                                              ]
+                                             )
+                              )
+                             )
                         ]) : '',
                         m('.fontcolor-secondary.u-marginbottom-10',
-                            `Valor do apoio${isSub ? ' mensal' : ''}`
-                        ),
+                          `Valor do apoio${isSub ? ' mensal' : ''}`
+                         ),
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                                m('.back-reward-input-reward.placeholder', 'R$')
-                            ),
+                              m('.back-reward-input-reward.placeholder', 'R$')
+                             ),
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                                m('input.w-input.back-reward-input-reward[type="tel"]', {
-                                    config: ctrl.setInput,
-                                    onkeyup: m.withAttr('value', ctrl.applyMask),
-                                    value: ctrl.contributionValue()
-                                })
-                            )
+                              m('input.w-input.back-reward-input-reward[type="tel"]', {
+                                  config: ctrl.setInput,
+                                  onkeyup: m.withAttr('value', ctrl.applyMask),
+                                  value: ctrl.contributionValue()
+                              })
+                             )
                         ]),
                         m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
                         ctrl.error().length > 0 ? m('.text-error', [

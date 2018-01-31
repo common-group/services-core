@@ -15,6 +15,7 @@ describe('ProjectRewardList', () => {
                             id: 1231,
                             open_for_contributions: true
                         }),
+                        hasSubscription: m.prop(false),
                         rewardDetails: m.prop(rewardDetail)
                     });
 

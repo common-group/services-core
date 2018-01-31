@@ -40,6 +40,7 @@ const projectAbout = {
                 m('.fontsize-base.fontweight-semibold.u-marginbottom-30', 'Recompensas'),
                 m.component(projectRewardList, {
                     project: args.project,
+                    hasSubscription: args.hasSubscription,
                     rewardDetails: args.rewardDetails
                 }), fundingPeriod()
             ] : [

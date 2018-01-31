@@ -16,40 +16,40 @@ const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectSidebar = {
     controller(args) {
         const project = args.project,
-            animateProgress = (el, isInitialized) => {
-                if (!isInitialized) {
-                    let animation,
-                        progress = 0,
-                        pledged = 0,
-                        contributors = 0;
-                    const pledgedIncrement = project().pledged / project().progress,
-                        contributorsIncrement = project().total_contributors / project().progress;
+              animateProgress = (el, isInitialized) => {
+                  if (!isInitialized) {
+                      let animation,
+                          progress = 0,
+                          pledged = 0,
+                          contributors = 0;
+                      const pledgedIncrement = project().pledged / project().progress,
+                            contributorsIncrement = project().total_contributors / project().progress;
 
-                    const progressBar = document.getElementById('progressBar'),
-                        pledgedEl = document.getElementById('pledged'),
-                        contributorsEl = document.getElementById('contributors'),
-                        incrementProgress = () => {
-                            if (progress <= parseInt(project().progress)) {
-                                progressBar.style.width = `${progress}%`;
-                                pledgedEl.innerText = `R$ ${h.formatNumber(pledged)}`;
-                                contributorsEl.innerText = `${parseInt(contributors)} pessoas`;
-                                el.innerText = `${progress}%`;
-                                pledged += pledgedIncrement;
-                                contributors += contributorsIncrement;
-                                progress += 1;
-                            } else {
-                                clearInterval(animation);
-                            }
-                        },
-                        animate = () => {
-                            animation = setInterval(incrementProgress, 28);
-                        };
+                      const progressBar = document.getElementById('progressBar'),
+                            pledgedEl = document.getElementById('pledged'),
+                            contributorsEl = document.getElementById('contributors'),
+                            incrementProgress = () => {
+                                if (progress <= parseInt(project().progress)) {
+                                    progressBar.style.width = `${progress}%`;
+                                    pledgedEl.innerText = `R$ ${h.formatNumber(pledged)}`;
+                                    contributorsEl.innerText = `${parseInt(contributors)} pessoas`;
+                                    el.innerText = `${progress}%`;
+                                    pledged += pledgedIncrement;
+                                    contributors += contributorsIncrement;
+                                    progress += 1;
+                                } else {
+                                    clearInterval(animation);
+                                }
+                            },
+                            animate = () => {
+                                animation = setInterval(incrementProgress, 28);
+                            };
 
-                    setTimeout(() => {
-                        animate();
-                    }, 1800);
-                }
-            };
+                      setTimeout(() => {
+                          animate();
+                      }, 1800);
+                  }
+              };
 
         const navigate = () => {
             if (projectVM.isSubscription(args.project)) {
@@ -149,7 +149,7 @@ const projectSidebar = {
                         })
                     ])
                 ]),
-                (project().open_for_contributions ? m('.back-project-btn-div', [
+                (project().open_for_contributions && !args.hasSubscription ? m('.back-project-btn-div', [
                     m('.back-project--btn-row', [
                         m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]', {
                             onclick: h.analytics.event({
