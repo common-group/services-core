@@ -4167,7 +4167,7 @@ var subscriptionListVM = commonPayment.paginationVM(models.userSubscription, 'id
 
 var vm$6 = commonPayment.filtersVM({
     status: 'eq',
-    full_text_index: '@@',
+    search_index: '@@',
     payment_method: 'eq'
 });
 var paramToString$3 = function paramToString(p) {
@@ -4181,8 +4181,8 @@ vm$6.order({
     id: 'desc'
 });
 
-vm$6.full_text_index.toFilter = function () {
-    var filter = paramToString$3(vm$6.full_text_index());
+vm$6.search_index.toFilter = function () {
+    var filter = paramToString$3(vm$6.search_index());
     return filter && replaceDiacritics$1(filter) || undefined;
 };
 
@@ -4406,7 +4406,7 @@ var adminSubscriptions = {
             filterBuilder = [{ // name
             component: filterMain,
             data: {
-                vm: filterVM.full_text_index,
+                vm: filterVM.search_index,
                 placeholder: 'Busque por projeto, permalink, email, nome do realizador...'
             }
         }, { // state
@@ -7630,7 +7630,7 @@ var downloadReports = {
             return reward.paid_count > 0;
         });
 
-        return m('section.min-height-70', m('.w-section', m('article', m('.section.project-metrics', m('.w-container', m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', m('.card.u-radius.u-marginbottom-20.card-terciary', [m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [m('span.fa.fa-download', m.trust('&nbsp;')), 'Baixar relatórios']), m('ul.w-list-unstyled', [m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoiadores confirmados ', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;state=paid\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;state=paid\']', 'XLS')])), m('li.divider.u-marginbottom-10'), m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoiadores pendentes', m.trust('&nbsp;'), m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;state=pending&amp;waiting_payment=true\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;state=pending&amp;waiting_payment=true\']', 'XLS')])), m('li.divider.u-marginbottom-10'), m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoiadores que não selecionaram recompensa', m.trust('&nbsp;'), m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;reward_id=0&amp;state=paid\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;reward_id=0&amp;state=paid\']', 'XLS')])), _$1.map(paidRewards, function (reward) {
+        return m('section.min-height-70', m('.w-section', m('article', m('.section.project-metrics', m('.w-container', m('.w-row', [m('.w-col.w-col-2'), m('.w-col.w-col-8', m('.card.u-radius.u-marginbottom-20.card-terciary', [m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [m('span.fa.fa-download', m.trust('&nbsp;')), 'Baixar relatórios']), m('.card.u-radius.u-marginbottom-20', [m('span.fontweight-semibold', m.trust('Atenção:')), 'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.']), m('ul.w-list-unstyled', [m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoiadores confirmados ', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;state=paid\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;state=paid\']', 'XLS')])), m('li.divider.u-marginbottom-10'), m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoiadores pendentes', m.trust('&nbsp;'), m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;state=pending&amp;waiting_payment=true\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;state=pending&amp;waiting_payment=true\']', 'XLS')])), m('li.divider.u-marginbottom-10'), m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoiadores que não selecionaram recompensa', m.trust('&nbsp;'), m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;reward_id=0&amp;state=paid\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;reward_id=0&amp;state=paid\']', 'XLS')])), _$1.map(paidRewards, function (reward) {
             return [m('li.divider.u-marginbottom-10'), m('li.fontsize-smaller.u-marginbottom-10', m('div', ['R$ ' + reward.minimum_value + ' ' + reward.description.substring(0, 40) + '...;', m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.csv?project_id=' + project.project_id + '&amp;reward_id=' + reward.id + '&amp;state=paid\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/pt/reports/contribution_reports_for_project_owners.xls?project_id=' + project.project_id + '&amp;reward_id=' + reward.id + '&amp;state=paid\']', 'XLS')]))];
         }), m('li.divider.u-marginbottom-10')])])), m('.w-col.w-col-2')]))))));
     }
@@ -8265,7 +8265,7 @@ var projectSubscriptionReportDownload = {
         var currentMonth = moment().startOf('month');
         return m('.section.project-metrics', m('.w-container', m('.w-row', [m.component(projectDashboardMenu, {
             project: m.prop(_$1.first(ctrl.project()))
-        }), m('.w-col.w-col-2'), m('.w-col.w-col-8', m('.card.u-radius.u-marginbottom-20.card-terciary', [m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [m('span.fa.fa-download', m.trust('&nbsp;')), 'Baixar relatórios']), m('ul.w-list-unstyled', [m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Relatório geral ', m.trust('&nbsp;'), m('a.alt-link[href=\'/projects/' + args.project_id + '/subscriptions_report_for_project_owners.csv\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/projects/' + args.project_id + '/subscriptions_report_for_project_owners.xls\']', 'XLS')])), _$1.map([currentMonth, lastMonth], function (month) {
+        }), m('.w-col.w-col-2'), m('.w-col.w-col-8', m('.card.u-radius.u-marginbottom-20.card-terciary', [m('.fontsize-small.fontweight-semibold.u-marginbottom-20', [m('span.fa.fa-download', m.trust('&nbsp;')), 'Baixar relatórios']), m('.card.u-radius.u-marginbottom-20', [m('span.fontweight-semibold', m.trust('Atenção:')), 'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.']), m('ul.w-list-unstyled', [m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Relatório geral ', m.trust('&nbsp;'), m('a.alt-link[href=\'/projects/' + args.project_id + '/subscriptions_report_for_project_owners.csv\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/projects/' + args.project_id + '/subscriptions_report_for_project_owners.xls\']', 'XLS')])), _$1.map([currentMonth, lastMonth], function (month) {
             return [m('li.divider.u-marginbottom-10'), m('li.fontsize-smaller.u-marginbottom-10', m('div', ['Apoios confirmados em ' + month.format('MMMM') + '/' + month.format('YYYY'), m.trust('&nbsp;'), m.trust('&nbsp;'), m('a.alt-link[href=\'/projects/' + args.project_id + '/subscriptions_monthly_report_for_project_owners.csv?created_at=' + month.format() + '\']', 'CSV'), m.trust('&nbsp;'), '\\', m.trust('&nbsp;'), m('a.alt-link[href=\'/projects/' + args.project_id + '/subscriptions_monthly_report_for_project_owners.xls?created_at=' + month.format() + '\']', 'XLS')]))];
         })])])), m('.w-col.w-col-2')])));
     }
