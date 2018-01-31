@@ -22,7 +22,10 @@ const downloadReports = {
                                             'Baixar relatórios'
                                         ]),
                                         m('.card.u-radius.u-marginbottom-20', [
-                                            'Atenção: Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
+                                            m('span.fontweight-semibold',
+                                                m.trust('Atenção:')
+                                            ),
+                                            'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
                                         ]),   
                                         m('ul.w-list-unstyled', [
                                             m('li.fontsize-smaller.u-marginbottom-10',
