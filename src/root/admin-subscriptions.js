@@ -17,7 +17,7 @@ const adminSubscriptions = {
             filterBuilder = [{ // name
                 component: filterMain,
                 data: {
-                    vm: filterVM.full_text_index,
+                    vm: filterVM.search_index,
                     placeholder: 'Busque por projeto, permalink, email, nome do realizador...',
                 },
             },{ // state
