@@ -9,28 +9,29 @@ const insightsInfoBox = {
     view(ctrl, args) {
         const newCount = args.newCount,
               oldCount = args.oldCount,
-              countIncrease = oldCount > 0 ? Math.floor(((newCount - oldCount) / oldCount) * 100) : null;
+              countIncrease = Math.abs( newCount - oldCount ),
+              arrowClass = !args.inverted && ( newCount > oldCount ) ? 'success' : 'error';
 
         return m('.flex-column.card.u-radius.u-marginbottom-10', [
             m('div',
-                args.label
-            ),
+              args.label
+             ),
             m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter',
-                'Últimos 7 dias'
-            ),
+              'Últimos 7 dias'
+             ),
             m('.fontsize-largest.fontweight-semibold',
               args.info
              ),
-            oldCount > 0 ?
-            m(`.fontsize-small.fontweight-semibold.lineheight-tighter.text-${newCount >= oldCount ? 'success' : 'error'}`, [
-                m(`span.fa.fa-arrow-${newCount >= oldCount ? 'up' : 'down'}`,
-                    ' '
-                ),
-                `${countIncrease}%`
-            ]) : '--',
+            m(`.fontsize-small.fontweight-semibold.lineheight-tighter.text-${arrowClass}`, [
+                countIncrease !== 0 ?
+                    m(`span.fa.fa-arrow-${newCount > oldCount ? 'up' : 'down'}`,
+                      ' '
+                     ) : '',
+                m(countIncrease === 0 ? 'span.fontcolor-secondary' : 'span', countIncrease)
+            ]),
             m('.fontsize-mini.fontweight-semibold.fontcolor-secondary.lineheight-tighter',
-                'Semana anterior'
-            )
+              'Semana anterior'
+             )
         ]);
     }
 };

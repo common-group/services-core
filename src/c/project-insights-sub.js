@@ -16,10 +16,10 @@ const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 const projectInsightsSub = {
     controller(args) {
         const filtersVM = args.filtersVM;
-        const weekSubscriptions = m.prop({});
-        const lastWeekSubscriptions = m.prop({});
-        const weekTransitions = m.prop({});
-        const lastWeekTransitions = m.prop({});
+        const weekSubscriptions = m.prop([]);
+        const lastWeekSubscriptions = m.prop([]);
+        const weekTransitions = m.prop([]);
+        const lastWeekTransitions = m.prop([]);
 
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekSubscriptions);
@@ -45,11 +45,10 @@ const projectInsightsSub = {
     },
     view(ctrl, args) {
         const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
-        const sumTransitionAmount = list => _.reduce(list, (memo, sub) => memo + (sub.data.checkout_data.amount / 100), 0);
         const weekSum = sumAmount(ctrl.weekSubscriptions());
         const lastWeekSum = sumAmount(ctrl.lastWeekSubscriptions());
-        const canceledWeekSum = sumTransitionAmount(ctrl.weekTransitions());
-        const canceledLastWeekSum = sumTransitionAmount(ctrl.lastWeekTransitions());
+        const canceledWeekSum = sumAmount(ctrl.weekTransitions());
+        const canceledLastWeekSum = sumAmount(ctrl.lastWeekTransitions());
         const project = args.project,
             subscribersDetails = args.subscribersDetails,
             balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
@@ -126,9 +125,10 @@ const projectInsightsSub = {
                             }),
                             m(insightsInfoBox, {
                                 label: 'Assinantes perdidos',
+                                inverted: true,
                                 info: ctrl.weekTransitions().length,
                                 newCount: ctrl.weekTransitions().length,
-                                oldCount: ctrl.lastWeekTransitions().lenght
+                                oldCount: ctrl.lastWeekTransitions().length
                             })
                         ])
                     ]),
@@ -145,8 +145,8 @@ const projectInsightsSub = {
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                  `R$${h.formatNumber( averageRevenue, 2, 3 )}`
-                                 )
+                                    `R$${h.formatNumber( averageRevenue, 2, 3 )}`
+                                )
 
                             ]),
                             m(insightsInfoBox, {
@@ -157,6 +157,7 @@ const projectInsightsSub = {
                             }),
                             m(insightsInfoBox, {
                                 label: 'Receita perdida',
+                                inverted: true,
                                 info: `R$${canceledWeekSum}`,
                                 newCount: canceledWeekSum,
                                 oldCount: canceledLastWeekSum
