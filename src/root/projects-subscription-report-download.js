@@ -1,5 +1,4 @@
 import m from 'mithril';
-import moment from 'moment';
 import _ from 'underscore';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import {
@@ -26,8 +25,6 @@ const projectSubscriptionReportDownload = {
         };
     },
     view(ctrl, args) {
-        const lastMonth = moment().subtract(1, 'month').startOf('month');
-        const currentMonth = moment().startOf('month');
         return m('.section.project-metrics',
             m('.w-container',
                 m('.w-row', [
@@ -46,13 +43,13 @@ const projectSubscriptionReportDownload = {
                             m('.card.u-radius.u-marginbottom-20', [
                                 m('span.fontweight-semibold',
                                     m.trust('Atenção:')
-                                ),  
+                                ),
                                 'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
-                            ]),                                  
+                            ]),
                             m('ul.w-list-unstyled', [
                                 m('li.fontsize-smaller.u-marginbottom-10',
                                     m('div', [
-                                        'Relatório geral ',
+                                        'Base de assinantes ',
                                         m.trust('&nbsp;'),
                                         m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.csv']`,
                                             'CSV'
@@ -61,30 +58,27 @@ const projectSubscriptionReportDownload = {
                                         '\\',
                                         m.trust('&nbsp;'),
                                         m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.xls']`,
-                                          'XLS'
+                                            'XLS'
                                         )
                                     ])
                                 ),
-
-                                _.map([currentMonth, lastMonth], month => [
-                                    m('li.divider.u-marginbottom-10'),
-                                    m('li.fontsize-smaller.u-marginbottom-10',
-                                        m('div', [
-                                            `Apoios confirmados em ${month.format('MMMM')}/${month.format('YYYY')}`,
-                                            m.trust('&nbsp;'),
-                                            m.trust('&nbsp;'),
-                                            m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.csv?created_at=${month.format()}']`,
-                                                'CSV'
-                                            ),
-                                            m.trust('&nbsp;'),
-                                            '\\',
-                                            m.trust('&nbsp;'),
-                                            m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.xls?created_at=${month.format()}']`,
-                                                'XLS'
-                                            )
-                                        ])
-                                    )
-                                ])
+                                m('li.divider.u-marginbottom-10'),
+                                m('li.fontsize-smaller.u-marginbottom-10',
+                                    m('div', [
+                                        `Relatório de apoios confirmados`,
+                                        m.trust('&nbsp;'),
+                                        m.trust('&nbsp;'),
+                                        m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.csv']`,
+                                            'CSV'
+                                        ),
+                                        m.trust('&nbsp;'),
+                                        '\\',
+                                        m.trust('&nbsp;'),
+                                        m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.xls']`,
+                                            'XLS'
+                                        )
+                                    ])
+                                )
                             ])
                         ])
                     ),
