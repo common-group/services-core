@@ -30,7 +30,7 @@ const insightsInfoBox = {
                 m(countIncrease === 0 ? 'span.fontcolor-secondary' : 'span', countIncrease)
             ]),
             m('.fontsize-mini.fontweight-semibold.fontcolor-secondary.lineheight-tighter',
-              'Semana anterior'
+              'Comparado ao período anterior'
              )
         ]);
     }
