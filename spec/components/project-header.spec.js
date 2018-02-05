@@ -11,6 +11,7 @@ describe('ProjectHeader', () => {
             goalDetails = m.prop(GoalsMockery());
             $output = mq(m.component(projectHeader, {
                 hasSubscription: m.prop(false),
+                userProjectSubscriptions: m.prop([]),
                 project: projectDetail,
                 userDetails: m.prop([]),
                 projectContributions: m.prop([]),
