@@ -17,7 +17,7 @@ const getSubscriptionTransitions = (projectId, toStatus, fromStatus, startAt, en
     vm.from_status(fromStatus);
     vm.to_status(toStatus);
 
-    const lSub = commonPayment.loaderWithToken(models.subscriptionTransition.getRowOptions(vm.parameters()));
+    const lSub = commonPayment.loaderWithToken(models.subscriptionTransition.getPageOptions(vm.parameters()));
     return lSub.load();
 };
 
@@ -33,7 +33,7 @@ const getNewSubscriptions = (projectId, startAt, endAt) => {
     vm.project_id(projectId);
     vm.status('active');
 
-    const lSub = commonPayment.loaderWithToken(models.userSubscription.getRowOptions(vm.parameters()));
+    const lSub = commonPayment.loaderWithToken(models.userSubscription.getPageOptions(vm.parameters()));
     return lSub.load();
 };
 
@@ -48,8 +48,7 @@ const getUserProjectSubscriptions = (userId, projectId, status) => {
     vm.user_id(userId);
     vm.project_id(projectId);
     vm.status(status);
-
-    const lSub = commonPayment.loaderWithToken(models.userSubscription.getRowOptions(vm.parameters()));
+    const lSub = commonPayment.loaderWithToken(models.userSubscription.getPageOptions(vm.parameters()));
     return lSub.load();
 };
 
