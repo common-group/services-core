@@ -9,6 +9,7 @@ import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
 import addressVM from '../vms/address-vm';
 import usersVM from '../vms/user-vm';
+import subscriptionVM from '../vms/subscription-vm';
 import faqBox from '../c/faq-box';
 import nationalityRadio from '../c/nationality-radio';
 import paymentForm from '../c/payment-form';
@@ -28,10 +29,19 @@ const projectsSubscriptionCheckout = {
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             isCnpj = m.prop(false),
             currentUserID = h.getUserID(),
-            user = usersVM.getCurrentUser();
+            user = usersVM.getCurrentUser(),
+            oldSubscription = m.prop({}),
+            error = m.prop();
 
         const subscriptionId = m.prop(m.route.param('subscription_id'));
         const isEdit = m.prop(Boolean(subscriptionId()));
+
+        if (isEdit) {
+            subscriptionVM
+                .getSubscription(subscriptionId())
+                .then(data => oldSubscription(_.first(data)))
+                .catch(error);
+        }
 
         if (_.isNull(currentUserID)) {
             projectVM.storeSubscribeAction(m.route());
@@ -133,6 +143,7 @@ const projectsSubscriptionCheckout = {
             project,
             lastDayOfNextMonth,
             isLongDescription,
+            oldSubscription,
             toggleDescription: h.toggleProp(false, true)
         };
     },
@@ -336,6 +347,7 @@ const projectsSubscriptionCheckout = {
                             project_common_id: projectVM.currentProject().common_id,
                             user_common_id: user.common_id,
                             isSubscription: true,
+                            oldSubscription: ctrl.oldSubscription,
                             value: ctrl.value,
                             hideSave: true,
                         }) : ''

@@ -18,8 +18,10 @@ const subscriptionEditModal = {
         };
     },
     view(ctrl, args) {
-        const reward = args.args.reward;
-
+        const newSubscription = args.args;
+        const {oldSubscription} = args;
+        console.log(oldSubscription);
+        
         return m('.modal-backdrop',
             m('.modal-dialog-outer', 
                 m('.modal-dialog-inner.modal-dialog-small',
@@ -41,32 +43,33 @@ const subscriptionEditModal = {
                                             [
                                                 m('.fontsize-smallest.fontweight-semibold', 
                                                     {
-                                                        class: ctrl.isLongDescription(reward())
+                                                        class: ctrl.isLongDescription(newSubscription.reward())
                                                             ? ctrl.toggleDescription()
                                                                 ? 'extended'
                                                                 : ''
                                                             : 'extended'
                                                     },
-                                                    reward().title
+                                                    newSubscription.reward().title
                                                 ),
                                                 m('.fontsize-smallest.fontcolor-secondary',
-                                                    reward().description
-                                                        ? reward().description
+                                                    newSubscription.reward().description
+                                                        ? newSubscription.reward().description
                                                         : m.trust(
                                                             I18n.t('selected_reward.review_without_reward_html',
                                                                 ctrl.scope(
                                                                     _.extend({
-                                                                        value: Number(ctrl.value).toFixed()
+                                                                        value: Number(newSubscription.value).toFixed()
                                                                     })
                                                                 )
                                                             )
                                                         )
                                                 ),
-                                                m('a.link-more.link-hidden[href="#"]', {
-                                                        onclick: ctrl.toggleDescription.toggle
-                                                    }, 
-                                                    ['mais', m('span.fa.fa-angle-down')]
-                                                )
+                                                ctrl.isLongDescription(newSubscription.reward())
+                                                    ? m('a.link-more.link-hidden[href="#"]', {
+                                                            onclick: ctrl.toggleDescription.toggle
+                                                        }, 
+                                                        ['mais', m('span.fa.fa-angle-down')]
+                                                    ) : ''
                                             ]
                                         )
                                     ]
@@ -79,15 +82,9 @@ const subscriptionEditModal = {
                                         ),
                                         m('.fontsize-large',
                                             [
-                                                m('span.fontcolor-terciary', 
-                                                    'R$10'
-                                                ),
-                                                m('span.fa.fa-angle-right.fontcolor-terciary', 
-                                                    '.'
-                                                ),
-                                                'R$15'
-                                            ]
-                                        )
+                                                m('span.fontcolor-terciary', `R$${oldSubscription.value} `),
+                                                m('span.fa.fa-angle-right.fontcolor-terciary'),
+                                                ` R$${newSubscription.value}` ])
                                     ]
                                 ),
                                 m('.divider.u-marginbottom-10'),
@@ -100,31 +97,22 @@ const subscriptionEditModal = {
                                             [
                                                 m('span.fontcolor-terciary',
                                                     [
-                                                        m('span.fa.fa-credit-card', 
-                                                            '.'
-                                                        ),
-                                                        'Cartão final 1234'
+                                                        m('span.fa.fa-credit-card'),
+                                                        ' Cartão final 1234 '
                                                     ]
                                                 ),
-                                                m.trust('&nbsp;'),
-                                                m('span.fa.fa-angle-right.fontcolor-terciary', 
-                                                    '.'
-                                                ),
-                                                m('span.fa.fa-barcode', 
-                                                    '.'
-                                                ),
-                                                m.trust('&nbsp;'),
-                                                'Boleto bancário'
+                                                m('span.fa.fa-angle-right.fontcolor-terciary'),
+                                                ' ',
+                                                m('span.fa.fa-barcode'),
+                                                ' Boleto bancário'
                                             ]
                                         ),
                                         m('.fontsize-smaller',
                                             [
                                                 m('span.fontweight-semibold',
                                                     [
-                                                        m('span.fa.fa-money.text-success', 
-                                                            '.'
-                                                        ),
-                                                        'Cobrança hoje:'
+                                                        m('span.fa.fa-money.text-success'),
+                                                        ' Cobrança hoje: '
                                                     ]
                                                 ),
                                                 'Nenhuma'
@@ -134,15 +122,11 @@ const subscriptionEditModal = {
                                             [
                                                 m('span.fontweight-semibold',
                                                     [
-                                                        m('span.fa.fa-calendar-o.text-success', 
-                                                            '.'
-                                                        ),
-                                                        m.trust('&nbsp;'),
-                                                        'Próxima cobrança:'
+                                                        m('span.fa.fa-calendar-o.text-success'),
+                                                        ' Próxima cobrança:'
                                                     ]
                                                 ),
-                                                m.trust('&nbsp;'),
-                                                '01/Setembro no valor de R$15'
+                                                ` 01/Setembro no valor de R$${newSubscription.value}`
                                             ]
                                         )
                                     ]

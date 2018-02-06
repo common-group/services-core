@@ -53,10 +53,20 @@ const getUserProjectSubscriptions = (userId, projectId, status) => {
     return lSub.load();
 };
 
+const getSubscription = (userId, subscriptionId) => {
+    const vm = commonPayment.filtersVM({id: 'eq'});
+    vm.id(subscriptionId);
+
+    const lSub = commonPayment.loaderWithToken(models.userSubscription.getRowOptions(vm.parameters()));
+
+    return lSub.load();
+};
+
 const subscriptionVM = {
     getNewSubscriptions,
     getSubscriptionTransitions,
-    getUserProjectSubscriptions
+    getUserProjectSubscriptions,
+    getSubscription
 };
 
 export default subscriptionVM;
