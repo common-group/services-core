@@ -100,9 +100,6 @@ const adminSubscriptionDetail = {
               reward = ctrl.reward(),
               currentPayment = ctrl.currentPayment;
 
-        console.log(args);
-        console.log(ctrl.notifications());
-
         return m('.card.card-terciary.w-row', payments ? [
             m('.w-col.w-col-4',
                 m('div', [
