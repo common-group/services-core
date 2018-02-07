@@ -2,6 +2,7 @@ import { catarse, commonPayment, commonAnalytics, commonProject, commonNotificat
 
 const models = {
     notificationTemplates: commonNotification.model('notification_templates'),
+    userNotification: commonNotification.model('user_notifications'),
     commonNotificationTemplate: commonNotification.model('rpc/notification_template'),
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
     projectReward: commonProject.model('rewards'),
