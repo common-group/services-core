@@ -8,7 +8,6 @@ import projectVM from '../vms/project-vm';
 import creditCardInput from './credit-card-input';
 import inlineError from './inline-error';
 import subscriptionEditModal from './subscription-edit-modal';
-
 import commonPaymentVM from '../vms/common-payment-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
@@ -443,7 +442,8 @@ const paymentCreditCard = {
                             args,
                             pay: ctrl.sendSubscriptionPayment,
                             showModal: ctrl.showSubscriptionModal,
-                            confirm: ctrl.subscriptionEditConfirmed
+                            confirm: ctrl.subscriptionEditConfirmed,
+                            paymentMethod: 'credit_card'
                         }
                     ) : null
             ])

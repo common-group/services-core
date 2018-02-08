@@ -19,8 +19,8 @@ const subscriptionEditModal = {
     },
     view(ctrl, args) {
         const newSubscription = args.args;
-        const {oldSubscription} = args;
-        console.log(oldSubscription);
+        const oldSubscription = args.args.oldSubscription();
+        console.log('oldSubscription.checkout_data.amount === newSubscription.value', oldSubscription.checkout_data.amount, newSubscription.value);
         
         return m('.modal-backdrop',
             m('.modal-dialog-outer', 
@@ -76,13 +76,15 @@ const subscriptionEditModal = {
                                 ),
                                 m('.divider.u-marginbottom-10'),
                                 m('.u-marginbottom-10',
-                                    [
+                                    oldSubscription.checkout_data.amount == newSubscription.value
+                                    ? ''
+                                    : [
                                         m('.fontsize-smaller.fontcolor-secondary', 
                                             'Valor da assinatura'
                                         ),
                                         m('.fontsize-large',
                                             [
-                                                m('span.fontcolor-terciary', `R$${oldSubscription.value} `),
+                                                m('span.fontcolor-terciary', `R$${oldSubscription.checkout_data.amount} `),
                                                 m('span.fa.fa-angle-right.fontcolor-terciary'),
                                                 ` R$${newSubscription.value}` ])
                                     ]
@@ -93,20 +95,22 @@ const subscriptionEditModal = {
                                 ),
                                 m('.w-hidden-small.w-hidden-tiny',
                                     [
-                                        m('.fontsize-large.u-marginbottom-10',
-                                            [
-                                                m('span.fontcolor-terciary',
-                                                    [
-                                                        m('span.fa.fa-credit-card'),
-                                                        ' Cartão final 1234 '
-                                                    ]
-                                                ),
-                                                m('span.fa.fa-angle-right.fontcolor-terciary'),
-                                                ' ',
-                                                m('span.fa.fa-barcode'),
-                                                ' Boleto bancário'
-                                            ]
-                                        ),
+                                        oldSubscription.payment_method === args.paymentMethod
+                                            ? ''
+                                            : m('.fontsize-large.u-marginbottom-10',
+                                                [
+                                                    m('span.fontcolor-terciary',
+                                                        [
+                                                            m('span.fa.fa-credit-card'),
+                                                            ' Cartão de Crédito '
+                                                        ]
+                                                    ),
+                                                    m('span.fa.fa-angle-right.fontcolor-terciary'),
+                                                    ' ',
+                                                    m('span.fa.fa-barcode'),
+                                                    ' Boleto bancário'
+                                                ]
+                                            ),
                                         m('.fontsize-smaller',
                                             [
                                                 m('span.fontweight-semibold',
@@ -126,7 +130,7 @@ const subscriptionEditModal = {
                                                         ' Próxima cobrança:'
                                                     ]
                                                 ),
-                                                ` 01/Setembro no valor de R$${newSubscription.value}`
+                                                `${h.momentify(oldSubscription.next_charge_at)} no valor de R$${newSubscription.value}`
                                             ]
                                         )
                                     ]
