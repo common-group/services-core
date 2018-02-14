@@ -31,14 +31,13 @@ const ownerMessageContent = {
             }
             submitDisabled(true);
             content(content().split('\n').join('<br />'));
-            const project = h.getCurrentProject() || { project_id: args().project_id };
 
             const loaderOpts = models.directMessage.postOptions({
                 from_name: from_name(),
                 from_email: from_email(),
                 user_id: h.getUser().user_id,
                 content: content(),
-                project_id: project ? project.project_id : null,
+                project_id: args().project_id,
                 to_user_id: userDetails().id
             });
 
