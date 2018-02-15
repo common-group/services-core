@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(23);
+    select plan(25);
 
     SELECT function_returns(
         'payment_service_api', 'pay', ARRAY['json'], 'json' 
@@ -173,6 +173,36 @@ BEGIN;
     $$;
 
     select test_repay_error_with_scoped_user();
+
+
+    create or replace function test_pay_with_foreign_user()
+    returns setof text language plpgsql as $$
+    declare
+    _count_expected numeric default 0;
+    _generated_payment payment_service.catalog_payments;
+    _generated_subscription payment_service.subscriptions;
+    begin
+        -- test valid data with scoped_user
+        set local role scoped_user;
+        set local request.jwt.claim.platform_token to 'a28be766-bb36-4821-82ec-768d2634d78b';
+        set local request.jwt.claim.user_id to 'bb8f4478-df41-411c-8ed7-12c034044c0e';
+        set local "request.header.x-forwarded-for" to '127.0.0.1'; -- ip header should be found
+
+        -- test card document cpf validation
+        return next lives_ok(
+            'EXECUTE pay_with_data(''{"subscription": true, "is_international": true, "card_hash": "foo_hash_card", "payment_method": "credit_card", "credit_card_owner_document": "", "customer_document_number": "", "customer_document_type": "", "subscription": "", "customer_address_number": "", "customer_phone_ddi": ""}''::json)',
+            'should persist payment without vaildate documents and some address field');
+
+        -- cant generate boleto for international payments
+        return next throws_matching(
+            'EXECUTE pay_with_data(''{"subscription": true, "is_international": true, "payment_method": "boleto", "customer_document_number": "", "customer_document_type": "", "subscription": ""}''::json)',
+            'invalid_payment_method' ,
+            'cant generate a boleto when foreign payment');
+    end;
+    $$;
+
+    select test_pay_with_foreign_user();
+
 
 
     select * from finish();
