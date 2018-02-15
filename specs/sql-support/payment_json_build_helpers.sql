@@ -4,10 +4,10 @@ declare
 data json;
 begin
     data := json_build_object(
-        'is_international', coalesce(($1->>'is_international')::boolean, false),
+        'is_international', coalesce(nullif(($1->>'is_international'), '')::boolean, false),
         'current_ip', '127.0.0.1',
-        'anonymous', coalesce(($1->>'anonymous')::boolean, false),
-        'subscription', coalesce(($1->>'subscription')::boolean, false),
+        'anonymous', coalesce(nullif(($1->>'anonymous'), '')::boolean, false),
+        'subscription', coalesce(nullif(($1->>'subscription'), '')::boolean, false),
         'user_id', 'd44378a2-3637-447c-9f57-dc20fff574db',
         'project_id', '52273d0a-1610-4f48-9239-e96e5861c3d3',
         'amount', 2400,
