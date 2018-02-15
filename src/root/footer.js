@@ -41,9 +41,15 @@ const footer = {
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
                                                 ),                                                                                                
-                                                m('a.u-marginbottom-30.link-footer[href=\'https://ano.catarse.me/2016?ref=ctrse_footer\']',
-                                                    ' Retrospectiva 2016'
-                                                ),
+                                                m('a.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
+                                                  [
+                                                      'Retrospectiva 2017',
+                                                      m.trust('&nbsp;'),
+                                                      m('span.badge.badge-success',
+                                                        'Novidade‍'
+                                                       )
+                                                  ]
+                                                 ),   
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Redes Sociais'
                                                 ),                                                                                                
