@@ -2,7 +2,8 @@ import m from 'mithril';
 import _ from 'underscore';
 import {
     commonPayment,
-    commonProject
+    commonProject,
+    commonNotification
 } from '../api';
 import h from '../h';
 import models from '../models';
@@ -29,6 +30,22 @@ const adminSubscriptionDetail = {
         });
         filterVM.subscription_id(args.key);
         const currentPayment = m.prop({});
+
+        const loadNotifications = () => {
+            const notifications = m.prop([]);
+            const notificationFilterVM = commonNotification.filtersVM({
+                user_id: 'eq'
+            });
+            notificationFilterVM.user_id(args.item.user_id);
+
+            const lNotifications = commonNotification.loaderWithToken(
+                models.userNotification.getPageOptions(notificationFilterVM.parameters()));
+
+            lNotifications.load().then(notifications);
+
+            return notifications;
+        };
+
         const loadTransitions = () => {
             const transitions = m.prop([]);
 
@@ -69,6 +86,7 @@ const adminSubscriptionDetail = {
         return {
             payments: loadPayments(),
             transitions: loadTransitions(),
+            notifications: loadNotifications(),
             currentPayment,
             clearSelected,
             reward: loadReward(),
@@ -78,15 +96,16 @@ const adminSubscriptionDetail = {
     view(ctrl, args) {
         const payments = ctrl.payments(),
             transitions = ctrl.transitions(),
-            reward = ctrl.reward(),
-            currentPayment = ctrl.currentPayment;
+              notifications = ctrl.notifications(),
+              reward = ctrl.reward(),
+              currentPayment = ctrl.currentPayment;
 
         return m('.card.card-terciary.w-row', payments ? [
             m('.w-col.w-col-4',
                 m('div', [
                     m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
-                        'Histórico da transação'
-                    ),
+                      'Histórico da transação'
+                     ),
                     _.map(transitions, (transition) => {
                         return m('.fontsize-smallest.lineheight-looser.w-row', [
                             m('.w-col.w-col-6',
@@ -121,7 +140,24 @@ const adminSubscriptionDetail = {
                                 ))
                         ]);
 
-                    })
+                    }),
+                    m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20.u-margintop-20',
+                      'Notificações'
+                     ),
+                    _.map(notifications, (notification) => {
+                        return m('.fontsize-smallest.lineheight-looser.w-row', [
+                            m('.w-col.w-col-6',
+                              m('div',
+                                h.momentify(notification.created_at, 'DD/MM/YYYY hh:mm')
+                               )
+                             ),
+                            m('.w-col.w-col-6',
+                              m('span',
+                                notification.label
+                               ))
+                        ]);
+
+                    }),
                 ])),
             m('.w-col.w-col-4',
                 m('div', [
