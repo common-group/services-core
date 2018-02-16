@@ -96,6 +96,7 @@ async function init(stdin_data) {
         const project = res.rows[0].project_data;
         const project_owner = res.rows[0].project_owner_data;
         const subscription = res.rows[0].subscription_data;
+        const is_international = payment.data.is_international || false;
 
         let basic_raven_context = {
             user: {
@@ -117,10 +118,9 @@ async function init(stdin_data) {
             country: customer.address.country,
             state: customer.address.state,
             city: customer.address.city,
-            zipcode: customer.address.zipcode,
+            zipcode: (is_international ? '00000000' : customer.address.zipcode),
             neighborhood: customer.address.neighbourhood,
-            street: customer.address.street_number,
-            street_number: customer.address.number,
+            street_number: (is_international ? '100' : customer.address.street_number),
             complementary: customer.address.complementary,
             latitude: '',
             longitude: ''
@@ -134,17 +134,17 @@ async function init(stdin_data) {
             customer: {
                 name: customer.name,
                 email: customer.email,
-                document_number: customer.document_number,
+                document_number: (is_international ? '00000000000' : customer.document_number),
                 address: {
                     street: customer.address.street,
-                    street_number: customer.address.street_number,
+                    street_number: (is_international ? '100' : customer.address.street_number),
                     neighborhood: customer.address.neighborhood,
-                    zipcode: customer.address.zipcode
+                    zipcode: (is_international ? '00000000' : customer.address.zipcode)
                 },
                 phone: {
-                    ddi: customer.phone.ddi,
-                    ddd: customer.phone.ddd,
-                    number: customer.phone.number
+                    ddi: (is_international ? '55' : customer.phone.ddi),
+                    ddd: (is_international ? '33' : customer.phone.ddd),
+                    number: (is_international ? '33335555' : customer.phone.number)
                 }
             },
             metadata: {
