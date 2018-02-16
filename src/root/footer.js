@@ -46,7 +46,7 @@ const footer = {
                                                       'Retrospectiva 2017',
                                                       m.trust('&nbsp;'),
                                                       m('span.badge.badge-success',
-                                                        'Novidade‍'
+                                                        'Novidade'
                                                        )
                                                   ]
                                                  ),   
