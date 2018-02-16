@@ -63,8 +63,8 @@ const projectsShow = {
         };
 
         const hasSubscription = () => {
-            return !_.isEmpty(userProjectSubscriptions()) && _.findWhere(userProjectSubscriptions(), {
-                project_id: projectVM.currentProject().common_id
+            return !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), (sub) => {
+                return sub.project_id === projectVM.currentProject().common_id && sub.status !== 'canceled';
             });
         };
 
