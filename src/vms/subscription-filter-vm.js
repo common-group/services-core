@@ -7,7 +7,7 @@ import h from '../h';
 
 const vm = commonPayment.filtersVM({
         status: 'eq',
-        search_index: '@@',
+        search_index: 'fts(portuguese)',
         payment_method: 'eq'
     }),
 
