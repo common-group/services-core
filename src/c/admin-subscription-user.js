@@ -29,15 +29,17 @@ const adminSubscriptionUser = {
         };
     },
     view(ctrl, args) {
+        console.log(args.item);
         const item = args.item,
+              customer = item.checkout_data ? item.checkout_data.customer : {},
               user = {
                   profile_img_thumbnail: ctrl.user() ? ctrl.user().profile_img_thumbnail : '',
                   id: item.user_external_id,
-                  name: item.checkout_data.customer.name,
+                  name: customer.name,
                   email: item.user_email
               };
 
-        const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${item.checkout_data.customer.email}`);
+        const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${customer.email}`);
         return ctrl.user() ? m.component(adminUser, {
             item: user,
             additional_data: additionalData
