@@ -148,7 +148,7 @@ services:
       - "3008:3000"
 
   payment_service_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.payment_service_api.env
     depends_on:
@@ -159,7 +159,7 @@ services:
       - "3001:3000"
 
   project_service_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.project_service_api.env
     depends_on:
@@ -170,7 +170,7 @@ services:
       - "3002:3000"
 
   community_service_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.community_service_api.env
     depends_on:
@@ -181,7 +181,7 @@ services:
       - "3003:3000"
 
   platform_service_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.platform_service_api.env
     depends_on:
@@ -192,7 +192,7 @@ services:
       - "3004:3000"
 
   analytics_service_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.analytics_service_api.env
     depends_on:
@@ -203,7 +203,7 @@ services:
       - "3005:3000"
 
   notification_service_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.notification_service_api.env
     depends_on:
