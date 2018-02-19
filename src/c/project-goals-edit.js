@@ -86,12 +86,14 @@ const projectGoalsEdit = {
                                         return m(projectGoalEditCard, {
                                             goal,
                                             showSuccess,
+                                            project: args.project,
                                             currentGoal: ctrl.currentGoal,
                                             error
                                         });
                                     }
                                     return m(projectGoalCard, {
                                         goal,
+                                        project: args.project,
                                         currentGoal: ctrl.currentGoal
                                     });
                                 }),

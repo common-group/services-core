@@ -6,6 +6,7 @@ import projectGoalsVM from '../vms/project-goals-vm';
 const projectGoalEditCard = {
     controller(args) {
         const goal = args.goal(),
+            project = args.project,
             descriptionError = m.prop(false),
             titleError = m.prop(false),
             valueError = m.prop(false),
@@ -27,7 +28,7 @@ const projectGoalEditCard = {
                     args.error(true);
                     valueError(true);
                 }
-                if  (parseInt(goal.value()) >= 10 && args.currentGoal() && parseInt(goal.value()) <= args.currentGoal().value()) {
+                if  (parseInt(goal.value()) >= 10 && project.state !== 'draft' && args.currentGoal() && parseInt(goal.value()) <= args.currentGoal().value()) {
                     args.error(true);
                     currentError(true);
                 }
