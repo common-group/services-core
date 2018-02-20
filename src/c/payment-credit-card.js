@@ -44,6 +44,8 @@ const paymentCreditCard = {
 
             const data = _.extend({}, commonData, {subscription_id: args.subscriptionId()});
 
+            console.log('selectedCreditCard', selectCreditCard, 'vm', vm, 'data', data);
+
             commonPaymentVM.sendCreditCardPayment(
                 selectedCreditCard,
                 vm, 

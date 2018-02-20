@@ -20,7 +20,6 @@ const subscriptionEditModal = {
     view(ctrl, args) {
         const newSubscription = args.args;
         const oldSubscription = args.args.oldSubscription();
-        console.log('oldSubscription.checkout_data.amount === newSubscription.value', oldSubscription.checkout_data.amount, newSubscription.value);
         
         return m('.modal-backdrop',
             m('.modal-dialog-outer', 
