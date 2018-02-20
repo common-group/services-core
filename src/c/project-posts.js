@@ -57,28 +57,33 @@ const projectPosts = {
                         ])
                     ])
                 ] : ''), (_.map(list.collection(), post => m('.w-row', [
-                    _.isEmpty(post.comment_html) ?
-                    m('.card.card-message.u-radius.card-big.u-text-center.u-marginbottom-10', [
-                        m('.fa.fa-lock.fa-3x.fontcolor-secondary',
-                            ''
-                        ),
-                        project.mode === 'sub' ? [
-                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                `Post exclusivo para assinantes${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
+                    _.isEmpty(post.comment_html) ? [
+                        m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
+                        m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
+                            m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
+                        ]),
+                        m('.card.card-message.u-radius.card-big.u-text-center.u-marginbottom-60', [
+                            m('.fa.fa-lock.fa-3x.fontcolor-secondary',
+                                ''
                             ),
-                            m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
-                                'Acessar esse post'
-                            )
-                        ] : [
-                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                `Post exclusivo para apoiadores${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
-                            ),
-                            m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
-                              'Acessar esse post'
-                            )
-                        ]
+                            project.mode === 'sub' ? [
+                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    `Post exclusivo para assinantes${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
+                                ),
+                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
+                                    'Acessar esse post'
+                                )
+                            ] : [
+                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                    `Post exclusivo para apoiadores${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
+                                ),
+                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
+                                    'Acessar esse post'
+                                )
+                            ]
 
-                    ]) : [m('.w-col.w-col-1'),
+                        ])
+                    ] : [m('.w-col.w-col-1'),
                         m('.w-col.w-col-10', [
                             m('.post', [
                                 m('.u-marginbottom-60 .w-clearfix', [
