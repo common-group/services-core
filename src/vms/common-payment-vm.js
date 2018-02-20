@@ -14,6 +14,12 @@ const sendPaymentRequest = data => commonPayment.postWithToken(
     {'X-forwarded-For': '127.0.0.1'}
 );
 
+const sendSubscriptionUpgrade = data => commonSubscriptionUpgrade.postWithToken(
+    {data},
+    null,
+    {'X-forwarded-For': '127.0.0.1'}
+);
+
 const saveCreditCard = creditCardHash => commonCreditCard.postWithToken(
     {data: {card_hash: creditCardHash}}
 );
@@ -110,21 +116,21 @@ const waitForSavedCreditCard = promise => creditCardId => {
         return promise.reject({message: 'Could not save card'});
     }
 
-    creditCardInfo(creditCardId).then((infoR) => {
-        if(_.isNull(infoR.data) || _.isUndefined(infoR.data)) {
-            if(!_.isNull(infoR.gateway_errors)) {
+    creditCardInfo(creditCardId).then(([infoR]) => {
+        if(_.isEmpty(infoR.gateway_data)) {
+            if(!_.isEmpty(infoR.gateway_errors)) {
                 return promise.reject(_.first(infoR.gateway_errors));
             } 
 
             return h.sleep(4000).then(() => {
-                retries = retries - 1;
+                creditCardRetries = creditCardRetries - 1;
 
                 return waitForSavedCreditCard(promise)(creditCardId);
             });
         }
 
         return promise.resolve();
-    }).catch(() => promise.reject({}));
+    }).catch(() => promise.reject({message: 'Really couldnt save your card'}));
  
 
     return promise;
@@ -142,7 +148,9 @@ const processCreditCard = (cardHash, fields) => {
 }
 
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
-    fields.isLoading(true);
+    if (!fields) {
+        return false;
+    }
     m.redraw();
 
     const meta = _.first(document.querySelectorAll('[name=pagarme-encryption-key]'));
@@ -192,10 +200,18 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
         if (commonData.rewardCommonId) {
             _.extend(payload, {reward_id: commonData.rewardCommonId});
         }
+
+        if (commonData.subscription_id) {
+            _.extend(payload, {id: commonData.subscription_id});
+        }
+
+        const pay = () => commonData.subscription_id
+            ? sendSubscriptionUpgrade(payload)
+            : sendPaymentRequest(payload);
   
         updateUser(userPayload(customer, address))
             .then(() => processCreditCard(cardHash, fields))
-            .then(() => sendPaymentRequest(payload))
+            .then(pay)
             .then(getPaymentInfoUntilNoError(payload.payment_method))
             .catch(displayError(fields));
     });
