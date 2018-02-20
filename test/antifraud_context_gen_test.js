@@ -11,7 +11,7 @@ const {
     genAFMetadata
 } = require('../lib/antifraud_context_gen');
 
-test('test genAFAddress with national payment', t => {
+test('test genAFAddress', t => {
     const ctx = {
         payment: {
             data: {
@@ -40,39 +40,6 @@ test('test genAFAddress with national payment', t => {
             neighborhood: 'Centro',
             street_number: '200',
             complementary: 'AP',
-            latitude: '',
-            longitude: ''
-        };
-
-    t.deepEqual(genAFAddress(ctx), expected);
-});
-
-test('test genAFAddress with foreign payment should use masks', t => {
-    const ctx = {
-        payment: {
-            data: {
-                is_international: true,
-                customer: {
-                    address: {
-                        country: 'Brasil',
-                        state: 'SP',
-                        street: 'Rua Lorem',
-                        city: 'São Paulo',
-                        neighbourhood: 'Centro',
-                    }
-                }
-            }
-        }
-    },
-        expected = {
-            country: 'Brasil',
-            state: 'SP',
-            street: 'Rua Lorem',
-            city: 'São Paulo',
-            zipcode: '00000000',
-            neighborhood: 'Centro',
-            street_number: '100',
-            complementary: '',
             latitude: '',
             longitude: ''
         };
