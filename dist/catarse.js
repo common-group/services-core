@@ -9646,7 +9646,7 @@ var paymentInfo = function paymentInfo(paymentId) {
 
 var retries = 10;
 var resolvePayment = function resolvePayment(gateway_payment_method, payment_confirmed, payment_id) {
-    return m.route('/projects/subscriptions/thank_you?project_id=' + projectVM.currentProject().project_id + '&payment_method=' + gateway_payment_method + '&payment_confirmed=' + payment_confirmed + '&payment_id=' + payment_id);
+    return m.route('/projects/' + projectVM.currentProject().project_id + '/subscriptions/thank_you?project_id=' + projectVM.currentProject().project_id + '&payment_method=' + gateway_payment_method + '&payment_confirmed=' + payment_confirmed + '&payment_id=' + payment_id);
 };
 var requestInfo = function requestInfo(promise, paymentInfoId, defaultPaymentMethod) {
     if (retries <= 0) {
