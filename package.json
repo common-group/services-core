@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-      "test": "ava"
+    "test": "ava"
   },
   "dependencies": {
     "ava": "^0.25.0",
@@ -12,6 +12,7 @@
     "get-stdin": "^5.0.1",
     "lodash": "^4.17.4",
     "luxon": "^0.2.5",
+    "nock": "^9.1.6",
     "pagarme": "^3",
     "pg": "^7",
     "ramda": "^0.25.0",
