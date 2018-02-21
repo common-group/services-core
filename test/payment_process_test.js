@@ -6,9 +6,17 @@ const {
     isForeign,
     expirationDate,
     createGatewayTransaction,
+    fetchTransactionPayables
 } = require('../lib/payment_process');
 const { genAFMetadata } = require('../lib/antifraud_context_gen');
 
+/*
+ * generate payables valid reply
+ */
+const payablesReply = () => {
+    let reply = JSON.parse('[{"id": 3744350, "fee": 380, "type": "credit", "amount": 500, "object": "payable", "status": "paid", "installment": null, "accrual_date": null, "date_created": "2018-02-08T22:14:58.305Z", "payment_date": "2018-02-08T02:00:00.245Z", "recipient_id": "re_ci76hy9k000gsdw16ab7yyrgr", "split_rule_id": null, "payment_method": "boleto", "transaction_id": 2882562, "anticipation_fee": 0, "bulk_anticipation_id": null, "original_payment_date": null}]');
+    return reply;
+};
 /*
  * generate transaction valid reply
  */
@@ -330,6 +338,21 @@ test('test createGatewayTransaction', async t => {
     let transaction = await createGatewayTransaction(genTransactionData(ctx));
 
     t.deepEqual(transaction, transactionReply());
+
+    delete process.env.GATEWAY_API_KEY;
+});
+
+
+test('test fetchTransactionPayables', async t => {
+    process.env.GATEWAY_API_KEY = 'api_key_test';
+
+    let gatewayApiMock = nock(/pagar\.me/)
+        .get(/transactions\/\d+\/payables/)
+        .reply(200, payablesReply())
+
+    let payables = await fetchTransactionPayables(2882562)
+
+    t.deepEqual(payables, payablesReply());
 
     delete process.env.GATEWAY_API_KEY;
 });
