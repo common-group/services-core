@@ -64,7 +64,7 @@ const paymentInfo = (paymentId) => {
 };
 
 let retries = 10;
-const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`)
+const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`)
 const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
     if (retries <= 0) {
         return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId));
