@@ -7,8 +7,9 @@ const {
     loadPaymentContext,
     createCardFromPayment,
     updateGatewayDataOnPayment,
-    changeSubscriptionCard
+    changeSubscriptionCard,
     findPayment,
+    notificationServiceNotify,
 } = require('../../lib/dal')
 
 test('test findPayment', async t => {
@@ -216,4 +217,33 @@ test('test changeSubscriptionCard', async t => {
     await client.query('rollback;');
     await client.release();
 });
+
+test('test notificationServiceNotify', async t => {
+    const client = await pool.connect();
+    await client.query('begin;');
+
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert notification global template to database
+    const template = (await client.query(`
+        insert into notification_service.notification_global_templates
+        (label, subject, template)
+        values ('test_label', 'test subject', 'test template')
+        returning *
+    `)).rows[0];
+
+    const notification = await notificationServiceNotify(client, 'test_label', {
+        relations: { user_id: basicData.community_first_user.id }
+    });
+
+    t.is(R.isNil(notification.id), false);
+    t.is(notification.notification_global_template_id, template.id);
+    t.is(notification.user_id, basicData.community_first_user.id);
+
+    await client.query('rollback;');
+    await client.release();
+});
+
+
 
