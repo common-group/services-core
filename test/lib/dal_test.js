@@ -8,7 +8,37 @@ const {
     createCardFromPayment,
     updateGatewayDataOnPayment,
     changeSubscriptionCard
+    findPayment,
 } = require('../../lib/dal')
+
+test('test findPayment', async t => {
+    const client = await pool.connect();
+    await client.query('begin;');
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert payment into database
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data) 
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    const found = await findPayment(client, payment.id)
+
+    t.is(found.id, payment.id);
+
+    t.deepEqual(found.data, helpers.paymentBasicData({}));
+
+    await client.query('rollback;')
+    await client.release();
+});
 
 test('test loadPaymentContext', async t => {
     const client = await pool.connect();
