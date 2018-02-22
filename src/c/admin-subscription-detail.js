@@ -34,9 +34,11 @@ const adminSubscriptionDetail = {
         const loadNotifications = () => {
             const notifications = m.prop([]);
             const notificationFilterVM = commonNotification.filtersVM({
-                user_id: 'eq'
+                user_id: 'eq',
+                project_id: 'eq'
             });
             notificationFilterVM.user_id(args.item.user_id);
+            notificationFilterVM.project_id(args.item.project_id);
 
             const lNotifications = commonNotification.loaderWithToken(
                 models.userNotification.getPageOptions(notificationFilterVM.parameters()));
