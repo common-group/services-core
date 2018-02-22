@@ -6,7 +6,8 @@ const {
     pool,
     loadPaymentContext,
     createCardFromPayment,
-    updateGatewayDataOnPayment
+    updateGatewayDataOnPayment,
+    changeSubscriptionCard
 } = require('../../lib/dal')
 
 test('test loadPaymentContext', async t => {
@@ -137,6 +138,50 @@ test('test updateGatewayDataOnPayment', async t => {
     //t.is(created_card.gateway_data.id, transaction.card.id);
     //t.is(created_card.platform_id, basicData.platform.id);
     //t.is(created_card.user_id, basicData.community_first_user.id);
+
+    await client.query('rollback;');
+    await client.release();
+});
+
+test('test changeSubscriptionCard', async t => {
+    const client = await pool.connect();
+    await client.query('begin;');
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert subscription in database
+    const subscription = (await client.query(`
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, checkout_data)
+        values ('active', now(), $1::uuid, $2::uuid, $3::uuid, $4::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    // insert payment into database
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data, subscription_id) 
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json, $6::uuid)
+        returning *`, [
+            basicData.platform.id,
+            basicData.community_first_user.id,
+            basicData.project.id,
+            JSON.stringify(helpers.paymentBasicData({})),
+            JSON.stringify(helpers.paymentBasicGatewayCachedData({})),
+            subscription.id
+    ])).rows[0];
+
+    const created_card = await createCardFromPayment(client, payment.id);
+    const subscription_changed = await changeSubscriptionCard(client, subscription.id, created_card.id);
+
+    t.is(R.isNil(subscription.credit_card_id), true);
+    t.is(subscription_changed.id, subscription.id);
+    t.is(subscription_changed.credit_card_id, created_card.id);
 
     await client.query('rollback;');
     await client.release();
