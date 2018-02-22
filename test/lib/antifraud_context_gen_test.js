@@ -9,7 +9,7 @@ const {
     genAFShoppingCart,
     genAFEvents,
     genAFMetadata
-} = require('../lib/antifraud_context_gen');
+} = require('../../lib/antifraud_context_gen');
 
 test('test genAFAddress', t => {
     const ctx = {
