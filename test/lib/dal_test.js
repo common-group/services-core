@@ -313,3 +313,50 @@ test('test paymentTransitionTo', async t => {
     await client.query('rollback;');
     await client.release();
 });
+
+test('test subscriptionTransitionTo', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    await client.query('begin;');
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+
+    // insert subscription into db
+    const subscription = (await client.query(`
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, checkout_data)
+        values ('started', now(), $1::uuid, $2::uuid, $3::uuid, $4::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data, subscription_id) 
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json, $6::uuid)
+        returning *`, [
+            basicData.platform.id,
+            basicData.community_first_user.id,
+            basicData.project.id,
+            JSON.stringify(helpers.paymentBasicData({})),
+            JSON.stringify(helpers.paymentBasicGatewayCachedData({})),
+            subscription.id
+    ])).rows[0];
+
+    const transaction = payment.gateway_cached_data.transaction;
+    const payables = payment.gateway_cached_data.payables;
+    const transition_reason = {transaction: transaction, payables: payables}
+
+    const subscription_transition = await dalCtx.subscriptionTransitionTo(subscription.id, 'active', transition_reason);
+
+    t.is(subscription_transition.id, subscription.id);
+    t.is(subscription_transition.status, 'active');
+    t.deepEqual(subscription_transition.checkout_data, subscription.checkout_data);
+
+    await client.query('rollback;');
+    await client.release();
+});
