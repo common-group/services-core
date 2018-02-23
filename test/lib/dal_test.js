@@ -160,6 +160,39 @@ test('test updateGatewayDataOnPayment', async t => {
     t.is(R.isNil(payment.gateway_data), true);
     const { payables, transaction } = helpers.paymentBasicGatewayCachedData({});
     const updated_payment = await dalCtx.updateGatewayDataOnPayment(payment.id, transaction, payables);
+    t.is(payment.id, updated_payment.id);
+    t.is(R.isNil(updated_payment.gateway_cached_data), false);
+    t.deepEqual(updated_payment.gateway_cached_data.transaction, transaction);
+    t.deepEqual(updated_payment.gateway_cached_data.payables, payables);
+
+    await client.query('rollback;');
+    await client.release();
+});
+
+test('test buildGatewayGeneralDataOnPayment', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
+    await client.query('begin;');
+
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert payment into database
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data)
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json)
+        returning *`, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    t.is(R.isNil(payment.gateway_data), true);
+    const { payables, transaction } = helpers.paymentBasicGatewayCachedData({});
+    const updated_payment = await dalCtx.buildGatewayGeneralDataOnPayment(payment.id, transaction, payables);
     const expected_general_data = {
         boleto_barcode: null,
         boleto_expiration_date: null,
@@ -191,17 +224,9 @@ test('test updateGatewayDataOnPayment', async t => {
     };
 
     t.is(payment.id, updated_payment.id);
-    t.is(R.isNil(updated_payment.gateway_cached_data), false);
     t.is(R.isNil(updated_payment.gateway_general_data), false);
-    t.deepEqual(updated_payment.gateway_cached_data.transaction, transaction);
-    t.deepEqual(updated_payment.gateway_cached_data.payables, payables);
 
     t.deepEqual(updated_payment.gateway_general_data, expected_general_data);
-
-    //t.deepEqual(created_card.gateway_data, transaction.card);
-    //t.is(created_card.gateway_data.id, transaction.card.id);
-    //t.is(created_card.platform_id, basicData.platform.id);
-    //t.is(created_card.user_id, basicData.community_first_user.id);
 
     await client.query('rollback;');
     await client.release();
