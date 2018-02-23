@@ -4,17 +4,15 @@ const R = require('ramda');
 const helpers = require('../support/helpers');
 const {
     pool,
-    loadPaymentContext,
-    createCardFromPayment,
-    updateGatewayDataOnPayment,
-    changeSubscriptionCard,
-    findPayment,
-    notificationServiceNotify,
+    generateDalContext
 } = require('../../lib/dal')
 
 test('test findPayment', async t => {
     const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
     await client.query('begin;');
+
     // insert fixtures (platform, project, users)
     const basicData = await helpers.insertBasicData(client);
 
@@ -31,7 +29,7 @@ test('test findPayment', async t => {
         JSON.stringify(helpers.paymentBasicData({}))
     ])).rows[0];
 
-    const found = await findPayment(client, payment.id)
+    const found = await dalCtx.findPayment(payment.id);
 
     t.is(found.id, payment.id);
 
@@ -41,8 +39,40 @@ test('test findPayment', async t => {
     await client.release();
 });
 
+test('test findSubscription', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
+    await client.query('begin;');
+
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    const subscription = (await client.query(`
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, checkout_data)
+        values ('active', now(), $1::uuid, $2::uuid, $3::uuid, $4::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    const found = await dalCtx.findSubscription(subscription.id);
+
+    t.is(found.id, subscription.id);
+
+    t.deepEqual(found.checkout_data, helpers.paymentBasicData({}));
+
+    await client.query('rollback;')
+    await client.release();
+});
+
 test('test loadPaymentContext', async t => {
     const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
     await client.query('begin;');
     // insert fixtures (platform, project, users)
     const basicData = await helpers.insertBasicData(client);
@@ -60,7 +90,7 @@ test('test loadPaymentContext', async t => {
         JSON.stringify(helpers.paymentBasicData({}))
     ])).rows[0];
 
-    const ctx = await loadPaymentContext(client, payment.id)
+    const ctx = await dalCtx.loadPaymentContext(payment.id)
 
     t.is(ctx.payment.id, payment.id);
     t.is(ctx.user.id, basicData.community_first_user.id);
@@ -76,6 +106,7 @@ test('test loadPaymentContext', async t => {
 
 test('test createCardFromPayment', async t => {
     const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
     await client.query('begin;');
     // insert fixtures (platform, project, users)
     const basicData = await helpers.insertBasicData(client);
@@ -94,7 +125,7 @@ test('test createCardFromPayment', async t => {
     ])).rows[0];
     
     const transaction = payment.gateway_cached_data.transaction;
-    const created_card = await createCardFromPayment(client, payment.id);
+    const created_card = await dalCtx.createCardFromPayment(payment.id);
 
     t.deepEqual(created_card.gateway_data, transaction.card);
     t.is(created_card.gateway_data.id, transaction.card.id);
@@ -107,6 +138,8 @@ test('test createCardFromPayment', async t => {
 
 test('test updateGatewayDataOnPayment', async t => {
     const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
     await client.query('begin;');
 
     // insert fixtures (platform, project, users)
@@ -126,7 +159,7 @@ test('test updateGatewayDataOnPayment', async t => {
 
     t.is(R.isNil(payment.gateway_data), true);
     const { payables, transaction } = helpers.paymentBasicGatewayCachedData({});
-    const updated_payment = await updateGatewayDataOnPayment(client, payment.id, transaction, payables);
+    const updated_payment = await dalCtx.updateGatewayDataOnPayment(payment.id, transaction, payables);
     const expected_general_data = {
         boleto_barcode: null,
         boleto_expiration_date: null,
@@ -176,6 +209,7 @@ test('test updateGatewayDataOnPayment', async t => {
 
 test('test changeSubscriptionCard', async t => {
     const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
     await client.query('begin;');
     // insert fixtures (platform, project, users)
     const basicData = await helpers.insertBasicData(client);
@@ -207,8 +241,8 @@ test('test changeSubscriptionCard', async t => {
             subscription.id
     ])).rows[0];
 
-    const created_card = await createCardFromPayment(client, payment.id);
-    const subscription_changed = await changeSubscriptionCard(client, subscription.id, created_card.id);
+    const created_card = await dalCtx.createCardFromPayment(payment.id);
+    const subscription_changed = await dalCtx.changeSubscriptionCard(subscription.id, created_card.id);
 
     t.is(R.isNil(subscription.credit_card_id), true);
     t.is(subscription_changed.id, subscription.id);
@@ -220,6 +254,7 @@ test('test changeSubscriptionCard', async t => {
 
 test('test notificationServiceNotify', async t => {
     const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
     await client.query('begin;');
 
     // insert fixtures (platform, project, users)
@@ -233,7 +268,7 @@ test('test notificationServiceNotify', async t => {
         returning *
     `)).rows[0];
 
-    const notification = await notificationServiceNotify(client, 'test_label', {
+    const notification = await dalCtx.notificationServiceNotify('test_label', {
         relations: { user_id: basicData.community_first_user.id }
     });
 
@@ -245,5 +280,36 @@ test('test notificationServiceNotify', async t => {
     await client.release();
 });
 
+test('test paymentTransitionTo', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    await client.query('begin;');
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
 
+    // insert payment into database
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data) 
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json)
+        returning *`, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({})),
+        JSON.stringify(helpers.paymentBasicGatewayCachedData({}))
+    ])).rows[0];
 
+    const transaction = payment.gateway_cached_data.transaction;
+    const payables = payment.gateway_cached_data.payables;
+    const transition_reason = {transaction: transaction, payables: payables}
+
+    const payment_transition = await dalCtx.paymentTransitionTo(payment.id, 'refunded', transition_reason);
+
+    t.is(payment_transition.id, payment.id);
+    t.is(payment_transition.status, 'refunded');
+    t.deepEqual(payment_transition.data, payment.data);
+
+    await client.query('rollback;');
+    await client.release();
+});
