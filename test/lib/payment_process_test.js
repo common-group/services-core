@@ -1,14 +1,18 @@
 const {test} = require('ava');
 const { DateTime } = require('luxon');
+const R = require('ramda');
 const nock = require('nock');
+const helpers = require('../support/helpers');
 const { 
     genTransactionData,
     isForeign,
     expirationDate,
     createGatewayTransaction,
-    fetchTransactionPayables
+    fetchTransactionPayables,
+    processPayment
 } = require('../../lib/payment_process');
 const { genAFMetadata } = require('../../lib/antifraud_context_gen');
+const { pool, generateDalContext } = require('../../lib/dal');
 
 /*
  * generate payables valid reply
@@ -356,4 +360,63 @@ test('test fetchTransactionPayables', async t => {
     t.deepEqual(payables, payablesReply());
 
     delete process.env.GATEWAY_API_KEY;
+});
+
+test('test processPayment with subscription and valid credit card data', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    await client.query('begin;');
+
+    const basicData = await helpers.insertBasicData(client);
+    process.env.GATEWAY_API_KEY = 'api_key_test';
+
+    // insert subscription in database
+    const gen_subscription = (await client.query(`
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, checkout_data)
+        values ('started', now(), $1::uuid, $2::uuid, $3::uuid, $4::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    // insert payment into database
+    const gen_payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id)
+        values ('pending', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::uuid)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({})),
+        gen_subscription.id
+    ])).rows[0];
+
+    let apitransactionmock = nock(/pagar\.me/)
+        .post(/transactions/)
+        .reply(200, transactionReply());
+    let apipayablesmock = nock(/pagar\.me/)
+        .get(/transactions\/\d+\/payables/)
+        .reply(200, payablesReply());
+
+    const {
+        transaction,
+        payables,
+        payment,
+        subscription
+    } = await processPayment(client, gen_payment.id);
+
+    t.is(R.isNil(transaction.id), false);
+    t.is(payment.status, 'paid');
+    t.is(subscription.status, 'active');
+    t.is(transaction.id.toString(), payment.gateway_general_data.gateway_id);
+    t.deepEqual(payment.gateway_cached_data.transaction, transaction);
+
+    await client.query('rollback;');
+    await client.release();
 });
