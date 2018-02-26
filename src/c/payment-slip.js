@@ -6,7 +6,7 @@ import projectVM from '../vms/project-vm';
 import commonPaymentVM from '../vms/common-payment-vm';
 import subscriptionEditModal from './subscription-edit-modal';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
+const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 
 const paymentSlip = {
     controller(args) {
@@ -52,11 +52,14 @@ const paymentSlip = {
             loading,
             completed,
             error,
+            isSubscriptionEdit,
             showSubscriptionModal,
             subscriptionEditConfirmed
         };
     },
     view(ctrl, args) {
+        const buttonLabel = isSubscriptionEdit ? I18n.t('pay_slip', I18nScope()) : I18n.t('subscription_edit', I18nScope());
+
         return m('.w-row',
                     m('.w-col.w-col-12',
                         m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [
@@ -70,7 +73,7 @@ const paymentSlip = {
                                 m('.w-col.w-col-8.w-col-push-2', [
                                     ctrl.vm.isLoading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
                                         onclick: ctrl.buildSlip,
-                                        value: 'Imprimir Boleto',
+                                        value: buttonLabel,
                                         type: 'submit'
                                     }),
                                     ctrl.showSubscriptionModal()
