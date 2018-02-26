@@ -159,7 +159,7 @@ test('test updateGatewayDataOnPayment', async t => {
 
     t.is(R.isNil(payment.gateway_data), true);
     const { payables, transaction } = helpers.paymentBasicGatewayCachedData({});
-    const updated_payment = await dalCtx.updateGatewayDataOnPayment(payment.id, transaction, payables);
+    const updated_payment = await dalCtx.updateGatewayDataOnPayment(payment.id, {transaction, payables});
     t.is(payment.id, updated_payment.id);
     t.is(R.isNil(updated_payment.gateway_cached_data), false);
     t.deepEqual(updated_payment.gateway_cached_data.transaction, transaction);
