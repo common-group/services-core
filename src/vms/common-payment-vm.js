@@ -151,6 +151,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     if (!fields) {
         return false;
     }
+    fields.isLoading(true);
     m.redraw();
 
     const meta = _.first(document.querySelectorAll('[name=pagarme-encryption-key]'));

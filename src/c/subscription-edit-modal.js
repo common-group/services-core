@@ -20,14 +20,14 @@ const subscriptionEditModal = {
     view(ctrl, args) {
         const newSubscription = args.args;
         const oldSubscription = args.args.oldSubscription();
-        
+
         return m('.modal-backdrop',
-            m('.modal-dialog-outer', 
+            m('.modal-dialog-outer',
                 m('.modal-dialog-inner.modal-dialog-small',
                     [
                         m('button.modal-close.fa.fa-close.fa-lg.w-inline-block', {onclick: () => args.showModal(false)}),
-                        m('.modal-dialog-header', 
-                            m('.fontsize-large.u-text-center', 
+                        m('.modal-dialog-header',
+                            m('.fontsize-large.u-text-center',
                                 'Confirme suas alterações'
                             )
                         ),
@@ -35,12 +35,12 @@ const subscriptionEditModal = {
                             [
                                 m('.u-marginbottom-10',
                                     [
-                                        m('.fontsize-smaller.fontcolor-secondary', 
+                                        m('.fontsize-smaller.fontcolor-secondary',
                                             'Recompensa'
                                         ),
                                         m('div',
                                             [
-                                                m('.fontsize-smallest.fontweight-semibold', 
+                                                m('.fontsize-smallest.fontweight-semibold',
                                                     {
                                                         class: ctrl.isLongDescription(newSubscription.reward())
                                                             ? ctrl.toggleDescription()
@@ -66,7 +66,7 @@ const subscriptionEditModal = {
                                                 ctrl.isLongDescription(newSubscription.reward())
                                                     ? m('a.link-more.link-hidden[href="#"]', {
                                                             onclick: ctrl.toggleDescription.toggle
-                                                        }, 
+                                                        },
                                                         ['mais', m('span.fa.fa-angle-down')]
                                                     ) : ''
                                             ]
@@ -78,7 +78,7 @@ const subscriptionEditModal = {
                                     oldSubscription.checkout_data.amount == newSubscription.value
                                     ? ''
                                     : [
-                                        m('.fontsize-smaller.fontcolor-secondary', 
+                                        m('.fontsize-smaller.fontcolor-secondary',
                                             'Valor da assinatura'
                                         ),
                                         m('.fontsize-large',
@@ -89,7 +89,7 @@ const subscriptionEditModal = {
                                     ]
                                 ),
                                 m('.divider.u-marginbottom-10'),
-                                m('.fontsize-smaller.fontcolor-secondary', 
+                                m('.fontsize-smaller.fontcolor-secondary',
                                     'Pagamento'
                                 ),
                                 m('.w-hidden-small.w-hidden-tiny',
@@ -142,7 +142,7 @@ const subscriptionEditModal = {
                                                 m('button.btn.btn-large.u-marginbottom-20', {
                                                         onclick: () => {
                                                             args.confirm(true);
-                                                            args.pay();
+                                                            args.showModal(false);
                                                         }
                                                     },
                                                     'Confirmar'
