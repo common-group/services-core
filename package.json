@@ -5,15 +5,15 @@
   "main": "",
   "ava": {
     "files": [
-        "test/**/*.js",
-        "!test/support/*.js"
+      "test/**/*.js",
+      "!test/support/*.js"
     ]
   },
   "scripts": {
     "test": "ava"
   },
   "dependencies": {
-    "ava": "^0.25.0",
+    "ava": "^1.0.0-beta.3",
     "express": "^4.16.2",
     "get-stdin": "^5.0.1",
     "lodash": "^4.17.4",
