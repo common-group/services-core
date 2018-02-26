@@ -21,6 +21,17 @@ const payablesReply = () => {
     let reply = JSON.parse('[{"id": 3744350, "fee": 380, "type": "credit", "amount": 500, "object": "payable", "status": "paid", "installment": null, "accrual_date": null, "date_created": "2018-02-08T22:14:58.305Z", "payment_date": "2018-02-08T02:00:00.245Z", "recipient_id": "re_ci76hy9k000gsdw16ab7yyrgr", "split_rule_id": null, "payment_method": "boleto", "transaction_id": 2882562, "anticipation_fee": 0, "bulk_anticipation_id": null, "original_payment_date": null}]');
     return reply;
 };
+
+/*
+ * generate transaction error reply
+ */
+const transactionErrorReply = () => {
+    let reply = JSON.parse('{"errors": [{"type": "invalid_parameter", "message": "CEP não encontrado", "parameter_name": "customer[address][zipcode]"}]}');
+
+    return reply;
+};
+
+
 /*
  * generate transaction valid reply
  */
@@ -416,6 +427,63 @@ test('test processPayment with subscription and valid credit card data', async t
     t.is(subscription.status, 'active');
     t.is(transaction.id.toString(), payment.gateway_general_data.gateway_id);
     t.deepEqual(payment.gateway_cached_data.transaction, transaction);
+
+    await client.query('rollback;');
+    await client.release();
+});
+
+test('test processPayment with error on gateway', async t => {
+
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
+    const basicData = await helpers.insertBasicData(client);
+    process.env.GATEWAY_API_KEY = 'api_key_test';
+
+    // insert subscription in database
+    const gen_subscription = (await client.query(`
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, checkout_data)
+        values ('started', now(), $1::uuid, $2::uuid, $3::uuid, $4::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    // insert payment into database
+    const gen_payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id)
+        values ('pending', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::uuid)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({})),
+        gen_subscription.id
+    ])).rows[0];
+
+    // persist on database this payment to avoid rollbacks when error
+    await client.query('begin;');
+    let apitransactionmock = nock(/pagar\.me/)
+        .post(/transactions/)
+        .reply(400, transactionErrorReply());
+    let apipayablesmock = nock(/pagar\.me/)
+        .get(/transactions\/\d+\/payables/)
+        .reply(200, payablesReply());
+
+    const error = await t.throws( async ()=> {
+        await processPayment(client, gen_payment.id);
+    }, Error);
+
+    const reloaded_payment = await dalCtx.findPayment(gen_payment.id);
+
+    t.is(reloaded_payment.status, 'error');
+    t.deepEqual(reloaded_payment.gateway_cached_data, transactionErrorReply().errors);
 
     await client.query('rollback;');
     await client.release();
