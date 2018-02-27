@@ -1,9 +1,11 @@
+'use strict';
+
 const {test} = require('ava');
 const { DateTime } = require('luxon');
 const R = require('ramda');
 const nock = require('nock');
 const helpers = require('../support/helpers');
-const { 
+const {
     genTransactionData,
     isForeign,
     expirationDate,

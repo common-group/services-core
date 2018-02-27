@@ -7,6 +7,35 @@ const {
     generateDalContext
 } = require('../../lib/dal')
 
+test('test findCard', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
+    await client.query('begin;');
+
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert credit card into database
+    const card = (await client.query(`
+        insert into payment_service.credit_cards
+        (platform_id, user_id, gateway, data)
+        values ($1::uuid, $2::uuid, 'pagarme', '{"card_hash": "foo_bar"}'::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id
+    ])).rows[0];
+
+    const found = await dalCtx.findCard(card.id);
+
+    t.is(found.id, card.id);
+    t.is(found.data.card_hash, 'foo_bar');
+
+    await client.query('rollback;')
+    await client.release();
+});
+
 test('test findPayment', async t => {
     const client = await pool.connect();
     const dalCtx = generateDalContext(client);
@@ -104,6 +133,36 @@ test('test loadPaymentContext', async t => {
     await client.release();
 });
 
+test('test updateCardFromGateway', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    await client.query('begin;');
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert credit card into database
+    const card = (await client.query(`
+        insert into payment_service.credit_cards
+        (platform_id, user_id, gateway, data)
+        values ($1::uuid, $2::uuid, 'pagarme', '{"card_hash": "foo_bar"}'::jsonb)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id
+    ])).rows[0];
+
+    const transaction = helpers.paymentBasicGatewayCachedData({}).transaction;
+    const updated_card = await dalCtx.updateCardFromGateway(card.id, transaction.card);
+
+    t.is(updated_card.id, card.id)
+    t.is(updated_card.gateway_data.id, transaction.card.id);
+
+    t.deepEqual(updated_card.gateway_data, transaction.card);
+
+    await client.query('rollback;');
+    await client.release();
+});
+
 test('test createCardFromPayment', async t => {
     const client = await pool.connect();
     const dalCtx = generateDalContext(client);
@@ -123,7 +182,7 @@ test('test createCardFromPayment', async t => {
         JSON.stringify(helpers.paymentBasicData({})),
         JSON.stringify(helpers.paymentBasicGatewayCachedData({}))
     ])).rows[0];
-    
+
     const transaction = payment.gateway_cached_data.transaction;
     const created_card = await dalCtx.createCardFromPayment(payment.id);
 
