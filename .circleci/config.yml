@@ -46,9 +46,8 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push payment_dispatcher --recursive -a $PRODUCTION_PAYMENT_DISPATCHER_APP
+      - run: heroku container:push payment_stream_processor --recursive -a $PRODUCTION_PAYMENT_STREAM_APP
       - run: heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
-      - run: heroku container:push credit_card_generator --recursive -a $PRODUCTION_CREDIT_CARD_DISPATCHER_APP
 
   deploy_sandbox:
     docker:
@@ -63,9 +62,8 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push payment_dispatcher --recursive -a $SANDBOX_PAYMENT_DISPATCHER_APP
+      - run: heroku container:push payment_stream_processor --recursive -a $SANDBOX_PAYMENT_STREAM_APP
       - run: heroku container:push subscriptions_scheduler --recursive -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
-      - run: heroku container:push credit_card_generator --recursive -a $SANDBOX_CREDIT_CARD_DISPATCHER_APP
 
 
 workflows:
