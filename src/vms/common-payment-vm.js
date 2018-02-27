@@ -7,11 +7,21 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const paymentInfoId = m.prop();
-const {commonPayment, commonPaymentInfo} = models;
+const {commonPayment, commonPaymentInfo, commonCreditCard, commonCreditCards} = models;
 const sendPaymentRequest = data => commonPayment.postWithToken(
     {data: _.extend({}, data, {payment_id: paymentInfoId()})},
     null,
     {'X-forwarded-For': '127.0.0.1'}
+);
+
+const sendSubscriptionUpgrade = data => commonSubscriptionUpgrade.postWithToken(
+    {data},
+    null,
+    {'X-forwarded-For': '127.0.0.1'}
+);
+
+const saveCreditCard = creditCardHash => commonCreditCard.postWithToken(
+    {data: {card_hash: creditCardHash}}
 );
 
 const updateUser = user => m.request({
@@ -63,6 +73,8 @@ const paymentInfo = (paymentId) => {
     });
 };
 
+const creditCardInfo = (creditCard) => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
+
 let retries = 10;
 const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`)
 const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
@@ -97,7 +109,48 @@ const getPaymentInfoUntilNoError = (paymentMethod) => ({id}) => {
     return p.promise;
 };
 
+
+let creditCardRetries = 5;
+const waitForSavedCreditCard = promise => creditCardId => {
+    if(creditCardRetries <= 0) {
+        return promise.reject({message: 'Could not save card'});
+    }
+
+    creditCardInfo(creditCardId).then(([infoR]) => {
+        if(_.isEmpty(infoR.gateway_data)) {
+            if(!_.isEmpty(infoR.gateway_errors)) {
+                return promise.reject(_.first(infoR.gateway_errors));
+            } 
+
+            return h.sleep(4000).then(() => {
+                creditCardRetries = creditCardRetries - 1;
+
+                return waitForSavedCreditCard(promise)(creditCardId);
+            });
+        }
+
+        return promise.resolve();
+    }).catch(() => promise.reject({message: 'Really couldnt save your card'}));
+ 
+
+    return promise;
+};
+
+const processCreditCard = (cardHash, fields) => {
+    const p = m.deferred();
+    
+    saveCreditCard(cardHash)
+        .then(waitForSavedCreditCard(p))
+        .catch(p.reject);
+    
+    return p.promise;
+
+}
+
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
+    if (!fields) {
+        return false;
+    }
     fields.isLoading(true);
     m.redraw();
 
@@ -149,10 +202,18 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
         if (commonData.rewardCommonId) {
             _.extend(payload, {reward_id: commonData.rewardCommonId});
         }
+
+        if (commonData.subscription_id) {
+            _.extend(payload, {id: commonData.subscription_id});
+        }
+
+        const pay = () => commonData.subscription_id
+            ? sendSubscriptionUpgrade(payload)
+            : sendPaymentRequest(payload);
   
-        const sendPayment = () => sendPaymentRequest(payload);
         updateUser(userPayload(customer, address))
-            .then(sendPayment)
+            .then(() => processCreditCard(cardHash, fields))
+            .then(pay)
             .then(getPaymentInfoUntilNoError(payload.payment_method))
             .catch(displayError(fields));
     });

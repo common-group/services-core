@@ -9,6 +9,7 @@ import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
 import addressVM from '../vms/address-vm';
 import usersVM from '../vms/user-vm';
+import subscriptionVM from '../vms/subscription-vm';
 import faqBox from '../c/faq-box';
 import nationalityRadio from '../c/nationality-radio';
 import paymentForm from '../c/payment-form';
@@ -28,7 +29,19 @@ const projectsSubscriptionCheckout = {
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             isCnpj = m.prop(false),
             currentUserID = h.getUserID(),
-            user = usersVM.getCurrentUser();
+            user = usersVM.getCurrentUser(),
+            oldSubscription = m.prop({}),
+            error = m.prop();
+
+        const subscriptionId = m.prop(m.route.param('subscription_id'));
+        const isEdit = m.prop(Boolean(subscriptionId()));
+
+        if (isEdit) {
+            subscriptionVM
+                .getSubscription(subscriptionId())
+                .then(data => oldSubscription(_.first(data)))
+                .catch(error);
+        }
 
         if (_.isNull(currentUserID)) {
             projectVM.storeSubscribeAction(m.route());
@@ -123,11 +136,14 @@ const projectsSubscriptionCheckout = {
             addVM,
             scope,
             isCnpj,
+            isEdit,
+            subscriptionId,
             vm,
             user,
             project,
             lastDayOfNextMonth,
             isLongDescription,
+            oldSubscription,
             toggleDescription: h.toggleProp(false, true)
         };
     },
@@ -323,11 +339,15 @@ const projectsSubscriptionCheckout = {
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
+                            isSubscriptionEdit: ctrl.isEdit,
+                            subscriptionId: ctrl.subscriptionId,
                             user_id: user.id,
+                            reward: ctrl.reward,
                             reward_common_id: ctrl.reward().common_id,
                             project_common_id: projectVM.currentProject().common_id,
                             user_common_id: user.common_id,
                             isSubscription: true,
+                            oldSubscription: ctrl.oldSubscription,
                             value: ctrl.value,
                             hideSave: true,
                         }) : ''
@@ -370,7 +390,9 @@ const projectsSubscriptionCheckout = {
                                             ' Próxima cobrança: '
                                         ]
                                     ),
-                                    ctrl.lastDayOfNextMonth()
+                                    ctrl.isEdit()
+                                        ? I18n.t('subscription_edit.invoice_none', I18nScope())
+                                        : ctrl.lastDayOfNextMonth()
                                 ]
                             ),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
@@ -409,7 +431,7 @@ const projectsSubscriptionCheckout = {
                         m.component(faqBox, {
                             mode: project.mode,
                             vm: ctrl.vm,
-                            faq: ctrl.vm.faq(project.mode),
+                            faq: ctrl.vm.faq(ctrl.isEdit() ? `${project.mode}_edit` : project.mode),
                             projectUserId: project.user_id
                         })
                     ])

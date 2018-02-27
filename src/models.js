@@ -11,6 +11,8 @@ const models = {
     cancelSubscription: commonPayment.model('rpc/cancel_subscription'),
     commonPaymentInfo: commonPayment.model('rpc/payment_info'),
     commonPayments: commonPayment.model('payments'),
+    commonCreditCard: commonPayment.model('rpc/credit_card'),
+    commonCreditCards: commonPayment.model('credit_cards'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     contributionDetail: catarse.model('contribution_details'),
