@@ -1,12 +1,11 @@
 #!/usr/local/bin/node
+'use strict';
 
 const getStdin = require('get-stdin');
 const R = require('ramda');
 const { processPayment } = require('./lib/payment_process');
 const { pool } = require('./lib/dal');
 const Raven = require('raven');
-
-'use strict'
 
 if(process.env.SENTRY_DSN) {
     Raven.config(process.env.SENTRY_DSN).install();
@@ -84,15 +83,13 @@ const finishProcessErr = (result) => {
     process.exit(1);
 };
 
-getStdin()
-    .then((notification) => {
-        console.log(notification);
-        if(!R.isNil(notification)) {
-            main(notification)
-                .then(finishProcessOk)
-                .catch(finishProcessErr);
-        } else {
-            console.log('invalid stdin');
-            process.exit(1);
-        }
-    });
+getStdin().then((notification) => {
+    if(!R.isNil(notification)) {
+        main(notification)
+            .then(finishProcessOk)
+            .catch(finishProcessErr);
+    } else {
+        console.log('invalid stdin');
+        process.exit(1);
+    }
+});
