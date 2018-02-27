@@ -50,16 +50,21 @@ const raven_report = (e, context_opts) => {
  */
 const main = async (notification) => {
     console.log('received -> ', notification);
-    const jsonNotification = JSON.parse(notification);
-    const dbclient = await pool.connect();
+    const jsonNotification = JSON.parse(notification),
+        resource_id = jsonNotification.id,
+        dbclient = await pool.connect();
+
 
     switch (jsonNotification.action) {
         case 'process_payment':
-            console.log('processing payment ', jsonNotification.id);
-            const { transaction } = await processPayment(dbclient, jsonNotification.id);
+            console.log('processing payment ', resource_id);
+            const { transaction } = await processPayment(dbclient, resource_id);
             console.log('generate transaction with id ', transaction.id);
             break;
         case 'generate_card':
+            console.log('processing card ', resource_id);
+            const card = await processCardCreation(dbclient, resource_id);
+            console.log('generate card with id ', card.gateway_data.id);
             break;
         default:
             throw new Error('invalid action');
