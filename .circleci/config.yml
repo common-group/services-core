@@ -8,7 +8,16 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       # build the application container
+      - run: apk add --update ca-certificates openssl && update-ca-certificates
+
       - run: docker build -t comum/payment-service:latest .
+      - run: docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
+
+      - run: docker run -i --rm --link pg_default:pg_default comum/services-core psql -U postgres -h pg_default -p 5432 services_core_test < init.sql
+      - run: docker run -i --rm --link pg_default:pg_default comum/services-core psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
+      - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core ./scripts/run_migrations.sh
+
+      - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/payment-service npm test -- -v
 
   push_image:
     docker:
@@ -37,9 +46,8 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push payment_dispatcher --recursive -a $PRODUCTION_PAYMENT_DISPATCHER_APP
+      - run: heroku container:push payment_stream_processor --recursive -a $PRODUCTION_PAYMENT_STREAM_APP
       - run: heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
-      - run: heroku container:push credit_card_generator --recursive -a $PRODUCTION_CREDIT_CARD_DISPATCHER_APP
 
   deploy_sandbox:
     docker:
@@ -54,9 +62,8 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
 
       - run: heroku container:login
-      - run: heroku container:push payment_dispatcher --recursive -a $SANDBOX_PAYMENT_DISPATCHER_APP
+      - run: heroku container:push payment_stream_processor --recursive -a $SANDBOX_PAYMENT_STREAM_APP
       - run: heroku container:push subscriptions_scheduler --recursive -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
-      - run: heroku container:push credit_card_generator --recursive -a $SANDBOX_CREDIT_CARD_DISPATCHER_APP
 
 
 workflows:
