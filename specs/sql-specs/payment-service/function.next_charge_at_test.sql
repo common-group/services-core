@@ -12,7 +12,6 @@ BEGIN;
     create or replace function test_next_charge_at_with_paid_payment()
     returns setof text language plpgsql as $$
         declare
-            _paid_not_in_time payment_service.catalog_payments;
             _subscription payment_service.subscriptions;
         begin
 
@@ -24,8 +23,8 @@ BEGIN;
 
             insert into payment_service.catalog_payments
                 (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
-                values ('paid', '01-31-2018 13:00', 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription.id)
-                returning * into _paid_not_in_time;
+                values ('paid', '12-31-2017 13:00', 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription.id),
+                ('paid', '01-31-2018 13:00', 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription.id);
 
             return next is(
                 payment_service.next_charge_at(_subscription),
