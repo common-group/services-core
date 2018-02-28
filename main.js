@@ -4,6 +4,7 @@
 const getStdin = require('get-stdin');
 const R = require('ramda');
 const { processPayment } = require('./lib/payment_process');
+const { processCardCreation } = require('./lib/credit_card_process');
 const { pool } = require('./lib/dal');
 const Raven = require('raven');
 
