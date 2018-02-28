@@ -129,7 +129,7 @@ const waitForSavedCreditCard = promise => creditCardId => {
             });
         }
 
-        return promise.resolve();
+        return promise.resolve({creditCardId});
     }).catch(() => promise.reject({message: 'Really couldnt save your card'}));
  
 
@@ -206,9 +206,15 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
             _.extend(payload, {id: commonData.subscription_id});
         }
 
-        const pay = () => commonData.subscription_id
-            ? sendSubscriptionUpgrade(payload)
-            : sendPaymentRequest(payload);
+        const pay = ({creditCardId}) => {
+            if (creditCardId) {
+                _.extend(payload, {card_id: creditCardId});
+            }
+            
+            return commonData.subscription_id
+                ? sendSubscriptionUpgrade(payload)
+                : sendPaymentRequest(payload);
+        };
   
         updateUser(userPayload(customer, address))
             .then(() => processCreditCard(cardHash, fields))
