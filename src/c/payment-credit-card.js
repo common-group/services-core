@@ -16,7 +16,7 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 const paymentCreditCard = {
     controller(args) {
         const vm = args.vm,
-            isSubscriptionEdit = args.isSubscriptionEdit,
+            isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
             subscriptionEditConfirmed = m.prop(false),
             confirmSubscriptionChanges = m.prop(false),
             showSubscriptionModal = m.prop(false),
@@ -240,7 +240,8 @@ const paymentCreditCard = {
             showForm,
             showSubscriptionModal,
             sendSubscriptionPayment,
-            subscriptionEditConfirmed
+            subscriptionEditConfirmed,
+            isSubscriptionEdit
         };
     },
     view(ctrl, args) {
@@ -425,7 +426,7 @@ const paymentCreditCard = {
                         !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
                             m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
                         ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: 
-                            args.isSubscriptionEdit()
+                            ctrl.isSubscriptionEdit()
                                 ? I18n.t('subscription_edit', ctrl.scope())
                                 : I18n.t('credit_card.finish_payment', ctrl.scope())
                         }),

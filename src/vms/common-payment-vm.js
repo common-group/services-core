@@ -175,7 +175,6 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
             project_id: commonData.projectCommonId,
             amount: commonData.amount,
             payment_method: 'credit_card',
-            card_hash: cardHash,
             credit_card_owner_document: fields.creditCardFields.cardOwnerDocument(),
             customer: {
                 name: customer.completeName(),
