@@ -1,4 +1,4 @@
-# Payment Services API
+# Payment Services API [![CircleCI](https://circleci.com/gh/common-group/payment-service-api.svg?style=svg)](https://circleci.com/gh/common-group/payment-service-api)
 This repository handles with a several modules to:
 - Payment processing
 - Credit card processing
@@ -16,9 +16,9 @@ Payment process message:
 
 ```json
 {
-	"action": "process_payment",
-  "id": "catalog_payment_uuid",
-  "created_at": "2018-02-23T16:31:18.238164"
+    "action": "process_payment",
+    "id": "catalog_payment_uuid",
+    "created_at": "2018-02-23T16:31:18.238164"
 }
 ```
 
@@ -27,7 +27,7 @@ Credit card generation
 ```json
 {
 	"action": "generate_card",
-  "id": "credit_card_uuid"
+    "id": "credit_card_uuid"
 }
 ```
 
