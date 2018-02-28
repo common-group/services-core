@@ -9817,7 +9817,7 @@ var sendCreditCardPayment = function sendCreditCardPayment(selectedCreditCard, f
             var creditCardId = _ref4.creditCardId;
 
             if (creditCardId) {
-                _.extend(payload, { card_id: creditCardId });
+                _.extend(payload, { card_id: creditCardId.id });
             }
 
             return commonData.subscription_id ? sendSubscriptionUpgrade(payload) : sendPaymentRequest(payload);
