@@ -155,10 +155,10 @@ const userSubscriptionBox = {
                                         m.trust('&nbsp;'),
                                         'Sua assinatura está inativa por falta de pagamento'
                                     ]),
-                                    m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start${subscription.reward_external_id?'?reward_id='+subscription.reward_external_id:''}]`, 'Assinar novamente')
+                                    m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : ''}&subscription_status=${subscription.status}]`, 'Assinar novamente')
                                 ] : subscription.status === 'canceled' ? [
                                     m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
-                                        {href: `/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id?'&reward_id='+subscription.reward_external_id:''}`},
+                                        {href: `/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : ''}&subscription_status=${subscription.status}`},
                                         'Reativar assinatura'
                                     ),
                                     m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
@@ -176,7 +176,7 @@ const userSubscriptionBox = {
                                     ])
                                 ) : (subscription.status === 'active' ? [
                                     m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
-                                        {href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id?'reward_id='+subscription.reward_external_id:''}&subscription_id=${subscription.id}`},
+                                        {href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : ''}&subscription_id=${subscription.id}&subscription_status=${subscription.status}`},
                                         'Editar assinatura'
                                     ),
                                     subscription.payment_status === 'pending'
