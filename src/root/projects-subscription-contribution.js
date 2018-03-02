@@ -25,6 +25,8 @@ const projectsSubscriptionContribution = {
         );
 
         const isEdit = m.prop(m.route.param('subscription_id'));
+        const subscriptionStatus = m.route.param('subscription_status');
+        const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
@@ -34,7 +36,7 @@ const projectsSubscriptionContribution = {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value}`);
             } else {
                 rewardVM.error('');
-                m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? '&reward_id=' + currentRewardId : ''}${isEdit() ? '&subscription_id=' + m.route.param('subscription_id') : ''}`);
+                m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? '&reward_id=' + currentRewardId : ''}${isEdit() ? '&subscription_id=' + m.route.param('subscription_id') : ''}${isReactivation() ? '&subscription_status=' + subscriptionStatus : ''}`);
             }
         };
 
@@ -42,6 +44,7 @@ const projectsSubscriptionContribution = {
 
         return {
             isEdit,
+            isReactivation,
             project: projectVM.currentProject,
             paymentVM: paymentVM(),
             submitContribution,
@@ -50,7 +53,12 @@ const projectsSubscriptionContribution = {
     },
     view(ctrl, args) {
         const project = ctrl.project;
-        const faq = ctrl.paymentVM.faq(ctrl.isEdit() ? `${project().mode}_edit` : project().mode);
+        const faq = ctrl.paymentVM.faq(
+            ctrl.isReactivation() 
+                ? `${project().mode}_reactivate`
+                : ctrl.isEdit() 
+                    ? `${project().mode}_edit` 
+                    : project().mode);
 
         return m('#contribution-new', !_.isEmpty(project()) ? [
             m(`.w-section.section-product.${project().mode}`),
@@ -61,11 +69,13 @@ const projectsSubscriptionContribution = {
             ),
             m('.w-section.header-cont-new',
                 m('.w-container',
-                    ctrl.isEdit()
-                        ? [
-                            m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_edit_title', I18nScope())),
-                            m('.fontsize-base', I18n.t('subscription_edit_subtitle', I18nScope()))
-                        ] : m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_start_title', I18nScope())) 
+                    ctrl.isReactivation()
+                        ? [ m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_reactivation_title', I18nScope())),
+                            m('.fontsize-base', I18n.t('subscription_edit_subtitle', I18nScope())) ]
+                        : ctrl.isEdit()
+                            ? [ m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_edit_title', I18nScope())),
+                                m('.fontsize-base', I18n.t('subscription_edit_subtitle', I18nScope())) ] 
+                            : m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', I18n.t('subscription_start_title', I18nScope())) 
                 )
             ),
             m('.section', m('.w-container', m('.w-row', [
