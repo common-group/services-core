@@ -127,7 +127,7 @@ const subscriptionEditModal = {
                                                         ' Próxima cobrança:'
                                                     ]
                                                 ),
-                                                `${h.momentify(oldSubscription.next_charge_at)} no valor de R$${newSubscription.value}`
+                                                `${h.momentify(oldSubscription.next_charge_at || Date.now())} no valor de R$${newSubscription.value}`
                                             ]
                                         )
                                     ]

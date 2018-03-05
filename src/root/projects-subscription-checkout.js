@@ -391,6 +391,8 @@ const projectsSubscriptionCheckout = {
                                     ),
                                     ctrl.isEdit()
                                         ? ctrl.oldSubscription().next_charge_at
+                                            ? ctrl.oldSubscription().next_charge_at
+                                            : h.momentify(Date.now())
                                         : h.lastDayOfNextMonth()
                                 ]
                             ),
