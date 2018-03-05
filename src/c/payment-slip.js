@@ -82,7 +82,8 @@ const paymentSlip = {
                                                 args,
                                                 showModal: ctrl.showSubscriptionModal,
                                                 confirm: ctrl.subscriptionEditConfirmed,
-                                                paymentMethod: 'boleto'
+                                                paymentMethod: 'boleto',
+                                                pay: ctrl.buildSlip
                                             }
                                         ) : null,
                                     !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',

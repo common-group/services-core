@@ -52,7 +52,7 @@ const getUserProjectSubscriptions = (userId, projectId, status) => {
     return lSub.load();
 };
 
-const getSubscription = (userId, subscriptionId) => {
+const getSubscription = (subscriptionId) => {
     const vm = commonPayment.filtersVM({id: 'eq'});
     vm.id(subscriptionId);
 
