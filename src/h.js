@@ -40,6 +40,7 @@ const
             }
         });
     },
+    lastDayOfNextMonth = () => moment().add(1, 'months').format('D/MMMM'),
     existy = (x: any): boolean => x != null,
 
     slugify = (str: string): string => replaceDiacritics(str.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')),
@@ -942,6 +943,7 @@ export default {
     validateCnpj,
     momentify,
     momentFromString,
+    lastDayOfNextMonth,
     formatNumber,
     idVM,
     getUser,

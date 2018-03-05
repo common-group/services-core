@@ -443,7 +443,8 @@ const paymentCreditCard = {
                             args,
                             showModal: ctrl.showSubscriptionModal,
                             confirm: ctrl.subscriptionEditConfirmed,
-                            paymentMethod: 'credit_card'
+                            paymentMethod: 'credit_card',
+                            pay: ctrl.onSubmit
                         }
                     ) : null
             ])

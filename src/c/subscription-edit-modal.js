@@ -3,6 +3,9 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
+const paymentBadge = (paymentMethod) => paymentMethod === 'credit_card' 
+        ? [m('span.fa.fa-credit-card'), ' Cartão de Crédito']
+        : [m('span.fa.fa-barcode'), ' Boleto Bancário'];
 
 const subscriptionEditModal = {
     controller(args) {
@@ -83,7 +86,7 @@ const subscriptionEditModal = {
                                         ),
                                         m('.fontsize-large',
                                             [
-                                                m('span.fontcolor-terciary', `R$${oldSubscription.checkout_data.amount} `),
+                                                m('span.fontcolor-terciary', `R$${oldSubscription.checkout_data.amount / 100} `),
                                                 m('span.fa.fa-angle-right.fontcolor-terciary'),
                                                 ` R$${newSubscription.value}` ])
                                     ]
@@ -99,15 +102,10 @@ const subscriptionEditModal = {
                                             : m('.fontsize-large.u-marginbottom-10',
                                                 [
                                                     m('span.fontcolor-terciary',
-                                                        [
-                                                            m('span.fa.fa-credit-card'),
-                                                            ' Cartão de Crédito '
-                                                        ]
+                                                        [paymentBadge(oldSubscription.checkout_data.payment_method), ' ']
                                                     ),
                                                     m('span.fa.fa-angle-right.fontcolor-terciary'),
-                                                    ' ',
-                                                    m('span.fa.fa-barcode'),
-                                                    ' Boleto bancário'
+                                                    [' ', paymentBadge(args.paymentMethod)]
                                                 ]
                                             ),
                                         m('.fontsize-smaller',
@@ -143,6 +141,7 @@ const subscriptionEditModal = {
                                                         onclick: () => {
                                                             args.confirm(true);
                                                             args.showModal(false);
+                                                            args.pay();
                                                         }
                                                     },
                                                     'Confirmar'

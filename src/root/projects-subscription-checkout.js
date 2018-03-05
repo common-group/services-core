@@ -115,8 +115,6 @@ const projectsSubscriptionCheckout = {
 
         const isLongDescription = reward => reward.description && reward.description.length > 110;
 
-        const lastDayOfNextMonth = () => moment().add(1, 'months').format('D/MMMM');
-
         vm.fetchUser().then(() => {
             addVM(addressVM({
                 data: vm.fields.address()
@@ -141,7 +139,6 @@ const projectsSubscriptionCheckout = {
             vm,
             user,
             project,
-            lastDayOfNextMonth,
             isLongDescription,
             oldSubscription,
             toggleDescription: h.toggleProp(false, true)
@@ -361,7 +358,7 @@ const projectsSubscriptionCheckout = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}"]`,
                                     {config: m.route}
                                     ,
                                     'Editar'
@@ -379,7 +376,9 @@ const projectsSubscriptionCheckout = {
                                             ' Cobrança hoje:'
                                         ]
                                     ),
-                                    `R$ ${formatedValue}`
+                                    ctrl.isEdit()
+                                        ? ` ${I18n.t('invoice_none', I18nScope())}`
+                                        : `R$ ${formatedValue}`
                                 ]
                             ),
                             m('.fontsize-smaller.u-marginbottom-10',
@@ -391,8 +390,8 @@ const projectsSubscriptionCheckout = {
                                         ]
                                     ),
                                     ctrl.isEdit()
-                                        ? I18n.t('subscription_edit.invoice_none', I18nScope())
-                                        : ctrl.lastDayOfNextMonth()
+                                        ? ctrl.oldSubscription().next_charge_at
+                                        : h.lastDayOfNextMonth()
                                 ]
                             ),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
