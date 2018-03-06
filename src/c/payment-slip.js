@@ -23,7 +23,7 @@ const paymentSlip = {
             loading(true);
             m.redraw();
 
-            if (!subscriptionEditConfirmed() && isSubscriptionEdit()) {
+            if (!subscriptionEditConfirmed() && isSubscriptionEdit() && (args.oldSubscription().status === 'canceled')) {
                 showSubscriptionModal(true);
 
                 return false;
@@ -58,7 +58,7 @@ const paymentSlip = {
         };
     },
     view(ctrl, args) {
-        const buttonLabel = ctrl.isSubscriptionEdit ? I18n.t('pay_slip', I18nScope()) : I18n.t('subscription_edit', I18nScope());
+        const buttonLabel = ctrl.isSubscriptionEdit() ? I18n.t('pay_slip', I18nScope()) : I18n.t('subscription_edit', I18nScope());
 
         return m('.w-row',
                     m('.w-col.w-col-12',

@@ -36,7 +36,7 @@ const paymentCreditCard = {
                 return false;
             }
 
-            if (!subscriptionEditConfirmed()) {
+            if (!subscriptionEditConfirmed() && !(args.oldSubscription().status === 'canceled')) {
                 showSubscriptionModal(true);
 
                 return false;
