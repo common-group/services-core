@@ -13,6 +13,7 @@ const models = {
     commonPayments: commonPayment.model('payments'),
     commonCreditCard: commonPayment.model('rpc/credit_card'),
     commonCreditCards: commonPayment.model('credit_cards'),
+    commonSubscriptionUpgrade: commonPayment.model('rpc/upgrade_subscription'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     contributionDetail: catarse.model('contribution_details'),

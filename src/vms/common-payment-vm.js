@@ -7,7 +7,7 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const paymentInfoId = m.prop();
-const {commonPayment, commonPaymentInfo, commonCreditCard, commonCreditCards} = models;
+const {commonPayment, commonSubscriptionUpgrade, commonPaymentInfo, commonCreditCard, commonCreditCards} = models;
 const sendPaymentRequest = data => commonPayment.postWithToken(
     {data: _.extend({}, data, {payment_id: paymentInfoId()})},
     null,
