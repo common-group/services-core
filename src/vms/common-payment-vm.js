@@ -99,12 +99,17 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
     }).catch(() => promise.reject({}));
 };
 
-const getPaymentInfoUntilNoError = (paymentMethod) => ({id}) => {
+const getPaymentInfoUntilNoError = (paymentMethod) => ({id, catalog_payment_id}) => {
     let p = m.deferred();
+    const paymentId = id || catalog_payment_id;
 
-    paymentInfoId(id);
 
-    requestInfo(p, id, paymentMethod);
+    if (paymentId) {
+        paymentInfoId(paymentId);
+        requestInfo(p, paymentId, paymentMethod);
+    } else {
+        resolvePayment(paymentMethod, false, null);
+    }
 
     return p.promise;
 };
