@@ -76,7 +76,7 @@ const paymentInfo = (paymentId) => {
 const creditCardInfo = (creditCard) => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
 
 let retries = 10;
-const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`)
+const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`);
 const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
     if (retries <= 0) {
         return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId));
@@ -91,7 +91,7 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
             return h.sleep(4000).then(() => {
                 retries = retries - 1;
 
-                return requestInfo(promise, paymentInfoId, defaultPaymentMethod)
+                return requestInfo(promise, paymentInfoId, defaultPaymentMethod);
             });
         }
 
@@ -99,9 +99,9 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
     }).catch(() => promise.reject({}));
 };
 
-const getPaymentInfoUntilNoError = (paymentMethod) => ({id, catalog_payment_id}) => {
+const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({id, catalog_payment_id}) => {
     let p = m.deferred();
-    const paymentId = id || catalog_payment_id;
+    const paymentId = isEdit ? catalog_payment_id : id;
 
 
     if (paymentId) {
@@ -125,7 +125,7 @@ const waitForSavedCreditCard = promise => creditCardId => {
         if(_.isEmpty(infoR.gateway_data)) {
             if(!_.isEmpty(infoR.gateway_errors)) {
                 return promise.reject(_.first(infoR.gateway_errors));
-            } 
+            }
 
             return h.sleep(4000).then(() => {
                 creditCardRetries = creditCardRetries - 1;
@@ -136,18 +136,18 @@ const waitForSavedCreditCard = promise => creditCardId => {
 
         return promise.resolve({creditCardId});
     }).catch(() => promise.reject({message: 'Really couldnt save your card'}));
- 
+
 
     return promise;
 };
 
 const processCreditCard = (cardHash, fields) => {
     const p = m.deferred();
-    
+
     saveCreditCard(cardHash)
         .then(waitForSavedCreditCard(p))
         .catch(p.reject);
-    
+
     return p.promise;
 
 }
@@ -193,7 +193,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
                     country: 'Brasil',
                     state: addressState.acronym,
                     city: address.address_city,
-                    complementary: address.address_complement,
+                    complementary: address.address_complement
                 },
                 phone: {
                     ddi: '55',
@@ -202,7 +202,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
                 }
             }
         };
-    
+
         if (commonData.rewardCommonId) {
             _.extend(payload, {reward_id: commonData.rewardCommonId});
         }
@@ -215,16 +215,16 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
             if (creditCardId) {
                 _.extend(payload, {card_id: creditCardId.id});
             }
-            
+
             return commonData.subscription_id
                 ? sendSubscriptionUpgrade(payload)
                 : sendPaymentRequest(payload);
         };
-  
+
         updateUser(userPayload(customer, address))
             .then(() => processCreditCard(cardHash, fields))
             .then(pay)
-            .then(getPaymentInfoUntilNoError(payload.payment_method))
+            .then(getPaymentInfoUntilNoError(payload.payment_method, Boolean(commonData.subscription_id)))
             .catch(displayError(fields));
     });
 };
@@ -258,7 +258,7 @@ const sendSlipPayment = (fields, commonData) => {
                 country: 'Brasil',
                 state: addressState.acronym,
                 city: address.address_city,
-                complementary: address.address_complement,
+                complementary: address.address_complement
             },
             phone: {
                 ddi: '55',
@@ -272,10 +272,13 @@ const sendSlipPayment = (fields, commonData) => {
         _.extend(payload, {reward_id: commonData.rewardCommonId});
     }
 
-    const sendPayment = () => sendPaymentRequest(payload);
+    const sendPayment =  commonData.subscription_id
+        ? sendSubscriptionUpgrade(payload)
+        : sendPaymentRequest(payload);
+
     updateUser(userPayload(customer, address))
         .then(sendPayment)
-        .then(getPaymentInfoUntilNoError(payload.payment_method))
+        .then(getPaymentInfoUntilNoError(payload.payment_method, Boolean(commonData.subscription_id)))
         .catch(displayError(fields));
 };
 
