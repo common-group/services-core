@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import I18n from 'i18n-js';
 import h from '../h';
 import inlineError from './inline-error';
@@ -36,6 +37,13 @@ const paymentSlip = {
                     projectCommonId: args.project_common_id,
                     amount: args.value * 100
                 };
+
+                if (isSubscriptionEdit()) {
+                    commonPaymentVM.sendSlipPayment(vm, _.extend({}, commonData, {subscription_id: args.subscriptionId()}));
+
+                    return false;
+                }
+
                 commonPaymentVM.sendSlipPayment(vm, commonData);
 
                 return false;
@@ -58,7 +66,7 @@ const paymentSlip = {
         };
     },
     view(ctrl, args) {
-        const buttonLabel = ctrl.isSubscriptionEdit() ? I18n.t('pay_slip', I18nScope()) : I18n.t('subscription_edit', I18nScope());
+        const buttonLabel = ctrl.isSubscriptionEdit() ? I18n.t('subscription_edit', I18nScope()) : I18n.t('pay_slip', I18nScope());
 
         return m('.w-row',
                     m('.w-col.w-col-12',
