@@ -212,7 +212,10 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
 
         const pay = ({creditCardId}) => {
             if (creditCardId) {
-                _.extend(payload, {card_id: creditCardId.id});
+                _.extend(payload, {
+                    card_id: creditCardId.id,
+                    credit_card_id: creditCardId.id
+                });
             }
 
             return commonData.subscription_id
