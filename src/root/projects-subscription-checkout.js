@@ -54,7 +54,7 @@ const projectsSubscriptionCheckout = {
         if (_.isString(rewardVM.contributionValue())) {
             value = h.monetaryToFloat(rewardVM.contributionValue);
         } else {
-            value = rewardVM.contributionValue()
+            value = rewardVM.contributionValue();
         }
 
         const valueParam = h.getParams('contribution_value');
@@ -120,7 +120,7 @@ const projectsSubscriptionCheckout = {
                 data: vm.fields.address()
             }));
         });
-        
+
         projectVM.getCurrentProject();
 
         return {
@@ -159,7 +159,7 @@ const projectsSubscriptionCheckout = {
                         onchange: () => {
                             ctrl.vm.fields.anonymous.toggle();
                         },
-                        checked: ctrl.vm.fields.anonymous(),
+                        checked: ctrl.vm.fields.anonymous()
                     }),
                     m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
                         I18n.t('fields.anonymous', ctrl.scope())
@@ -346,7 +346,7 @@ const projectsSubscriptionCheckout = {
                             isSubscription: true,
                             oldSubscription: ctrl.oldSubscription,
                             value: ctrl.value,
-                            hideSave: true,
+                            hideSave: true
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
@@ -431,6 +431,7 @@ const projectsSubscriptionCheckout = {
                         ]),
                         m.component(faqBox, {
                             mode: project.mode,
+                            isEdit: ctrl.isEdit(),
                             vm: ctrl.vm,
                             faq: ctrl.vm.faq(ctrl.isEdit() ? `${project.mode}_edit` : project.mode),
                             projectUserId: project.user_id

@@ -103,7 +103,6 @@ const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({id, catalog_paym
     let p = m.deferred();
     const paymentId = isEdit ? catalog_payment_id : id;
 
-
     if (paymentId) {
         paymentInfoId(paymentId);
         requestInfo(p, paymentId, paymentMethod);
@@ -150,7 +149,7 @@ const processCreditCard = (cardHash, fields) => {
 
     return p.promise;
 
-}
+};
 
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     if (!fields) {
@@ -270,6 +269,10 @@ const sendSlipPayment = (fields, commonData) => {
 
     if (commonData.rewardCommonId) {
         _.extend(payload, {reward_id: commonData.rewardCommonId});
+    }
+
+    if (commonData.subscription_id) {
+        _.extend(payload, {id: commonData.subscription_id});
     }
 
     const sendPayment =  commonData.subscription_id
