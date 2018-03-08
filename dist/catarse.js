@@ -12955,8 +12955,8 @@ var projectsSubscriptionCheckout = {
             value = rewardVM.contributionValue();
         }
 
-        var valueParam = h.getParams('contribution_value');
-        var rewardIdParam = h.getParams('reward_id');
+        var valueParam = m.route.param('contribution_value');
+        var rewardIdParam = m.route.param('reward_id');
 
         if (valueParam) {
             value = rewardVM.contributionValue(Number(valueParam));

@@ -57,8 +57,8 @@ const projectsSubscriptionCheckout = {
             value = rewardVM.contributionValue();
         }
 
-        const valueParam = h.getParams('contribution_value');
-        const rewardIdParam = h.getParams('reward_id'); 
+        const valueParam = m.route.param('contribution_value');
+        const rewardIdParam = m.route.param('reward_id'); 
 
         if (valueParam) {
             value = rewardVM.contributionValue(Number(valueParam));
