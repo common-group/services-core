@@ -4,33 +4,32 @@
 
 ### data payload json
 
-|name | type |  description |
-| :--- | :--- | :--- |
-| id | uuid | user id only avaiable when updating a user with platform_user |
-| external\_id | string | only avaiable when creating a user with platform\_user, this is a reference for a external source |
-| name | string | user full name |
-| email | string | user email |
-| password | string | user password |
-| password\_encrypted | boolean | set true when password is already encrypted using bcrypt |
-| document\_type | string | CPF / CNPJ |
-| document\_number | string | valid CPF/CNPJ number |
-| born\_at | date | birth date \(YYYY-MM-DD\) |
-| address.street | string | address street |
-| address.street\_number | numeric | address street number |
-| address.neighborhood | string | address neighborhood |
-| address.zipcode | string | address zipcode |
-| address.country | string | address country name |
-| address.state | string | address state |
-| address.city | string |  address city |
-| address.complementary | string | address complement |
-| phone.ddi | string |  ddi phone number |
-| phone.ddd | string |  ddd phone number |
-| phone.number | string | phone number |
-| bank\_account.bank\_code | string | bank code |
-| bank\_account.account | string | bank account number |
-| bank\_account.account\_digit | string | bank account digit |
-| bank\_account.agency | string | bank account agency |
-| bank\_account.agency\_digit | string | bank account agency digit |
+| name | type | required | description |
+| :--- | :--- | :--- | :--- |
+| external\_id | string | not required, default is null | only avaiable when creating a user with platform\_user, this is a reference for a external source |
+| name | string | **required** | user full name |
+| email | string | **required** | user email |
+| password | string | **required** | user password |
+| password\_encrypted | boolean | not required, default false | set true when password is already encrypted using bcrypt |
+| document\_type | string | not required | CPF / CNPJ |
+| document\_number | string | not required | valid CPF/CNPJ number |
+| born\_at | date | not required | birth date \(YYYY-MM-DD\) |
+| address.street | string | not required | address street |
+| address.street\_number | numeric | not required | address street number |
+| address.neighborhood | string | not required | address neighborhood |
+| address.zipcode | string | not required | address zipcode |
+| address.country | string | not required | address country name |
+| address.state | string | not required | address state |
+| address.city | string | not required | address city |
+| address.complementary | string | not required | address complement |
+| phone.ddi | string | not required | ddi phone number |
+| phone.ddd | string | not required | ddd phone number |
+| phone.number | string | not required | phone number |
+| bank\_account.bank\_code | string | not required | bank code |
+| bank\_account.account | string | not required | bank account number |
+| bank\_account.account\_digit | string | not required | bank account digit |
+| bank\_account.agency | string | not required | bank account agency |
+| bank\_account.agency\_digit | string | not required | bank account agency digit |
 
 ###
 
