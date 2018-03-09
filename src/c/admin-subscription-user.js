@@ -29,7 +29,6 @@ const adminSubscriptionUser = {
         };
     },
     view(ctrl, args) {
-        console.log(args.item);
         const item = args.item,
               customer = item.checkout_data ? item.checkout_data.customer : {},
               user = {

@@ -181,6 +181,8 @@ const adminSubscriptionDetail = {
                         m('br'),
                         `Id pagamento: ${currentPayment().id}`,
                         m('br'),
+                        `Id gateway: ${currentPayment().gateway_id}`,
+                        m('br'),
                         'Apoio:',
                         m.trust('&nbsp;'),
                         currentPayment().subscription_id,
