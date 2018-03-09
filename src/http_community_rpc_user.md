@@ -122,7 +122,7 @@ curl -X POST https://sandbox.api.community.comum.io/rpc/user \
 }
 ```
 
-# function code
+## function source
 
 ```sql
 CREATE OR REPLACE FUNCTION community_service_api."user"(data json)
