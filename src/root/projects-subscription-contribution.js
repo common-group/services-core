@@ -86,7 +86,8 @@ const projectsSubscriptionContribution = {
                         }, [
                             _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, {
                                 reward,
-                                isSubscription: projectVM.isSubscription(project)
+                                isSubscription: projectVM.isSubscription(project),
+                                isReactivation: ctrl.isReactivation
                             }))
                         ])
                     )
@@ -103,7 +104,8 @@ const projectsSubscriptionContribution = {
                         vm: ctrl.paymentVM,
                         faq,
                         projectUserId: args.project_user_id,
-                        isEdit: ctrl.isEdit()
+                        isEdit: ctrl.isEdit(),
+                        isReactivate: ctrl.isReactivation()
                     })
                 ])
             ])))

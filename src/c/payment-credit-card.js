@@ -36,7 +36,7 @@ const paymentCreditCard = {
                 return false;
             }
 
-            if (!subscriptionEditConfirmed() && !(args.oldSubscription().status === 'canceled')) {
+            if (!subscriptionEditConfirmed() && !args.isReactivation()) {
                 showSubscriptionModal(true);
 
                 return false;
@@ -425,8 +425,8 @@ const paymentCreditCard = {
                     m('.w-col.w-col-8.w-col-push-2', [
                         !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
                             m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
-                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: 
-                            ctrl.isSubscriptionEdit()
+                        ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value:
+                        ctrl.isSubscriptionEdit() && !args.isReactivation()
                                 ? I18n.t('subscription_edit', ctrl.scope())
                                 : I18n.t('credit_card.finish_payment', ctrl.scope())
                         }),

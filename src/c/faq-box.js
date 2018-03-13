@@ -7,7 +7,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.faq');
 
 const faqBox = {
     controller(args) {
-        const mode = args.mode === 'sub' && args.isEdit ? 'sub_edit' : args.mode,
+        const mode = args.mode === 'sub' && args.isEdit ? args.isReactivate ? 'sub_reactivate' : 'sub_edit' : args.mode,
             questions = args.faq.questions,
             selectedQuestion = m.prop(-1),
             user = m.prop({ name: '...' }),

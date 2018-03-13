@@ -35,6 +35,8 @@ const projectsSubscriptionCheckout = {
 
         const subscriptionId = m.prop(m.route.param('subscription_id'));
         const isEdit = m.prop(Boolean(subscriptionId()));
+        const subscriptionStatus = m.route.param('subscription_status');
+        const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
 
         if (isEdit) {
             subscriptionVM
@@ -136,6 +138,7 @@ const projectsSubscriptionCheckout = {
             isCnpj,
             isEdit,
             subscriptionId,
+            isReactivation,
             vm,
             user,
             project,
@@ -337,6 +340,7 @@ const projectsSubscriptionCheckout = {
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
                             isSubscriptionEdit: ctrl.isEdit,
+                            isReactivation: ctrl.isReactivation,
                             subscriptionId: ctrl.subscriptionId,
                             user_id: user.id,
                             reward: ctrl.reward,
@@ -432,8 +436,9 @@ const projectsSubscriptionCheckout = {
                         m.component(faqBox, {
                             mode: project.mode,
                             isEdit: ctrl.isEdit(),
+                            isReactivate: ctrl.isReactivation(),
                             vm: ctrl.vm,
-                            faq: ctrl.vm.faq(ctrl.isEdit() ? `${project.mode}_edit` : project.mode),
+                            faq: ctrl.vm.faq(ctrl.isEdit() ? ctrl.isReactivation() ? `${project.mode}_reactivate` : `${project.mode}_edit` : project.mode),
                             projectUserId: project.user_id
                         })
                     ])
