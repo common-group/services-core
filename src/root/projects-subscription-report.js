@@ -7,6 +7,7 @@ import {
 import models from '../models';
 import h from '../h';
 import loadMoreBtn from '../c/load-more-btn';
+import filterMain from '../c/filter-main';
 import FilterDropdown from '../c/filter-dropdown';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
@@ -43,6 +44,18 @@ const projectSubscriptionReport = {
                 return false;
             },
             filterBuilder = [{
+                    component: filterMain,
+                    label: 'text_filter',
+                    data: {
+                        label: 'Busca',
+                        vm: filterVM.search_index,
+                        onchange: submit,
+                        wrapper_class: '.w-sub-col.w-col.w-col-5',
+                        inputWrapperClass: '.w-input.text-field.positive.medium',
+                        placeholder: 'Busque por nome ou email do assinante...'
+                    }
+                },
+                {
                     label: 'reward_filter',
                     component: FilterDropdown,
                     data: {
@@ -50,7 +63,7 @@ const projectSubscriptionReport = {
                         onchange: submit,
                         name: 'reward_external_id',
                         vm: filterVM.reward_external_id,
-                        wrapper_class: '.w-sub-col.w-col.w-col-4',
+                        wrapper_class: '.w-sub-col.w-col.w-col-2',
                         options: []
                     }
                 },
@@ -65,7 +78,7 @@ const projectSubscriptionReport = {
                         onchange: submit,
                         name: 'status',
                         vm: filterVM.status,
-                        wrapper_class: '.w-sub-col.w-col.w-col-4',
+                        wrapper_class: '.w-sub-col.w-col.w-col-3',
                         options: [{
                                 value: '',
                                 option: 'Todos'
@@ -97,7 +110,7 @@ const projectSubscriptionReport = {
                         onchange: submit,
                         name: 'payment_method',
                         vm: filterVM.payment_method,
-                        wrapper_class: '.w-sub-col.w-col.w-col-4',
+                        wrapper_class: '.w-sub-col.w-col.w-col-2',
                         options: [{
                                 value: '',
                                 option: 'Todos'
@@ -179,6 +192,9 @@ const projectSubscriptionReport = {
             statusFilter = _.findWhere(filterBuilder, {
                 label: 'status_filter'
             }),
+            textFilter = _.findWhere(filterBuilder, {
+                label: 'text_filter'
+            }),
             rewardFilter = _.findWhere(filterBuilder, {
                 label: 'reward_filter'
             }),
@@ -212,14 +228,14 @@ const projectSubscriptionReport = {
                                     onsubmit: ctrl.submit
                                 },
                                 m('.u-margintop-20.w-row', [
-                                    m('.w-col.w-col-8.w-col-push-2.u-text-center',
+                                    m('.w-col.w-col-12.u-text-center',
                                         m('.w-row', [
                                             m.component(statusFilter.component, statusFilter.data),
                                             m.component(rewardFilter.component, rewardFilter.data),
-                                            m.component(paymentFilter.component, paymentFilter.data)
+                                            m.component(paymentFilter.component, paymentFilter.data),
+                                            m.component(textFilter.component, textFilter.data)
                                         ])
-                                    ),
-                                    m('.w-col.w-col-4', '')
+                                    )
                                 ])
                             )
                         ])
