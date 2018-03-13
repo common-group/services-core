@@ -24,7 +24,9 @@ const paymentSlip = {
             loading(true);
             m.redraw();
 
-            if (!subscriptionEditConfirmed() && isSubscriptionEdit() && (args.oldSubscription().status === 'canceled')) {
+            if (isSubscriptionEdit
+                && !subscriptionEditConfirmed()
+                && !(args.oldSubscription().status === 'canceled')) {
                 showSubscriptionModal(true);
 
                 return false;
