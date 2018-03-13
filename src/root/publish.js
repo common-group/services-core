@@ -123,7 +123,11 @@ const publish = {
                                 m('.w-col.w-col-1.u-text-center', [
                                     m('div', [
                                         m((index + 1 > acceptedIndex()) ? 'a.w-inline-block.checkbox-big' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg', {
-                                            onclick: () => { acceptedIndex(acceptedIndex() + 1); }
+                                            onclick: () => {
+                                                    if(index >= acceptedIndex()) {
+                                                        acceptedIndex(acceptedIndex() + 1);
+                                                    }
+                                                }
                                         })
                                     ])
                                 ]),
