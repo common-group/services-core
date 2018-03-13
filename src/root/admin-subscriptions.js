@@ -18,7 +18,7 @@ const adminSubscriptions = {
                 component: filterMain,
                 data: {
                     vm: filterVM.search_index,
-                    placeholder: 'Busque por projeto, permalink, email, nome do realizador...',
+                    placeholder: 'Busque por projeto, permalink, email, nome do realizador...'
                 },
             },{ // state
                 component: filterDropdown,
