@@ -144,7 +144,8 @@ const projectsSubscriptionCheckout = {
             project,
             isLongDescription,
             oldSubscription,
-            toggleDescription: h.toggleProp(false, true)
+            toggleDescription: h.toggleProp(false, true),
+            subscriptionStatus
         };
     },
     view(ctrl) {
@@ -192,7 +193,7 @@ const projectsSubscriptionCheckout = {
                             m('.fontsize-larger.text-success.u-left',
                                 `R$ ${formatedValue}`
                             ),
-                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}` : ''}"]`,
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}${ctrl.isReactivation()}` : ''}"]`,
                               'Editar'
                              )
                         ]),
@@ -362,7 +363,7 @@ const projectsSubscriptionCheckout = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}"]`,
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : ''}"]`,
                                     {config: m.route}
                                     ,
                                     'Editar'
@@ -377,10 +378,10 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-money.text-success'),
-                                            ' Cobrança hoje:'
+                                            ' Cobrança hoje: '
                                         ]
                                     ),
-                                    ctrl.isEdit()
+                                    ctrl.isEdit() && !ctrl.isReactivation()
                                         ? ` ${I18n.t('invoice_none', I18nScope())}`
                                         : `R$ ${formatedValue}`
                                 ]
@@ -393,7 +394,7 @@ const projectsSubscriptionCheckout = {
                                             ' Próxima cobrança: '
                                         ]
                                     ),
-                                    ctrl.isEdit()
+                                    ctrl.isEdit() && !ctrl.isReactivation()
                                         ? ctrl.oldSubscription().next_charge_at
                                             ? h.momentify(ctrl.oldSubscription().next_charge_at)
                                             : h.momentify(Date.now())
