@@ -6,6 +6,7 @@ import {
     catarse
 } from '../api';
 import models from '../models';
+import dashboardSubscriptionCardDetail from './dashboard-subscription-card-detail'
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
@@ -14,6 +15,7 @@ const dashboardSubscriptionCard = {
     controller(args) {
         const subscription = args.subscription,
             reward = m.prop(),
+            toggleDetails = h.toggleProp(false, true),
             user = m.prop();
 
         if (subscription.user_external_id) {
@@ -52,6 +54,7 @@ const dashboardSubscriptionCard = {
         };
         return {
             statusClass,
+            toggleDetails,
             reward,
             user,
             paymentClass
@@ -60,67 +63,77 @@ const dashboardSubscriptionCard = {
     view(ctrl, args) {
         const subscription = args.subscription,
             statusClass = ctrl.statusClass,
+            user = ctrl.user(),
+            cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '',
             paymentClass = ctrl.paymentClass;
 
-        return m('.card', ctrl.user() ?
-            m('.w-row', [
-                m('.table-col.w-col.w-col-3',
-                    m('.w-row', [
-                        m('.w-col.w-col-3',
-                            m(`img.u-marginbottom-10.user-avatar[src='${h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)}']`)
-                        ),
-                        m('.w-col.w-col-9', [
-                            m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                ctrl.user().name
+        return m(`div${cardClass}`, [m('.card', ctrl.user() ?
+                m('.w-row', [
+                    m('.table-col.w-col.w-col-3',
+                        m('.w-row', [
+                            m('.w-col.w-col-3',
+                                m(`img.u-marginbottom-10.user-avatar[src='${h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)}']`)
                             ),
-                            m('.fontcolor-secondary.fontsize-smallest',
-                                subscription.user_email
-                            )
+                            m('.w-col.w-col-9', [
+                                m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
+                                    ctrl.user().name
+                                ),
+                                m('.fontcolor-secondary.fontsize-smallest',
+                                    subscription.user_email
+                                )
+                            ])
                         ])
-                    ])
-                ),
-                m('.table-col.w-col.w-col-2',
-                    m('.fontsize-smaller',
-                        _.isEmpty(ctrl.reward()) ? '' : `${ctrl.reward().description.substring(0, 20)}...`
-                    )
-                ),
-                m('.table-col.w-col.w-col-1.u-text-center', [
-                    m('.fontsize-smaller',
-                        `R$${h.formatNumber(subscription.amount / 100, 0, 3)}`
                     ),
-                    m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                        m(`span.fa.${paymentClass[subscription.payment_method]}`,
-                            ''
-                        ),
-                        I18n.t(subscription.payment_method, I18nScope())
-                    ])
-                ]),
-                m('.w-col.w-col-2.u-text-center', [
-                    m('.fontsize-smaller',
-                        `R$${h.formatNumber(subscription.total_paid / 100, 0, 3)}`
+                    m('.table-col.w-col.w-col-2',
+                        m('.fontsize-smaller',
+                            _.isEmpty(ctrl.reward()) ? '' : `${ctrl.reward().description.substring(0, 20)}...`
+                        )
                     ),
-                    m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                        `${subscription.paid_count} meses`
-                    )
-                ]),
-                m('.w-col.w-col-2.u-text-center',
-                    m('.fontsize-smaller',
-                        subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : ''
-                    )
-                ),
-                m('.w-col.w-col-2.u-text-center',
-                    m('.fontsize-smaller', [
-                        m(`span.fa.${statusClass[subscription.status]}`,
-                            ' '
+                    m('.table-col.w-col.w-col-1.u-text-center', [
+                        m('.fontsize-smaller',
+                            `R$${h.formatNumber(subscription.amount / 100, 0, 3)}`
                         ),
-                        I18n.t(`status.${subscription.status}`, I18nScope())
+                        m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
+                            m(`span.fa.${paymentClass[subscription.payment_method]}`,
+                                ''
+                            ),
+                            I18n.t(subscription.payment_method, I18nScope())
+                        ])
                     ]),
-                    subscription.status === 'started' ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                        `em ${moment(subscription.created_at).format('DD/MM/YYYY')}`
-                    ) : ''
-                )
-            ]) : ''
-        );
+                    m('.w-col.w-col-2.u-text-center', [
+                        m('.fontsize-smaller',
+                            `R$${h.formatNumber(subscription.total_paid / 100, 0, 3)}`
+                        ),
+                        m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
+                            `${subscription.paid_count} meses`
+                        )
+                    ]),
+                    m('.w-col.w-col-2.u-text-center',
+                        m('.fontsize-smaller',
+                            subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : ''
+                        )
+                    ),
+                    m('.w-col.w-col-2.u-text-center',
+                        m('.fontsize-smaller', [
+                            m(`span.fa.${statusClass[subscription.status]}`,
+                                ' '
+                            ),
+                            I18n.t(`status.${subscription.status}`, I18nScope())
+                        ]),
+                        subscription.status === 'started' ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
+                            `em ${moment(subscription.created_at).format('DD/MM/YYYY')}`
+                        ) : ''
+                    ),
+                    m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
+                        onclick: ctrl.toggleDetails.toggle
+                    })
+                ]) : ''
+            ),
+            ctrl.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
+                subscription,
+                user
+            }) : ''
+        ]);
     }
 };
 
