@@ -32,6 +32,7 @@ export { default as UsersEdit } from './root/users-edit';
 export { default as ProjectEdit } from './root/project-edit';
 export { default as ProjectsPayment } from './root/projects-payment';
 export { default as ProjectsReward } from './root/projects-reward';
+export { default as ProjectsFiscal } from './root/projects-fiscal';
 export { default as Publish } from './root/publish';
 export { default as Start } from './root/start';
 export { default as Team } from './root/team';

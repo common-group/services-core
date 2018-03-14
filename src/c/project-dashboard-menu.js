@@ -124,7 +124,14 @@ const projectDashboardMenu = {
                                     config: m.route
                                 }, [
                                     m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n.t('surveys_tab', I18nScope())
-                                ]))
+                                ])),
+
+                            m(`a#dashboard_fiscal_link[class="dashboard-nav-link-left ${h.locationActionMatch('fiscal') ? 'selected' : ''}"][href="${projectRoute}/fiscal"]`, {
+                                config: m.route
+                            }, [
+                                m('span.fa.fa.fa-book.fa-lg.fa-fw'), I18n.t('fiscal_tab', I18nScope())
+                            ])
+
                         ] : '')
                     ]),
                     m('.edit-project-div', [

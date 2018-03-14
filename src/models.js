@@ -45,6 +45,7 @@ const models = {
     projectContributionsPerLocation: catarse.model('project_contributions_per_location'),
     projectContributionsPerRef: catarse.model('project_contributions_per_ref'),
     projectVisitorsPerDay: catarse.model('project_visitors_per_day'),
+    projectFiscalId: catarse.model('project_fiscal_ids'),
     projectTransfer: catarse.model('project_transfers'),
     project: catarse.model('projects'),
     adminProject: catarse.model('admin_projects'),
