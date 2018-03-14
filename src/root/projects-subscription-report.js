@@ -50,8 +50,9 @@ const projectSubscriptionReport = {
                         label: 'Busca',
                         vm: filterVM.search_index,
                         onchange: submit,
-                        wrapper_class: '.w-sub-col.w-col.w-col-5',
-                        inputWrapperClass: '.w-input.text-field.positive.medium',
+                        wrapper_class: '.w-sub-col.w-col.w-col-5.u-margintop-20',
+                        inputWrapperClass: '.w-input.text-field.positive',
+                        btnClass:  '.btn.btn-medium.u-marginbottom-10',
                         placeholder: 'Busque por nome ou email do assinante...'
                     }
                 },
