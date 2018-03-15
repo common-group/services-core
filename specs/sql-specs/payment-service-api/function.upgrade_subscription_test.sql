@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(20);
+    select plan(21);
 
     select function_returns(
         'payment_service_api', 'upgrade_subscription', ARRAY['json'], 'json'
@@ -192,6 +192,15 @@ BEGIN;
                 'id', _inactive_subscription.id,
                 'payment_method', 'boleto'
             ));
+
+            select count(1) from notification_service.notifications n
+                join notification_service.notification_global_templates ngt on ngt.id = n.notification_global_template_id
+                where n.user_id = _inactive_subscription.user_id
+                    and (n.data -> 'relations' ->> 'subscription_id')::uuid = _inactive_subscription.id
+                    and ngt.label = 'updated_subscription'
+                into _count_expected;
+            return next is(_count_expected, 0, 'should not generate a notification when subscription is inactive');
+
 
             select count(1) from payment_service.catalog_payments
                 where subscription_id = _inactive_subscription.id
