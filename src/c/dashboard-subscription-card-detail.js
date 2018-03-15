@@ -3,8 +3,13 @@ import _ from 'underscore';
 import moment from 'moment';
 import UserFollowBtn from './user-follow-btn';
 import ownerMessageContent from './owner-message-content';
+import I18n from 'i18n-js';
 import modalBox from './modal-box';
+import subscriptionStatusIcon from './subscription-status-icon';
+import paymentMethodIcon from './payment-method-icon';
 import h from '../h';
+
+const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCardDetail = {
     controller(args) {
@@ -15,7 +20,10 @@ const dashboardSubscriptionCardDetail = {
 
     view(ctrl, args) {
         const subscription = args.subscription,
-            user = _.extend(args.user, { project_id: subscription.project_external_id }),
+            user = _.extend(args.user, {
+                project_id: subscription.project_external_id
+            }),
+            reward = args.reward,
             contactModalC = [ownerMessageContent, m.prop(user)];
 
         return m('.details-backed-project.card',
@@ -29,48 +37,42 @@ const dashboardSubscriptionCardDetail = {
                             m('.fontsize-smaller', [
                                 m('div', [
                                     m('span.fontcolor-secondary',
-                                        'Status:'
-                                    ),
-                                    m.trust('&nbsp;'),
-                                    m('span.fa.fa-circle.text-waiting',
-                                        '.'
-                                    ),
-                                    'Iniciada'
+                                      'Status: '
+                                     ),
+                                    m(subscriptionStatusIcon, {
+                                        subscription
+                                    })
                                 ]),
                                 m('div', [
                                     m('span.fontcolor-secondary',
-                                        'Valor da assinatura:'
+                                        'Valor da assinatura: '
                                     ),
-                                    'R$15'
+                                    `R$${subscription.amount / 100}`
                                 ]),
                                 m('div', [
                                     m('span.fontcolor-secondary',
-                                        'Recompensa:'
-                                    ),
-                                    'R$15 - Título da recompensa'
+                                        'Recompensa: '
+                                    ), !_.isEmpty(reward) ? `R$${reward.minimum_value} - ${reward.title} - ${reward.description.substring(0, 90)}(...)` : 'Sem recompensa'
                                 ]),
                                 m('div', [
                                     m('span.fontcolor-secondary',
-                                        'Meio de pagamento:'
+                                        'Meio de pagamento: '
                                     ),
-                                    m('span.fa.fa-barcode',
-                                        '.'
-                                    ),
-                                    'Boleto Bancário'
+                                    m(paymentMethodIcon, {subscription})
                                 ]),
                                 m('div', [
                                     m('span.fontcolor-secondary',
-                                        'Tempo de assinatura:'
+                                        'Tempo de assinatura: '
                                     ),
-                                    '0 meses'
+                                    `${subscription.paid_count} meses`
                                 ]),
                                 m('.fontsize-base.u-margintop-10', [
                                     m('span.fontcolor-secondary',
-                                        'Total apoiado:'
+                                        'Total apoiado: '
                                     ),
                                     m.trust('&nbsp;'),
                                     m('span.fontweight-semibold.text-success',
-                                        'R$0'
+                                        `R$${subscription.total_paid/100}`
                                     )
                                 ])
                             ])
@@ -100,7 +102,12 @@ const dashboardSubscriptionCardDetail = {
                                 (!_.isEmpty(user.email) ? m('a.btn.btn-small.btn-inline.btn-edit.u-marginright-10.w-button', {
                                     onclick: ctrl.displayModal.toggle
                                 }, 'Enviar mensagem') : ''),
-                                m(UserFollowBtn, { follow_id: user.id, following: user.following_this_user, enabledClass: 'a.btn.btn-small.btn-inline.btn-terciary.w-button', disabledClass: 'a.btn.btn-small.btn-inline.btn-terciary.w-button' })
+                                m(UserFollowBtn, {
+                                    follow_id: user.id,
+                                    following: user.following_this_user,
+                                    enabledClass: 'a.btn.btn-small.btn-inline.btn-terciary.w-button',
+                                    disabledClass: 'a.btn.btn-small.btn-inline.btn-terciary.w-button'
+                                })
                             ])
                         ])
                     ])

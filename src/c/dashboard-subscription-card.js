@@ -6,7 +6,9 @@ import {
     catarse
 } from '../api';
 import models from '../models';
-import dashboardSubscriptionCardDetail from './dashboard-subscription-card-detail'
+import dashboardSubscriptionCardDetail from './dashboard-subscription-card-detail';
+import subscriptionStatusIcon from './subscription-status-icon';
+import paymentMethodIcon from './payment-method-icon';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
@@ -39,33 +41,16 @@ const dashboardSubscriptionCard = {
                 reward(_.first(data));
             });
         }
-        const statusClass = {
-            active: 'fa-circle.text-success',
-            started: 'fa-circle.text-waiting',
-            inactive: 'fa-circle.text-error',
-            canceled: 'fa-times-circle.text-error',
-            canceling: 'fa-times-circle-o.text-error',
-            deleted: 'fa-circle.text-error',
-            error: 'fa-circle.text-error'
-        };
-        const paymentClass = {
-            boleto: 'fa-barcode',
-            credit_card: 'fa-credit-card'
-        };
         return {
-            statusClass,
             toggleDetails,
             reward,
-            user,
-            paymentClass
+            user
         };
     },
     view(ctrl, args) {
         const subscription = args.subscription,
-            statusClass = ctrl.statusClass,
             user = ctrl.user(),
-            cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '',
-            paymentClass = ctrl.paymentClass;
+            cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';
 
         return m(`div${cardClass}`, [m('.card', ctrl.user() ?
                 m('.w-row', [
@@ -94,10 +79,9 @@ const dashboardSubscriptionCard = {
                             `R$${h.formatNumber(subscription.amount / 100, 0, 3)}`
                         ),
                         m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [
-                            m(`span.fa.${paymentClass[subscription.payment_method]}`,
-                                ''
-                            ),
-                            I18n.t(subscription.payment_method, I18nScope())
+                            m(paymentMethodIcon, {
+                                subscription
+                            })
                         ])
                     ]),
                     m('.w-col.w-col-2.u-text-center', [
@@ -114,15 +98,9 @@ const dashboardSubscriptionCard = {
                         )
                     ),
                     m('.w-col.w-col-2.u-text-center',
-                        m('.fontsize-smaller', [
-                            m(`span.fa.${statusClass[subscription.status]}`,
-                                ' '
-                            ),
-                            I18n.t(`status.${subscription.status}`, I18nScope())
-                        ]),
-                        subscription.status === 'started' ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                            `em ${moment(subscription.created_at).format('DD/MM/YYYY')}`
-                        ) : ''
+                        m(subscriptionStatusIcon, {
+                            subscription
+                        })
                     ),
                     m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
                         onclick: ctrl.toggleDetails.toggle
@@ -131,6 +109,7 @@ const dashboardSubscriptionCard = {
             ),
             ctrl.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
                 subscription,
+                reward: ctrl.reward(),
                 user
             }) : ''
         ]);
