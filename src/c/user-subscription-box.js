@@ -10,6 +10,8 @@ import {
 import contributionVM from '../vms/contribution-vm';
 import commonPaymentVM from '../vms/common-payment-vm';
 import ownerMessageContent from '../c/owner-message-content';
+import subscriptionStatusIcon from '../c/subscription-status-icon';
+import paymentMethodIcon from '../c/payment-method-icon';
 import cancelSubscriptionContent from '../c/cancel-subscription-content';
 import modalBox from '../c/modal-box';
 import userVM from '../vms/user-vm';
@@ -117,20 +119,10 @@ const userSubscriptionBox = {
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
                         m('.u-marginbottom-10', [
-                            m(`span.fa.fa-${{canceled: 'times-', canceling: 'times-'}[subscription.status] || ''}circle${subscription.status === 'canceling' ? '-o' : ''}.text-${{
-                                started: 'waiting',
-                                active:  'success'
-                            }[subscription.status] || 'error'}`),
-                            {
-                                started: ' Iniciada',
-                                active: ' Ativa',
-                                inactive: ' Inativa',
-                                canceled: ' Cancelada',
-                                canceling: ' Cancelamento solicitado',
-                                deleted: ' Apagada'
-                            }[subscription.status] || ' Erro',
+                            m(subscriptionStatusIcon, {subscription}),
                             m.trust('&nbsp;&nbsp;&nbsp;'),
-                            (subscription.payment_method === 'credit_card' ? [m('span.fa.fa-credit-card'), ' Cartão de Crédito'] : [m('span.fa.fa-barcode'), ' Boleto'])
+                            m(paymentMethodIcon, {subscription})
+                            
                         ])
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
