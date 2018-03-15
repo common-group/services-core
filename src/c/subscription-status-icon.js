@@ -27,7 +27,7 @@ const subscriptionStatusIcon = {
 
         return m('span', [
             m('span.fontsize-smaller', [
-                m(`span.fa.${statusClass[subscription.status]}`,
+                m(`span.fa.${statusClass[subscription.status] || 'Erro'}`,
                     ' '
                 ),
                 I18n.t(`status.${subscription.status}`, I18nScope())
