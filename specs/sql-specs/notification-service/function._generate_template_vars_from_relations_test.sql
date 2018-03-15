@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(7);
+    select plan(8);
 
     SELECT function_returns(
         'notification_service', '_generate_template_vars_from_relations', ARRAY['json'], 'json'
@@ -14,21 +14,29 @@ BEGIN;
     declare
         _relations_json json;
         _user community_service.users;
+        _subscription payment_service.subscriptions;
         _payment payment_service.catalog_payments;
         _result json;
     begin
 
+        -- generate subscription
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, checkout_data) 
+        values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb)
+        returning * into _subscription;
+
         -- generate payment
         insert into payment_service.catalog_payments
-        (gateway, platform_id, user_id, reward_id, project_id, data) 
-        values ('pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_reward_id(), __seed_project_id(), '{}')
+        (gateway, platform_id, user_id, reward_id, project_id, subscription_id, data) 
+        values ('pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_reward_id(), __seed_project_id(), _subscription.id, '{}')
         returning * into _payment;
 
         _relations_json := json_build_object(
             'user_id', __seed_first_user_id(),
             'project_id', __seed_project_id(),
             'reward_id', __seed_reward_id(),
-            'catalog_payment_id', _payment.id
+            'catalog_payment_id', _payment.id,
+            'subscription_id', _subscription.id
         );
 
         _result := notification_service._generate_template_vars_from_relations(_relations_json);
@@ -58,6 +66,10 @@ BEGIN;
             'check platform structure keys'
         );
 
+        return next ok(
+            (_result->'subscription')::jsonb ?& '{id, status, reward_id, period_month_year, payment_method, amount, paid_count, paid_sum, first_payment_at, fmt_first_payment_at}',
+            'check subscriptions structure keys'
+        );
 
         return next ok(
             (_result->'project_owner')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at}',
