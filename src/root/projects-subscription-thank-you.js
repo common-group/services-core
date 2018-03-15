@@ -18,6 +18,7 @@ const ProjectsSubscriptionThankYou = {
         const paymentData = m.prop({});
         const error = m.prop(false);
         const projectId = m.route.param('project_id');
+        const isEdit = m.route.param('is_edit');
         const project = m.prop({});
         const projectUser = m.prop();
         const recommendedProjects = UserVM.getUserRecommendedProjects();
@@ -43,7 +44,8 @@ const ProjectsSubscriptionThankYou = {
             project,
             projectUser,
             paymentData,
-            error
+            error,
+            isEdit
         };
     },
     view(ctrl, args) {
@@ -61,14 +63,20 @@ const ProjectsSubscriptionThankYou = {
                             ),
                             m('#thank-you.u-text-center', [
                                 m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
-                                    I18n.t('thank_you.thank_you', I18nScope())
+                                  ctrl.isEdit
+                                    ? I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
+                                    : I18n.t('thank_you.thank_you', I18nScope())
                                 ),
                                 m('.fontsize-base.u-marginbottom-40',
                                     m.trust(
                                         I18n.t(
-                                            ctrl.paymentMethod === 'credit_card' 
-                                            ? 'thank_you.thank_you_text_html'
-                                            : ctrl.paymentConfirmed ? 'thank_you_slip.thank_you_text_html' : 'thank_you.thank_you_slip_unconfirmed_text_html',
+                                            ctrl.isEdit
+                                                ? 'thank_you.subscription_edit.text_html'
+                                                : ctrl.paymentMethod === 'credit_card'
+                                                    ? 'thank_you.thank_you_text_html'
+                                                    : ctrl.paymentConfirmed
+                                                        ? 'thank_you_slip.thank_you_text_html'
+                                                        : 'thank_you.thank_you_slip_unconfirmed_text_html',
                                             I18nScope({
                                                 total: project.total_contributions,
                                                 email: user.email,
@@ -79,7 +87,7 @@ const ProjectsSubscriptionThankYou = {
                                     )
                                 ),
                                 m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                    'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
+                                    'Compartilh com seus amigos e ajude esse projeto a bater a meta!'
                                 )
                             ]),
                             m('.w-row', [

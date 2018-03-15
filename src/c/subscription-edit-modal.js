@@ -78,7 +78,8 @@ const subscriptionEditModal = {
                                 ),
                                 m('.divider.u-marginbottom-10'),
                                 m('.u-marginbottom-10',
-                                    oldSubscription.checkout_data.amount == newSubscription.value
+                                  oldSubscription.checkout_data
+                                  && oldSubscription.checkout_data.amount == newSubscription.value
                                     ? ''
                                     : [
                                         m('.fontsize-smaller.fontcolor-secondary',
@@ -86,7 +87,7 @@ const subscriptionEditModal = {
                                         ),
                                         m('.fontsize-large',
                                             [
-                                                m('span.fontcolor-terciary', `R$${oldSubscription.checkout_data.amount / 100} `),
+                                                m('span.fontcolor-terciary', `R$${oldSubscription.checkout_data ? oldSubscription.checkout_data.amount / 100 : ''} `),
                                                 m('span.fa.fa-angle-right.fontcolor-terciary'),
                                                 ` R$${newSubscription.value}` ])
                                     ]
@@ -102,7 +103,7 @@ const subscriptionEditModal = {
                                             : m('.fontsize-large.u-marginbottom-10',
                                                 [
                                                     m('span.fontcolor-terciary',
-                                                        [paymentBadge(oldSubscription.checkout_data.payment_method), ' ']
+                                                      [paymentBadge(oldSubscription.checkout_data ? oldSubscription.checkout_data.payment_method : ''), ' ']
                                                     ),
                                                     m('span.fa.fa-angle-right.fontcolor-terciary'),
                                                     [' ', paymentBadge(args.paymentMethod)]

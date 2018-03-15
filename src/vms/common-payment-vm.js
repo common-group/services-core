@@ -76,10 +76,10 @@ const paymentInfo = (paymentId) => {
 const creditCardInfo = (creditCard) => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
 
 let retries = 10;
-const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}`);
-const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
+const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}${isEdit ? '&is_edit=1' : ''}`);
+const requestInfo = (promise, paymentInfoId, defaultPaymentMethod, isEdit) => {
     if (retries <= 0) {
-        return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId));
+        return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId, isEdit));
     }
 
     paymentInfo(paymentInfoId).then((infoR) => {
@@ -95,7 +95,7 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod) => {
             });
         }
 
-        return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentInfoId));
+        return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentInfoId, isEdit));
     }).catch(() => promise.reject({}));
 };
 
@@ -105,9 +105,9 @@ const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({id, catalog_paym
 
     if (paymentId) {
         paymentInfoId(paymentId);
-        requestInfo(p, paymentId, paymentMethod);
+        requestInfo(p, paymentId, paymentMethod, isEdit);
     } else {
-        resolvePayment(paymentMethod, false, null);
+        resolvePayment(paymentMethod, false, null, isEdit);
     }
 
     return p.promise;
