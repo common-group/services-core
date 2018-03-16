@@ -4,14 +4,15 @@ BEGIN;
     \i /specs/sql-support/clean_sets_helpers.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(10);
+    select plan(11);
 
     select has_view('payment_service_api', 'subscriptions', 'check view');
 
     -- generate a subscription for first_user_id
     insert into payment_service.subscriptions
     (status, created_at, platform_id, user_id, project_id, checkout_data, credit_card_id) 
-    values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb, __seed_first_user_credit_card_id());
+    values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb, __seed_first_user_credit_card_id()),
+    ('deleted', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb, __seed_first_user_credit_card_id());
 
 
     create or replace function test_access_with_anon()
@@ -50,6 +51,11 @@ BEGIN;
 
             return next is(_result_row.id, _subscription.id, 'subscription owner can see they subscription');
             return next is(_result_row.credit_card_id, __seed_first_user_credit_card_id(), 'subscription owner can see the credit_card_id on subscription');
+
+            select * from payment_service_api.subscriptions where status = 'deleted'
+            into _result_row;
+
+            return next is(_result_row.id is null, true, 'should not show deleted subscriptions');
 
             -- when scoped user is project owner
             EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_second_user_id()||'''';
