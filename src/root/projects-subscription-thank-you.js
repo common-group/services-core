@@ -87,7 +87,7 @@ const ProjectsSubscriptionThankYou = {
                                     )
                                 ),
                                 m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                    'Compartilh com seus amigos e ajude esse projeto a bater a meta!'
+                                    'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
                                 )
                             ]),
                             m('.w-row', [
