@@ -52,7 +52,9 @@ const dashboardSubscriptionCard = {
             user = ctrl.user(),
             cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';
 
-        return m(`div${cardClass}`, [m('.card', ctrl.user() ?
+        return m(`div${cardClass}`, [m('.card.card-clickable', {
+                    onclick: ctrl.toggleDetails.toggle
+                }, ctrl.user() ?
                 m('.w-row', [
                     m('.table-col.w-col.w-col-3',
                         m('.w-row', [
@@ -102,9 +104,7 @@ const dashboardSubscriptionCard = {
                             subscription
                         })
                     ),
-                    m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
-                        onclick: ctrl.toggleDetails.toggle
-                    })
+                    m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary')
                 ]) : ''
             ),
             ctrl.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
