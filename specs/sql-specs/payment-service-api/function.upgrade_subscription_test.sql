@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(21);
+    select plan(23);
 
     select function_returns(
         'payment_service_api', 'upgrade_subscription', ARRAY['json'], 'json'
@@ -15,6 +15,7 @@ BEGIN;
     returns setof text language plpgsql as $$
         declare
             _inactive_subscription payment_service.subscriptions;
+            _deleted_subscription payment_service.subscriptions;
             _another_user_sub payment_service.subscriptions;
             _subscription payment_service.subscriptions;
             _not_enabled_card payment_service.credit_cards;
@@ -26,8 +27,14 @@ BEGIN;
             insert into payment_service.credit_cards (platform_id, user_id, gateway, gateway_data)
                 values (__seed_platform_id(), __seed_first_user_id(), 'pagarme', '{}'::jsonb)
                 returning * into _not_enabled_card;
-            -- generate inactive subscription
 
+            -- generate deleted subscription
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('deleted', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
+                returning * into _deleted_subscription;
+
+            -- generate inactive subscription
             insert into payment_service.subscriptions
                 (status, created_at, platform_id, user_id, project_id, checkout_data) 
                 values ('inactive', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
@@ -47,6 +54,12 @@ BEGIN;
 
             set local role platform_user;
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
+
+            -- cant change deleted subscription
+            return next throws_matching(
+                'EXECUTE upgrade_subscription(''{"id": "'||_deleted_subscription.id||'", "reward_id": "'||__seed_reward_120_id()||'"}'')', 
+                'subscription_not_found',
+                'cant update a subscription that is deleted');
 
             -- try change another user subscription
             return next lives_ok(
@@ -114,6 +127,7 @@ BEGIN;
         declare
             _another_user_sub payment_service.subscriptions;
             _inactive_subscription payment_service.subscriptions;
+            _deleted_subscription payment_service.subscriptions;
             _subscription payment_service.subscriptions;
             _not_enabled_card payment_service.credit_cards;
             _count_expected integer;
@@ -124,6 +138,13 @@ BEGIN;
             insert into payment_service.credit_cards (platform_id, user_id, gateway, gateway_data)
                 values (__seed_platform_id(), __seed_first_user_id(), 'pagarme', '{}'::jsonb)
                 returning * into _not_enabled_card;
+
+            -- generate deleted subscription
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('deleted', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
+                returning * into _deleted_subscription;
+
 
             -- generate subscription
             insert into payment_service.subscriptions
@@ -146,6 +167,13 @@ BEGIN;
             set local role scoped_user;
             EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_first_user_id()||'''';
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
+
+            -- cant change deleted subscription
+            return next throws_matching(
+                'EXECUTE upgrade_subscription(''{"id": "'||_deleted_subscription.id||'", "reward_id": "'||__seed_reward_120_id()||'"}'')', 
+                'subscription_not_found',
+                'cant update a subscription that is deleted');
+
 
             -- try change another user subscription
             return next throws_matching(
