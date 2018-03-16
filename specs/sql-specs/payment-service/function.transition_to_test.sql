@@ -4,11 +4,31 @@ BEGIN;
     \i /specs/sql-support/payment_json_build_helpers.sql
     -- \i /specs/sql-support/insert_global_notifications.sql
 
-    select plan(4);
+    select plan(5);
 
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.catalog_payments', 'payment_service.payment_status', 'json'], 'boolean');
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.subscriptions', 'payment_service.subscription_status', 'json'], 'boolean');
 
+
+    CREATE OR REPLACE FUNCTION test_subscription_transition_when_deleted()
+    returns setof text language plpgsql
+    as $$
+        declare
+            _subscription payment_service.subscriptions;
+            _canceled_notification notification_service.notifications;
+        begin
+
+            -- generate subscription
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('deleted', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
+                returning * into _subscription;
+
+            -- should not transit subscription to any status
+            return next is(payment_service.transition_to(_subscription, 'active', '{}'), false, 'should not change subscription status');
+        end;
+    $$;
+    select * from test_subscription_transition_when_deleted();
 
     CREATE OR REPLACE FUNCTION test_subscription_transition_canceling_to_canceled()
     returns setof text language plpgsql

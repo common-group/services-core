@@ -6,9 +6,10 @@ BEGIN;
     -- generate subscription
     insert into payment_service.subscriptions
     (status, created_at, platform_id, user_id, project_id, checkout_data) 
-    values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb);
+    values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb),
+    ('deleted', (now() - '1 month'::interval), __seed_platform_id(), __seed_second_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card", "anonymous": true}'::json)::jsonb);
 
-    select plan(6);
+    select plan(11);
 
 	select has_view('project_service_api', 'subscribers',  'view should be defined');
 
@@ -30,6 +31,13 @@ BEGIN;
             into _result_row;
 
         return next is(_result_row.id, null, 'anon should not view anon contributions');
+
+        return next is(
+            (select count(1) from project_service_api.subscribers
+                where project_id = __seed_project_id()),
+            0::bigint,
+            'should not list subscriber that subscription is deleted as anon'
+        );
     end;
     $$;
 
@@ -52,6 +60,12 @@ BEGIN;
 
         return next is(_result_row.id is not null, true, 'can see anonymous contributions when platform_user');
 
+        return next is(
+            (select count(1) from project_service_api.subscribers
+                where project_id = __seed_project_id()),
+            1::bigint,
+            'should not list subscriber that subscription is deleted as platform user'
+        );
     end;
     $$;
     select * from test_access_with_platform();
@@ -75,6 +89,13 @@ BEGIN;
 
         return next is(_result_row.id is not null, true, 'can see anonymous contributions when scoped_user is the subscriber');
 
+        return next is(
+            (select count(1) from project_service_api.subscribers
+                where project_id = __seed_project_id()),
+            1::bigint,
+            'should not list subscriber that subscription is deleted as first user'
+        );
+
         -- test using another scoped user that is not project owner
         EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_third_user_id()||'''';
 
@@ -85,6 +106,13 @@ BEGIN;
 
         return next is(_result_row.id, null, 'scoped cant see anonymous subscribers');
 
+        return next is(
+            (select count(1) from project_service_api.subscribers
+                where project_id = __seed_project_id()),
+            0::bigint,
+            'should not list subscriber that subscription is deleted has third user'
+        );
+
         -- test using scoped user project owner
         EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_second_user_id()||'''';
 
@@ -94,6 +122,13 @@ BEGIN;
             into _result_row;
 
         return next is(_result_row.id is not null, true, 'can see anonymous contributions when scoped_user is the project owner');
+
+        return next is(
+            (select count(1) from project_service_api.subscribers
+                where project_id = __seed_project_id()),
+            1::bigint,
+            'should not list subscriber that subscription is deleted'
+        );
     end;
     $$;
     select * from test_access_with_scoped();
