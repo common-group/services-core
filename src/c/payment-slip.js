@@ -12,21 +12,22 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const paymentSlip = {
     controller(args) {
         const vm = args.vm,
-            isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
-            slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(args.contribution_id),
-            loading = m.prop(false),
-            error = m.prop(false),
-            completed = m.prop(false),
-            subscriptionEditConfirmed = m.prop(false),
-            showSubscriptionModal = m.prop(false);
+              isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
+              slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(args.contribution_id),
+              loading = m.prop(false),
+              error = m.prop(false),
+              completed = m.prop(false),
+              subscriptionEditConfirmed = m.prop(false),
+              showSubscriptionModal = m.prop(false),
+              isReactivation = args.isReactivation || m.prop(false);
 
         const buildSlip = () => {
-            loading(true);
+            vm.isLoading(true);
             m.redraw();
 
-            if (isSubscriptionEdit
+            if (isSubscriptionEdit ()
                 && !subscriptionEditConfirmed()
-                && !args.isReactivation()){
+                && !isReactivation()){
                 showSubscriptionModal(true);
 
                 return false;
@@ -64,7 +65,8 @@ const paymentSlip = {
             error,
             isSubscriptionEdit,
             showSubscriptionModal,
-            subscriptionEditConfirmed
+            subscriptionEditConfirmed,
+            isReactivation
         };
     },
     view(ctrl, args) {
