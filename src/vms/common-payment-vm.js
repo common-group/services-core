@@ -76,7 +76,11 @@ const paymentInfo = (paymentId) => {
 const creditCardInfo = (creditCard) => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
 
 let retries = 10;
-const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}${isEdit ? '&is_edit=1' : ''}`);
+const isReactivation = () => {
+    const subscriptionStatus = m.route.param('subscription_status');
+    return subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled';
+};
+const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}&payment_id=${payment_id}${isEdit && !isReactivation() ? '&is_edit=1' : ''}`);
 const requestInfo = (promise, paymentInfoId, defaultPaymentMethod, isEdit) => {
     if (retries <= 0) {
         return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId, isEdit));
