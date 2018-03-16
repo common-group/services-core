@@ -8291,13 +8291,13 @@ var dashboardSubscriptionCard = {
             user = ctrl.user(),
             cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';
 
-        return m('div' + cardClass, [m('.card', ctrl.user() ? m('.w-row', [m('.table-col.w-col.w-col-3', m('.w-row', [m('.w-col.w-col-3', m('img.u-marginbottom-10.user-avatar[src=\'' + h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail) + '\']')), m('.w-col.w-col-9', [m('.fontsize-smaller.fontweight-semibold.lineheight-tighter', ctrl.user().name), m('.fontcolor-secondary.fontsize-smallest', subscription.user_email)])])), m('.table-col.w-col.w-col-2', m('.fontsize-smaller', _$1.isEmpty(ctrl.reward()) ? '' : ctrl.reward().description.substring(0, 20) + '...')), m('.table-col.w-col.w-col-1.u-text-center', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.amount / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [m(paymentMethodIcon, {
+        return m('div' + cardClass, [m('.card.card-clickable', {
+            onclick: ctrl.toggleDetails.toggle
+        }, ctrl.user() ? m('.w-row', [m('.table-col.w-col.w-col-3', m('.w-row', [m('.w-col.w-col-3', m('img.u-marginbottom-10.user-avatar[src=\'' + h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail) + '\']')), m('.w-col.w-col-9', [m('.fontsize-smaller.fontweight-semibold.lineheight-tighter', ctrl.user().name), m('.fontcolor-secondary.fontsize-smallest', subscription.user_email)])])), m('.table-col.w-col.w-col-2', m('.fontsize-smaller', _$1.isEmpty(ctrl.reward()) ? '' : ctrl.reward().description.substring(0, 20) + '...')), m('.table-col.w-col.w-col-1.u-text-center', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.amount / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', [m(paymentMethodIcon, {
             subscription: subscription
         })])]), m('.w-col.w-col-2.u-text-center', [m('.fontsize-smaller', 'R$' + h.formatNumber(subscription.total_paid / 100, 0, 3)), m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest', subscription.paid_count + ' meses')]), m('.w-col.w-col-2.u-text-center', m('.fontsize-smaller', subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : '')), m('.w-col.w-col-2.u-text-center', m(subscriptionStatusIcon, {
             subscription: subscription
-        })), m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
-            onclick: ctrl.toggleDetails.toggle
-        })]) : ''), ctrl.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
+        })), m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary')]) : ''), ctrl.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
             subscription: subscription,
             reward: ctrl.reward(),
             user: user
