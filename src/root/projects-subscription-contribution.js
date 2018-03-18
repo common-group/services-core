@@ -53,6 +53,9 @@ const projectsSubscriptionContribution = {
     },
     view(ctrl, args) {
         const project = ctrl.project;
+        if(_.isEmpty(project())) {
+            return h.loader();
+        };
         const faq = ctrl.paymentVM.faq(
             ctrl.isReactivation() 
                 ? `${project().mode}_reactivate`
