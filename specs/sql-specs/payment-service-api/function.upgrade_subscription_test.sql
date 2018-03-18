@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(23);
+    select plan(26);
 
     select function_returns(
         'payment_service_api', 'upgrade_subscription', ARRAY['json'], 'json'
@@ -15,6 +15,7 @@ BEGIN;
     returns setof text language plpgsql as $$
         declare
             _inactive_subscription payment_service.subscriptions;
+            _canceled_subscription payment_service.subscriptions;
             _deleted_subscription payment_service.subscriptions;
             _another_user_sub payment_service.subscriptions;
             _subscription payment_service.subscriptions;
@@ -33,6 +34,12 @@ BEGIN;
                 (status, created_at, platform_id, user_id, project_id, checkout_data) 
                 values ('deleted', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
                 returning * into _deleted_subscription;
+
+            -- generate canceled subscription
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('canceled', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
+                returning * into _canceled_subscription;
 
             -- generate inactive subscription
             insert into payment_service.subscriptions
@@ -117,6 +124,28 @@ BEGIN;
 
             return next is(_generated_payment.status, 'pending', 'generated payment should be pending');
 
+			-- test on canceled subscription
+            _result := payment_service_api.upgrade_subscription(json_build_object(
+                'id', _canceled_subscription.id,
+                'payment_method', 'boleto'
+            ));
+			-- reload canceled subscription
+			select * from payment_service.subscriptions where id = _canceled_subscription.id
+			into _canceled_subscription;
+
+			return next is(_canceled_subscription.status, 'inactive', 'should change from canceled to inactive to try charge');
+
+            select count(1) from payment_service.catalog_payments
+                where subscription_id = _canceled_subscription.id
+                into _count_expected;
+            return next is(_count_expected, 1, 'should generate new payment on subscription');
+
+
+            select * from payment_service.catalog_payments
+                where subscription_id = _canceled_subscription.id
+                into _generated_payment;
+
+            return next is(_generated_payment.status, 'pending', 'generated payment should be pending');
         end;
     $$;
     select * from test_upgrage_sub_with_platform_user();
@@ -240,7 +269,6 @@ BEGIN;
                 into _generated_payment;
 
             return next is(_generated_payment.status, 'pending', 'generated payment should be pending');
-
         end;
     $$;
     select * from test_upgrage_sub_with_scoped();

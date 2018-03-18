@@ -4,7 +4,7 @@ BEGIN;
     \i /specs/sql-support/payment_json_build_helpers.sql
     -- \i /specs/sql-support/insert_global_notifications.sql
 
-    select plan(5);
+    select plan(7);
 
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.catalog_payments', 'payment_service.payment_status', 'json'], 'boolean');
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.subscriptions', 'payment_service.subscription_status', 'json'], 'boolean');
@@ -68,6 +68,39 @@ BEGIN;
         end;
     $$;
     select test_subscription_transition_canceling_to_canceled();
+
+	create or replace function test_susbcription_transition_from_canceled_to_inactive()
+	returns setof text language plpgsql as $$
+		declare
+            _canceled_subscription payment_service.subscriptions;
+			_inactive_subscription_notification notification_service.notifications;
+		begin
+            -- generate subscription
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('canceled', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
+                returning * into _canceled_subscription;
+
+			perform payment_service.transition_to(_canceled_subscription, 'inactive', row_to_json(_canceled_subscription));
+
+            -- check for inactive subscription notifications
+            select n.* from notification_service.notifications n
+                join notification_service.notification_global_templates ngt 
+                    on ngt.id = n.notification_global_template_id
+                where n.user_id = _canceled_subscription.user_id
+                    and ngt.label = 'inactive_subscription'
+                    and (n.data -> 'relations' ->> 'subscription_id')::uuid = _canceled_subscription.id
+                into _inactive_subscription_notification;
+
+            return next ok(_inactive_subscription_notification.id is null, 'should not sent inactive_subscription');
+
+			select * from payment_service.subscriptions where id = _canceled_subscription.id
+			into _canceled_subscription;
+
+			return next is(_canceled_subscription.status, 'inactive', 'subscription should be inactived');
+		end;
+	$$;
+	select * from test_susbcription_transition_from_canceled_to_inactive();
 
     SELECT * FROM finish();
 ROLLBACK;
