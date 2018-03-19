@@ -81,12 +81,12 @@ const isReactivation = () => {
     return subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled';
 };
 const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}${payment_id ? '&payment_id=' + payment_id : ''}${isEdit && !isReactivation() ? '&is_edit=1' : ''}`);
-const requestInfo = (promise, paymentInfoId, defaultPaymentMethod, isEdit) => {
+const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
     if (retries <= 0) {
-        return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentInfoId, isEdit));
+        return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentId, isEdit));
     }
 
-    paymentInfo(paymentInfoId).then((infoR) => {
+    paymentInfo(paymentId).then((infoR) => {
         if(_.isNull(infoR.gateway_payment_method) || _.isUndefined(infoR.gateway_payment_method)) {
             if(!_.isNull(infoR.gateway_errors)) {
                 return promise.reject(_.first(infoR.gateway_errors));
@@ -95,16 +95,17 @@ const requestInfo = (promise, paymentInfoId, defaultPaymentMethod, isEdit) => {
             return h.sleep(4000).then(() => {
                 retries = retries - 1;
 
-                return requestInfo(promise, paymentInfoId, defaultPaymentMethod);
+                return requestInfo(promise, paymentId, defaultPaymentMethod);
             });
         }
 
-        return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentInfoId, isEdit));
+        return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentId, isEdit));
     }).catch(() => promise.reject({}));
 };
 
 const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({id, catalog_payment_id}) => {
     let p = m.deferred();
+
     const paymentId = isEdit ? catalog_payment_id : id;
 
     if (paymentId) {
@@ -215,6 +216,8 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
         }
 
         const pay = ({creditCardId}) => {
+            const p = m.deferred();
+
             if (creditCardId) {
                 _.extend(payload, {
                     card_id: creditCardId.id,
@@ -222,9 +225,13 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
                 });
             }
 
-            return commonData.subscription_id
-                ? sendSubscriptionUpgrade(payload)
-                : sendPaymentRequest(payload);
+            if (commonData.subscription_id){
+                sendSubscriptionUpgrade(payload).then(p.resolve).catch(p.reject);
+            } else {
+                sendPaymentRequest(payload).then(p.resolve).catch(p.reject);
+            }
+
+            return p.promise;
         };
 
         updateUser(userPayload(customer, address))
@@ -282,9 +289,17 @@ const sendSlipPayment = (fields, commonData) => {
         _.extend(payload, {id: commonData.subscription_id});
     }
 
-    const sendPayment =  commonData.subscription_id
-        ? sendSubscriptionUpgrade(payload)
-        : sendPaymentRequest(payload);
+    const sendPayment = () => {
+        const p = m.deferred();
+
+        if (commonData.subscription_id) {
+            sendSubscriptionUpgrade(payload).then(p.resolve).catch(p.reject);
+        } else {
+            sendPaymentRequest(payload).then(p.resolve).catch(p.reject);
+        }
+
+        return p.promise;
+    };
 
     updateUser(userPayload(customer, address))
         .then(sendPayment)
