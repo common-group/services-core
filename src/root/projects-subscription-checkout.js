@@ -193,9 +193,9 @@ const projectsSubscriptionCheckout = {
                             m('.fontsize-larger.text-success.u-left',
                                 `R$ ${formatedValue}`
                             ),
-                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start${ctrl.reward().id ? `?reward_id=${ctrl.reward().id}${ctrl.isReactivation()}` : ''}"]`,
-                              'Editar'
-                             )
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : ''}"]`,
+                                'Editar'
+                            )
                         ]),
                         m('.divider.u-marginbottom-10.u-margintop-10'),
                         m('.back-payment-info-reward', [
