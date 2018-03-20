@@ -67,7 +67,7 @@ BEGIN;
         );
 
         return next ok(
-            (_result->'subscription')::jsonb ?& '{id, status, reward_id, period_month_year, payment_method, amount, paid_count, paid_sum, first_payment_at, fmt_first_payment_at}',
+            (_result->'subscription')::jsonb ?& '{id, status, project_id, reward_id, period_month_year, last_payment_payment_method, last_payment_amount, payment_method, amount, paid_count, paid_sum, first_payment_at, fmt_first_payment_at, next_charge_at, fmt_next_charge_at}',
             'check subscriptions structure keys'
         );
 
