@@ -142,13 +142,23 @@ const userSubscriptionBox = {
                                 (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
                             ] :
                             (subscription.status === 'inactive' ? [
-                                    m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
-                                        m('span.fa.fa-exclamation-triangle'),
-                                        m.trust('&nbsp;'),
-                                        'Sua assinatura está inativa por falta de pagamento'
-                                    ]),
-                                    m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : ''}&subscription_status=${subscription.status}]`, 'Assinar novamente')
-                                ] : subscription.status === 'canceled' ? [
+                                (subscription.payment_status === 'pending'
+                                    && subscription.boleto_url
+                                    && subscription.boleto_expiration_date ? [
+                                        m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                            m('span.fa.fa-exclamation-triangle'),
+                                            ` O boleto de sua assinatura vence dia ${h.momentify(subscription.boleto_expiration_date)}` 
+                                        ]),
+                                        m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto')
+                                    ] : [ 
+                                        m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                            m('span.fa.fa-exclamation-triangle'),
+                                            m.trust('&nbsp;'),
+                                            'Sua assinatura está inativa por falta de pagamento'
+                                        ]),
+                                        m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : ''}&subscription_status=${subscription.status}]`, 'Assinar novamente')
+                                    ])
+                            ] : subscription.status === 'canceled' ? [
                                     m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
                                         {href: `/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : ''}&subscription_status=${subscription.status}`},
                                         'Reativar assinatura'
