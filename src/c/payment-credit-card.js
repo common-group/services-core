@@ -441,6 +441,7 @@ const paymentCreditCard = {
                     ? m(subscriptionEditModal,
                         {
                             args,
+                            vm: ctrl.vm,
                             showModal: ctrl.showSubscriptionModal,
                             confirm: ctrl.subscriptionEditConfirmed,
                             paymentMethod: 'credit_card',

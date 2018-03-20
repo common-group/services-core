@@ -21,6 +21,7 @@ const subscriptionEditModal = {
         };
     },
     view(ctrl, args) {
+        const vmIsLoading = args.vm.isLoading;
         const newSubscription = args.args;
         const oldSubscription = args.args.oldSubscription;
 
@@ -28,7 +29,10 @@ const subscriptionEditModal = {
             m('.modal-dialog-outer',
                 m('.modal-dialog-inner.modal-dialog-small',
                     [
-                        m('button.modal-close.fa.fa-close.fa-lg.w-inline-block', {onclick: () => args.showModal(false)}),
+                        m('button.modal-close.fa.fa-close.fa-lg.w-inline-block', {onclick: () => {
+                            vmIsLoading(false);
+                            args.showModal(false);
+                        }}),
                         m('.modal-dialog-header',
                             m('.fontsize-large.u-text-center',
                                 'Confirme suas alterações'
@@ -149,7 +153,10 @@ const subscriptionEditModal = {
                                                 )
                                             ),
                                             m('.w-col.w-col-4', 
-                                                m('button.btn.btn-large.u-marginbottom-20.btn-terciary.btn-no-border', {onclick: () => args.showModal(false)},
+                                                m('button.btn.btn-large.u-marginbottom-20.btn-terciary.btn-no-border', {onclick: () => {
+                                                    vmIsLoading(false);
+                                                    args.showModal(false);
+                                                }},
                                                     'Cancelar'
                                                 )
                                             )
