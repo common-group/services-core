@@ -92,6 +92,7 @@ const paymentSlip = {
                                         ? m(subscriptionEditModal,
                                             {
                                                 args,
+                                                vm: ctrl.vm,
                                                 showModal: ctrl.showSubscriptionModal,
                                                 confirm: ctrl.subscriptionEditConfirmed,
                                                 paymentMethod: 'boleto',
