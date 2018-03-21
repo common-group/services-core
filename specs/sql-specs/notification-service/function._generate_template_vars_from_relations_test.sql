@@ -42,12 +42,12 @@ BEGIN;
         _result := notification_service._generate_template_vars_from_relations(_relations_json);
 
         return next ok(
-            (_result->'user')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at}',
+            (_result->'user')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at, external_id}',
             'check user structure keys'
         );
 
         return next ok(
-            (_result->'payment')::jsonb ?& '{id, amount, boleto_url, boleto_barcode, boleto_expiration_date, boleto_expiration_day_month, payment_method, confirmed_at, fmt_confirmed_at, refused_at, fmt_refused_at, chargedback_at, fmt_chargedback_at, refunded_at, fmt_refunded_at, next_charge_at, fmt_next_charge_at, card_last_digits, card_brand, created_at, fmt_created_at}',
+            (_result->'payment')::jsonb ?& '{id, amount, boleto_url, boleto_barcode, boleto_expiration_date, boleto_expiration_day_month, payment_method, confirmed_at, fmt_confirmed_at, refused_at, fmt_refused_at, chargedback_at, fmt_chargedback_at, refunded_at, fmt_refunded_at, next_charge_at, fmt_next_charge_at, card_last_digits, card_brand, created_at, fmt_created_at, external_id}',
             'check payment structure keys'
         );
 
@@ -57,7 +57,7 @@ BEGIN;
         );
 
         return next ok(
-            (_result->'reward')::jsonb ?& '{id, title, minimum_value, deliver_at, fmt_deliver_at, deliver_at_period}',
+            (_result->'reward')::jsonb ?& '{id, title, minimum_value, deliver_at, fmt_deliver_at, deliver_at_period, external_id}',
             'check reward structure keys'
         );
 
@@ -72,7 +72,7 @@ BEGIN;
         );
 
         return next ok(
-            (_result->'project_owner')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at}',
+            (_result->'project_owner')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at, external_id}',
             'check project_owner structure keys'
         );
 
