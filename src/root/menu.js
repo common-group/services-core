@@ -41,7 +41,7 @@ const menu = {
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
                         args.menuShort ? '' : m('div#menu-components', [
-                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/start?ref=ctrse_header\']', { config: m.route }, 'Comece seu projeto'),
+                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'https://crowdfunding.catarse.me/comece\']', 'Comece seu projeto'),
                             m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { config: m.route }, 'Explore'),
                             m.component(menuSearch)
                         ])
