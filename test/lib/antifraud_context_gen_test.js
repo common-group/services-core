@@ -413,6 +413,7 @@ test('test genAFMetadata', t => {
             ip: '127.0.0.1',
             platform: 'web',
             register: genAFRegister(ctx),
+            billing: genAFBilling(ctx),
             buyer: genAFBuyer(ctx),
             shipping: genAFShipping(ctx),
             shopping_cart: [genAFShoppingCart(ctx)],
