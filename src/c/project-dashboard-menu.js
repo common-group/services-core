@@ -56,7 +56,7 @@ const projectDashboardMenu = {
             editLinksToggle.toggle(false);
         }
 
-        if (args.hidePublish || projectVM.isSubscription(args.project())) {
+        if (args.hidePublish) {
             showPublish.toggle(false);
         }
 
