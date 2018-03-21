@@ -11,13 +11,13 @@ const {commonPayment, commonSubscriptionUpgrade, commonPaymentInfo, commonCredit
 const sendPaymentRequest = data => commonPayment.postWithToken(
     {data: _.extend({}, data, {payment_id: paymentInfoId()})},
     null,
-    {'X-forwarded-For': '127.0.0.1'}
+    (h.isDevEnv() ? {'X-forwarded-For': '127.0.0.1'} : {})
 );
 
 const sendSubscriptionUpgrade = data => commonSubscriptionUpgrade.postWithToken(
     {data},
     null,
-    {'X-forwarded-For': '127.0.0.1'}
+    (h.isDevEnv() ? {'X-forwarded-For': '127.0.0.1'} : {})
 );
 
 const saveCreditCard = creditCardHash => commonCreditCard.postWithToken(
@@ -68,9 +68,8 @@ const displayError = (fields) => (data) => {
 };
 
 const paymentInfo = (paymentId) => {
-    return commonPaymentInfo.postWithToken({id: paymentId}, null, {
-        'X-forwarded-For': '127.0.0.1'
-    });
+    return commonPaymentInfo.postWithToken({id: paymentId}, null, 
+    (h.isDevEnv() ? {'X-forwarded-For': '127.0.0.1'} : {}));
 };
 
 const creditCardInfo = (creditCard) => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());

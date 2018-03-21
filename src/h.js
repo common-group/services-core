@@ -282,6 +282,13 @@ const
         id: 'eq'
     }),
 
+    isDevEnv = (): ?boolean => {
+        const root = document.getElementById('catarse_bootstrap'),
+            data = root && root.getAttribute('data-environment');
+
+        return (data && data == 'development');
+    },
+
     getCurrentProject = (): ?Object => {
         if (_dataCache.currentProject) { return _dataCache.currentProject; }
 
@@ -666,7 +673,7 @@ const
     },
 
     applyMonetaryMask = (number: number): string => {
-        let onlyNumbers = String(number).replace(/[^0-9]|[.,]/g, ''),
+        let onlyNumbers = String(number).replace(/[^0-9]|[.]/g, ''),
             integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
             decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
 
@@ -1007,5 +1014,6 @@ export default {
     rootUrl,
     redactor,
     setCsrfToken,
-    userSignedIn
+    userSignedIn,
+    isDevEnv
 };
