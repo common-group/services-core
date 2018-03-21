@@ -60,6 +60,7 @@ BEGIN;
                 returning * into _another_user_sub;
 
             set local role platform_user;
+            set local "request.header.x-forwarded-for" to '127.0.0.1';
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
 
             -- cant change deleted subscription
