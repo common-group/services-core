@@ -111,10 +111,10 @@ const footer = {
                                                 m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']',
                                                   ' Responsabilidades e Segurança'
                                                  ),                                                
-                                                m('a.link-footer[href=\'/pt/terms-of-use\']',
+                                                m('a.link-footer[href=\'https://crowdfunding.catarse.me/legal/termos-de-uso\'][target="_BLANK"]',
                                                   ' Termos de uso'
                                                  ),
-                                                m('a.link-footer[href=\'/pt/privacy-policy\']',
+                                                m('a.link-footer[href=\'https://crowdfunding.catarse.me/legal/politica-de-privacidade\'][target="_BLANK"]',
                                                   ' Política de privacidade'
                                                  )
                                             ]
