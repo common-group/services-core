@@ -23,7 +23,7 @@ const projectEditStart = {
                                     I18n.t('description', I18nScope({ name: args.project().user.name || '' }))
                                 ),
                                 m('.card.card-terciary.u-radius',
-                                    m(`iframe[allowfullscreen="true"][frameborder="0"][scrolling="no"][mozallowfullscreen="true"][webkitallowfullscreen="true"][src=${I18n.t('video_src', I18nScope())}]`)
+                                    m(`iframe[allowfullscreen="true"][width="630"][height="383"][frameborder="0"][scrolling="no"][mozallowfullscreen="true"][webkitallowfullscreen="true"][src=${I18n.t('video_src', I18nScope())}]`)
                                 )
                             ]
                         )
