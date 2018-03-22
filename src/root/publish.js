@@ -144,9 +144,6 @@ const publish = {
                             m('.u-text-center.fontsize-smaller', [
                                 'Ao publicar o seu projeto, você está aceitando os ',
                                 m('a.alt-link[href=\'/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'),
-                                (project.mode === 'sub' ?
-                                m('a.alt-link[href=\'https://suporte.catarse.me/hc/pt-br/articles/115005588243\'][target=\'_blank\']', ', Regras do Catarse Assinaturas')
-                                : ''),
                                 ' e ',
                                 m('a.alt-link[href=\'/privacy-policy\'][target=\'_blank\']', 'Politica de Privacidade')
                             ])
