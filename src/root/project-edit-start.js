@@ -23,9 +23,7 @@ const projectEditStart = {
                                     I18n.t('description', I18nScope({ name: args.project().user.name || '' }))
                                 ),
                                 m('.card.card-terciary.u-radius',
-                                    m('.w-embed.w-video', { style: { 'padding-top': '56.17021276595745%' } },
-                                        m(`iframe.embedly-embed[allowfullscreen="true"][frameborder="0"][scrolling="no"][src=${I18n.t('video_src', I18nScope())}]`)
-                                    )
+                                    m(`iframe[allowfullscreen="true"][frameborder="0"][scrolling="no"][mozallowfullscreen="true"][webkitallowfullscreen="true"][src=${I18n.t('video_src', I18nScope())}]`)
                                 )
                             ]
                         )
