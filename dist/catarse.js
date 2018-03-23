@@ -12701,7 +12701,7 @@ var paymentCreditCard = {
             onchange: m.withAttr('checked', ctrl.creditCard.save),
             checked: ctrl.creditCard.save()
         }), m('label.w-form-label[for="payment_save_card"]', I18n$1.t('credit_card.save_card', ctrl.scope()))])]), m('.w-row', [m('.w-col.w-col-8.w-col-push-2', [!_$1.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '', ctrl.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: ctrl.isSubscriptionEdit() && !args.isReactivation() ? I18n$1.t('subscription_edit', ctrl.scope()) : I18n$1.t('credit_card.finish_payment', ctrl.scope())
-        }), m('.fontsize-smallest.u-text-center.u-marginbottom-30', m.trust(I18n$1.t(args.isSubscription ? 'credit_card.terms_of_use_agreement_sub' : 'credit_card.terms_of_use_agreement', ctrl.scope())))])]), ctrl.showSubscriptionModal() ? m(subscriptionEditModal, {
+        }), m('.fontsize-smallest.u-text-center.u-marginbottom-30', m.trust(I18n$1.t('credit_card.terms_of_use_agreement', ctrl.scope())))])]), ctrl.showSubscriptionModal() ? m(subscriptionEditModal, {
             args: args,
             vm: ctrl.vm,
             showModal: ctrl.showSubscriptionModal,
