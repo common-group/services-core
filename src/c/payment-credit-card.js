@@ -432,7 +432,7 @@ const paymentCreditCard = {
                         }),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30',
                             m.trust(
-                                I18n.t(args.isSubscription ? 'credit_card.terms_of_use_agreement_sub' : 'credit_card.terms_of_use_agreement', ctrl.scope())
+                                I18n.t('credit_card.terms_of_use_agreement', ctrl.scope())
                             )
                         )
                     ])
