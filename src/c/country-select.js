@@ -17,7 +17,13 @@ const countrySelect = {
             args.international(parseInt(countryID) !== defaultCountryID);
         };
 
-        countriesLoader.load().then(countryData => countries(_.sortBy(countryData, 'name_en')));
+        countriesLoader.load().then(countryData => {
+            countries(_.sortBy(countryData, 'name_en'));
+            if (args.addVM) {
+                args.addVM.countries(countries());
+            }
+        });
+
         return {
             changeCountry,
             defaultCountryID,

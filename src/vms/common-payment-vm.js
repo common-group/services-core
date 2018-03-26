@@ -138,7 +138,7 @@ const waitForSavedCreditCard = promise => creditCardId => {
         }
 
         return promise.resolve({creditCardId});
-    }).catch(() => promise.reject({message: 'Really couldnt save your card'}));
+    }).catch((err) => promise.reject({message: err.message}));
 
 
     return promise;
@@ -152,10 +152,9 @@ const processCreditCard = (cardHash, fields) => {
         .catch(p.reject);
 
     return p.promise;
-
 };
 
-const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
+const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) => {
     if (!fields) {
         return false;
     }
@@ -172,8 +171,8 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
     const address = customer.address();
     const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
     const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
-    const addressState = _.findWhere(addressVM.states(), {id: address.state_id}) || {};
-    const addressCountry = _.findWhere(addressVM.countries(), {id: address.country_id}) || {};
+    const addressState = _.findWhere(addVM.states(), {id: address.state_id}) || {};
+    const addressCountry = _.findWhere(addVM.countries(), {id: address.country_id}) || {};
 
     card.generateHash(cardHash => {
         const payload = {
@@ -184,6 +183,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
             amount: commonData.amount,
             payment_method: 'credit_card',
             credit_card_owner_document: fields.creditCardFields.cardOwnerDocument(),
+            is_international: address.country_id !== addVM.defaultCountryID,
             customer: {
                 name: customer.completeName(),
                 document_number: customer.ownerDocument(),
@@ -192,8 +192,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData) => {
                     street: address.address_street,
                     street_number: address.address_number,
                     zipcode: address.address_zip_code,
-                    //TOdO: remove hard-coded country when international support is added on the back-end
-                    country: 'Brasil',
+                    country: addressCountry.name_en,
                     state: addressState.acronym,
                     city: address.address_city,
                     complementary: address.address_complement

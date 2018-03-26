@@ -31,7 +31,7 @@ const paymentCreditCard = {
 
         const sendSubscriptionPayment = (selectedCreditCard, vm, commonData) => {
             if (!isSubscriptionEdit()) {
-                commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData);
+                commonPaymentVM.sendCreditCardPayment(selectedCreditCard, vm, commonData, args.addressVM);
 
                 return false;
             }
@@ -46,8 +46,9 @@ const paymentCreditCard = {
 
             commonPaymentVM.sendCreditCardPayment(
                 selectedCreditCard,
-                vm, 
-                data
+                vm,
+                data,
+                args.addressVM
             );
 
             return false;

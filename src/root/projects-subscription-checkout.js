@@ -60,7 +60,7 @@ const projectsSubscriptionCheckout = {
         }
 
         const valueParam = m.route.param('contribution_value');
-        const rewardIdParam = m.route.param('reward_id'); 
+        const rewardIdParam = m.route.param('reward_id');
 
         if (valueParam) {
             value = rewardVM.contributionValue(Number(valueParam));
@@ -318,11 +318,11 @@ const projectsSubscriptionCheckout = {
 
                                 m('.card.card-terciary.u-radius.u-marginbottom-40',
                                     m(addressForm, {
+                                        addVM,
                                         addressFields: addVM.fields,
                                         fields: m.prop(ctrl.vm.fields),
-                                        international: false,
-                                        hideNationality: true,
-                                        disableInternational: true
+                                        international: addVM.international,
+                                        hideNationality: true
                                     })
                                 )
                             ])
@@ -338,6 +338,7 @@ const projectsSubscriptionCheckout = {
                             )
                         ) : ''),
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
+                            addressVM: addVM,
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
                             isSubscriptionEdit: ctrl.isEdit,
