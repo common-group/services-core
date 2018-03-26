@@ -163,6 +163,7 @@ const addressForm = {
                     args.disableInternational ? '' : m(countrySelect, {
                         countryName: args.countryName,
                         fields,
+                        addVM: args.addVM,
                         international,
                         defaultCountryID,
                         defaultForeignCountryID
