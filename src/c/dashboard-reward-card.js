@@ -55,7 +55,7 @@ const dashboardRewardCard = {
             toggleLimit,
             saveReward,
             showLimited,
-            limitError,
+            limitError
         };
     },
     view(ctrl, args) {
@@ -79,23 +79,28 @@ const dashboardRewardCard = {
                     (rewardVM.canEdit(reward, project.state, args.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
-                                onclick: () => {
-                                    reward.edit.toggle();
-                                }
-                            },
+                                    onclick: () => {
+                                        reward.edit.toggle();
+                                    }
+                                },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                             )
                         ) : '')
                 ]),
-                m('.fontsize-smaller.u-marginbottom-20.fontweight-semibold',
-                    I18n.t(
-                        isSubscription ?
-                        'paid_subscribers' :
-                        'paid_contributors', I18nScope({
-                            count: reward.paid_count()
-                        })
-                    )
-                ),
+                m('.u-marginbottom-20', [
+                    m('.fontsize-smaller.fontweight-semibold',
+                        I18n.t(
+                            isSubscription ?
+                            'paid_subscribers' :
+                            'paid_contributors', I18nScope({
+                                count: reward.paid_count()
+                            })
+                        )
+                    ),
+                    m('.fontsize-smaller.fontcolor-secondary', I18n.t('index.contributions_to_confirm', I18nScope({
+                        count: reward.waiting_payment_count()
+                    })))
+                ]),
                 m('.fontsize-small.fontweight-semibold',
                     reward.title()
                 ),
@@ -139,10 +144,10 @@ const dashboardRewardCard = {
                 ]),
                 m(`div${ctrl.showLimited() ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
-                        style: {
-                            display: 'block'
-                        }
-                    },
+                            style: {
+                                display: 'block'
+                            }
+                        },
                         m('.w-form', [
                             [
                                 m('.w-row', [
@@ -173,8 +178,8 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: ctrl.toggleShowLimit
-                                        },
+                                                onclick: ctrl.toggleShowLimit
+                                            },
                                             'Cancelar'
                                         )
                                     ),
