@@ -192,7 +192,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
                     street: address.address_street,
                     street_number: address.address_number,
                     zipcode: address.address_zip_code,
-                    country: addressCountry.name_en,
+                    country: addressCountry.name,
                     state: addressState.acronym,
                     city: address.address_city,
                     complementary: address.address_complement
