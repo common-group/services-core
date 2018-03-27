@@ -52,7 +52,7 @@ const projectInsightsSub = {
         const project = args.project,
             subscribersDetails = args.subscribersDetails,
             balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
-        const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : '--';
+        const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : null;
 
         return m('.project-insights', !args.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -145,7 +145,7 @@ const projectInsightsSub = {
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                    `R$${h.formatNumber( averageRevenue, 2, 3 )}`
+                                  `R$${averageRevenue ? `${h.formatNumber( averageRevenue, 2, 3 )}` : '--'}`
                                 )
 
                             ]),
