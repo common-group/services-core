@@ -6472,7 +6472,7 @@ var projectInsightsSub = {
         var project = args.project,
             subscribersDetails = args.subscribersDetails,
             balanceData = ctrl.balanceLoader() && !_$1.isNull(_$1.first(ctrl.balanceLoader())) ? _$1.first(ctrl.balanceLoader()) : null;
-        var averageRevenue = subscribersDetails.total_subscriptions > 0 ? subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions : '--';
+        var averageRevenue = subscribersDetails.total_subscriptions > 0 ? subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions : null;
 
         return m('.project-insights', !args.l() ? [m('.w-section.section-product.' + project.mode), project.is_owner_or_admin ? m.component(projectDashboardMenu, {
             project: m.prop(project)
@@ -6492,7 +6492,7 @@ var projectInsightsSub = {
             info: ctrl.weekTransitions().length,
             newCount: ctrl.weekTransitions().length,
             oldCount: ctrl.lastWeekTransitions().length
-        })])]), m('.u-marginbottom-60', [m('.fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30', 'Receita'), m('.flex-row.u-marginbottom-40.u-text-center-small-only', [m('.flex-column.card.u-radius.u-marginbottom-10', [m('div', 'Receita média por assinante'), m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + moment().format('DD/MM/YYYY')), m('.fontsize-largest.fontweight-semibold', 'R$' + h.formatNumber(averageRevenue, 2, 3))]), m(insightsInfoBox, {
+        })])]), m('.u-marginbottom-60', [m('.fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30', 'Receita'), m('.flex-row.u-marginbottom-40.u-text-center-small-only', [m('.flex-column.card.u-radius.u-marginbottom-10', [m('div', 'Receita média por assinante'), m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + moment().format('DD/MM/YYYY')), m('.fontsize-largest.fontweight-semibold', 'R$' + (averageRevenue ? '' + h.formatNumber(averageRevenue, 2, 3) : '--'))]), m(insightsInfoBox, {
             label: 'Nova receita',
             info: 'R$' + weekSum,
             newCount: weekSum,
@@ -15101,7 +15101,7 @@ var userBalance = {
         return m('.w-section.section.user-balance-section', [ctrl.displayModal() ? m.component(modalBox, {
             displayModal: ctrl.displayModal,
             content: balanceRequestModalC
-        }) : '', m('.w-container', [m('.w-row', [m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m('.fontsize-larger', [I18n.t('totals', I18nScope$55()), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount, 2, 3))])]), m('.card.card-terciary.u-radius.w-col.w-col-4', [m('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 || balance.in_period_yet ? 'btn-inactive' : '') + '"][href="javascript:void(0);"]', {
+        }) : '', m('.w-container', [m('.w-row', [m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [m('.fontsize-larger', [I18n.t('totals', I18nScope$55()), m('span.text-success', 'R$ ' + h.formatNumber(balance.amount || 0, 2, 3))])]), m('.card.card-terciary.u-radius.w-col.w-col-4', [m('a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ' + (balance.amount <= 0 || balance.in_period_yet ? 'btn-inactive' : '') + '"][href="javascript:void(0);"]', {
             onclick: balance.amount > 0 && (_$1.isNull(balance.in_period_yet) || balance.in_period_yet === false) ? ctrl.displayModal.toggle : 'javascript:void(0);'
         }, I18n.t('withdraw_cta', I18nScope$55())), m('.fontsize-smaller.fontweight-semibold', balance.last_transfer_amount && balance.in_period_yet ? I18n.t('last_withdraw_msg', I18nScope$55({
             amount: 'R$ ' + h.formatNumber(balance.last_transfer_amount, 2, 3),
