@@ -2,6 +2,8 @@ import m from 'mithril';
 import _ from 'underscore';
 import I18n from 'i18n-js';
 import moment from 'moment';
+import {catarse} from '../api'
+import models from '../models';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import rewardVM from '../vms/reward-vm';
@@ -31,6 +33,7 @@ const projectsSubscriptionCheckout = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser(),
             oldSubscription = m.prop({}),
+            countriesLoader = catarse.loader(models.country.getPageOptions()),
             error = m.prop();
 
         const subscriptionId = m.prop(m.route.param('subscription_id'));
@@ -121,7 +124,13 @@ const projectsSubscriptionCheckout = {
             addVM(addressVM({
                 data: vm.fields.address()
             }));
+            countriesLoader
+                .load()
+                .then(countryData => {
+                    addVM().countries(_.sortBy(countryData, 'name_en'));
+                });
         });
+
 
         projectVM.getCurrentProject();
 
