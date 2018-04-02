@@ -9881,8 +9881,8 @@ var sendCreditCardPayment = function sendCreditCardPayment(selectedCreditCard, f
 
     var customer = fields.fields;
     var address = customer.address();
-    var phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
-    var phoneNumber = address.phone_number.substr(5, address.phone_number.length);
+    var phoneDdd = address.phone_number ? address.phone_number.match(/\(([^)]*)\)/)[1] : null;
+    var phoneNumber = address.phone_number ? address.phone_number.substr(5, address.phone_number.length) : null;
     var addressState = _.findWhere(addVM.states(), { id: address.state_id }) || {};
     var addressCountry = _.findWhere(addVM.countries(), { id: address.country_id }) || {};
 
@@ -13216,7 +13216,7 @@ var projectsSubscriptionCheckout = {
             onchange: m.withAttr('value', ctrl.vm.fields.completeName),
             value: ctrl.vm.fields.completeName(),
             placeholder: 'Nome Completo'
-        }), ctrl.fieldHasError('completeName')]), m('.w-col.w-col-5', [m('label.field-label.fontweight-semibold[for=\'document\']', I18n$1.t('fields.owner_document', ctrl.scope())), m('input.positive.w-input.text-field[id=\'document\']', {
+        }), ctrl.fieldHasError('completeName')]), m('.w-col.w-col-5', addVM.international() ? '' : [m('label.field-label.fontweight-semibold[for=\'document\']', I18n$1.t('fields.owner_document', ctrl.scope())), m('input.positive.w-input.text-field[id=\'document\']', {
             onfocus: ctrl.vm.resetFieldError('ownerDocument'),
             class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
             type: 'tel',
@@ -13251,7 +13251,7 @@ var projectsSubscriptionCheckout = {
             oldSubscription: ctrl.oldSubscription,
             value: ctrl.value,
             hideSave: true
-        }) : '']), m('.w-col.w-col-4', [m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', I18n$1.t('selected_reward.value', ctrl.scope())), m('.w-clearfix', [m('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), m('a.alt-link.fontsize-smaller.u-right[href="/projects/' + projectVM.currentProject().project_id + '/subscriptions/start?' + (ctrl.reward().id ? 'reward_id=' + ctrl.reward().id : '') + (ctrl.isEdit() ? '&subscription_id=' + ctrl.subscriptionId() : '') + (ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : '') + '"]', { config: m.route }, 'Editar')]), m('.divider.u-marginbottom-10.u-margintop-10'), m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', 'Plano de pagamento'), m('.fontsize-smaller', [m('span.fontweight-semibold', [m('span.fa.fa-money.text-success'), ' Cobrança hoje: ']), ctrl.isEdit() && !ctrl.isReactivation() ? ' ' + I18n$1.t('invoice_none', I18nScope$44()) : 'R$ ' + formatedValue]), m('.fontsize-smaller.u-marginbottom-10', [m('span.fontweight-semibold', [m('span.fa.fa-calendar-o.text-success'), ' Próxima cobrança: ']), ctrl.isEdit() && !ctrl.isReactivation() ? ctrl.oldSubscription().next_charge_at ? h.momentify(ctrl.oldSubscription().next_charge_at) : h.momentify(Date.now()) : h.lastDayOfNextMonth()]), m('.divider.u-marginbottom-10.u-margintop-10'), m('.back-payment-info-reward', [m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.reward', ctrl.scope())), m('.fontsize-smallest.fontweight-semibold', ctrl.reward().title), m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+        }) : '']), m('.w-col.w-col-4', [m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', I18n$1.t('selected_reward.value', ctrl.scope())), m('.w-clearfix', [m('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), m('a.alt-link.fontsize-smaller.u-right[href="/projects/' + projectVM.currentProject().project_id + '/subscriptions/start?' + (ctrl.reward().id ? 'reward_id=' + ctrl.reward().id : '') + (ctrl.isEdit() ? '&subscription_id=' + ctrl.subscriptionId() : '') + (ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : '') + '"]', { config: m.route }, I18n$1.t('selected_reward.edit', ctrl.scope()))]), m('.divider.u-marginbottom-10.u-margintop-10'), m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.payment_plan', ctrl.scope())), m('.fontsize-smaller', [m('span.fontweight-semibold', [m('span.fa.fa-money.text-success'), ' ' + I18n$1.t('selected_reward.charged_today', ctrl.scope()) + ' ']), ctrl.isEdit() && !ctrl.isReactivation() ? ' ' + I18n$1.t('invoice_none', I18nScope$44()) : 'R$ ' + formatedValue]), m('.fontsize-smaller.u-marginbottom-10', [m('span.fontweight-semibold', [m('span.fa.fa-calendar-o.text-success'), ' ' + I18n$1.t('selected_reward.next_charge', ctrl.scope()) + ' ']), ctrl.isEdit() && !ctrl.isReactivation() ? ctrl.oldSubscription().next_charge_at ? h.momentify(ctrl.oldSubscription().next_charge_at) : h.momentify(Date.now()) : h.lastDayOfNextMonth()]), m('.divider.u-marginbottom-10.u-margintop-10'), m('.back-payment-info-reward', [m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', I18n$1.t('selected_reward.reward', ctrl.scope())), m('.fontsize-smallest.fontweight-semibold', ctrl.reward().title), m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
             class: ctrl.isLongDescription(ctrl.reward()) ? ctrl.toggleDescription() ? 'extended' : '' : 'extended'
         }, ctrl.reward().description ? ctrl.reward().description : m.trust(I18n$1.t('selected_reward.review_without_reward_html', ctrl.scope(_$1.extend({
             value: Number(ctrl.value).toFixed()
