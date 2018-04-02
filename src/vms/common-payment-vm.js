@@ -171,7 +171,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
     const address = customer.address();
     const phoneDdd = address.phone_number ? address.phone_number.match(/\(([^)]*)\)/)[1] : null;
     const phoneNumber = address.phone_number ? address.phone_number.substr(5, address.phone_number.length) : null;
-    const addressState = _.findWhere(addVM.states(), {id: address.state_id}) || {};
+    const addressState = address.state_id ? _.findWhere(addVM.states(), {id: address.state_id}) : address.address_state;
     const addressCountry = _.findWhere(addVM.countries(), {id: address.country_id}) || {};
 
     card.generateHash(cardHash => {
@@ -193,7 +193,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
                     street_number: address.address_number,
                     zipcode: address.address_zip_code,
                     country: addressCountry.name,
-                    state: addressState.acronym,
+                    state: addressState.acronym ? addressState.acronym : addressState,
                     city: address.address_city,
                     complementary: address.address_complement
                 },
