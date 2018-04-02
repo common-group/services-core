@@ -206,6 +206,7 @@ test('test genTransactionData with card_hash', t => {
         project: {
             id: '12345',
             mode: 'aon',
+            permalink: 'test_project',
             data: {
                 name: 'foo project',
                 expires_at: '2016-09-09 12:30:11'
@@ -252,6 +253,7 @@ test('test genTransactionData with card_hash', t => {
             card_hash: 'card_hash_123',
             postback_url: undefined,
             async: false,
+            soft_descriptor: 'test_project',
             customer: {
                 name: 'Lorem name',
                 email: 'lorem@email.com',
