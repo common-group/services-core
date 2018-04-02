@@ -308,7 +308,7 @@ const projectsSubscriptionCheckout = {
                                             }),
                                             ctrl.fieldHasError('completeName')
                                         ]),
-                                        m('.w-col.w-col-5', [
+                                        m('.w-col.w-col-5', addVM.international() ? '' : [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
                                                 I18n.t('fields.owner_document', ctrl.scope())
                                             ),
@@ -374,21 +374,20 @@ const projectsSubscriptionCheckout = {
                                     `R$ ${formatedValue}`
                                 ),
                                 m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : ''}"]`,
-                                    {config: m.route}
-                                    ,
-                                    'Editar'
+                                    {config: m.route},
+                                    I18n.t('selected_reward.edit', ctrl.scope())
                                 )
                             ]),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                'Plano de pagamento'
+                                I18n.t('selected_reward.payment_plan', ctrl.scope())
                             ),
                             m('.fontsize-smaller',
                                 [
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-money.text-success'),
-                                            ' Cobrança hoje: '
+                                            ` ${I18n.t('selected_reward.charged_today', ctrl.scope())} ` 
                                         ]
                                     ),
                                     ctrl.isEdit() && !ctrl.isReactivation()
@@ -401,7 +400,7 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-calendar-o.text-success'),
-                                            ' Próxima cobrança: '
+                                            ` ${I18n.t('selected_reward.next_charge', ctrl.scope())} `
                                         ]
                                     ),
                                     ctrl.isEdit() && !ctrl.isReactivation()
