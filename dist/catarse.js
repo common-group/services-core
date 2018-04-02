@@ -9883,7 +9883,7 @@ var sendCreditCardPayment = function sendCreditCardPayment(selectedCreditCard, f
     var address = customer.address();
     var phoneDdd = address.phone_number ? address.phone_number.match(/\(([^)]*)\)/)[1] : null;
     var phoneNumber = address.phone_number ? address.phone_number.substr(5, address.phone_number.length) : null;
-    var addressState = _.findWhere(addVM.states(), { id: address.state_id }) || {};
+    var addressState = address.state_id ? _.findWhere(addVM.states(), { id: address.state_id }) : address.address_state;
     var addressCountry = _.findWhere(addVM.countries(), { id: address.country_id }) || {};
 
     card.generateHash(function (cardHash) {
@@ -9905,7 +9905,7 @@ var sendCreditCardPayment = function sendCreditCardPayment(selectedCreditCard, f
                     street_number: address.address_number,
                     zipcode: address.address_zip_code,
                     country: addressCountry.name,
-                    state: addressState.acronym,
+                    state: addressState.acronym ? addressState.acronym : addressState,
                     city: address.address_city,
                     complementary: address.address_complement
                 },
