@@ -2,13 +2,43 @@ BEGIN;
     -- import __json_data_payment from helpers
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(48);
+    select plan(50);
     -- check function signature
     SELECT function_returns(
         'payment_service', '_serialize_subscription_basic_data', ARRAY['json'], 'json' 
     );
 
     prepare generate_data as select * from payment_service._serialize_subscription_basic_data(__json_data_payment($1::json));
+
+    create or replace function test_serialize_with_foreign_data()
+    returns setof text language plpgsql as $$
+        declare
+            _result json;
+            _expected json;
+        begin
+            -- test with valid params when foreign
+            _expected := __json_data_payment(json_build_object(
+                    'is_international', true,
+                    'payment_method', 'credit_card',
+                    'card_hash', 'some_card_hash',
+                    'customer_document_number', '',
+                    'credit_card_owner_document', '',
+                    'customer_address_street_number', '',
+                    'customer_address_neighborhood', '',
+                    'customer_address_zipcode', '',
+                    'customer_phone_ddi', '',
+                    'customer_phone_ddd', '',
+                    'customer_phone_number', ''
+            ));
+
+        -- check serialized structure
+        _result := payment_service._serialize_payment_basic_data(_expected);
+        
+        return next is(_result ->> 'amount', _expected ->> 'amount');
+        return next is(_result -> 'customer' ->> 'document_number', _expected -> 'customer'->>'document_number');
+        end;
+    $$;
+    select * from test_serialize_with_foreign_data();
 
     create or replace function test_serialize_with_default_data()
     returns setof text language plpgsql as $$

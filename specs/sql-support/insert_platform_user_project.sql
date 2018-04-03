@@ -41,9 +41,9 @@ insert into community_service.users(platform_id, id, email, password, key, data)
 (__seed_platform_id(), __seed_third_user_id(), 'test_community_user_03@test.com', crypt('123456', gen_salt('bf')), '60667ced-8fd4-4ad1-a761-d1ff7009d44b', json_build_object('name', 'test community user 03')::jsonb);
 
 -- add project
-insert into project_service.projects(id, platform_id, user_id, name, mode, permalink, data) 
-    values (__seed_project_id(), __seed_platform_id(), __seed_second_user_id(), 'test project 01', 'sub', 'test_project', json_build_object('name', 'test project 01')),
-    (__seed_aon_project_id(), __seed_platform_id(), __seed_second_user_id(), 'test project 02', 'aon', 'test_project_aon', json_build_object('name', 'test project aon'));
+insert into project_service.projects(id, platform_id, user_id, status, name, mode, permalink, data) 
+    values (__seed_project_id(), __seed_platform_id(), __seed_second_user_id(), 'online', 'test project 01', 'sub', 'test_project', json_build_object('name', 'test project 01')),
+    (__seed_aon_project_id(), __seed_platform_id(), __seed_second_user_id(), 'online' ,'test project 02', 'aon', 'test_project_aon', json_build_object('name', 'test project aon'));
 
 -- add reward to project
 insert into project_service.rewards(id, project_id, platform_id, data) 

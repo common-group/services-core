@@ -1,7 +1,7 @@
 BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
 
-    SELECT plan(8);
+    SELECT plan(10);
 
     SELECT function_returns('payment_service', 'subscriptions_charge', '{}'::text[], 'json');
 
@@ -66,6 +66,25 @@ BEGIN;
             return next is(_count_expected, 1, 'should not generate more one payment to in time subscription');
 
             -- run again should not charge the same subscription
+            _result := payment_service.subscriptions_charge();
+            return next is((_result ->> 'total_affected')::integer, 0);
+            return next is(((_result ->> 'affected_ids')::json->>0)::uuid, null::uuid);
+
+            -- generate another subscription to be charged
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('active', (now() - '1 month + 4 days'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
+                returning * into _active_subscription;
+            insert into payment_service.catalog_payments
+                (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+                values ('paid', (now() - '1 month + 4 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _active_subscription.id);
+
+            -- move project to rejected
+            update project_service.projects
+                set status = 'rejected'
+                where id = __seed_project_id();
+
+            -- run again should not charge the new subscription for rejected project
             _result := payment_service.subscriptions_charge();
             return next is((_result ->> 'total_affected')::integer, 0);
             return next is(((_result ->> 'affected_ids')::json->>0)::uuid, null::uuid);
