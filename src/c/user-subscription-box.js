@@ -177,10 +177,10 @@ const userSubscriptionBox = {
                                         ` Sua assinatura será cancelada no dia ${h.momentify( subscription.next_charge_at, 'DD/MM/YYYY' )}. Até lá, ela ainda será considerada ativa.`
                                     ])
                                 ) : (subscription.status === 'active' ? [
-                                    m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
+                                    subscription.payment_status !== 'pending' ? m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
                                         {href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : ''}&subscription_id=${subscription.id}&subscription_status=${subscription.status}`},
                                         'Editar assinatura'
-                                    ),
+                                    ) : '',
                                     subscription.payment_status === 'pending'
                                     && subscription.boleto_url
                                     && subscription.boleto_expiration_date ?
