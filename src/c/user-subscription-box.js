@@ -177,19 +177,26 @@ const userSubscriptionBox = {
                                         ` Sua assinatura será cancelada no dia ${h.momentify( subscription.next_charge_at, 'DD/MM/YYYY' )}. Até lá, ela ainda será considerada ativa.`
                                     ])
                                 ) : (subscription.status === 'active' ? [
-                                    m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
+                                    subscription.payment_status !== 'pending' ? m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
                                         {href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : ''}&subscription_id=${subscription.id}&subscription_status=${subscription.status}`},
                                         'Editar assinatura'
-                                    ),
+                                    ) : '',
                                     subscription.payment_status === 'pending'
                                     && subscription.boleto_url
                                     && subscription.boleto_expiration_date ?
                                         [
-                                            m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                            moment(subscription.boleto_expiration_date).isBefore(Date.now())
+                                            ? m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                                 m('span.fa.fa-exclamation-triangle'),
-                                                ` O boleto de sua assinatura vence dia ${h.momentify(subscription.boleto_expiration_date)}` 
-                                            ]),
-                                            m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto')
+                                                    ` O boleto de sua assinatura venceu dia ${h.momentify(subscription.boleto_expiration_date)}` 
+                                            ])
+                                            : [
+                                                m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                                    m('span.fa.fa-exclamation-triangle'),
+                                                        ` O boleto de sua assinatura vence dia ${h.momentify(subscription.boleto_expiration_date)}` 
+                                                    ]),
+                                                    m(`a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto')
+                                            ]
                                         ] : '',
                                     m("button.btn-link.fontsize-smallest.link-hidden-light", {
                                             onclick: () => {
