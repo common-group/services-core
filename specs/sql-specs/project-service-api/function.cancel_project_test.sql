@@ -4,7 +4,7 @@ begin;
     \i /specs/sql-support/payment_json_build_helpers.sql
     \i /specs/sql-support/clean_sets_helpers.sql
 
-    select plan(6);
+    select plan(7);
 
     select function_returns('project_service_api', 'cancel_project', '{uuid}', 'json', 'should be defined');
 
@@ -67,6 +67,13 @@ begin;
             into _subscription;
 
             return next is(_subscription.status, 'canceled', 'subscription should be canceled');
+            return next is((
+                    select count(1) 
+                    from notification_service.notifications n
+                        join notification_service.notification_global_templates ngt on ngt.label = 'canceled_subscription' and ngt.id = n.notification_global_template_id
+                    where n.user_id = _subscription.user_id
+                        and (n.data->'relations'->>'subscription_id')::uuid = _subscription.id
+            )::integer, 0::integer, 'should not deliver canceled notification to subscriber when project is refused');
         end;
         $$;
     select test_cancel_project();
