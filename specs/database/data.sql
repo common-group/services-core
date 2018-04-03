@@ -18,7 +18,7 @@ insert into community_service.users(platform_id, id, email, password, key, data)
     values ('8187a11e-6fa5-4561-a5e5-83329236fbd6', 'd44378a2-3637-447c-9f57-dc20fff574db', 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f', json_build_object('name', 'test community user 01')::jsonb),
     ('8187a11e-6fa5-4561-a5e5-83329236fbd6', 'bb8f4478-df41-411c-8ed7-12c034044c0e', 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63', json_build_object('name', 'test community user 02')::jsonb);
 
-insert into project_service.projects(id, platform_id, user_id, name, mode, permalink, data) values ('52273d0a-1610-4f48-9239-e96e5861c3d3', '8187a11e-6fa5-4561-a5e5-83329236fbd6', 'bb8f4478-df41-411c-8ed7-12c034044c0e', 'test project 01', 'sub', 'test_project', json_build_object('name', 'test project 01'));
+insert into project_service.projects(id, platform_id, user_id, name, status, mode, permalink, data) values ('52273d0a-1610-4f48-9239-e96e5861c3d3', '8187a11e-6fa5-4561-a5e5-83329236fbd6', 'bb8f4478-df41-411c-8ed7-12c034044c0e', 'test project 01', 'online', 'sub', 'test_project', json_build_object('name', 'test project 01'));
 
 insert into project_service.rewards(id, project_id, platform_id, data)
 values ('c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d', '52273d0a-1610-4f48-9239-e96e5861c3d3', '8187a11e-6fa5-4561-a5e5-83329236fbd6', json_build_object('current_ip', '127.0.0.1',
