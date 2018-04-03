@@ -2,7 +2,7 @@ BEGIN;
     -- import __json_data_payment from helpers
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(37);
+    select plan(38);
     -- check function signature
     SELECT function_returns(
         'payment_service', '_serialize_payment_basic_data', ARRAY['json'], 'json' 
@@ -37,6 +37,7 @@ BEGIN;
 
         -- should generate basic data without validate required fields on foreign payment
         return next is(_result ->> 'amount', _expected ->> 'amount');
+        return next is(_result ->> 'is_international', _expected ->> 'is_international');
         return next is(_result -> 'customer' ->> 'document_number', _expected -> 'customer'->>'document_number');
 
     end;
