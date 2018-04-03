@@ -6,11 +6,11 @@ begin;
 
     select plan(7);
 
-    select function_returns('project_service_api', 'cancel_project', '{uuid}', 'json', 'should be defined');
+    select function_returns('project_service_api', 'finish_project', '{uuid}', 'json', 'should be defined');
 
-    prepare cancel_project as select * from project_service_api.cancel_project($1::uuid);
+    prepare finish_project as select * from project_service_api.finish_project($1::uuid);
 
-    create or replace function test_cancel_project()
+    create or replace function test_finish_project()
     returns setof text language plpgsql
     as $$
         declare
@@ -27,27 +27,27 @@ begin;
                 values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
                 returning * into _subscription;
 
-            -- test cancel project with anonymous
+            -- test finish project with anonymous
             set local role anonymous;
             set local "request.header.platform-code" to 'a28be766-bb36-4821-82ec-768d2634d78b';
 
             return next throws_matching(
-                'EXECUTE cancel_project('''||_project.id||''')',
+                'EXECUTE finish_project('''||_project.id||''')',
                 'insufficient_privilege',
-                'anon cant call cancel_project'
+                'anon cant call finish_project'
             );
             perform clean_sets();
 
-            -- test cancel project with scoped user
+            -- test finish project with scoped user
             set local role scoped_user;
             set local "request.header.x-forwarded-for" to '127.0.0.1'; -- ip header should be found
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
             EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_first_user_id()||'''';
 
             return next throws_matching(
-                'EXECUTE cancel_project('''||_project.id||''')',
+                'EXECUTE finish_project('''||_project.id||''')',
                 'insufficient_privilege',
-                'anon cant call cancel_project'
+                'scoped_user cant call finish_project'
             );
             perform clean_sets();
 
@@ -56,7 +56,7 @@ begin;
             set local "request.header.x-forwarded-for" to '127.0.0.1'; -- ip header should be found
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
 
-            _result := project_service_api.cancel_project(_project.id);
+            _result := project_service_api.finish_project(_project.id);
 
             return next is((_result->>'id')::uuid, _project.id, 'should have project id on return json');
             return next is((_result->>'total_canceled_subscriptions')::integer, 1, 'should have a count of canceled subscriptions');
@@ -76,7 +76,7 @@ begin;
             )::integer, 0::integer, 'should not deliver canceled notification to subscriber when project is refused');
         end;
         $$;
-    select test_cancel_project();
+    select test_finish_project();
 
     select * from finish();
 rollback;
