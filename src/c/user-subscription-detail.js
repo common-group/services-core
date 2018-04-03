@@ -2,7 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import userSubscriptionBox from './user-subscription-box';
 
-const userContributionDetail = {
+const userSubscriptionDetail = {
     controller(args) {
         const subscription = args.subscription;
 
@@ -17,4 +17,4 @@ const userContributionDetail = {
     }
 };
 
-export default userContributionDetail;
+export default userSubscriptionDetail;
