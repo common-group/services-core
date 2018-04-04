@@ -6,12 +6,20 @@ volumes:
     driver: local
   dispatcher-redis-data:
     driver: local
+  catarse-redis-data:
+    driver: local
 
 services:
   dispatcher_redis:
     image: redis
     volumes:
       - dispatcher-redis-data:/var/lib/redis
+    command: redis-server --appendonly yes
+
+  catarse_redis:
+    image: redis
+    volumes:
+      - catarse-redis-data:/var/lib/redis
     command: redis-server --appendonly yes
 
   catarse_db:
@@ -43,18 +51,18 @@ services:
       POSTGRES_DB: service_core
 
   # service just for apply migrations or seed
-  migrations:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    # image: comum/services-core:latest
-    env_file:
-      - ./compose_env/.service_core_migrator.env
-    command: ["./scripts/run_migrations.sh"]
-    volumes: 
-      - ./migrations:/usr/app/migrations
-    links:
-        - "service_core_db:service_core_db"
+  # migrations:
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile
+  #   # image: comum/services-core:latest
+  #   env_file:
+  #     - ./compose_env/.service_core_migrator.env
+  #   command: ["./scripts/run_migrations.sh"]
+  #   volumes: 
+  #     - ./migrations:/usr/app/migrations
+  #   links:
+  #       - "service_core_db:service_core_db"
 
   notification_dispatcher:
     build:
@@ -152,6 +160,28 @@ services:
       - service_core_db
     ports:
       - "3006:4444"
+
+  catarse:
+    build:
+      context: ../catarse
+      dockerfile: dev.Dockerfile
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
+      REDIS_URL: redis://catarse_redis:6379
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+    volumes:
+      # mount volumes for development on catarse / catarse.js
+      - ../catarse/:/usr/app
+      - ../catarse.js/:/usr/app/node_modules/catarse.js
+    links:
+      - "catarse_db:localhostcatarse"
+      - "catarse_redis:catarse_redis"
+    depends_on:
+      - catarse_db
+      - catarse_redis
+    ports:
+      - "3000:3000"
 
   catarse_api:
     image: postgrest/postgrest:v0.4.3.0
