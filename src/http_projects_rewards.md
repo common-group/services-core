@@ -1,5 +1,4 @@
-#
-list rewards
+# Listing rewards
 
 | GET `/rewards` | **required roles:** `platform_user` |
 | :--- | :--- |
