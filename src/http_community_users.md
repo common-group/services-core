@@ -5,7 +5,7 @@
 ### example request
 
 ```bash
-curl -X GET 'https://sandbox.api.payment.comum.io/users?limit=1' \
+curl -X GET 'https://sandbox.api.community.comum.io/users?limit=1' \
     -H 'authorization: Bearer API_KEY' \
     -H 'cache-control: no-cache'
 ```
