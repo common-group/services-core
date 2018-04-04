@@ -51,18 +51,18 @@ services:
       POSTGRES_DB: service_core
 
   # service just for apply migrations or seed
-  # migrations:
-  #   build:
-  #     context: ./
-  #     dockerfile: Dockerfile
-  #   # image: comum/services-core:latest
-  #   env_file:
-  #     - ./compose_env/.service_core_migrator.env
-  #   command: ["./scripts/run_migrations.sh"]
-  #   volumes: 
-  #     - ./migrations:/usr/app/migrations
-  #   links:
-  #       - "service_core_db:service_core_db"
+  migrations:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # image: comum/services-core:latest
+    env_file:
+      - ./compose_env/.service_core_migrator.env
+    command: ["./scripts/run_migrations.sh"]
+    volumes: 
+      - ./migrations:/usr/app/migrations
+    links:
+        - "service_core_db:service_core_db"
 
   notification_dispatcher:
     build:
