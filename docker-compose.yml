@@ -9,18 +9,31 @@ volumes:
   catarse-redis-data:
     driver: local
 
+networks:
+  cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.1.0/26
+
 services:
   dispatcher_redis:
     image: redis
     volumes:
       - dispatcher-redis-data:/var/lib/redis
     command: redis-server --appendonly yes
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.40
 
   catarse_redis:
     image: redis
     volumes:
       - catarse-redis-data:/var/lib/redis
     command: redis-server --appendonly yes
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.41
 
   catarse_db:
     image: library/postgres:9.4-alpine
@@ -37,6 +50,9 @@ services:
       POSTGRES_PASSWORD: example
       POSTGRES_USER: catarse
       POSTGRES_DB: catarse_db
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.42
 
   service_core_db:
     image: library/postgres:9.6.5-alpine
@@ -49,6 +65,9 @@ services:
       POSTGRES_PASSWORD: example
       POSTGRES_USER: postgres
       POSTGRES_DB: service_core
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.43
 
   # service just for apply migrations or seed
   migrations:
@@ -79,6 +98,9 @@ services:
     depends_on:
       - service_core_db
       - dispatcher_redis
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.44
 
   payment_stream_processor:
     build:
@@ -96,6 +118,9 @@ services:
     depends_on:
       - service_core_db
       - dispatcher_redis
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.45
 
   # payment_processor_dispatcher:
   #   build:
@@ -144,6 +169,9 @@ services:
       - "service_core_db:service_core_db"
     depends_on:
       - service_core_db
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.46
 
   hook_service_api:
     build:
@@ -160,6 +188,9 @@ services:
       - service_core_db
     ports:
       - "3006:4444"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.47
 
   catarse:
     build:
@@ -177,16 +208,14 @@ services:
     links:
       - "catarse_db:localhostcatarse"
       - "catarse_redis:catarse_redis"
-      - "catarse_api:catarse_api"
-      - "community_service_api"
-      - "payment_service_api"
-      - "project_service_api"
-      - "analytics_service_api"
     depends_on:
       - catarse_db
       - catarse_redis
     ports:
       - "3000:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.48
 
   catarse_api:
     image: postgrest/postgrest:v0.4.3.0
@@ -198,6 +227,9 @@ services:
       - "catarse_db:catarse_db"
     ports:
       - "3008:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.49
 
   payment_service_api:
     image: postgrest/postgrest:v0.4.4.0
@@ -209,6 +241,9 @@ services:
       - "service_core_db:service_core_db"
     ports:
       - "3001:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.50
 
   project_service_api:
     image: postgrest/postgrest:v0.4.4.0
@@ -220,6 +255,9 @@ services:
       - "service_core_db:service_core_db"
     ports:
       - "3002:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.51
 
   community_service_api:
     image: postgrest/postgrest:v0.4.4.0
@@ -231,6 +269,9 @@ services:
       - "service_core_db:service_core_db"
     ports:
       - "3003:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.52
 
   platform_service_api:
     image: postgrest/postgrest:v0.4.4.0
@@ -242,6 +283,9 @@ services:
       - "service_core_db:service_core_db"
     ports:
       - "3004:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.53
 
   analytics_service_api:
     image: postgrest/postgrest:v0.4.4.0
@@ -253,6 +297,9 @@ services:
       - "service_core_db:service_core_db"
     ports:
       - "3005:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.54
 
   notification_service_api:
     image: postgrest/postgrest:v0.4.4.0
@@ -264,3 +311,6 @@ services:
       - "service_core_db:service_core_db"
     ports:
       - "3007:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.55
