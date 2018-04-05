@@ -177,6 +177,11 @@ services:
     links:
       - "catarse_db:localhostcatarse"
       - "catarse_redis:catarse_redis"
+      - "catarse_api:catarse_api"
+      - "community_service_api"
+      - "payment_service_api"
+      - "project_service_api"
+      - "analytics_service_api"
     depends_on:
       - catarse_db
       - catarse_redis
