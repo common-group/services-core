@@ -11,6 +11,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import models from '../models';
+import adminExternalAction from './admin-external-action';
 import userVM from '../vms/user-vm';
 import adminResetPassword from './admin-reset-password';
 import adminInputAction from './admin-input-action';
@@ -31,6 +32,13 @@ const adminUserDetail = {
                     placeholder: 'ex: 123mud@r',
                     model: models.user
                 },
+                ban: {
+                    updateKey: 'id',
+                    callToAction: 'Banir usuário',
+                    innerLabel: 'Tem certeza que deseja banir o usuário?',
+                    outerLabel: 'Banir usuário',
+                    model: models.user
+                },
                 reactivate: {
                     property: 'deactivated_at',
                     updateKey: 'id',
@@ -49,6 +57,12 @@ const adminUserDetail = {
         const actions = ctrl.actions,
               item = args.item,
               details = args.details,
+              banUser = (builder, id) => _.extend({}, builder, {
+                  requestOptions: {
+                      url: (`/users/${id}/ban`),
+                      method: 'POST'
+                  }
+              }),
               addOptions = (builder, id) => _.extend({}, builder, {
                   requestOptions: {
                       url: (`/users/${id}/new_password`),
@@ -61,6 +75,10 @@ const adminUserDetail = {
             m('.w-row.u-marginbottom-30', [
                 m.component(adminResetPassword, {
                     data: addOptions(actions.reset, item.id),
+                    item
+                }),
+                m.component(adminExternalAction, {
+                    data: banUser(actions.ban, item.id),
                     item
                 }),
                 (item.deactivated_at) ?
