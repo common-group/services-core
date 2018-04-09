@@ -99,9 +99,9 @@ const dashboardSubscriptionCardDetail = {
                                     displayModal: ctrl.displayModal,
                                     content: contactModalC
                                 }) : ''),
-                                (!_.isEmpty(user.email) ? m('a.btn.btn-small.btn-inline.btn-edit.u-marginright-10.w-button', {
+                                (m('a.btn.btn-small.btn-inline.btn-edit.u-marginright-10.w-button', {
                                     onclick: ctrl.displayModal.toggle
-                                }, 'Enviar mensagem') : ''),
+                                }, 'Enviar mensagem')),
                                 m(UserFollowBtn, {
                                     follow_id: user.id,
                                     following: user.following_this_user,
