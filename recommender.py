@@ -58,12 +58,13 @@ f_names = [
     ]
 
 class Collaborative():
-    def get_online_projects(self):
+    def get_online_projects(self, user_id):
         cur.execute("""
         (SELECT
-        p.id - 1
+        p.id
         FROM projects p
         WHERE p.state = 'online'
+        AND NOT EXISTS(select true from contributions where user_id = """ + str( user_id ) + """ and project_id =  p.id)
         )
         """)
         return np.array( cur.fetchall() ).flatten()
@@ -71,14 +72,16 @@ class Collaborative():
     def get_predictions(self, user_id):
         filehandler = open(b"cf_model.obj","rb")
         model = pickle.load(filehandler)
-        pids = self.get_online_projects()
-        predictions = model.predict(user_id - 1, pids)
+        pids = self.get_online_projects(user_id)
+        predictions = model.predict(user_id, pids)
+        # predictions = scale( predictions, axis=0, with_mean=True, with_std=True, copy=True )
+        predictions = (predictions - np.min(predictions))/np.ptp(predictions)
         projects = []
         for i, pred in enumerate( predictions ):
-            projects.append([str(pred), int(pids[i]) + 1])
+            projects.append([float(pred), int(pids[i])])
 
         projects.sort(key=lambda x: float(x[0]), reverse=True)
-        print(projects[:20])
+        return projects
 
     def get_cv_data(self, n_rows):
         cur.execute("""
@@ -100,10 +103,10 @@ class Collaborative():
         max_user_id = max(cv_data[:, 0])
         max_project_id = max(cv_data[:, 1])
         # LightFM accepts standard scipy sparse matrics as inputs, with user ids as row indices, item ids as columns, and entries being non-zero only if a user interacted with an item.
-        rating_matrix = sps.dok_matrix((max_user_id + 1, max_project_id * 2), dtype=np.int8)
+        rating_matrix = sps.dok_matrix((max_user_id + 1, max_project_id + 1000), dtype=np.int8)
 
         for row in cv_data:
-            rating_matrix[row[0] - 1, row[1] - 1] = row[2]
+            rating_matrix[row[0], row[1]] = row[2]
 
         train_matrix, test_matrix = random_train_test_split(rating_matrix)
         data = {'train': coo_matrix(train_matrix),
@@ -209,6 +212,10 @@ class Predictions(Resource):
         display(eli5.format_as_html(eli5.explain_prediction_xgboost(bst, row),  show_feature_values=True))
 
     def get(self, user_id):
+        projects = self.get_predictions(user_id)
+        return {'projects': np.array(projects)[:, 1].flatten().tolist()}
+
+    def get_predictions(self, user_id):
         rows = self.get_rows(user_id)
         #remove project id
         features = rows[:, :-1]
@@ -219,10 +226,10 @@ class Predictions(Resource):
         preds = bst.predict(dtest)
         projects = []
         for i, pred in enumerate( preds ):
-            projects.append([str(pred), int(rows[i][-1])])
+            projects.append([float(pred), int(rows[i][-1])])
 
         projects.sort(key=lambda x: float(x[0]), reverse=True)
-        return {'projects': np.array(projects)[:, 1].flatten().tolist()}
+        return projects
 
 
 class Train():
@@ -450,7 +457,19 @@ api.add_resource(Predictions, '/predictions/gbtree/<user_id>') # Route_3
 if __name__ == '__main__':
     # app.run(port=5002)
     c = Collaborative()
-    # c.train()
-    c.get_predictions(11)
+    p = Predictions()
+    cf = c.get_predictions(361)
+    xg = p.get_predictions(361)
+    print(cf[:10])
+    print(xg[:10])
+    cf.sort(key=lambda x: float(x[1]), reverse=True)
+    xg.sort(key=lambda x: float(x[1]), reverse=True)
+    hybrid = []
+    for i, project in enumerate(cf):
+        hybrid.append([project[0]*xg[i][0], project[1]])
+    hybrid.sort(key=lambda x: float(x[0]), reverse=True)
+    for h in hybrid[:30]:
+        print('catarse.me/projects/', h[1])
+    # print(hybrid)
     cur.close()
     conn.close()
