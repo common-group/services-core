@@ -1,9 +1,14 @@
 import m from 'mithril';
 import moment from 'moment';
 import _ from 'underscore';
+import {
+    catarse
+} from '../api'
+import models from '../models';
 import I18n from 'i18n-js';
 import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
+import projectDataChart from '../c/project-data-chart';
 import projectInviteCard from '../c/project-invite-card';
 import projectGoalsBoxDashboard from './project-goals-box-dashboard';
 import insightsInfoBox from './insights-info-box';
@@ -15,12 +20,25 @@ const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsightsSub = {
     controller(args) {
-        const filtersVM = args.filtersVM;
+        const filtersVM = args.filtersVM,
+            visitorsTotal = m.prop(0),
+            loader = catarse.loaderWithToken,
+            visitorsPerDay = m.prop([]);
         const weekSubscriptions = m.prop([]);
         const lastWeekSubscriptions = m.prop([]);
         const weekTransitions = m.prop([]);
         const lastWeekTransitions = m.prop([]);
+        const processVisitors = (data) => {
+            if (!_.isEmpty(data)) {
+                visitorsPerDay(data);
+                visitorsTotal(_.first(data).total);
+            }
+        };
 
+        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
+        lVisitorsPerDay.load().then(processVisitors);
+
+        lVisitorsPerDay.load().then(processVisitors);
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekSubscriptions);
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
@@ -40,6 +58,9 @@ const projectInsightsSub = {
             weekTransitions,
             lastWeekTransitions,
             projectGoalsVM,
+            lVisitorsPerDay,
+            visitorsTotal,
+            visitorsPerDay,
             balanceLoader
         };
     },
@@ -145,7 +166,7 @@ const projectInsightsSub = {
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                  `R$${averageRevenue ? `${h.formatNumber( averageRevenue, 2, 3 )}` : '--'}`
+                                    `R$${averageRevenue ? `${h.formatNumber( averageRevenue, 2, 3 )}` : '--'}`
                                 )
 
                             ]),
@@ -163,7 +184,17 @@ const projectInsightsSub = {
                                 oldCount: canceledLastWeekSum
                             })
                         ])
-                    ])
+                    ]),
+                    m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
+                        I18n.t('visitors_per_day_label', I18nScope()),
+                        h.newFeatureBadge()
+                    ]),
+                    !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
+                        collection: ctrl.visitorsPerDay,
+                        dataKey: 'visitors',
+                        xAxis: item => h.momentify(item.day),
+                        emptyState: I18n.t('visitors_per_day_empty', I18nScope())
+                    }) : h.loader()
                 ])
             ])
         ] : h.loader());
