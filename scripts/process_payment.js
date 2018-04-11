@@ -290,7 +290,7 @@ async function init(stdin_data) {
             };
 
             transaction_data['boleto_expiration_date'] = expirationDate(
-                DateTime.local(), 2);
+                DateTime.local(), 4);
         }
 
         try {
