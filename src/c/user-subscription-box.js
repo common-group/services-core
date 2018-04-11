@@ -185,7 +185,7 @@ const userSubscriptionBox = {
                                     && subscription.boleto_url
                                     && subscription.boleto_expiration_date ?
                                         [
-                                            moment(subscription.boleto_expiration_date).isBefore(Date.now())
+                                            moment(subscription.boleto_expiration_date).add(1, 'days').isBefore(Date.now())
                                             ? m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                                 m('span.fa.fa-exclamation-triangle'),
                                                     ` O boleto de sua assinatura venceu dia ${h.momentify(subscription.boleto_expiration_date)}` 
