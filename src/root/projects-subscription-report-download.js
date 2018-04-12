@@ -65,7 +65,7 @@ const projectSubscriptionReportDownload = {
                                 m('li.divider.u-marginbottom-10'),
                                 m('li.fontsize-smaller.u-marginbottom-10',
                                     m('div', [
-                                        `Relatório de apoios confirmados`,
+                                        `Relatório de pagamentos confirmados`,
                                         m.trust('&nbsp;'),
                                         m.trust('&nbsp;'),
                                         m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.csv']`,
