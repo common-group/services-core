@@ -10,7 +10,7 @@ const projectEditStart = {
     controller(args) {},
 
     view(ctrl, args) {
-        return m('.dashboard-header.min-height-70.u-text-center', [
+        return m('.dashboard-header.min-height-70.u-text-center.u-marginbottom-80', [
             m('.w-container',
                 m('.u-marginbottom-40.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
