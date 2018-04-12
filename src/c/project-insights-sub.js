@@ -134,29 +134,6 @@ const projectInsightsSub = {
                     })) : ''),
 
                     m('.u-marginbottom-60', [
-                        m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
-                            'Assinaturas'
-                        ),
-                        m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                            m(insightsInfoBox, {
-                                label: 'Novos Assinantes',
-                                info: ctrl.weekSubscriptions().length,
-                                newCount: ctrl.weekSubscriptions().length,
-                                oldCount: ctrl.lastWeekSubscriptions().length
-                            }),
-                            m(insightsInfoBox, {
-                                label: 'Assinantes perdidos',
-                                inverted: true,
-                                info: ctrl.weekTransitions().length,
-                                newCount: ctrl.weekTransitions().length,
-                                oldCount: ctrl.lastWeekTransitions().length
-                            })
-                        ])
-                    ]),
-                    m('.u-marginbottom-60', [
-                        m('.fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30',
-                            'Receita'
-                        ),
                         m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                             m('.flex-column.card.u-radius.u-marginbottom-10', [
                                 m('div',
@@ -171,17 +148,16 @@ const projectInsightsSub = {
 
                             ]),
                             m(insightsInfoBox, {
+                                label: 'Novos Assinantes',
+                                info: ctrl.weekSubscriptions().length,
+                                newCount: ctrl.weekSubscriptions().length,
+                                oldCount: ctrl.lastWeekSubscriptions().length
+                            }),                            
+                            m(insightsInfoBox, {
                                 label: 'Nova receita',
                                 info: `R$${weekSum}`,
                                 newCount: weekSum,
                                 oldCount: lastWeekSum
-                            }),
-                            m(insightsInfoBox, {
-                                label: 'Receita perdida',
-                                inverted: true,
-                                info: `R$${canceledWeekSum}`,
-                                newCount: canceledWeekSum,
-                                oldCount: canceledLastWeekSum
                             })
                         ])
                     ]),
