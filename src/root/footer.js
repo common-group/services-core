@@ -41,7 +41,7 @@ const footer = {
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
                                                 ),                                                                                                
-                                                m('a.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
+                                                m('a.u-marginbottom-30.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
                                                   [
                                                       'Retrospectiva 2017',
                                                       m.trust('&nbsp;'),
@@ -130,9 +130,18 @@ const footer = {
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',
                                                     ' Música no Catarse'
                                                 ),
-                                                m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']',
+                                                m('a.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']',
                                                     ' Publicações Independentes'
                                                 ),
+                                                m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
+                                                  [
+                                                      'Catarse Assinaturas',
+                                                      m.trust('&nbsp;'),
+                                                      m('span.badge.badge-success',
+                                                        'Novidade‍'
+                                                       )
+                                                  ]
+                                                 ),                                            
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Apoie projetos no Catarse'
                                                 ),                                           
