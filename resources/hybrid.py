@@ -43,10 +43,10 @@ class Hybrid(Resource):
     def get_predictions(self, user_id):
         cf_predictions = self.cf.get_predictions(user_id)
         cb_predictions = self.cb.get_predictions(user_id)
+        # print(cf_predictions[:10])
+        # print(cb_predictions[:10])
         cf_predictions.sort(key=lambda x: float(x[1]), reverse=True)
         cb_predictions.sort(key=lambda x: float(x[1]), reverse=True)
-        print(cf_predictions[:10])
-        print(cb_predictions[:10])
         hybrid = []
         for i, project in enumerate(cf_predictions):
             hybrid.append([project[0]*cb_predictions[i][0], project[1]])

@@ -28,6 +28,7 @@ from json import dumps
 from sklearn import metrics   #Additional scklearn functions
 import matplotlib.pyplot as plt
 from scipy.sparse import coo_matrix
+from catarse_recommender.application import app, get_db
 
 class CollaborativeFiltering(Resource):
     def __init__(self):
@@ -35,7 +36,6 @@ class CollaborativeFiltering(Resource):
         self.model = pickle.load(filehandler)
 
     def get_online_projects(self, user_id):
-        from ..application import get_db, app
         with app.app_context():
             db, cur = get_db()
         cur.execute("""
@@ -66,7 +66,6 @@ class CollaborativeFiltering(Resource):
 
 class TrainCollaborative():
     def get_cv_data(self, n_rows):
-        from ..application import get_db, app
         with app.app_context():
             db, cur = get_db()
         cur.execute("""
