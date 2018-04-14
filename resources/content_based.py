@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from flask_restful import Resource
+from flask import g, current_app
 import numpy as np
 from IPython.display import display
 from lightfm.datasets import fetch_stackexchange
@@ -22,127 +23,17 @@ from sklearn.metrics import accuracy_score
 from sklearn.datasets import dump_svmlight_file
 from sklearn.datasets import load_svmlight_file
 from xgboost.sklearn import XGBClassifier
-from flask import Flask, request
-from flask_restful import Resource, Api
 from sqlalchemy import create_engine
 from json import dumps
 from sklearn import metrics   #Additional scklearn functions
 import matplotlib.pyplot as plt
 from scipy.sparse import coo_matrix
-import helpers
 
-# np.set_printoptions(threshold=np.inf)
-
-try:
-    # conn = psycopg2.connect(dbname='catarse_db', user='catarse', host='localhost', password='example', port='5445')
-    conn = psycopg2.connect(dbname='catarse_production', user='catarse', host='db.catarse.me')
-except:
-    print(  "I am unable to connect to the database" )
-
-cur = conn.cursor()
-app = Flask(__name__)
-api = Api(app)
-f_names = [
-        'category_count',
-        'mode_count',
-        'same_state',
-        'recommended',
-        'has_video',
-        'budget',
-        'description',
-        'pledged',
-        'contributions',
-        'progress',
-        'owner_projects',
-        'reward_count'
-    ]
-
-class Collaborative():
-    def get_online_projects(self, user_id):
-        cur.execute("""
-        (SELECT
-        p.id
-        FROM projects p
-        WHERE p.state = 'online'
-        AND NOT EXISTS(select true from contributions where user_id = """ + str( user_id ) + """ and project_id =  p.id)
-        )
-        """)
-        return np.array( cur.fetchall() ).flatten()
-
-    def get_predictions(self, user_id):
-        filehandler = open(b"cf_model.obj","rb")
-        model = pickle.load(filehandler)
-        pids = self.get_online_projects(user_id)
-        predictions = model.predict(user_id, pids)
-        # predictions = scale( predictions, axis=0, with_mean=True, with_std=True, copy=True )
-        predictions = (predictions - np.min(predictions))/np.ptp(predictions)
-        projects = []
-        for i, pred in enumerate( predictions ):
-            projects.append([float(pred), int(pids[i])])
-
-        projects.sort(key=lambda x: float(x[0]), reverse=True)
-        return projects
-
-    def get_cv_data(self, n_rows):
-        cur.execute("""
-        (SELECT
-        u.id,
-        p.id,
-        1 AS y
-        FROM contributions c
-        JOIN users u ON u.id = c.user_id
-        JOIN projects p ON p.id = c.project_id
-        WHERE p.created_at > '01-01-2015'::TIMESTAMP
-        AND p.state not in ('draft', 'failed')
-        LIMIT """ + n_rows + """)
-        """)
-        return np.array( cur.fetchall() )
-
-    def train(self):
-        cv_data = self.get_cv_data(str(500000))
-        max_user_id = max(cv_data[:, 0])
-        max_project_id = max(cv_data[:, 1])
-        # LightFM accepts standard scipy sparse matrics as inputs, with user ids as row indices, item ids as columns, and entries being non-zero only if a user interacted with an item.
-        rating_matrix = sps.dok_matrix((max_user_id + 1, max_project_id + 1000), dtype=np.int8)
-
-        for row in cv_data:
-            rating_matrix[row[0], row[1]] = row[2]
-
-        train_matrix, test_matrix = random_train_test_split(rating_matrix)
-        data = {'train': coo_matrix(train_matrix),
-            'test': coo_matrix(test_matrix)
-            }
-        train = data['train']
-        test = data['test']
-        print('The dataset has %s users and %s items, '
-        'with %s interactions in the test and %s interactions in the training set.'
-        % (train.shape[0], train.shape[1], test.getnnz(), train.getnnz()))
-        NUM_THREADS = 2
-        NUM_EPOCHS = 3
-        ITEM_ALPHA = 1e-6
-
-        # Let's fit a WARP model: these generally have the best performance.
-        model = LightFM(loss='warp',
-                    item_alpha=ITEM_ALPHA)
-
-        print('training start')
-        model = model.fit(train, epochs=NUM_EPOCHS, num_threads=NUM_THREADS)
-        print('training done')
-        filehandler = open(b"cf_model.obj","wb")
-        pickle.dump(model, filehandler)
-        # model = pickle.load(filehandler)
-        # Compute and print the AUC score
-        # train_auc = auc_score(model, train, num_threads=NUM_THREADS).mean()
-        # print('Collaborative filtering train AUC: %s' % train_auc)
-        # test_auc = auc_score(model, test, train_interactions=train, num_threads=NUM_THREADS).mean()
-        # test_precision = precision_at_k(model, test, train_interactions=train, num_threads=NUM_THREADS).mean()
-        # test_recall = recall_at_k(model, test, train_interactions=train, num_threads=NUM_THREADS).mean()
-        # print('Collaborative filtering test AUC: %s' % test_auc)
-        # print('Collaborative filtering test precision: %s' % test_precision)
-        # print('Collaborative filtering test recall: %s' % test_recall)
-
-class Predictions(Resource):
+class ContentBased(Resource):
     def get_rows(self, user_id):
+        from ..application import get_db, app
+        with app.app_context():
+            db, cur = get_db()
         cur.execute("""
         SELECT
         (SELECT count(*)
@@ -213,14 +104,14 @@ class Predictions(Resource):
 
     def get(self, user_id):
         projects = self.get_predictions(user_id)
-        return {'projects': np.array(projects)[:, 1].flatten().tolist()}
+        return {'projects': np.array(projects, dtype=np.int)[:, 1].flatten().tolist()}
 
     def get_predictions(self, user_id):
         rows = self.get_rows(user_id)
         #remove project id
         features = rows[:, :-1]
         # load model and data in
-        bst = xgb.Booster(model_file='xgb.model')
+        bst = xgb.Booster(model_file='common/xgb.model')
 
         dtest = xgb.DMatrix(features)
         preds = bst.predict(dtest)
@@ -232,8 +123,26 @@ class Predictions(Resource):
         return projects
 
 
-class Train():
+class TrainTree():
+    def __init__(self):
+        self.f_names = [
+                'category_count',
+                'mode_count',
+                'same_state',
+                'recommended',
+                'has_video',
+                'budget',
+                'description',
+                'pledged',
+                'contributions',
+                'progress',
+                'owner_projects',
+                'reward_count'
+            ]
     def get_db_data(self, n_rows):
+        from ..application import get_db, app
+        with app.app_context():
+            db, cur = get_db()
         cur.execute("""
                 WITH pt AS
         (SELECT c.project_id,
@@ -293,7 +202,7 @@ class Train():
         LEFT JOIN pt ON pt.project_id = p.id
         WHERE p.state IN ('successful')
             AND p.created_at > '01-01-2015'::TIMESTAMP
-        LIMIT """ + n_rows + """)
+        LIMIT """ + str( n_rows ) + """)
         UNION ALL
         (SELECT
             (SELECT count(*)
@@ -349,31 +258,34 @@ class Train():
         WHERE p.state IN ('failed')
             AND c.project_id != p.id
             AND p.created_at > '01-01-2015'::TIMESTAMP
-        LIMIT """ +  n_rows + """)
+        LIMIT """ +  str(n_rows) + """)
         """)
         return np.array( cur.fetchall() )
 
-    def train_model(self, num_round=8000, cache=False):
+    def train_model(self, num_round=4000, cache=False):
         if not cache:
-            rows = get_db_data(300000)
+            rows = self.get_db_data(300000)
+            print('finished getting data')
             features = rows[:, :-1]
             ys = rows[:, -1]
             seed = 1
             test_size = 0.33
             X_train, X_test, y_train, y_test = train_test_split(features, ys, test_size=test_size, random_state=seed)
             try:
-                dump_svmlight_file(features , ys, 'catarse.txt.all')
-                dump_svmlight_file(X_train, y_train, 'catarse.txt.train')
-                dump_svmlight_file(X_test, y_test, 'catarse.txt.test')
+                dump_svmlight_file(features , ys, 'common/catarse.txt.all')
+                dump_svmlight_file(X_train, y_train, 'common/catarse.txt.train')
+                dump_svmlight_file(X_test, y_test, 'common/catarse.txt.test')
             except Exception as inst:
                 print(inst)
 
-            dtrain = xgb.DMatrix(X_train, label = y_train, feature_names = f_names)
-            dtest = xgb.DMatrix(X_test, label = y_test, feature_names = f_names)
+            dtrain = xgb.DMatrix(features, label = ys, feature_names = self.f_names)
+            # dtrain = xgb.DMatrix(X_train, label = y_train, feature_names = self.f_names)
+            dtest = xgb.DMatrix(X_test, label = y_test, feature_names = self.f_names)
         else:
             # load file from text file, also binary buffer generated by xgboost
-            dtrain = xgb.DMatrix('catarse.txt.train', feature_names = f_names)
-            dtest = xgb.DMatrix('catarse.txt.test', feature_names = f_names)
+            dtrain = xgb.DMatrix('common/catarse.txt.all', feature_names = self.f_names)
+            # dtrain = xgb.DMatrix('catarse.txt.train', feature_names = self.f_names)
+            dtest = xgb.DMatrix('common/catarse.txt.test', feature_names = self.f_names)
 
         # specify parameters via map, definition are same as c++ version
         param = {'max_depth':4, 'eta':0.01, 'silent':1, 'booster': 'gbtree', 'min_child_weight': 2, 'objective':'binary:logistic', 'eval_metric': 'logloss'}
@@ -381,15 +293,15 @@ class Train():
         # specify validations set to watch performance
         watchlist = [(dtrain, 'train'), (dtest, 'eval')]
         bst = xgb.train(param, dtrain, num_round, watchlist, early_stopping_rounds=20)
-        bst.feature_names = f_names
+        bst.feature_names = self.f_names
         # dump model
-        bst.dump_model('dump.raw.txt')
+        # bst.dump_model('dump.raw.txt')
 
         # save dmatrix into binary buffer
-        dtest.save_binary('dtest.buffer')
-        dtrain.save_binary('dtrain.buffer')
+        # dtest.save_binary('dtest.buffer')
+        # dtrain.save_binary('dtrain.buffer')
         # save model
-        bst.save_model('xgb.model')
+        bst.save_model('common/xgb.model')
 
     def plot_importance(self, bst):
         plt.show(xgb.plot_importance(bst))
@@ -404,9 +316,9 @@ class Train():
         preds = bst.predict(dtest, ntree_limit=bst.best_ntree_limit)
         labels = dtest.get_label()
         print('error=%f' % (sum(1 for i in range(len(preds)) if int(preds[i] > 0.5) != labels[i]) / float(len(preds))))
-        with open('pred.txt', 'w') as predictions:
-            for item in preds:
-                predictions.write("%s\n" % str( item ))
+        # with open('pred.txt', 'w') as predictions:
+        #     for item in preds:
+        #         predictions.write("%s\n" % str( item ))
 
     def cv(self, cache=False):
         if not cache:
@@ -447,29 +359,7 @@ class Train():
         # #Print model report:
         print("\nModel Report")
         print("Accuracy : %.4g" % metrics.accuracy_score(y, dtrain_predictions))
-        feat_imp = pandas.Series(xgb1.booster().get_fscore()).sort_values(ascending=False)
-        feat_imp.plot(kind='bar', title='Feature Importances')
-        plt.ylabel('Feature Importance Score')
-        plt.show()
-
-api.add_resource(Predictions, '/predictions/gbtree/<user_id>') # Route_3
-
-if __name__ == '__main__':
-    # app.run(port=5002)
-    c = Collaborative()
-    p = Predictions()
-    cf = c.get_predictions(361)
-    xg = p.get_predictions(361)
-    print(cf[:10])
-    print(xg[:10])
-    cf.sort(key=lambda x: float(x[1]), reverse=True)
-    xg.sort(key=lambda x: float(x[1]), reverse=True)
-    hybrid = []
-    for i, project in enumerate(cf):
-        hybrid.append([project[0]*xg[i][0], project[1]])
-    hybrid.sort(key=lambda x: float(x[0]), reverse=True)
-    for h in hybrid[:30]:
-        print('catarse.me/projects/', h[1])
-    # print(hybrid)
-    cur.close()
-    conn.close()
+        # feat_imp = pandas.Series(xgb1.booster().get_fscore()).sort_values(ascending=False)
+        # feat_imp.plot(kind='bar', title='Feature Importances')
+        # plt.ylabel('Feature Importance Score')
+        # plt.show()
