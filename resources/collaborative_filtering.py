@@ -1,14 +1,12 @@
 from flask_restful import Resource
 from flask import g, current_app
 import numpy as np
-from IPython.display import display
 from lightfm.datasets import fetch_stackexchange
 from lightfm.cross_validation import random_train_test_split
 import scipy.io as spi
 import scipy.sparse as sps
 from lightfm.evaluation import auc_score, precision_at_k, recall_at_k
 import eli5
-import matplotlib.pyplot as plt
 import scipy.sparse
 import pickle
 import psycopg2
@@ -26,9 +24,8 @@ from xgboost.sklearn import XGBClassifier
 from sqlalchemy import create_engine
 from json import dumps
 from sklearn import metrics   #Additional scklearn functions
-import matplotlib.pyplot as plt
 from scipy.sparse import coo_matrix
-from catarse_recommender.application import app, get_db
+from app.application import app, get_db
 
 class CollaborativeFiltering(Resource):
     def __init__(self):
