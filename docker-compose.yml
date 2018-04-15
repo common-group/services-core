@@ -314,3 +314,22 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.55
+
+  recommender_service_api:
+    build:
+      context: ../catarse_recommender
+      dockerfile: Dockerfile
+    env_file:
+      - ./compose_env/.recommender_service_api.env
+    command: flask run --host 0.0.0.0 --port 3009
+    volumes:
+      - ../catarse_recommender/:/usr/app
+    depends_on:
+      - catarse_db
+    links:
+      - "catarse_db:catarse_db"
+    ports:
+      - "3009:3009"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.56
