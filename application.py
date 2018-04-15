@@ -2,11 +2,13 @@
 from __future__ import print_function
 from flask import Flask, _app_ctx_stack, g
 from flask_restful import Api
+from flask_cors import CORS
 import psycopg2
 import os
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 def connect_db():
     try:

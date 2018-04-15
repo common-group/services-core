@@ -7,3 +7,4 @@ eli5
 pandas
 psycopg2-binary
 xgboost
+flask-cors
