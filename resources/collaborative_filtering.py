@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import g, current_app
+from flask import g, current_app, request
 import numpy as np
 from lightfm.datasets import fetch_stackexchange
 from lightfm.cross_validation import random_train_test_split
@@ -13,7 +13,7 @@ import pandas
 from lightfm import LightFM
 from json import dumps
 from scipy.sparse import coo_matrix
-from app.application import app, get_db
+from app.application import app, get_db, get_project_details
 
 class CollaborativeFiltering(Resource):
     def __init__(self):
@@ -48,8 +48,13 @@ class CollaborativeFiltering(Resource):
         return projects
 
     def get(self, user_id):
+        offset, limit = [0, 10000]
+        if request.headers.has_key("Range"):
+            offset, limit = np.array(request.headers["Range"].split('-'), dtype=int)
         projects = self.get_predictions(user_id)
-        return {'projects': np.array(projects, dtype=np.int)[:, 1].flatten().tolist()}
+        project_ids = np.array(projects, dtype=np.int)[:, 1].flatten().tolist()
+        details = get_project_details(project_ids, offset, limit)
+        return details.flatten().tolist()
 
 
 class TrainCollaborative():

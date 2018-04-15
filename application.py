@@ -4,6 +4,7 @@ from flask import Flask, _app_ctx_stack, g
 from flask_restful import Api
 from flask_cors import CORS
 import psycopg2
+import numpy as np
 import os
 
 app = Flask(__name__)
@@ -13,9 +14,9 @@ CORS(app)
 def connect_db():
     try:
         conn = psycopg2.connect(os.environ['DATABASE_URL'])
+        return conn
     except:
         print("Error connecting to the database")
-    return conn
 
 def get_db():
     """Opens a new database connection if there is none yet for the
@@ -26,6 +27,23 @@ def get_db():
     if not hasattr(g, 'cur'):
         g.cur = g.psql_db.cursor()
     return g.psql_db, g.cur
+
+def get_project_details(ids, offset, limit):
+    with app.app_context():
+        db, cur = get_db()
+    cur.execute("""
+    SELECT array_to_json(array_agg(s)) FROM
+    (
+        SELECT p.*
+        FROM "1".projects p
+        JOIN unnest('{""" + ','.join(str(e) for e in ids) + """}'::int[]) WITH ORDINALITY t(project_id, ord) USING (project_id)
+        where project_id IN (""" + ','.join(str(e) for e in ids) + """)
+        ORDER  BY t.ord
+        offset """ + str( offset ) + """
+        limit """ + str( limit - offset ) + """
+    ) s
+    """)
+    return np.array( cur.fetchall() )
 
 @app.teardown_request
 def teardown_request(exception):
