@@ -62,7 +62,7 @@
     "jquery": "^3.1.1",
     "liquidjs": "^2.0.3",
     "mithril": "^0.2.4",
-    "mithril-postgrest": "^3.0.2",
+    "mithril-postgrest": "^3.0.3",
     "moment": "~> 2.19.3",
     "moment-timezone": "^0.5.4",
     "underscore": "^1.8.3"
