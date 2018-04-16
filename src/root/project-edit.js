@@ -73,16 +73,6 @@ const projectEdit = {
                             subtitle: I18n.t(`card_subtitle_${project().mode}`, I18nScope()),
                             content: m(projectEditCard, _.extend({}, c_opts))
                         }),
-                        '#basics': m(projectEditTab, {
-                            title: I18n.t('basics', I18nScope()),
-                            subtitle: I18n.t('basics_subtitle', I18nScope()),
-                            content: m(projectEditBasic, _.extend({}, c_opts))
-                        }),
-                        '#goal': m(projectEditTab, {
-                            title: I18n.t('goal', I18nScope()),
-                            subtitle: I18n.t('goal_subtitle', I18nScope()),
-                            content: m(projectEditGoal, _.extend({}, c_opts))
-                        }),
                         '#goals': m(projectEditTab, {
                             title: I18n.t('goals', I18nScope()),
                             subtitle: '',
@@ -96,6 +86,19 @@ const projectEdit = {
                         '#preview': m(projectPreview, _.extend({}, c_opts)),
                         '#start': m(projectEditStart, _.extend({}, c_opts))
                     };
+
+                if (!project().is_published || project().is_admin_role) {
+                    tabs['#goal'] = m(projectEditTab, {
+                        title: I18n.t('goal', I18nScope()),
+                        subtitle: I18n.t('goal_subtitle', I18nScope()),
+                        content: m(projectEditGoal, _.extend({}, c_opts))
+                    });
+                    tabs['#basics'] = m(projectEditTab, {
+                        title: I18n.t('basics', I18nScope()),
+                        subtitle: I18n.t('basics_subtitle', I18nScope()),
+                        content: m(projectEditBasic, _.extend({}, c_opts))
+                    });
+                }
 
                 hash(window.location.hash);
 
