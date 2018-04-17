@@ -4,6 +4,7 @@ const models = {
     notificationTemplates: commonNotification.model('notification_templates'),
     userNotification: commonNotification.model('user_notifications'),
     commonNotificationTemplate: commonNotification.model('rpc/notification_template'),
+    projectSubscriptionsPerDay: commonAnalytics.model('project_subscriptions_per_day'),
     projectSubscribersInfo: commonAnalytics.model('rpc/project_subscribers_info'),
     projectReward: commonProject.model('rewards'),
     projectSubscriber: commonProject.model('subscribers'),

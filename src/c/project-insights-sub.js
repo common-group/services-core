@@ -2,7 +2,8 @@ import m from 'mithril';
 import moment from 'moment';
 import _ from 'underscore';
 import {
-    catarse
+    catarse,
+    commonAnalytics
 } from '../api'
 import models from '../models';
 import I18n from 'i18n-js';
@@ -22,12 +23,17 @@ const projectInsightsSub = {
     controller(args) {
         const filtersVM = args.filtersVM,
             visitorsTotal = m.prop(0),
-            loader = catarse.loaderWithToken,
+            visitorLoader = catarse.loaderWithToken,
+            loader = commonAnalytics.loaderWithToken,
             visitorsPerDay = m.prop([]);
         const weekSubscriptions = m.prop([]);
+        const subscriptionsPerDay = m.prop([]);
         const lastWeekSubscriptions = m.prop([]);
         const weekTransitions = m.prop([]);
         const lastWeekTransitions = m.prop([]);
+        const subVM = commonAnalytics.filtersVM({
+            project_id: 'eq'
+        });
         const processVisitors = (data) => {
             if (!_.isEmpty(data)) {
                 visitorsPerDay(data);
@@ -35,10 +41,13 @@ const projectInsightsSub = {
             }
         };
 
-        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
+        subVM.project_id(args.project.common_id);
+        const lVisitorsPerDay = visitorLoader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
         lVisitorsPerDay.load().then(processVisitors);
 
-        lVisitorsPerDay.load().then(processVisitors);
+        const lSubscriptionsPerDay = loader(models.projectSubscriptionsPerDay.getRowOptions(subVM.parameters()));
+        lSubscriptionsPerDay.load().then(subscriptionsPerDay);
+
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekSubscriptions);
         subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
@@ -59,6 +68,8 @@ const projectInsightsSub = {
             lastWeekTransitions,
             projectGoalsVM,
             lVisitorsPerDay,
+            lSubscriptionsPerDay,
+            subscriptionsPerDay,
             visitorsTotal,
             visitorsPerDay,
             balanceLoader
@@ -170,7 +181,38 @@ const projectInsightsSub = {
                         dataKey: 'visitors',
                         xAxis: item => h.momentify(item.day),
                         emptyState: I18n.t('visitors_per_day_empty', I18nScope())
-                    }) : h.loader()
+                    }) : h.loader(),
+
+                    m('.w-row', [
+                        m('.w-col.w-col-12.u-text-center', {
+                            style: {
+                                'min-height': '300px'
+                            }
+                        }, [
+                            !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
+                                collection: ctrl.subscriptionsPerDay,
+                                label: I18n.t('amount_per_day_label_sub', I18nScope()),
+                                dataKey: 'total_amount',
+                                xAxis: item => h.momentify(item.paid_at),
+                                emptyState: I18n.t('amount_per_day_empty_sub', I18nScope())
+                            }) : h.loader()
+                        ]),
+                    ]),
+                    m('.w-row', [
+                        m('.w-col.w-col-12.u-text-center', {
+                            style: {
+                                'min-height': '300px'
+                            }
+                        }, [
+                            !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
+                                collection: ctrl.subscriptionsPerDay,
+                                label: I18n.t('contributions_per_day_label_sub', I18nScope()),
+                                dataKey: 'total',
+                                xAxis: item => h.momentify(item.paid_at),
+                                emptyState: I18n.t('contributions_per_day_empty_sub', I18nScope())
+                            }) : h.loader()
+                        ]),
+                    ])
                 ])
             ])
         ] : h.loader());
