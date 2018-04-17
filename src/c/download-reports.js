@@ -7,7 +7,6 @@ const downloadReports = {
               paymentState = project.state === 'failed' ? 'paid,refunded' : 'paid',
             paidRewards = _.filter(args.rewards, reward => reward.paid_count > 0);
 
-        console.log(project);
         return m('section.min-height-70',
             m('.w-section',
                 m('article',
