@@ -7,7 +7,10 @@
  * <div data-mithril="ProjectsExplore">
  */
 import m from 'mithril';
-import {catarse} from '../api'
+import {
+    catarse,
+    commonRecommender
+} from '../api'
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
@@ -23,9 +26,15 @@ const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
     controller(args) {
+        const setCsrfToken = (xhr) => {
+            if (h.authenticityToken()) {
+                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
+            }
+        };
         const filters = catarse.filtersVM,
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
+              currentUser = h.getUser() || {},
             defaultFilter = h.paramByName('filter') || 'all',
             fallbackFilter = 'all',
             currentFilter = m.prop(filtersMap[defaultFilter]),
@@ -35,9 +44,8 @@ const projectsExplore = {
             },
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
-                projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends']);
+                projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends', 'recommended']);
             },
-            currentUser = h.getUser() || {},
             hasFBAuth = currentUser.has_fb_auth,
             buildTooltip = tooltipText => m.component(tooltip, {
                 el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
@@ -45,7 +53,7 @@ const projectsExplore = {
                 width: 380
             }),
             hint = () => {
-                  // TODO Add copies to i18n.
+                // TODO Add copies to i18n.
                 let hintText = '',
                     tooltipText = '',
                     hasHint = false;
@@ -61,6 +69,10 @@ const projectsExplore = {
                     hasHint = true;
                     hintText = 'Projetos apoiados por amigos ';
                     tooltipText = 'Projetos apoiados por amigos';
+                } else if (currentFilter().keyName === 'recommended') {
+                    hasHint = true;
+                    hintText = 'Projetos recomendados ';
+                    tooltipText = 'Projetos recomendados';
                 }
 
                 return hasHint ? m('.fontsize-smaller.fontcolor-secondary', [hintText, buildTooltip(tooltipText)]) : '';
@@ -70,18 +82,24 @@ const projectsExplore = {
             categoryId = m.prop(),
             findCategory = id => _.find(categoryCollection(), c => c.id === parseInt(id)),
             category = _.compose(findCategory, categoryId),
-            loadCategories = () => models.category.getPageWithToken(filters({}).order({ name: 'asc' }).parameters()).then(categoryCollection),
+            loadCategories = () => models.category.getPageWithToken(filters({}).order({
+                name: 'asc'
+            }).parameters()).then(categoryCollection),
             externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories,
             hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]),
-              // just small fix when have two scored projects only
+            // just small fix when have two scored projects only
             checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
-              // Fake projects object to be able to render page while loadding (in case of search)
-            projects = m.prop({ collection: m.prop([]), isLoading: () => true, isLastPage: () => true }),
+            // Fake projects object to be able to render page while loadding (in case of search)
+            projects = m.prop({
+                collection: m.prop([]),
+                isLoading: () => true,
+                isLastPage: () => true
+            }),
             loadRoute = () => {
                 const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
                     cat = route &&
-                            route[2] &&
-                            findCategory(route[2]),
+                    route[2] &&
+                    findCategory(route[2]),
 
                     filterFromRoute = () => {
                         const byCategory = filters({
@@ -89,17 +107,31 @@ const projectsExplore = {
                         });
 
                         return route &&
-                                route[1] &&
-                                filtersMap[route[1]] ||
-                                cat &&
-                                { title: cat.name, filter: byCategory.category_id(cat.id) };
+                            route[1] &&
+                            filtersMap[route[1]] ||
+                            cat && {
+                                title: cat.name,
+                                filter: byCategory.category_id(cat.id)
+                            };
                     },
 
                     filter = filterFromRoute() || currentFilter(),
                     search = h.paramByName('pg_search'),
 
+                    recommendedProjects = () => {
+                        const pages = commonRecommender.paginationVM(models.recommendedProjectsHybrid, '', {}, false);
+                        const rFilter = commonRecommender.filtersVM({
+                            user_id: 'eq'
+                        }).user_id(currentUser.id);
+
+                        pages.firstPage(rFilter.parameters());
+                        return pages;
+                    },
+
                     searchProjects = () => {
-                        const l = catarse.loaderWithToken(models.projectSearch.postOptions({ query: search })),
+                        const l = catarse.loaderWithToken(models.projectSearch.postOptions({
+                                query: search
+                            })),
                             page = { // We build an object with the same interface as paginationVM
                                 collection: m.prop([]),
                                 isLoading: l,
@@ -142,6 +174,9 @@ const projectsExplore = {
                 } else if (currentFilter().keyName === 'finished') {
                     isSearch(false);
                     projects(loadFinishedProjects());
+                } else if (currentFilter().keyName === 'recommended') {
+                    isSearch(false);
+                    projects(recommendedProjects());
                 } else {
                     isSearch(false);
                     title(filter.title);
@@ -199,6 +234,7 @@ const projectsExplore = {
     view(ctrl, args) {
         const categoryId = ctrl.categoryId,
             projectsCollection = ctrl.projects().collection(),
+            // projectsCollection = ctrl.recommended(),
             projectsCount = projectsCollection.length,
             filterKeyName = ctrl.currentFilter().keyName,
             isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends'),
@@ -212,18 +248,22 @@ const projectsExplore = {
             }
         }
 
-        return m('#explore', { config: h.setPageTitle(I18n.t('header_html', I18nScope())) }, [
+        return m('#explore', {
+            config: h.setPageTitle(I18n.t('header_html', I18nScope()))
+        }, [
             m('.w-section.hero-search', [
                 m.component(search),
                 m('.w-container.u-marginbottom-10', [
                     m('.u-text-center.u-marginbottom-40', [
-                        m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]',
-                            { onclick: () => ctrl.toggleCategories.toggle() },
-                            ['Explore projetos incríveis ', m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
+                        m('a#explore-open.link-hidden-white.fontweight-light.fontsize-larger[href="javascript:void(0);"]', {
+                            onclick: () => ctrl.toggleCategories.toggle()
+                        }, ['Explore projetos incríveis ', m(`span#explore-btn.fa.fa-angle-down${ctrl.toggleCategories() ? '.opened' : ''}`, '')])
                     ]),
                     m(`#categories.category-slider${ctrl.toggleCategories() ? '.opened' : ''}`, [
                         m('.w-row.u-marginbottom-30', [
-                            _.map(ctrl.categories(), category => m.component(categoryButton, { category }))
+                            _.map(ctrl.categories(), category => m.component(categoryButton, {
+                                category
+                            }))
                         ])
                     ]),
                 ])
@@ -236,23 +276,25 @@ const projectsExplore = {
                             m('.fontsize-larger', ctrl.title()),
                             ctrl.hint()
                         ]),
-                        m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4',
-                            !ctrl.isSearch() ? m('select.w-select.text-field.positive',
-                                { onchange: m.withAttr('value', ctrl.changeFilter) },
-                                _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => {
-                                    const isSelected = ctrl.currentFilter() === pageFilter;
+                        m('.w-col.w-col-3.w-col-small-4.w-col-tiny-4', !ctrl.isSearch() ? m('select.w-select.text-field.positive', {
+                                onchange: m.withAttr('value', ctrl.changeFilter)
+                            },
+                            _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => {
+                                const isSelected = ctrl.currentFilter() === pageFilter;
 
-                                    return m('option', { value: pageFilter.keyName, selected: isSelected }, pageFilter.nicename);
-                                })
-                            ) : ''
-                        )
+                                return m('option', {
+                                    value: pageFilter.keyName,
+                                    selected: isSelected
+                                }, pageFilter.nicename);
+                            })
+                        ) : '')
                     ])
                 ])
             ]),
 
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
-             (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '')
-             : ''),
+                (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '') :
+                ''),
             m('.w-section.section', [
                 m('.w-container', [
                     m('.w-row', [
@@ -286,7 +328,12 @@ const projectsExplore = {
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, { project, ref, type: cardType, showFriends: isContributedByFriendsFilter });
+                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {
+                                project,
+                                ref,
+                                type: cardType,
+                                showFriends: isContributedByFriendsFilter
+                            });
                         })),
                         ctrl.projects().isLoading() ? h.loader() : (_.isEmpty(projectsCollection) && ctrl.hasFBAuth ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : '')
                     ])
@@ -297,7 +344,12 @@ const projectsExplore = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-2.w-col-push-5', [
-                            (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', { onclick: () => { ctrl.projects().nextPage(); return false; } }, 'Carregar mais')
+                            (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
+                                onclick: () => {
+                                    ctrl.projects().nextPage();
+                                    return false;
+                                }
+                            }, 'Carregar mais')
                         ]),
                     ])
                 ])
@@ -306,17 +358,20 @@ const projectsExplore = {
             m('.w-section.section-large.before-footer.u-margintop-80.bg-gray.divider', [
                 m('.w-container.u-text-center', [
                     m('img.u-marginbottom-20.icon-hero', {
-                        src: hasSpecialFooter
-                                ? ctrl.externalLinkCategories[categoryId()].icon
-                                : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
+                        src: hasSpecialFooter ?
+                            ctrl.externalLinkCategories[categoryId()].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
                     }),
                     m('h2.fontsize-larger.u-marginbottom-60',
                         hasSpecialFooter ? ctrl.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
-                            hasSpecialFooter
-                                ? m('a.w-button.btn.btn-large', { href: `${ctrl.externalLinkCategories[categoryId()].link}?ref=ctrse_explore` }, ctrl.externalLinkCategories[categoryId()].cta)
-                                : m('a.w-button.btn.btn-large', { href: '/start?ref=ctrse_explore' }, 'Aprenda como')
+                            hasSpecialFooter ?
+                            m('a.w-button.btn.btn-large', {
+                                href: `${ctrl.externalLinkCategories[categoryId()].link}?ref=ctrse_explore`
+                            }, ctrl.externalLinkCategories[categoryId()].cta) :
+                            m('a.w-button.btn.btn-large', {
+                                href: '/start?ref=ctrse_explore'
+                            }, 'Aprenda como')
                         ])
                     ])
                 ])

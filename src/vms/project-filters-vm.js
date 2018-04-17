@@ -32,6 +32,10 @@ const projectFiltersVM = () => {
             open_for_contributions: 'eq'
         }).open_for_contributions('true'),
 
+        recommended = filtersVM({
+            open_for_contributions: 'eq'
+        }).open_for_contributions('true'),
+
         contributed_by_friends = filtersVM({
             open_for_contributions: 'eq',
             contributed_by_friends: 'eq'
@@ -90,6 +94,13 @@ const projectFiltersVM = () => {
                 nicename: 'Finalizados',
                 isContextual: false,
                 keyName: 'finished'
+            },
+            recommended: {
+                title: 'Recomendados',
+                filter: recommended,
+                nicename: 'Recomendados',
+                isContextual: false,
+                keyName: 'recommended'
             },
             recent: {
                 title: 'Recentes',
