@@ -13,7 +13,7 @@ import pandas
 from lightfm import LightFM
 from json import dumps
 from scipy.sparse import coo_matrix
-from app.application import app, get_db, get_project_details
+from catarse_recommender.application import app, get_db, get_project_details
 
 class CollaborativeFiltering(Resource):
     def __init__(self):
@@ -47,7 +47,8 @@ class CollaborativeFiltering(Resource):
         projects.sort(key=lambda x: float(x[0]), reverse=True)
         return projects
 
-    def get(self, user_id):
+    def get(self):
+        user_id = request.args.get('user_id').split('.')[1]
         offset, limit = [0, 10000]
         if request.headers.has_key("Range"):
             offset, limit = np.array(request.headers["Range"].split('-'), dtype=int)

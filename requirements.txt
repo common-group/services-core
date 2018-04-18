@@ -8,3 +8,4 @@ pandas
 psycopg2-binary
 xgboost
 flask-cors
+gunicorn

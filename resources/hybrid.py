@@ -1,8 +1,8 @@
 from flask_restful import Resource
 from flask import request
-from app.resources.collaborative_filtering import CollaborativeFiltering
-from app.resources.content_based import ContentBased
-from app.application import get_project_details
+from catarse_recommender.resources.collaborative_filtering import CollaborativeFiltering
+from catarse_recommender.resources.content_based import ContentBased
+from catarse_recommender.application import get_project_details
 import numpy as np
 import scipy.io as spi
 import scipy.sparse as sps
@@ -16,7 +16,8 @@ class Hybrid(Resource):
         self.cf = CollaborativeFiltering()
         self.cb = ContentBased()
 
-    def get(self, user_id):
+    def get(self):
+        user_id = request.args.get('user_id').split('.')[1]
         projects = self.get_predictions(user_id)
         offset, limit = [0, 10000]
         if request.headers.has_key("Range"):

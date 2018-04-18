@@ -20,7 +20,7 @@ from xgboost.sklearn import XGBClassifier
 from sqlalchemy import create_engine
 from json import dumps
 from sklearn import metrics   #Additional scklearn functions
-from app.application import app, get_db, get_project_details
+from catarse_recommender.application import app, get_db, get_project_details
 
 class ContentBased(Resource):
     def get_rows(self, user_id):
@@ -94,7 +94,8 @@ class ContentBased(Resource):
     # def explain_prediction(self, bst, row):
     #     display(eli5.format_as_html(eli5.explain_prediction_xgboost(bst, row),  show_feature_values=True))
 
-    def get(self, user_id):
+    def get(self):
+        user_id = request.args.get('user_id').split('.')[1]
         offset, limit = [0, 10000]
         if request.headers.has_key("Range"):
             offset, limit = np.array(request.headers["Range"].split('-'), dtype=int)

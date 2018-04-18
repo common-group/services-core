@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import print_function
 from flask import Flask, _app_ctx_stack, g
 from flask_restful import Api
 from flask_cors import CORS
@@ -28,6 +27,7 @@ def get_db():
         g.cur = g.psql_db.cursor()
     return g.psql_db, g.cur
 
+# get project details in the same order as ids array
 def get_project_details(ids, offset, limit):
     with app.app_context():
         db, cur = get_db()
@@ -52,9 +52,9 @@ def teardown_request(exception):
     if hasattr(g, 'cur'):
         g.cur.close()
 
-from app.resources.collaborative_filtering import CollaborativeFiltering, TrainCollaborative
-from app.resources.content_based import ContentBased, TrainTree
-from app.resources.hybrid import Hybrid
-api.add_resource(Hybrid, '/predictions/hybrid/<int:user_id>')
-api.add_resource(CollaborativeFiltering, '/predictions/cf/<int:user_id>')
-api.add_resource(ContentBased, '/predictions/cb/<int:user_id>')
+from catarse_recommender.resources.collaborative_filtering import CollaborativeFiltering, TrainCollaborative
+from catarse_recommender.resources.content_based import ContentBased, TrainTree
+from catarse_recommender.resources.hybrid import Hybrid
+api.add_resource(Hybrid, '/predictions/hybrid')
+api.add_resource(CollaborativeFiltering, '/predictions/cf')
+api.add_resource(ContentBased, '/predictions/cb')

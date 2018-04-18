@@ -12,8 +12,8 @@ RUN python3.6 -m pip install wheel
 RUN apt-get install -y python-pip python-dev build-essential
 
 EXPOSE 3009
-WORKDIR /usr/app
-RUN mkdir -p /usr/app
-ADD requirements.txt /usr/app
+WORKDIR /usr/catarse_recommender
+RUN mkdir -p /usr/catarse_recommender
+ADD requirements.txt /usr/catarse_recommender
 RUN pip3 install --no-cache-dir -r requirements.txt
-ADD . /usr/app
+ADD . /usr/catarse_recommender
