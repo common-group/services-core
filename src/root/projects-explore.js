@@ -26,15 +26,10 @@ const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
     controller(args) {
-        const setCsrfToken = (xhr) => {
-            if (h.authenticityToken()) {
-                xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
-            }
-        };
         const filters = catarse.filtersVM,
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
-              currentUser = h.getUser() || {},
+            currentUser = h.getUser() || {},
             defaultFilter = h.paramByName('filter') || 'all',
             fallbackFilter = 'all',
             currentFilter = m.prop(filtersMap[defaultFilter]),
