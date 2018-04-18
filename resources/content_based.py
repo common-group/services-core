@@ -27,18 +27,9 @@ class ContentBased(Resource):
         with app.app_context():
             db, cur = get_db()
         cur.execute("""
-        SELECT
-        (SELECT count(*)
-        FROM contributions
-        JOIN projects ON projects.id = contributions.project_id
-        WHERE contributions.user_id = u.id
-            AND contributions.was_confirmed
-            AND projects.category_id = p.category_id) AS category_count,
-        (SELECT count(*)
-        FROM contributions
-        JOIN projects ON projects.id = contributions.project_id
-        WHERE contributions.user_id = u.id
-            AND projects.mode = p.mode) AS mode_count,
+                SELECT
+        count(c.*) FILTER (where p2.category_id = p.category_id) as category_count,
+        count(c.*) FILTER (where p2.mode = p.mode) as mode_count,
             (coalesce(
                         (SELECT state_id
                             FROM cities
@@ -49,6 +40,7 @@ class ContentBased(Resource):
                                                     WHERE a.id = u.address_id
                                                         AND state_id IS NOT NULL
                                                     LIMIT 1), 0))::integer AS same_state,
+
             coalesce(p.recommended, FALSE)::integer AS recommended,
             (p.video_url IS NOT NULL)::integer AS has_video,
             coalesce(char_length(p.budget), 0) AS budget_length,
@@ -77,16 +69,18 @@ class ContentBased(Resource):
         FROM projects
         WHERE projects.user_id = p.user_id
             AND projects.state != 'draft')::integer AS project_count,
-
         (SELECT count(*)
         FROM rewards r
         WHERE r.project_id = p.id)::integer AS reward_count,
         p.id
         FROM projects p,
             users u
+        join contributions c on c.user_id = u.id
+        JOIN projects p2 ON p2.id = c.project_id
         WHERE u.id = """ + str( user_id ) + """
         and p.state = 'online'
         AND NOT EXISTS (select true from contributions c2 where c2.project_id = p.id and c2.user_id = u.id)
+        group by p.id, u.id
         """)
 
         return np.array(cur.fetchall())

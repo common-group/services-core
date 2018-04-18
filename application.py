@@ -29,8 +29,7 @@ def get_db():
 
 # get project details in the same order as ids array
 def get_project_details(ids, offset, limit):
-    with app.app_context():
-        db, cur = get_db()
+    db, cur = get_db()
     cur.execute("""
     SELECT array_to_json(array_agg(s)) FROM
     (
