@@ -6524,7 +6524,7 @@ var projectInsightsSub = {
         }) : '', m('.dashboard-header.section-one-column', [m('.u-marginbottom-30.u-text-center', [m('.fontsize-larger.fontweight-semibold', 'Ol\xE1, ' + (project.user.public_name || project.user.name) + '!'), m('.fontsize-smaller', 'Este \xE9 o retrato de sua campanha hoje, ' + moment().format('DD [de] MMMM [de] YYYY'))]), m('.w-container', [m('.flex-row.u-marginbottom-40.u-text-center-small-only', [subscribersDetails && !_$1.isEmpty(ctrl.projectGoalsVM.goals()) ? m.component(projectGoalsBoxDashboard, {
             goalDetails: ctrl.projectGoalsVM.goals,
             amount: subscribersDetails.amount_paid_for_valid_period
-        }) : '', m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Assinantes ativos'), m('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), m('.fontsize-largest.fontweight-semibold', 'R$' + h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3))]), m('.card.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', ['Saldo', m.trust('&nbsp;'), ' ', m('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\']', 'Sacar')]), m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + h.formatNumber(balanceData.amount, 2, 3) : ''), m('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
+        }) : '', m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Assinantes ativos'), m('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), m('.fontsize-largest.fontweight-semibold', 'R$' + h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3))]), m('.card.flex-column.u-marginbottom-10.u-radius', [m('.fontsize-small.u-marginbottom-10', ['Saldo', m.trust('&nbsp;'), ' ', m('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\']', 'Sacar')]), m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + h.formatNumber(balanceData.amount, 2, 3) : ''), m('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? m('.w-container.u-marginbottom-60', m.component(projectInviteCard, {
             project: project
         })) : '', m('.u-marginbottom-60', [m('.flex-row.u-marginbottom-40.u-text-center-small-only', [m('.flex-column.card.u-radius.u-marginbottom-10', [m('div', 'Receita média por assinante'), m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + moment().format('DD/MM/YYYY')), m('.fontsize-largest.fontweight-semibold', 'R$' + (averageRevenue ? '' + h.formatNumber(averageRevenue, 2, 3) : '--'))]), m(insightsInfoBox, {
             label: 'Novos Assinantes',
@@ -6543,7 +6543,7 @@ var projectInsightsSub = {
                 return h.momentify(item.day);
             },
             emptyState: I18n$1.t('visitors_per_day_empty', I18nScope$14())
-        }) : h.loader(), m('.w-row', [m('.w-col.w-col-12.u-text-center', {
+        }) : h.loader(), m('.u-text-center', {
             style: {
                 'min-height': '300px'
             }
@@ -6555,7 +6555,7 @@ var projectInsightsSub = {
                 return h.momentify(item.paid_at);
             },
             emptyState: I18n$1.t('amount_per_day_empty_sub', I18nScope$14())
-        }) : h.loader()])]), m('.w-row', [m('.w-col.w-col-12.u-text-center', {
+        }) : h.loader()]), m('.u-text-center', {
             style: {
                 'min-height': '300px'
             }
@@ -6567,7 +6567,7 @@ var projectInsightsSub = {
                 return h.momentify(item.paid_at);
             },
             emptyState: I18n$1.t('contributions_per_day_empty_sub', I18nScope$14())
-        }) : h.loader()])])])])] : h.loader());
+        }) : h.loader()])])])] : h.loader());
     }
 };
 
