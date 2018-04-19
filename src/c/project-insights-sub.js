@@ -140,7 +140,7 @@ const projectInsightsSub = {
                             )
                         ])
                     ]),
-                    (project.state === 'online' && !project.has_cancelation_request ? m('.w-container', m.component(projectInviteCard, {
+                    (project.state === 'online' && !project.has_cancelation_request ? m('.w-container.u-marginbottom-60', m.component(projectInviteCard, {
                         project
                     })) : ''),
 
@@ -183,35 +183,31 @@ const projectInsightsSub = {
                         emptyState: I18n.t('visitors_per_day_empty', I18nScope())
                     }) : h.loader(),
 
-                    m('.w-row', [
-                        m('.w-col.w-col-12.u-text-center', {
-                            style: {
-                                'min-height': '300px'
-                            }
-                        }, [
-                            !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
-                                collection: ctrl.subscriptionsPerDay,
-                                label: I18n.t('amount_per_day_label_sub', I18nScope()),
-                                dataKey: 'total_amount',
-                                xAxis: item => h.momentify(item.paid_at),
-                                emptyState: I18n.t('amount_per_day_empty_sub', I18nScope())
-                            }) : h.loader()
-                        ]),
+                    m('.u-text-center', {
+                        style: {
+                            'min-height': '300px'
+                        }
+                    }, [
+                        !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
+                            collection: ctrl.subscriptionsPerDay,
+                            label: I18n.t('amount_per_day_label_sub', I18nScope()),
+                            dataKey: 'total_amount',
+                            xAxis: item => h.momentify(item.paid_at),
+                            emptyState: I18n.t('amount_per_day_empty_sub', I18nScope())
+                        }) : h.loader()
                     ]),
-                    m('.w-row', [
-                        m('.w-col.w-col-12.u-text-center', {
-                            style: {
-                                'min-height': '300px'
-                            }
-                        }, [
-                            !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
-                                collection: ctrl.subscriptionsPerDay,
-                                label: I18n.t('contributions_per_day_label_sub', I18nScope()),
-                                dataKey: 'total',
-                                xAxis: item => h.momentify(item.paid_at),
-                                emptyState: I18n.t('contributions_per_day_empty_sub', I18nScope())
-                            }) : h.loader()
-                        ]),
+                    m('.u-text-center', {
+                        style: {
+                            'min-height': '300px'
+                        }
+                    }, [
+                        !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
+                            collection: ctrl.subscriptionsPerDay,
+                            label: I18n.t('contributions_per_day_label_sub', I18nScope()),
+                            dataKey: 'total',
+                            xAxis: item => h.momentify(item.paid_at),
+                            emptyState: I18n.t('contributions_per_day_empty_sub', I18nScope())
+                        }) : h.loader()
                     ])
                 ])
             ])
