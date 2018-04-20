@@ -51,8 +51,10 @@ def teardown_request(exception):
     if hasattr(g, 'cur'):
         g.cur.close()
 
-from catarse_recommender.resources.collaborative_filtering import CollaborativeFiltering, TrainCollaborative
-from catarse_recommender.resources.content_based import ContentBased, TrainTree
+from catarse_recommender.resources.collaborative_filtering import CollaborativeFiltering
+from catarse_recommender.resources.content_based import ContentBased
+from catarse_recommender.resources.train_tree import TrainTree
+from catarse_recommender.resources.train_collaborative import TrainCollaborative
 from catarse_recommender.resources.hybrid import Hybrid
 api.add_resource(Hybrid, '/predictions/hybrid')
 api.add_resource(CollaborativeFiltering, '/predictions/cf')
