@@ -82,6 +82,9 @@ services:
       - ./migrations:/usr/app/migrations
     links:
         - "service_core_db:service_core_db"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.57
 
   notification_dispatcher:
     build:
