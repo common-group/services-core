@@ -1,6 +1,6 @@
 create user postgrest with login password 'example';
 create user catarse_fdw with login password 'example';
-create role catarse with nologin
+create role catarse with nologin;
 create role admin with nologin;
 create role web_user with nologin;
 create role anonymous with nologin;
