@@ -1,3 +1,0 @@
-#!/bin/bash
-
-pg-dispatcher --db-uri="$DISPATCHER_DATABASE_URL" --redis-uri="$DISPATCHER_REDIS_URL" --channel="$DISPATCHER_CHANNEL" --workers="$DISPATCHER_WORKERS" --exec="${DISPATCHER_EXEC}"
