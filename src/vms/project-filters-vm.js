@@ -13,6 +13,14 @@ const projectFiltersVM = () => {
             open_for_contributions: 'eq'
         }).open_for_contributions('true').near_me(true),
 
+        sub = filtersVM({
+            mode: 'eq'
+        }).mode('sub'),
+
+        notSub = filtersVM({
+            mode: 'not.eq'
+        }).mode('sub'),
+
         expiring = filtersVM({
             expires_at: 'lte',
             open_for_contributions: 'eq'
@@ -98,9 +106,27 @@ const projectFiltersVM = () => {
             recommended: {
                 title: 'Recomendados',
                 filter: recommended,
-                nicename: 'Recomendados',
+                nicename: 'Recomendados para mim',
                 isContextual: false,
                 keyName: 'recommended'
+            },
+            not_sub: {
+                title: 'Projetos pontuais',
+                filter: notSub,
+                isContextual: false,
+                keyName: 'not_sub'
+            },
+            all_modes: {
+                title: 'Todos os projetos',
+                filter: null,
+                isContextual: false,
+                keyName: 'all_modes'
+            },
+            sub: {
+                title: 'Projetos recorrentes',
+                filter: sub,
+                isContextual: false,
+                keyName: 'sub'
             },
             recent: {
                 title: 'Recentes',
