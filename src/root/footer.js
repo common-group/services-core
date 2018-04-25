@@ -17,14 +17,8 @@ const footer = {
                                                     'Bem-vindo'
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/quem-somos?ref=ctrse_footer\']',
-                                                  [
-                                                      'Quem Somos',
-                                                      m.trust('&nbsp;'),
-                                                      m('span.badge.badge-success',
-                                                        'Novidade‍'
-                                                       )
-                                                  ]
-                                                 ),                                               
+                                                    ' Quem Somos'
+                                                ),                                               
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
                                                     ' Como funciona'
                                                 ),                                                
@@ -42,14 +36,8 @@ const footer = {
                                                     ' Imprensa'
                                                 ),                                                                                                
                                                 m('a.u-marginbottom-30.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
-                                                  [
-                                                      'Retrospectiva 2017',
-                                                      m.trust('&nbsp;'),
-                                                      m('span.badge.badge-success',
-                                                        'Novidade'
-                                                       )
-                                                  ]
-                                                 ),   
+                                                    ' Retrospectiva 2017'
+                                                ),   
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Redes Sociais'
                                                 ),                                                                                                
