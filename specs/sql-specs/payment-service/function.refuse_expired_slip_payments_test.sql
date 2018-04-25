@@ -22,6 +22,11 @@ BEGIN;
                 returning * into _non_expired_payment;
 
             insert into payment_service.catalog_payments
+            (gateway, platform_id, user_id, project_id, data, gateway_general_data) 
+            values ('pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto')::jsonb, json_build_object('boleto_expiration_date', now() - '3 days'::interval)::jsonb)
+            returning * into _non_expired_payment;
+
+            insert into payment_service.catalog_payments
                 (gateway, platform_id, user_id, project_id, data, gateway_general_data) 
                 values ('pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto')::jsonb, json_build_object('boleto_expiration_date', now() - '10 days'::interval)::jsonb)
                 returning * into _expired_payment;
