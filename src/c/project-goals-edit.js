@@ -73,10 +73,10 @@ const projectGoalsEdit = {
                             m(".card.card-terciary.medium.u-marginbottom-30[id='arrecadacao']", [
                                 m('.u-marginbottom-30', [
                                     m("label.fontsize-base.fontweight-semibold[for='name-8']",
-                                        'O que você vai alcançar com os apoios de seus assinantes?'
+                                        'O que você vai alcançar com os pagamentos mensais de seus assinantes?'
                                     ),
                                     m('.fontsize-small', [
-                                        'As metas são a melhor maneira de deixar seus assinantes envolvidos no próximo passo de sua jornada criativa. Use-as para mostrar, de forma clara, o que vocês estarão conquistando',
+                                        'As metas mensais são a melhor maneira de informar aos seus assinantes o que você fará com os recursos arrecadados mensalmente em sua campanha. Use-as para mostrar, de forma clara, o que vocês estarão conquistando',
                                         m.trust('&nbsp;'),
                                         'juntos com o sucesso de seu Catarse Assinaturas.'
                                     ])
@@ -104,7 +104,7 @@ const projectGoalsEdit = {
                                 }, [
                                     '+ ',
                                     m.trust('&nbsp;'),
-                                    ' Adicionar meta'
+                                    ' Adicionar meta mensal'
                                 ])
                             ])
                         )
