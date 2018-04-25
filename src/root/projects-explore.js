@@ -129,9 +129,9 @@ const projectsExplore = {
                         }).user_id(currentUser.id);
 
                         const parameters = _.extend({}, currentFilter().filter.parameters(),
-                                                    filter.filter.parameters(),
-                                                    rFilter.parameters(),
-                                                    currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
+                            filter.filter.parameters(),
+                            rFilter.parameters(),
+                            currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
                         pages.firstPage(parameters);
                         // pages.firstPage(rFilter.parameters());
                         return pages;
@@ -286,36 +286,38 @@ const projectsExplore = {
                         ctrl.modeToggle() ? '' :
                         m('.explore-filter-select', [
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.modeToggle.toggle();
-                                    ctrl.currentMode(ctrl.filtersMap.all_modes);
-                                    ctrl.loadRoute();
+                                    onclick: () => {
+                                        ctrl.modeToggle.toggle();
+                                        ctrl.currentMode(ctrl.filtersMap.all_modes);
+                                        ctrl.loadRoute();
+                                    },
+                                    class: ctrl.currentMode() === null ? 'selected' : ''
                                 },
-                                class: ctrl.currentMode() === null ? 'selected' : ''
-                            },
                                 'Todos os projetos'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.modeToggle.toggle();
-                                    ctrl.currentMode(ctrl.filtersMap.not_sub);
-                                    ctrl.loadRoute();
+                                    onclick: () => {
+                                        ctrl.modeToggle.toggle();
+                                        ctrl.currentMode(ctrl.filtersMap.not_sub);
+                                        ctrl.loadRoute();
+                                    },
+                                    class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
                                 },
-                                class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
-                            },
                                 'Projetos pontuais'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.modeToggle.toggle();
-                                    ctrl.currentMode(ctrl.filtersMap.sub);
-                                    ctrl.loadRoute();
+                                    onclick: () => {
+                                        ctrl.modeToggle.toggle();
+                                        ctrl.currentMode(ctrl.filtersMap.sub);
+                                        ctrl.loadRoute();
+                                    },
+                                    class: ctrl.currentMode() === 'sub' ? 'selected' : ''
                                 },
-                                class: ctrl.currentMode() === 'sub' ? 'selected' : ''
-                            },
                                 'Projetos recorrentes'
                             ),
-                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block')
+                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                onclick: ctrl.modeToggle.toggle
+                            })
                         ])
                     ]),
                     m('.explore-text-fixed',
@@ -341,25 +343,25 @@ const projectsExplore = {
                             m('.explore-filer-select-row', [
                                 m('.explore-filter-select-col', [
                                     m("a.explore-filter-link[href='#']", {
-                                        onclick: () => {
-                                            ctrl.categoryToggle.toggle();
-                                            ctrl.selectedCategory({
-                                                name: 'Todas as categorias',
-                                                id: null
-                                            });
+                                            onclick: () => {
+                                                ctrl.categoryToggle.toggle();
+                                                ctrl.selectedCategory({
+                                                    name: 'Todas as categorias',
+                                                    id: null
+                                                });
+                                            },
+                                            class: ctrl.selectedCategory().id === null ? 'selected' : ''
                                         },
-                                        class: ctrl.selectedCategory().id === null ? 'selected' : ''
-                                    },
                                         'Todas as categorias'
                                     ),
                                     _.map(ctrl.categories().slice(0, Math.floor(_.size(ctrl.categories()) / 2)), category =>
                                         m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
-                                            onclick: () => {
-                                                ctrl.categoryToggle.toggle();
-                                                ctrl.selectedCategory(category);
+                                                onclick: () => {
+                                                    ctrl.categoryToggle.toggle();
+                                                    ctrl.selectedCategory(category);
+                                                },
+                                                class: ctrl.selectedCategory() === category ? 'selected' : ''
                                             },
-                                            class: ctrl.selectedCategory() === category ? 'selected' : ''
-                                        },
                                             category.name
                                         )
                                     )
@@ -367,17 +369,19 @@ const projectsExplore = {
                                 m('.explore-filter-select-col', [
                                     _.map(ctrl.categories().slice(Math.floor(_.size(ctrl.categories()) / 2), _.size(ctrl.categories())), category =>
                                         m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
-                                            onclick: () => {
-                                                ctrl.categoryToggle.toggle();
-                                                ctrl.selectedCategory(category);
+                                                onclick: () => {
+                                                    ctrl.categoryToggle.toggle();
+                                                    ctrl.selectedCategory(category);
+                                                },
+                                                class: ctrl.selectedCategory() === category ? 'selected' : ''
                                             },
-                                            class: ctrl.selectedCategory() === category ? 'selected' : ''
-                                        },
                                             category.name
                                         )
                                     )
                                 ]),
-                                m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block')
+                                m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                    onclick: ctrl.categoryToggle.toggle
+                                })
                             ])
                         )
                     ]),
@@ -395,22 +399,24 @@ const projectsExplore = {
                                 'FILTRO'
                             ),
                             m('.inline-block',
-                                'Recomendados para mim'
+                              ctrl.currentFilter().nicename
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
                         ctrl.filterToggle() ? '' :
                         m('.explore-filter-select', [
                             _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.changeFilter(pageFilter.keyName);
-                                    ctrl.filterToggle.toggle();
+                                    onclick: () => {
+                                        ctrl.changeFilter(pageFilter.keyName);
+                                        ctrl.filterToggle.toggle();
+                                    },
+                                    class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
                                 },
-                                class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
-                            },
-                                    pageFilter.nicename
-                                )),
-                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block')
+                                pageFilter.nicename
+                            )),
+                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                onclick: ctrl.filterToggle.toggle
+                            })
                         ])
                     ])
                 ])

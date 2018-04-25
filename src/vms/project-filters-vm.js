@@ -59,7 +59,7 @@ const projectFiltersVM = () => {
             all: {
                 title: 'Todas as Categorias',
                 filter: all,
-                nicename: 'No ar',
+                nicename: 'Populares',
                 isContextual: false,
                 keyName: 'all'
             },
@@ -73,7 +73,7 @@ const projectFiltersVM = () => {
             contributed_by_friends: {
                 title: 'Amigos',
                 filter: contributed_by_friends,
-                nicename: 'Amigos',
+                nicename: 'Apoiados por amigos',
                 isContextual: false,
                 keyName: 'contributed_by_friends'
             },
