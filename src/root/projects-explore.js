@@ -46,13 +46,13 @@ const projectsExplore = {
             },
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
-                const filters = ['finished', 'all', 'contributed_by_friends'];
+                const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
                 if (currentUser.is_admin_role){
-                    filters.push('recommended_cf');
-                    filters.push('recommended_cb');
-                    filters.push('recommended_hb');
+                    contextFilters.push('recommended_cf');
+                    contextFilters.push('recommended_cb');
+                    contextFilters.push('recommended_hb');
                 }
-                projectFiltersVM.setContextFilters(filters);
+                projectFiltersVM.setContextFilters(contextFilters);
             },
             hasFBAuth = currentUser.has_fb_auth,
             buildTooltip = tooltipText => m.component(tooltip, {

@@ -86,6 +86,7 @@ const projectFiltersVM = () => {
             expiring: {
                 title: 'Reta final',
                 filter: expiring,
+                nicename: 'Reta final',
                 isContextual: false,
                 keyName: 'expiring'
             },
@@ -145,6 +146,7 @@ const projectFiltersVM = () => {
             recent: {
                 title: 'Recentes',
                 filter: recent,
+                nicename: 'Recentes',
                 isContextual: false,
                 keyName: 'recent'
             },
