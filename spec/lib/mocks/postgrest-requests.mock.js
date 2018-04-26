@@ -27,6 +27,11 @@ commonNotificationApiMeta.content = 'https://notification.common.io';
 commonNotificationApiMeta.name = 'common-notification-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonNotificationApiMeta);
 
+const commonRecommenderApiMeta = document.createElement('meta');
+commonRecommenderApiMeta.content = 'https://recommender.common.io';
+commonRecommenderApiMeta.name = 'common-recommender-api-host';
+document.getElementsByTagName('head')[0].appendChild(commonRecommenderApiMeta);
+
 // const apiPrefix = "https://api.catarse.me";
 // catarse.init(apiPrefix, {method: "GET", url: "/api_token"});
 
