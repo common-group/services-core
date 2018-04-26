@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import Flask, _app_ctx_stack, g
+from flask import Flask, _app_ctx_stack, g, request
 from flask_restful import Api
 from flask_cors import CORS
 import psycopg2
@@ -59,3 +59,5 @@ from catarse_recommender.resources.hybrid import Hybrid
 api.add_resource(Hybrid, '/predictions/hybrid')
 api.add_resource(CollaborativeFiltering, '/predictions/cf')
 api.add_resource(ContentBased, '/predictions/cb')
+api.add_resource(TrainCollaborative, '/traincf')
+api.add_resource(TrainTree, '/traincb')

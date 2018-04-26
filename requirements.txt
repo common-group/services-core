@@ -3,6 +3,7 @@ flask-jsonpify
 flask-sqlalchemy
 flask-restful
 lightfm
+numpy
 eli5
 pandas
 psycopg2-binary

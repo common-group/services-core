@@ -14,7 +14,7 @@ from flask import g, current_app, request
 from IPython.display import display
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, recall_score
+from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.datasets import dump_svmlight_file
 from sklearn.datasets import load_svmlight_file
 from xgboost.sklearn import XGBClassifier
@@ -24,7 +24,7 @@ from catarse_recommender.application import app, get_db, get_project_details
 
 # Train content-based model using XGboost
 
-class TrainTree():
+class TrainTree(Resource):
     def __init__(self):
         self.f_names = [
                 'category_count',
@@ -163,7 +163,8 @@ class TrainTree():
         """)
         return np.array( cur.fetchall() )
 
-    def train_model(self, num_round=4000, cache=False):
+    #train model method
+    def get(self, num_round=4000, cache=False):
         if not cache:
             rows = self.get_db_data(250000)
             print('finished getting data')
@@ -245,12 +246,13 @@ class TrainTree():
         dtrain = xgb.DMatrix('common/catarse.txt.train', feature_names = self.f_names)
         dtest = xgb.DMatrix('common/catarse.txt.test', feature_names = self.f_names)
         # this is prediction
-        preds = bst.predict(dtest)
         labels = dtest.get_label()
+        preds = bst.predict(dtest)
         y_pred = [int(i > 0.5) for i in preds]
         print('recall=%f' % recall_score(labels, y_pred))
         print('accuracy=%f' % accuracy_score(labels, y_pred))
-        print('precision at 10=%f' % self.ranking_precision_score(labels, preds))
+        print('precision =%f' % precision_score(labels, y_pred))
+        # print('precision at 10=%f' % self.ranking_precision_score(labels, preds))
         print('error=%f' % (sum(1 for i in range(len(preds)) if int(preds[i] > 0.5) != labels[i]) / float(len(preds))))
         # with open('pred.txt', 'w') as predictions:
         #     for item in preds:
