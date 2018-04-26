@@ -103,12 +103,26 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'finished'
             },
-            recommended: {
+            recommended_cf: {
                 title: 'Recomendados',
                 filter: recommended,
-                nicename: 'Recomendados para mim',
+                nicename: 'Recomendados cf',
                 isContextual: false,
-                keyName: 'recommended'
+                keyName: 'recommended_cf'
+            },
+            recommended_cb: {
+                title: 'Recomendados',
+                filter: recommended,
+                nicename: 'Recomendados cb',
+                isContextual: false,
+                keyName: 'recommended_cb'
+            },
+            recommended_hb: {
+                title: 'Recomendados',
+                filter: recommended,
+                nicename: 'Recomendados hb',
+                isContextual: false,
+                keyName: 'recommended_hb'
             },
             not_sub: {
                 title: 'Projetos pontuais',

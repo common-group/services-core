@@ -46,7 +46,13 @@ const projectsExplore = {
             },
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
-                projectFiltersVM.setContextFilters(['finished', 'all', 'contributed_by_friends', 'recommended']);
+                const filters = ['finished', 'all', 'contributed_by_friends'];
+                if (currentUser.is_admin_role){
+                    filters.push('recommended_cf');
+                    filters.push('recommended_cb');
+                    filters.push('recommended_hb');
+                }
+                projectFiltersVM.setContextFilters(filters);
             },
             hasFBAuth = currentUser.has_fb_auth,
             buildTooltip = tooltipText => m.component(tooltip, {
@@ -54,31 +60,6 @@ const projectsExplore = {
                 text: tooltipText,
                 width: 380
             }),
-            hint = () => {
-                // TODO Add copies to i18n.
-                let hintText = '',
-                    tooltipText = '',
-                    hasHint = false;
-                if (currentFilter().keyName === 'all') {
-                    hasHint = true;
-                    hintText = 'Ordenados por popularidade ';
-                    tooltipText = 'O nosso fator popularidade é uma mistura da seleção do time do Catarse com um valor que é calculado pela velocidade de arrecadação do projeto';
-                } else if (currentFilter().keyName === 'finished') {
-                    hasHint = true;
-                    hintText = 'Ordenados por R$ alcançado ';
-                    tooltipText = 'Os projetos com maior meta de arrecadação alcançada ficam no topo';
-                } else if (currentFilter().keyName === 'contributed_by_friends') {
-                    hasHint = true;
-                    hintText = 'Projetos apoiados por amigos ';
-                    tooltipText = 'Projetos apoiados por amigos';
-                } else if (currentFilter().keyName === 'recommended') {
-                    hasHint = true;
-                    hintText = 'Projetos recomendados ';
-                    tooltipText = 'Projetos recomendados';
-                }
-
-                return hasHint ? m('.fontsize-smaller.fontcolor-secondary', [hintText, buildTooltip(tooltipText)]) : '';
-            },
             isSearch = m.prop(false),
             categoryCollection = m.prop([]),
             categoryId = m.prop(),
@@ -122,8 +103,20 @@ const projectsExplore = {
                     filter = filterFromRoute() || currentFilter();
 
                 const search = h.paramByName('pg_search'),
-                    recommendedProjects = () => {
-                        const pages = commonRecommender.paginationVM(models.recommendedProjectsHybrid, '', {}, false);
+                    recommendedProjects = (alg) => {
+                        let model;
+                        //admin only for now
+                        switch (alg) {
+                            case 'cf':
+                                model = models.recommendedProjectsCf;
+                                break;
+                            case 'cb':
+                                model = models.recommendedProjectsCb;
+                                break;
+                            default:
+                                model = models.recommendedProjectsHybrid;
+                        }
+                        const pages = commonRecommender.paginationVM(model, '', {}, false);
                         const rFilter = commonRecommender.filtersVM({
                             user_id: 'eq'
                         }).user_id(currentUser.id);
@@ -133,7 +126,6 @@ const projectsExplore = {
                             rFilter.parameters(),
                             currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
                         pages.firstPage(parameters);
-                        // pages.firstPage(rFilter.parameters());
                         return pages;
                     },
 
@@ -153,7 +145,9 @@ const projectsExplore = {
 
                     // @TODO fix infinite requests when collection is empty
                     loadProjects = () => {
-                        const pages = catarse.paginationVM(models.project);
+                        const pages = catarse.paginationVM(models.project, null, {
+                            Prefer: 'count=exact'
+                        });
                         const parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                             open_for_contributions: 'desc',
                             state_order: 'asc',
@@ -166,7 +160,9 @@ const projectsExplore = {
                     },
 
                     loadFinishedProjects = () => {
-                        const pages = catarse.paginationVM(models.finishedProject),
+                        const pages = catarse.paginationVM(models.finishedProject, null, {
+                                Prefer: 'count=exact'
+                            }),
                             parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
                                 state_order: 'asc',
                                 state: 'desc',
@@ -184,9 +180,15 @@ const projectsExplore = {
                 } else if (currentFilter().keyName === 'finished') {
                     isSearch(false);
                     projects(loadFinishedProjects());
-                } else if (currentFilter().keyName === 'recommended') {
+                } else if (currentFilter().keyName === 'recommended_cf') {
                     isSearch(false);
-                    projects(recommendedProjects());
+                    projects(recommendedProjects('cf'));
+                } else if (currentFilter().keyName === 'recommended_cb') {
+                    isSearch(false);
+                    projects(recommendedProjects('cb'));
+                } else if (currentFilter().keyName === 'recommended_hb') {
+                    isSearch(false);
+                    projects(recommendedProjects('hb'));
                 } else {
                     isSearch(false);
                     title(filter.title);
@@ -226,7 +228,6 @@ const projectsExplore = {
             projects,
             category,
             title,
-            hint,
             loadRoute,
             modeToggle,
             categoryToggle,
@@ -399,7 +400,7 @@ const projectsExplore = {
                                 'FILTRO'
                             ),
                             m('.inline-block',
-                              ctrl.currentFilter().nicename
+                                ctrl.currentFilter().nicename
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
@@ -420,19 +421,19 @@ const projectsExplore = {
                         ])
                     ])
                 ])
-            ]),
-
-            m('.w-section', [
-                m('.w-container', [
+            ]), !ctrl.projects().isLoading() && ctrl.projects().total() ?
+            m('div',
+                m('.w-container',
                     m('.w-row', [
-                        m('.w-col.w-col-9.w-col-small-8.w-col-tiny-8', [
-                            m('.fontsize-larger', ctrl.title()),
-                            ctrl.hint()
-                        ])
+                        m('.w-col.w-col-9.w-col-tiny-9.w-col-small-9',
+                            m('.fontsize-large',
+                                `${ctrl.projects().total()} projetos encontrados`
+                            )
+                        ),
+                        m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
                     ])
-                ])
-            ]),
-
+                )
+             ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
                 (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '') :
                 ''),
