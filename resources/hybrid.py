@@ -32,7 +32,7 @@ class Hybrid(Resource):
         cf_predictions.sort(key=lambda x: float(x[1]), reverse=True)
         cb_predictions.sort(key=lambda x: float(x[1]), reverse=True)
         hybrid = []
-        for i, project in enumerate(cf_predictions):
-            hybrid.append([project[0]*cb_predictions[i][0], project[1]])
+        for i, cf_prediction in enumerate(cf_predictions):
+            hybrid.append([cf_prediction[0]*cb_predictions[i][0], cf_prediction[1]])
         hybrid.sort(key=lambda x: float(x[0]), reverse=True)
         return hybrid

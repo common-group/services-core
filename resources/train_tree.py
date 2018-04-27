@@ -1,14 +1,14 @@
 import numpy as np
 import scipy.io as spi
 import scipy.sparse as sps
-import matplotlib.pyplot as plt
-import matplotlib.pylab as pl
+# import matplotlib.pyplot as plt
+# import matplotlib.pylab as pl
 import scipy.sparse
 import pickle
 import psycopg2
 import pandas
 import xgboost as xgb
-import shap
+# import shap
 from flask_restful import Resource
 from flask import g, current_app, request
 from IPython.display import display
@@ -258,15 +258,15 @@ class TrainTree(Resource):
         #     for item in preds:
         #         predictions.write("%s\n" % str( item ))
 
-    def graphs(self):
-        bst = xgb.Booster(model_file='common/xgb.model')
-        data = load_svmlight_file('common/catarse.txt.all')
-        X = data[0]
-        y = data[1]
-        X = pandas.DataFrame(data= X.toarray(), columns=self.f_names)
-        shap_values = shap.TreeExplainer(bst).shap_values(X)
-        # shap.dependence_plot("has_video", shap_values, X)
-        shap.summary_plot(shap_values, X)
+    # def graphs(self):
+    #     bst = xgb.Booster(model_file='common/xgb.model')
+    #     data = load_svmlight_file('common/catarse.txt.all')
+    #     X = data[0]
+    #     y = data[1]
+    #     X = pandas.DataFrame(data= X.toarray(), columns=self.f_names)
+    #     shap_values = shap.TreeExplainer(bst).shap_values(X)
+    #     # shap.dependence_plot("has_video", shap_values, X)
+    #     shap.summary_plot(shap_values, X)
 
     def cv(self, cache=False):
         if not cache:

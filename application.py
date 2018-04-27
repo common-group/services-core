@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import Flask, _app_ctx_stack, g, request
+from flask import Flask, _app_ctx_stack, g
 from flask_restful import Api
 from flask_cors import CORS
 import psycopg2
