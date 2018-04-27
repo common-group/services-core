@@ -158,6 +158,8 @@ test('test genTransactionData with boleto', t => {
                     zipcode: '33465765',
                     neighborhood: 'Centro',
                     street_number: '200',
+                    city: 'São Paulo',
+                    state: 'SP'
                 },
                 phone: {
                     ddi: 55,
@@ -263,6 +265,8 @@ test('test genTransactionData with card_hash', t => {
                     zipcode: '33465765',
                     neighborhood: 'Centro',
                     street_number: '200',
+                    city: 'São Paulo',
+                    state: 'SP'
                 },
                 phone: {
                     ddi: 55,
