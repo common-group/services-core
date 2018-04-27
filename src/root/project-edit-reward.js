@@ -27,6 +27,7 @@ const projectEditReward = {
                 deliver_at: m.prop(moment().date(1).format()),
                 description: m.prop(''),
                 paid_count: m.prop(0),
+                waiting_payment_count: m.prop(0),
                 limited: h.toggleProp(false, true),
                 maximum_contributions: m.prop(null),
                 newReward: true,
