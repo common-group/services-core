@@ -11,7 +11,6 @@ import xgboost as xgb
 # import shap
 from flask_restful import Resource
 from flask import g, current_app, request
-from IPython.display import display
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, recall_score, precision_score
