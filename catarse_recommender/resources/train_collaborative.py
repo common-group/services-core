@@ -32,9 +32,9 @@ class TrainCollaborative(Resource):
         return np.array( cur.fetchall() )
 
     def predict(self):
-        test_file = open(b"common/cf_test.obj","rb")
-        train_file = open(b"common/cf_train.obj","rb")
-        model_file = open(b"common/cf_model.obj","rb")
+        test_file = open(b"catarse_recommender/common/cf_test.obj","rb")
+        train_file = open(b"catarse_recommender/common/cf_train.obj","rb")
+        model_file = open(b"catarse_recommender/common/cf_model.obj","rb")
         model = None
         test = None
         train = None
@@ -106,7 +106,7 @@ class TrainCollaborative(Resource):
         # Let's fit a WARP model: these generally have the best performance.
 
         try:
-            model_file = open(b"common/cf_model.obj","rb")
+            model_file = open(b"catarse_recommender/common/cf_model.obj","rb")
             model = pickle.load(model_file)
             model = model.fit_partial(train, epochs=4, num_threads=NUM_THREADS)
         except:
@@ -115,7 +115,7 @@ class TrainCollaborative(Resource):
                         item_alpha=ITEM_ALPHA)
             model = model.fit(train, epochs=NUM_EPOCHS, num_threads=NUM_THREADS)
 
-        filehandler = open(b"common/cf_model.obj","wb")
+        filehandler = open(b"catarse_recommender/common/cf_model.obj","wb")
         pickle.dump(model, filehandler)
         # train_file = open(b"common/cf_train.obj","wb")
         # pickle.dump(train, train_file)
