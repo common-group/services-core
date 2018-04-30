@@ -13,7 +13,7 @@ from catarse_recommender.application import app, get_db, get_project_details
 
 class CollaborativeFiltering(Resource):
     def __init__(self):
-        filehandler = open(b"common/cf_model.obj","rb")
+        filehandler = open(b"catarse_recommender/common/cf_model.obj","rb")
         try:
             self.model = pickle.load(filehandler)
         except Exception as inst:

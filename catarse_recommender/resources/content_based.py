@@ -94,7 +94,7 @@ class ContentBased(Resource):
         #remove project id
         features = rows[:, :-1]
         # load model and data in
-        bst = xgb.Booster(model_file='common/xgb.model')
+        bst = xgb.Booster(model_file='catarse_recommender/common/xgb.model')
 
         dtest = xgb.DMatrix(features)
         preds = bst.predict(dtest)
