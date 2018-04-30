@@ -324,7 +324,7 @@ services:
       dockerfile: catarse_recommender/Dockerfile
     env_file:
       - ./compose_env/.recommender_service_api.env
-    command: gunicorn -w 4 -b 0.0.0.0:3009 catarse_recommender.application:app
+    command: gunicorn -w 4 -b 0.0.0.0:3009 --timeout 1800 catarse_recommender.application:app
     volumes:
       - ../catarse_recommender/:/usr/app
     depends_on:
