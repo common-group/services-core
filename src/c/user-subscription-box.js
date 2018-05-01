@@ -59,12 +59,87 @@ const userSubscriptionBox = {
             });
         }
 
+        const showLastSubscriptionVersionValueIfHasOne = () => {
+            const last_subscription_version = subscription.last_subscription_version;
+            if (last_subscription_version &&
+                subscription.checkout_data.amount != last_subscription_version.checkout_data.amount)
+            {
+                return m("span.badge.badge-attention", [
+                    m("span.fa.fa-arrow-right", ""),
+                    m.trust('&nbsp;'),
+                    `R$ ${h.formatNumber(parseFloat((last_subscription_version.checkout_data||subscription).amount) / 100)}`,
+                ]);
+            }
+
+            return "";
+        };
+
+        const showLastSubscriptionVersionPaymentMethodIfHasOne = () => {
+            const last_subscription_version = subscription.last_subscription_version;
+            if (last_subscription_version &&
+               subscription.checkout_data.payment_method != last_subscription_version.checkout_data.payment_method)
+            {
+                return m("span.badge.badge-attention.fontweight-semibold", [
+                    m("span.fa.fa-arrow-right", ""),
+                    m.trust('&nbsp;'),
+                    m(paymentMethodIcon, {subscription: last_subscription_version.checkout_data })
+                ]);
+            }
+
+            return "";
+        };
+
+        const showLastSubscriptionVersionRewardTitleIfHasOne = () => {
+            const last_reward_data = subscription.last_reward_data;
+            const last_reward_id = subscription.last_reward_id;
+            if (subscription.last_subscription_version &&
+                subscription.reward_id != last_reward_id)
+            {
+                return m(".fontsize-smallest.fontweight-semibold",
+                         m("span.badge.badge-attention", [
+                            m("span.fa.fa-arrow-right", ""), 
+                            m.trust('&nbsp;'),
+                            last_reward_data.title
+                        ]));
+            }
+
+            return "";
+        };
+
+        const showLastSubscriptionVersionEditionNextCharge = () => {
+            const last_reward_data = subscription.last_reward_data;
+            const last_reward_id = subscription.last_reward_id;
+            const last_subscription_version = subscription.last_subscription_version;
+
+            if (last_subscription_version &&
+                (
+                    subscription.reward_id != last_reward_id ||
+                    subscription.checkout_data.payment_method != last_subscription_version.checkout_data.payment_method ||
+                    subscription.checkout_data.amount != last_subscription_version.checkout_data.amount
+                )
+            )
+            {
+                const message = `As alterações destacadas entrarão em vigor na próxima cobrança ${h.momentify( subscription.next_charge_at, 'DD/MM/YYYY' )}.`;
+                return m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                    m("span.fa.fa-exclamation-triangle", ""),
+                    m.trust('&nbsp;'),
+                    message
+                ]);
+            }
+
+            return "";
+        };
+
         return {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
             displayCancelModal,
             subscription,
-            contactModalInfo
+            contactModalInfo,
+            showLastSubscriptionVersionValueIfHasOne,
+            showLastSubscriptionVersionPaymentMethodIfHasOne,
+            showLastSubscriptionVersionRewardTitleIfHasOne,
+            showLastSubscriptionVersionEditionNextCharge
         };
     },
     view(ctrl) {
@@ -112,17 +187,18 @@ const userSubscriptionBox = {
                         )
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
-                        m('.fontsize-base.fontweight-semibold.lineheight-looser',
-                            `R$ ${h.formatNumber(parseFloat((subscription.checkout_data||subscription).amount) / 100)} por mês`
-                        ),
+                        m('.fontsize-base.fontweight-semibold.lineheight-tighter',[
+                            `R$ ${h.formatNumber(parseFloat((subscription.checkout_data||subscription).amount) / 100)} por mês`,
+                            ctrl.showLastSubscriptionVersionValueIfHasOne()
+                        ]),
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
                         m('.u-marginbottom-10', [
                             m(subscriptionStatusIcon, {subscription}),
                             m.trust('&nbsp;&nbsp;&nbsp;'),
-                            m(paymentMethodIcon, {subscription})
-                            
+                            m(paymentMethodIcon, {subscription}),
+                            ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne()
                         ])
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
@@ -130,7 +206,9 @@ const userSubscriptionBox = {
                             subscription.reward.title
                         ), m('p.fontcolor-secondary.fontsize-smallest', m.trust(h.simpleFormat(
                             `${subscription.reward.description.substring(0, 90)} (...)`
-                        )))] : (subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `))
+                        )))] : (subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `)),
+
+			                  ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()
                     ]),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
                         (subscription.status === 'started' ? [
@@ -177,6 +255,7 @@ const userSubscriptionBox = {
                                         ` Sua assinatura será cancelada no dia ${h.momentify( subscription.next_charge_at, 'DD/MM/YYYY' )}. Até lá, ela ainda será considerada ativa.`
                                     ])
                                 ) : (subscription.status === 'active' ? [
+                                    ctrl.showLastSubscriptionVersionEditionNextCharge(), 
                                     subscription.payment_status !== 'pending' ? m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', 
                                         {href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : ''}&subscription_id=${subscription.id}&subscription_status=${subscription.status}`},
                                         'Editar assinatura'
