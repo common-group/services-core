@@ -14,11 +14,11 @@ apiInit(catarse, catarseApiMeta, '/api_token');
 
 const commonPayment = new Postgrest();
 const commonPaymentApiMeta = document.querySelector('[name="common-payment-api-host"]');
-apiInit(commonPayment, commonPaymentApiMeta,'/api_token/common', commonRequestHeader);
+apiInit(commonPayment, commonPaymentApiMeta, '/api_token/common', commonRequestHeader);
 
 const commonProject = new Postgrest();
 const commonProjectApiMeta = document.querySelector('[name="common-project-api-host"]');
-apiInit(commonProject, commonProjectApiMeta,'/api_token/common', commonRequestHeader);
+apiInit(commonProject, commonProjectApiMeta, '/api_token/common', commonRequestHeader);
 
 const commonAnalytics = new Postgrest();
 const commonAnalyticsApiMeta = document.querySelector('[name="common-analytics-api-host"]');
@@ -28,4 +28,9 @@ const commonNotification = new Postgrest();
 const commonNotificationApiMeta = document.querySelector('[name="common-notification-api-host"]');
 apiInit(commonNotification, commonNotificationApiMeta, '/api_token/common', commonRequestHeader);
 
-export { catarse, commonPayment, commonProject, commonAnalytics, commonNotification };
+//not a postgrest instance, but pretend it is to get free pagination
+const commonRecommender = new Postgrest();
+const commonRecommenderApiMeta = document.querySelector('[name="common-recommender-api-host"]');
+apiInit(commonRecommender, commonRecommenderApiMeta, '/api_token/common', commonRequestHeader);
+
+export { catarse, commonPayment, commonProject, commonAnalytics, commonNotification, commonRecommender };
