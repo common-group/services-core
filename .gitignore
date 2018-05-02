@@ -21,5 +21,6 @@ compose_env/.notification_service_api.env
 compose_env/.catarse_api.env
 compose_env/.credit_cards_dispatcher.env
 compose_env/.payment_stream_processor.env
+compose_env/.recommender_service_api.env
 target/
 Cargo.lock
