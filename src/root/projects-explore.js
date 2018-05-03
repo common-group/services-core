@@ -272,10 +272,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.modeToggle.toggle,
-                            style: {
-                                'border-color': 'rgba(0, 0, 0, 0.11)'
-                            }
+                            onclick: ctrl.modeToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'MODALIDADE'
@@ -321,10 +318,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.categoryToggle.toggle,
-                            style: {
-                                'border-color': 'rgba(0, 0, 0, 0.11)'
-                            }
+                            onclick: ctrl.categoryToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'CATEGORIA'
@@ -386,10 +380,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.filterToggle.toggle,
-                            style: {
-                                'border-color': 'rgba(0, 0, 0, 0.11)'
-                            }
+                            onclick: ctrl.filterToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'FILTRO'
