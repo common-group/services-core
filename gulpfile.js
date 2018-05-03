@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var concat = require('gulp-concat');
 var argv = require('yargs').argv;
-var multiEntry = require('rollup-plugin-multi-entry').default;
+var multiEntry = require('rollup-plugin-multi-entry');
 var babel = require('rollup-plugin-babel');
 var rollup = require('rollup-stream');
 var jscs = require('gulp-jscs');
@@ -37,10 +37,10 @@ var rollupGlobals = {
 
 gulp.task('bundle-tests', function(done){
     rollup({
-      entry: tests,
-      sourceMap: true,
+      input: tests,
+      sourcemap: true,
       format: 'iife',
-      moduleName: 'catarseSpecs',
+      name: 'catarseSpecs',
       plugins: [
           rollupFlow(),
           babel({
@@ -93,10 +93,10 @@ gulp.task('lint', function(){
 
 gulp.task('dist', function(done){
     rollup({
-        entry: 'src/c.js',
+        input: 'src/c.js',
         format: 'iife',
-        moduleName: 'c',
-        sourceMap: true,
+        name: 'c',
+        sourcemap: true,
         plugins: [
             rollupFlow(),
             babel({
