@@ -46,7 +46,7 @@
     "karma-spec-reporter": "0.0.20",
     "rollup-plugin-babel": "^2.4.0",
     "rollup-plugin-flow": "^1.0.1",
-    "rollup-plugin-multi-entry": "^1.2.0",
+    "rollup-plugin-multi-entry": "^2.0.0",
     "rollup-stream": "^1.24.1",
     "select": "^1.1.2",
     "vinyl-buffer": "^1.0.1",
