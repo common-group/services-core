@@ -193,7 +193,7 @@ const projectInsightsSub = {
                             label: I18n.t('amount_per_day_label_sub', I18nScope()),
                             dataKey: 'total_amount',
                             xAxis: item => h.momentify(item.paid_at),
-                            emptyState: I18n.t('amount_per_day_empty_sub', I18nScope())
+                            emptyState: m.trust(I18n.t('amount_per_day_empty_sub', I18nScope()))
                         }) : h.loader()
                     ]),
                     m('.u-text-center', {
@@ -206,7 +206,7 @@ const projectInsightsSub = {
                             label: I18n.t('contributions_per_day_label_sub', I18nScope()),
                             dataKey: 'total',
                             xAxis: item => h.momentify(item.paid_at),
-                            emptyState: I18n.t('contributions_per_day_empty_sub', I18nScope())
+                            emptyState: m.trust(I18n.t('contributions_per_day_empty_sub', I18nScope()))
                         }) : h.loader()
                     ])
                 ])
