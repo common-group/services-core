@@ -37,10 +37,10 @@ var rollupGlobals = {
 
 gulp.task('bundle-tests', function(done){
     rollup({
-      entry: tests,
-      sourceMap: true,
+      input: tests,
+      sourcemap: true,
       format: 'iife',
-      moduleName: 'catarseSpecs',
+      name: 'catarseSpecs',
       plugins: [
           rollupFlow(),
           babel({
@@ -93,10 +93,10 @@ gulp.task('lint', function(){
 
 gulp.task('dist', function(done){
     rollup({
-        entry: 'src/c.js',
+        input: 'src/c.js',
         format: 'iife',
-        moduleName: 'c',
-        sourceMap: true,
+        name: 'c',
+        sourcemap: true,
         plugins: [
             rollupFlow(),
             babel({
