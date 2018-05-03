@@ -92,16 +92,8 @@ CREATE OR REPLACE VIEW "payment_service_api"."subscriptions" AS
             sv.updated_at,
             last_reward_data.data AS last_reward_data,
             last_reward_data.id AS last_reward_id
-           FROM (payment_service.subscription_versions sv
-             LEFT JOIN LATERAL ( SELECT reward.id,
-                    reward.project_id,
-                    reward.data,
-                    reward.created_at,
-                    reward.updated_at,
-                    reward.platform_id,
-                    reward.external_id
-                   FROM project_service.rewards reward
-                  WHERE ((reward.id)::text = (sv.data ->> 'reward_id'::text))) last_reward_data ON (true))
+           FROM payment_service.subscription_versions sv
+             LEFT JOIN project_service.rewards as last_reward_data ON (last_reward_data.id)::text = (sv.data ->> 'reward_id'::text)
           WHERE (sv.subscription_id = s.id)
           ORDER BY sv.created_at DESC
          LIMIT 1) last_subscription_version ON (true))
