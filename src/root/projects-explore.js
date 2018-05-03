@@ -47,19 +47,25 @@ const projectsExplore = {
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
                 const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
-                if (currentUser.is_admin_role){
+                if (currentUser.is_admin_role) {
                     contextFilters.push('recommended_cf');
                     contextFilters.push('recommended_cb');
                     contextFilters.push('recommended_hb');
                 }
                 projectFiltersVM.setContextFilters(contextFilters);
             },
+            changeMode = (newMode) => {
+                if (newMode === 'sub') {
+                    projectFiltersVM.removeContextFilter(projectFiltersVM.filters.finished);
+                    projectFiltersVM.removeContextFilter(projectFiltersVM.filters.expiring);
+                } else {
+                    resetContextFilter();
+                }
+                modeToggle.toggle();
+                currentMode(filtersMap[newMode]);
+                loadRoute();
+            },
             hasFBAuth = currentUser.has_fb_auth,
-            buildTooltip = tooltipText => m.component(tooltip, {
-                el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
-                text: tooltipText,
-                width: 380
-            }),
             isSearch = m.prop(false),
             categoryCollection = m.prop([]),
             categoryId = m.prop(),
@@ -225,6 +231,7 @@ const projectsExplore = {
             categories: categoryCollection,
             changeFilter,
             fallbackFilter,
+            resetContextFilter,
             projects,
             category,
             title,
@@ -236,6 +243,7 @@ const projectsExplore = {
             currentMode,
             filtersMap,
             currentFilter,
+            changeMode,
             projectFiltersVM,
             isSearch,
             hasFBAuth,
@@ -254,13 +262,6 @@ const projectsExplore = {
             hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
         let widowProjects = [];
 
-        if (!ctrl.projects().isLoading() && _.isEmpty(projectsCollection) && !ctrl.isSearch()) {
-            if (!(isContributedByFriendsFilter && !ctrl.hasFBAuth)) {
-                ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
-                ctrl.changeFilter(ctrl.fallbackFilter);
-            }
-        }
-
         return m('#explore', {
             config: h.setPageTitle(I18n.t('header_html', I18nScope()))
         }, [
@@ -271,10 +272,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.modeToggle.toggle,
-                            style: {
-                                'border-color': 'rgba(0, 0, 0, 0.11)'
-                            }
+                            onclick: ctrl.modeToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'MODALIDADE'
@@ -288,9 +286,7 @@ const projectsExplore = {
                         m('.explore-filter-select', [
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.modeToggle.toggle();
-                                        ctrl.currentMode(ctrl.filtersMap.all_modes);
-                                        ctrl.loadRoute();
+                                        ctrl.changeMode('all_modes');
                                     },
                                     class: ctrl.currentMode() === null ? 'selected' : ''
                                 },
@@ -298,9 +294,7 @@ const projectsExplore = {
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.modeToggle.toggle();
-                                        ctrl.currentMode(ctrl.filtersMap.not_sub);
-                                        ctrl.loadRoute();
+                                        ctrl.changeMode('not_sub');
                                     },
                                     class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
                                 },
@@ -308,9 +302,7 @@ const projectsExplore = {
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.modeToggle.toggle();
-                                        ctrl.currentMode(ctrl.filtersMap.sub);
-                                        ctrl.loadRoute();
+                                        ctrl.changeMode('sub');
                                     },
                                     class: ctrl.currentMode() === 'sub' ? 'selected' : ''
                                 },
@@ -326,10 +318,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.categoryToggle.toggle,
-                            style: {
-                                'border-color': 'rgba(0, 0, 0, 0.11)'
-                            }
+                            onclick: ctrl.categoryToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'CATEGORIA'
@@ -391,10 +380,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.filterToggle.toggle,
-                            style: {
-                                'border-color': 'rgba(0, 0, 0, 0.11)'
-                            }
+                            onclick: ctrl.filterToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'FILTRO'
@@ -421,7 +407,7 @@ const projectsExplore = {
                         ])
                     ])
                 ])
-            ]), !ctrl.projects().isLoading() && ctrl.projects().total() ?
+            ]), !ctrl.projects().isLoading() && !_.isUndefined(ctrl.projects().total()) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
@@ -433,7 +419,7 @@ const projectsExplore = {
                         m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
                     ])
                 )
-             ) : '',
+            ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
                 (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '') :
                 ''),
@@ -477,7 +463,7 @@ const projectsExplore = {
                                 showFriends: isContributedByFriendsFilter
                             });
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : (_.isEmpty(projectsCollection) && ctrl.hasFBAuth ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : '')
+                        ctrl.projects().isLoading() ? h.loader() : ''
                     ])
                 ])
             ]),
