@@ -15,8 +15,12 @@ import Chart from 'chartjs';
 const projectDataChart = {
     controller(args) {
         const resource = _.first(args.collection()),
-            source = (!_.isUndefined(resource) ? resource.source : []),
-
+            limitDataset = args.limitDataset,
+            source = !_.isUndefined(resource) 
+                ? _.isNumber(limitDataset)
+                    ? _.last(resource.source, limitDataset)
+                    : resource.source
+                : [],
             mountDataset = () => [{
                 fillColor: 'rgba(126,194,69,0.2)',
                 strokeColor: 'rgba(126,194,69,1)',
