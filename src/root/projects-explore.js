@@ -55,11 +55,6 @@ const projectsExplore = {
                 projectFiltersVM.setContextFilters(contextFilters);
             },
             hasFBAuth = currentUser.has_fb_auth,
-            buildTooltip = tooltipText => m.component(tooltip, {
-                el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
-                text: tooltipText,
-                width: 380
-            }),
             isSearch = m.prop(false),
             categoryCollection = m.prop([]),
             categoryId = m.prop(),
@@ -254,13 +249,6 @@ const projectsExplore = {
             hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
         let widowProjects = [];
 
-        if (!ctrl.projects().isLoading() && _.isEmpty(projectsCollection) && !ctrl.isSearch()) {
-            if (!(isContributedByFriendsFilter && !ctrl.hasFBAuth)) {
-                ctrl.projectFiltersVM.removeContextFilter(ctrl.currentFilter());
-                ctrl.changeFilter(ctrl.fallbackFilter);
-            }
-        }
-
         return m('#explore', {
             config: h.setPageTitle(I18n.t('header_html', I18nScope()))
         }, [
@@ -421,7 +409,7 @@ const projectsExplore = {
                         ])
                     ])
                 ])
-            ]), !ctrl.projects().isLoading() && ctrl.projects().total() ?
+            ]), !ctrl.projects().isLoading() && !_.isUndefined(ctrl.projects().total()) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
@@ -477,7 +465,7 @@ const projectsExplore = {
                                 showFriends: isContributedByFriendsFilter
                             });
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : (_.isEmpty(projectsCollection) && ctrl.hasFBAuth ? m('.fontsize-base.w-col.w-col-12', 'Nenhum projeto para mostrar.') : '')
+                        ctrl.projects().isLoading() ? h.loader() : ''
                     ])
                 ])
             ]),

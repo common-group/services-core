@@ -113,7 +113,7 @@ gulp.task('dist', function(done){
     .pipe(sourcemaps.write())
     .pipe(rename('catarse.js'))
     .pipe(gulp.dest('dist'))
-    .pipe($.if(!argv.fast, uglify()))
+    .pipe($.if(!argv.q, uglify()))
     .pipe(rename('catarse.min.js'))
     .pipe(gulp.dest('dist'))
     .on('end', done);
