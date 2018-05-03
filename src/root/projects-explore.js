@@ -47,12 +47,23 @@ const projectsExplore = {
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
                 const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
-                if (currentUser.is_admin_role){
+                if (currentUser.is_admin_role) {
                     contextFilters.push('recommended_cf');
                     contextFilters.push('recommended_cb');
                     contextFilters.push('recommended_hb');
                 }
                 projectFiltersVM.setContextFilters(contextFilters);
+            },
+            changeMode = (newMode) => {
+                if (newMode === 'sub') {
+                    projectFiltersVM.removeContextFilter(projectFiltersVM.filters.finished);
+                    projectFiltersVM.removeContextFilter(projectFiltersVM.filters.expiring);
+                } else {
+                    resetContextFilter();
+                }
+                modeToggle.toggle();
+                currentMode(filtersMap[newMode]);
+                loadRoute();
             },
             hasFBAuth = currentUser.has_fb_auth,
             isSearch = m.prop(false),
@@ -220,6 +231,7 @@ const projectsExplore = {
             categories: categoryCollection,
             changeFilter,
             fallbackFilter,
+            resetContextFilter,
             projects,
             category,
             title,
@@ -231,6 +243,7 @@ const projectsExplore = {
             currentMode,
             filtersMap,
             currentFilter,
+            changeMode,
             projectFiltersVM,
             isSearch,
             hasFBAuth,
@@ -276,9 +289,7 @@ const projectsExplore = {
                         m('.explore-filter-select', [
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.modeToggle.toggle();
-                                        ctrl.currentMode(ctrl.filtersMap.all_modes);
-                                        ctrl.loadRoute();
+                                        ctrl.changeMode('all_modes');
                                     },
                                     class: ctrl.currentMode() === null ? 'selected' : ''
                                 },
@@ -286,9 +297,7 @@ const projectsExplore = {
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.modeToggle.toggle();
-                                        ctrl.currentMode(ctrl.filtersMap.not_sub);
-                                        ctrl.loadRoute();
+                                        ctrl.changeMode('not_sub');
                                     },
                                     class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
                                 },
@@ -296,9 +305,7 @@ const projectsExplore = {
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.modeToggle.toggle();
-                                        ctrl.currentMode(ctrl.filtersMap.sub);
-                                        ctrl.loadRoute();
+                                        ctrl.changeMode('sub');
                                     },
                                     class: ctrl.currentMode() === 'sub' ? 'selected' : ''
                                 },
@@ -421,7 +428,7 @@ const projectsExplore = {
                         m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
                     ])
                 )
-             ) : '',
+            ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
                 (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '') :
                 ''),
