@@ -61,7 +61,7 @@ const userBalanceTrasactionRow = {
                          subscriber_name: transaction.origin_objects.subscriber_name,
                          service_fee: transaction.origin_objects.service_fee ? (transaction.origin_objects.service_fee*100.0) : '',
                          project_name: transaction.origin_objects.project_name,
-                         contributitor_name: transaction.origin_objects.contributor_name
+                         contributitor_name: transaction.origin_objects.contributor_name,
                      };
 
                      return m('div', [
@@ -70,7 +70,10 @@ const userBalanceTrasactionRow = {
                                  m(`.text-${(pos ? 'success' : 'error')}`, `${pos ? '+' : '-'} R$ ${h.formatNumber(Math.abs(transaction.amount), 2, 3)}`)
                              ]),
                              m('.w-col.w-col-10', [
-                                 m('div', I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data)))
+                                 (transaction.event_name === 'balance_expired'
+                                     ? m('div', m.trust(I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data))))
+                                     : m('div', I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data)))
+                                 )
                              ])
                          ]),
                          m('.divider.u-marginbottom-10')
