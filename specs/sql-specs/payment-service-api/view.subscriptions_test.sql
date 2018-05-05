@@ -135,14 +135,14 @@ BEGIN;
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
 
             -- generate a subscription version for this subscription
-            insert into payment_service.subscription_versions
-            (subscription_id, data, created_at, updated_at)
-            values (_subscription.id, '{"id": "fa800670-4fe9-4da2-b934-dfe58001c107", "status": "active", "user_id": "bdb1a3d1-7d02-4767-baad-18abdf3be236", "reward_id": "252f4e28-7869-49cf-88e7-f123706b7291", "created_at": "2018-04-27T17:42:51.16365", "project_id": "a69f95bb-e7b9-441d-aac7-c14dd86cce99", "updated_at": "2018-04-27T17:42:51.16365", "platform_id": "8187a11e-6fa5-4561-a5e5-83329236fbd6", "checkout_data": {"amount": "1000", "customer": {"name": "Astrogildo", "phone": {"ddd": "23", "ddi": "52", "number": "123456789"}, "address": {"city": "Fda", "state": "RR", "street": "Blah street", "country": "Brasil", "zipcode": "99999-999", "neighborhood": "Blah", "complementary": "none", "street_number": "999"}, "document_number": "12345678912"}, "anonymous": false, "current_ip": "127.0.0.1", "payment_method": "boleto", "is_international": false, "credit_card_owner_document": null}, "credit_card_id": null}'::json, now(), now());
+            insert into payment_service.catalog_payments
+            (gateway, platform_id, project_id, user_id, subscription_id, data, created_at, updated_at)
+            values ('pagarme', __seed_platform_id(), __seed_project_id(), __seed_first_user_id(), _subscription.id, '{"amount": 1000, "customer": {"name": "Gilberto Ribeiro Paz da Rosa", "email": "gilbertoribeiropazdarosa@gmail.com", "phone": {"ddd": "51", "ddi": "55", "number": "980120950"}, "address": {"city": "Porto Alegre", "state": "RS", "street": "Rua José do Patrocínio", "country": "Brasil", "zipcode": "90050-001", "neighborhood": "Cidade Baixa", "complementary": "apt 304", "street_number": "669"}, "document_number": "02334261084"}, "anonymous": false, "current_ip": "127.0.0.1", "payment_method": "boleto", "is_international": false}'::json, now(), now());
 
             select * from payment_service_api.subscriptions
             into _result_row;
 
-            return next is(_result_row.last_subscription_version->>'status'::text, 'active'::text, 'subscription version data loaded from subscriptions view');
+            return next is(_result_row.current_paid_subscription->>'amount'::text, '1000', 'subscription version data loaded from subscriptions view');
 
             perform clean_sets();
         end;
