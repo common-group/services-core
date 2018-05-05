@@ -13,15 +13,15 @@ describe('UserSubscriptionBox', () => {
             }));
         });
 
-        it('Should render new payment method of the last subscription version', () => {
+        it('Should render new payment method of the current paid subscription', () => {
             expect($subscriptionVersionWithNewDataShow.has('.fa.fa-credit-card')).toBeTrue(); 
         });
 
-        it('Should render new value of the last subscription version', () => {
+        it('Should render new value of the current paid subscription', () => {
             expect($subscriptionVersionWithNewDataShow.contains('R$ 10')).toBeTrue(); 
         });
 
-        it('Should render new reward of the last subscription version', () => {
+        it('Should render new reward of the current paid subscription', () => {
             expect($subscriptionVersionWithNewDataShow.contains('Notas')).toBeTrue(); 
         });
 

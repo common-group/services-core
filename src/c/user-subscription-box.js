@@ -60,59 +60,104 @@ const userSubscriptionBox = {
         }
 
         const showLastSubscriptionVersionValueIfHasOne = () => {
-            const last_subscription_version = subscription.last_subscription_version;
-            if (last_subscription_version &&
-                subscription.checkout_data.amount != last_subscription_version.checkout_data.amount) {
-                return m('span.badge.badge-attention', [
-                    m('span.fa.fa-arrow-right', ''),
-                    m.trust('&nbsp;'),
-                    `R$ ${h.formatNumber(parseFloat((last_subscription_version.checkout_data || subscription).amount) / 100)}`,
-                ]);
+            const current_paid_subscription = subscription.current_paid_subscription;
+            // has some subscription edition
+            if (current_paid_subscription && current_paid_subscription.amount != subscription.checkout_data.amount)
+            {
+                const paid_value = parseFloat(current_paid_subscription.amount) / 100;
+                const next_value = parseFloat(subscription.checkout_data.amount) / 100;
+                return [ 
+                    `R$ ${h.formatNumber(paid_value)} por mês`,
+                    m('span.badge.badge-attention', [
+                        m('span.fa.fa-arrow-right', ''),
+                        m.trust('&nbsp;'),
+                        `R$ ${h.formatNumber(next_value)}`,
+                    ])
+                ];
+            }
+            else
+            {
+                const paid_value = parseFloat(subscription.checkout_data.amount) / 100;
+                return [`R$ ${h.formatNumber(paid_value)} por mês`];
             }
 
             return '';
         };
 
         const showLastSubscriptionVersionPaymentMethodIfHasOne = () => {
-            const last_subscription_version = subscription.last_subscription_version;
-            if (last_subscription_version &&
-               subscription.checkout_data.payment_method != last_subscription_version.checkout_data.payment_method) {
-                return m('span.badge.badge-attention.fontweight-semibold', [
-                    m('span.fa.fa-arrow-right', ''),
-                    m.trust('&nbsp;'),
-                    m(paymentMethodIcon, { subscription: last_subscription_version.checkout_data })
-                ]);
+            const current_paid_subscription = subscription.current_paid_subscription;
+
+            if (current_paid_subscription && subscription.checkout_data.payment_method != current_paid_subscription.payment_method)
+            {
+                return [
+                    m(subscriptionStatusIcon, { subscription}),
+                    m.trust('&nbsp;&nbsp;&nbsp;'),
+                    m(paymentMethodIcon, { subscription : current_paid_subscription}),
+                    m('span.badge.badge-attention.fontweight-semibold', [
+                        m('span.fa.fa-arrow-right', ''),
+                        m.trust('&nbsp;'),
+                        m(paymentMethodIcon, { subscription })
+                    ])
+                ];
+            }
+            else
+            {
+                return [
+                    m(subscriptionStatusIcon, { subscription }),
+                    m.trust('&nbsp;&nbsp;&nbsp;'),
+                    m(paymentMethodIcon, { subscription })
+                ];
             }
 
             return '';
         };
 
         const showLastSubscriptionVersionRewardTitleIfHasOne = () => {
-            const last_reward_data = subscription.last_reward_data;
-            const last_reward_id = subscription.last_reward_id;
-            if (subscription.last_subscription_version &&
-                subscription.reward_id != last_reward_id) {
-                return m('.fontsize-smallest.fontweight-semibold',
-                         m('span.badge.badge-attention', [
-                             m('span.fa.fa-arrow-right', ''),
-                             m.trust('&nbsp;'),
-                             last_reward_data.title
-                         ]));
-            }
+            const current_paid_subscription = subscription.current_paid_subscription;
+            const current_reward_data = subscription.current_reward_data;
+            const current_reward_id = subscription.current_reward_id;
 
-            return '';
+            if (current_reward_data && subscription.reward && subscription.reward.id != current_reward_id)
+            {
+                const reward_description_formated = h.simpleFormat(`${current_reward_data.description.substring(0, 90)} (...)`);
+                return [
+                    m('.fontsize-smallest.fontweight-semibold', current_reward_data.title),
+                    m('p.fontcolor-secondary.fontsize-smallest', m.trust(reward_description_formated)),
+			              m('.fontsize-smallest.fontweight-semibold',
+                      m('span.badge.badge-attention', [
+                          m('span.fa.fa-arrow-right', ''),
+                          m.trust('&nbsp;'),
+                          subscription.reward.title
+                      ]))
+                ];
+            }
+            else if (subscription.reward)
+            {
+                const reward_description = subscription.reward.description.substring(0, 90);
+                const reward_description_formated = h.simpleFormat(`${reward_description} (...)`);
+                return [
+                    m('.fontsize-smallest.fontweight-semibold', subscription.reward.title),
+                    m('p.fontcolor-secondary.fontsize-smallest', m.trust(reward_description_formated))
+                ];
+            }
+            else
+            {
+                return [
+                    subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `
+                ];
+            }
         };
 
         const showLastSubscriptionVersionEditionNextCharge = () => {
-            const last_reward_data = subscription.last_reward_data;
-            const last_reward_id = subscription.last_reward_id;
-            const last_subscription_version = subscription.last_subscription_version;
+            const current_reward_data = subscription.current_reward_data;
+            const current_reward_id = subscription.current_reward_id;
+            const current_paid_subscription = subscription.current_paid_subscription;
 
-            if (last_subscription_version &&
+            if (current_paid_subscription &&
                 (
-                    subscription.reward_id != last_reward_id ||
-                    subscription.checkout_data.payment_method != last_subscription_version.checkout_data.payment_method ||
-                    subscription.checkout_data.amount != last_subscription_version.checkout_data.amount
+                    subscription.reward_id != current_reward_id ||
+                    subscription.checkout_data.payment_method != current_paid_subscription.payment_method ||
+                    subscription.checkout_data.amount != current_paid_subscription.amount
                 )
             ) {
                 const message = `As alterações destacadas entrarão em vigor na próxima cobrança ${h.momentify(subscription.next_charge_at, 'DD/MM/YYYY')}.`;
@@ -183,29 +228,13 @@ const userSubscriptionBox = {
                         )
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
-                        m('.fontsize-base.fontweight-semibold.lineheight-tighter', [
-                            `R$ ${h.formatNumber(parseFloat((subscription.checkout_data || subscription).amount) / 100)} por mês`,
-                            ctrl.showLastSubscriptionVersionValueIfHasOne()
-                        ]),
+                        m('.fontsize-base.fontweight-semibold.lineheight-tighter', ctrl.showLastSubscriptionVersionValueIfHasOne()),
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
-                        m('.u-marginbottom-10', [
-                            m(subscriptionStatusIcon, { subscription }),
-                            m.trust('&nbsp;&nbsp;&nbsp;'),
-                            m(paymentMethodIcon, { subscription }),
-                            ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne()
-                        ])
+                        m('.u-marginbottom-10', ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne())
                     ]),
-                    m('.u-marginbottom-20.w-col.w-col-3', [
-                        (subscription.reward ? [m('.fontsize-smallest.fontweight-semibold',
-                            subscription.reward.title
-                        ), m('p.fontcolor-secondary.fontsize-smallest', m.trust(h.simpleFormat(
-                            `${subscription.reward.description.substring(0, 90)} (...)`
-                        )))] : (subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `)),
-
-			                  ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()
-                    ]),
+                    m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
                         (subscription.status === 'started' ? [
                             m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
