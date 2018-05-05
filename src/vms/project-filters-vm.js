@@ -13,6 +13,14 @@ const projectFiltersVM = () => {
             open_for_contributions: 'eq'
         }).open_for_contributions('true').near_me(true),
 
+        sub = filtersVM({
+            mode: 'eq'
+        }).mode('sub'),
+
+        notSub = filtersVM({
+            mode: 'not.eq'
+        }).mode('sub'),
+
         expiring = filtersVM({
             expires_at: 'lte',
             open_for_contributions: 'eq'
@@ -32,6 +40,10 @@ const projectFiltersVM = () => {
             open_for_contributions: 'eq'
         }).open_for_contributions('true'),
 
+        recommended = filtersVM({
+            open_for_contributions: 'eq'
+        }).open_for_contributions('true'),
+
         contributed_by_friends = filtersVM({
             open_for_contributions: 'eq',
             contributed_by_friends: 'eq'
@@ -47,7 +59,7 @@ const projectFiltersVM = () => {
             all: {
                 title: 'Todas as Categorias',
                 filter: all,
-                nicename: 'No ar',
+                nicename: 'Populares',
                 isContextual: false,
                 keyName: 'all'
             },
@@ -61,7 +73,7 @@ const projectFiltersVM = () => {
             contributed_by_friends: {
                 title: 'Amigos',
                 filter: contributed_by_friends,
-                nicename: 'Amigos',
+                nicename: 'Apoiados por amigos',
                 isContextual: false,
                 keyName: 'contributed_by_friends'
             },
@@ -74,6 +86,7 @@ const projectFiltersVM = () => {
             expiring: {
                 title: 'Reta final',
                 filter: expiring,
+                nicename: 'Reta final',
                 isContextual: false,
                 keyName: 'expiring'
             },
@@ -91,9 +104,49 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'finished'
             },
+            recommended_cf: {
+                title: 'Recomendados',
+                filter: recommended,
+                nicename: 'Recomendados cf',
+                isContextual: false,
+                keyName: 'recommended_cf'
+            },
+            recommended_cb: {
+                title: 'Recomendados',
+                filter: recommended,
+                nicename: 'Recomendados cb',
+                isContextual: false,
+                keyName: 'recommended_cb'
+            },
+            recommended_hb: {
+                title: 'Recomendados',
+                filter: recommended,
+                nicename: 'Recomendados hb',
+                isContextual: false,
+                keyName: 'recommended_hb'
+            },
+            not_sub: {
+                title: 'Projetos pontuais',
+                filter: notSub,
+                isContextual: false,
+                keyName: 'not_sub'
+            },
+            all_modes: {
+                title: 'Todos os projetos',
+                filter: null,
+                isContextual: false,
+                keyName: 'all_modes'
+            },
+            sub: {
+                title: 'Projetos recorrentes',
+                filter: sub,
+                isContextual: false,
+                keyName: 'sub'
+            },
             recent: {
                 title: 'Recentes',
                 filter: recent,
+                nicename: 'Recentes',
                 isContextual: false,
                 keyName: 'recent'
             },
