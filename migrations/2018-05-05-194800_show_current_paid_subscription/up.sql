@@ -1,3 +1,5 @@
+DROP VIEW "payment_service_api"."subscriptions";
+
 CREATE OR REPLACE VIEW "payment_service_api"."subscriptions" AS 
  SELECT s.id,
     s.project_id,
@@ -100,6 +102,7 @@ CREATE OR REPLACE VIEW "payment_service_api"."subscriptions" AS
   WHERE ((s.status <> 'deleted'::payment_service.subscription_status) AND (s.platform_id = core.current_platform_id()) AND (core.is_owner_or_admin(s.user_id) OR core.is_owner_or_admin(p.user_id)));
 
 -- grant permissions to:
+grant select on payment_service_api.subscriptions to scoped_user, platform_user;
 grant select on payment_service.catalog_payments to scoped_user, platform_user;
 grant select on payment_service.subscription_versions to scoped_user, platform_user;
 grant select on project_service.rewards to scoped_user, platform_user;
