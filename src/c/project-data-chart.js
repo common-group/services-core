@@ -49,6 +49,7 @@ const projectDataChart = {
     view(ctrl, args) {
         return m('.card.u-radius.medium.u-marginbottom-30', [
             m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
+            m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', args.subLabel || ''),
             m('.w-row', [
                 m('.w-col.w-col-12.overflow-auto', [
                     !_.isEmpty(ctrl.source) ? m('canvas[id="chart"][width="860"][height="300"]', {
