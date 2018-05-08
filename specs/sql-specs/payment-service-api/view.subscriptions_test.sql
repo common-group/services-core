@@ -136,8 +136,8 @@ BEGIN;
 
             -- generate a subscription version for this subscription
             insert into payment_service.catalog_payments
-            (gateway, platform_id, project_id, user_id, subscription_id, data, created_at, updated_at)
-            values ('pagarme', __seed_platform_id(), __seed_project_id(), __seed_first_user_id(), _subscription.id, '{"amount": 1000, "customer": {"name": "Gilberto Ribeiro Paz da Rosa", "email": "gilbertoribeiropazdarosa@gmail.com", "phone": {"ddd": "51", "ddi": "55", "number": "980120950"}, "address": {"city": "Porto Alegre", "state": "RS", "street": "Rua José do Patrocínio", "country": "Brasil", "zipcode": "90050-001", "neighborhood": "Cidade Baixa", "complementary": "apt 304", "street_number": "669"}, "document_number": "02334261084"}, "anonymous": false, "current_ip": "127.0.0.1", "payment_method": "boleto", "is_international": false}'::json, now(), now());
+            (gateway, platform_id, project_id, user_id, subscription_id, data, created_at, updated_at, status)
+            values ('pagarme', __seed_platform_id(), __seed_project_id(), __seed_first_user_id(), _subscription.id, '{"amount": 1000, "customer": {"name": "Gasdasd", "email": "aslidasd@asdasd", "phone": {"ddd": "52", "ddi": "25", "number": "123123123"}, "address": {"city": "Casdas", "state": "WE", "street": "ASdasd asdasd", "country": "Brasil", "zipcode": "99999-999", "neighborhood": "ASasdasd", "complementary": "123", "street_number": "123"}, "document_number": "123456789"}, "anonymous": false, "current_ip": "127.0.0.1", "payment_method": "boleto", "is_international": false}'::json, now(), now(), 'paid');
 
             select * from payment_service_api.subscriptions
             into _result_row;
