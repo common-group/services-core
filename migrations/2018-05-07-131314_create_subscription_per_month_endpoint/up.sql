@@ -23,7 +23,7 @@ CREATE OR REPLACE VIEW "payment_service_api"."subscriptions_per_month" AS
      WHERE cp.status = 'paid'
      and ((s.status <> 'deleted'::payment_service.subscription_status) AND (s.platform_id = core.current_platform_id()) AND (core.is_owner_or_admin(s.user_id) OR core.is_owner_or_admin(p.user_id)))
      group by month, s.project_id, p.external_id, payment_method;
-GRANT SELECT ON VIEW payment_service_api.subscriptions_per_month TO platform_user;
-GRANT SELECT ON VIEW payment_service_api.subscriptions_per_month TO scoped_user;
+GRANT SELECT ON payment_service_api.subscriptions_per_month TO platform_user;
+GRANT SELECT ON payment_service_api.subscriptions_per_month TO scoped_user;
 
 
