@@ -117,7 +117,22 @@ const userSubscriptionBox = {
             const current_reward_data = subscription.current_reward_data;
             const current_reward_id = subscription.current_reward_id;
 
-            if (current_reward_data && subscription.reward && subscription.reward.id != current_reward_id)
+            // first selection was no reward, but now selected one
+            if (!current_reward_data && subscription.reward)
+            {
+                return [
+                    ` ${I18n.t('no_reward', contributionScope())} `,
+                    m.trust('&nbsp;'),
+                    m('.fontsize-smallest.fontweight-semibold',
+                      m('span.badge.badge-attention', [
+                          m('span.fa.fa-arrow-right', ''),
+                          m.trust('&nbsp;'),
+                          subscription.reward.title
+                      ]))
+                ]; 
+            }
+	    // selected one rewared on subscription start, now selected another reward and last and current rewards are different
+            else if (current_reward_data && subscription.reward && subscription.reward.id != current_reward_id)
             {
                 const reward_description_formated = h.simpleFormat(`${current_reward_data.description.substring(0, 90)} (...)`);
                 return [
@@ -131,6 +146,7 @@ const userSubscriptionBox = {
                       ]))
                 ];
             }
+	    // no edition to rewards yet
             else if (subscription.reward)
             {
                 const reward_description = subscription.reward.description.substring(0, 90);
@@ -140,6 +156,7 @@ const userSubscriptionBox = {
                     m('p.fontcolor-secondary.fontsize-smallest', m.trust(reward_description_formated))
                 ];
             }
+	    // no editions to reward yet and no reward selected
             else
             {
                 return [
