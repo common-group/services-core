@@ -1,4 +1,6 @@
-import { commonPayment } from '../api';
+import {
+    commonPayment
+} from '../api';
 import m from 'mithril';
 import _ from 'underscore';
 import models from '../models';
@@ -37,6 +39,19 @@ const getNewSubscriptions = (projectId, startAt, endAt) => {
     return lSub.load();
 };
 
+const getSubscriptionsPerMonth = (projectId) => {
+    const vm = commonPayment.filtersVM({
+        project_id: 'eq'
+    }).order({
+        month: 'desc',
+        payment_method: 'desc'
+    });
+
+    vm.project_id(projectId);
+    const lSub = commonPayment.loaderWithToken(models.subscriptionsPerMonth.getPageOptions(vm.parameters()));
+    return lSub.load();
+};
+
 const getUserProjectSubscriptions = (userId, projectId, status) => {
     const vm = commonPayment.filtersVM({
         user_id: 'eq',
@@ -53,7 +68,9 @@ const getUserProjectSubscriptions = (userId, projectId, status) => {
 };
 
 const getSubscription = (subscriptionId) => {
-    const vm = commonPayment.filtersVM({id: 'eq'});
+    const vm = commonPayment.filtersVM({
+        id: 'eq'
+    });
     vm.id(subscriptionId);
 
     const lSub = commonPayment.loaderWithToken(models.userSubscription.getRowOptions(vm.parameters()));
@@ -63,6 +80,7 @@ const getSubscription = (subscriptionId) => {
 
 const subscriptionVM = {
     getNewSubscriptions,
+    getSubscriptionsPerMonth,
     getSubscriptionTransitions,
     getUserProjectSubscriptions,
     getSubscription
