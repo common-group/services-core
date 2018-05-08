@@ -163,18 +163,21 @@ const projectInsightsSub = {
                                 info: ctrl.weekSubscriptions().length,
                                 newCount: ctrl.weekSubscriptions().length,
                                 oldCount: ctrl.lastWeekSubscriptions().length
-                            }),                            
+                            }),
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
                                 info: `R$${weekSum}`,
                                 newCount: weekSum,
                                 oldCount: lastWeekSum
                             })
+                        ]),
+                        m(".fontsize-large.fontweight-semibold.u-text-center[id='origem']", [
+                          I18n.t('visitors_per_day_label', I18nScope()),
+                          h.newFeatureBadge()
+                        ]),
+                        m(".u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20", [
+                            I18n.t('last_30_days_indication', I18nScope())
                         ])
-                    ]),
-                    m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
-                        I18n.t('visitors_per_day_label', I18nScope()),
-                        h.newFeatureBadge()
                     ]),
                     !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
                         collection: ctrl.visitorsPerDay,
@@ -191,6 +194,7 @@ const projectInsightsSub = {
                         !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
                             collection: ctrl.subscriptionsPerDay,
                             label: I18n.t('amount_per_day_label_sub', I18nScope()),
+                            subLabel: I18n.t('last_30_days_indication', I18nScope()),
                             dataKey: 'total_amount',
                             xAxis: item => h.momentify(item.paid_at),
                             emptyState: m.trust(I18n.t('amount_per_day_empty_sub', I18nScope()))
@@ -204,6 +208,7 @@ const projectInsightsSub = {
                         !ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
                             collection: ctrl.subscriptionsPerDay,
                             label: I18n.t('contributions_per_day_label_sub', I18nScope()),
+                            subLabel: I18n.t('last_30_days_indication', I18nScope()),
                             dataKey: 'total',
                             xAxis: item => h.momentify(item.paid_at),
                             emptyState: m.trust(I18n.t('contributions_per_day_empty_sub', I18nScope()))
