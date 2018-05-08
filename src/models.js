@@ -16,7 +16,6 @@ const models = {
     commonPaymentInfo: commonPayment.model('rpc/payment_info'),
     commonPayments: commonPayment.model('payments'),
     subscriptionsPerMonth: commonPayment.model('subscriptions_per_month'),
-    newSubscriptionsPerMonth: commonPayment.model('new_subscriptions_per_month'),
     commonCreditCard: commonPayment.model('rpc/credit_card'),
     commonCreditCards: commonPayment.model('credit_cards'),
     commonSubscriptionUpgrade: commonPayment.model('rpc/upgrade_subscription'),
