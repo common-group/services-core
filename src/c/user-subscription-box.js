@@ -131,6 +131,7 @@ const userSubscriptionBox = {
                       ]))
                 ]; 
             }
+	    // selected one rewared on subscription start, now selected another reward and last and current rewards are different
             else if (current_reward_data && subscription.reward && subscription.reward.id != current_reward_id)
             {
                 const reward_description_formated = h.simpleFormat(`${current_reward_data.description.substring(0, 90)} (...)`);
@@ -145,6 +146,7 @@ const userSubscriptionBox = {
                       ]))
                 ];
             }
+	    // no edition to rewards yet
             else if (subscription.reward)
             {
                 const reward_description = subscription.reward.description.substring(0, 90);
@@ -154,6 +156,7 @@ const userSubscriptionBox = {
                     m('p.fontcolor-secondary.fontsize-smallest', m.trust(reward_description_formated))
                 ];
             }
+	    // no editions to reward yet and no reward selected
             else
             {
                 return [
