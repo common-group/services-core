@@ -17,7 +17,7 @@ jobs:
       - run: docker create -v /specs --name sql_test_files alpine:3.4 /bin/true
       - run: docker cp ~/project/specs/ sql_test_files:/
       - run: docker run -t --rm --volumes-from sql_test_files --link pg_default:pg_default comum/pgtap -h pg_default -u postgres -w example -d services_core_test -t '/specs/sql-specs/*/*.sql'
-      - run: docker run -i --rm --link pg_default:localhost -e "TEST_DB_HOST=localhost" -e="DB_NAME=services_core_test" -e "TEST_DB_USER=postgres" -e "TEST_DB_PORT=5432" comum/services-core:test bash -c './scripts/generate_dump_test_schema.sh && ./scripts/run_tests.sh'
+        #- run: docker run -i --rm --link pg_default:localhost -e "TEST_DB_HOST=localhost" -e="DB_NAME=services_core_test" -e "TEST_DB_USER=postgres" -e "TEST_DB_PORT=5432" comum/services-core:test bash -c './scripts/generate_dump_test_schema.sh && ./scripts/run_tests.sh'
   push_docker:
     docker:
       - image: comum/docker-build-env:latest
