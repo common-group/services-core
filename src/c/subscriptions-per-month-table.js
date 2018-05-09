@@ -1,6 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
+import h from '../h';
 
 const subscriptionsPerMonthTable = {
     controller() {
@@ -78,13 +79,13 @@ const subscriptionsPerMonthTable = {
                             ]),
                             m('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-stack.w-col-tiny-2', [
                                 m('.fontweight-semibold',
-                                    `R$${(slip.new_amount + credit_card.new_amount) / 100}`
+                                  `R$${h.formatNumber((slip.new_amount + credit_card.new_amount) / 100, 2, 3)}`
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary',
-                                    `R$${(credit_card.new_amount) / 100}`
+                                    `R$${h.formatNumber((credit_card.new_amount) / 100, 2, 3)}`
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary',
-                                    `R$${(slip.new_amount) / 100}`
+                                  `R$${h.formatNumber((slip.new_amount) / 100, 2, 3)}`
                                 )
                             ]),
                             m('.w-col.w-col-2.w-col-small-2.w-col-stack.w-col-tiny-2', [
@@ -100,13 +101,13 @@ const subscriptionsPerMonthTable = {
                             ]),
                             m('.w-col.w-col-2.w-col-small-2.w-col-stack.w-col-tiny-2', [
                                 m('.fontweight-semibold.text-success',
-                                    `R$${((slip.total_amount) + (credit_card.total_amount)) / 100}`
+                                    `R$${h.formatNumber(((slip.total_amount) + (credit_card.total_amount)) / 100, 2, 3)}`
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary',
-                                    `R$${(credit_card.total_amount) / 100}`
+                                    `R$${h.formatNumber((credit_card.total_amount) / 100, 2, 3)}`
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary',
-                                    `R$${(slip.total_amount) / 100}`
+                                    `R$${h.formatNumber((slip.total_amount) / 100, 2, 3)}`
                                 )
                             ])
                         ]);
