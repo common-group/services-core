@@ -1,7 +1,19 @@
 import m from 'mithril';
 import _ from 'underscore';
+import moment from 'moment';
 
 const subscriptionsPerMonthTable = {
+    controller() {
+        return {
+            emptyRow: {
+                total_amount: 0,
+                new_amount: 0,
+                total_subscriptions: 0,
+                new_subscriptions: 0
+            }
+        };
+    },
+
     view(ctrl, args) {
         return m('div', [
             m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
@@ -38,23 +50,13 @@ const subscriptionsPerMonthTable = {
                 ]),
                 m('.table-inner.fontsize-small', [!args.data ? '' :
                     _.map(_.groupBy(args.data, 'month'), (subscription) => {
-                        const slip = _.filter(subscription, sub => sub.payment_method === 'boleto')[0] || {
-                            total_amount: 0,
-                            new_amount: 0,
-                            total_subscriptions: 0,
-                            new_subscriptions: 0
-                        };
-                        const credit_card = _.filter(subscription, sub => sub.payment_method === 'credit_card')[0] || {
-                            total_amount: 0,
-                            new_amount: 0,
-                            total_subscriptions: 0,
-                            new_subscriptions: 0
-                        };
+                        const slip = _.filter(subscription, sub => sub.payment_method === 'boleto')[0] || ctrl.emptyRow;
+                        const credit_card = _.filter(subscription, sub => sub.payment_method === 'credit_card')[0] || ctrl.emptyRow;
 
                         return m('.table-row.w-row', [
                             m('.table-col.w-col.w-col-4.w-col-small-4.w-col-stack.w-col-tiny-4', [
                                 m('.fontweight-semibold',
-                                    subscription[0].month
+                                  moment(subscription[0].month).format('MMMM YYYY')
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary',
                                     'Cartão de crédito'
