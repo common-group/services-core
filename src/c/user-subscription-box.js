@@ -60,9 +60,12 @@ const userSubscriptionBox = {
         }
 
         const showLastSubscriptionVersionValueIfHasOne = () => {
+            const is_active = subscription.status === 'active';
             const current_paid_subscription = subscription.current_paid_subscription;
+            const last_paid_sub_amount = is_active || !current_paid_subscription ? subscription.checkout_data.amount : current_paid_subscription.amount;
+
             // has some subscription edition
-            if (current_paid_subscription && current_paid_subscription.amount != subscription.checkout_data.amount)
+            if (is_active && current_paid_subscription && current_paid_subscription.amount != subscription.checkout_data.amount)
             {
                 const paid_value = parseFloat(current_paid_subscription.amount) / 100;
                 const next_value = parseFloat(subscription.checkout_data.amount) / 100;
@@ -77,7 +80,7 @@ const userSubscriptionBox = {
             }
             else
             {
-                const paid_value = parseFloat(subscription.checkout_data.amount) / 100;
+                const paid_value = parseFloat(last_paid_sub_amount) / 100;
                 return [`R$ ${h.formatNumber(paid_value)} por mês`];
             }
 
@@ -85,12 +88,14 @@ const userSubscriptionBox = {
         };
 
         const showLastSubscriptionVersionPaymentMethodIfHasOne = () => {
+            const is_active = subscription.status === 'active';
             const current_paid_subscription = subscription.current_paid_subscription;
+            const last_paid_sub_data = is_active || !current_paid_subscription ? subscription : current_paid_subscription;
 
-            if (current_paid_subscription && subscription.checkout_data.payment_method != current_paid_subscription.payment_method)
+            if (is_active && current_paid_subscription && subscription.checkout_data.payment_method != current_paid_subscription.payment_method)
             {
                 return [
-                    m(subscriptionStatusIcon, { subscription}),
+                    m(subscriptionStatusIcon, { subscription }),
                     m.trust('&nbsp;&nbsp;&nbsp;'),
                     m(paymentMethodIcon, { subscription : current_paid_subscription}),
                     m('span.badge.badge-attention.fontweight-semibold', [
@@ -105,7 +110,7 @@ const userSubscriptionBox = {
                 return [
                     m(subscriptionStatusIcon, { subscription }),
                     m.trust('&nbsp;&nbsp;&nbsp;'),
-                    m(paymentMethodIcon, { subscription })
+                    m(paymentMethodIcon, { subscription: last_paid_sub_data })
                 ];
             }
 
@@ -113,12 +118,14 @@ const userSubscriptionBox = {
         };
 
         const showLastSubscriptionVersionRewardTitleIfHasOne = () => {
+            const is_active = subscription.status === 'active';
             const current_paid_subscription = subscription.current_paid_subscription;
             const current_reward_data = subscription.current_reward_data;
             const current_reward_id = subscription.current_reward_id;
+            const last_paid_sub_data = is_active || !current_paid_subscription ? subscription : {reward: current_reward_data, reward_id: current_reward_id, reward_external_id: null};
 
             // first selection was no reward, but now selected one
-            if (!current_reward_data && subscription.reward)
+            if (is_active && !current_reward_data && subscription.reward)
             {
                 return [
                     ` ${I18n.t('no_reward', contributionScope())} `,
@@ -131,8 +138,8 @@ const userSubscriptionBox = {
                       ]))
                 ]; 
             }
-	    // selected one rewared on subscription start, now selected another reward and last and current rewards are different
-            else if (current_reward_data && subscription.reward && subscription.reward.id != current_reward_id)
+	          // selected one rewared on subscription start, now selected another reward and last and current rewards are different
+            else if (is_active && current_reward_data && subscription.reward && subscription.reward_id != current_reward_id)
             {
                 const reward_description_formated = h.simpleFormat(`${current_reward_data.description.substring(0, 90)} (...)`);
                 return [
@@ -146,21 +153,21 @@ const userSubscriptionBox = {
                       ]))
                 ];
             }
-	    // no edition to rewards yet
-            else if (subscription.reward)
+	          // no edition to rewards yet
+            else if (last_paid_sub_data.reward)
             {
-                const reward_description = subscription.reward.description.substring(0, 90);
+                const reward_description = last_paid_sub_data.reward.description.substring(0, 90);
                 const reward_description_formated = h.simpleFormat(`${reward_description} (...)`);
                 return [
-                    m('.fontsize-smallest.fontweight-semibold', subscription.reward.title),
+                    m('.fontsize-smallest.fontweight-semibold', last_paid_sub_data.reward.title),
                     m('p.fontcolor-secondary.fontsize-smallest', m.trust(reward_description_formated))
                 ];
             }
-	    // no editions to reward yet and no reward selected
+	          // no editions to reward yet and no reward selected
             else
             {
                 return [
-                    subscription.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `
+                    last_paid_sub_data.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `
                 ];
             }
         };
