@@ -149,7 +149,7 @@ const projectInsightsSub = {
                         project
                     })) : ''),
 
-                    m('.u-marginbottom-60', [
+                    m('.u-marginbottom-30', [
                         m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                             m('.flex-column.card.u-radius.u-marginbottom-10', [
                                 m('div',
@@ -176,9 +176,8 @@ const projectInsightsSub = {
                                 oldCount: lastWeekSum
                             })
                         ]),
-                        m(".fontsize-large.fontweight-semibold.u-text-center[id='origem']", [
-                            I18n.t('visitors_per_day_label', I18nScope()),
-                            h.newFeatureBadge()
+                        m(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [
+                          I18n.t('visitors_per_day_label', I18nScope())
                         ]),
                         m(".u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20", [
                             I18n.t('last_30_days_indication', I18nScope())
