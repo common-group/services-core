@@ -47,6 +47,7 @@ const getSubscriptionsPerMonth = (projectId) => {
         payment_method: 'desc'
     });
 
+    models.subscriptionsPerMonth.pageSize(false);
     vm.project_id(projectId);
     const lSub = commonPayment.loaderWithToken(models.subscriptionsPerMonth.getPageOptions(vm.parameters()));
     return lSub.load();

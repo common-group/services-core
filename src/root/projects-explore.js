@@ -407,7 +407,8 @@ const projectsExplore = {
                         ])
                     ])
                 ])
-            ]), !ctrl.projects().isLoading() && !_.isUndefined(ctrl.projects().total()) ?
+            ]),
+            !ctrl.projects().isLoading() && !_.isUndefined(ctrl.projects().total) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
