@@ -29,6 +29,7 @@ const projectsExplore = {
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
             currentUser = h.getUser() || {},
+            chosenRecommender = m.prop('recommended_hb'),
             currentMode = m.prop(filtersMap.all_modes),
             selectedCategory = m.prop({
                 name: 'Todas as categorias',
@@ -38,6 +39,7 @@ const projectsExplore = {
             fallbackFilter = 'all',
             currentFilter = m.prop(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
+            availableRecommenders = ['recommended_cf', 'recommended_cb', 'recommended_hb'],
             categoryToggle = h.toggleProp(true, false),
             filterToggle = h.toggleProp(true, false),
             changeFilter = (newFilter) => {
@@ -47,10 +49,10 @@ const projectsExplore = {
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
                 const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
-                if (currentUser.is_admin_role) {
-                    contextFilters.push('recommended_cf');
-                    contextFilters.push('recommended_cb');
-                    contextFilters.push('recommended_hb');
+                // only show recommended projects to logged in users
+                if (currentUser.id) {
+                    chosenRecommender(_.sample(availableRecommenders));
+                    contextFilters.push(chosenRecommender());
                 }
                 projectFiltersVM.setContextFilters(contextFilters);
             },
@@ -111,7 +113,6 @@ const projectsExplore = {
                 const search = h.paramByName('pg_search'),
                     recommendedProjects = (alg) => {
                         let model;
-                        //admin only for now
                         switch (alg) {
                             case 'cf':
                                 model = models.recommendedProjectsCf;
@@ -237,6 +238,7 @@ const projectsExplore = {
             title,
             loadRoute,
             modeToggle,
+            availableRecommenders,
             categoryToggle,
             filterToggle,
             selectedCategory,
@@ -260,6 +262,17 @@ const projectsExplore = {
             filterKeyName = ctrl.currentFilter().keyName,
             isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends'),
             hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
+        const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
+            m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
+                    onclick: () => {
+                        ctrl.categoryToggle.toggle();
+                        ctrl.selectedCategory(category);
+                    },
+                    class: ctrl.selectedCategory() === category ? 'selected' : ''
+                },
+                category.name
+            )
+        );
         let widowProjects = [];
 
         return m('#explore', {
@@ -344,30 +357,10 @@ const projectsExplore = {
                                         },
                                         'Todas as categorias'
                                     ),
-                                    _.map(ctrl.categories().slice(0, Math.floor(_.size(ctrl.categories()) / 2)), category =>
-                                        m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
-                                                onclick: () => {
-                                                    ctrl.categoryToggle.toggle();
-                                                    ctrl.selectedCategory(category);
-                                                },
-                                                class: ctrl.selectedCategory() === category ? 'selected' : ''
-                                            },
-                                            category.name
-                                        )
-                                    )
+                                    categoryColumn(ctrl.categories(), 0, Math.floor(_.size(ctrl.categories()) / 2))
                                 ]),
                                 m('.explore-filter-select-col', [
-                                    _.map(ctrl.categories().slice(Math.floor(_.size(ctrl.categories()) / 2), _.size(ctrl.categories())), category =>
-                                        m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
-                                                onclick: () => {
-                                                    ctrl.categoryToggle.toggle();
-                                                    ctrl.selectedCategory(category);
-                                                },
-                                                class: ctrl.selectedCategory() === category ? 'selected' : ''
-                                            },
-                                            category.name
-                                        )
-                                    )
+                                    categoryColumn(ctrl.categories(), Math.floor(_.size(ctrl.categories()) / 2), _.size(ctrl.categories()))
                                 ]),
                                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                                     onclick: ctrl.categoryToggle.toggle
@@ -408,7 +401,7 @@ const projectsExplore = {
                     ])
                 ])
             ]),
-            !ctrl.projects().isLoading() && !_.isUndefined(ctrl.projects().total) ?
+            !ctrl.projects().isLoading() && _.isFunction(ctrl.projects().total) && !_.isUndefined(ctrl.projects().total()) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
@@ -435,6 +428,8 @@ const projectsExplore = {
                                 ref = 'ctrse_explore_pgsearch';
                             } else if (isContributedByFriendsFilter) {
                                 ref = 'ctrse_explore_friends';
+                            } else if (_.indexOf(ctrl.availableRecommenders, ctrl.currentFilter().keyName) !== -1) {
+                                ref = `ctrse_${ctrl.currentFilter().keyName}`;
                             } else if (filterKeyName === 'all') {
                                 if (project.score >= 1) {
                                     if (idx === 0) {
