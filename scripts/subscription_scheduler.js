@@ -45,6 +45,18 @@ async function refuse_expired_slip_payments() {
     };
 };
 
+async function notify_expiring_slips() {
+    try {
+        // fetch payment and user data to build context
+        const res = await pool.query(
+            `select payment_service.notify_expiring_slips()`);
+
+        console.log(res.rows[0]);
+    } catch (e) {
+        console.log(e);
+    };
+};
+
 async function cancel_canceling_expired_subscriptions() {
     try {
         // fetch payment and user data to build context
@@ -108,6 +120,15 @@ const recursive_calls = () => {
         }, (process.env.SET_INTERVAL || 60000));
     }
 
+    const notify_expiring = () => {
+        setTimeout(() => {
+            console.log('checking for expiring slips');
+            notify_expiring_slips().then(() => {
+                notify_expiring();
+            });
+        }, (process.env.SET_INTERVAL || 60000));
+    }
+
     const inactive_invalid_subs = () => {
         setTimeout(() => {
             console.log('checking for subscriptions to inactive');
@@ -123,6 +144,7 @@ const recursive_calls = () => {
     refuse_expired();
     cancel_expired_subscriptions();
     inactive_invalid_subs();
+    notify_expiring();
 };
 
 recursive_calls();
