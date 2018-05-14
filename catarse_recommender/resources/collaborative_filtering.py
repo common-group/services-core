@@ -51,4 +51,5 @@ class CollaborativeFiltering(Resource):
         projects = self.get_predictions(user_id)
         project_ids = np.array(projects, dtype=np.int)[:, 1].flatten().tolist()
         details = get_project_details(project_ids, offset, limit)
-        return details.flatten().tolist()
+        headers = {'Content-Range': '{0}-{1}/{2}'.format(offset, limit, len(project_ids)), 'Access-Control-Expose-Headers': 'Content-Encoding, Content-Location, Content-Range, Content-Type, Date, Location, Server, Transfer-Encoding, Range-Unit'}
+        return details.flatten().tolist(), 206, headers
