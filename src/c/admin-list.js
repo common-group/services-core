@@ -23,16 +23,16 @@ const adminList = {
                 error() ?
                 m('.card.card-error.u-radius.fontweight-bold', error()) : [
                     m('.w-row.u-marginbottom-20', [
-                        m('.w-col.w-col-9', [
+                        m('.w-col.w-col-12', [
                             m('.fontsize-base',
                                 list.isLoading() ?
                               `Carregando ${label.toLowerCase()}...` : [
                                   m('.w-row', [
-                                      m('.w-col.w-col-3', [
+                                      m('.w-col.w-col-2', [
                                           m('.fontweight-semibold', list.total()),
                                           ` ${label.toLowerCase()} encontrados`
                                       ]),
-                                      (args.vm && args.vm.hasInputAction ? m('.w-col-9.w-col', args.vm.inputActions()) : '')
+                                      (args.vm && args.vm.hasInputAction ? m('.w-col-10.w-col', args.vm.inputActions()) : '')
                                   ])
                               ]
                             )
