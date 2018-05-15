@@ -16,7 +16,10 @@ import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-det
 const adminBalanceTranfers = {
     controller(args) {
         const listVM = balanceTransferListVM,
-              filterVM = balanceTransferFilterVM,
+              filterVM = balanceTransferFilterVM(),
+              authorizedListVM = balanceTransferListVM,
+              authorizedFilterVM = balanceTransferFilterVM(),
+              authorizedCollection = m.prop([]),
               error = m.prop(''),
               selectedAny = m.prop(false),
               filterBuilder = [
@@ -91,6 +94,8 @@ const adminBalanceTranfers = {
               displayApprovalModal = h.toggleProp(false, true),
               displayManualModal = h.toggleProp(false, true),
               displayRejectModal = h.toggleProp(false, true),
+              displayProcessTransfer = h.toggleProp(false, true),
+              processingTranfersLoader = h.toggleProp(false, true),
               selectAllLoading = m.prop(false),
               redrawProp = m.prop(false),
               actionMenuToggle = h.toggleProp(false, true),
@@ -113,6 +118,13 @@ const adminBalanceTranfers = {
                   if(_.isEmpty(newIDs)) {
                       selectedAny(false);
                   }
+              },
+              loadAuthorizedBalances = () => {
+                  authorizedFilterVM.state('authorized');
+                  authorizedFilterVM.getAllBalanceTransfers(authorizedFilterVM).then((data) => {
+                      authorizedCollection(data);
+                      m.redraw();
+                  });
               },
               submit = () => {
                   error(false);
@@ -210,9 +222,26 @@ const adminBalanceTranfers = {
                   }).then((data) => {
                       selectedItemsIDs([]);
                       listVM.firstPage(filterVM.parameters());
+                      loadAuthorizedBalances();
                       displayApprovalModal(false);
                       m.redraw();
                   });
+              },
+              processAuthorizedTransfers = () => {
+                processingTranfersLoader(true);
+                m.redraw();
+                m.request({
+                    method: 'POST',
+                    url: '/admin/balance_transfers/process_transfers',
+                    data: {},
+                    config: h.setCsrfToken
+                }).then((data) => {
+                    listVM.firstPage(filterVM.parameters());
+                    loadAuthorizedBalances();
+                    displayProcessTransfer(false);
+                    processingTranfersLoader(false);
+                    m.redraw();
+                })
               },
               rejectSelectedIDs = () => {
                   m.request({
@@ -245,6 +274,9 @@ const adminBalanceTranfers = {
                   });
               },
               inputActions = () => {
+                  let authorizedSum = h.formatNumber(_.reduce(authorizedCollection(), (memo, item) => {
+                      return memo + item.amount;
+                  }, 0), 2, 3);
                   return m('', [
                       m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: selectAll }, (selectAllLoading() ? 'carregando...' : `Selecionar todos`)),
                       (selectedItemsIDs().length > 1 ? m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', { onclick: unSelectAll }, `Desmarcar todos (${selectedItemsIDs().length})`) : ''),
@@ -267,17 +299,39 @@ const adminBalanceTranfers = {
                                     onclick: event => displayRejectModal.toggle()
                                 }, 'Recusada')
                             ]) : '')
-                       ]) : '')
+                       ]) : ''),
+                      (authorizedCollection().length > 0 ? m('._w-inline-block.u-right', [
+                          m('button.btn.btn-small.btn-inline', {
+                            onclick: displayProcessTransfer.toggle
+                          }, `Repassar saques aprovados (${authorizedCollection().length})`),
+                          (displayProcessTransfer() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+                              m('.w-form', [
+                                  ( processingTranfersLoader() ? h.loader() : m('form', [
+                                      m('label.fontsize-smaller.umarginbottom-20', `Tem certeza que deseja repassar ${authorizedCollection().length} saques aprovados (total de R$ ${authorizedSum}) ?`),
+                                      m('button.btn.btn-small', {
+                                        onclick: processAuthorizedTransfers
+                                      } ,'Repassar saques aprovados')
+                                  ]))
+                              ])
+                          ]) : '')
+                      ]) : '')
                   ]);
               };
+
+        loadAuthorizedBalances();
+        console.log(filterVM.state());
+        console.log(authorizedFilterVM.state());
 
         return {
             displayApprovalModal,
             displayRejectModal,
             displayManualModal,
+            displayProcessTransfer,
+            authorizedCollection,
             generateWrapperModal,
             approveSelectedIDs,
             manualTransferSelectedIDs,
+            processAuthorizedTransfers,
             rejectSelectedIDs,
             filterVM,
             filterBuilder,
