@@ -78,6 +78,23 @@ const downloadReports = {
                                                     )
                                                 ])
                                             ),
+                                            m('li.divider.u-marginbottom-10'),
+                                            m('li.fontsize-smaller.u-marginbottom-10',
+                                                m('div', [
+                                                    'Apoios cancelados após o pagamento',
+                                                    m.trust('&nbsp;'),
+                                                    m.trust('&nbsp;'),
+                                                    m(`a.alt-link[href='/pt/reports/contribution_reports_for_project_owners.csv?project_id=${project.project_id}&amp;state=refunded,chargeback']`,
+                                                        'CSV'
+                                                    ),
+                                                    m.trust('&nbsp;'),
+                                                    '\\',
+                                                    m.trust('&nbsp;'),
+                                                    m(`a.alt-link[href='/pt/reports/contribution_reports_for_project_owners.xls?project_id=${project.project_id}&amp;state=refunded,chargeback']`,
+                                                        'XLS'
+                                                    )
+                                                ])
+                                            ),
                                             _.map(paidRewards, reward => [
                                                 m('li.divider.u-marginbottom-10'),
                                                 m('li.fontsize-smaller.u-marginbottom-10',
