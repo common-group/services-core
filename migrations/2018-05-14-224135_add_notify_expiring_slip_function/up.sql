@@ -44,7 +44,7 @@ AS $function$
                     ) then 
                         _relations_json := json_build_object(
                         'relations', json_build_object(
-                            'catalog_payment_id', _last_payment.id,
+                            'catalog_payment_id', _last_subscription_payment.id,
                             'subscription_id', _subscription.id,
                             'project_id', _subscription.project_id,
                             'user_id', _subscription.user_id
