@@ -6,8 +6,8 @@ BEGIN;
 
     select plan(4);
 
-    SELECT can('payment_service', ARRAY['notify_expiring_slip']);
-    SELECT function_returns('payment_service', 'notify_expiring_slip', 'json');
+    SELECT can('payment_service', ARRAY['notify_expiring_slips']);
+    SELECT function_returns('payment_service', 'notify_expiring_slips', 'json');
 
     CREATE OR REPLACE FUNCTION test_notify_slip()
     returns setof text language plpgsql
@@ -38,12 +38,12 @@ BEGIN;
                 (label, subject, template) values 
                 ('expiring_slip', 'title', 'body');
 
-            _result := payment_service.notify_expiring_slip();
+            _result := payment_service.notify_expiring_slips();
             return next is((_result ->> 'total_payments_affected')::integer, 1);
             return next is(((_result ->> 'affected_payments_ids')::json->>0)::uuid, _active_subscription.id);
         end;
     $$;
+    SELECT * FROM test_notify_slip();
 
-  SELECT * FROM test_notify_slip();
   SELECT * FROM finish();
 ROLLBACK;
