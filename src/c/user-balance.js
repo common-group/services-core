@@ -28,6 +28,7 @@ const userBalance = {
     },
     view(ctrl, args) {
         const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0},
+            positiveValue = balance.amount >= 0,
             balanceRequestModalC = [
                 userBalanceRequestModalContent,
                 _.extend({}, { balance }, args)
@@ -43,7 +44,7 @@ const userBalance = {
                     m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [
                         m('.fontsize-larger', [
                             I18n.t('totals', I18nScope()),
-                            m('span.text-success', `R$ ${h.formatNumber(balance.amount || 0, 2, 3)}`)
+                            m(`span.text-${positiveValue ? 'success' : 'error'}`, `R$ ${h.formatNumber(balance.amount || 0, 2, 3)}`)
                         ])
                     ]),
                     m('.card.card-terciary.u-radius.w-col.w-col-4', [
