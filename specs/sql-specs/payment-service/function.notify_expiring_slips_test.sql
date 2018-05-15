@@ -44,6 +44,6 @@ BEGIN;
         end;
     $$;
 
-  SELECT * FROM runtests();
+  SELECT * FROM test_notify_slip();
   SELECT * FROM finish();
 ROLLBACK;
