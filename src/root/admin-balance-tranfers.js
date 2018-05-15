@@ -319,8 +319,6 @@ const adminBalanceTranfers = {
               };
 
         loadAuthorizedBalances();
-        console.log(filterVM.state());
-        console.log(authorizedFilterVM.state());
 
         return {
             displayApprovalModal,
