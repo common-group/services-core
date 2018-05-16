@@ -39,7 +39,7 @@ const projectsExplore = {
             fallbackFilter = 'all',
             currentFilter = m.prop(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
-            availableRecommenders = ['recommended_cf', 'recommended_cb', 'recommended_hb'],
+            availableRecommenders = ['recommended_cf', 'recommended_cb', 'recommended_hb', 'recommended_pop'],
             categoryToggle = h.toggleProp(true, false),
             filterToggle = h.toggleProp(true, false),
             changeFilter = (newFilter) => {
@@ -48,11 +48,18 @@ const projectsExplore = {
             },
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
-                const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
-                // only show recommended projects to logged in users
-                if (currentUser.id) {
-                    chosenRecommender(_.sample(availableRecommenders));
-                    contextFilters.push(chosenRecommender());
+                let contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
+                // only show recommended projects to logged in users with contributions
+                if (currentUser.contributions && currentUser.contributions > 0) {
+                    const lastDigit = parseInt(currentUser.id.toString().slice(-1));
+                    // group into 4 even sets for A/B testing
+                    if (lastDigit <= 7) {
+                        const testedRecommenderIndex = lastDigit % 4;
+                        chosenRecommender(availableRecommenders[testedRecommenderIndex]);
+                        contextFilters.push(chosenRecommender());
+                        changeFilter(chosenRecommender());
+                        contextFilters = _.without(contextFilters, 'all');
+                    }
                 }
                 projectFiltersVM.setContextFilters(contextFilters);
             },
