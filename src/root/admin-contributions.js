@@ -121,6 +121,52 @@ const adminContributions = {
                     error(serverError.message);
                 });
                 return false;
+            },
+            displayChargebackForm = h.toggleProp(false, true),
+            chargebackIds = m.prop(),
+            generateIdsToData = () => {
+                if(chargebackIds() == undefined) {
+                    return null;
+                }
+
+                return chargebackIds().split(',').map((str) => str.trim());
+            },
+            processChargebacksLoader = h.toggleProp(false, true),
+            processChargebacks = () => {
+                processChargebacksLoader(true);
+                m.redraw();
+                m.request({
+                    method: 'POST',
+                    url: '/admin/contributions/batch_chargeback',
+                    data: {
+                        gateway_payment_ids: generateIdsToData()
+                    },
+                    config: h.setCsrfToken
+                }).then((data) => {
+                    processChargebacksLoader(false);
+                    displayChargebackForm(false);
+                });
+            },
+            inputActions = () => {
+                return m('', [
+                    m('.w-inline-block', [
+                        m('button.btn-inline.btn.btn-small.btn-terciary', {
+                            onclick: displayChargebackForm.toggle
+                        },'Chargeback em massa'),
+                        (displayChargebackForm() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+                            m('.w-form', [
+                                (processChargebacksLoader() 
+                                    ? h.loader()
+                                    : m('form', [
+                                        m('label.fontsize-small', 'Insira os IDs dos apoios separados por vírgula'),
+                                        m('textarea.text-field.w-input', { oninput: m.withAttr('value', chargebackIds) }),
+                                        m('button.btn.btn-small.w-button', { onclick: processChargebacks }, 'Virar apoios para chargeback')
+                                    ])
+                                )
+                            ])
+                        ]) : '')
+                    ])
+                ]);
             };
 
         return {
@@ -128,6 +174,8 @@ const adminContributions = {
             filterBuilder,
             listVM: {
                 list: listVM,
+                hasInputAction: true,
+                inputActions,
                 error
             },
             data: {
