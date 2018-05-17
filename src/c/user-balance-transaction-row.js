@@ -62,6 +62,8 @@ const userBalanceTrasactionRow = {
                          service_fee: transaction.origin_objects.service_fee ? (transaction.origin_objects.service_fee*100.0) : '',
                          project_name: transaction.origin_objects.project_name,
                          contributitor_name: transaction.origin_objects.contributor_name,
+                         from_user_name: transaction.origin_objects.from_user_name,
+                         to_user_name: transaction.origin_objects.to_user_name,
                      };
 
                      return m('div', [
