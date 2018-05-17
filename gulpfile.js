@@ -45,7 +45,6 @@ gulp.task('bundle-tests', function(done){
           rollupFlow(),
           babel({
               exclude: 'node_modules/**',
-              "presets": [ "es2015-rollup" ]
           }),
           multiEntry()
       ],
@@ -100,8 +99,7 @@ gulp.task('dist', function(done){
         plugins: [
             rollupFlow(),
             babel({
-              exclude: 'node_modules/**',
-              "presets": [ "es2015-rollup" ]
+                exclude: 'node_modules/**',
             })
         ],
         globals: rollupGlobals,
