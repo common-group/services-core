@@ -10,65 +10,77 @@ import models from '../models';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 import inlineError from './inline-error';
+import projectReportDisrespectRules from './project-report-disrespect-rules';
+import projectReportInfringesIntellectualProperty from './project-report-infringes-intellectual-property';
+import projectReportNoRewardReceived from './project-report-no-reward-received';
 
 const projectReport = {
     controller(args) {
         const displayForm = h.toggleProp(false, true),
-            sendSuccess = m.prop(false),
-            submitDisabled = m.prop(false),
-            user = h.getUser() || {},
-            email = m.prop(user.email),
-            details = m.prop(''),
-            reason = m.prop(''),
-            reasonError = m.prop(false),
-            detailsError = m.prop(false),
-            storeReport = 'report',
-            project = projectVM.currentProject(),
-            hasPendingAction = project && (h.callStoredAction(storeReport) == project.project_id),
-            checkLogin = () => {
+              displayFormWithName = m.prop(''),
+              sendSuccess = m.prop(false),
+              submitDisabled = m.prop(false),
+              user = args.user || h.getUser() || {},
+              email = m.prop(user.email),
+              details = m.prop(''),
+              reason = m.prop(''),
+              storeReport = 'report',
+              project = args.project || projectVM.currentProject(),
+              hasPendingAction = project && (h.callStoredAction(storeReport) == project.project_id),
+              CPF = m.prop(''),
+              telephone = m.prop(''),
+              businessName = m.prop(''),
+              CNPJ = m.prop(''),
+              businessRole = m.prop(''),
+              relationWithViolatedProperty = m.prop(''),
+              fullName = m.prop(''),
+              fullAddress = m.prop(''),
+              projectInfringes = m.prop(''),
+              termsAgreed = h.toggleProp(false, true),
+              checkLogin = (event) => {
                 if (!_.isEmpty(user)) {
                     displayForm.toggle();
                 } else {
                     h.storeAction(storeReport, project.project_id);
                     return h.navigateToDevise();
                 }
-            },
-            validate = () => {
-                let ok = true;
-                detailsError(false);
-                reasonError(false);
-                if (_.isEmpty(reason())) {
-                    reasonError(true);
-                    ok = false;
-                }
-                if (_.isEmpty(details())) {
-                    detailsError(true);
-                    ok = false;
-                }
-                return ok;
-            },
-            sendReport = () => {
-                if (!validate()) {
-                    return false;
-                }
-                submitDisabled(true);
-                const loaderOpts = models.projectReport.postOptions({
-                    email: email(),
-                    details: details(),
-                    reason: reason(),
-                    project_id: project.project_id
-                });
-                const l = catarse.loaderWithToken(loaderOpts);
+              },
+              sendReport = (validateFunction) => {
+                  if (!validateFunction()) {
+                      return false;
+                  }
+                  submitDisabled(true);
+                  const loaderOpts = models.projectReport.postOptions({
+                      email: email(),
+                      details: details(),
+                      reason: reason(),
+                      data: {
+                          email: email(),
+                          details: details(),
+                          reason: reason(),
+                          cpf: CPF(),
+                          telephone: telephone(),
+                          business_name: businessName(),
+                          cnpj: CNPJ(),
+                          business_role: businessRole(),
+                          relation_with_violated_property: relationWithViolatedProperty(),
+                          full_name: fullName(),
+                          project_infringes: projectInfringes(),
+                          terms_agreed: termsAgreed(),
+                      },
+                      project_id: project.project_id
+                  });
+                  const l = catarse.loaderWithToken(loaderOpts);
 
-                l.load().then(sendSuccess(true));
-                submitDisabled(false);
-                return false;
-            },
-            checkScroll = (el, isInit) => {
-                if (!isInit && hasPendingAction) {
-                    h.animateScrollTo(el);
-                }
-            };
+                  l.load().then(sendSuccess(true));
+                  submitDisabled(false);
+                  return false;
+              },
+              checkScroll = (el, isInit) => {
+                  if (!isInit && hasPendingAction) {
+                      h.animateScrollTo(el);
+                  }
+              };
 
 
         if (!_.isEmpty(user) && hasPendingAction) {
@@ -76,6 +88,7 @@ const projectReport = {
         }
 
         return {
+            displayFormWithName,
             checkScroll,
             checkLogin,
             displayForm,
@@ -83,82 +96,73 @@ const projectReport = {
             submitDisabled,
             sendReport,
             user,
-            detailsError,
-            reasonError,
             details,
-            reason
+            reason,
+            project: m.prop(project),
+            user,
+            CPF,
+            telephone,
+            businessName,
+            CNPJ,
+            businessRole,
+            relationWithViolatedProperty,
+            fullName,
+            fullAddress,
+            projectInfringes,
+            termsAgreed
         };
     },
 
     view(ctrl, args) {
-        return m('.card.card-terciary.u-radius',
-            [
-                m('.fontsize-small.u-marginbottom-20',
-                    [
-                        'Este projeto desrespeita',
-                        m.trust('&nbsp;'),
-                        m('a.alt-link[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638\'][target=\'_blank\']',
-                            'nossas regras? '
-                          )
-                    ]
-                      ),
+        return m('.card.card-terciary.u-radius', [
                 ctrl.sendSuccess() ?
-                       m('.w-form',
-                        m('p',
-                          'Obrigado! A sua denúncia foi recebida.'
-                        )
-                      ) :
-                [
-                    m('.a.w-button.btn.btn-medium.btn-terciary.btn-inline[href=\'javascript:void(0);\']', { onclick: ctrl.checkLogin },
-                        'Denunciar este projeto'
-                      ),
-                    ctrl.displayForm() ? m('#report-form.u-margintop-30',
-                        m('.w-form',
-                          m('form', { onsubmit: ctrl.sendReport, config: ctrl.checkScroll },
-                              [
-                                  m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
-                                'Por que você está denunciando este projeto?'
-                              ),
-                                  m('select.w-select.text-field.positive[required=\'required\']', { onchange: m.withAttr('value', ctrl.reason) },
-                                      [
-                                          m('option[value=\'\']',
-                                    'Selecione um motivo'
-                                  ),
-                                          m('option[value=\'Violação de propriedade intelectual\']',
-                                    'Violação de propriedade intelectual'
-                                  ),
-                                          m('option[value=\'Calúnia, injúria, difamação ou discriminação\']',
-                                    'Calúnia, injúria, difamação ou discriminação'
-                                  ),
-                                          m('option[value=\'Escopo de projeto proibido\']',
-                                    'Escopo de projeto proibido'
-                                  ),
-                                          m('option[value=\'Recompensas proibidas\']',
-                                    'Recompensas proibidas'
-                                  ),
-                                          m('option[value=\'Cenas de sexo explícitas e gratuitas\']',
-                                    'Cenas de sexo explícitas e gratuitas'
-                                  ),
-                                          m('option[value=\'Abuso de SPAM\']',
-                                    'Abuso de SPAM'
-                                  ),
-                                          m('option[value=\'Outros\']',
-                                    'Outros'
-                                  )
-                                      ]
-                              ),
-                                  (ctrl.reasonError() ? m(inlineError, { message: 'Selecione um motivo' }) : ''),
-                                  m('textarea.w-input.text-field.positive.u-marginbottom-30', { placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema', onchange: m.withAttr('value', ctrl.details) }),
-                                  m('.w-row',
-                                  (ctrl.detailsError() ? m(inlineError, { message: 'Informe os detalhes da denúncia' }) : '')),
-                                  m('input.w-button.btn.btn-medium.btn-inline.btn-dark[type=\'submit\'][value=\'Enviar denúncia\']', { disabled: ctrl.submitDisabled() })
-                              ]
-                          )
-                        )
-                      ) : '']
-
-            ]
-                  );
+                    m('.w-form', m('p', 'Obrigado! A sua denúncia foi recebida.' ))
+                :
+                    [
+                        m('button.btn.btn-terciary.btn-inline.btn-large.w-button',
+                          {
+                              onclick: ctrl.checkLogin
+                          },
+                          'Denunciar este projeto ao Catarse'
+                        ),
+                        ctrl.displayForm() ?
+                            m('div', [
+                                m(projectReportDisrespectRules, {
+                                    displayFormWithName: ctrl.displayFormWithName,
+                                    submitDisabled: ctrl.submitDisabled,
+                                    checkScroll: ctrl.checkScroll,
+                                    sendReport: ctrl.sendReport,
+                                    reason: ctrl.reason,
+                                    details: ctrl.details,
+                                }),
+                                m(projectReportInfringesIntellectualProperty, {
+                                    CPF: ctrl.CPF,
+                                    telephone: ctrl.telephone,
+                                    businessName: ctrl.businessName,
+                                    CNPJ: ctrl.CNPJ,
+                                    businessRole: ctrl.businessRole,
+                                    relationWithViolatedProperty: ctrl.relationWithViolatedProperty,
+                                    fullName: ctrl.fullName,
+                                    fullAddress: ctrl.fullAddress,
+                                    projectInfringes: ctrl.projectInfringes,
+                                    termsAgreed: ctrl.termsAgreed,
+                                    reason: ctrl.reason,
+                                    details: ctrl.details,
+                                    displayFormWithName: ctrl.displayFormWithName,
+                                    sendReport: ctrl.sendReport,
+                                    checkScroll: ctrl.checkScroll,
+                                    submitDisabled: ctrl.submitDisabled
+                                }),
+                                m(projectReportNoRewardReceived, {
+                                    displayFormWithName: ctrl.displayFormWithName,
+                                    project: ctrl.project,
+                                    user: ctrl.user
+                                })
+                            ])
+                        :
+                            ''
+                    ]
+            ]);
     }
 };
 
