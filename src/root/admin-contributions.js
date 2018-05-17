@@ -1,5 +1,8 @@
 import m from 'mithril';
 import h from '../h';
+import models from '../models';
+import {catarse} from '../api';
+import _ from 'underscore';
 import contributionListVM from '../vms/contribution-list-vm';
 import contributionFilterVM from '../vms/contribution-filter-vm';
 import adminList from '../c/admin-list';
@@ -10,6 +13,7 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 import filterNumberRange from '../c/filter-number-range';
 import filterDateRange from '../c/filter-date-range';
+import modalBox from '../c/modal-box';
 
 const adminContributions = {
     controller() {
@@ -132,20 +136,98 @@ const adminContributions = {
                 return chargebackIds().split(',').map((str) => str.trim());
             },
             processChargebacksLoader = h.toggleProp(false, true),
+            displayChargebackConfirmationModal = h.toggleProp(false, true),
+            searchChargebackLoader = h.toggleProp(false, true),
+            toChargebackListVM = models.contributionDetail,
+            toChargebackCollection = m.prop(),
+            chargebackConfirmationModalContentWrapper = (customAttrs) => {
+                const wrapper = {
+                    view(ctrl, args) {
+                        return m('', [
+                            m('.modal-dialog-header', [
+                                m('.fontsize-large.u-text-center', args.modalTitle)
+                            ]),
+                            m('.modal-dialog-content', [
+                                m('.w-row.fontweight-semibold', [
+                                    m('.w-col.w-col-3', 'ID do gateway'),
+                                    m('.w-col.w-col-4', 'Nome do apoiador'),
+                                    m('.w-col.w-col-2', 'Valor'),
+                                    m('.w-col.w-col-3', 'Projeto'),
+                                ]),
+                                _.map(toChargebackCollection(), (item, index) => {
+                                      return m('.divider.fontsize-smallest.lineheight-looser', [
+                                          m('.w-row', [
+                                              m('.w-col.w-col-3', [
+                                                  m('span', item.gateway_id)
+                                              ]),
+                                              m('.w-col.w-col-4', [
+                                                  m('span', item.user_name)
+                                              ]),
+                                              m('.w-col.w-col-2', [
+                                                  m('span', `${h.formatNumber(item.value, 2, 3)}`)
+                                              ]),
+                                              m('.w-col.w-col-3', [
+                                                  m('span', item.project_name)
+                                              ]),
+                                          ])
+                                      ]);
+                                }),
+                                m('.w-row.fontweight-semibold.divider', [
+                                    m('.w-col.w-col-6', 'Total'),
+                                    m('.w-col.w-col-3', `R$ ${h.formatNumber(_.reduce(toChargebackCollection(), (t,i) => t + i.value, 0), 2, 3)}`)
+                                ]),
+                                m('.w-row.u-margintop-40', [
+                                    m('.w-col.w-col-1'),
+                                    m('.w-col.w-col-5',
+                                        m('a.btn.btn-medium.w-button', {
+                                            onclick: args.onClickCallback
+                                        }, args.ctaText)
+                                    ),
+                                    m('.w-col.w-col-5',
+                                        m('a.btn.btn-medium.btn-terciary.w-button', {
+                                            onclick: args.displayModal.toggle
+                                        }, 'Voltar')
+                                    ),
+                                    m('.w-col.w-col-1')
+                                ])
+                            ])
+                        ]);
+                    }
+                };
+                return [wrapper, customAttrs];
+            },
+            searchToChargebackPayments = () => {
+                if(chargebackIds() != undefined && chargebackIds() != '') {
+                    searchChargebackLoader(true);
+                    m.redraw();
+                    toChargebackListVM.pageSize(30);
+                    toChargebackListVM.getPageWithToken({gateway: 'eq.Pagarme', gateway_id: `in.(${generateIdsToData().join(',')})`}).then((data) => {
+                        toChargebackCollection(data);
+                        searchChargebackLoader(false);
+                        displayChargebackConfirmationModal(true);
+                        m.redraw();
+                        toChargebackListVM.pageSize(10)
+                    });
+                }
+            },
             processChargebacks = () => {
-                processChargebacksLoader(true);
-                m.redraw();
-                m.request({
-                    method: 'POST',
-                    url: '/admin/contributions/batch_chargeback',
-                    data: {
-                        gateway_payment_ids: generateIdsToData()
-                    },
-                    config: h.setCsrfToken
-                }).then((data) => {
-                    processChargebacksLoader(false);
-                    displayChargebackForm(false);
-                });
+                if(generateIdsToData() != null && generateIdsToData().length >= 0) {
+                    processChargebacksLoader(true);
+                    m.redraw();
+                    m.request({
+                        method: 'POST',
+                        url: '/admin/contributions/batch_chargeback',
+                        data: {
+                            gateway_payment_ids: generateIdsToData()
+                        },
+                        config: h.setCsrfToken
+                    }).then((data) => {
+                        processChargebacksLoader(false);
+                        displayChargebackForm(false);
+                        displayChargebackConfirmationModal(false);
+                        submit(); // just to reload the contribution list
+                    });
+                }
             },
             inputActions = () => {
                 return m('', [
@@ -158,9 +240,9 @@ const adminContributions = {
                                 (processChargebacksLoader() 
                                     ? h.loader()
                                     : m('form', [
-                                        m('label.fontsize-small', 'Insira os IDs dos apoios separados por vírgula'),
+                                        m('label.fontsize-small', 'Insira os IDs do gateway separados por vírgula'),
                                         m('textarea.text-field.w-input', { oninput: m.withAttr('value', chargebackIds) }),
-                                        m('button.btn.btn-small.w-button', { onclick: processChargebacks }, 'Virar apoios para chargeback')
+                                        m('button.btn.btn-small.w-button', { onclick: searchToChargebackPayments }, 'Virar apoios para chargeback')
                                     ])
                                 )
                             ])
@@ -172,6 +254,9 @@ const adminContributions = {
         return {
             filterVM,
             filterBuilder,
+            displayChargebackConfirmationModal,
+            chargebackConfirmationModalContentWrapper,
+            processChargebacks,
             listVM: {
                 list: listVM,
                 hasInputAction: true,
@@ -186,17 +271,28 @@ const adminContributions = {
     },
 
     view(ctrl) {
-        return m('#admin-root-contributions', [
-            m.component(adminFilter, {
-                form: ctrl.filterVM.formDescriber,
-                filterBuilder: ctrl.filterBuilder,
-                submit: ctrl.submit
-            }),
-            m.component(adminList, {
-                vm: ctrl.listVM,
-                listItem: adminContributionItem,
-                listDetail: adminContributionDetail
-            })
+        return m('', [
+            (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {
+                displayModal: ctrl.displayChargebackConfirmationModal,
+                content: ctrl.chargebackConfirmationModalContentWrapper({
+                    modalTitle: 'Aprovar chargebacks',
+                    ctaText: 'Aprovar',
+                    displayModal: ctrl.displayChargebackConfirmationModal,
+                    onClickCallback: ctrl.processChargebacks
+                })
+            }) : ''),
+            m('#admin-root-contributions', [
+                m.component(adminFilter, {
+                    form: ctrl.filterVM.formDescriber,
+                    filterBuilder: ctrl.filterBuilder,
+                    submit: ctrl.submit
+                }),
+                m.component(adminList, {
+                    vm: ctrl.listVM,
+                    listItem: adminContributionItem,
+                    listDetail: adminContributionDetail
+                })
+            ])
         ]);
     }
 };
