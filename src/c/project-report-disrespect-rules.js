@@ -59,7 +59,7 @@ const projectReportDisrespectRules = {
                    ),
                   m('.fontsize-smaller.fontcolor-secondary',
                     [
-                        'Todos os projetos no Catarse precisam respeitar nossas',
+                        'Todos os projetos no Catarse precisam respeitar nossas ',
                         m('a.alt-link.fontweight-semibold[href=\'http://suporte.catarse.me/hc/pt-br/articles/202387638\'][target=\'_blank\']', 
                           'Diretrizes de Criação de Projetos'
                          ),
