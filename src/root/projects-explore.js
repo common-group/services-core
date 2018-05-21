@@ -42,6 +42,7 @@ const projectsExplore = {
             availableRecommenders = ['recommended_cf', 'recommended_cb', 'recommended_hb', 'recommended_pop'],
             categoryToggle = h.toggleProp(true, false),
             filterToggle = h.toggleProp(true, false),
+            showFilter = h.toggleProp(true, false),
             changeFilter = (newFilter) => {
                 currentFilter(filtersMap[newFilter]);
                 loadRoute();
@@ -65,9 +66,15 @@ const projectsExplore = {
             },
             changeMode = (newMode) => {
                 if (newMode === 'sub') {
+                    // temporarily remove filters from sub projects
+                    showFilter.toggle();
                     projectFiltersVM.removeContextFilter(projectFiltersVM.filters.finished);
                     projectFiltersVM.removeContextFilter(projectFiltersVM.filters.expiring);
+                    changeFilter('all');
                 } else {
+                    if (!showFilter()) {
+                        showFilter.toggle();
+                    }
                     resetContextFilter();
                 }
                 modeToggle.toggle();
@@ -252,6 +259,7 @@ const projectsExplore = {
             currentMode,
             filtersMap,
             currentFilter,
+            showFilter,
             changeMode,
             projectFiltersVM,
             isSearch,
@@ -375,40 +383,41 @@ const projectsExplore = {
                             ])
                         )
                     ]),
-                    m('.explore-text-fixed',
-                        'que são'
-                    ),
-                    m('.explore-filter-wrapper', [
-                        m('.explore-span-filter', {
-                            onclick: ctrl.filterToggle.toggle
-                        }, [
-                            m('.explore-mobile-label',
-                                'FILTRO'
-                            ),
-                            m('.inline-block',
-                                ctrl.currentFilter().nicename
-                            ),
-                            m('.inline-block.fa.fa-angle-down')
-                        ]),
-                        ctrl.filterToggle() ? '' :
-                        m('.explore-filter-select', [
-                            _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                    onclick: () => {
-                                        ctrl.changeFilter(pageFilter.keyName);
-                                        ctrl.filterToggle.toggle();
-                                    },
-                                    class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
-                                },
-                                pageFilter.nicename
-                            )),
-                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                    ctrl.showFilter() ? [
+                        m('.explore-text-fixed',
+                            'que são'
+                        ),
+                        m('.explore-filter-wrapper', [
+                            m('.explore-span-filter', {
                                 onclick: ctrl.filterToggle.toggle
-                            })
+                            }, [
+                                m('.explore-mobile-label',
+                                    'FILTRO'
+                                ),
+                                m('.inline-block',
+                                    ctrl.currentFilter().nicename
+                                ),
+                                m('.inline-block.fa.fa-angle-down')
+                            ]),
+                            ctrl.filterToggle() ? '' :
+                            m('.explore-filter-select', [
+                                _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                        onclick: () => {
+                                            ctrl.changeFilter(pageFilter.keyName);
+                                            ctrl.filterToggle.toggle();
+                                        },
+                                        class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
+                                    },
+                                    pageFilter.nicename
+                                )),
+                                m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                    onclick: ctrl.filterToggle.toggle
+                                })
+                            ])
                         ])
-                    ])
+                    ] : ''
                 ])
-            ]),
-            !ctrl.projects().isLoading() && _.isFunction(ctrl.projects().total) && !_.isUndefined(ctrl.projects().total()) ?
+            ]), !ctrl.projects().isLoading() && _.isFunction(ctrl.projects().total) && !_.isUndefined(ctrl.projects().total()) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
