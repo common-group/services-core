@@ -51,7 +51,7 @@ const projectsExplore = {
                 currentFilter(filtersMap[defaultFilter]);
                 let contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
                 // only show recommended projects to logged in users with contributions
-                if (currentUser.contributions && currentUser.contributions > 0) {
+                if (currentUser.contributions && currentUser.contributions > 0 && currentMode().keyName !== 'sub') {
                     const lastDigit = parseInt(currentUser.id.toString().slice(-1));
                     // group into 4 even sets for A/B testing
                     if (lastDigit <= 7) {
@@ -65,9 +65,12 @@ const projectsExplore = {
                 projectFiltersVM.setContextFilters(contextFilters);
             },
             changeMode = (newMode) => {
+                modeToggle.toggle();
+                currentMode(filtersMap[newMode]);
                 if (newMode === 'sub') {
                     // temporarily remove filters from sub projects
                     showFilter.toggle();
+                    resetContextFilter();
                     projectFiltersVM.removeContextFilter(projectFiltersVM.filters.finished);
                     projectFiltersVM.removeContextFilter(projectFiltersVM.filters.expiring);
                     changeFilter('all');
@@ -77,8 +80,6 @@ const projectsExplore = {
                     }
                     resetContextFilter();
                 }
-                modeToggle.toggle();
-                currentMode(filtersMap[newMode]);
                 loadRoute();
             },
             hasFBAuth = currentUser.has_fb_auth,
