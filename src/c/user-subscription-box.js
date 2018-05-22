@@ -289,10 +289,15 @@ const userSubscriptionBox = {
                                         m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=${subscription.status}]`, 'Assinar novamente')
                                     ])
                             ] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [
-                                m('a.btn.btn-inline.btn-small.w-button',
+                                m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button',
                                         { href: `/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=${subscription.status}` },
-                                        'Assinar novamente'
-                                 )
+                                        'Reativar assinatura'
+                                    ),
+                                m('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                    m('span.fa.fa-exclamation-triangle'),
+                                    m.trust('&nbsp;'),
+                                    ' Você cancelou sua assinatura'
+                                ])
                             ] : subscription.status === 'canceling' ?
                                 m('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error',
                                     m('div', [
