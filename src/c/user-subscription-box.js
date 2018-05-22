@@ -210,9 +210,6 @@ const userSubscriptionBox = {
     view(ctrl) {
         const subscription = ctrl.subscription;
 
-        console.log('statuses: ', subscription.status, subscription.project);
-
-
         return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
             (ctrl.displayCancelModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
                 m.component(modalBox, {
