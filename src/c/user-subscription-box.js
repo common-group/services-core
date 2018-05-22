@@ -285,7 +285,7 @@ const userSubscriptionBox = {
                                         ]),
                                         m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=${subscription.status}]`, 'Assinar novamente')
                                     ])
-                            ] : subscription.status === 'canceled' && subscription.project.status == 'online' ? [
+                            ] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [
                                 m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button',
                                         { href: `/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=${subscription.status}` },
                                         'Reativar assinatura'
