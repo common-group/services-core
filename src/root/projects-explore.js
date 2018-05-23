@@ -29,14 +29,13 @@ const projectsExplore = {
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
             currentUser = h.getUser() || {},
-            chosenRecommender = m.prop('recommended_hb'),
+            chosenRecommender = m.prop(null),
             currentMode = m.prop(filtersMap.all_modes),
             selectedCategory = m.prop({
                 name: 'Todas as categorias',
                 id: null
             }),
             defaultFilter = h.paramByName('filter') || 'all',
-            fallbackFilter = 'all',
             currentFilter = m.prop(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
             availableRecommenders = ['recommended_cf', 'recommended_cb', 'recommended_hb', 'recommended_pop'],
@@ -45,11 +44,19 @@ const projectsExplore = {
             showFilter = h.toggleProp(true, false),
             changeFilter = (newFilter) => {
                 currentFilter(filtersMap[newFilter]);
+                // reset category
+                if (_.contains(availableRecommenders, newFilter)) {
+                    history.replaceState(null, null, ' ');
+                    selectedCategory({
+                        name: 'Todas as categorias',
+                        id: null
+                    });
+                }
                 loadRoute();
             },
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
-                let contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
+                const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
                 // only show recommended projects to logged in users with contributions
                 if (currentUser.contributions && currentUser.contributions > 0 && currentMode().keyName !== 'sub') {
                     const lastDigit = parseInt(currentUser.id.toString().slice(-1));
@@ -58,8 +65,7 @@ const projectsExplore = {
                         const testedRecommenderIndex = lastDigit % 4;
                         chosenRecommender(availableRecommenders[testedRecommenderIndex]);
                         contextFilters.push(chosenRecommender());
-                        changeFilter(chosenRecommender());
-                        contextFilters = _.without(contextFilters, 'all');
+                        // contextFilters = _.without(contextFilters, 'all');
                     }
                 }
                 projectFiltersVM.setContextFilters(contextFilters);
@@ -232,6 +238,11 @@ const projectsExplore = {
 
         // Initial loads
         resetContextFilter();
+        if (chosenRecommender()) {
+            // clear category from hash
+            history.replaceState(null, null, ' ');
+            changeFilter(chosenRecommender());
+        }
         models.project.pageSize(9);
         loadCategories().then(loadRoute);
 
@@ -246,7 +257,6 @@ const projectsExplore = {
         return {
             categories: categoryCollection,
             changeFilter,
-            fallbackFilter,
             resetContextFilter,
             projects,
             category,
