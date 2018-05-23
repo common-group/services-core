@@ -30,18 +30,20 @@ def get_db():
 # get project details in the same order as ids array
 def get_project_details(ids, offset, limit):
     db, cur = get_db()
-    cur.execute("""
+    id_list = ','.join(str(e) for e in ids)
+    query = """
     SELECT array_to_json(array_agg(s)) FROM
     (
         SELECT p.*
         FROM "1".projects p
-        JOIN unnest('{""" + ','.join(str(e) for e in ids) + """}'::int[]) WITH ORDINALITY t(project_id, ord) USING (project_id)
-        where project_id IN (""" + ','.join(str(e) for e in ids) + """)
+        JOIN unnest(%s::int[]) WITH ORDINALITY t(project_id, ord) USING (project_id)
+        where project_id IN %s
         ORDER  BY t.ord
-        offset """ + str( offset ) + """
-        limit """ + str( limit - offset ) + """
+        offset %s
+        limit %s
     ) s
-    """)
+        """
+    cur.execute(query, (('{' + id_list + '}'), tuple(ids), str( offset ), str( limit - offset )))
     return np.array( cur.fetchall() )
 
 @app.teardown_request

@@ -68,11 +68,11 @@ class ContentBased(Resource):
             users u
         LEFT join contributions c on c.user_id = u.id
         LEFT JOIN projects p2 ON p2.id = c.project_id
-        WHERE u.id = """ + str( user_id ) + """
+        WHERE u.id = %s
         and p.state = 'online'
         AND NOT EXISTS (select true from contributions c2 where c2.project_id = p.id and c2.user_id = u.id)
         group by p.id, u.id
-        """)
+        """, (user_id,))
 
         return np.array(cur.fetchall())
 
