@@ -119,7 +119,7 @@ const projectReport = {
                     m('.w-form', m('p', 'Obrigado! A sua denúncia foi recebida.' ))
                 :
                     [
-                        m('button.btn.btn-terciary.btn-inline.btn-large.w-button',
+                        m('button.btn.btn-terciary.btn-inline.btn-medium.w-button',
                           {
                               onclick: ctrl.checkLogin
                           },
