@@ -176,7 +176,6 @@ const projectInsights = {
                                 !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
                                     collection: ctrl.visitorsPerDay,
                                     dataKey: 'visitors',
-                                    limitDataset: 30,
                                     xAxis: item => h.momentify(item.day),
                                     emptyState: I18n.t('visitors_per_day_empty', I18nScope())
                                 }) : h.loader()
