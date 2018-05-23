@@ -27,9 +27,10 @@ class CollaborativeFiltering(Resource):
         p.id
         FROM projects p
         WHERE p.state = 'online'
-        AND NOT EXISTS(select true from contributions where user_id = """ + str( user_id ) + """ and project_id =  p.id)
-        )
-        """)
+        AND NOT EXISTS(select true from contributions where user_id = %s and project_id =  p.id)
+        );
+        """, (user_id,))
+
         return np.array( cur.fetchall() ).flatten()
 
     def get_predictions(self, user_id):
