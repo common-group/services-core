@@ -14,7 +14,7 @@ describe('ProjectReport', () => {
 
             $projectReportMountedComponent = mq(m.component(projectReport, {project :{project_id: 1}, user}));
 
-            $projectReportMountedComponent.click('button.btn.btn-terciary.btn-inline.btn-large.w-button'); 
+            $projectReportMountedComponent.click('button.btn.btn-terciary.btn-inline.btn-medium.w-button'); 
         });
 
         it('Should render normal report', () => {
