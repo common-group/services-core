@@ -4,6 +4,8 @@ volumes:
     driver: local
   postgres-catarse-data:
     driver: local
+  postgres-catarse-moments-data:
+    driver: local
   dispatcher-redis-data:
     driver: local
   catarse-redis-data:
@@ -53,6 +55,25 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.42
+
+  catarse_moments_db:
+    image: library/postgres:10.3-alpine
+    volumes:
+      - ./init_catarse_moments.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-catarse-moments-data:/var/lib/postgresql/data
+    ports:
+      - "5446:5432"
+    links:
+        - "catarse_db:catarse_db"
+    depends_on:
+      - catarse_db
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: catarse_moments
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.44
 
   service_core_db:
     image: library/postgres:9.6.5-alpine
