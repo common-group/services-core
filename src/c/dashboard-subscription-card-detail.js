@@ -18,7 +18,7 @@ const dashboardSubscriptionCardDetail = {
         const countries = catarse.loaderWithToken(models.country);
         models.country.getRow({id: `eq.${args.user.address.country_id}`}).then(countries => {
             const country = countries.length > 0 ? countries[0] : {name: 'Pais'};
-            args.user.address = Object.assign(args.user.address, {country_name: country.name});
+            args.user.address = _.extend({country_name: country.name}, args.user.address);
         });
 
         return {
@@ -28,9 +28,9 @@ const dashboardSubscriptionCardDetail = {
 
     view(ctrl, args) {
         const subscription = args.subscription,
-            user = Object.assign(args.user, {project_id: subscription.project_external_id }),
-            reward = args.reward,
-            contactModalC = [ownerMessageContent, m.prop(user)];
+              user = _.extend({project_id: subscription.project_external_id }, args.user),
+              reward = args.reward,
+              contactModalC = [ownerMessageContent, m.prop(user)];
 
         return m('.details-backed-project.card',
             m('.card.card-terciary',
