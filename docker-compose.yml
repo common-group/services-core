@@ -146,40 +146,6 @@ services:
       cluster:
         ipv4_address: 10.0.1.45
 
-  # payment_processor_dispatcher:
-  #   build:
-  #     context: ../payment-service-api
-  #     dockerfile: Dockerfile
-  #   # image: comum/payment-service:latest
-  #   env_file:
-  #     - ./compose_env/.payment_processor_dispatcher.env
-  #   command: ["./dispatchers/payment_processor_dispatcher"]
-  #   volumes:
-  #     - ../payment-service-api/:/usr/app
-  #   links:
-  #     - "service_core_db:service_core_db"
-  #     - "dispatcher_redis:dispatcher_redis"
-  #   depends_on:
-  #     - service_core_db
-  #     - dispatcher_redis
-
-  # credit_cards_dispatcher:
-  #   build:
-  #     context: ../payment-service-api
-  #     dockerfile: Dockerfile
-  #   # image: comum/payment-service:latest
-  #   env_file:
-  #     - ./compose_env/.credit_cards_dispatcher.env
-  #   command: ["./dispatchers/create_cards"]
-  #   volumes:
-  #     - ../payment-service-api/:/usr/app
-  #   links:
-  #     - "service_core_db:service_core_db"
-  #     - "dispatcher_redis:dispatcher_redis"
-  #   depends_on:
-  #     - service_core_db
-  #     - dispatcher_redis
-
   subscriptions_scheduler:
     build:
       context: ../payment-service-api

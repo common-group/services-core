@@ -15,3 +15,7 @@ create server catarse_db
 create user mapping for catarse_fdw
     server catarse_db
     options (user 'catarse_fdw', password 'example');
+
+create user mapping for postgres
+    server catarse_db
+    options (user 'catarse_fdw', password 'example');
