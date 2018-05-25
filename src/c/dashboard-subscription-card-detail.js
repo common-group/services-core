@@ -8,11 +8,19 @@ import modalBox from './modal-box';
 import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';
 import h from '../h';
+import models from '../models';
+import { catarse } from '../api';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCardDetail = {
     controller(args) {
+        const countries = catarse.loaderWithToken(models.country);
+        models.country.getRow({id: `eq.${args.user.address.country_id}`}).then(countries => {
+            const country = countries.length > 0 ? countries[0] : {name: 'Pais'};
+            args.user.address = _.extend({country_name: country.name}, args.user.address);
+        });
+
         return {
             displayModal: h.toggleProp(false, true)
         };
@@ -20,11 +28,9 @@ const dashboardSubscriptionCardDetail = {
 
     view(ctrl, args) {
         const subscription = args.subscription,
-            user = _.extend(args.user, {
-                project_id: subscription.project_external_id
-            }),
-            reward = args.reward,
-            contactModalC = [ownerMessageContent, m.prop(user)];
+              user = _.extend({project_id: subscription.project_external_id }, args.user),
+              reward = args.reward,
+              contactModalC = [ownerMessageContent, m.prop(user)];
 
         return m('.details-backed-project.card',
             m('.card.card-terciary',
@@ -109,9 +115,22 @@ const dashboardSubscriptionCardDetail = {
                                     disabledClass: 'a.btn.btn-small.btn-inline.btn-terciary.w-button'
                                 })
                             ])
-                        ])
+                        ]),
+                        (user && user.address) ?
+                            m('.u-marginbottom-20.card.u-radius', [
+                                m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
+                                    'Endereço'
+                                ),
+                                m('.fontsize-smaller', [
+                                    m('div', [user.address.address_street, user.address.address_number, user.address.address_complement].join(', ')),
+                                    m('div', [user.address.address_city, user.address.address_state].join(' - ')),
+                                    m('div', `CEP: ${user.address.address_zip_code}`),
+                                    m('div', `${user.address.country_name}`)
+                                ])
+                            ])
+                        :
+                            ''
                     ])
-
                 ])
             )
         );

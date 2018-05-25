@@ -6,7 +6,13 @@ beforeAll(function() {
       user_id: 405699,
       name: 'Ryane Leão',
       address: {
-        city: 'Sampa'
+          address_street: 'teste rua',
+          address_number: '123',
+          address_complement: 'test complement',
+          address_state: 'test state',
+          address_zip_code: '12323-123',
+          country_id: 36,
+          city: 'Sampa'
       },
       address_city: 'São Paulo',
       profile_img_thumbnail: 'https://s3.amazonaws.com/cdn.catarse/uploads/user/uploaded_image/405699/thumb_avatar_ryaneleao.jpg',
