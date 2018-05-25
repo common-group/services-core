@@ -26,16 +26,16 @@ const subscriptionStatusIcon = {
 
             args.subscription.transition_date = args.subscription.created_at;
 
-    	    const filterRowVM = commonPayment.filtersVM({
+    	      const filterRowVM = commonPayment.filtersVM({
                 subscription_id: 'eq',
-		project_id: 'eq',
+		            project_id: 'eq',
             }).order({
-		created_at: 'desc'
-	    }).subscription_id(args.subscription.id).project_id(args.subscription.project_id);
-            
-	    const lRew = commonPayment.loaderWithToken(models.subscriptionTransition.getRowOptions(filterRowVM.parameters()));
+		            created_at: 'desc'
+	          }).subscription_id(args.subscription.id).project_id(args.subscription.project_id);
+
+	          const lRew = commonPayment.loaderWithToken(models.subscriptionTransition.getRowOptions(filterRowVM.parameters()));
             lRew.load().then((data) => {
-		args.subscription.transition_date = data && data.length > 0 && _.first(data).created_at ? _.first(data).created_at : args.subscription.created_at;
+		            args.subscription.transition_date = data && data.length > 0 && _.first(data).created_at ? _.first(data).created_at : args.subscription.created_at;
             });
         }
 
@@ -45,19 +45,20 @@ const subscriptionStatusIcon = {
     },
     view(ctrl, args) {
         const subscription = args.subscription,
-            statusClass = ctrl.statusClass,
-	    statusToShowTransitionDate = ['started', 'canceling', 'canceled', 'inactive'];
+              statusClass = ctrl.statusClass,
+	            statusToShowTransitionDate = ['started', 'canceling', 'canceled', 'inactive'],
+              shouldShowTransitionDate = statusToShowTransitionDate.indexOf(subscription.status) >= 0;
 
         return m('span', [
             m('span.fontsize-smaller', [
                 m(`span.fa.${statusClass[subscription.status] || 'Erro'}`,
-                    ' '
+                  ' '
                 ),
                 I18n.t(`status.${subscription.status}`, I18nScope())
             ]),
-	    statusToShowTransitionDate.includes(subscription.status) ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                `em ${moment(subscription.transition_date).format('DD/MM/YYYY')}`
-            ) : ''
+	          shouldShowTransitionDate ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
+                                                                         `em ${moment(subscription.transition_date).format('DD/MM/YYYY')}`
+                                                                        ) : ''
         ]);
     }
 };
