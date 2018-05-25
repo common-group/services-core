@@ -17,6 +17,9 @@ import projectDataTable from '../c/project-data-table';
 import projectReminderCount from '../c/project-reminder-count';
 import projectSuccessfulOnboard from '../c/project-successful-onboard';
 import projectInviteCard from '../c/project-invite-card';
+import {
+    catarseMoments
+} from '../api';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -40,7 +43,7 @@ const projectInsights = {
             }
         };
 
-        const lVisitorsPerDay = loader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
+        const lVisitorsPerDay = catarseMoments.loaderWithToken(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
         lVisitorsPerDay.load().then(processVisitors);
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));

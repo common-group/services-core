@@ -12,6 +12,10 @@ const catarse = new Postgrest();
 const catarseApiMeta = document.querySelector('[name="api-host"]');
 apiInit(catarse, catarseApiMeta, '/api_token');
 
+const catarseMoments = new Postgrest();
+const catarseApiMomentsMeta = document.querySelector('[name="api-moments-host"]');
+apiInit(catarseMoments, catarseApiMomentsMeta, '/api_token');
+
 const commonPayment = new Postgrest();
 const commonPaymentApiMeta = document.querySelector('[name="common-payment-api-host"]');
 apiInit(commonPayment, commonPaymentApiMeta, '/api_token/common', commonRequestHeader);
@@ -33,4 +37,4 @@ const commonRecommender = new Postgrest();
 const commonRecommenderApiMeta = document.querySelector('[name="common-recommender-api-host"]');
 apiInit(commonRecommender, commonRecommenderApiMeta, '/api_token/common', commonRequestHeader);
 
-export { catarse, commonPayment, commonProject, commonAnalytics, commonNotification, commonRecommender };
+export { catarse, catarseMoments, commonPayment, commonProject, commonAnalytics, commonNotification, commonRecommender };
