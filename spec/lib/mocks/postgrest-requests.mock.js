@@ -10,8 +10,8 @@ document.getElementsByTagName('head')[0].appendChild(apiMeta);
 const ApiMomentsMeta = document.createElement('meta');
 ApiMomentsMeta.content = 'https://api-moments.catarse.me';
 ApiMomentsMeta.name = 'api-moments-host';
+document.getElementsByTagName('head')[0].appendChild(ApiMomentsMeta);
 
-document.getElementsByTagName('head')[0].appendChild(commonPaymentApiMeta);
 const commonPaymentApiMeta = document.createElement('meta');
 commonPaymentApiMeta.content = 'https://payment.common.io';
 commonPaymentApiMeta.name = 'common-payment-api-host';
