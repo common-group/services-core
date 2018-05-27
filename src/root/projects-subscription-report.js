@@ -97,6 +97,10 @@ const projectSubscriptionReport = {
                                 option: 'Cancelamento solicitado'
                             },
                             {
+                                value: 'canceled',
+                                option: 'Cancelada'
+                            },
+                            {
                                 value: 'inactive',
                                 option: 'Inativa'
                             }
