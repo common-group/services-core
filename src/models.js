@@ -1,4 +1,4 @@
-import { catarse, commonPayment, commonAnalytics, commonProject, commonNotification, commonRecommender } from './api';
+import { catarse, catarseMoments, commonPayment, commonAnalytics, commonProject, commonNotification, commonRecommender } from './api';
 
 const models = {
     recommendedProjectsCf: commonRecommender.model('predictions/cf'),
@@ -41,6 +41,7 @@ const models = {
     directMessage: catarse.model('direct_messages'),
     teamTotal: catarse.model('team_totals'),
     recommendedProjects: catarse.model('recommended_projects'),
+    projectVisitorsPerDay: catarseMoments.model('project_visitors_per_day'),
     projectAccount: catarse.model('project_accounts'),
     projectAccountError: catarse.model('project_account_errors'),
     projectContribution: catarse.model('project_contributions'),
@@ -49,7 +50,6 @@ const models = {
     projectContributionsPerDay: catarse.model('project_contributions_per_day'),
     projectContributionsPerLocation: catarse.model('project_contributions_per_location'),
     projectContributionsPerRef: catarse.model('project_contributions_per_ref'),
-    projectVisitorsPerDay: catarse.model('project_visitors_per_day'),
     projectFiscalId: catarse.model('project_fiscal_ids'),
     projectTransfer: catarse.model('project_transfers'),
     project: catarse.model('projects'),

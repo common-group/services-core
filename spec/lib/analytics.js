@@ -148,7 +148,7 @@ window.CatarseAnalytics = window.CatarseAnalytics || (function(){
     if(_apiHost)
       return _apiHost;
 
-    var el=document.getElementById('api-host');
+    var el=document.getElementById('api-host-moments');
     _apiHost = (el && el.getAttribute('content'));
     if(_apiHost)
       _apiHost=_apiHost+'/rpc/track';
