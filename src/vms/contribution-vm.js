@@ -43,7 +43,7 @@ const canShowReceipt = contribution => wasConfirmed(contribution);
 const canShowSlip = contribution => contribution.payment_method === 'BoletoBancario' && moment(contribution.gateway_data.boleto_expiration_date).isAfter(moment());
 
 const canGenerateSlip = contribution => contribution.payment_method === 'BoletoBancario' &&
-    contribution.state === 'pending' &&
+      (contribution.state === 'pending' || contribution.state === 'refused') &&
     contribution.project_state === 'online' &&
     !contribution.reward_sold_out &&
     !moment(contribution.gateway_data.boleto_expiration_date).isAfter(moment());
