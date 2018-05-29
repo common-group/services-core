@@ -54,6 +54,8 @@ values (__seed_reward_id(), __seed_project_id(), __seed_platform_id(), json_buil
         'deliver_at', ('2 months'::interval + now())::timestamp,
         'row_order',  1,
         'title', 'test title reward',
+        'welcome_message_subjects', 'test message subject',
+        'welcome_message_body', 'test message body',
         'description', 'test reward description',
         'metadata', '{}'::json
 )::jsonb),

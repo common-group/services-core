@@ -54,7 +54,10 @@ AS $function$
                             where n.user_id = $1.user_id
                                 and (n.data -> 'relations' ->> 'subscription_id')::uuid = $1.id
                                 and n.label = 'reward_welcome_message'
-                    ) and $1.id is not null then 
+                    ) and (select r.data->>'welcome_message_body' is not null
+                            and r.data->>'welcome_message_subject' is not null
+                            from  project_service.rewards r where r.id = $1.reward_id
+                    ) then
                         perform notification_service.notify('reward_welcome_message', _relations_json);
                     end if;
                 when 'inactive' then
