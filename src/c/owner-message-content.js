@@ -38,7 +38,11 @@ const ownerMessageContent = {
                 user_id: h.getUser().user_id,
                 content: content(),
                 project_id: args().project_id,
-                to_user_id: userDetails().id
+                to_user_id: userDetails().id,
+		data: {
+			page_title: document.title,
+			page_url: window.location.href
+		}
             });
 
             l = catarse.loaderWithToken(loaderOpts);
