@@ -156,6 +156,10 @@ const projectDashboardMenu = {
                                 m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
                                 ]),
+                                projectVM.isSubscription(project) ?
+                                m(`a#dashboard_welcome_message_link[class="${editLinkClass('#welcome_message')}"][href="${editRoute}#welcome_message"]`, [railsErrorsVM.errorsFor('welcome_message'),
+                                                                                                                               'Email de boas vindas', optionalOpt
+                                                                                                                              ]) : null,
                                 m(`a#dashboard_user_about_link[class="${editLinkClass('#user_about')}"][href="${editRoute}#user_about"]`, railsErrorsVM.errorsFor('user_about'), I18n.t('about_you_tab', linksScope())),
                                 ((project.is_published || project.state === 'draft') || project.is_admin_role ? [
                                     m(`a#dashboard_user_settings_link[class="${editLinkClass('#user_settings')}"][href="${editRoute}#user_settings"]`, railsErrorsVM.errorsFor('user_settings'), I18n.t('account_tab', linksScope())),
