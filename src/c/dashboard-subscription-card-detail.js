@@ -9,17 +9,17 @@ import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';
 import h from '../h';
 import models from '../models';
-import { catarse } from '../api';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCardDetail = {
     controller(args) {
-        const countries = catarse.loaderWithToken(models.country);
-        models.country.getRow({id: `eq.${args.user.address.country_id}`}).then(countries => {
-            const country = countries.length > 0 ? countries[0] : {name: 'Pais'};
-            args.user.address = _.extend({country_name: country.name}, args.user.address);
-        });
+        if (args.user.address) {
+            models.country.getRow({id: `eq.${args.user.address.country_id}`}).then(countries => {
+                const country = countries.length > 0 ? countries[0] : {name: 'Pais'};
+                args.user.address = _.extend({country_name: country.name}, args.user.address);
+            });
+        }
 
         return {
             displayModal: h.toggleProp(false, true)
