@@ -4,11 +4,41 @@ BEGIN;
     \i /specs/sql-support/payment_json_build_helpers.sql
     -- \i /specs/sql-support/insert_global_notifications.sql
 
-    select plan(7);
+    select plan(9);
 
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.catalog_payments', 'payment_service.payment_status', 'json'], 'boolean');
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.subscriptions', 'payment_service.subscription_status', 'json'], 'boolean');
 
+
+    CREATE OR REPLACE FUNCTION test_subscription_transition_when_active()
+    returns setof text language plpgsql
+    as $$
+    declare
+    _subscription payment_service.subscriptions;
+    _reward_notification notification_service.notifications;
+    begin
+
+    -- generate subscription
+    insert into payment_service.subscriptions
+    (status, created_at, platform_id, user_id, project_id, reward_id, checkout_data) 
+    values ('started', now(), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __seed_reward_id(), '{}'::jsonb)
+    returning * into _subscription;
+
+    return next is(payment_service.transition_to(_subscription, 'active', '{}'), true, 'should change subscription status');
+
+    select n.* from notification_service.notifications n
+    join notification_service.notification_global_templates ngt 
+    on ngt.id = n.notification_global_template_id
+    where n.user_id = _subscription.user_id
+    and ngt.label = 'reward_welcome_message'
+    and (n.data -> 'relations' ->> 'subscription_id')::uuid = _subscription.id
+    into _reward_notification;
+
+    return next ok(_reward_notification.id is not null, 'should have a reward_welcome notification');
+
+    end;
+    $$;
+    select * from test_subscription_transition_when_active();
 
     CREATE OR REPLACE FUNCTION test_subscription_transition_when_deleted()
     returns setof text language plpgsql
