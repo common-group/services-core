@@ -6,6 +6,7 @@ import projectVM from '../vms/project-vm';
 // @TODO move all tabs to c/
 // using the inside components that root tabs use
 import projectEditGoal from '../root/project-edit-goal';
+import projectEditWelcomeMessage from '../root/project-edit-welcome';
 import projectEditGoals from '../root/project-edit-goals';
 import projectEditBasic from '../root/project-edit-basic';
 import projectEditDescription from '../root/project-edit-description';
@@ -67,6 +68,11 @@ const projectEdit = {
                             title: I18n.t('user_about', I18nScope()),
                             subtitle: I18n.t('user_about_subtitle', I18nScope()),
                             content: m(projectEditUserAbout, _.extend({}, c_opts))
+                        }),
+                        '#welcome_message': m(projectEditTab, {
+                            title: I18n.t('welcome', I18nScope()),
+                            subtitle: I18n.t('welcome_subtitle', I18nScope()),
+                            content: m(projectEditWelcomeMessage, _.extend({}, c_opts))
                         }),
                         '#card': m(projectEditTab, {
                             title: I18n.t(`card_${project().mode}`, I18nScope()),
