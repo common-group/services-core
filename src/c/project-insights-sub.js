@@ -3,6 +3,7 @@ import moment from 'moment';
 import _ from 'underscore';
 import {
     catarse,
+    catarseMoments,
     commonAnalytics
 } from '../api';
 import models from '../models';
@@ -24,7 +25,7 @@ const projectInsightsSub = {
     controller(args) {
         const filtersVM = args.filtersVM,
             visitorsTotal = m.prop(0),
-            visitorLoader = catarse.loaderWithToken,
+            visitorLoader = catarseMoments.loaderWithToken,
             loader = commonAnalytics.loaderWithToken,
             visitorsPerDay = m.prop([]);
         const weekSubscriptions = m.prop([]);
