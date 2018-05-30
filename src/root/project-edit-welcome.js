@@ -112,7 +112,7 @@ const projectEditWelcome = {
                                     m('.field-label.fontweight-semibold.u-marginbottom-10',
                                         'Recompensa'
                                     ),
-                                    m('select.u-marginbottom-30.positive', {
+                                    m('select.u-marginbottom-30.w-input.text-field.w-select.positive.medium', {
                                         onchange: (e) => {
                                             m.withAttr('value', ctrl.currentRewardId)(e);
                                             ctrl.changeReward();
@@ -146,7 +146,7 @@ const projectEditWelcome = {
                                             m('.field-label.fontweight-semibold.u-marginbottom-10',
                                                 'Texto'
                                             ),
-                                            m('textarea.text-field.jumbo.positive.u-marginbottom-60.w-input', {
+                                            m('textarea.text-field.height-medium.positive.u-marginbottom-60.w-input', {
                                                 value: ctrl.currentReward().welcome_message_body(),
                                                 onchange: m.withAttr('value', ctrl.currentReward().welcome_message_body)
                                             }),
