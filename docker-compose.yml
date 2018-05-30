@@ -4,6 +4,8 @@ volumes:
     driver: local
   postgres-catarse-data:
     driver: local
+  postgres-catarse-moments-data:
+    driver: local
   dispatcher-redis-data:
     driver: local
   catarse-redis-data:
@@ -53,6 +55,25 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.42
+
+  catarse_moments_db:
+    image: library/postgres:10.3-alpine
+    volumes:
+      - ./init_catarse_moments.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-catarse-moments-data:/var/lib/postgresql/data
+    ports:
+      - "5446:5432"
+    links:
+        - "catarse_db:catarse_db"
+    depends_on:
+      - catarse_db
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: catarse_moments
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.44
 
   service_core_db:
     image: library/postgres:9.6.5-alpine
@@ -124,40 +145,6 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.45
-
-  # payment_processor_dispatcher:
-  #   build:
-  #     context: ../payment-service-api
-  #     dockerfile: Dockerfile
-  #   # image: comum/payment-service:latest
-  #   env_file:
-  #     - ./compose_env/.payment_processor_dispatcher.env
-  #   command: ["./dispatchers/payment_processor_dispatcher"]
-  #   volumes:
-  #     - ../payment-service-api/:/usr/app
-  #   links:
-  #     - "service_core_db:service_core_db"
-  #     - "dispatcher_redis:dispatcher_redis"
-  #   depends_on:
-  #     - service_core_db
-  #     - dispatcher_redis
-
-  # credit_cards_dispatcher:
-  #   build:
-  #     context: ../payment-service-api
-  #     dockerfile: Dockerfile
-  #   # image: comum/payment-service:latest
-  #   env_file:
-  #     - ./compose_env/.credit_cards_dispatcher.env
-  #   command: ["./dispatchers/create_cards"]
-  #   volumes:
-  #     - ../payment-service-api/:/usr/app
-  #   links:
-  #     - "service_core_db:service_core_db"
-  #     - "dispatcher_redis:dispatcher_redis"
-  #   depends_on:
-  #     - service_core_db
-  #     - dispatcher_redis
 
   subscriptions_scheduler:
     build:
@@ -336,3 +323,18 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.56
+
+  catarse_moment_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.catarse_moment_service_api.env
+    depends_on:
+      - catarse_moments_db
+    links:
+      - "catarse_moments_db:catarse_moments_db"
+    ports:
+      - "3010:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.57
+

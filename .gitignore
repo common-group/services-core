@@ -24,3 +24,4 @@ compose_env/.payment_stream_processor.env
 compose_env/.recommender_service_api.env
 target/
 Cargo.lock
+compose_env/.catarse_moment_service_api.env
