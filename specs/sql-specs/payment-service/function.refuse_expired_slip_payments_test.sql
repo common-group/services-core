@@ -3,7 +3,7 @@ BEGIN;
     -- insert seed data for basic user/platform/project/reward
     \i /specs/sql-support/insert_platform_user_project.sql
 
-    SELECT plan(28);
+    SELECT plan(35);
 
     SELECT function_returns('payment_service', 'refuse_expired_slip_payments', '{}'::text[], 'json');
 
@@ -225,6 +225,49 @@ BEGIN;
     $$;
 
     select * from test_inactive_active_subscription_reach_limit();
+
+    create or replace function test_with_canceled_subscription()
+    returns setof text language plpgsql
+    as $$
+        declare
+            _subscription payment_service.subscriptions;
+            _expired_payment payment_service.catalog_payments;
+            _result json;
+        begin
+
+            -- generate subscription
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('canceled', (now() - '2 months'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
+                returning * into _subscription;
+
+            insert into payment_service.catalog_payments
+                (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id, gateway_general_data) 
+                values ('pending', (now() - '10 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription.id, json_build_object('boleto_expiration_date', now() - '9 days'::interval)::jsonb)
+                returning * into _expired_payment;
+
+            _result := payment_service.refuse_expired_slip_payments();
+            -- reload subscription and payments
+            select * from payment_service.subscriptions
+                where id = _subscription.id
+                into _subscription;
+            select * from payment_service.catalog_payments
+                where id = _expired_payment.id
+                into _expired_payment;
+
+            return next is((_result ->> 'total_subscriptions_affected')::integer, 0);
+            return next is(((_result ->> 'affected_subscriptions_ids')::json->>0), null);
+            return next is((_result ->> 'total_payments_affected')::integer , 1);
+            return next is(((_result ->> 'affected_payments_ids')::json->>0)::uuid, _expired_payment.id);
+            return next is((_result->'recharged_payment_ids')::json->>0, null, 'should not generate any recharged payment');
+
+            return next is(_subscription.status, 'canceled', 'should keep subscription');
+            return next is(_expired_payment.status, 'refused');
+        end;
+    $$;
+
+    select * from test_with_canceled_subscription();
+
 
     SELECT * FROM finish();
 ROLLBACK;
