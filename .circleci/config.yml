@@ -45,6 +45,7 @@ jobs:
 
       - run: heroku container:push service_core --recursive -a $PRODUCTION_SERVICE_CORE_DB_APP
       - run: heroku container:release service_core -a $PRODUCTION_SERVICE_CORE_DB_APP
+      - run: sleep 5 # wait time for new relase on heroku
       - run: heroku run ./scripts/run_migrations.sh -a $PRODUCTION_SERVICE_CORE_DB_APP --type=service_core
       - run: heroku restart -a $PRODUCTION_ANALYTICS_API_APP
       - run: heroku restart -a $PRODUCTION_COMMUNITY_API_APP
@@ -68,6 +69,7 @@ jobs:
 
       - run: heroku container:push service_core --recursive -a $SANDBOX_SERVICE_CORE_DB_APP
       - run: heroku container:release service_core -a $SANDBOX_SERVICE_CORE_DB_APP
+      - run: sleep 5 # wait time for new relase on heroku
       - run: heroku run ./scripts/run_migrations.sh -a $SANDBOX_SERVICE_CORE_DB_APP --type=service_core
 
       - run: heroku restart -a $SANDBOX_ANALYTICS_API_APP
