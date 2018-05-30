@@ -6817,7 +6817,7 @@ var projectInsightsSub = {
     controller: function controller(args) {
         var filtersVM = args.filtersVM,
             visitorsTotal = m.prop(0),
-            visitorLoader = catarse.loaderWithToken,
+            visitorLoader = catarseMoments.loaderWithToken,
             loader = commonAnalytics.loaderWithToken,
             visitorsPerDay = m.prop([]);
         var weekSubscriptions = m.prop([]);
