@@ -13,6 +13,7 @@
         - [Create / Update user](./http_community_rpc_user.md)
         - [List users](./http_community_users.md)
         - [Generate scoped user api key](./http_community_rpc_create_scoped_user_session.md)
+        - [Get user details](./http_community_rpc_user_details.md)
     - [Notifications](./http_notifications.md)
         - [Listing notification templates](./http_notifications_list_notification_templates.md)
         - [Edit notification template](./http_notifications_rpc_notification_template.md)
