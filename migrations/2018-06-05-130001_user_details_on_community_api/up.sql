@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION community_service_api.user_details(user_id uuid)
+CREATE OR REPLACE FUNCTION community_service_api.user_details(id uuid)
  RETURNS jsonb
  LANGUAGE plpgsql
 AS $function$
@@ -9,7 +9,7 @@ AS $function$
             _ret jsonb;
         begin
         
-            _user_id := user_id;
+            _user_id := id;
             
             select 
                 true 
@@ -46,6 +46,7 @@ AS $function$
                 
             select json_build_object(
                 'id', _user.id,
+                'external_id', _user.external_id,
                 'address', (_user.data->>'address'::text)::jsonb
             )
             into _ret;
@@ -56,5 +57,5 @@ $function$
 ---
 ;
 
-grant execute on function community_service_api.user_details(user_id uuid) to scoped_user, platform_user;
-COMMENT ON FUNCTION community_service_api.user_details(user_id uuid) IS 'rpc/user_details - returns id and address of user. Address is related with current user or if user has contributed to some project that the user requesting it';
+grant execute on function community_service_api.user_details(id uuid) to scoped_user, platform_user;
+COMMENT ON FUNCTION community_service_api.user_details(id uuid) IS 'rpc/user_details - returns id and address of user. Address is related with current user or if user has contributed to some project that the user requesting it';
