@@ -57,8 +57,9 @@ from catarse_recommender.resources.content_based import ContentBased
 from catarse_recommender.resources.train_tree import TrainTree
 from catarse_recommender.resources.train_collaborative import TrainCollaborative
 from catarse_recommender.resources.hybrid import Hybrid
-api.add_resource(Hybrid, '/predictions/hybrid')
-api.add_resource(CollaborativeFiltering, '/predictions/cf')
 api.add_resource(ContentBased, '/predictions/cb')
 api.add_resource(TrainCollaborative, '/traincf')
-api.add_resource(TrainTree, '/traincb')
+
+# routes for a/b testing
+api.add_resource(Hybrid, '/predictions/1')
+api.add_resource(CollaborativeFiltering, '/predictions/2')
