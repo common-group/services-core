@@ -73,7 +73,7 @@ services:
       POSTGRES_DB: catarse_moments
     networks:
       cluster:
-        ipv4_address: 10.0.1.44
+        ipv4_address: 10.0.1.59
 
   service_core_db:
     image: library/postgres:9.6.5-alpine
@@ -336,5 +336,5 @@ services:
       - "3010:3000"
     networks:
       cluster:
-        ipv4_address: 10.0.1.57
+        ipv4_address: 10.0.1.58
 
