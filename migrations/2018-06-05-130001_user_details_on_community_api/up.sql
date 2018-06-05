@@ -53,5 +53,8 @@ AS $function$
             return _ret;
         end;
 $function$
+---
+;
 
 grant execute on function community_service_api.user_details(user_id uuid) to scoped_user, platform_user;
+COMMENT ON FUNCTION community_service_api.user_details(user_id uuid) IS 'rpc/user_details - returns id and address of user. Address is related with current user or if user has contributed to some project that the user requesting it';
