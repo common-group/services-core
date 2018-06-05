@@ -15,11 +15,11 @@ describe('UserAddressOnDashboardOfUserDetails', () => {
     });
 
     it('Should show user address street', () => {
-        expect($output.contains($userDetail.address.address_street)).toBeTrue();
+        expect($output.contains($userDetail.address.street)).toBeTrue();
     });
 
 	it('Should show user country', () => {
-		expect($output.contains($userDetail.address.country_name)).toBeTrue();
+		expect($output.contains($userDetail.address.country)).toBeTrue();
     });
     
     it('Should not contain user address because it is null', () => {

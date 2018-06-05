@@ -9,17 +9,22 @@ import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';
 import h from '../h';
 import models from '../models';
+import {commonCommunity} from '../api';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCardDetail = {
     controller(args) {
-        if (args.user.address) {
-            models.country.getRow({id: `eq.${args.user.address.country_id}`}).then(countries => {
-                const country = countries.length > 0 ? countries[0] : {name: 'Pais'};
-                args.user.address = _.extend({country_name: country.name}, args.user.address);
-            });
-        }
+        const userDetailsOptions = {
+            user_id: args.user.common_id
+        };
+
+        const userDetailsLoader = models.commonUserDetails.getRowWithToken(userDetailsOptions);
+        
+        userDetailsLoader.then(user_details => {
+            args.user.address = user_details.address;
+        });
+
 
         return {
             displayModal: h.toggleProp(false, true)
@@ -122,10 +127,10 @@ const dashboardSubscriptionCardDetail = {
                                     'Endereço'
                                 ),
                                 m('.fontsize-smaller', [
-                                    m('div', [user.address.address_street, user.address.address_number, user.address.address_complement].join(', ')),
-                                    m('div', [user.address.address_city, user.address.address_state].join(' - ')),
-                                    m('div', `CEP: ${user.address.address_zip_code}`),
-                                    m('div', `${user.address.country_name}`)
+                                    m('div', [user.address.street, user.address.street_number, user.address.complementary].join(', ')),
+                                    m('div', [user.address.city, user.address.state].join(' - ')),
+                                    m('div', `CEP: ${user.address.zipcode}`),
+                                    m('div', `${user.address.country}`)
                                 ])
                             ])
                         :

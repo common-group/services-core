@@ -37,4 +37,8 @@ const commonRecommender = new Postgrest();
 const commonRecommenderApiMeta = document.querySelector('[name="common-recommender-api-host"]');
 apiInit(commonRecommender, commonRecommenderApiMeta, '/api_token/common', commonRequestHeader);
 
-export { catarse, catarseMoments, commonPayment, commonProject, commonAnalytics, commonNotification, commonRecommender };
+const commonCommunity = new Postgrest();
+const commonCommunityApiMeta = document.querySelector('[name="common-community-api-host"]');
+apiInit(commonCommunity, commonCommunityApiMeta, '/api_token/common', commonRequestHeader);
+
+export { catarse, catarseMoments, commonPayment, commonProject, commonAnalytics, commonNotification, commonRecommender, commonCommunity };

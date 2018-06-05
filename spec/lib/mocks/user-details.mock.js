@@ -6,12 +6,12 @@ beforeAll(function() {
       user_id: 405699,
       name: 'Ryane Leão',
       address: {
-          address_street: 'teste rua',
-          address_number: '123',
-          address_complement: 'test complement',
-          address_state: 'test state',
-          address_zip_code: '12323-123',
-          country_id: 36,
+          street: 'teste rua',
+          street_number: '123',
+          complementary: 'test complement',
+          state: 'test state',
+          zipcode: '12323-123',
+          country: "Brasil",
           city: 'Sampa'
       },
       address_city: 'São Paulo',
