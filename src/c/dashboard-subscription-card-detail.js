@@ -16,7 +16,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 const dashboardSubscriptionCardDetail = {
     controller(args) {
         const userDetailsOptions = {
-            user_id: args.user.common_id
+            id: args.user.common_id
         };
 
         const userDetailsLoader = models.commonUserDetails.getRowWithToken(userDetailsOptions);
@@ -24,7 +24,6 @@ const dashboardSubscriptionCardDetail = {
         userDetailsLoader.then(user_details => {
             args.user.address = user_details.address;
         });
-
 
         return {
             displayModal: h.toggleProp(false, true)
