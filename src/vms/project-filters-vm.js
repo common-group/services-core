@@ -56,14 +56,6 @@ const projectFiltersVM = () => {
         finished = filtersVM({}),
 
         filters = {
-            //temporary use for a/b testing
-            recommended_pop: {
-                title: 'Recomendados',
-                filter: all,
-                nicename: 'Recomendados',
-                isContextual: false,
-                keyName: 'recommended_pop'
-            },
             all: {
                 title: 'Todas as Categorias',
                 filter: all,
@@ -112,26 +104,19 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'finished'
             },
-            recommended_cf: {
+            recommended_1: {
                 title: 'Recomendados',
                 filter: recommended,
                 nicename: 'Recomendados',
                 isContextual: false,
-                keyName: 'recommended_cf'
+                keyName: 'recommended_1'
             },
-            recommended_cb: {
+            recommended_2: {
                 title: 'Recomendados',
                 filter: recommended,
                 nicename: 'Recomendados',
                 isContextual: false,
-                keyName: 'recommended_cb'
-            },
-            recommended_hb: {
-                title: 'Recomendados',
-                filter: recommended,
-                nicename: 'Recomendados',
-                isContextual: false,
-                keyName: 'recommended_hb'
+                keyName: 'recommended_2'
             },
             not_sub: {
                 title: 'Projetos pontuais',
