@@ -61,4 +61,7 @@ api.add_resource(Hybrid, '/predictions/hybrid')
 api.add_resource(CollaborativeFiltering, '/predictions/cf')
 api.add_resource(ContentBased, '/predictions/cb')
 api.add_resource(TrainCollaborative, '/traincf')
-api.add_resource(TrainTree, '/traincb')
+
+# routes for a/b testing
+api.add_resource(Hybrid, '/predictions/1')
+api.add_resource(CollaborativeFiltering, '/predictions/2')

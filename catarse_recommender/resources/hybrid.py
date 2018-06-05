@@ -12,9 +12,11 @@ import psycopg2
 import pandas
 
 class Hybrid(Resource):
-    def __init__(self):
+    def __init__(self, cb_weight = 0.5, cf_weight = 0.5):
         self.cf = CollaborativeFiltering()
         self.cb = ContentBased()
+        self.cb_weight = cb_weight
+        self.cf_weight = cf_weight
 
     def get(self):
         user_id = request.args.get('user_id').split('.')[1]
@@ -30,10 +32,12 @@ class Hybrid(Resource):
     def get_predictions(self, user_id):
         cf_predictions = self.cf.get_predictions(user_id)
         cb_predictions = self.cb.get_predictions(user_id)
+        # sort predictions by project_id
         cf_predictions.sort(key=lambda x: float(x[1]), reverse=True)
         cb_predictions.sort(key=lambda x: float(x[1]), reverse=True)
         hybrid = []
         for i, cf_prediction in enumerate(cf_predictions):
-            hybrid.append([cf_prediction[0]*cb_predictions[i][0], cf_prediction[1]])
+            weighted_average = (self.cf_weight * cf_prediction[0]) + (self.cb_weight * cb_predictions[i][0])
+            hybrid.append([weighted_average, cf_prediction[1]])
         hybrid.sort(key=lambda x: float(x[0]), reverse=True)
         return hybrid
