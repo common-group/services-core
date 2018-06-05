@@ -1,0 +1,1 @@
+DROP FUNCTION community_service_api.user_details(user_id uuid);
