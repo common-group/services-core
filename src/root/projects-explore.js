@@ -38,7 +38,7 @@ const projectsExplore = {
             defaultFilter = h.paramByName('filter') || 'all',
             currentFilter = m.prop(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
-            availableRecommenders = ['recommended_cf', 'recommended_cb', 'recommended_hb', 'recommended_pop'],
+            availableRecommenders = ['recommended_1', 'recommended_2'],
             categoryToggle = h.toggleProp(true, false),
             filterToggle = h.toggleProp(true, false),
             showFilter = h.toggleProp(true, false),
@@ -60,13 +60,10 @@ const projectsExplore = {
                 // only show recommended projects to logged in users with contributions
                 if (currentUser.contributions && currentUser.contributions > 0 && currentMode().keyName !== 'sub') {
                     const lastDigit = parseInt(currentUser.id.toString().slice(-1));
-                    // group into 4 even sets for A/B testing
-                    if (lastDigit <= 7) {
-                        const testedRecommenderIndex = lastDigit % 4;
-                        chosenRecommender(availableRecommenders[testedRecommenderIndex]);
-                        contextFilters.push(chosenRecommender());
-                        // contextFilters = _.without(contextFilters, 'all');
-                    }
+                    // group into 2 even sets for A/B testing
+                    const testedRecommenderIndex = lastDigit % 2;
+                    chosenRecommender(availableRecommenders[testedRecommenderIndex]);
+                    contextFilters.push(chosenRecommender());
                 }
                 projectFiltersVM.setContextFilters(contextFilters);
             },
@@ -135,14 +132,11 @@ const projectsExplore = {
                     recommendedProjects = (alg) => {
                         let model;
                         switch (alg) {
-                            case 'cf':
-                                model = models.recommendedProjectsCf;
-                                break;
-                            case 'cb':
-                                model = models.recommendedProjectsCb;
+                            case '1':
+                                model = models.recommendedProjects1;
                                 break;
                             default:
-                                model = models.recommendedProjectsHybrid;
+                                model = models.recommendedProjects2;
                         }
                         const pages = commonRecommender.paginationVM(model, '', {}, false);
                         const rFilter = commonRecommender.filtersVM({
@@ -208,15 +202,12 @@ const projectsExplore = {
                 } else if (currentFilter().keyName === 'finished') {
                     isSearch(false);
                     projects(loadFinishedProjects());
-                } else if (currentFilter().keyName === 'recommended_cf') {
+                } else if (currentFilter().keyName === 'recommended_1') {
                     isSearch(false);
-                    projects(recommendedProjects('cf'));
-                } else if (currentFilter().keyName === 'recommended_cb') {
+                    projects(recommendedProjects('1'));
+                } else if (currentFilter().keyName === 'recommended_2') {
                     isSearch(false);
-                    projects(recommendedProjects('cb'));
-                } else if (currentFilter().keyName === 'recommended_hb') {
-                    isSearch(false);
-                    projects(recommendedProjects('hb'));
+                    projects(recommendedProjects('2'));
                 } else {
                     isSearch(false);
                     title(filter.title);
