@@ -122,27 +122,27 @@ const projectGoalsEdit = {
                       m('ul.w-list-unstyled',
                         [
                           m('li.u-marginbottom-10', 
-                            m('a.fontsize-smaller.alt-link[href='https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_inicial'][target='_blank']', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_inicial"][target="_blank"]', 
                               'O que é a meta mensal inicial?'
                             )
                           ),
                           m('li.u-marginbottom-10', 
-                            m('a.fontsize-smaller.alt-link[href='https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_futura'][target='_blank']', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_futura"][target="_blank"]', 
                               'O que são as metas mensais futuras?'
                             )
                           ),
                           m('li.u-marginbottom-10', 
-                            m('a.fontsize-smaller.alt-link[href='https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_atual'][target='_blank']', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_atual"][target="_blank"]', 
                               'O que é a meta mensal atual?'
                             )
                           ),
                           m('li.u-marginbottom-10', 
-                            m('a.fontsize-smaller.alt-link[href='https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#nova_meta'][target='_blank']', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#nova_meta"][target="_blank"]', 
                               'Posso adicionar novas metas depois do lançamento?'
                             )
                           ),
                           m('li.u-marginbottom-10', 
-                            m('a.fontsize-smaller.alt-link[href='https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#nao_atingir'][target='_blank']', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#nao_atingir"][target="_blank"]', 
                               'O que acontece se eu não atingir a meta do meu projeto?'
                             )
                           )
