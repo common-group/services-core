@@ -9,11 +9,11 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const rewardSelectCard = {
     controller(args) {
+        const queryRewardValue = h.getParams('value');
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
-        const isSelected = currentReward => rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id;
+        const isSelected = (currentReward) => (currentReward.id == null && rewardVM.selectedReward() == undefined && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
         const selectedDestination = m.prop('');
         const queryRewardId = h.getParams('reward_id');
-        const queryRewardValue = h.getParams('value');
         const isEdit = m.prop(m.route.param('subscription_id'));
         const subscriptionStatus = m.route.param('subscription_status');
         const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
