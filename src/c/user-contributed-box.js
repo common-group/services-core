@@ -81,7 +81,7 @@ const userContributedBox = {
                                     m(`span.fa.fa-circle.fontsize-smallest.${contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'}`,
                                         m.trust('&nbsp;')
                                     ),
-                                    I18n.t(contribution.state, I18nScope({
+                                    I18n.t(`${contribution.payment_method.toLowerCase()}.${contribution.state}`, I18nScope({
                                         date: h.momentify(contribution[`${contribution.state}_at`])
                                     }))
                                 ]),
