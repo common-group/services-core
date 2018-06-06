@@ -21,8 +21,7 @@ class TrainCollaborative(Resource):
         cur.execute("""
         (SELECT
         c.user_id as user_id,
-        c.project_id as project_id,
-        1 AS y
+        c.project_id as project_id
         FROM contributions c
         join projects p on p.id = c.project_id
         WHERE p.state not in ('draft', 'deleted')
@@ -79,47 +78,25 @@ class TrainCollaborative(Resource):
 
     #train model method
     def get(self):
-        print('getting data')
         cv_data = self.get_cv_data()
-        print('finished getting data')
         max_user_id = max(cv_data[:, 0])
         max_project_id = max(cv_data[:, 1])
         # LightFM accepts standard scipy sparse matrics as inputs, with user ids as row indices, item ids as columns, and entries being non-zero only if a user interacted with an item.
         rating_matrix = sps.dok_matrix((max_user_id + 1000, max_project_id + 1000), dtype=np.int8)
 
         for row in cv_data:
-            rating_matrix[row[0], row[1]] = row[2]
+            rating_matrix[row[0], row[1]] = 1
 
-        train_matrix, test_matrix = random_train_test_split(rating_matrix)
-        data = {'train': coo_matrix(train_matrix),
-            'test': coo_matrix(test_matrix)
-            }
+        data = {'train': coo_matrix(rating_matrix)}
         train = data['train']
-        test = data['test']
-        # print('The dataset has %s users and %s items, '
-        # 'with %s interactions in the test and %s interactions in the training set.'
-        # % (train.shape[0], train.shape[1], test.getnnz(), train.getnnz()))
         NUM_THREADS = 4
-        NUM_EPOCHS = 20
-        ITEM_ALPHA = 1e-6
+        NUM_EPOCHS = 15
 
         # Let's fit a WARP model: these generally have the best performance.
+        model = LightFM(loss='warp')
+        model = model.fit(train, epochs=NUM_EPOCHS, num_threads=NUM_THREADS)
 
-        try:
-            model_file = open(b"catarse_recommender/common/cf_model.obj","rb")
-            model = pickle.load(model_file)
-            model = model.fit_partial(train, epochs=4, num_threads=NUM_THREADS)
-        except:
-            print('new model')
-            model = LightFM(loss='warp',
-                        item_alpha=ITEM_ALPHA)
-            model = model.fit(train, epochs=NUM_EPOCHS, num_threads=NUM_THREADS)
-
-        filehandler = open(b"catarse_recommender/common/cf_model.obj","wb")
+        filehandler = open(b"catarse_recommender/common/cf_model.obj","wb+")
         pickle.dump(model, filehandler)
-        # train_file = open(b"common/cf_train.obj","wb")
-        # pickle.dump(train, train_file)
-        # test_file = open(b"common/cf_test.obj","wb")
-        # pickle.dump(test, test_file)
         return '', 200
 

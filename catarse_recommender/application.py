@@ -30,7 +30,6 @@ def get_db():
 # get project details in the same order as ids array
 def get_project_details(ids, offset, limit):
     db, cur = get_db()
-    id_list = ','.join(str(e) for e in ids)
     query = """
     SELECT array_to_json(array_agg(s)) FROM
     (
@@ -43,7 +42,7 @@ def get_project_details(ids, offset, limit):
         limit %s
     ) s
         """
-    cur.execute(query, (('{' + id_list + '}'), tuple(ids), str( offset ), str( limit - offset )))
+    cur.execute(query, (ids, tuple(ids), str( offset ), str( limit - offset )))
     return np.array( cur.fetchall() )
 
 @app.teardown_request
@@ -58,8 +57,9 @@ from catarse_recommender.resources.content_based import ContentBased
 from catarse_recommender.resources.train_tree import TrainTree
 from catarse_recommender.resources.train_collaborative import TrainCollaborative
 from catarse_recommender.resources.hybrid import Hybrid
-api.add_resource(Hybrid, '/predictions/hybrid')
-api.add_resource(CollaborativeFiltering, '/predictions/cf')
 api.add_resource(ContentBased, '/predictions/cb')
 api.add_resource(TrainCollaborative, '/traincf')
-api.add_resource(TrainTree, '/traincb')
+
+# routes for a/b testing
+api.add_resource(Hybrid, '/predictions/1')
+api.add_resource(CollaborativeFiltering, '/predictions/2')
