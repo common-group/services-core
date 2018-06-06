@@ -65,8 +65,7 @@ const projectGoalsEdit = {
                     error: true
                 }) : ''),
 
-                m('.w-col.w-col-1'),
-                m('.w-col.w-col-10',
+                m('.w-col.w-col-8',
                     m('.w-form', [
                         ctrl.e.inlineError('goals'),
                         m('div',
@@ -75,10 +74,10 @@ const projectGoalsEdit = {
                                     m("label.fontsize-base.fontweight-semibold[for='name-8']",
                                         'O que você vai alcançar com os pagamentos mensais de seus assinantes?'
                                     ),
-                                    m('.fontsize-small', [
-                                        'As metas mensais são a melhor maneira de informar aos seus assinantes o que você fará com os recursos arrecadados mensalmente em sua campanha. Use-as para mostrar, de forma clara, o que vocês estarão conquistando',
+                                    m('.fontsize-smaller', [
+                                        'As metas mensais são a melhor maneira de informar aos seus assinantes como os recursos arrecadados mensalmente serão usados e o que vocês estão conquistando juntos.',
                                         m.trust('&nbsp;'),
-                                        'juntos com o sucesso de seu Catarse Assinaturas.'
+                                        'Lembre-se: uma vez que a arrecadação for iniciada, você não poderá mais alterar a sua meta de arrecadação inicial.'
                                     ])
                                 ]),
                                 _.map(ctrl.goals(), (goal) => {
@@ -110,7 +109,48 @@ const projectGoalsEdit = {
                         )
                     ])
                 ),
-                m('.w-col.w-col-1')
+                m('.w-col.w-col-4', 
+                  m('.card.u-radius',
+                    [
+                      m('.fontsize-small.u-marginbottom-20',
+                        [
+                          m('span.fa.fa-lightbulb-o'),
+                          m.trust('&nbsp;'),
+                          'Dicas'
+                        ]
+                      ),
+                      m('ul.w-list-unstyled',
+                        [
+                          m('li.u-marginbottom-10', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_inicial"][target="_blank"]', 
+                              'O que é a meta mensal inicial?'
+                            )
+                          ),
+                          m('li.u-marginbottom-10', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_futura"][target="_blank"]', 
+                              'O que são as metas mensais futuras?'
+                            )
+                          ),
+                          m('li.u-marginbottom-10', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#meta_atual"][target="_blank"]', 
+                              'O que é a meta mensal atual?'
+                            )
+                          ),
+                          m('li.u-marginbottom-10', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#nova_meta"][target="_blank"]', 
+                              'Posso adicionar novas metas depois do lançamento?'
+                            )
+                          ),
+                          m('li.u-marginbottom-10', 
+                            m('a.fontsize-smaller.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#nao_atingir"][target="_blank"]', 
+                              'O que acontece se eu não atingir a meta do meu projeto?'
+                            )
+                          )
+                        ]
+                      )
+                    ]
+                  )
+                )
             ])
         );
     }
