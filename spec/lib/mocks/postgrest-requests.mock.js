@@ -22,6 +22,11 @@ commonProjectApiMeta.content = 'https://project.common.io';
 commonProjectApiMeta.name = 'common-project-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonProjectApiMeta);
 
+const commonCommunityApiMeta = document.createElement('meta');
+commonCommunityApiMeta.content = 'https://community.common.io';
+commonCommunityApiMeta.name = 'common-community-api-host';
+document.getElementsByTagName('head')[0].appendChild(commonCommunityApiMeta);
+
 const commonAnalyticsApiMeta = document.createElement('meta');
 commonAnalyticsApiMeta.content = 'https://analytics.common.io';
 commonAnalyticsApiMeta.name = 'common-analytics-api-host';
