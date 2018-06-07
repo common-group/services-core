@@ -17,7 +17,7 @@ AS $function$
                 true
             from 
                 project_service.projects project
-            left join 
+            inner join 
                 payment_service.catalog_payments payment 
             on 
                 payment.user_id = _user_id
@@ -61,4 +61,3 @@ $function$
 ;
 
 grant execute on function community_service_api.user_details(id uuid) to anonymous, scoped_user, platform_user;
-COMMENT ON FUNCTION community_service_api.user_details(id uuid) IS 'rpc/user_details - returns id and address of user. Address is related with current user or if user has contributed to some project that the user requesting it';
