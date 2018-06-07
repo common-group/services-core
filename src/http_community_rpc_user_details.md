@@ -55,18 +55,20 @@ AS $function$
         begin
         
             _user_id := id;
+            _exists_user_relation := false;
             
             select 
-                true 
+                true
             from 
-                project_service.projects project 
-            left join 
+                project_service.projects project
+            inner join 
                 payment_service.catalog_payments payment 
             on 
-                payment.user_id = _user_id and 
+                payment.user_id = _user_id
+            where
                 project.user_id = core.current_user_id()
             limit 1
-            INTO
+            into
                 _exists_user_relation;
                 
             select
