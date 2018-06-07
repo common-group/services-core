@@ -62,11 +62,10 @@ BEGIN;
         begin
             -- when anonymous
             set local role anonymous;
-            return next throws_like(
-                'EXECUTE user_details('''||__seed_first_user_id()||''')',
-                'permission denied for function user_details', 
-                'should not have access to user information'
-            );
+            select * from community_service_api.user_details(__seed_first_user_id())
+            into _result_row;
+
+            return next is(_result_row->>'address', null, 'anonymous dont access address');
 
             perform clean_sets();
         end;
