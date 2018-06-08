@@ -29,7 +29,7 @@ curl -X GET https://sandbox.api.community.comum.io/rpc/user_details?id=USER_UUID
     "address": {
         "city": "City", 
         "state": "ST", 
-        "street": "Stree Name", 
+        "street": "Street Name", 
         "country": "Country Name", 
         "zipcode": "12345-123", 
         "neighborhood": "Neighborhood name", 
