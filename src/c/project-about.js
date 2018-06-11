@@ -38,7 +38,7 @@ const projectAbout = {
                         m.trust('&nbsp;'),
                         m("span.badge.fontsize-smaller.badge-success", "parcele em até 6x")
                     ])
-                ],                
+                ],
                 hasRewards ? [
                     m.component(projectRewardList, {
                         project: args.project,
