@@ -50,17 +50,19 @@ const projectsContribution = {
         const project = ctrl.project;
 
         return m('#contribution-new',
-                 !_.isEmpty(project()) ? [
-                     m(`.w-section.section-product.${project().mode}`),
-                     m(projectHeaderTitle, {
-                         project
-                     }),
-                     m('.w-section.header-cont-new',
-                    m('.w-container',
-                        m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only',
-                            'Escolha a recompensa e em seguida o valor do apoio'
+                    !_.isEmpty(project()) ? [
+                        m(`.w-section.section-product.${project().mode}`),
+                        m(projectHeaderTitle, {
+                            project
+                        }),
+                        m('.w-section.header-cont-new',
+                        m('.w-container',
+                            m(".fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only", [
+                                "Escolha a recompensa e o valor do apoio",
+                                m.trust('&nbsp;'),
+                                m("span.fontsize-small.badge.badge-success", "(parcele em até 6x)")
+                            ])
                         )
-                    )
                 ),
                      m('.section', m('.w-container', m('.w-row', [
                          m('.w-col.w-col-8',
