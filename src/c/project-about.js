@@ -22,8 +22,6 @@ const projectAbout = {
             m('.fontsize-small.u-text-center-small-only', `${h.momentify(project.zone_online_date)} - ${h.momentify(project.zone_expires_at)} (${onlineDays()} dias)`)
         ]) : '';
 
-        const buildIfTrue = (condition, buildSteps) => condition ? buildSteps : '';
-
         const nextStepsCardOptions = () => {
             const isSubscription = projectVM.isSubscription(project);
             const hasRewards = !_.isEmpty(args.rewardDetails());
