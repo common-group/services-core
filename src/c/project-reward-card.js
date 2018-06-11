@@ -113,10 +113,6 @@ const projectRewardCard = {
             }, ctrl.selectReward(reward)),
             config: ctrl.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
         }, [
-            reward.minimum_value >= 100 && !isSub ? m('.tag-circle-installment', [
-                m('.fontsize-smallest.fontweight-semibold.lineheight-tightest', '3x'),
-                m('.fontsize-mini.lineheight-tightest', 's/ juros')
-            ]) : '',
             m('.u-marginbottom-20', [
                 m('.fontsize-base.fontweight-semibold', `R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`)
             ]),

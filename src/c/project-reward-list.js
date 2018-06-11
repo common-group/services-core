@@ -11,7 +11,7 @@ const projectRewardList = {
         return m('#rewards', [
             m('.reward.u-marginbottom-30', _.map(_.sortBy(args.rewardDetails(), reward => Number(reward.row_order)), reward => m(projectRewardCard, { reward, project, hasSubscription: args.hasSubscription }))),
             args.showReport ? m.component(projectReport) : null
-        ])
+        ]);
     }
 };
 
