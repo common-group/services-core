@@ -292,19 +292,20 @@ const paymentCreditCard = {
                                         m('.fontsize-small.fontweight-semibold.u-marginbottom-20', `XXXX.XXXX.XXXX.${card.last_digits}`)
                                     ),
                                     m('.w-clearfix.w-col.w-col-4', [
-                                        (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' :
+                                        (ctrl.loadingInstallments() || (ctrl.installments().length <= 1)) ? '' : [
                                             m('select.w-select.text-field.text-field-creditcard', {
-                                                onchange: m.withAttr('value', ctrl.selectedInstallment),
-                                                value: ctrl.selectedInstallment()
-                                            }, _.map(ctrl.installments(), installment => m('option', { value: installment.number },
-                                                `${installment.number} X R$ ${installment.amount}`
-                                            ))
-                                        ),
-                                        m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary', [
-                                            I18n.t('credit_card.total', ctrl.scope()) , `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`,
-                                            m('span.fontcolor-terciary', I18n.t(`credit_card.installments_number.${ctrl.selectedInstallment()}`, ctrl.scope())),
-                                            m('span.fontsize-smallest.fontcolor-terciary')
-                                        ])
+                                                    onchange: m.withAttr('value', ctrl.selectedInstallment),
+                                                    value: ctrl.selectedInstallment()
+                                                }, _.map(ctrl.installments(), installment => m('option', { value: installment.number },
+                                                    `${installment.number} X R$ ${installment.amount}`
+                                                ))
+                                            ),
+                                            m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary', [
+                                                I18n.t('credit_card.total', ctrl.scope()) , `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`,
+                                                m('span.fontcolor-terciary', I18n.t(`credit_card.installments_number.${ctrl.selectedInstallment()}`, ctrl.scope())),
+                                                m('span.fontsize-smallest.fontcolor-terciary')
+                                            ])
+                                        ]
                                     ])
                                 ]
                             ])
@@ -438,13 +439,18 @@ const paymentCreditCard = {
                         ]),
                         m('.w-col.w-col-6')
                     ]),
-                    args.hideSave ? '' : m(".card.card-terciary.u-radius.u-margintop-30", 
+                    args.hideSave ? '' : m(".card.card-terciary.u-radius.u-margintop-30", {
+                            style: 'cursor:pointer;',
+                            onclick: () => ctrl.creditCard.save(!ctrl.creditCard.save())
+                        }, 
                         m(".fontsize-small.w-clearfix.w-checkbox", [
                             m('input#payment_save_card.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
-                                onchange: m.withAttr('checked', ctrl.creditCard.save),
-                                checked: ctrl.creditCard.save()
+                                checked: ctrl.creditCard.save(),
+                                onclick: (e) => e.preventDefault()
                             }),
-                            m('label.w-form-label[for="payment_save_card"]', 
+                            m('label.w-form-label[for="payment_save_card"]', {
+                                onclick: (e) => e.preventDefault()
+                            },
                                 I18n.t('credit_card.save_card', ctrl.scope())
                             )
                         ])
