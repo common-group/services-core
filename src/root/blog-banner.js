@@ -1,10 +1,9 @@
-// @flow
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import blogVM from '../vms/blog-vm';
 
-const blogBanner : Component = {
+const blogBanner = {
     controller(args) {
         const posts = m.prop([]),
             error = m.prop(false);

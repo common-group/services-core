@@ -1,9 +1,8 @@
-/* @flow */
 import _ from 'underscore';
 import m from 'mithril';
 
-const blogVM : { getBlogPosts : Function } = {
-    getBlogPosts () : Promise<any> {
+const blogVM  = {
+    getBlogPosts () {
         const deferred = m.deferred();
         const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
 

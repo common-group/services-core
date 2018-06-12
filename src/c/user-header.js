@@ -1,4 +1,3 @@
-// @flow weak
 import m from 'mithril';
 import h from '../h';
 import userVM from '../vms/user-vm';

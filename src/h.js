@@ -1,4 +1,3 @@
-// @flow
 import I18n from 'i18n-js';
 import _ from 'underscore';
 import moment from 'moment';
@@ -9,17 +8,17 @@ import CatarseAnalytics from 'CatarseAnalytics';
 import contributionVM from './vms/contribution-vm';
 
 const
-    _dataCache : Object = {},
-    hashMatch = (str: string): boolean => window.location.hash === str,
-    mobileScreen = (): boolean => window.screen && window.screen.width<=767,
-    paramByName = (name: string): string => {
+    _dataCache = {},
+    hashMatch = (str) => window.location.hash === str,
+    mobileScreen = () => window.screen && window.screen.width<=767,
+    paramByName = (name) => {
         const normalName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
             regex = new RegExp(`[\\?&]${normalName}=([^&#]*)`),
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-  	selfOrEmpty = (obj: any, emptyState: string = ''): any => obj || emptyState,
-    setMomentifyLocale = (): void => {
+  	selfOrEmpty = (obj, emptyState = '') => obj || emptyState,
+    setMomentifyLocale = () => {
         moment.locale('pt', {
             months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
             monthsShort: 'jan_fev_mar_abr_mai_jun_jul_ago_set_out_nov_dez'.split('_'),
@@ -41,33 +40,33 @@ const
         });
     },
     lastDayOfNextMonth = () => moment().add(1, 'months').format('D/MMMM'),
-    existy = (x: any): boolean => x != null,
+    existy = (x) => x != null,
 
-    slugify = (str: string): string => replaceDiacritics(str.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')),
+    slugify = (str) => replaceDiacritics(str.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')),
 
-    momentify = (date: string, format: string): string => {
+    momentify = (date, format) => {
         format = format || 'DD/MM/YYYY';
         return date ? moment(date).locale('pt').format(format) : 'no date';
     },
 
-    getRandomInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1)) + min,
+    getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
 
-    storeAction = (action: string, value: string) => {
+    storeAction = (action, value) => {
         if (!localStorage.getItem(action)) {
             return localStorage.setItem(action, String(value));
         }
     },
 
-    storeObject = (sessionKey: string, obj: Object) => sessionStorage.setItem(sessionKey, JSON.stringify(obj)),
+    storeObject = (sessionKey, obj) => sessionStorage.setItem(sessionKey, JSON.stringify(obj)),
 
-    getStoredObject = (sessionKey: string): ?Object => {
+    getStoredObject = (sessionKey) => {
         if (sessionStorage.getItem(sessionKey)) {
             return JSON.parse(String(sessionStorage.getItem(sessionKey)));
         }
         return null;
     },
 
-    callStoredAction = (action: string): ?string => {
+    callStoredAction = (action) => {
         const item = localStorage.getItem(action);
 
         if (item) {
@@ -77,9 +76,9 @@ const
         return null;
     },
 
-    capitalize = (string: string): ?string => string.charAt(0).toUpperCase() + string.slice(1),
+    capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1),
 
-    discuss = (page: Object, identifier: string) => {
+    discuss = (page, identifier) => {
         const d = document,
             s = d.createElement('script');
         window.disqus_config = function () {
@@ -92,12 +91,12 @@ const
         return m('');
     },
 
-    validateEmail = (email: string): boolean => {
+    validateEmail = (email) => {
         const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
         return re.test(email);
     },
 
-    validateCnpj = (cnpjStr: string): boolean => {
+    validateCnpj = (cnpjStr) => {
         let tamanho,
             numeros,
             digitos,
@@ -160,7 +159,7 @@ const
         return true;
     },
 
-    validateCpf = (strCPF: string): boolean => {
+    validateCpf = (strCPF) => {
         let sum = 0,
             remainder;
 
@@ -198,15 +197,15 @@ const
         return true;
     },
 
-    validationErrors: Function = m.prop([]),
+    validationErrors = m.prop([]),
 
-    resetValidations = (): Array<Object> => validationErrors([]),
+    resetValidations = () => validationErrors([]),
 
-    validate = (): {submit: Function, hasError: Function} => {
+    validate = () => {
         const errorFields = m.prop([]);
 
         return {
-            submit(fields: Object, fn: Function) {
+            submit(fields, fn) {
                 return () => {
                     resetValidations();
 
@@ -227,25 +226,25 @@ const
                     return !validationErrors().length > 0 ? fn() : false;
                 };
             },
-            hasError(fieldProp: Function): boolean {
+            hasError(fieldProp) {
                 return _.reduce(validationErrors(), (memo, fieldError) => fieldError.field() === fieldProp() || memo, false);
             }
         };
     },
 
-    momentFromString = (date: string, format: string): string => {
+    momentFromString = (date, format) => {
         const european = moment(date, format || 'DD/MM/YYYY');
         return european.isValid() ? european : moment(date);
     },
 
-    translatedTimeUnits: {days: string, minutes: string, hours: string, seconds: string} = {
+    translatedTimeUnits = {
         days: 'dias',
         minutes: 'minutos',
         hours: 'horas',
         seconds: 'segundos'
     },
     // Object manipulation helpers
-    translatedTime = (time: {unit: ?string, total: ?number}): {unit: string, total: ?number} => {
+    translatedTime = (time) => {
         const translatedTime = translatedTimeUnits,
             unit = () => {
                 const projUnit = translatedTime[time.unit || 'seconds'];
@@ -260,7 +259,7 @@ const
     },
 
     // Number formatting helpers
-    generateFormatNumber = (s: string, c: string): Function => (number, n, x): ?string => {
+    generateFormatNumber = (s, c) => (number, n, x) => {
         if (!_.isNumber(number)) {
             return null;
         }
@@ -271,25 +270,25 @@ const
     },
     formatNumber = generateFormatNumber('.', ','),
 
-    toggleProp = (defaultState: any, alternateState: any): Function => {
+    toggleProp = (defaultState, alternateState) => {
         const p = m.prop(defaultState);
         p.toggle = () => p(((p() === alternateState) ? defaultState : alternateState));
 
         return p;
     },
 
-    idVM: Function = catarse.filtersVM({
+    idVM = catarse.filtersVM({
         id: 'eq'
     }),
 
-    isDevEnv = (): ?boolean => {
+    isDevEnv = () => {
         const root = document.getElementById('catarse_bootstrap'),
             data = root && root.getAttribute('data-environment');
 
         return (data && data == 'development');
     },
 
-    getCurrentProject = (): ?Object => {
+    getCurrentProject = () => {
         if (_dataCache.currentProject) { return _dataCache.currentProject; }
 
         const root = document.getElementById('application'),
@@ -300,28 +299,28 @@ const
         return null;
     },
 
-    getRdToken = (): ?string => {
+    getRdToken = () => {
         if (_dataCache.rdToken) { return _dataCache.rdToken; }
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
         return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : null;
     },
 
-    getSimilityCustomer = (): ?string => {
+    getSimilityCustomer = () => {
         if (_dataCache.similityCustomer) { return _dataCache.similityCustomer; }
 
         const meta = _.first(document.querySelectorAll('[name=simility-customer]'));
         return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : null;
     },
 
-    getNewsletterUrl = (): ?string => {
+    getNewsletterUrl = () => {
         if (_dataCache.newsletterUrl) { return _dataCache.newsletterUrl; }
 
         const meta = _.first(document.querySelectorAll('[name=newsletter-url]'));
         return meta ? (_dataCache.newsletterUrl = meta.getAttribute('content')) : null;
     },
 
-    getUser = (): ?Object => {
+    getUser = () => {
         if (_dataCache.user) { return _dataCache.user; }
 
         const body = document.getElementsByTagName('body'),
@@ -332,14 +331,14 @@ const
         return null;
     },
 
-    getUserID = (): ?number => {
+    getUserID = () => {
         const user = getUser();
         return user == null || user.user_id == null ? null : user.user_id;
     },
 
-    userSignedIn = (): ?boolean => !_.isNull(getUserID()),
+    userSignedIn = () => !_.isNull(getUserID()),
 
-    getBlogPosts = (): ?Object => {
+    getBlogPosts = () => {
         if (_dataCache.blogPosts) { return _dataCache.blogPosts; }
 
         const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
@@ -350,26 +349,26 @@ const
         return null;
     },
 
-    getApiHost = (): ?string => {
+    getApiHost = () => {
         if (_dataCache.apiHost) { return _dataCache.apiHost; }
 
         const el = document.getElementById('api-host');
         return _dataCache.apiHost = el && el.getAttribute('content');
     },
 
-    locationActionMatch = (action: string): boolean => {
+    locationActionMatch = (action) => {
         const act = window.location.pathname.split('/').slice(-1)[0];
         return action === act;
     },
 
-    useAvatarOrDefault = (avatarPath: string): string => avatarPath || '/assets/catarse_bootstrap/user.jpg',
+    useAvatarOrDefault = (avatarPath) => avatarPath || '/assets/catarse_bootstrap/user.jpg',
 
     // Templates
-    loader = (): mNode => m('.u-text-center.u-margintop-30 u-marginbottom-30', [
+    loader = () => m('.u-text-center.u-margintop-30 u-marginbottom-30', [
         m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
     ]),
 
-    newFeatureBadge = (): mNode => m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge')),
+    newFeatureBadge = () => m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge')),
 
     fbParse = () => {
         const tryParse = () => {
@@ -383,15 +382,15 @@ const
         return window.setTimeout(tryParse, 500); // use timeout to wait async of facebook
     },
 
-    pluralize = (count: number, s: string, p: string): string => (count > 1 ? count + p : count + s),
+    pluralize = (count, s, p) => (count > 1 ? count + p : count + s),
 
-    strip = (html: string): string => {
+    strip = (html) => {
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
     },
 
-    simpleFormat = (str: string = ''): string => {
+    simpleFormat = (str = '') => {
         str = str.replace(/\r\n?/, '\n');
         if (str.length > 0) {
             str = str.replace(/\n\n+/g, '</p><p>');
@@ -401,24 +400,24 @@ const
         return str;
     },
 
-    rewardSouldOut = (reward: Object): boolean => (reward.maximum_contributions > 0 ?
+    rewardSouldOut = (reward) => (reward.maximum_contributions > 0 ?
             (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false),
 
-    rewardRemaning = (reward: Object): number => reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count),
+    rewardRemaning = (reward) => reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count),
 
-    parseUrl = (href: string): Node => {
+    parseUrl = (href) => {
         const l = document.createElement('a');
         l.href = href;
         return l;
     },
 
-    UIHelper = (): Function => (el, isInitialized): void => {
+    UIHelper = () => (el, isInitialized) => {
         if (!isInitialized && window.$ && window.UIHelper) {
             window.UIHelper.setupResponsiveIframes($(el));
         }
     },
 
-    toAnchor = (): mConfig => (el, isInitialized) => {
+    toAnchor = () => (el, isInitialized) => {
         if (!isInitialized) {
             const hash = window.location.hash.substr(1);
             if (hash === el.id) {
@@ -435,12 +434,12 @@ const
         return false;
     },
 
-    navigateTo = (path: string) => {
+    navigateTo = (path) => {
         window.location.href = path;
         return false;
     },
 
-    cumulativeOffset = (element: HTMLElement): {top: number, left: number} => {
+    cumulativeOffset = (element) => {
         let top = 0,
             left = 0;
         do {
@@ -455,7 +454,7 @@ const
         };
     },
 
-    closeModal = (): void => {
+    closeModal = () => {
         // Temp for rails unstyled close links
         const close = (elm, selector) => {
             const all = document.getElementsByClassName(selector);
@@ -488,7 +487,7 @@ const
         });
     },
 
-    closeFlash = (): void => {
+    closeFlash = () => {
         const el = document.getElementsByClassName('icon-close')[0];
         if (_.isElement(el)) {
             el.onclick = (event) => {
@@ -500,12 +499,12 @@ const
         }
     },
 
-    i18nScope = (scope: Object, obj: Object) => {
+    i18nScope = (scope, obj) => {
         obj = obj || {};
         return _.extend({}, obj, { scope });
     },
 
-    redrawHashChange = (before: any) => {
+    redrawHashChange = (before) => {
         const callback = _.isFunction(before) ?
                   () => {
                       before();
@@ -525,7 +524,7 @@ const
         return meta ? meta.getAttribute('content') : null;
     },
 
-    animateScrollTo = (el: HTMLElement) => {
+    animateScrollTo = (el) => {
         let scrolled = window.scrollY;
 
         const offset = cumulativeOffset(el).top,
@@ -546,9 +545,9 @@ const
             }, 1);
     },
     scrollTop = () => window.scrollTo(0, 0),
-    scrollTo = (): mConfig => {
-        const setTrigger = (el: HTMLElement, anchorId: string): void => {
-            el.onclick = (): boolean => {
+    scrollTo = () => {
+        const setTrigger = (el, anchorId) => {
+            el.onclick = () => {
                 const anchorEl = document.getElementById(anchorId);
 
                 if (_.isElement(anchorEl)) {
@@ -566,7 +565,7 @@ const
         };
     },
 
-    projectStateTextClass = (state: string, has_cancelation_request: boolean): {cssClass: string, text: string} => {
+    projectStateTextClass = (state, has_cancelation_request) => {
         const statusText = {
             online: {
                 cssClass: 'text-success',
@@ -612,7 +611,7 @@ const
         }
     },
 
-    RDTracker = (eventId: string): mConfig => (el, isInitialized) => {
+    RDTracker = (eventId) => (el, isInitialized) => {
         if (!isInitialized) {
             const integrationScript = document.createElement('script');
             integrationScript.type = 'text/javascript';
@@ -628,7 +627,7 @@ const
         }
     },
 
-    analyticsEvent = (eventObj: Object, fn: Function = Function.prototype): Function => {
+    analyticsEvent = (eventObj, fn = Function.prototype) => {
         // https://developers.google.com/analytics/devguides/collection/analyticsjs/command-queue-reference#send
         if (!eventObj) {
             return fn;
@@ -646,7 +645,7 @@ const
         };
     },
     _analyticsOneTimeEventFired = {},
-    analyticsOneTimeEvent = (eventObj: Object, fn: Function): Function => {
+    analyticsOneTimeEvent = (eventObj, fn) => {
         if (!eventObj) {
             return fn;
         }
@@ -664,7 +663,7 @@ const
             }
         };
     },
-    monetaryToFloat = (propValue: Function): number => {
+    monetaryToFloat = (propValue) => {
         if (_.isNumber(propValue())) {
             return parseFloat(propValue());
         }
@@ -672,7 +671,7 @@ const
         return parseFloat(propValue().replace('.', '').replace(',', '.'));
     },
 
-    applyMonetaryMask = (number: number): string => {
+    applyMonetaryMask = (number) => {
         let onlyNumbers = String(number).replace(/[^0-9]|[.]/g, ''),
             integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
             decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
@@ -682,20 +681,20 @@ const
         return `${integerPart},${decimalPart}`;
     },
 
-    noNumbersMask = (value: string): string => value.replace(/[0-9]/g, ''),
+    noNumbersMask = (value) => value.replace(/[0-9]/g, ''),
 
-    numbersOnlyMask = (value: string): string => value.replace(/[^0-9]/g, ''),
+    numbersOnlyMask = (value) => value.replace(/[^0-9]/g, ''),
 
-    addChar = (position: number, maskChar: string): Function => (char: string): Function => (string: string): string => {
+    addChar = (position, maskChar) => (char) => (string) => {
         if (string.length === position && char !== maskChar) {
             return (string + maskChar);
         }
         return string;
     },
 
-    readMaskDefinition = (maskCharDefinitions: Object): Function => (maskDefinition: string): Array<any> => _.compact(_.map(maskDefinition, (letter, index) => (letter in maskCharDefinitions ? null : [index, letter]))),
+    readMaskDefinition = (maskCharDefinitions) => (maskDefinition) => _.compact(_.map(maskDefinition, (letter, index) => (letter in maskCharDefinitions ? null : [index, letter]))),
 
-    isCharAllowed = (maskCharDefinitions: Object): Function => (maskDefinition: string): Function => (position: number, newChar: string): boolean => {
+    isCharAllowed = (maskCharDefinitions) => (maskDefinition) => (position, newChar) => {
         if (position >= maskDefinition.length) {
             return false;
         }
@@ -707,7 +706,7 @@ const
         return (newChar === maskChar || isCharAllowed(maskCharDefinitions)(maskDefinition)(position + 1, newChar));
     },
 
-    applyMask = (maskDefinition): Function => {
+    applyMask = (maskDefinition) => {
         const maskFunctions = _.map(maskDefinition, maskChar => addChar(maskChar[0], maskChar[1]));
         return (string, newChar) => {
             const addNewCharFunctions = _.map(maskFunctions, el => el(newChar));
@@ -717,7 +716,7 @@ const
     },
 
     // Adapted from https://github.com/diogob/jquery.fixedmask
-    mask = (maskDefinition: RegExp, value: string): string => {
+    mask = (maskDefinition, value) => {
         const maskCharDefinitions = {
                 '9': /\d/, // String key needed to avoid flowType error
                 A: /[a-zA-Z]/
@@ -735,20 +734,20 @@ const
         }, '');
     },
 
-    removeStoredObject = (sessionKey: string) => sessionStorage.removeItem(sessionKey),
+    removeStoredObject = (sessionKey) => sessionStorage.removeItem(sessionKey),
 
     currentProject = m.prop(),
-    setProject = (project: Object): void => {
+    setProject = (project) => {
         currentProject(project);
     },
-    getProject = (): Object => currentProject,
+    getProject = () => currentProject,
     currentReward = m.prop(),
-    setReward = (reward: Object): void => {
+    setReward = (reward) => {
         currentReward(reward);
     },
     getReward = () => currentReward,
-    buildLink = (link: string, refStr: string): string => `/${link}${refStr ? `?ref=${refStr}` : ''}`,
-    analyticsWindowScroll = (eventObj: Object): void => {
+    buildLink = (link, refStr) => `/${link}${refStr ? `?ref=${refStr}` : ''}`,
+    analyticsWindowScroll = (eventObj) => {
         if (eventObj) {
             let fired = false;
             window.addEventListener('scroll', (e) => {
@@ -768,7 +767,7 @@ const
         windowScroll: analyticsWindowScroll
     },
 
-    projectFullPermalink = (project: Object): string => {
+    projectFullPermalink = (project) => {
         let permalink;
         if (typeof project === 'function') {
             permalink = project().permalink;
@@ -778,12 +777,12 @@ const
 
         return `https://www.catarse.me/${permalink}`;
     },
-    isHome = (): boolean => {
+    isHome = () => {
         const path = window.location.pathname;
 
         return path == '/pt' || path == '/';
     },
-    isProjectPage = (): boolean => {
+    isProjectPage = () => {
         const path = window.location.pathname,
             isOnInsights = path.indexOf('/insights') > -1,
             isOnFiscal = path.indexOf('/fiscal') > -1,
@@ -792,7 +791,7 @@ const
 
         return !isOnEdit && !isOnInsights && !isOnContribution && !isOnFiscal;
     },
-    setPageTitle = (title: string): mConfig => (el, isInitialized) => {
+    setPageTitle = (title) => (el, isInitialized) => {
         const titleEl = document.getElementsByTagName('title')[0],
             currentTitle = titleEl.innerText;
 
@@ -800,14 +799,14 @@ const
             return titleEl.innerText = title;
         }
     },
-    checkReminder = (): void => {
+    checkReminder = () => {
         const reminder = sessionStorage.getItem('reminder');
 
         if (reminder && isHome()) {
             window.location.href = `/projects/${reminder}`;
         }
     },
-    rootUrl = (): ?string => {
+    rootUrl = () => {
         if (_dataCache.rootUrl) { return _dataCache.rootUrl; }
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
@@ -872,17 +871,17 @@ const
         }
     },
 
-    redactor = (name: string, prop: Function) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
+    redactor = (name, prop) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
         name, config: setRedactor(prop)
     }),
 
-    setCsrfToken = (xhr: Object) => {
+    setCsrfToken = (xhr) => {
         if (authenticityToken()) {
             xhr.setRequestHeader('X-CSRF-Token', authenticityToken());
         }
     },
 
-    contributionStatusBadge = (contribution: Object) => {
+    contributionStatusBadge = (contribution) => {
         const status = {
             delivered: m('span.fontsize-smallest.badge.badge-success',
                 'Enviada'
@@ -900,7 +899,7 @@ const
 
         return contributionVM.canBeDelivered(contribution) ? status[contribution.delivery_status] : '';
     },
-    getParams = (searchKey: string) => {
+    getParams = (searchKey) => {
         const query = window.location.href;
         const queryParams = (/^[?#]/.test(query) ? query.slice(1) : query).split('?');
 
@@ -912,7 +911,7 @@ const
                 return params;
             }, {})[searchKey] : null;
     },
-    stripScripts = (s: string) => {
+    stripScripts = (s) => {
         const div = document.createElement('div');
         div.innerHTML = s;
         const scripts = div.getElementsByTagName('script');
@@ -922,7 +921,7 @@ const
         }
         return div.innerHTML;
     },
-    sleep = (time: number) => {
+    sleep = (time) => {
         const p = m.deferred();
 
         setTimeout(p.resolve, time);
