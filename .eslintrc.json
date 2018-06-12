@@ -12,7 +12,6 @@
         "one-var": 0
     },
     "plugins": [
-        "import",
-        "flowtype"
+        "import"
     ]
 }
