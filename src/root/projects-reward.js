@@ -70,9 +70,11 @@ const projectsReward = {
             ]),
             m('.w-section.header-cont-new',
                     m('.w-container',
-                        m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only',
-                            'Escolha a recompensa e em seguida o valor do apoio'
-                        )
+                        m(".fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only", [
+                            "Escolha a recompensa e o valor do apoio",
+                            m.trust('&nbsp;'),
+                            m("span.fontsize-small.badge.badge-success", "(parcele em até 6x)")
+                        ])
                     )
                 ),
             m('.section[id=\'new-contribution\']',
