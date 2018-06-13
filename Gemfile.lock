@@ -40,6 +40,8 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    shoulda-matchers (3.1.2)
+      activesupport (>= 4.0.0)
     thread_safe (0.3.6)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
@@ -52,6 +54,7 @@ DEPENDENCIES
   common_models!
   rake (~> 10.0)
   rspec (~> 3.0)
+  shoulda-matchers (~> 3.1)
 
 BUNDLED WITH
    1.16.2
