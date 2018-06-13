@@ -114,18 +114,8 @@ const projectEditReward = {
                             message: ctrl.errors(),
                             error: true
                         }) : ''),
-                        m('.w-row',
-                            m('.w-col.w-col-8.w-col-push-2',
-                                m('.u-marginbottom-60.u-text-center',
-                                    m('.w-inline-block.card.fontsize-small.u-radius', [
-                                        m('span.fa.fa-lightbulb-o'),
-                                        m.trust(` ${I18n.t('reward_know_more_cta_html', I18nScope())}`)
-                                    ])
-                                )
-                            )
-                        ),
                         m('.w-row', [
-                            m('.w-col.w-col-9',
+                            m('.w-col.w-col-8',
                                 m('.w-form', [
                                     ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
                                         config: ctrl.setSorting
@@ -166,23 +156,32 @@ const projectEditReward = {
 
                                 ] : ''
                             ),
-                            m('.w-col.w-col-3', [
-                                I18n.t('reward_faq_intro', I18nScope()),
-                                m('br'),
-                                m('br'),
-                                I18n.t('reward_faq_sub_intro', I18nScope()),
-                                m('br'),
-                                m('br'),
-                                _.map(ctrl.tips,
-                                    (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4)
-                                        ? null : [
-                                            m('.fontweight-semibold', tip.title),
-                                            m.trust(tip.description),
-                                            m('br'),
-                                            m('br')
-                                        ]
-                                )
-                            ])
+                            m('.w-col.w-col-4',
+                                m('.card.u-radius', [
+                                    m('.fontsize-small.u-marginbottom-20', [
+                                        m('span.fa.fa-lightbulb-o.fa-lg'), 
+                                        m.trust(` ${I18n.t('reward_know_more_cta_html', I18nScope())}`)
+                                    ]),
+                                    m('.divider.u-marginbottom-20'),
+                                    m('.fontsize-smallest.w-hidden-small.w-hidden-tiny', [
+                                        I18n.t('reward_faq_intro', I18nScope()),
+                                        m('br'),
+                                        m('br'),
+                                        I18n.t('reward_faq_sub_intro', I18nScope()),
+                                        m('br'),
+                                        m('br'),
+                                        _.map(ctrl.tips,
+                                            (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4)
+                                                ? null : [
+                                                    m('.fontweight-semibold', tip.title),
+                                                    m.trust(tip.description),
+                                                    m('br'),
+                                                    m('br')
+                                                ]
+                                        )
+                                    ])                                        
+                                ])
+                            )
                         ])
                     ])
                 )
