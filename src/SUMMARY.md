@@ -6,6 +6,8 @@
 - [Development operations](./dev_ops.md)
     - [Catarse integration setup](./dev_ops_catarse_integration.md)
     - [Receiveing postbacks on local](./dev_ops_postback_local.md)
+- [Periodic tasks](./periodic_tasks.md)
+    - [Automatic recharge or inactive card subscriptions](./period_task_automatic_recharge_or_inactive_card_subscriptions.md)
 - [HTTP API - Services](./http_api.md)
     - [Analytics](./http_analytics.md)
         - [Get project subscribers stats](./http_analytics_rpc_project_subscribers_info.md)
