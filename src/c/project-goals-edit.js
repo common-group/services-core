@@ -114,7 +114,7 @@ const projectGoalsEdit = {
                     [
                       m('.fontsize-small.u-marginbottom-20',
                         [
-                          m('span.fa.fa-lightbulb-o'),
+                          m('span.fa.fa-lightbulb-o.fa-lg'),
                           m.trust('&nbsp;'),
                           'Dicas'
                         ]
