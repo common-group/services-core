@@ -300,13 +300,15 @@ const paymentCreditCard = {
                                                 `${installment.number} X R$ ${installment.amount}`
                                             ))
                                         ),
-                                        ctrl.selectedInstallment() > 1 ?
-                                            m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary', [
-                                                I18n.t('credit_card.total', ctrl.scope()) , `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`,
-                                                m('span.fontcolor-terciary', I18n.t(`credit_card.installments_number.${ctrl.selectedInstallment()}`, ctrl.scope())),
-                                                m('span.fontsize-smallest.fontcolor-terciary')
-                                            ])
-                                        : ''
+                                        (
+						ctrl.selectedInstallment() > 1 ?
+                                            	m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary', [
+                                                	I18n.t('credit_card.total', ctrl.scope()) , `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`,
+                                                	m('span.fontcolor-terciary', I18n.t(`credit_card.installments_number.${ctrl.selectedInstallment()}`, ctrl.scope())),
+                                                	m('span.fontsize-smallest.fontcolor-terciary')
+                                            	])
+                                        	: ''
+					)
                                     ])
                                 ]
                             ])
@@ -432,13 +434,16 @@ const paymentCreditCard = {
                             }, _.map(ctrl.installments(), installment => m(`option[value="${installment.number}"]`,
                                      `${installment.number} X R$ ${installment.amount}`
                             ))),
-                            ctrl.selectedInstallment() > 1 ?
-                                m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary', [
-                                    I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`,
-                                    m('span.fontcolor-terciary', I18n.t(`credit_card.installments_number.${ctrl.selectedInstallment()}`, ctrl.scope())),
-                                    m('span.fontsize-smallest.fontcolor-terciary')
-                                ])
-                            : ''
+			    (
+
+	                            ctrl.selectedInstallment() > 1 ?
+        	                        m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary', [
+                	                    I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`,
+                        	            m('span.fontcolor-terciary', I18n.t(`credit_card.installments_number.${ctrl.selectedInstallment()}`, ctrl.scope())),
+                                	    m('span.fontsize-smallest.fontcolor-terciary')
+                                	])
+                            	    : ''
+			    )
                         ]),
                         m('.w-col.w-col-6')
                     ]),
