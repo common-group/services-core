@@ -123,3 +123,5 @@ AS $function$
         )::json;
     end;
 $function$;
+
+comment on function payment_service_api.upgrade_subscription(data json) is 'Update subscription checkout data and charges new payment when subscription is not active or have last payment refused';
