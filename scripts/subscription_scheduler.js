@@ -81,6 +81,18 @@ async function inactive_invalid_subscriptions() {
     };
 };
 
+async function automatic_recharge_or_inactive_card_subscriptions() {
+    try {
+        // fetch and transition to inactive subscriptions that should be inactived
+        const res = await pool.query(
+            `select payment_service.automatic_recharge_or_inactive_card_subscriptions()`);
+
+        console.log(res.rows[0]);
+    } catch (e) {
+        console.log(e);
+    };
+};
+
 const recursive_calls = () => {
 
     const rec_charge = () => {
@@ -139,12 +151,23 @@ const recursive_calls = () => {
         }, (process.env.SET_INTERVAL || 60000));
     };
 
+    const recharge_or_inactive_card_subscriptions = () => {
+        setTimeout(() => {
+            console.log('checking for subscriptions to automatic recharge or inactive');
+
+            automatic_recharge_or_inactive_card_subscriptions().then(() => {
+                recharge_or_inactive_card_subscriptions();
+            })
+        }, (process.env.SET_INTERVAL || 60000));
+    };
+
     rec_charge();
     rec_errors_charge();
     refuse_expired();
     cancel_expired_subscriptions();
     inactive_invalid_subs();
     notify_expiring();
+	recharge_or_inactive_card_subscriptions();
 };
 
 recursive_calls();
