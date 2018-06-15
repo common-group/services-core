@@ -6,7 +6,7 @@
 
 ### Overview:
 
-When subscription is inactive/canceled this endpoint will generate a new payment when called.
+When subscription is inactive/canceled or the last payment is refused this endpoint will generate a new payment when called.
 
 ### data payload json
 
@@ -93,6 +93,7 @@ CREATE OR REPLACE FUNCTION payment_service_api.upgrade_subscription(data json)
 AS $function$
     declare
         _subscription payment_service.subscriptions;
+        _last_payment payment_service.catalog_payments;
         _new_payment payment_service.catalog_payments;
         _reward project_service.rewards;
         _card payment_service.credit_cards;
@@ -116,6 +117,11 @@ AS $function$
         if _subscription.id is null then
             raise 'subscription_not_found';
         end if;
+
+        select * from payment_service.catalog_payments
+            where subscription_id = _subscription.id
+                order by created_at desc limit 1
+                into _last_payment;
 
         -- check if new value and new reward is compatible
         if ($1->>'reward_id')::uuid is not null then
@@ -178,7 +184,8 @@ AS $function$
             select * from payment_service.subscriptions where id = _subscription.id into _subscription;
         end if;
 
-        if _subscription.status in('inactive', 'canceled', 'canceling') then
+        if _subscription.status in('inactive', 'canceled', 'canceling') 
+            OR _last_payment.status = 'refused' then
             _new_payment := payment_service.generate_new_catalog_payment(_subscription);
         else
             -- build relations json
@@ -203,7 +210,5 @@ AS $function$
             'old_subscription_version_id', _version.id
         )::json;
     end;
-$function$
+$function$;
 ```
-
-
