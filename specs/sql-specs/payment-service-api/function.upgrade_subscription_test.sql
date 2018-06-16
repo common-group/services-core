@@ -3,7 +3,7 @@ BEGIN;
     \i /specs/sql-support/insert_platform_user_project.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(26);
+    select plan(28);
 
     select function_returns(
         'payment_service_api', 'upgrade_subscription', ARRAY['json'], 'json'
@@ -162,6 +162,8 @@ BEGIN;
             _not_enabled_card payment_service.credit_cards;
             _count_expected integer;
             _generated_payment payment_service.catalog_payments;
+            _active_with_refused payment_service.subscriptions;
+            _last_refused_payment payment_service.catalog_payments;
             _result json;
         begin
             -- generate not enabled card
@@ -181,6 +183,18 @@ BEGIN;
                 (status, created_at, platform_id, user_id, project_id, checkout_data) 
                 values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
                 returning * into _subscription;
+
+            -- generate subscription with last payment refused
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('active', (now() - '1 month'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __json_data_payment('{"payment_method": "credit_card"}'::json)::jsonb)
+                returning * into _active_with_refused;
+
+            -- generate refused payment for subscription
+            insert into payment_service.catalog_payments
+                (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+                values ('refused', (now() - '1 month'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'credit_card'), _active_with_refused.id)
+                returning * into _last_refused_payment;
 
             -- generate inactive subscription
             insert into payment_service.subscriptions
@@ -270,6 +284,24 @@ BEGIN;
                 into _generated_payment;
 
             return next is(_generated_payment.status, 'pending', 'generated payment should be pending');
+
+            -- when update a subscription with last payment refused
+            _result := payment_service_api.upgrade_subscription(json_build_object(
+                'id', _active_with_refused.id,
+                'payment_method', 'boleto'
+            ));
+
+            select count(1) from payment_service.catalog_payments
+                where subscription_id = _active_with_refused.id
+                    and id <> _last_refused_payment.id
+                into _count_expected;
+            return next is(_count_expected, 1, 'should generate new payment on active subscription with last payment refused');
+
+            select * from payment_service.catalog_payments
+                where id = (_result->>'catalog_payment_id')::uuid
+                into _generated_payment;
+            return next ok(_generated_payment.id <> _last_refused_payment.id,  'should generate a new payment after upgrade a subscription that last payment is refused');
+
         end;
     $$;
     select * from test_upgrage_sub_with_scoped();

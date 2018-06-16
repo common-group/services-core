@@ -4,11 +4,92 @@ BEGIN;
     \i /specs/sql-support/payment_json_build_helpers.sql
     -- \i /specs/sql-support/insert_global_notifications.sql
 
-    select plan(9);
+    select plan(15);
 
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.catalog_payments', 'payment_service.payment_status', 'json'], 'boolean');
     SELECT function_returns('payment_service', 'transition_to', ARRAY['payment_service.subscriptions', 'payment_service.subscription_status', 'json'], 'boolean');
 
+    create or replace function test_payment_transition_to_refused()
+    returns setof text language plpgsql
+    as $$
+    declare
+        _subscription payment_service.subscriptions;
+        _payment payment_service.catalog_payments;
+    begin
+
+        -- generate subscription
+        insert into payment_service.subscriptions
+        (status, created_at, platform_id, user_id, project_id, reward_id, checkout_data) 
+        values ('started', now(), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), __seed_reward_id(), '{}'::jsonb)
+        returning * into _subscription;
+
+        -- create payment for subscription into _payment
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+        values ('pending', now(), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'credit_card'), _subscription.id)
+        returning * into _payment;
+
+        -- transit payment to refused and reload
+        perform payment_service.transition_to(_payment, 'refused', row_to_json(_payment));
+        select * from payment_service.catalog_payments
+            where id = _payment.id
+            into _payment;
+
+        return next is(_payment.status, 'refused', 'should turn payment to refused');
+        return next is(exists(
+            select true from notification_service.user_catalog_notifications
+                where user_id = _payment.user_id
+                    and label = 'refused_subscription_card_payment'
+                    and (data->'relations'->>'catalog_payment_id')::uuid = _payment.id
+        ), true, 'should create notification refused_subscription_card_payment when payment is a subscription payment');
+
+
+        -- insert boleto payment to subscription
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+        values ('pending', now(), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription.id)
+        returning * into _payment;
+
+        -- transit payment to refused and reload
+        perform payment_service.transition_to(_payment, 'refused', row_to_json(_payment));
+        select * from payment_service.catalog_payments
+            where id = _payment.id
+            into _payment;
+
+        return next is(_payment.status, 'refused', 'should turn payment to refused');
+        return next is(exists(
+            select true from notification_service.user_catalog_notifications
+                where user_id = _payment.user_id
+                    and label = 'refused_subscription_card_payment'
+                    and (data->'relations'->>'catalog_payment_id')::uuid = _payment.id
+        ), false, 'should not notify with refused_subscription_card_payment when payment method is boleto');
+
+
+        -- insert new payment without subscription
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+        values ('pending', now(), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'credit_card'), null)
+        returning * into _payment;
+
+
+        -- transit payment to refused and reload
+        perform payment_service.transition_to(_payment, 'refused', row_to_json(_payment));
+        select * from payment_service.catalog_payments
+            where id = _payment.id
+            into _payment;
+
+        return next is(_payment.status, 'refused', 'should turn payment to refused');
+        return next is(exists(
+            select true from notification_service.user_catalog_notifications
+                where user_id = _payment.user_id
+                    and label = 'refused_subscription_card_payment'
+                    and (data->'relations'->>'catalog_payment_id')::uuid = _payment.id
+        ), false, 'should not create refused_subscription_card_payment notification when payment is not belong to a subscription');
+
+
+    end;
+    $$;
+    select test_payment_transition_to_refused();
 
     CREATE OR REPLACE FUNCTION test_subscription_transition_when_active()
     returns setof text language plpgsql
