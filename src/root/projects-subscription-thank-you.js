@@ -22,9 +22,24 @@ const ProjectsSubscriptionThankYou = {
         const project = m.prop({});
         const projectUser = m.prop();
         const recommendedProjects = UserVM.getUserRecommendedProjects();
-        
+        const sendSubscriptionDataToAnalyticsInterceptingPaymentInfoRequest = (payData) => {
+            const analyticsData = {
+                cat: isEdit ? 'subscription_edition' : 'subscription_creation',
+                act: isEdit ? 'subscription_edited' : 'subscription_created',
+                extraData: {
+                    project_id: projectId,
+                    subscription_id: payData.subscription_id
+                }
+            };
+            h.analytics.event(analyticsData)();
+            return payData;
+        };
+
         if (paymentId) {
-            CommonPaymentVM.paymentInfo(paymentId).then(paymentData).catch(() => error(true));
+            CommonPaymentVM
+                .paymentInfo(paymentId)
+                .then(sendSubscriptionDataToAnalyticsInterceptingPaymentInfoRequest)
+                .then(paymentData).catch(() => error(true));
         }
 
         ProjectVM
