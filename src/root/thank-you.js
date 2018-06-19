@@ -12,10 +12,23 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const thankYou = {
     controller(args) {
         const recommendedProjects = userVM.getUserRecommendedProjects(),
-            isSlip = args.contribution && !_.isEmpty(args.contribution.slip_url);
+            isSlip = args.contribution && !_.isEmpty(args.contribution.slip_url),
+            sendContributionCreationData = () => {
+                const analyticsData = {
+                    cat: 'contribution_creation',
+                    act: 'contribution_created',
+                    extraData: {
+                        project_id: args.contribution.project.id,
+                        contribution_id: args.contribution.contribution_id
+                    }
+                };
+                h.analytics.event(analyticsData)();
+            };
 
         const setEvents = (el, isInitialized) => {
             if (!isInitialized) {
+                sendContributionCreationData();
+
                 CatarseAnalytics.event({
                     cat: 'contribution_finish',
                     act: 'contribution_finished',
