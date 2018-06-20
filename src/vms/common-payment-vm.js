@@ -305,6 +305,7 @@ const sendSlipPayment = (fields, commonData) => {
         .catch(displayError(fields));
 };
 
+// Makes a request count down of retries of getting payment info
 const trialsToGetPaymentInfo = (p, catalog_payment_id, retries) => {
 
     if (retries > 0)
@@ -336,6 +337,8 @@ const trialsToGetPaymentInfo = (p, catalog_payment_id, retries) => {
     return p.promise;
 };
 
+// Try recharge a payment if it's slip is expired, pinging /rpc/payment_info endpoint
+// looking up for new payment_info
 const tryRechargeSubscription = (subscription_id) => {
     const p = m.deferred();
 

@@ -60,6 +60,7 @@ const userSubscriptionBox = {
             });
         }
 
+        //Generate second slip payment and wait for result to update the view. In case of timeout, reloads the page.
         const generateSecondSlip = () => {
             isGeneratingSecondSlip.toggle();
             commonPaymentVM

@@ -3,13 +3,18 @@ import h from '../../src/h';
 import userSubscriptionBox from '../../src/c/user-subscription-box.js';
 
 describe('UserSubscriptionBox', () => {
-    let $subscriptionVersionWithNewDataShow, subscriptionData;
+    let $subscriptionVersionWithNewDataShow, subscriptionData, paymentInfoData;
 
     describe('view', () => {
         beforeAll(() => {
             subscriptionData = SubscriptionVersionMockery();
+            paymentInfoData = PaymentInfoMockery();
             $subscriptionVersionWithNewDataShow = mq(m.component(userSubscriptionBox, {
-                subscription: subscriptionData
+                subscription: _.extend({}, subscriptionData, {
+                    boleto_url: paymentInfoData.boleto_url,
+                    boleto_expiration_date: paymentInfoData.boleto_expiration_date,
+                    payment_status: paymentInfoData.status
+                })
             }));
         });
 
@@ -27,6 +32,10 @@ describe('UserSubscriptionBox', () => {
 
         it('Should render info about next charge', () => {
             expect($subscriptionVersionWithNewDataShow.contains('As alterações destacadas entrarão em vigor na próxima cobrança')).toBeTrue();
+        });
+
+        it('Should render generate second slip button', () => {
+            expect($subscriptionVersionWithNewDataShow.contains('Gerar segunda via')).toBeTrue();
         });
     });
 });
