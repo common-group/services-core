@@ -7,7 +7,7 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const paymentInfoId = m.prop();
-const {commonPayment, commonSubscriptionUpgrade, commonPaymentInfo, commonCreditCard, commonCreditCards} = models;
+const {commonPayment, commonSubscriptionUpgrade, commonPaymentInfo, commonCreditCard, commonCreditCards, rechargeSubscription} = models;
 const sendPaymentRequest = data => commonPayment.postWithToken(
     {data: _.extend({}, data, {payment_id: paymentInfoId()})},
     null,
@@ -305,10 +305,54 @@ const sendSlipPayment = (fields, commonData) => {
         .catch(displayError(fields));
 };
 
+const trialsToGetPaymentInfo = (p, catalog_payment_id, retries) => {
+
+    if (retries > 0)
+    {
+        paymentInfo(catalog_payment_id).then((infoR) => {
+            if(_.isNull(infoR.gateway_payment_method) || _.isUndefined(infoR.gateway_payment_method)) {
+                if(!_.isNull(infoR.gateway_errors)) {
+                    return p.reject(_.first(infoR.gateway_errors));
+                } 
+    
+                return h.sleep(4000).then(() => {
+                    return trialsToGetPaymentInfo(p, catalog_payment_id, retries - 1);
+                });
+            }
+    
+            return p.resolve({
+                boleto_url: infoR.boleto_url,
+                boleto_expiration_date: infoR.boleto_expiration_date,
+                boleto_barcode: infoR.boleto_barcode,
+                status: infoR.status
+            });
+        }).catch(() => p.reject({}));
+    }
+    else
+    {
+        return p.reject({});
+    }
+
+    return p.promise;
+};
+
+const tryRechargeSubscription = (subscription_id) => {
+    const p = m.deferred();
+
+    rechargeSubscription
+        .postWithToken({subscription_id})
+        .then(payment_data => {
+            return trialsToGetPaymentInfo(p, payment_data.catalog_payment_id, 5);
+        }).catch(p.reject);
+
+    return p.promise;
+};
+
 const commonPaymentVM = {
     sendCreditCardPayment,
     sendSlipPayment,
-    paymentInfo
+    paymentInfo,
+    tryRechargeSubscription
 };
 
 export default commonPaymentVM;

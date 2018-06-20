@@ -80,7 +80,8 @@ const models = {
     cancelProject: catarse.model('rpc/cancel_project'),
     city: catarse.model('cities'),
     mailMarketingList: catarse.model('mail_marketing_lists'),
-    commonUserDetails: commonCommunity.model('rpc/user_details')
+    commonUserDetails: commonCommunity.model('rpc/user_details'),
+    rechargeSubscription: commonPayment.model('rpc/recharge_subscription')
 };
 
 models.teamMember.pageSize(40);
