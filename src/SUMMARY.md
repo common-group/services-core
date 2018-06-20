@@ -22,6 +22,7 @@
     - [Payments](./http_payments.md)
         - [Create payment / subscription](./http_payments_rpc_pay.md)
         - [Edit / Upgrade subscription](./http_payments_rpc_upgrade_subscription.md)
+        - [Recharge subscription (Oneclick charge)](./http_payments_rpc_recharge_subscription.md)
         - [Canceling a subscription](./http_payments_rpc_cancel_subscription.md)
         - [List payments](./http_payments_payments.md)
         - [List subscriptions](./http_payments_subscriptions.md)
