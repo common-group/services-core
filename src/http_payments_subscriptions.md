@@ -71,7 +71,21 @@ curl -X GET https://sandbox.api.payment.comum.io/subscriptions \
         "search_index":"null",
         "current_paid_subscription":null,
         "current_reward_data":null,
-        "current_reward_id":null
+        "current_reward_id":null,
+        "last_payment_data": {
+            "id": "f003cecc-57a6-48fa-97b1-cce0c9b33f5e",
+            "created_at":"2018-06-20T16:55:41.043751",
+            "status": "refused",
+            "refused_at":"2018-06-20T16:55:41.043751",
+            "next_retry_at":"2018-06-24T16:55:41.043751",
+            "payment_method": "credit_card"
+        },
+        "last_paid_payment_data": {
+            "id": "null",
+            "created_at":"null",
+            "status": "null",
+            "payment_method": "null"
+        }
     }
 ]
 ```
@@ -118,17 +132,26 @@ CREATE OR REPLACE VIEW "payment_service_api"."subscriptions" AS
     current_paid_subscription.current_reward_data,
     current_paid_subscription.current_reward_id,
     json_build_object(
-        'id', last_payment.id,
-        'status', last_payment.status,
+        'id', last_payment.id, 
+        'status', last_payment.status, 
         'created_at', last_payment.created_at,
-        'payment_method', last_payment.data->>'payment_method'
-    ) as last_payment_data,
+        'payment_method', (last_payment.data ->> 'payment_method'::text),
+        'refused_at', (case when last_payment.status = 'refused' then payment_service.refused_transition_at(last_payment) else null end),
+        'next_retry_at', (
+            case 
+            when (last_payment.data->>'payment_method') = 'credit_card' and last_payment.status = 'refused' then 
+                (payment_service.refused_transition_at(last_payment) + '4 days'::interval)
+            when (last_payment.data->>'payment_method') = 'boleto' and last_Payment.status = 'refused' then
+                (payment_service.refused_transition_at(last_payment) + '3 days'::interval)
+            else null end
+        )
+    ) AS last_payment_data,
     json_build_object(
         'id', last_paid_payment.id,
         'status', last_paid_payment.status,
         'created_at', last_paid_payment.created_at,
-        'payment_method', last_payment.data->>'payment_method'
-    ) as last_paid_payment_data
+        'payment_method', (last_payment.data ->> 'payment_method'::text)
+    ) AS last_paid_payment_data
    FROM (((((((payment_service.subscriptions s
      JOIN project_service.projects p ON ((p.id = s.project_id)))
      JOIN community_service.users u ON ((u.id = s.user_id)))
