@@ -71,7 +71,21 @@ curl -X GET https://sandbox.api.payment.comum.io/subscriptions \
         "search_index":"null",
         "current_paid_subscription":null,
         "current_reward_data":null,
-        "current_reward_id":null
+        "current_reward_id":null,
+        "last_payment_data": {
+            "id": "f003cecc-57a6-48fa-97b1-cce0c9b33f5e",
+            "created_at":"2018-06-20T16:55:41.043751",
+            "status": "refused",
+            "refused_at":"2018-06-20T16:55:41.043751",
+            "retry_at":"2018-06-24T16:55:41.043751",
+            "payment_method": "credit_card"
+        },
+        "last_paid_payment_data": {
+            "id": "null",
+            "created_at":"null",
+            "status": "null",
+            "payment_method": "null"
+        }
     }
 ]
 ```
