@@ -17,8 +17,10 @@ $ git clone https://github.com/common-group/services-core-db.git
 $ git clone https://github.com/common-group/payment-service-api.git
 $ git clone https://github.com/common-group/hook-service-api.git
 $ git clone https://github.com/common-group/notification-service-api.git
+$ git clone https://github.com/catarse/catarse_moments.git
 $ git clone https://github.com/catarse/catarse.git
 $ git clone https://github.com/catarse/catarse.js.git
+$ git clone https://github.com/catarse/catarse_recommender.git
 ```
 
 #### Setup env files:
@@ -79,6 +81,8 @@ analytics_service_api - http://localhost:3005
 hook_service_api - http://localhost:3006
 notification_service_api - http://localhost:3007
 catarse_api - http://localhost:3008
+catarse_recommender - http://localhost:3009
+catarse_moments_api - http://localhost:3010
 catarse - http://localhost:3000
 ```
 
@@ -94,6 +98,8 @@ VBoxManage.exe controlvm "default" natpf1 "common__analytics_service_api,tcp,127
 VBoxManage.exe controlvm "default" natpf1 "common__hook_service_api,tcp,127.0.0.1,3006,,3006"
 VBoxManage.exe controlvm "default" natpf1 "common__notification_service_api,tcp,127.0.0.1,3007,,3007"
 VBoxManage.exe controlvm "default" natpf1 "common__catase_api,tcp,127.0.0.1,3008,,3008"
+VBoxManage.exe controlvm "default" natpf1 "common__catase_recommender,tcp,127.0.0.1,3008,,3009"
+VBoxManage.exe controlvm "default" natpf1 "common__catase_moments_api,tcp,127.0.0.1,3008,,3010"
 VBoxManage.exe controlvm "default" natpf1 "common__catarse,tcp,127.0.0.1,3000,,3000"
 ```
 
