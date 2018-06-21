@@ -17,6 +17,7 @@ $ git clone https://github.com/common-group/services-core-db.git
 $ git clone https://github.com/common-group/payment-service-api.git
 $ git clone https://github.com/common-group/hook-service-api.git
 $ git clone https://github.com/common-group/notification-service-api.git
+$ git clone https://github.com/common-group/common.git
 $ git clone https://github.com/catarse/catarse_moments.git
 $ git clone https://github.com/catarse/catarse.git
 $ git clone https://github.com/catarse/catarse.js.git
@@ -84,6 +85,7 @@ catarse_api - http://localhost:3008
 catarse_recommender - http://localhost:3009
 catarse_moments_api - http://localhost:3010
 catarse - http://localhost:3000
+common_docs - http://localhost:3011
 ```
 
 **Note**: if you're using _docker-machine_ with V_irtualBox_, create port-forwards:
@@ -99,7 +101,9 @@ VBoxManage.exe controlvm "default" natpf1 "common__hook_service_api,tcp,127.0.0.
 VBoxManage.exe controlvm "default" natpf1 "common__notification_service_api,tcp,127.0.0.1,3007,,3007"
 VBoxManage.exe controlvm "default" natpf1 "common__catase_api,tcp,127.0.0.1,3008,,3008"
 VBoxManage.exe controlvm "default" natpf1 "common__catase_recommender,tcp,127.0.0.1,3008,,3009"
-VBoxManage.exe controlvm "default" natpf1 "common__catase_moments_api,tcp,127.0.0.1,3008,,3010"
+VBoxManage.exe controlvm "default" natpf1 "common__catase_moments_api,tcp,127.0.0.1,3010,,3010"
+VBoxManage.exe controlvm "default" natpf1 "common__catase_moments_api,tcp,127.0.0.1,3011,,3011"
+VBoxManage.exe controlvm "default" natpf1 "common__catase_moments_api,tcp,127.0.0.1,3012,,3012"
 VBoxManage.exe controlvm "default" natpf1 "common__catarse,tcp,127.0.0.1,3000,,3000"
 ```
 
