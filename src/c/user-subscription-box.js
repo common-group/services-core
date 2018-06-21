@@ -281,7 +281,7 @@ const userSubscriptionBox = {
                     m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
                         (subscription.status === 'started' ? (
-                            subscription.last_payment_data != undefined && subscription.last_payment_data.status == 'refused' ? [
+                            subscription.last_payment_data.status == 'refused' ? [
                                 m(".card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold", 
                                     m("div",
                                         [
