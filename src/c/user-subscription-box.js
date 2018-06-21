@@ -280,13 +280,28 @@ const userSubscriptionBox = {
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
-                        (subscription.status === 'started' ? [
-                            m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
-                                m('span.fa.fa-exclamation-triangle'),
-                                m.trust('&nbsp;'),
-                                'Aguardando confirmação do pagamento'
-                            ]), (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
-                        ] :
+                        (subscription.status === 'started' ? (
+                            subscription.last_payment_data.status == 'refused' ? [
+                                m(".card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold", 
+                                    m("div",
+                                        [
+                                            m("span.fa.fa-exclamation-triangle", "."),
+                                            `Seu pagamento foi recusado em ${h.momentify(subscription.last_payment_data.refused_at)}. Vamos tentar uma nova cobrança em ${h.momentify(subscription.last_payment_data.next_retry_at)}`
+                                        ]
+                                    )
+                                ),
+                                m(`a.btn.btn-inline.btn-small.w-button[href='/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=${subscription.status}']`, 
+                                    "Refazer pagamento"
+                                )
+
+                            ] :  [
+                                m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                    m('span.fa.fa-exclamation-triangle'),
+                                    m.trust('&nbsp;'),
+                                    'Aguardando confirmação do pagamento'
+                                ]), (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
+                            ]
+                        ) :
                             (subscription.status === 'inactive' ? [
                                 (subscription.payment_status === 'pending'
                                     && subscription.boleto_url
