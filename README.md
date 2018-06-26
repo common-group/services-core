@@ -6,40 +6,25 @@ A set of mithril components to use accross [catarse](https://github.com/catarse/
 
 ## Development
 
-To start developing components to catarse.js you'll first have to globally install [gulp](http://gulpjs.com/), [bower](http://bower.io/) and [npm](https://www.npmjs.com/).
+Install project dependencies ```npm install```.
 
-Then, install all the project package dependencies by calling ```npm install && bower install```.
+Catarse.js uses webpack as build tool. To start developing just run `gulp` and gulp will start watching your source files for changes and running build when those happen.
 
-Application build dependencies are described on `bower.json`, while dev dependencies are described on `package.json`.
+To trigger a build, run:
+```npm run build```
 
-Catarse.js uses gulp as build tool. To start developing just run `gulp` and gulp will start watching your source files for changes and running build when those happen.
-
-To watch source files without running through testing tasks, run:
-```gulp --notest```
-
-To watch source files without running testing or linting tasks, run:
-```gulp --q```
-
-To trigger a build cycle without watching files, run:
-```gulp build```
+If you are deploying the built code to production, then run:
+```npm run build:prod```
 
 To link catarse.js with catarse, run:
-```bower link```
+```npm link```
 Then, in you catarse repository, run:
-```bower link catarse.js```
+```npm link catarse.js```
 
-## Flowtype && ES6
-
-Currently we are moving our code to ES6 + Flowtype. All new components should be written on this new paradigm. For doing such, we deeply recommend a clear understand of both [Flow](http://flowtype.org/), ES6 and [Babel](https://babeljs.io/) - our ES6 transpile tool.
-
-## Troubleshooting
-
-If you can't run `gulp` try to install it with `npm install -g gulp`
 
 ## Project Architecture
 
-Gulp compiles the code found inside the /src directory and outputs into the /dist folder as catarse.js and catarse.min.js
-
+Webpack compiles the code found inside the /src directory and outputs into the /dist folder as catarse.js
 There are 3 different folders: /c, /root and /vm.
 
 /c
@@ -57,7 +42,15 @@ View-models. Component controllers ideally should not deal with nothing more the
 
 /c.js
 
-The entry point we use to expose the root components to the application window.c
+The entry point we use to expose the root components to the application
+
+/app.js
+
+Where we do the application bootstraping
+
+/api.js
+
+The module that handles setup for all the different apis we currently communicate with
 
 /h.js
 
