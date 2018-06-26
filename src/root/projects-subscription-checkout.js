@@ -71,7 +71,7 @@ const projectsSubscriptionCheckout = {
         }
 
         if (rewardIdParam) {
-            rewardVM.fetchRewards(h.getCurrentProject().project_id).then(() => {
+            rewardVM.fetchRewards(projectVM.getCurrentProject().project_id).then(() => {
                 reward(_.findWhere(rewardVM.rewards(), {id: Number(rewardIdParam)}));
                 rewardVM.selectedReward(reward());
                 m.redraw();
