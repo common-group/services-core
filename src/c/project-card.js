@@ -1,5 +1,4 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
@@ -112,7 +111,7 @@ const projectCard = {
                             },
                             project.project_name || project.name)
                         ]),
-                        m(ctrl.css().author, `${I18n.t('by', I18nScope())} ${projectOwnerName}`),
+                        m(ctrl.css().author, `${window.I18n.t('by', I18nScope())} ${projectOwnerName}`),
                         m(ctrl.css().headline, [
                             m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, args.ref)
@@ -133,7 +132,7 @@ const projectCard = {
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
                                 m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
-                                m('.fontsize-smallest.lineheight-tightest', I18n.t(`pledged.${project.mode}`, I18nScope()))
+                                m('.fontsize-smallest.lineheight-tightest', window.I18n.t(`pledged.${project.mode}`, I18nScope()))
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', ctrl.cardCopy(project)),
                         ])

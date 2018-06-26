@@ -1,6 +1,5 @@
 import m from 'mithril';
 import moment from 'moment';
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -44,12 +43,12 @@ const CheckEmail = {
 
             return ((user && !userCreatedRecently && !user.email_active && !ctrl.hideAlert()) ? m('.card-alert.section.u-text-center', { style: (args.menuTransparency ? { 'padding-top': '100px' } : {}) }, [
                 m('.w-container', (ctrl.confirmedEmail() ? [
-                    m('.fontsize-large.fontweight-semibold', I18n.t('confirmed_title', I18nScope())),
-                    m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n.t('confirmed_sub', I18nScope())),
+                    m('.fontsize-large.fontweight-semibold', window.I18n.t('confirmed_title', I18nScope())),
+                    m('.fontsize-large.fontweight-semibold.u-marginbottom-20', window.I18n.t('confirmed_sub', I18nScope())),
                 ] : [
-                    m('.fontsize-large.fontweight-semibold', _.isNull(user.name) ? 'Olá' : I18n.t('hello', I18nScope({ name: user.name }))),
-                    m('.fontsize-large.fontweight-semibold.u-marginbottom-20', I18n.t('hello_sub', I18nScope())),
-                    m('.fontsize-base.u-marginbottom-10', I18n.t('hello_email', I18nScope({ email: user.email }))),
+                    m('.fontsize-large.fontweight-semibold', _.isNull(user.name) ? 'Olá' : window.I18n.t('hello', I18nScope({ name: user.name }))),
+                    m('.fontsize-large.fontweight-semibold.u-marginbottom-20', window.I18n.t('hello_sub', I18nScope())),
+                    m('.fontsize-base.u-marginbottom-10', window.I18n.t('hello_email', I18nScope({ email: user.email }))),
                     m('.w-row', [
                         m('.w-col.w-col-3'),
                         m('.w-col.w-col-3', [

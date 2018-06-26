@@ -1,7 +1,6 @@
 import m from 'mithril';
 import {catarse} from '../api'
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import tooltip from '../c/tooltip';
@@ -68,9 +67,9 @@ const projectInsights = {
         lContributionsPerLocation.load().then(buildPerLocationTable);
 
         const contributionsPerRefTable = [[
-            I18n.t('ref_table.header.origin', I18nScope()),
-            I18n.t('ref_table.header.contributions', I18nScope()),
-            I18n.t('ref_table.header.amount', I18nScope())
+            window.I18n.t('ref_table.header.origin', I18nScope()),
+            window.I18n.t('ref_table.header.contributions', I18nScope()),
+            window.I18n.t('ref_table.header.amount', I18nScope())
         ]];
         const buildPerRefTable = contributions => (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
                 // Test if the string matches a word starting with ctrse_ and followed by any non-digit group of characters
@@ -85,7 +84,7 @@ const projectInsights = {
                 contribution.referral_link = test[0].substr(-1) === '_' ? test[0].substr(0, test[0].length - 1) : test[0];
             }
 
-            column.push(contribution.referral_link ? I18n.t(`referral.${contribution.referral_link}`, I18nScope({ defaultValue: contribution.referral_link })) : I18n.t('referral.others', I18nScope()));
+            column.push(contribution.referral_link ? window.I18n.t(`referral.${contribution.referral_link}`, I18nScope({ defaultValue: contribution.referral_link })) : window.I18n.t('referral.others', I18nScope()));
             column.push(contribution.total);
             column.push([contribution.total_amount, [
                 m(`input[type="hidden"][value="${contribution.total_contributed}"`),
@@ -119,7 +118,7 @@ const projectInsights = {
                 el,
                 text: [
                     'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
-                    m(`a[href="${I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
+                    m(`a[href="${window.I18n.t('ref_table.help_url', I18nScope())}"][target='_blank']`, 'aqui.')
                 ],
                 width: 380
             });
@@ -141,19 +140,19 @@ const projectInsights = {
             m('.w-container', (project.state === 'successful' && !project.has_cancelation_request) ? m.component(projectSuccessfulOnboard, { project: m.prop(project) }) : [
                 m('.w-row.u-marginbottom-40', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', I18n.t('campaign_title', I18nScope())),
+                        m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', window.I18n.t('campaign_title', I18nScope())),
 
                         (project.state === 'online' && !project.has_cancelation_request ? m.component(projectInviteCard, { project }) : ''),
                         (project.state === 'draft' && !project.has_cancelation_request ? m.component(adminProjectDetailsCard, {
                             resource: project
                         }) : ''),
                         m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`,
-                            project.has_cancelation_request ? m.trust(I18n.t('has_cancelation_request_explanation', I18nScope())) :
+                            project.has_cancelation_request ? m.trust(window.I18n.t('has_cancelation_request_explanation', I18nScope())) :
                             [
                                 project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? m('span', [
-                                    m.trust(I18n.t('finish_explanation', I18nScope())),
-                                    m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/213783503-tudo-sobre-Prazo-da-campanha"][target="_blank"]', I18n.t('know_more', I18nScope()))
-                                ]) : m.trust(I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))
+                                    m.trust(window.I18n.t('finish_explanation', I18nScope())),
+                                    m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/213783503-tudo-sobre-Prazo-da-campanha"][target="_blank"]', window.I18n.t('know_more', I18nScope()))
+                                ]) : m.trust(window.I18n.t(`campaign.${project.mode}.${project.state}`, I18nScope({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))
                             ]
                         )
                     ])
@@ -174,13 +173,13 @@ const projectInsights = {
                                 }
                             }, [
                                 m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
-                                    I18n.t('visitors_per_day_label', I18nScope())
+                                    window.I18n.t('visitors_per_day_label', I18nScope())
                                 ]),
                                 !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
                                     collection: ctrl.visitorsPerDay,
                                     dataKey: 'visitors',
                                     xAxis: item => h.momentify(item.day),
-                                    emptyState: I18n.t('visitors_per_day_empty', I18nScope())
+                                    emptyState: window.I18n.t('visitors_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -192,10 +191,10 @@ const projectInsights = {
                             }, [
                                 !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
                                     collection: ctrl.contributionsPerDay,
-                                    label: I18n.t('amount_per_day_label', I18nScope()),
+                                    label: window.I18n.t('amount_per_day_label', I18nScope()),
                                     dataKey: 'total_amount',
                                     xAxis: item => h.momentify(item.paid_at),
-                                    emptyState: I18n.t('amount_per_day_empty', I18nScope())
+                                    emptyState: window.I18n.t('amount_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -207,10 +206,10 @@ const projectInsights = {
                             }, [
                                 !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
                                     collection: ctrl.contributionsPerDay,
-                                    label: I18n.t('contributions_per_day_label', I18nScope()),
+                                    label: window.I18n.t('contributions_per_day_label', I18nScope()),
                                     dataKey: 'total',
                                     xAxis: item => h.momentify(item.paid_at),
-                                    emptyState: I18n.t('contributions_per_day_empty', I18nScope())
+                                    emptyState: window.I18n.t('contributions_per_day_empty', I18nScope())
                                 }) : h.loader()
                             ]),
                         ]),
@@ -218,7 +217,7 @@ const projectInsights = {
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
-                                        I18n.t('ref_origin_title', I18nScope()),
+                                        window.I18n.t('ref_origin_title', I18nScope()),
                                         ' ',
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
@@ -228,7 +227,7 @@ const projectInsights = {
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
                                             m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
                                                 m('.w-col.w-col-8.w-col-push-2',
-                                                    m('p.fontsize-base', I18n.t('contributions_per_ref_empty', I18nScope()))
+                                                    m('p.fontsize-base', window.I18n.t('contributions_per_ref_empty', I18nScope()))
                                                 )
                                             )
                                         ) : h.loader()
@@ -238,14 +237,14 @@ const projectInsights = {
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
-                                    m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', I18n.t('location_origin_title', I18nScope())),
+                                    m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', window.I18n.t('location_origin_title', I18nScope())),
                                     !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
                                         table: ctrl.contributionsPerLocationTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
                                             m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
                                                 m('.w-col.w-col-8.w-col-push-2',
-                                                    m('p.fontsize-base', I18n.t('contributions_per_location_empty', I18nScope()))
+                                                    m('p.fontsize-base', window.I18n.t('contributions_per_location_empty', I18nScope()))
                                                 )
                                             )
                                         ) : h.loader()

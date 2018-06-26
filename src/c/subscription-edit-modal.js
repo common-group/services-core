@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');

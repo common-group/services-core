@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import facebookButton from '../c/facebook-button';
 import projectShareBox from '../c/project-share-box';
@@ -79,12 +78,12 @@ const ProjectsSubscriptionThankYou = {
                             m('#thank-you.u-text-center', [
                                 m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
                                   ctrl.isEdit
-                                    ? I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
-                                    : I18n.t('thank_you.thank_you', I18nScope())
+                                    ? window.I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
+                                    : window.I18n.t('thank_you.thank_you', I18nScope())
                                 ),
                                 m('.fontsize-base.u-marginbottom-40',
                                     m.trust(
-                                        I18n.t(
+                                        window.I18n.t(
                                             ctrl.isEdit
                                                 ? 'thank_you.subscription_edit.text_html'
                                                 : ctrl.paymentMethod === 'credit_card'
@@ -141,7 +140,7 @@ const ProjectsSubscriptionThankYou = {
             ctrl.error() 
                 ? m('.w-row',
                     m('.w-col.w-col-8.w-col-offset-2',
-                        m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', I18n.translate('thank_you.thank_you_error', I18nScope()))
+                        m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', window.I18n.translate('thank_you.thank_you_error', I18nScope()))
                     )
                 )
                 : ctrl.paymentData().boleto_url
@@ -158,7 +157,7 @@ const ProjectsSubscriptionThankYou = {
                     ) : m('.section.u-marginbottom-40',
                         m('.w-container', [
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
-                                I18n.t('thank_you.project_recommendations', I18nScope())
+                                window.I18n.t('thank_you.project_recommendations', I18nScope())
                             ),
                             m.component(projectRow, {
                                 collection: ctrl.recommendedProjects,

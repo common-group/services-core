@@ -1,5 +1,7 @@
 import _ from 'underscore';
 
+const { CatarseAnalytics } = window;
+
 const defaultFormat = /(\d{1,4})/g;
 
 const slice = [].slice,

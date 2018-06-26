@@ -10,7 +10,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import {catarse} from '../api'
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import userVM from '../vms/user-vm';
@@ -120,43 +119,43 @@ const userBalanceRequestModelContent = {
 
         return m('div', [
             m('.modal-dialog-header', [
-                m('.fontsize-large.u-text-center', I18n.t('withdraw', I18nScope()))
+                m('.fontsize-large.u-text-center', window.I18n.t('withdraw', I18nScope()))
             ]),
             (ctrl.displayConfirmation() ? m('.modal-dialog-content.u-text-center', (
                 ctrl.loadBankA() ? h.loader() : _.map(ctrl.bankAccounts(), item => [
                  m('.fontsize-base.u-marginbottom-20', [
-                     m('span.fontweight-semibold', `${I18n.t('value_text', I18nScope())}:`),
+                     m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
                      m.trust('&nbsp;'),
                      m('span.text-success',
-                       I18n.t('shared.currency', {amount: h.formatNumber(balance.amount, 2, 3)})
+                       window.I18n.t('shared.currency', {amount: h.formatNumber(balance.amount, 2, 3)})
                       )
                  ]),
                  m('.fontsize-base.u-marginbottom-10', [
-                     m('span', { style: { 'font-weight': ' 600' } }, I18n.t('bank.account', I18nScope()))
+                     m('span', { style: { 'font-weight': ' 600' } }, window.I18n.t('bank.account', I18nScope()))
                  ]),
                  m('.fontsize-small.u-marginbottom-10', [
                      m('div', [
-                         m('span.fontcolor-secondary', I18n.t('bank.name', I18nScope())),
+                         m('span.fontcolor-secondary', window.I18n.t('bank.name', I18nScope())),
                          m.trust('&nbsp;'),
                          item.owner_name
                      ]),
                      m('div', [
-                         m('span.fontcolor-secondary', I18n.t('bank.cpf_cnpj', I18nScope())),
+                         m('span.fontcolor-secondary', window.I18n.t('bank.cpf_cnpj', I18nScope())),
                          m.trust('&nbsp;'),
                          item.owner_document
                      ]),
                      m('div', [
-                         m('span.fontcolor-secondary', I18n.t('bank.bank_name', I18nScope())),
+                         m('span.fontcolor-secondary', window.I18n.t('bank.bank_name', I18nScope())),
                          m.trust('&nbsp;'),
                          item.bank_name
                      ]),
                      m('div', [
-                         m('span.fontcolor-secondary', I18n.t('bank.agency', I18nScope())),
+                         m('span.fontcolor-secondary', window.I18n.t('bank.agency', I18nScope())),
                          m.trust('&nbsp;'),
                          `${item.agency}-${item.agency_digit}`
                      ]),
                      m('div', [
-                         m('span.fontcolor-secondary', I18n.t('bank.account', I18nScope())),
+                         m('span.fontcolor-secondary', window.I18n.t('bank.account', I18nScope())),
                          m.trust('&nbsp;'),
                          `${item.account}-${item.account_digit}`
                      ])
@@ -165,13 +164,13 @@ const userBalanceRequestModelContent = {
             )) : (
                 ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
                  m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
-                 m('p.fontsize-large', I18n.t('success_message', I18nScope()))
+                 m('p.fontsize-large', window.I18n.t('success_message', I18nScope()))
              ]) : m('.modal-dialog-content', [
                  m('.fontsize-base.u-marginbottom-20', [
-                     m('span.fontweight-semibold', `${I18n.t('value_text', I18nScope())}:`),
+                     m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
                      m.trust('&nbsp;'),
                      m('span.text-success',
-                       I18n.t('shared.currency', {amount: h.formatNumber(balance.amount, 2, 3)})
+                       window.I18n.t('shared.currency', {amount: h.formatNumber(balance.amount, 2, 3)})
                       )
                  ]),
                  m(UserOwnerBox, {user: args.user, hideAvatar: true}),
@@ -186,7 +185,7 @@ const userBalanceRequestModelContent = {
                          : [
                              m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]',
                                { onclick: () => ctrl.requestFund() },
-                               I18n.t('shared.confirm_text')),
+                               window.I18n.t('shared.confirm_text')),
                          ])
                     ),
                     m('.w-col.w-col-5',
@@ -195,7 +194,7 @@ const userBalanceRequestModelContent = {
                        : [
                            m('a.btn.btn-medium.btn-terciary.w-button', {
                                onclick: ctrl.displayConfirmation.toggle
-                           }, I18n.t('shared.back_text'))
+                           }, window.I18n.t('shared.back_text'))
                        ])
                      ),
                     m('.w-col.w-col-1')
@@ -210,7 +209,7 @@ const userBalanceRequestModelContent = {
                           h.loader()
                           : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]',
                               { onclick: () => ctrl.updateUserData(args.user.id) },
-                              I18n.t('request_fund', I18nScope())))
+                              window.I18n.t('request_fund', I18nScope())))
                      ]),
                      m('.w-col.w-col-3')
                  ])

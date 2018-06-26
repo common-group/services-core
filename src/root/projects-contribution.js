@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
 import projectVM from '../vms/project-vm';
@@ -77,10 +76,10 @@ const projectsContribution = {
                     ),
                          m('.w-col.w-col-4', [
                              m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [
-                                 m('.fontsize-small.fontweight-semibold', I18n.t('contribution_warning.title', I18nScope())),
-                                 m('.fontsize-smaller.u-marginbottom-10', I18n.t('contribution_warning.subtitle', I18nScope())),
-                                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', I18n.t('contribution_warning.info', I18nScope())),
-                                 m(`a.alt-link.fontsize-smallest[target="__blank"][href="${I18n.t('contribution_warning.link', I18nScope())}"]`, I18n.t('contribution_warning.link_label', I18nScope()))
+                                 m('.fontsize-small.fontweight-semibold', window.I18n.t('contribution_warning.title', I18nScope())),
+                                 m('.fontsize-smaller.u-marginbottom-10', window.I18n.t('contribution_warning.subtitle', I18nScope())),
+                                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', window.I18n.t('contribution_warning.info', I18nScope())),
+                                 m(`a.alt-link.fontsize-smallest[target="__blank"][href="${window.I18n.t('contribution_warning.link', I18nScope())}"]`, window.I18n.t('contribution_warning.link_label', I18nScope()))
                              ]),
                              m.component(faqBox, {
                                  mode: project().mode,

@@ -2,8 +2,9 @@ import m from 'mithril';
 import {
     commonPayment
 } from '../api';
-import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
+
+const { replaceDiacritics } = window;
 
 const vm = commonPayment.filtersVM({
         status: 'eq',

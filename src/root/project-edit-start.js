@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';

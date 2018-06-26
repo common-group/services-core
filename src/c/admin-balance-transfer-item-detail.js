@@ -6,7 +6,6 @@ import userVM from '../vms/user-vm';
 import models from '../models';
 import adminUserBalanceTransactionsList from './admin-user-balance-transactions-list';
 import popNotification from './pop-notification';
-import I18n from 'i18n-js';
 
 const I18nScope = _.partial(h.i18nScope, 'admin.balance_transfers');
 
@@ -38,14 +37,14 @@ const adminBalanceTransferItemDetail = {
                 }).then((data) => {
                     showPopNotification(true);
                     popNotificationAttributes({
-                        message: I18n.t('admin_notes.success_update', I18nScope()),
+                        message: window.I18n.t('admin_notes.success_update', I18nScope()),
                         toggleOpt: showPopNotification
                     });
                     loadingNotes(false);
                 }, (err) => {
                     showPopNotification(true);
                     popNotificationAttributes({
-                        message: I18n.t('admin_notes.failed_update', I18nScope()),
+                        message: window.I18n.t('admin_notes.failed_update', I18nScope()),
                         error: true,
                         toggleOpt: showPopNotification
                     });
@@ -116,7 +115,7 @@ const adminBalanceTransferItemDetail = {
                         m('.u-text-center',
                             m('button.btn.btn-terciary', {
                                 onclick: ctrl.submitNotes
-                            }, I18n.t('shared.save_text'))
+                            }, window.I18n.t('shared.save_text'))
                         ),
                         (ctrl.showPopNotification() ? m(popNotification, ctrl.popNotificationAttributes()) : '')
 

@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import { catarse, commonProject } from '../api';
 import models from '../models';
 import h from '../h';
@@ -108,7 +107,7 @@ const projectContributions = {
                                     projectVM.isSubscription(args.project()) ? stats.total_subscriptions : stats.total
                                 ),
                                 m('.fontsize-large',
-                                    I18n.t(`people_back.${args.project().mode}`, I18nScope())
+                                    window.I18n.t(`people_back.${args.project().mode}`, I18nScope())
                                 )
                             ]),
                             m('.w-col.w-col-6',
@@ -116,25 +115,25 @@ const projectContributions = {
                                     m('.w-row', [
                                         m('.u-marginbottom-20.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                             m('.fontweight-semibold.u-marginbottom-10',
-                                                I18n.t(`new_backers.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`new_backers.${args.project().mode}`, I18nScope())
                                             ),
                                             m('.fontsize-largest.u-marginbottom-10',
                                                 `${Math.floor(stats.new_percent)}%`
                                             ),
                                             m('.fontsize-smallest',
-                                                I18n.t(`new_backers_explanation.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`new_backers_explanation.${args.project().mode}`, I18nScope())
                                             )
                                         ]),
                                         m('.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                             m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
                                             m('.fontweight-semibold.u-marginbottom-10',
-                                                I18n.t(`recurring_backers.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`recurring_backers.${args.project().mode}`, I18nScope())
                                             ),
                                             m('.fontsize-largest.u-marginbottom-10',
                                                 `${Math.ceil(stats.returning_percent)}%`
                                             ),
                                             m('.fontsize-smallest',
-                                                I18n.t(`recurring_backers_explanation.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`recurring_backers_explanation.${args.project().mode}`, I18nScope())
                                             )
                                         ])
                                     ])
@@ -145,7 +144,7 @@ const projectContributions = {
                 ),
             m('.divider.w-section'),
             m('.section.w-section', m('.w-container', [
-                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', I18n.t(`backers.${args.project().mode}`, I18nScope())),
+                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', window.I18n.t(`backers.${args.project().mode}`, I18nScope())),
                 m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, contribution => m('.project-contribution-item.w-col.w-col-4', [
                     m(projectContributorCard, { project: args.project, contribution, isSubscription: projectVM.isSubscription(args.project()) })
                 ]))))),

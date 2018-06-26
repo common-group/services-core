@@ -1,5 +1,5 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
+import _ from 'underscore';
 import projectVM from '../vms/project-vm';
 import addressVM from '../vms/address-vm';
 import models from '../models';
@@ -61,9 +61,9 @@ const userPayload = (customer, address) => ({
 });
 
 const displayError = (fields) => (data) => {
-    const errorMsg = data.message || I18n.t('submission.encryption_error', I18nScope());
+    const errorMsg = data.message || window.I18n.t('submission.encryption_error', I18nScope());
     fields.isLoading(false);
-    fields.submissionError(I18n.t('submission.error',I18nScope({ message: errorMsg })));
+    fields.submissionError(window.I18n.t('submission.error',I18nScope({ message: errorMsg })));
     m.redraw();
 };
 

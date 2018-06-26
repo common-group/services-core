@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import {catarse} from '../api';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import inlineError from '../c/inline-error';
@@ -242,10 +241,10 @@ const addressForm = {
                                 m('.w-col.w-col-6', [
                                     m('.field-label', [
                                         m('span.fontweight-semibold',
-                                            `${I18n.t('address_zip_code', I18nScope())} *`
+                                            `${window.I18n.t('address_zip_code', I18nScope())} *`
                                         ),
                                         m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']",
-                                            I18n.t('zipcode_unknown', I18nScope())
+                                            window.I18n.t('zipcode_unknown', I18nScope())
                                         )
                                     ]),
                                     m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
@@ -264,7 +263,7 @@ const addressForm = {
                             ]),
                             m('.w-row', [
                                 m('.field-label.fontweight-semibold',
-                                    `${I18n.t('address_street', I18nScope())} *`
+                                    `${window.I18n.t('address_street', I18nScope())} *`
                                 ),
                                 m("input.positive.text-field.w-input[maxlength='256'][required='required'][type='text']", {
                                     class: errors.addressStreet() ? 'error' : '',
@@ -278,7 +277,7 @@ const addressForm = {
                             m('.w-row', [
                                 m('.w-sub-col.w-col.w-col-4', [
                                     m('.field-label.fontweight-semibold',
-                                        `${I18n.t('address_number', I18nScope())} *`
+                                        `${window.I18n.t('address_number', I18nScope())} *`
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressNumber() ? 'error' : '',
@@ -291,7 +290,7 @@ const addressForm = {
                                 ]),
                                 m('.w-sub-col.w-col.w-col-4', [
                                     m('.field-label.fontweight-semibold',
-                                        I18n.t('address_complement', I18nScope())
+                                        window.I18n.t('address_complement', I18nScope())
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         value: ctrl.fields.addressComplement(),
@@ -300,7 +299,7 @@ const addressForm = {
                                 ]),
                                 m('.w-col.w-col-4', [
                                     m('.field-label.fontweight-semibold',
-                                        `${I18n.t('address_neighbourhood', I18nScope())} *`
+                                        `${window.I18n.t('address_neighbourhood', I18nScope())} *`
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressNeighbourhood() ? 'error' : '',
@@ -315,7 +314,7 @@ const addressForm = {
                             m('.w-row', [
                                 m('.w-sub-col.w-col.w-col-6', [
                                     m('.field-label.fontweight-semibold',
-                                        `${I18n.t('address_city', I18nScope())} *`
+                                        `${window.I18n.t('address_city', I18nScope())} *`
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressCity() ? 'error' : '',
@@ -328,7 +327,7 @@ const addressForm = {
                                 ]),
                                 m('.w-sub-col.w-col.w-col-2', [
                                     m('.field-label.fontweight-semibold',
-                                        `${I18n.t('address_state', I18nScope())} *`
+                                        `${window.I18n.t('address_state', I18nScope())} *`
                                     ),
                                     m('select#address-state.positive.text-field.w-select', {
                                         class: errors.stateID() ? 'error' : '',
@@ -349,7 +348,7 @@ const addressForm = {
                                 ]),
                                 m('.w-col.w-col-4', [
                                     m('.field-label.fontweight-semibold',
-                                        `${I18n.t('phone_number', I18nScope())} *`
+                                        `${window.I18n.t('phone_number', I18nScope())} *`
                                     ),
                                     m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                         class: errors.phoneNumber() ? 'error' : '',

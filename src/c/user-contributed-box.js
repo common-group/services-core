@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import ownerMessageContent from '../c/owner-message-content';
@@ -64,7 +63,7 @@ const userContributedBox = {
                                 ctrl.displayModal.toggle();
                             }
                         },
-                            I18n.t('contact_author', contributionScope())
+                            window.I18n.t('contact_author', contributionScope())
                         )
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
@@ -74,14 +73,14 @@ const userContributedBox = {
                         m('.w-embed',
                             m('div', [
                                 m('.w-hidden-main.w-hidden-medium.fontsize-smallest.fontweight-semibold',
-                                    I18n.t('status', contributionScope())
+                                    window.I18n.t('status', contributionScope())
                                 ),
                                 m('.fontsize-smaller.fontweight-semibold', [
                                     m('.lineheight-tighter'),
                                     m(`span.fa.fa-circle.fontsize-smallest.${contribution.state === 'paid' ? 'text-success' : contribution.state === 'pending' ? 'text-waiting' : 'text-error'}`,
                                         m.trust('&nbsp;')
                                     ),
-                                    I18n.t(`${contribution.payment_method.toLowerCase()}.${contribution.state}`, I18nScope({
+                                    window.I18n.t(`${contribution.payment_method.toLowerCase()}.${contribution.state}`, I18nScope({
                                         date: h.momentify(contribution[`${contribution.state}_at`])
                                     }))
                                 ]),
@@ -91,24 +90,24 @@ const userContributedBox = {
                                 ),
                                 (contributionVM.canShowReceipt(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/receipt'][target='__blank']`,
-                                        I18n.t('show_receipt', contributionScope())
+                                        window.I18n.t('show_receipt', contributionScope())
                                     ) : ''),
 
                                 (contribution.gateway_data && contributionVM.canShowSlip(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='${contribution.gateway_data.boleto_url}'][target='__blank']`,
-                                        I18n.t('print_slip', contributionScope())
+                                        window.I18n.t('print_slip', contributionScope())
                                     ) : ''),
 
                                 (contribution.gateway_data && contributionVM.canGenerateSlip(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/second_slip'][target='__blank']`,
-                                        I18n.t('slip_copy', contributionScope())
+                                        window.I18n.t('slip_copy', contributionScope())
                                     ) : ''),
                                 m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                                     m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
                                         onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution)
                                     }),
                                     m('label.w-form-label',
-                                        I18n.t('anonymous', contributionScope())
+                                        window.I18n.t('anonymous', contributionScope())
                                     )
                                 ])
                             ])
@@ -119,16 +118,16 @@ const userContributedBox = {
                             contribution.reward_title
                         ), m('p.fontcolor-secondary.fontsize-smallest', m.trust(h.simpleFormat(
                             `${contribution.reward_description.substring(0, 90)} (...)`
-                        )))] : ` ${I18n.t('no_reward', contributionScope())} `),
+                        )))] : ` ${window.I18n.t('no_reward', contributionScope())} `),
                         contribution.deliver_at ? m('.fontsize-smallest', [
                             m('span.fontweight-semibold',
-                                `${I18n.t('delivery_estimate', contributionScope())} `
+                                `${window.I18n.t('delivery_estimate', contributionScope())} `
                             ),
                             h.momentify(contribution.deliver_at, 'MMMM/YYYY')
                         ]) : '',
                         contributionVM.canBeDelivered(contribution) ? m('.fontsize-smallest', [
                             m('span.fontweight-semibold',
-                                I18n.t('delivery_status', contributionScope())
+                                window.I18n.t('delivery_status', contributionScope())
                             ),
                             m.trust('&nbsp;'),
                             h.contributionStatusBadge(contribution)
@@ -167,7 +166,7 @@ const userContributedBox = {
                         ]) :
                         m('.u-text-center.w-col.w-col-2',
                             m(`a.btn.w-button[href='/contributions/${contribution.contribution_id}/surveys/${contribution.survey.survey_id}']`,
-                                I18n.t('answer_survey', contributionScope())
+                                window.I18n.t('answer_survey', contributionScope())
                             )
                         )
                     ] : '')

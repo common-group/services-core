@@ -1,7 +1,8 @@
 import m from 'mithril';
-import replaceDiacritics from 'replaceDiacritics';
 import h from '../h';
 import {catarse} from '../api';
+
+const { replaceDiacritics } = window;
 
 const vm = catarse.filtersVM({
         full_text_index: '@@',

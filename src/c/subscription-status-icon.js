@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import I18n from 'i18n-js';
 import h from '../h';
 import { commonPayment } from '../api';
 import models from '../models';
@@ -54,7 +53,7 @@ const subscriptionStatusIcon = {
                 m(`span.fa.${statusClass[subscription.status] || 'Erro'}`,
                   ' '
                 ),
-                I18n.t(`status.${subscription.status}`, I18nScope())
+                window.I18n.t(`status.${subscription.status}`, I18nScope())
             ]),
 	          shouldShowTransitionDate ? m('.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
                                                                          `em ${moment(subscription.transition_date).format('DD/MM/YYYY')}`

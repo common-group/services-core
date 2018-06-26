@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import {catarse} from '../api';
 import models from '../models';
 import h from '../h';
@@ -70,7 +69,7 @@ const projectBasicsEdit = {
             tagOptions([]);
 
             if (selectedTags().length >= 5) {
-                vm.e('public_tags', I18n.t('tags_max_error', I18nScope()));
+                vm.e('public_tags', window.I18n.t('tags_max_error', I18nScope()));
                 vm.e.inlineError('public_tags', true);
                 m.redraw();
 
@@ -153,11 +152,11 @@ const projectBasicsEdit = {
 
         return m('#basics-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: I18n.t('shared.successful_update'),
+                message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: I18n.t('shared.failed_update'),
+                message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true
             }) : ''),
@@ -170,7 +169,7 @@ const projectBasicsEdit = {
                       m('.w-row', [
                           m('.w-col.w-col-10.w-col-push-1', [
                               m(inputCard, {
-                                  label: I18n.t('tracker_snippet_html', I18nScope()),
+                                  label: window.I18n.t('tracker_snippet_html', I18nScope()),
                                   children: [
                                       m('textarea.text.optional.w-input.text-field.positive.medium', {
                                           value: vm.fields.tracker_snippet_html(),
@@ -179,7 +178,7 @@ const projectBasicsEdit = {
                                   ]
                               }),
                               m(inputCard, {
-                                  label: I18n.t('user_id', I18nScope()),
+                                  label: window.I18n.t('user_id', I18nScope()),
                                   children: [
                                       m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                                           value: vm.fields.user_id(),
@@ -188,8 +187,8 @@ const projectBasicsEdit = {
                                   ]
                               }),
                               m(inputCard, {
-                                  label: I18n.t('admin_tags', I18nScope()),
-                                  label_hint: I18n.t('admin_tags_hint', I18nScope()),
+                                  label: window.I18n.t('admin_tags', I18nScope()),
+                                  label_hint: window.I18n.t('admin_tags_hint', I18nScope()),
                                   children: [
                                       m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
                                           value: vm.fields.admin_tags(),
@@ -198,7 +197,7 @@ const projectBasicsEdit = {
                                   ]
                               }),
                               m(inputCard, {
-                                  label: I18n.t('service_fee', I18nScope()),
+                                  label: window.I18n.t('service_fee', I18nScope()),
                                   children: [
                                       m('input.string.optional.w-input.text-field.positive.medium[type="number"]', {
                                           value: vm.fields.service_fee(),
@@ -212,8 +211,8 @@ const projectBasicsEdit = {
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
                             m(inputCard, {
-                                label: I18n.t('name', I18nScope()),
-                                label_hint: I18n.t('name_hint', I18nScope()),
+                                label: window.I18n.t('name', I18nScope()),
+                                label_hint: window.I18n.t('name_hint', I18nScope()),
                                 children: [
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"][maxlength="50"]', {
                                         value: vm.fields.name(),
@@ -224,8 +223,8 @@ const projectBasicsEdit = {
                                 ]
                             }),
                             m(inputCard, {
-                                label: I18n.t('tags', I18nScope()),
-                                label_hint: I18n.t('tags_hint', I18nScope()),
+                                label: window.I18n.t('tags', I18nScope()),
+                                label_hint: window.I18n.t('tags_hint', I18nScope()),
                                 onclick: () => ctrl.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
@@ -255,8 +254,8 @@ const projectBasicsEdit = {
                                 ]
                             }),
                             m(inputCard, {
-                                label: I18n.t('permalink', I18nScope()),
-                                label_hint: I18n.t('permalink_hint', I18nScope()),
+                                label: window.I18n.t('permalink', I18nScope()),
+                                label_hint: window.I18n.t('permalink_hint', I18nScope()),
                                 children: [
                                     m('.w-row', [
                                         m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', {
@@ -275,8 +274,8 @@ const projectBasicsEdit = {
                                 ]
                             }),
                             m(inputCard, {
-                                label: I18n.t('category', I18nScope()),
-                                label_hint: I18n.t('category_hint', I18nScope()),
+                                label: window.I18n.t('category', I18nScope()),
+                                label_hint: window.I18n.t('category_hint', I18nScope()),
                                 children: [
                                     m('select.required.w-input.text-field.w-select.positive.medium', {
                                         value: vm.fields.category_id(),
@@ -287,8 +286,8 @@ const projectBasicsEdit = {
                                 ]
                             }),
                             m(inputCard, {
-                                label: I18n.t('city', I18nScope()),
-                                label_hint: I18n.t('city_hint', I18nScope()),
+                                label: window.I18n.t('city', I18nScope()),
+                                label_hint: window.I18n.t('city_hint', I18nScope()),
                                 children: [
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.city_name(),

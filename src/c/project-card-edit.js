@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import I18n from 'i18n-js';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectCardVM from '../vms/project-card-vm';
 import popNotification from './pop-notification';
@@ -70,11 +69,11 @@ const projectCardEdit = {
         const vm = ctrl.vm;
         return m('#card-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: I18n.t('shared.successful_update'),
+                message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: I18n.t('shared.failed_update'),
+                message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true
             }) : ''),
@@ -86,8 +85,8 @@ const projectCardEdit = {
                         m('.w-row', [
                             m('.w-col.w-col-12', [
                                 m(inputCard, {
-                                    label: m.trust(I18n.t('cover_image_label', I18nScope())),
-                                    label_hint: I18n.t('cover_image_hint', I18nScope()),
+                                    label: m.trust(window.I18n.t('cover_image_label', I18nScope())),
+                                    label_hint: window.I18n.t('cover_image_hint', I18nScope()),
                                     children: [
                                         m('span.hint',
                                             (vm.fields.cover_image()
@@ -107,8 +106,8 @@ const projectCardEdit = {
                         m('.w-row', [
                             m('.w-col.w-col-8', [
                                 m(inputCard, {
-                                    label: I18n.t('uploaded_image_label', I18nScope()),
-                                    label_hint: I18n.t('uploaded_image_hint', I18nScope()),
+                                    label: window.I18n.t('uploaded_image_label', I18nScope()),
+                                    label_hint: window.I18n.t('uploaded_image_hint', I18nScope()),
                                     children: [
                                         m('input.file.optional.w-input.text-field[id="project_uploaded_image"][name="project[uploaded_image]"][type="file"]', {
                                             class: vm.e.hasError('uploaded_image') ? 'error' : false,
@@ -118,8 +117,8 @@ const projectCardEdit = {
                                     ]
                                 }),
                                 m(inputCard, {
-                                    label: I18n.t('headline_label', I18nScope()),
-                                    label_hint: I18n.t('headline_label_hint', I18nScope()),
+                                    label: window.I18n.t('headline_label', I18nScope()),
+                                    label_hint: window.I18n.t('headline_label_hint', I18nScope()),
                                     children: [
                                         m('textarea.text.optional.w-input.text-field.positive[id="project_headline"][maxlength="100"][name="project[headline]"][rows="3"]', {
                                             onchange: m.withAttr('value', vm.fields.headline),

@@ -40,53 +40,53 @@ const projectEdit = {
                         '#video': projectVM.isSubscription(project)
                             ? null
                             : m(projectEditTab, {
-                                title: I18n.t('video_html', I18nScope()),
-                                subtitle: I18n.t('video_subtitle', I18nScope()),
+                                title: window.I18n.t('video_html', I18nScope()),
+                                subtitle: window.I18n.t('video_subtitle', I18nScope()),
                                 content: m(projectEditVideo, _.extend({}, c_opts))
                             }),
                         '#description': m(projectEditTab, {
-                            title: I18n.t('description', I18nScope()),
-                            subtitle: I18n.t('description_subtitle', I18nScope()),
+                            title: window.I18n.t('description', I18nScope()),
+                            subtitle: window.I18n.t('description_subtitle', I18nScope()),
                             content: m(projectEditDescription, _.extend({}, c_opts))
                         }),
                         '#budget': m(projectEditTab, {
-                            title: I18n.t('budget', I18nScope()),
-                            subtitle: I18n.t('budget_subtitle', I18nScope()),
+                            title: window.I18n.t('budget', I18nScope()),
+                            subtitle: window.I18n.t('budget_subtitle', I18nScope()),
                             content: m(projectEditBudget, _.extend({}, c_opts))
                         }),
                         '#reward': m(projectEditTab, {
-                            title: I18n.t('reward_html', I18nScope()),
-                            subtitle: I18n.t('reward_subtitle', I18nScope()),
+                            title: window.I18n.t('reward_html', I18nScope()),
+                            subtitle: window.I18n.t('reward_subtitle', I18nScope()),
                             content: m(projectEditReward, _.extend({}, c_opts))
                         }),
                         '#user_settings': m(projectEditTab, {
-                            title: I18n.t('user_settings', I18nScope()),
-                            subtitle: I18n.t('user_settings_subtitle', I18nScope()),
+                            title: window.I18n.t('user_settings', I18nScope()),
+                            subtitle: window.I18n.t('user_settings_subtitle', I18nScope()),
                             content: m(projectEditUserSettings, _.extend({}, c_opts))
                         }),
                         '#user_about': m(projectEditTab, {
-                            title: I18n.t('user_about', I18nScope()),
-                            subtitle: I18n.t('user_about_subtitle', I18nScope()),
+                            title: window.I18n.t('user_about', I18nScope()),
+                            subtitle: window.I18n.t('user_about_subtitle', I18nScope()),
                             content: m(projectEditUserAbout, _.extend({}, c_opts))
                         }),
                         '#welcome_message': m(projectEditTab, {
-                            title: I18n.t('welcome', I18nScope()),
-                            subtitle: I18n.t('welcome_subtitle', I18nScope()),
+                            title: window.I18n.t('welcome', I18nScope()),
+                            subtitle: window.I18n.t('welcome_subtitle', I18nScope()),
                             content: m(projectEditWelcomeMessage, _.extend({}, c_opts))
                         }),
                         '#card': m(projectEditTab, {
-                            title: I18n.t(`card_${project().mode}`, I18nScope()),
-                            subtitle: I18n.t(`card_subtitle_${project().mode}`, I18nScope()),
+                            title: window.I18n.t(`card_${project().mode}`, I18nScope()),
+                            subtitle: window.I18n.t(`card_subtitle_${project().mode}`, I18nScope()),
                             content: m(projectEditCard, _.extend({}, c_opts))
                         }),
                         '#goals': m(projectEditTab, {
-                            title: I18n.t('goals', I18nScope()),
+                            title: window.I18n.t('goals', I18nScope()),
                             subtitle: '',
                             content: m(projectEditGoals, _.extend({}, c_opts))
                         }),
                         '#announce_expiration': m(projectEditTab, {
-                            title: I18n.t('announce_expiration', I18nScope()),
-                            subtitle: I18n.t('announce_expiration_subtitle', I18nScope()),
+                            title: window.I18n.t('announce_expiration', I18nScope()),
+                            subtitle: window.I18n.t('announce_expiration_subtitle', I18nScope()),
                             content: m(projectAnnounceExpiration, _.extend({}, c_opts))
                         }),
                         '#preview': m(projectPreview, _.extend({}, c_opts)),
@@ -95,13 +95,13 @@ const projectEdit = {
 
                 if (!project().is_published || project().is_admin_role) {
                     tabs['#goal'] = m(projectEditTab, {
-                        title: I18n.t('goal', I18nScope()),
-                        subtitle: I18n.t('goal_subtitle', I18nScope()),
+                        title: window.I18n.t('goal', I18nScope()),
+                        subtitle: window.I18n.t('goal_subtitle', I18nScope()),
                         content: m(projectEditGoal, _.extend({}, c_opts))
                     });
                     tabs['#basics'] = m(projectEditTab, {
-                        title: I18n.t('basics', I18nScope()),
-                        subtitle: I18n.t('basics_subtitle', I18nScope()),
+                        title: window.I18n.t('basics', I18nScope()),
+                        subtitle: window.I18n.t('basics_subtitle', I18nScope()),
                         content: m(projectEditBasic, _.extend({}, c_opts))
                     });
                 }

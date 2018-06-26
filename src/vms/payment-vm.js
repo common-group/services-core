@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import I18n from 'i18n-js';
 import h from '../h';
 import usersVM from './user-vm';
 
@@ -85,14 +84,14 @@ const paymentVM = () => {
             ? { locale: 'en' }
             : { locale: 'pt' };
 
-    const faq = (mode = 'aon') => I18n.translations[I18n.currentLocale()].projects.faq[mode],
+    const faq = (mode = 'aon') => window.I18n.translations[window.I18n.currentLocale()].projects.faq[mode],
         currentUser = h.getUser() || {};
 
     const checkEmptyFields = checkedFields => _.map(checkedFields, (field) => {
         const val = fields[field]();
 
         if (!h.existy(val) || _.isEmpty(String(val).trim())) {
-            fields.errors().push({ field, message: I18n.t('validation.empty_field', scope()) });
+            fields.errors().push({ field, message: window.I18n.t('validation.empty_field', scope()) });
         }
     });
 
@@ -100,7 +99,7 @@ const paymentVM = () => {
         const isValid = h.validateEmail(fields.email());
 
         if (!isValid) {
-            fields.errors().push({ field: 'email', message: I18n.t('validation.email', scope()) });
+            fields.errors().push({ field: 'email', message: window.I18n.t('validation.email', scope()) });
         }
     };
 
@@ -158,7 +157,7 @@ const paymentVM = () => {
             dataType: 'json'
         }).then((data) => {
             if (data.payment_status == 'failed') {
-                error(I18n.t('submission.slip_submission', scope()));
+                error(window.I18n.t('submission.slip_submission', scope()));
             } else if (data.boleto_url) {
                 completed(true);
                 window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
@@ -166,7 +165,7 @@ const paymentVM = () => {
             loading(false);
             m.redraw();
         }).catch((err) => {
-            error(I18n.t('submission.slip_submission', scope()));
+            error(window.I18n.t('submission.slip_submission', scope()));
             loading(false);
             completed(false);
             m.redraw();
@@ -183,12 +182,12 @@ const paymentVM = () => {
                 })
                 .catch(() => {
                     loading(false);
-                    error(I18n.t('submission.slip_validation', scope()));
+                    error(window.I18n.t('submission.slip_validation', scope()));
                     m.redraw();
                 });
         } else {
             loading(false);
-            error(I18n.t('submission.slip_validation', scope()));
+            error(window.I18n.t('submission.slip_validation', scope()));
             m.redraw();
         }
     };
@@ -267,7 +266,7 @@ const paymentVM = () => {
             const card = setNewCreditCard();
             const errors = card.fieldErrors();
             if (_.keys(errors).length > 0) {
-                deferred.reject({ message: I18n.t('submission.card_invalid', scope()) });
+                deferred.reject({ message: window.I18n.t('submission.card_invalid', scope()) });
             } else {
                 card.generateHash((cardHash) => {
                     const data = {
@@ -285,7 +284,7 @@ const paymentVM = () => {
             if (!_.isEmpty(error.message)) {
                 deferred.reject(error);
             } else {
-                deferred.reject({ message: I18n.t('submission.encryption_error', scope()) });
+                deferred.reject({ message: window.I18n.t('submission.encryption_error', scope()) });
             }
         });
 
@@ -311,10 +310,10 @@ const paymentVM = () => {
 
     const creditCardPaymentSuccess = (deferred, project_id, contribution_id) => (data) => {
         if (data.payment_status === 'failed') {
-            const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+            const errorMsg = data.message || window.I18n.t('submission.payment_failed', scope());
 
             isLoading(false);
-            submissionError(I18n.t('submission.error', scope({ message: errorMsg })));
+            submissionError(window.I18n.t('submission.error', scope({ message: errorMsg })));
             m.redraw();
             deferred.reject();
         } else {
@@ -323,9 +322,9 @@ const paymentVM = () => {
     };
 
     const creditCardPaymentFail = deferred => (data) => {
-        const errorMsg = data.message || I18n.t('submission.payment_failed', scope());
+        const errorMsg = data.message || window.I18n.t('submission.payment_failed', scope());
         isLoading(false);
-        submissionError(I18n.t('submission.error', scope({ message: errorMsg })));
+        submissionError(window.I18n.t('submission.error', scope({ message: errorMsg })));
         m.redraw();
         deferred.reject();
     };

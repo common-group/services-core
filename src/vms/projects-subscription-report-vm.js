@@ -1,7 +1,8 @@
 import m from 'mithril';
 import { commonPayment } from '../api';
 import models from '../models';
-import replaceDiacritics from 'replaceDiacritics';
+
+const { replaceDiacritics } = window;
 
 const vm = commonPayment.filtersVM({
     status: 'in',

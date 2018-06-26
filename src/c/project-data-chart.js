@@ -10,7 +10,7 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import Chart from 'chartjs';
+import Chart from 'chart.js';
 
 const projectDataChart = {
     controller(args) {

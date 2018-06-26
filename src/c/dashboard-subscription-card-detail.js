@@ -3,7 +3,6 @@ import _ from 'underscore';
 import moment from 'moment';
 import UserFollowBtn from './user-follow-btn';
 import ownerMessageContent from './owner-message-content';
-import I18n from 'i18n-js';
 import modalBox from './modal-box';
 import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';

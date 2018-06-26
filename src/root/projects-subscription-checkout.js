@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import {catarse} from '../api'
 import models from '../models';
@@ -17,6 +16,8 @@ import nationalityRadio from '../c/nationality-radio';
 import paymentForm from '../c/payment-form';
 import inlineError from '../c/inline-error';
 import addressForm from '../c/address-form';
+
+const { CatarseAnalytics } = window;
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
@@ -175,17 +176,17 @@ const projectsSubscriptionCheckout = {
                         checked: ctrl.vm.fields.anonymous()
                     }),
                     m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
-                        I18n.t('fields.anonymous', ctrl.scope())
+                        window.I18n.t('fields.anonymous', ctrl.scope())
                     )
                 ]),
                 (ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
                     m('div', [
                         m('span.fontweight-bold', [
-                            I18n.t('anonymous_confirmation_title', ctrl.scope()),
+                            window.I18n.t('anonymous_confirmation_title', ctrl.scope()),
                             m('br')
                         ]),
                         m('br'),
-                        I18n.t('anonymous_confirmation', ctrl.scope())
+                        window.I18n.t('anonymous_confirmation', ctrl.scope())
                     ])
                 ) : '')
             ]);
@@ -196,7 +197,7 @@ const projectsSubscriptionCheckout = {
                 m('.w-col',
                     m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
                         m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                            I18n.t('selected_reward.value', ctrl.scope())
+                            window.I18n.t('selected_reward.value', ctrl.scope())
                         ),
                         m('.w-clearfix', [
                             m('.fontsize-larger.text-success.u-left',
@@ -209,7 +210,7 @@ const projectsSubscriptionCheckout = {
                         m('.divider.u-marginbottom-10.u-margintop-10'),
                         m('.back-payment-info-reward', [
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                I18n.t('selected_reward.reward', ctrl.scope())
+                                window.I18n.t('selected_reward.reward', ctrl.scope())
                             ),
                             m('.fontsize-smallest.fontweight-semibold',
                                 ctrl.reward().title
@@ -220,7 +221,7 @@ const projectsSubscriptionCheckout = {
                             }, ctrl.reward().description ?
                                 ctrl.reward().description :
                                 m.trust(
-                                    I18n.t('selected_reward.review_without_reward_html',
+                                    window.I18n.t('selected_reward.review_without_reward_html',
                                         ctrl.scope(
                                             _.extend({
                                                 value: formatedValue
@@ -248,7 +249,7 @@ const projectsSubscriptionCheckout = {
                                 m('span.fontweight-semibold',
                                     'Forma de envio: '
                                 ),
-                                I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {
+                                window.I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {
                                     scope: 'projects.contributions'
                                 })
                             ]) :
@@ -264,10 +265,10 @@ const projectsSubscriptionCheckout = {
                             m('form.u-marginbottom-40', [
                                 m('.u-marginbottom-40.u-text-center-small-only', [
                                     m('.fontweight-semibold.lineheight-tight.fontsize-large',
-                                        I18n.t('title', ctrl.scope())
+                                        window.I18n.t('title', ctrl.scope())
                                     ),
                                     m('.fontsize-smaller',
-                                        I18n.t('required', ctrl.scope())
+                                        window.I18n.t('required', ctrl.scope())
                                     )
                                 ]),
 
@@ -296,7 +297,7 @@ const projectsSubscriptionCheckout = {
                                     (m('.w-row', [
                                         m('.w-col.w-col-7.w-sub-col', [
                                             m('label.field-label.fontweight-semibold[for=\'complete-name\']',
-                                                I18n.t('fields.complete_name', ctrl.scope())
+                                                window.I18n.t('fields.complete_name', ctrl.scope())
                                             ),
                                             m('input.positive.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
                                                 onfocus: ctrl.vm.resetFieldError('completeName'),
@@ -310,7 +311,7 @@ const projectsSubscriptionCheckout = {
                                         ]),
                                         m('.w-col.w-col-5', addVM.international() ? '' : [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
-                                                I18n.t('fields.owner_document', ctrl.scope())
+                                                window.I18n.t('fields.owner_document', ctrl.scope())
                                             ),
                                             m('input.positive.w-input.text-field[id=\'document\']', {
                                                 onfocus: ctrl.vm.resetFieldError('ownerDocument'),
@@ -343,7 +344,7 @@ const projectsSubscriptionCheckout = {
                                     act: 'contribution_next_click'
                                 }, ctrl.validateForm)
                             },
-                                I18n.t('next_step', ctrl.scope())
+                                window.I18n.t('next_step', ctrl.scope())
                             )
                         ) : ''),
                         ctrl.showPaymentForm() ? m.component(paymentForm, {
@@ -367,7 +368,7 @@ const projectsSubscriptionCheckout = {
                     m('.w-col.w-col-4', [
                         m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                                I18n.t('selected_reward.value', ctrl.scope())
+                                window.I18n.t('selected_reward.value', ctrl.scope())
                             ),
                             m('.w-clearfix', [
                                 m('.fontsize-larger.text-success.u-left',
@@ -375,23 +376,23 @@ const projectsSubscriptionCheckout = {
                                 ),
                                 m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : ''}"]`,
                                     {config: m.route},
-                                    I18n.t('selected_reward.edit', ctrl.scope())
+                                    window.I18n.t('selected_reward.edit', ctrl.scope())
                                 )
                             ]),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                I18n.t('selected_reward.payment_plan', ctrl.scope())
+                                window.I18n.t('selected_reward.payment_plan', ctrl.scope())
                             ),
                             m('.fontsize-smaller',
                                 [
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-money.text-success'),
-                                            ` ${I18n.t('selected_reward.charged_today', ctrl.scope())} ` 
+                                            ` ${window.I18n.t('selected_reward.charged_today', ctrl.scope())} ` 
                                         ]
                                     ),
                                     ctrl.isEdit() && !ctrl.isReactivation()
-                                        ? ` ${I18n.t('invoice_none', I18nScope())}`
+                                        ? ` ${window.I18n.t('invoice_none', I18nScope())}`
                                         : `R$ ${formatedValue}`
                                 ]
                             ),
@@ -400,7 +401,7 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-calendar-o.text-success'),
-                                            ` ${I18n.t('selected_reward.next_charge', ctrl.scope())} `
+                                            ` ${window.I18n.t('selected_reward.next_charge', ctrl.scope())} `
                                         ]
                                     ),
                                     ctrl.isEdit() && !ctrl.isReactivation()
@@ -413,7 +414,7 @@ const projectsSubscriptionCheckout = {
                             m('.divider.u-marginbottom-10.u-margintop-10'),
                             m('.back-payment-info-reward', [
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                    I18n.t('selected_reward.reward', ctrl.scope())
+                                    window.I18n.t('selected_reward.reward', ctrl.scope())
                                 ),
                                 m('.fontsize-smallest.fontweight-semibold',
                                     ctrl.reward().title
@@ -424,7 +425,7 @@ const projectsSubscriptionCheckout = {
                                 }, ctrl.reward().description ?
                                     ctrl.reward().description :
                                     m.trust(
-                                        I18n.t('selected_reward.review_without_reward_html',
+                                        window.I18n.t('selected_reward.review_without_reward_html',
                                             ctrl.scope(
                                                 _.extend({
                                                     value: Number(ctrl.value).toFixed()

@@ -2,7 +2,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import $ from 'jquery';
-import I18n from 'i18n-js';
 import {catarse} from '../api'
 import models from '../models';
 import paymentStatus from './payment-status';
@@ -89,20 +88,20 @@ const projectContributionReportContentCard = {
             profileImg = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {
                 minimum_value: 0,
-                description: I18n.t('contribution.no_reward', contributionScope())
+                description: window.I18n.t('contribution.no_reward', contributionScope())
             },
             deliveryBadge = () => (contribution.delivery_status === 'error' ?
                                                 m('span.badge.badge-attention.fontsize-smaller',
-                                                    I18n.t(`status.${contribution.delivery_status}`, I18nScope())
+                                                    window.I18n.t(`status.${contribution.delivery_status}`, I18nScope())
                                                 ) : contribution.delivery_status === 'delivered' ?
                                                 m('span.badge.badge-success.fontsize-smaller',
-                                                    I18n.t(`status.${contribution.delivery_status}`, I18nScope())
+                                                    window.I18n.t(`status.${contribution.delivery_status}`, I18nScope())
                                                 ) : contribution.delivery_status === 'received' ?
                                                 m('span.fontsize-smaller.badge.badge-success', [
                                                     m('span.fa.fa-check-circle',
                                                         ''
                                                     ),
-                                                    I18n.t(`status.${contribution.delivery_status}`, I18nScope())
+                                                    window.I18n.t(`status.${contribution.delivery_status}`, I18nScope())
                                                 ]) : '');
 
         return m('div', [m(`.w-clearfix.card${ctrl.checked(contribution) ? '.card-alert' : ''}`, [
@@ -133,7 +132,7 @@ const projectContributionReportContentCard = {
                                             (contribution.has_another ? [
                                                 m('a.link-hidden-light.badge.badge-light', '+1 apoio '),
                                             ] : ''),
-                                            (contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary', m('span.fontcolor-secondary[style="font-size:11px;"]', ` ${I18n.t('contribution.anonymous_contribution', contributionScope())}`)) : '')
+                                            (contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary', m('span.fontcolor-secondary[style="font-size:11px;"]', ` ${window.I18n.t('contribution.anonymous_contribution', contributionScope())}`)) : '')
                                         ]),
                                         m('.fontsize-smallest.lineheight-looser', (contribution.email))
                                     ]),
@@ -148,7 +147,7 @@ const projectContributionReportContentCard = {
                                         m('div',
                                             deliveryBadge()
                                         ),
-                                        m('.fontsize-smallest.fontweight-semibold', `${I18n.t('reward', I18nScope())}: ${reward.minimum_value ? h.formatNumber(reward.minimum_value, 2, 3) : ''}`),
+                                        m('.fontsize-smallest.fontweight-semibold', `${window.I18n.t('reward', I18nScope())}: ${reward.minimum_value ? h.formatNumber(reward.minimum_value, 2, 3) : ''}`),
                                         m('.fontsize-smallest.fontweight-semibold',
                                             reward.title
                                         ),
@@ -210,7 +209,7 @@ const projectContributionReportContentCard = {
                         _.map(['info', 'profile'], tab =>
                         m(`a.dashboard-nav-link.w-inline-block.w-tab-link${ctrl.currentTab() === tab ? '.w--current' : ''}`, { onclick: () => ctrl.currentTab(tab) },
                             m('div',
-                                I18n.t(`report.${tab}`, contributionScope())
+                                window.I18n.t(`report.${tab}`, contributionScope())
                             )
                         ))
                     ]),
@@ -221,7 +220,7 @@ const projectContributionReportContentCard = {
                                 m('.right-divider.w-col.w-col-6', [
                                     m('.u-marginbottom-20', [
                                         m('.fontsize-base.fontweight-semibold.u-marginbottom-10',
-                                            `${I18n.t('selected_reward.value', contributionScope())}: R$${contribution.value}`
+                                            `${window.I18n.t('selected_reward.value', contributionScope())}: R$${contribution.value}`
                                         ),
                                         m(paymentStatus, { item: { payment_method: contribution.payment_method, state: contribution.state } }),
                                         m('.fontcolor-secondary.fontsize-smallest',
@@ -229,7 +228,7 @@ const projectContributionReportContentCard = {
                                         )
                                     ]),
                                     m('.fontsize-base.fontweight-semibold',
-                                        `${I18n.t('reward', I18nScope())}:`
+                                        `${window.I18n.t('reward', I18nScope())}:`
                                     ),
                                     m('.fontsize-small.fontweight-semibold.u-marginbottom-10', [
                                         `R$${reward.minimum_value} ${reward.title ? `- ${reward.title}` : ''} `,
@@ -241,16 +240,16 @@ const projectContributionReportContentCard = {
                                     m('.u-marginbottom-10', [
                                         m('.fontsize-smaller', [
                                             m('span.fontweight-semibold',
-                                                `${I18n.t('deliver_at', I18nScope())} `
+                                                `${window.I18n.t('deliver_at', I18nScope())} `
                                             ),
                                             h.momentify(reward.deliver_at, 'MMMM/YYYY')
                                         ]),
                                         (reward.shipping_options ?
                                         m('.fontsize-smaller', [
                                             m('span.fontweight-semibold',
-                                                I18n.t('delivery', I18nScope())
+                                                window.I18n.t('delivery', I18nScope())
                                             ),
-                                            I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
+                                            window.I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
                                         ]) : '')
                                     ])
                                 ]),
@@ -258,22 +257,22 @@ const projectContributionReportContentCard = {
                                 (survey ?
                                 m('.w-col.w-col-6', [
                                     m('.fontsize-base.fontweight-semibold',
-                                        I18n.t('survey.survey', contributionScope())
+                                        window.I18n.t('survey.survey', contributionScope())
                                     ),
                                     m('.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
-                                        I18n.t('survey.answered_at', contributionScope({ date: moment(survey.survey_answered_at).format('DD/MM/YYYY') }))
+                                        window.I18n.t('survey.answered_at', contributionScope({ date: moment(survey.survey_answered_at).format('DD/MM/YYYY') }))
                                     ),
                                     survey.confirm_address && survey.address ? [
                                         m('.fontsize-small', [
                                             m('.fontweight-semibold.lineheight-looser',
-                                            I18n.t('survey.address_title', contributionScope())
+                                            window.I18n.t('survey.address_title', contributionScope())
                                         ),
                                             m('p', [
                                                 contribution.public_user_name,
                                                 m('br'),
                                                 `${survey.address.address_street}, ${survey.address.address_number} ${survey.address.address_complement}`,
                                                 m('br'),
-                                                `${I18n.t('survey.address_neighbourhood', contributionScope())} ${survey.address.address_neighbourhood}`,
+                                                `${window.I18n.t('survey.address_neighbourhood', contributionScope())} ${survey.address.address_neighbourhood}`,
                                                 m('br'),
                                                 `${survey.address.address_zip_code} ${survey.address.address_city}-${survey.state_name}`,
                                                 m('br'),
@@ -314,11 +313,11 @@ const projectContributionReportContentCard = {
                                     m('br'),
                                     contribution.email,
                                     m('br'),
-                                    I18n.t('user_since', contributionScope({ date: h.momentify(contribution.user_created_at, 'MMMM YYYY') })),
+                                    window.I18n.t('user_since', contributionScope({ date: h.momentify(contribution.user_created_at, 'MMMM YYYY') })),
                                     m('br'),
-                                    I18n.t('backed_projects', contributionScope({ count: contribution.total_contributed_projects })),
+                                    window.I18n.t('backed_projects', contributionScope({ count: contribution.total_contributed_projects })),
                                     m('br'),
-                                    I18n.t('created_projects', contributionScope({ count: contribution.total_published_projects }))
+                                    window.I18n.t('created_projects', contributionScope({ count: contribution.total_published_projects }))
                                 ])
                             )
                         ))

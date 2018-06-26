@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
@@ -175,7 +174,7 @@ const rewardSelectCard = {
                         ]),
                         args.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
-                            m('.fontsize-smallest', I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
+                            m('.fontsize-smallest', window.I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
                         ])
                     ])
                 ])
