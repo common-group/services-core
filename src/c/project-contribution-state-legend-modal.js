@@ -1,5 +1,4 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 
@@ -7,7 +6,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions_report.legend_l
 
 const ProjectContributionStateLegendModal = {
     controller(args) {
-        const translate = path => I18n.t(path, I18nScope());
+        const translate = path => window.I18n.t(path, I18nScope());
 
         return {
             stages: {

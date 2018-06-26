@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import I18n from 'i18n-js';
 import {
     catarse
 } from '../api';

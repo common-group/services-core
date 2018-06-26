@@ -1,12 +1,11 @@
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import moment from 'moment';
 import $ from 'jquery';
 import m from 'mithril';
 import {catarse} from './api';
-import CatarseAnalytics from 'CatarseAnalytics';
 import contributionVM from './vms/contribution-vm';
 
+const { CatarseAnalytics } = window;
 const
     _dataCache = {},
     hashMatch = (str) => window.location.hash === str,
@@ -368,7 +367,7 @@ const
         m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')
     ]),
 
-    newFeatureBadge = () => m('span.badge.badge-success.margin-side-5', I18n.t('projects.new_feature_badge')),
+    newFeatureBadge = () => m('span.badge.badge-success.margin-side-5', window.I18n.t('projects.new_feature_badge')),
 
     fbParse = () => {
         const tryParse = () => {

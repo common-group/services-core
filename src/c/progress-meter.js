@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
@@ -26,7 +25,7 @@ const progressMeter = {
         return m(ctrl.cardMeter(), [
             (ctrl.isFinished(project)) ?
             m('div',
-                project.state === 'successful' && ctrl.progress < 100 ? I18n.t('display_status.flex_successful', I18nScope()) : I18n.t(`display_status.${project.state}`, I18nScope())
+                project.state === 'successful' && ctrl.progress < 100 ? window.I18n.t('display_status.flex_successful', I18nScope()) : window.I18n.t(`display_status.${project.state}`, I18nScope())
             ) :
             m('.meter', [
                 m('.meter-fill', {

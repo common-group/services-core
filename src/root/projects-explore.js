@@ -11,7 +11,6 @@ import {
     catarse,
     commonRecommender
 } from '../api';
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -94,7 +93,7 @@ const projectsExplore = {
             loadCategories = () => models.category.getPageWithToken(filters({}).order({
                 name: 'asc'
             }).parameters()).then(categoryCollection),
-            externalLinkCategories = I18n.translations[I18n.currentLocale()].projects.index.explore_categories,
+            externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories,
             hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]),
             // just small fix when have two scored projects only
             checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
@@ -293,7 +292,7 @@ const projectsExplore = {
         let widowProjects = [];
 
         return m('#explore', {
-            config: h.setPageTitle(I18n.t('header_html', I18nScope()))
+            config: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
         }, [
             m('.hero-search.explore', [
                 m('.u-text-center.w-container', [

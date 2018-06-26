@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import inlineError from './inline-error';
 import projectVM from '../vms/project-vm';
@@ -70,7 +69,7 @@ const paymentSlip = {
         };
     },
     view(ctrl, args) {
-        const buttonLabel = ctrl.isSubscriptionEdit() && !args.isReactivation() ? I18n.t('subscription_edit', I18nScope()) : I18n.t('pay_slip', I18nScope());
+        const buttonLabel = ctrl.isSubscriptionEdit() && !args.isReactivation() ? window.I18n.t('subscription_edit', I18nScope()) : window.I18n.t('pay_slip', I18nScope());
 
         return m('.w-row',
                     m('.w-col.w-col-12',

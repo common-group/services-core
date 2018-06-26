@@ -2,7 +2,6 @@ import m from 'mithril';
 import {catarse} from '../api';
 import _ from 'underscore';
 import moment from 'moment';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
@@ -80,13 +79,13 @@ const surveys = {
                     m('a.btn.btn-small.w-button', {
                         onclick: () => m.route(`/projects/${ctrl.project_id}/rewards/${reward.id}/surveys/new`)
                     },
-                        I18n.t('create_survey', surveyScope())
+                        window.I18n.t('create_survey', surveyScope())
                     )
                 );
             } else if (cannotBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-3.w-col-tiny-tiny-stack',
                     m('a.btn.btn-desactivated.btn-small.btn-terciary.w-button',
-                        I18n.t('create_survey', surveyScope())
+                        window.I18n.t('create_survey', surveyScope())
                     )
                 );
             } else if (reward.survey_sent_at && !reward.survey_finished_at) {
@@ -158,10 +157,10 @@ const surveys = {
                         m('.w-col.w-col-2'),
                         m('.w-col.w-col-8', [
                             m('.fontsize-larger.fontweight-semibold.lineheight-looser.u-text-center',
-                                I18n.t('title', surveyScope())
+                                window.I18n.t('title', surveyScope())
                             ),
                             m('.fontsize-base.u-text-center',
-                                I18n.t('subtitle', surveyScope())
+                                window.I18n.t('subtitle', surveyScope())
                             ),
                             m('.u-margintop-20.u-text-center',
                                 m('.w-inline-block.card.fontsize-small.u-radius', [
@@ -169,7 +168,7 @@ const surveys = {
                                         ''
                                     ),
                                     m.trust('&nbsp;'),
-                                    m.trust(I18n.t('help_link', surveyScope()))
+                                    m.trust(window.I18n.t('help_link', surveyScope()))
                                 ])
                             )
                         ]),
@@ -189,7 +188,7 @@ const surveys = {
                                         m('span.fa.fa-exclamation-circle',
                                             ''
                                         ),
-                                        I18n.t('online_explanation', surveyScope())
+                                        window.I18n.t('online_explanation', surveyScope())
                                     ])
                                 )
                             ),
@@ -253,7 +252,7 @@ const surveys = {
                                             'Envio:'
                                         ),
                                         m.trust('&nbsp;'),
-                                        I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
+                                        window.I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
                                     ])
                                 ]),
                                 m('.table-col.w-col.w-col-9',

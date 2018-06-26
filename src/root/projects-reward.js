@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
@@ -13,7 +12,7 @@ const projectsReward = {
             selectReward = vm.selectReward,
             rewards = vm.rewards(),
             mode = projectVM.currentProject().mode,
-            faq = I18n.translations[I18n.currentLocale()].projects.faq[mode];
+            faq = window.I18n.translations[window.I18n.currentLocale()].projects.faq[mode];
 
         // TODO unify projectsReward and project-reward-list reward submission. fix routing issue.
         const submitContribution = () => {

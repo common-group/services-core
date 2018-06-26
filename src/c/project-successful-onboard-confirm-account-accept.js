@@ -11,7 +11,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import I18n from 'i18n-js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
 
@@ -22,15 +21,15 @@ const projectSuccessfulOnboardConfirmAccountAccept = {
                 m('.w-form.bank-transfer-confirm.card.u-radius', [
                     m('form#successful-onboard-form', [
                         m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', { href: '#confirm_account', onclick: args.changeToAction('start') }),
-                        m('label.field-label.fontweight-semibold.u-marginbottom-20', I18n.t('accept.title', I18nScope())),
-                        m('.fontsize-smaller.u-marginbottom-30', I18n.t('accept.info', I18nScope())),
+                        m('label.field-label.fontweight-semibold.u-marginbottom-20', window.I18n.t('accept.title', I18nScope())),
+                        m('.fontsize-smaller.u-marginbottom-30', window.I18n.t('accept.info', I18nScope())),
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-push-4', [
                                 (!args.acceptAccountLoader() ?
                                  m('a.w-button.btn.btn-medium', {
                                      href: '#accept_account',
                                      onclick: args.acceptAccount
-                                 }, I18n.t('accept.cta', I18nScope())) : h.loader())
+                                 }, window.I18n.t('accept.cta', I18nScope())) : h.loader())
                             ])
                         ])
                     ])

@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import moment from 'moment';
 import models from '../models';
@@ -146,7 +145,7 @@ const userSubscriptionBox = {
             if (is_active && !current_reward_data && subscription.reward)
             {
                 return [
-                    ` ${I18n.t('no_reward', contributionScope())} `,
+                    ` ${window.I18n.t('no_reward', contributionScope())} `,
                     m.trust('&nbsp;'),
                     m('.fontsize-smallest.fontweight-semibold',
                       m('span.badge.badge-attention', [
@@ -185,7 +184,7 @@ const userSubscriptionBox = {
             else
             {
                 return [
-                    last_paid_sub_data.reward_external_id ? null : ` ${I18n.t('no_reward', contributionScope())} `
+                    last_paid_sub_data.reward_external_id ? null : ` ${window.I18n.t('no_reward', contributionScope())} `
                 ];
             }
         };
@@ -268,7 +267,7 @@ const userSubscriptionBox = {
                                 ctrl.displayModal.toggle();
                             }
                         },
-                            I18n.t('contact_author', contributionScope())
+                            window.I18n.t('contact_author', contributionScope())
                         )
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [

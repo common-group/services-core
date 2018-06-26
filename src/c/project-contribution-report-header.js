@@ -1,5 +1,4 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import h from '../h';
 import FilterMain from '../c/filter-main';
@@ -35,10 +34,10 @@ const projectContributionReportHeader = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6', [
                                 m('.fontsize-larger.fontweight-semibold.lineheight-looser.u-text-center',
-                                    I18n.t('title', I18nScope())
+                                    window.I18n.t('title', I18nScope())
                                 ),
                                 m('.fontsize-base.u-marginbottom-20.u-text-center',
-                                    I18n.t('subtitle_html', I18nScope())
+                                    window.I18n.t('subtitle_html', I18nScope())
                                 ),
                                 m('.u-marginbottom-60.u-text-center',
                                     m('.w-inline-block.card.fontsize-small.u-radius', [
@@ -46,7 +45,7 @@ const projectContributionReportHeader = {
                                             ''
                                         ),
                                         m.trust('&nbsp;'),
-                                        m.trust(I18n.t('help_link', I18nScope()))
+                                        m.trust(window.I18n.t('help_link', I18nScope()))
                                     ])
                                 )
                             ]),

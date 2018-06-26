@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import {catarse} from '../api';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 
@@ -26,7 +25,7 @@ const press = {
                 m('.w-container.u-text-center', [
                     m('img.icon-hero[alt=\'Icon assets\'][src=\'/assets/icon-assets-98f4556940e31b239cdd5fbdd993b5d5ed3bf67dcc3164b805e224d22e1340b7.png\']'),
                     m('.u-text-center.u-marginbottom-20.fontsize-largest',
-                        I18n.t('page-title', I18nScope())
+                        window.I18n.t('page-title', I18nScope())
                     )
                 ])
             ),
@@ -35,7 +34,7 @@ const press = {
                     m('.w-row',
                         m('.w-col.w-col-8.w-col-push-2',
                             m('.u-marginbottom-20.fontsize-large',
-                                I18n.t('abstract.title', I18nScope())
+                                window.I18n.t('abstract.title', I18nScope())
                             )
                         )
                     )
@@ -46,12 +45,12 @@ const press = {
                     m('.w-row',
                         m('.w-col.w-col-8.w-col-push-2', [
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                                I18n.t('history.title', I18nScope())
+                                window.I18n.t('history.title', I18nScope())
                             ),
                             m('.fontsize-large.u-marginbottom-20',
-                                I18n.t('history.subtitle', I18nScope())
+                                window.I18n.t('history.subtitle', I18nScope())
                             ),
-                            m.trust(I18n.t('history.cta_html', I18nScope()))
+                            m.trust(window.I18n.t('history.cta_html', I18nScope()))
                         ])
                     )
                 )
@@ -61,33 +60,33 @@ const press = {
                     m('.w-row',
                         m('.w-col.w-col-8.w-col-push-2', [
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-10',
-                                I18n.t('stats.title', I18nScope())
+                                window.I18n.t('stats.title', I18nScope())
                             ),
                             m('.fontsize-large.u-marginbottom-40',
-                                I18n.t('stats.subtitle', I18nScope())
+                                window.I18n.t('stats.subtitle', I18nScope())
                             ),
                             m('.w-row.w.hidden-small.u-text-center.u-marginbottom-40', [
                                 m('.w-col.w-col-4.u-marginbottom-20', [
                                     m('.text-success.lineheight-loose.fontsize-larger',
                                         h.formatNumber(stats.total_contributors, 0, 3)
                                     ),
-                                    m('.fontsize-smaller', m.trust(I18n.t('stats.people_html', I18nScope())))
+                                    m('.fontsize-smaller', m.trust(window.I18n.t('stats.people_html', I18nScope())))
                                 ]),
                                 m('.w-col.w-col-4.u-marginbottom-20', [
                                     m('.text-success.lineheight-loose.fontsize-larger',
                                         h.formatNumber(stats.total_projects_success, 0, 3)
                                     ),
-                                    m('.fontsize-smaller', m.trust(I18n.t('stats.projects_html', I18nScope())))
+                                    m('.fontsize-smaller', m.trust(window.I18n.t('stats.projects_html', I18nScope())))
                                 ]),
                                 m('.w-col.w-col-4.u-marginbottom-20', [
                                     m('.text-success.lineheight-loose.fontsize-larger',
                                         `${stats.total_contributed.toString().slice(0, 2)} milhões`
                                     ),
-                                    m('.fontsize-smaller', m.trust(I18n.t('stats.money_html', I18nScope())))
+                                    m('.fontsize-smaller', m.trust(window.I18n.t('stats.money_html', I18nScope())))
                                 ])
                             ]),
                             m('a.alt-link.fontsize-large[href=\'https://www.catarse.me/dbhero/dataclips/fa0d3570-9fa7-4af3-b070-2b2e386ef060\'][target=\'_blank\']', [
-                                m.trust(I18n.t('stats.cta_html', I18nScope()))
+                                m.trust(window.I18n.t('stats.cta_html', I18nScope()))
                             ])
                         ])
                     )
@@ -101,14 +100,14 @@ const press = {
                                 m('img[alt=\'Logo catarse press\'][src=\'/assets/logo-catarse-press-2f2dad49d3e5b256c29e136673b4c4f543c03e0d5548d351ae5a8d1e6e3d2645.png\']')
                             ),
                             m('.fontsize-base',
-                                I18n.t('assets.title', I18nScope())
+                                window.I18n.t('assets.title', I18nScope())
                             )
                         ])
                     ),
                     m('.w-row',
                         m('.w-col.w-col-4.w-col-push-4.u-text-center',
                             m('a.alt-link.fontsize-large[href=\'https://www.catarse.me/assets\'][target=\'_blank\']', [
-                                m.trust(I18n.t('assets.cta_html', I18nScope()))
+                                m.trust(window.I18n.t('assets.cta_html', I18nScope()))
                             ])
                         )
                     )
@@ -117,7 +116,7 @@ const press = {
             m('.section-large.bg-projectgrid',
                 m('.w-container', [
                     m('.fontsize-large.u-text-center.fontweight-semibold.u-marginbottom-30',
-                        I18n.t('social.title', I18nScope())
+                        window.I18n.t('social.title', I18nScope())
                     ),
                     m('.w-row', [
                         m('.w-col.w-col-3',
@@ -152,7 +151,7 @@ const press = {
                     m('.w-row',
                         m('.w-col.w-col-6.w-col-push-3', [
                             m('.fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30',
-                                I18n.t('social.news', I18nScope())
+                                window.I18n.t('social.news', I18nScope())
                             ),
                             m('.w-form',
                                 m(`form[accept-charset='UTF-8'][action='${h.getNewsletterUrl()}'][id='mailee-form'][method='post']`, [
@@ -173,11 +172,11 @@ const press = {
                     m('.w-row.u-text-center',
                         m('.w-col.w-col-8.w-col-push-2', [
                             m('.fontsize-larger.fontweight-semibold.u-marginbottom-10',
-                                I18n.t('email.title', I18nScope())
+                                window.I18n.t('email.title', I18nScope())
                             ),
                             m('div',
-                                m(`a.alt-link.fontsize-large[href='mailto:${I18n.t('email.cta', I18nScope())}']`,
-                                    I18n.t('email.cta', I18nScope())
+                                m(`a.alt-link.fontsize-large[href='mailto:${window.I18n.t('email.cta', I18nScope())}']`,
+                                    window.I18n.t('email.cta', I18nScope())
                                 )
                             )
                         ])

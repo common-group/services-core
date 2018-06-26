@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
@@ -23,7 +22,7 @@ const rewardCardBig = {
                 h.momentify(reward.deliver_at, 'MMMM/YYYY'),
                 m('span.fontcolor-terciary', '    |    '),
                 m('span.fontcolor-terciary', 'Envio: '),
-                I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
+                window.I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope())
             ])
         ]);
     }

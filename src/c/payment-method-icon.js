@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
@@ -26,7 +25,7 @@ const paymentMethodIcon = {
             m(`span.fa.${paymentClass[subscription.payment_method]}`,
                 ''
             ),
-            I18n.t(subscription.payment_method, I18nScope())
+            window.I18n.t(subscription.payment_method, I18nScope())
         ]);
     }
 };

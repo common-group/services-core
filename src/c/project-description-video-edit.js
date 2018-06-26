@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectDescriptionVideoVM from '../vms/project-description-video-vm';
@@ -59,11 +58,11 @@ const projectDescriptionVideoEdit = {
         const vm = ctrl.vm;
         return m('#description-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: I18n.t('shared.successful_update'),
+                message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: I18n.t('shared.failed_update'),
+                message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true
             }) : ''),
@@ -74,12 +73,12 @@ const projectDescriptionVideoEdit = {
                         m('.w-col.w-col-10.w-col-push-1', [
                             m('.u-marginbottom-60.u-text-center', [
 		                            m('.w-col-8.w-inline-block.card.fontsize-small.u-radius', [
-                                m.trust(I18n.t('description_video_alert', I18nScope()))
+                                m.trust(window.I18n.t('description_video_alert', I18nScope()))
 		                            ])
 	                          ]),
                             m(inputCard, {
-                                label: I18n.t('video_label', I18nVideoScope()),
-                                label_hint: I18n.t('video_hint', I18nVideoScope()),
+                                label: window.I18n.t('video_label', I18nVideoScope()),
+                                label_hint: window.I18n.t('video_hint', I18nVideoScope()),
                                 children: [
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.video_url(),
@@ -94,8 +93,8 @@ const projectDescriptionVideoEdit = {
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
                             m(bigInputCard, {
-                                label: I18n.t('description_label', I18nScope()),
-                                label_hint: I18n.t('description_hint', I18nScope()),
+                                label: window.I18n.t('description_label', I18nScope()),
+                                label_hint: window.I18n.t('description_hint', I18nScope()),
                                 children: [
                                     m('.preview-container', {
                                         class: vm.e.hasError('about_html') ? 'error' : false

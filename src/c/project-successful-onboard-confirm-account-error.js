@@ -11,7 +11,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import I18n from 'i18n-js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account.refuse');
 
@@ -39,9 +38,9 @@ const projectSuccessfulOnboardConfirmAccountError = {
                 m('.w-form.bank-transfer-problem.card.u-radius', [
                     m('form#successful-onboard-error', [
                         m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', { href: '#confirm_account', onclick: args.changeToAction('start') }),
-                        m('label.field-label.fontweight-semibold.u-marginbottom-20', I18n.t('title', I18nScope())),
+                        m('label.field-label.fontweight-semibold.u-marginbottom-20', window.I18n.t('title', I18nScope())),
                         m('textarea.w-input.text-field', {
-                            placeholder: I18n.t('placeholder', I18nScope()),
+                            placeholder: window.I18n.t('placeholder', I18nScope()),
                             class: ctrl.error() ? 'error' : '',
                             onfocus: () => ctrl.error(false),
                             onchange: m.withAttr('value', ctrl.errorReasonM)
@@ -56,7 +55,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
                                 m('a.w-button.btn.btn-medium', {
                                     href: '#confirm_account_refuse',
                                     onclick: ctrl.addErrorReason
-                                }, I18n.t('cta', I18nScope()))
+                                }, window.I18n.t('cta', I18nScope()))
                             ])
                         ])
                     ])

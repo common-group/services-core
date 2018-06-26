@@ -1,7 +1,7 @@
 import m from 'mithril';
+import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
-import I18n from 'i18n-js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
@@ -57,7 +57,7 @@ const postsPreview = {
                 ),
                 ' e ficará ',
                 m('span.fontweight-semibold',
-                I18n.t(`backers_only_${args.mode}`, I18nScope())
+                window.I18n.t(`backers_only_${args.mode}`, I18nScope())
                 )
             ]) :
             args.reward_id === '-1' ?
@@ -66,7 +66,7 @@ const postsPreview = {
                 m('span.fontweight-semibold',
                     'enviada por email para todos'
                 ),
-                I18n.t(`all_backers_${args.mode}`, I18nScope()),
+                window.I18n.t(`all_backers_${args.mode}`, I18nScope()),
                 m('span.fontweight-semibold',
                     'visível publicamente '
                 ),
@@ -74,7 +74,7 @@ const postsPreview = {
             ]) :
             m('.fontsize-small.u-marginbottom-30', [
                 m('span', ' A novidade acima será  '),
-                m('span.fontweight-semibold', I18n.t(`email_backers_${args.mode}`, I18nScope())),
+                m('span.fontweight-semibold', window.I18n.t(`email_backers_${args.mode}`, I18nScope())),
                 m('span', ' e ficará '),
                 m('span.fontweight-semibold', 'visível somente para esses na plataforma.')
             ]);

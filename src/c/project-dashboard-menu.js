@@ -10,7 +10,6 @@
  */
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectVM from '../vms/project-vm';
@@ -93,27 +92,27 @@ const projectDashboardMenu = {
                     m('#info-links.u-marginbottom-20', [
                         (project.state === 'draft' && projectVM.isSubscription(project)) ?
                         m(`a#dashboard_home_link[class="${editLinkClass('#start')}"][href="${editRoute}#start"]`, [
-                            m('span.fa.fa-info.fa-lg.fa-fw'), I18n.t('draft_start_tab', I18nScope())
+                            m('span.fa.fa-info.fa-lg.fa-fw'), window.I18n.t('draft_start_tab', I18nScope())
                         ]) :
                         m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, {
                             config: m.route
                         }, [
-                            m('span.fa.fa-bar-chart.fa-lg.fa-fw'), I18n.t('start_tab', I18nScope())
+                            m('span.fa.fa-bar-chart.fa-lg.fa-fw'), window.I18n.t('start_tab', I18nScope())
                         ]), (project.is_published ? [
                             projectVM.isSubscription(project) ?
                             m(`a#dashboard_subscriptions_link[class="dashboard-nav-link-left ${h.locationActionMatch('subscriptions_report') ? 'selected' : ''}"][href="${projectRoute}/subscriptions_report"]`, {
                                 config: m.route
                             }, [
-                                m('span.fa.fa.fa-users.fa-lg.fa-fw'), I18n.t('subscriptions_tab', I18nScope())
+                                m('span.fa.fa.fa-users.fa-lg.fa-fw'), window.I18n.t('subscriptions_tab', I18nScope())
                             ]) :
                             m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, {
                                 config: m.route
                             }, [
-                                m('span.fa.fa.fa-table.fa-lg.fa-fw'), I18n.t('reports_tab', I18nScope())
+                                m('span.fa.fa.fa-table.fa-lg.fa-fw'), window.I18n.t('reports_tab', I18nScope())
                             ]),
                             m(`a#dashboard_posts_link[class="dashboard-nav-link-left ${h.locationActionMatch('posts') ? 'selected' : ''}"][href="${projectRoute}/posts"]`, [
                                 m('span.fa.fa-bullhorn.fa-fw.fa-lg'),
-                                I18n.t('posts_tab', I18nScope()),
+                                window.I18n.t('posts_tab', I18nScope()),
                                 project.posts_count > 0 ?
                                 m('span.badge', project.posts_count) :
                                 m('span.badge.badge-attention', 'Nenhuma')
@@ -123,13 +122,13 @@ const projectDashboardMenu = {
                                 m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, {
                                     config: m.route
                                 }, [
-                                    m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), I18n.t('surveys_tab', I18nScope())
+                                    m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), window.I18n.t('surveys_tab', I18nScope())
                                 ])),
 
                             m(`a#dashboard_fiscal_link[class="dashboard-nav-link-left ${h.locationActionMatch('fiscal') ? 'selected' : ''}"][href="${projectRoute}/fiscal"]`, {
                                 config: m.route
                             }, [
-                                m('span.fa.fa.fa-book.fa-lg.fa-fw'), I18n.t('fiscal_tab', I18nScope())
+                                m('span.fa.fa.fa-book.fa-lg.fa-fw'), window.I18n.t('fiscal_tab', I18nScope())
                             ])
 
                         ] : '')
@@ -138,21 +137,21 @@ const projectDashboardMenu = {
                         (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
                             onclick: ctrl.editLinksToggle.toggle
                         }, [
-                            m('span.fa.fa-pencil.fa-fw.fa-lg'), I18n.t('edit_project', I18nScope())
+                            m('span.fa.fa-pencil.fa-fw.fa-lg'), window.I18n.t('edit_project', I18nScope())
                         ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
-                                    m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), I18n.t('basics_tab', linksScope())),
-                                    projectVM.isSubscription(project) ? '' : m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), I18n.t('goal_tab', linksScope())),
+                                    m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), window.I18n.t('basics_tab', linksScope())),
+                                    projectVM.isSubscription(project) ? '' : m(`a#goal_link[class="${editLinkClass('#goal')}"][href="${editRoute}#goal"]`, railsErrorsVM.errorsFor('goal'), window.I18n.t('goal_tab', linksScope())),
                                 ] : ''),
-                                projectVM.isSubscription(project) ? m(`a#goals_link[class="${editLinkClass('#goals')}"][href="${editRoute}#goals"]`, railsErrorsVM.errorsFor('goals'), I18n.t('goals_tab', linksScope())) : '',
-                                m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description"]`, railsErrorsVM.errorsFor('description'), I18n.t('description_tab', linksScope())),
+                                projectVM.isSubscription(project) ? m(`a#goals_link[class="${editLinkClass('#goals')}"][href="${editRoute}#goals"]`, railsErrorsVM.errorsFor('goals'), window.I18n.t('goals_tab', linksScope())) : '',
+                                m(`a#description_link[class="${editLinkClass('#description')}"][href="${editRoute}#description"]`, railsErrorsVM.errorsFor('description'), window.I18n.t('description_tab', linksScope())),
                                 projectVM.isSubscription(project) ? null : m(`a#video_link[class="${editLinkClass('#video')}"][href="${editRoute}#video"]`, [railsErrorsVM.errorsFor('video'),
                                     'Vídeo', m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)')
                                 ]),
                                 projectVM.isSubscription(project) ? null :
-                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), I18n.t('budget_tab', linksScope())),
-                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), I18n.t(`card_tab_${project.mode}`, linksScope())),
+                                m(`a#budget_link[class="${editLinkClass('#budget')}"][href="${editRoute}#budget"]`, railsErrorsVM.errorsFor('budget'), window.I18n.t('budget_tab', linksScope())),
+                                m(`a#card_link[class="${editLinkClass('#card')}"][href="${editRoute}#card"]`, railsErrorsVM.errorsFor('card'), window.I18n.t(`card_tab_${project.mode}`, linksScope())),
                                 m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
                                 ]),
@@ -160,12 +159,12 @@ const projectDashboardMenu = {
                                 m(`a#dashboard_welcome_message_link[class="${editLinkClass('#welcome_message')}"][href="${editRoute}#welcome_message"]`, [railsErrorsVM.errorsFor('welcome_message'),
                                                                                                                                'Email de boas vindas', optionalOpt
                                                                                                                               ]) : null,
-                                m(`a#dashboard_user_about_link[class="${editLinkClass('#user_about')}"][href="${editRoute}#user_about"]`, railsErrorsVM.errorsFor('user_about'), I18n.t('about_you_tab', linksScope())),
+                                m(`a#dashboard_user_about_link[class="${editLinkClass('#user_about')}"][href="${editRoute}#user_about"]`, railsErrorsVM.errorsFor('user_about'), window.I18n.t('about_you_tab', linksScope())),
                                 ((project.is_published || project.state === 'draft') || project.is_admin_role ? [
-                                    m(`a#dashboard_user_settings_link[class="${editLinkClass('#user_settings')}"][href="${editRoute}#user_settings"]`, railsErrorsVM.errorsFor('user_settings'), I18n.t('account_tab', linksScope())),
+                                    m(`a#dashboard_user_settings_link[class="${editLinkClass('#user_settings')}"][href="${editRoute}#user_settings"]`, railsErrorsVM.errorsFor('user_settings'), window.I18n.t('account_tab', linksScope())),
                                 ] : ''), (!project.is_published ? [
                                     m(`a#dashboard_preview_link[class="${editLinkClass('#preview')}"][href="${editRoute}#preview"]`, [
-                                        m('span.fa.fa-fw.fa-eye.fa-lg'), I18n.t('preview_tab', linksScope())
+                                        m('span.fa.fa-fw.fa-eye.fa-lg'), window.I18n.t('preview_tab', linksScope())
                                     ]),
                                 ] : '')
                             ])
@@ -177,20 +176,20 @@ const projectDashboardMenu = {
                                         (project.state === 'draft' ? m('button.btn.btn-medium', {
                                             onclick: ctrl.validatePublish
                                         }, [
-                                            I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                            window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
                                     ] : [
                                         (project.state === 'draft' ? m('button.btn.btn-medium', {
                                             onclick: ctrl.validatePublish
                                         }, [
-                                            I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
+                                            window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
                                     ]))
                             )
                         ] : [
                             ((project.mode === 'flex' && project.is_published) ? [
                                 m('.btn-send-draft-fixed',
-                                    (_.isNull(project.expires_at) ? m(`a.w-button.btn.btn-medium.btn-secondary-dark[href="${editRoute}#announce_expiration"]`, I18n.t('announce_expiration', I18nScope())) : ''))
+                                    (_.isNull(project.expires_at) ? m(`a.w-button.btn.btn-medium.btn-secondary-dark[href="${editRoute}#announce_expiration"]`, window.I18n.t('announce_expiration', I18nScope())) : ''))
                             ] : '')
                         ])
                     ]),

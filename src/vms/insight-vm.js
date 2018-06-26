@@ -1,5 +1,4 @@
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
@@ -15,8 +14,8 @@ const parseAccountData = (account, transfer) => ({
 
 const insightVM = {
     content(state, data) {
-        const translations = I18n.translations[
-            I18n.currentLocale()
+        const translations = window.I18n.translations[
+            window.I18n.currentLocale()
         ].projects.successful_onboard[state],
               translationContext = (state === 'finished' ? {
                   link_news: `/projects/${_.first(data.account()).project_id}/posts`
@@ -28,7 +27,7 @@ const insightVM = {
 
         _.map(translations, (translation, translationKey) => {
             contentObj = _.extend({}, contentObj, {
-                [translationKey]: I18n.t(`${state}.${translationKey}`, I18nScope(translationContext))
+                [translationKey]: window.I18n.t(`${state}.${translationKey}`, I18nScope(translationContext))
             });
         });
         return contentObj;

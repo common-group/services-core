@@ -2,7 +2,6 @@ import m from 'mithril';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
-import I18n from 'i18n-js';
 import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import postsPreview from '../c/posts-preview';
@@ -73,9 +72,9 @@ const posts = {
             },
             showRecipientes = (post, project) => {
                 if (post.recipients === 'public') {
-                    return I18n.t(`everyone_${project.mode}`, I18nScope());
+                    return window.I18n.t(`everyone_${project.mode}`, I18nScope());
                 } else if (post.recipients === 'backers') {
-                    return I18n.t(`backers_${project.mode}`, I18nScope());
+                    return window.I18n.t(`backers_${project.mode}`, I18nScope());
                 }
                 const reward = _.find(rewardVM.rewards(), r => (projectVM.isSubscription(project) ? r.external_id : r.id) == post.reward_id);
                 if (reward) {
@@ -158,7 +157,7 @@ const posts = {
             }) : [
                 m(`.w-section.section-product.${project.mode}`),
                 (ctrl.showSuccess() ? m.component(popNotification, {
-                    message: I18n.t('successful', I18nScope())
+                    message: window.I18n.t('successful', I18nScope())
                 }) : ''),
                 (ctrl.showError() ? m.component(popNotification, {
                     message: ctrl.errors(),
@@ -170,7 +169,7 @@ const posts = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6',
                                 m('.fontsize-larger.fontweight-semibold.lineheight-tight',
-                                    I18n.t(`send_a_message_${project.mode}`, I18nScope())
+                                    window.I18n.t(`send_a_message_${project.mode}`, I18nScope())
                                 )
                             ),
                             m('.w-col.w-col-3')
@@ -203,10 +202,10 @@ const posts = {
                                         m('option[value=\'-1\']', {
                                             selected: true
                                         },
-                                            I18n.t(`everyone_${project.mode}`, I18nScope())
+                                            window.I18n.t(`everyone_${project.mode}`, I18nScope())
                                         ),
                                         m('option[value=\'0\']',
-                                            I18n.t(`backers_${project.mode}`, I18nScope())
+                                            window.I18n.t(`backers_${project.mode}`, I18nScope())
                                         ),
                                         (_.map(paidRewards, reward => m(`option[value='${projectVM.isSubscription(project) ? reward.external_id : reward.id}']`,
                                               ctrl.rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project)
@@ -235,7 +234,7 @@ const posts = {
                                             m('button.btn.btn-large', {
                                                 onclick: ctrl.togglePreview
                                             },
-                                                I18n.t('preview', I18nScope())
+                                                window.I18n.t('preview', I18nScope())
                                             )
                                         ),
                                         m('.w-col.w-col-3')

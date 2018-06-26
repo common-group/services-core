@@ -1,5 +1,4 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
 import {
     catarse
 } from '../api';
@@ -106,7 +105,7 @@ const projectPosts = {
                             !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
                                 m('p.fontsize-base',
                                     m.trust(
-                                        I18n.t('empty',
+                                        window.I18n.t('empty',
                                             I18nScope({
                                                 project_user_name: args.userDetails().name,
                                                 project_id: project.project_id

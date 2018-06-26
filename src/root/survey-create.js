@@ -1,7 +1,6 @@
 import m from 'mithril';
 import {catarse} from '../api';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import surveyVM from '../vms/survey-vm';

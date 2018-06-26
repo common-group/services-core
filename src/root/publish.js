@@ -2,7 +2,6 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import { catarse } from '../api';
-import I18n from 'i18n-js';
 import models from '../models';
 import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
@@ -85,7 +84,7 @@ const publish = {
                                 m('.u-marginbottom-30.fontsize-base', [
                                     m('div', [m('span.fontweight-semibold', 'Título: '), project.name]),
                                     m('div', [m('span.fontweight-semibold', 'Link: '), `www.catarse.me/${project.permalink}`]),
-                                    m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), I18n.t(project.mode, I18nScope())]),
+                                    m('div', [m('span.fontweight-semibold', 'Modalidade de financiamento: '), window.I18n.t(project.mode, I18nScope())]),
                                     (project.mode !== 'sub' ?
                                         m('div', [m('span.fontweight-semibold', 'Meta de arrecadação: '), `R$ ${h.formatNumber(project.goal, 2, 3)}`]) :
                                         ''),

@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import I18n from 'i18n-js';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import userVM from '../vms/user-vm';
@@ -82,7 +81,7 @@ const projectEditReward = {
             }
         });
 
-        const tips = I18n.translations[I18n.currentLocale()].projects.reward_fields.faq;
+        const tips = window.I18n.translations[window.I18n.currentLocale()].projects.reward_fields.faq;
 
         loadRewards();
 
@@ -114,6 +113,16 @@ const projectEditReward = {
                             message: ctrl.errors(),
                             error: true
                         }) : ''),
+                        m('.w-row',
+                            m('.w-col.w-col-8.w-col-push-2',
+                                m('.u-marginbottom-60.u-text-center',
+                                    m('.w-inline-block.card.fontsize-small.u-radius', [
+                                        m('span.fa.fa-lightbulb-o'),
+                                        m.trust(` ${window.I18n.t('reward_know_more_cta_html', I18nScope())}`)
+                                    ])
+                                )
+                            )
+                        ),
                         m('.w-row', [
                             m('.w-col.w-col-8',
                                 m('.w-form', [
@@ -151,7 +160,7 @@ const projectEditReward = {
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
                                         onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
                                     },
-                                        I18n.t('add_reward', I18nScope())
+                                        window.I18n.t('add_reward', I18nScope())
                                     )
 
                                 ] : ''
@@ -160,14 +169,14 @@ const projectEditReward = {
                                 m('.card.u-radius', [
                                     m('.fontsize-small.u-marginbottom-20', [
                                         m('span.fa.fa-lightbulb-o.fa-lg'), 
-                                        m.trust(` ${I18n.t('reward_know_more_cta_html', I18nScope())}`)
+                                        m.trust(` ${window.I18n.t('reward_know_more_cta_html', I18nScope())}`)
                                     ]),
                                     m('.divider.u-marginbottom-20'),
                                     m('.fontsize-smallest.w-hidden-small.w-hidden-tiny', [
-                                        I18n.t('reward_faq_intro', I18nScope()),
+                                        window.I18n.t('reward_faq_intro', I18nScope()),
                                         m('br'),
                                         m('br'),
-                                        I18n.t('reward_faq_sub_intro', I18nScope()),
+                                        window.I18n.t('reward_faq_sub_intro', I18nScope()),
                                         m('br'),
                                         m('br'),
                                         _.map(ctrl.tips,

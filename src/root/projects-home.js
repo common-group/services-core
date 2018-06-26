@@ -1,7 +1,6 @@
 import m from 'mithril';
 import {catarse} from '../api';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import models from '../models';
 import projectFilters from '../vms/project-filters-vm';
@@ -74,7 +73,7 @@ const projectsHome = {
             };
         });
 
-        return m('#projects-home-component', { config: h.setPageTitle(I18n.t('header_html', I18nScope())) }, [
+        return m('#projects-home-component', { config: h.setPageTitle(window.I18n.t('header_html', I18nScope())) }, [
             // m.component(menu, {transparent: true}),
             m.component(slider, {
                 slides: slides(),

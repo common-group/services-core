@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import inlineError from './inline-error';
@@ -115,16 +114,16 @@ const userNotifications = {
                                                 [
                                                     m('.w-sub-col.w-col.w-col-6', 
                                                         m('img', {
-                                                            src: I18n.t(`newsletters.${item.list_id}.image_src`, I18nScope())
+                                                            src: window.I18n.t(`newsletters.${item.list_id}.image_src`, I18nScope())
                                                         })
                                                     ),
                                                     m('.w-col.w-col-6',
                                                         [   
                                                             m('.fontsize-base.fontweight-semibold', 
-                                                                I18n.t(`newsletters.${item.list_id}.title`, I18nScope())
+                                                                window.I18n.t(`newsletters.${item.list_id}.title`, I18nScope())
                                                             ),
                                                             m('.fontsize-small.u-marginbottom-30', 
-                                                                I18n.t(`newsletters.${item.list_id}.description`, I18nScope())
+                                                                window.I18n.t(`newsletters.${item.list_id}.description`, I18nScope())
                                                             ),
                                                             (_item.should_insert() || _item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
                                                             (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: ctrl.getUserMarketingListId(item) }) : ''),

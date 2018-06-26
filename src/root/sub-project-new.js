@@ -1,7 +1,6 @@
 import m from 'mithril';
 import {catarse} from '../api';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import models from '../models';
 import h from '../h';
 import inlineError from '../c/inline-error';
@@ -80,7 +79,7 @@ const subProjectNew = {
                                             m.withAttr('value', ctrl.projectCategory)(e);
                                         }
                                     }, [
-                                        m('option[value="-1"]', I18n.t('form.select_default', I18nScope())),
+                                        m('option[value="-1"]', window.I18n.t('form.select_default', I18nScope())),
                                         _.map(ctrl.categories(), category => m('option', {
                                             value: category.id,
                                             selected: ctrl.projectCategory() === category.id
@@ -90,7 +89,7 @@ const subProjectNew = {
                                 m('.u-marginbottom-80.w-row', [
                                     m('.w-col.w-col-4'),
                                     m('.u-margintop-40.w-col.w-col-4',
-                                        m(`input[type="submit"][value="${I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
+                                        m(`input[type="submit"][value="${window.I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
                                     ),
                                     m('.w-col.w-col-4',
                                         m('div')

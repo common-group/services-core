@@ -1,5 +1,5 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
+import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
 
@@ -25,8 +25,8 @@ const faqBox = {
             _.each(questions, (quest, idx) => {
                 _.extend(updatedQuestions, {
                     [idx + 1]: {
-                        question: I18n.t(`${tKey()}.questions.${idx}.question`, I18nScope()),
-                        answer: I18n.t(`${tKey()}.questions.${idx}.answer`,
+                        question: window.I18n.t(`${tKey()}.questions.${idx}.question`, I18nScope()),
+                        answer: window.I18n.t(`${tKey()}.questions.${idx}.answer`,
                                     I18nScope(
                                         { userLink: `/users/${user().id}`,
                                             userName: user().public_name || user().name
@@ -63,13 +63,13 @@ const faqBox = {
                         image, 
                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                             m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
-                                I18n.t(`${ctrl.tKey()}.description`, I18nScope())
+                                window.I18n.t(`${ctrl.tKey()}.description`, I18nScope())
                             )
                         )
                     ]
              ),
                 m('.u-marginbottom-20.fontsize-small.fontweight-semibold',
-                I18n.t(`${args.vm.isInternational() ? 'international_title' : 'title'}`, I18nScope())
+                window.I18n.t(`${args.vm.isInternational() ? 'international_title' : 'title'}`, I18nScope())
             ),
                 m('ul.w-list-unstyled',
                 _.map(ctrl.scopedQuestions(), (question, idx) => [

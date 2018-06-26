@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectGoalVM from '../vms/project-goal-vm';
@@ -64,11 +63,11 @@ const projectGoalEdit = {
         const vm = ctrl.vm;
         return m('#goal-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: I18n.t('shared.successful_update'),
+                message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: I18n.t('shared.failed_update'),
+                message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true
             }) : ''),
@@ -78,8 +77,8 @@ const projectGoalEdit = {
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
                             m(bigCard, {
-                                label: I18n.t('mode_label', I18nScope()),
-                                label_hint: I18n.t('mode_hint', I18nScope()),
+                                label: window.I18n.t('mode_label', I18nScope()),
+                                label_hint: window.I18n.t('mode_hint', I18nScope()),
                                 children: [
                                     m('.flex-row.u-marginbottom-30', [
                                         m('a.choose-mode.choose-aon.w-inline-block.btn-select.flex-column.u-text-center[data-mode="aon"][href="javascript:void(0);"]', {
@@ -103,20 +102,20 @@ const projectGoalEdit = {
                                     ]),
                                     (ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [
                                         m('.flex-row', [
-                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n.t('aon_diff_html', I18nScope()))),
-                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(I18n.t('flex_diff_html', I18nScope())))
+                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('aon_diff_html', I18nScope()))),
+                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('flex_diff_html', I18nScope())))
                                         ]),
                                         m('.u-text-center.u-margintop-30', [
                                             m('.divider.u-marginbottom-20'),
-                                            m('.fontsize-base', I18n.t('want_more', I18nScope())),
-                                            m.trust(I18n.t('mode_diff_ebook', I18nScope()))
+                                            m('.fontsize-base', window.I18n.t('want_more', I18nScope())),
+                                            m.trust(window.I18n.t('mode_diff_ebook', I18nScope()))
                                         ])
                                     ]) : '')
                                 ]
                             }),
                             m(bigCard, {
-                                label: I18n.t('goal_label', I18nScope()),
-                                label_hint: I18n.t('goal_hint', I18nScope()),
+                                label: window.I18n.t('goal_label', I18nScope()),
+                                label_hint: window.I18n.t('goal_hint', I18nScope()),
                                 children: [
                                     m('.w-row.u-marginbottom-30', [
                                         m('.w-col.w-col-2'),
@@ -146,26 +145,26 @@ const projectGoalEdit = {
                                         m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
                                             onclick: ctrl.showTaxesDiff.toggle
                                         }, [
-                                            I18n.t('goal_taxes_link', I18nScope()),
+                                            window.I18n.t('goal_taxes_link', I18nScope()),
                                             m('span.fa.fa-chevron-down')
                                         ])
                                     ]),
                                     (ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
                                         m('.u-marginbottom-30', [
-                                            m('.fontsize-small.fontweight-semibold', I18n.t('goal_taxes_label', I18nScope())),
-                                            m('.fontsize-smaller', I18n.t(`goal_${vm.fields.mode()}_taxes_hint`, I18nScope()))
+                                            m('.fontsize-small.fontweight-semibold', window.I18n.t('goal_taxes_label', I18nScope())),
+                                            m('.fontsize-smaller', window.I18n.t(`goal_${vm.fields.mode()}_taxes_hint`, I18nScope()))
                                         ]),
                                         m('.u-text-center.u-margintop-30', [
                                             m('.divider.u-marginbottom-20'),
-                                            m('.fontsize-base', I18n.t('want_more', I18nScope())),
-                                            m.trust(I18n.t('goal_taxes_watch_video_html', I18nScope()))
+                                            m('.fontsize-base', window.I18n.t('want_more', I18nScope())),
+                                            m.trust(window.I18n.t('goal_taxes_watch_video_html', I18nScope()))
                                         ])
                                     ]) : ''),
                                 ]
                             }),
                             m(bigCard, {
-                                label: I18n.t('online_days_label', I18nScope()),
-                                label_hint: m.trust(I18n.t(`online_days_${vm.fields.mode()}_hint`, I18nScope())),
+                                label: window.I18n.t('online_days_label', I18nScope()),
+                                label_hint: m.trust(window.I18n.t(`online_days_${vm.fields.mode()}_hint`, I18nScope())),
                                 children: (vm.fields.mode() == 'aon' ? [
                                     m('.w-row', [
                                         m('.w-col.w-col-2'),
@@ -195,15 +194,15 @@ const projectGoalEdit = {
                                             class: _.isEmpty(vm.fields.online_days().toString()) ? 'selected' : '',
                                             onclick: () => { vm.fields.online_days(''); }
                                         }, [
-                                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n.t('online_days_open', I18nScope())),
-                                            m('.w-hidden-tiny', I18n.t('online_days_open_hint', I18nScope())),
+                                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20', window.I18n.t('online_days_open', I18nScope())),
+                                            m('.w-hidden-tiny', window.I18n.t('online_days_open_hint', I18nScope())),
                                         ]),
                                         m('a.choose-time.choose-limited.w-inline-block.btn-select.flex-column.u-text-center', {
                                             class: _.isEmpty(vm.fields.online_days().toString()) ? '' : 'selected',
                                             onclick: () => { vm.fields.online_days(1); }
                                         }, [
-                                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20', I18n.t('online_days_closed', I18nScope())),
-                                            m('.w-hidden-tiny.u-marginbottom-30', I18n.t('online_days_closed_hint', I18nScope())),
+                                            m('.fontsize-base.fontweight-semibold.u-marginbottom-20', window.I18n.t('online_days_closed', I18nScope())),
+                                            m('.w-hidden-tiny.u-marginbottom-30', window.I18n.t('online_days_closed_hint', I18nScope())),
                                             m('.w-row', [
                                                 m('.w-col.w-col-6.label-hide', [
                                                     m('.input.integer.optional.project_online_days', [

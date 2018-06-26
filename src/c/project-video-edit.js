@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import I18n from 'i18n-js';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectVideoVM from '../vms/project-video-vm';
 import popNotification from './pop-notification';
@@ -56,11 +55,11 @@ const projectBudgetEdit = {
         const vm = ctrl.vm;
         return m('#video-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: I18n.t('shared.successful_update'),
+                message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
-                message: I18n.t('shared.failed_update'),
+                message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true
             }) : ''),
@@ -71,12 +70,12 @@ const projectBudgetEdit = {
                         m('.w-col.w-col-10.w-col-push-1', [
                             m('.u-marginbottom-60.u-text-center', [
 		                            m('.w-inline-block.card.fontsize-small.u-radius', [
-                                m.trust(I18n.t('video_alert', I18nScope()))
+                                m.trust(window.I18n.t('video_alert', I18nScope()))
 		                            ])
 	                          ]),
                             m(inputCard, {
-                                label: I18n.t('video_label', I18nScope()),
-                                label_hint: I18n.t('video_hint', I18nScope()),
+                                label: window.I18n.t('video_label', I18nScope()),
+                                label_hint: window.I18n.t('video_hint', I18nScope()),
                                 children: [
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.video_url(),

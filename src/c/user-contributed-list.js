@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import userContributedBox from '../c/user-contributed-box';
 import userSubscriptionBox from '../c/user-subscription-box';
@@ -32,24 +31,24 @@ const userContributedList = {
                     m('.card.card-secondary.w-hidden-small.w-hidden-tiny.w-row', [
                         m('.w-col.w-col-3',
                             m('.fontsize-small.fontweight-semibold',
-                                I18n.t('project_col', I18nScope())
+                                window.I18n.t('project_col', I18nScope())
                             )
                         ),
                         m('.w-col.w-col-3',
                             m('.fontsize-small.fontweight-semibold',
-                                I18n.t('contribution_col', I18nScope())
+                                window.I18n.t('contribution_col', I18nScope())
                             )
                         ),
                         m('.w-col.w-col-3',
                             m('.fontsize-small.fontweight-semibold',
-                                I18n.t('reward_col', I18nScope())
+                                window.I18n.t('reward_col', I18nScope())
                             )
                         ),
                         m('.w-col.w-col-1'),
                         (!hideSurveys ?
                             m('.w-col.w-col-2',
                                 m('.fontsize-small.fontweight-semibold',
-                                    (isSubscription ? '' : I18n.t('survey_col', I18nScope()))
+                                    (isSubscription ? '' : window.I18n.t('survey_col', I18nScope()))
                                 )
                             ) : '')
                     ]),

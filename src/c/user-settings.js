@@ -1,5 +1,4 @@
 import m from 'mithril';
-import I18n from 'i18n-js';
 import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
@@ -144,7 +143,7 @@ const userSettings = {
 
         return m('[id=\'settings-tab\']', [
             (ctrl.showSuccess() ? m.component(popNotification, {
-                message: I18n.t('update_success_msg', I18nScope()),
+                message: window.I18n.t('update_success_msg', I18nScope()),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
             (ctrl.showError() ? m.component(popNotification, {
@@ -161,8 +160,8 @@ const userSettings = {
                             // ( _.isEmpty(fields.name()) && _.isEmpty(fields.owner_document()) ? '' : m(UserOwnerBox, {user: user}) ),
 
                             m(bigCard, {
-                                label: I18n.t('legal_title', I18nScope()),
-                                label_hint: m.trust(I18n.t('legal_subtitle', I18nScope())),
+                                label: window.I18n.t('legal_title', I18nScope()),
+                                label_hint: m.trust(window.I18n.t('legal_subtitle', I18nScope())),
                                 children: [
 
                                     m('.divider.u-marginbottom-20'),
@@ -176,13 +175,13 @@ const userSettings = {
                                                 }, [
                                                     m('option[value=\'pf\']', {
                                                         selected: fields.account_type() === 'pf'
-                                                    }, I18n.t('account_types.pf', I18nScope())),
+                                                    }, window.I18n.t('account_types.pf', I18nScope())),
                                                     m('option[value=\'pj\']', {
                                                         selected: fields.account_type() === 'pj'
-                                                    }, I18n.t('account_types.pj', I18nScope())),
+                                                    }, window.I18n.t('account_types.pj', I18nScope())),
                                                     m('option[value=\'mei\']', {
                                                         selected: fields.account_type() === 'mei'
-                                                    }, I18n.t('account_types.mei', I18nScope())),
+                                                    }, window.I18n.t('account_types.mei', I18nScope())),
                                                 ])
                                             ])
                                         ),
@@ -190,7 +189,7 @@ const userSettings = {
                                     m('.w-row', [
                                         m('.w-col.w-col-6.w-sub-col', [
                                             m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
-                                                I18n.t(
+                                                window.I18n.t(
                                                     (fields.account_type() == 'pf' ? 'pf_label_name' : 'pj_label_name'),
                                                     I18nScope()
                                                 )
@@ -208,7 +207,7 @@ const userSettings = {
                                             m('.w-row', [
                                                 m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                                     m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                        I18n.t((fields.account_type() == 'pf' ? 'pf_label_document' : 'pj_label_document'), I18nScope())
+                                                        window.I18n.t((fields.account_type() == 'pf' ? 'pf_label_document' : 'pj_label_document'), I18nScope())
                                                     ),
                                                     m(`input.string.tel.required.w-input.text-field.positive${(disableFields ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                         value: fields.owner_document(),
@@ -222,7 +221,7 @@ const userSettings = {
                                                 ]),
                                                 m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', (fields.account_type() == 'pf' ? [
                                                     m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                        I18n.t('label_birth_date', I18nScope())
+                                                        window.I18n.t('label_birth_date', I18nScope())
                                                     ),
                                                     m(`input.string.tel.required.w-input.text-field.positive${((disableFields && !_.isEmpty(user.birth_date)) ? '.text-field-disabled' : '')}[data-validate-cpf-cnpj='true'][id='user_bank_account_attributes_owner_document'][type='tel'][validation_text='true']`, {
                                                         value: fields.birth_date(),
@@ -235,7 +234,7 @@ const userSettings = {
                                                     ctrl.parsedErrors.inlineError('birth_date')
                                                 ] : [
                                                     m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
-                                                        I18n.t('label_state_inscription', I18nScope())
+                                                        window.I18n.t('label_state_inscription', I18nScope())
                                                     ),
                                                     m('input.string.tel.required.w-input.text-field.positive[data-validate-cpf-cnpj=\'true\'][id=\'user_bank_account_attributes_owner_document\'][type=\'tel\'][validation_text=\'true\']', {
                                                         value: fields.state_inscription(),
@@ -253,8 +252,8 @@ const userSettings = {
                             }),
 
                             m(bigCard, {
-                                label: I18n.t('address_title', I18nScope()),
-                                label_hint: I18n.t('address_subtitle', I18nScope()),
+                                label: window.I18n.t('address_title', I18nScope()),
+                                label_hint: window.I18n.t('address_subtitle', I18nScope()),
                                 children: [
                                     m('.divider.u-marginbottom-20'),
                                     m(addressForm, {
@@ -266,23 +265,23 @@ const userSettings = {
 
                             (args.hideCreditCards ? '' : m('.w-form.card.card-terciary.u-marginbottom-20', [
                                 m('.fontsize-base.fontweight-semibold',
-                                    I18n.t('credit_cards.title', I18nScope())
+                                    window.I18n.t('credit_cards.title', I18nScope())
                                 ),
                                 m('.fontsize-small.u-marginbottom-20',
                                     m.trust(
-                                        I18n.t('credit_cards.subtitle', I18nScope())
+                                        window.I18n.t('credit_cards.subtitle', I18nScope())
                                     )
                                 ),
                                 m('.divider.u-marginbottom-20'),
                                 m('.w-row.w-hidden-tiny.card', [
                                     m('.w-col.w-col-5.w-col-small-5',
                                         m('.fontsize-small.fontweight-semibold',
-                                            I18n.t('credit_cards.card_label', I18nScope())
+                                            window.I18n.t('credit_cards.card_label', I18nScope())
                                         )
                                     ),
                                     m('.w-col.w-col-5.w-col-small-5',
                                         m('.fontweight-semibold.fontsize-small',
-                                            I18n.t('credit_cards.provider_label', I18nScope())
+                                            window.I18n.t('credit_cards.provider_label', I18nScope())
                                         )
                                     ),
                                     m('.w-col.w-col-2.w-col-small-2')
@@ -305,7 +304,7 @@ const userSettings = {
                                         m('a.btn.btn-terciary.btn-small[rel=\'nofollow\']', {
                                             onclick: ctrl.deleteCard(card.id)
                                         },
-                                            I18n.t('credit_cards.remove_label', I18nScope())
+                                            window.I18n.t('credit_cards.remove_label', I18nScope())
                                         )
                                     )
                                 ]))),

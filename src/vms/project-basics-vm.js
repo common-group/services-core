@@ -5,7 +5,8 @@ import {catarse} from '../api'
 import projectVM from './project-vm';
 import h from '../h';
 import generateErrorInstance from '../error';
-import replaceDiacritics from 'replaceDiacritics';
+
+const { replaceDiacritics } = window;
 
 const e = generateErrorInstance();
 
