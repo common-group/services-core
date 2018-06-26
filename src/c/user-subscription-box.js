@@ -337,7 +337,20 @@ const userSubscriptionBox = {
                                         ),
                                         ` Sua assinatura será cancelada no dia ${h.momentify(subscription.next_charge_at, 'DD/MM/YYYY')}. Até lá, ela ainda será considerada ativa.`
                                     ])
-                                ) : (subscription.status === 'active' ? [
+                                ) : (subscription.status === 'active' ? (
+                                    subscription.last_payment_data.status == 'refused' ? [
+                                        m(".card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold", 
+                                            m("div",
+                                                [
+                                                    m("span.fa.fa-exclamation-triangle", "."),
+                                                    `Seu pagamento foi recusado em ${h.momentify(subscription.last_payment_data.refused_at)}. Vamos tentar uma nova cobrança em ${h.momentify(subscription.last_payment_data.next_retry_at)}`
+                                                ]
+                                            )
+                                        ),
+                                        m(`a.btn.btn-inline.btn-small.w-button[href='/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=inactive']`, 
+                                            "Refazer pagamento"
+                                        )
+                                    ] : [
                                     ctrl.showLastSubscriptionVersionEditionNextCharge(),
                                     subscription.payment_status !== 'pending' ? m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button',
                                         { href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id ? `reward_id=${subscription.reward_external_id}` : ''}&subscription_id=${subscription.id}&subscription_status=${subscription.status}` },
@@ -374,7 +387,7 @@ const userSubscriptionBox = {
                                     },
                                         'Cancelar assinatura'
                                     )
-                                ] : null)
+                                ]) : null)
 
                             ))
                     )
