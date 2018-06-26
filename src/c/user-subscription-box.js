@@ -290,7 +290,7 @@ const userSubscriptionBox = {
                                         ]
                                     )
                                 ),
-                                m(`a.btn.btn-inline.btn-small.w-button[href='/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=${subscription.status}']`, 
+                                m(`a.btn.btn-inline.btn-small.w-button[href='/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=inactive']`, 
                                     "Refazer pagamento"
                                 )
 
