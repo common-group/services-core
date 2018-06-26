@@ -281,7 +281,7 @@ const userSubscriptionBox = {
                     m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
                         (subscription.status === 'started' ? (
-                            subscription.last_payment_data.status == 'refused' ? [
+                            subscription.last_payment_data.status === 'refused' && subscription.payment_method != 'boleto' ? [
                                 m(".card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold", 
                                     m("div",
                                         [
@@ -293,14 +293,41 @@ const userSubscriptionBox = {
                                 m(`a.btn.btn-inline.btn-small.w-button[href='/projects/${subscription.project_external_id}/subscriptions/start?subscription_id=${subscription.id}${subscription.reward_external_id ? `&reward_id=${subscription.reward_external_id}` : ''}&subscription_status=inactive']`, 
                                     "Refazer pagamento"
                                 )
+                            ] :  (
+                                subscription.payment_status === 'pending'
+                                && subscription.boleto_url
+                                && subscription.boleto_expiration_date ?
+                                [
+                                    moment(subscription.boleto_expiration_date).add(1, 'days').isBefore(Date.now())
+                                    ? [
+                                        m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                            m('span.fa.fa-exclamation-triangle'),
+                                            ` O boleto de sua assinatura venceu dia ${h.momentify(subscription.boleto_expiration_date)}`,
+                                        ]),
+                                        (ctrl.isGeneratingSecondSlip() ? h.loader() :
+                                            m(`button.btn.btn-inline.btn-small.u-marginbottom-20.w-button`, {
+                                                disabled: ctrl.isGeneratingSecondSlip(),
+                                                onclick: ctrl.generateSecondSlip
+                                            }, 'Gerar segunda via'))
+                                    ]
+                                    : [
+                                        m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                            m('span.fa.fa-exclamation-triangle'),
+                                            ` O boleto de sua assinatura vence dia ${h.momentify(subscription.boleto_expiration_date)}`
+                                        ]),
+                                        m(`a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto')
+                                    ]
+                                ] : (
+                                    subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [
+                                        m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
+                                            m('span.fa.fa-exclamation-triangle'),
+                                            m.trust('&nbsp;'),
+                                            'Aguardando confirmação do pagamento'
+                                        ])
+                                    ] : ''
+                                )
+                            )
 
-                            ] :  [
-                                m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
-                                    m('span.fa.fa-exclamation-triangle'),
-                                    m.trust('&nbsp;'),
-                                    'Aguardando confirmação do pagamento'
-                                ]), (subscription.boleto_url ? m(`a.btn.btn-inline.btn-small.w-button[target=_blank][href=${subscription.boleto_url}]`, 'Imprimir boleto') : null)
-                            ]
                         ) :
                             (subscription.status === 'inactive' ? [
                                 (subscription.payment_status === 'pending'
