@@ -45,12 +45,14 @@
     "rollup-plugin-multi-entry": "^2.0.0",
     "rollup-stream": "^1.24.1",
     "select": "^1.1.2",
+    "uglifyjs-webpack-plugin": "^1.2.6",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.2",
     "yargs": "^3.32.0"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "build": "./node_modules/.bin/webpack"
   },
   "dependencies": {
     "chart.js": "1.0.2",
@@ -61,6 +63,8 @@
     "mithril-postgrest": "^3.0.3",
     "moment": "~> 2.19.3",
     "moment-timezone": "^0.5.16",
-    "underscore": "^1.9.0"
+    "underscore": "^1.9.0",
+    "webpack": "^4.12.0",
+    "webpack-cli": "^3.0.4"
   }
 }
