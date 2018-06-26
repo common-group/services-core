@@ -52,7 +52,8 @@
   },
   "scripts": {
     "test": "gulp test",
-    "build": "./node_modules/.bin/webpack"
+    "build": "./node_modules/.bin/webpack",
+    "build:prod": "./node_modules/.bin/webpack -p"
   },
   "dependencies": {
     "chart.js": "1.0.2",
