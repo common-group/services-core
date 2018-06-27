@@ -51,7 +51,7 @@ const projectsSubscriptionCheckout = {
 
         if (_.isNull(currentUserID)) {
             projectVM.storeSubscribeAction(m.route());
-            h.navigateToDevise();
+            h.navigateToDevise(`?redirect_to=/projects/${m.route.param('project_id')}`);
         }
 
         let reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
