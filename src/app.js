@@ -1,4 +1,5 @@
 import m from 'mithril';
+import h from './h';
 import _ from 'underscore';
 import c from './c';
 import Chart from 'chart.js';
@@ -123,7 +124,7 @@ import Chart from 'chart.js';
             view: function(ctrl){
                 return m('#app', [
                     m.component(c.root.Menu, ctrl.attr),
-                    m.component(c.root.CheckEmail, ctrl.attr),
+                    (h.getUserID() ? m.component(c.root.CheckEmail, ctrl.attr) : ''),
                     m.component(component, ctrl.attr),
                     (ctrl.attr.hideFooter ? '' : m.component(c.root.Footer, ctrl.attr))
                 ]);
