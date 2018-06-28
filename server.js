@@ -148,10 +148,10 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                                 , [subscription.id, 'active', JSON.stringify(req.body)]);
                         } else if (current_status === 'refused') {
                             // inactive subscription when payment is refused
-                            await pool.query(subscription_transition_sql
-                                , [subscription.id, 'inactive', JSON.stringify(req.body)]);
-                        } else if (current_status === 'chargeback') {
-                            // inactive subscription when payment is chargeback
+                            // await pool.query(subscription_transition_sql
+                            //    , [subscription.id, 'inactive', JSON.stringify(req.body)]);
+                        } else if (current_status === 'chargedback') {
+                            // inactive subscription when payment is chargedback
                             await pool.query(subscription_transition_sql
                                 , [subscription.id, 'inactive', JSON.stringify(req.body)]);
                         }
