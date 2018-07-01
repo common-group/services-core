@@ -1,4 +1,4 @@
-import {catarse} from '../api';
+import { catarse } from '../api';
 import m from 'mithril';
 import moment from 'moment';
 import _ from 'underscore';

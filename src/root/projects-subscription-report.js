@@ -44,93 +44,93 @@ const projectSubscriptionReport = {
                 return false;
             },
             filterBuilder = [{
-                    component: filterMain,
-                    label: 'text_filter',
-                    data: {
-                        label: 'Busca',
-                        vm: filterVM.search_index,
-                        onchange: submit,
-                        wrapper_class: '.w-sub-col.w-col.w-col-5.u-margintop-20',
-                        inputWrapperClass: '.w-input.text-field.positive',
-                        btnClass:  '.btn.btn-medium.u-marginbottom-10',
-                        placeholder: 'Busque por nome ou email do assinante...'
-                    }
-                },
-                {
-                    label: 'reward_filter',
-                    component: FilterDropdown,
-                    data: {
-                        label: 'Recompensa',
-                        onchange: submit,
-                        name: 'reward_external_id',
-                        vm: filterVM.reward_external_id,
-                        wrapper_class: '.w-sub-col.w-col.w-col-2',
-                        options: []
-                    }
-                },
-                {
-                    label: 'status_filter',
-                    component: FilterDropdown,
-                    data: {
-                        custom_label: [
-                            statusCustomFilter,
-                            null
-                        ],
-                        onchange: submit,
-                        name: 'status',
-                        vm: filterVM.status,
-                        wrapper_class: '.w-sub-col.w-col.w-col-3',
-                        options: [{
-                                value: '',
-                                option: 'Todos'
-                            },
-                            {
-                                value: 'active',
-                                option: 'Ativa'
-                            },
-                            {
-                                value: 'started',
-                                option: 'Iniciada'
-                            },
-                            {
-                                value: 'canceling',
-                                option: 'Cancelamento solicitado'
-                            },
-                            {
-                                value: 'canceled',
-                                option: 'Cancelada'
-                            },
-                            {
-                                value: 'inactive',
-                                option: 'Inativa'
-                            }
-                        ]
-                    }
-                },
-                {
-                    label: 'payment_filter',
-                    component: FilterDropdown,
-                    data: {
-                        label: 'Meio de pagamento',
-                        onchange: submit,
-                        name: 'payment_method',
-                        vm: filterVM.payment_method,
-                        wrapper_class: '.w-sub-col.w-col.w-col-2',
-                        options: [{
-                                value: '',
-                                option: 'Todos'
-                            },
-                            {
-                                value: 'credit_card',
-                                option: 'Cartão de crédito'
-                            },
-                            {
-                                value: 'boleto',
-                                option: 'Boleto'
-                            }
-                        ]
-                    }
+                component: filterMain,
+                label: 'text_filter',
+                data: {
+                    label: 'Busca',
+                    vm: filterVM.search_index,
+                    onchange: submit,
+                    wrapper_class: '.w-sub-col.w-col.w-col-5.u-margintop-20',
+                    inputWrapperClass: '.w-input.text-field.positive',
+                    btnClass: '.btn.btn-medium.u-marginbottom-10',
+                    placeholder: 'Busque por nome ou email do assinante...'
                 }
+            },
+            {
+                label: 'reward_filter',
+                component: FilterDropdown,
+                data: {
+                    label: 'Recompensa',
+                    onchange: submit,
+                    name: 'reward_external_id',
+                    vm: filterVM.reward_external_id,
+                    wrapper_class: '.w-sub-col.w-col.w-col-2',
+                    options: []
+                }
+            },
+            {
+                label: 'status_filter',
+                component: FilterDropdown,
+                data: {
+                    custom_label: [
+                        statusCustomFilter,
+                        null
+                    ],
+                    onchange: submit,
+                    name: 'status',
+                    vm: filterVM.status,
+                    wrapper_class: '.w-sub-col.w-col.w-col-3',
+                    options: [{
+                        value: '',
+                        option: 'Todos'
+                    },
+                    {
+                        value: 'active',
+                        option: 'Ativa'
+                    },
+                    {
+                        value: 'started',
+                        option: 'Iniciada'
+                    },
+                    {
+                        value: 'canceling',
+                        option: 'Cancelamento solicitado'
+                    },
+                    {
+                        value: 'canceled',
+                        option: 'Cancelada'
+                    },
+                    {
+                        value: 'inactive',
+                        option: 'Inativa'
+                    }
+                    ]
+                }
+            },
+            {
+                label: 'payment_filter',
+                component: FilterDropdown,
+                data: {
+                    label: 'Meio de pagamento',
+                    onchange: submit,
+                    name: 'payment_method',
+                    vm: filterVM.payment_method,
+                    wrapper_class: '.w-sub-col.w-col.w-col-2',
+                    options: [{
+                        value: '',
+                        option: 'Todos'
+                    },
+                    {
+                        value: 'credit_card',
+                        option: 'Cartão de crédito'
+                    },
+                    {
+                        value: 'boleto',
+                        option: 'Boleto'
+                    }
+                    ]
+                }
+            }
 
             ],
             handleError = () => {
@@ -230,8 +230,8 @@ const projectSubscriptionReport = {
                     m('.w-container',
                         m('.w-form', [
                             m('form', {
-                                    onsubmit: ctrl.submit
-                                },
+                                onsubmit: ctrl.submit
+                            },
                                 m('.u-margintop-20.w-row', [
                                     m('.w-col.w-col-12.u-text-center',
                                         m('.w-row', [

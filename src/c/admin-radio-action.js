@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const adminRadioAction = {
     controller(args) {

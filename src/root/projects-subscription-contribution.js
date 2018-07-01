@@ -35,7 +35,7 @@ const projectsSubscriptionContribution = {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value}`);
             } else {
                 rewardVM.error('');
-                m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? '&reward_id=' + currentRewardId : ''}${isEdit() ? '&subscription_id=' + m.route.param('subscription_id') : ''}${isReactivation() ? '&subscription_status=' + subscriptionStatus : ''}`);
+                m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}${isEdit() ? `&subscription_id=${m.route.param('subscription_id')}` : ''}${isReactivation() ? `&subscription_status=${subscriptionStatus}` : ''}`);
             }
         };
 
@@ -52,14 +52,14 @@ const projectsSubscriptionContribution = {
     },
     view(ctrl, args) {
         const project = ctrl.project;
-        if(_.isEmpty(project())) {
+        if (_.isEmpty(project())) {
             return h.loader();
-        };
+        }
         const faq = ctrl.paymentVM.faq(
-            ctrl.isReactivation() 
+            ctrl.isReactivation()
                 ? `${project().mode}_reactivate`
-                : ctrl.isEdit() 
-                    ? `${project().mode}_edit` 
+                : ctrl.isEdit()
+                    ? `${project().mode}_edit`
                     : project().mode);
 
         return m('#contribution-new', !_.isEmpty(project()) ? [
@@ -72,12 +72,12 @@ const projectsSubscriptionContribution = {
             m('.w-section.header-cont-new',
                 m('.w-container',
                     ctrl.isReactivation()
-                        ? [ m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_reactivation_title', I18nScope())),
-                            m('.fontsize-base', window.I18n.t('subscription_edit_subtitle', I18nScope())) ]
+                        ? [m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_reactivation_title', I18nScope())),
+                            m('.fontsize-base', window.I18n.t('subscription_edit_subtitle', I18nScope()))]
                         : ctrl.isEdit()
-                            ? [ m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_edit_title', I18nScope())),
-                                m('.fontsize-base', window.I18n.t('subscription_edit_subtitle', I18nScope())) ] 
-                            : m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_start_title', I18nScope())) 
+                            ? [m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_edit_title', I18nScope())),
+                                m('.fontsize-base', window.I18n.t('subscription_edit_subtitle', I18nScope()))]
+                            : m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_start_title', I18nScope()))
                 )
             ),
             m('.section', m('.w-container', m('.w-row', [

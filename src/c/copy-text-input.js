@@ -21,7 +21,7 @@ const copyTextInput = {
             if (!isInitialized) {
                 const textarea = el.parentNode.previousSibling.firstChild;
 
-                textarea.innerText = args.value; //This fixes an issue when instantiating multiple copy clipboard components
+                textarea.innerText = args.value; // This fixes an issue when instantiating multiple copy clipboard components
                 el.onclick = () => {
                     select(textarea);
                     copy = document.execCommand('copy');

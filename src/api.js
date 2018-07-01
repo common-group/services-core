@@ -32,7 +32,7 @@ const commonNotification = new Postgrest();
 const commonNotificationApiMeta = document.querySelector('[name="common-notification-api-host"]');
 apiInit(commonNotification, commonNotificationApiMeta, '/api_token/common', commonRequestHeader);
 
-//not a postgrest instance, but pretend it is to get free pagination
+// not a postgrest instance, but pretend it is to get free pagination
 const commonRecommender = new Postgrest();
 const commonRecommenderApiMeta = document.querySelector('[name="common-recommender-api-host"]');
 apiInit(commonRecommender, commonRecommenderApiMeta, '/api_token/common', commonRequestHeader);

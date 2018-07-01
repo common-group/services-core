@@ -294,13 +294,13 @@ const paymentCreditCard = {
                                                 onchange: m.withAttr('value', ctrl.selectedInstallment),
                                                 value: ctrl.selectedInstallment()
                                             }, _.map(ctrl.installments(), installment => m('option', { value: installment.number },
-                                                `${installment.number} X R$ ${installment.amount} ${I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
+                                                `${installment.number} X R$ ${installment.amount} ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
                                             ))
                                         ),
                                         (
 						                ctrl.selectedInstallment() > 1 ?
                                             	m('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [
-                                                	I18n.t('credit_card.total', ctrl.scope()) , `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`
+                                                	window.I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`
                                             	])
                                         	: ''
 					                    )
@@ -427,12 +427,12 @@ const paymentCreditCard = {
                                 onchange: m.withAttr('value', ctrl.selectedInstallment),
                                 value: ctrl.selectedInstallment()
                             }, _.map(ctrl.installments(), installment => m(`option[value="${installment.number}"]`,
-                                     `${installment.number} X R$ ${installment.amount} ${I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
+                                     `${installment.number} X R$ ${installment.amount} ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
                             ))),
                             (
 	                            ctrl.selectedInstallment() > 1 ?
         	                        m('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [
-                	                    I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`
+                	                    window.I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`
                                 	])
                             	    : ''
             			    )

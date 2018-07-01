@@ -11,22 +11,22 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const paymentSlip = {
     controller(args) {
         const vm = args.vm,
-              isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
-              slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(args.contribution_id),
-              loading = m.prop(false),
-              error = m.prop(false),
-              completed = m.prop(false),
-              subscriptionEditConfirmed = m.prop(false),
-              showSubscriptionModal = m.prop(false),
-              isReactivation = args.isReactivation || m.prop(false);
+            isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
+            slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(args.contribution_id),
+            loading = m.prop(false),
+            error = m.prop(false),
+            completed = m.prop(false),
+            subscriptionEditConfirmed = m.prop(false),
+            showSubscriptionModal = m.prop(false),
+            isReactivation = args.isReactivation || m.prop(false);
 
         const buildSlip = () => {
             vm.isLoading(true);
             m.redraw();
 
-            if (isSubscriptionEdit ()
+            if (isSubscriptionEdit()
                 && !subscriptionEditConfirmed()
-                && !isReactivation()){
+                && !isReactivation()) {
                 showSubscriptionModal(true);
 
                 return false;
@@ -41,7 +41,7 @@ const paymentSlip = {
                 };
 
                 if (isSubscriptionEdit()) {
-                    commonPaymentVM.sendSlipPayment(vm, _.extend({}, commonData, {subscription_id: args.subscriptionId()}));
+                    commonPaymentVM.sendSlipPayment(vm, _.extend({}, commonData, { subscription_id: args.subscriptionId() }));
 
                     return false;
                 }

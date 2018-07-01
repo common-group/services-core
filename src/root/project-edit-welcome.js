@@ -13,9 +13,7 @@ const projectEditWelcome = {
             error = m.prop(false);
 
         const changeReward = () => {
-            const reward = _.find(rewards(), (r) => {
-                return r.id == currentRewardId();
-            });
+            const reward = _.find(rewards(), r => r.id == currentRewardId());
             currentReward(reward);
             m.redraw();
         };
@@ -153,8 +151,8 @@ const projectEditWelcome = {
                                                 m('.w-col.w-col-3'),
                                                 m('._w-sub-col.w-col.w-col-6',
                                                     m('a.btn.btn-large', {
-                                                            onclick: ctrl.updateRewards
-                                                        },
+                                                        onclick: ctrl.updateRewards
+                                                    },
                                                         'Salvar'
                                                     )
                                                 ),

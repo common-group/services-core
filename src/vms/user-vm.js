@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 import projectFilters from './project-filters-vm';
@@ -75,7 +75,7 @@ const getUserProjectReminders = (user_id) => {
 
 const getMailMarketingLists = () => {
     const l = catarse.loaderWithToken(
-        models.mailMarketingList.getPageOptions({order: 'id.asc' }));
+        models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
 
     return l.load();
 };

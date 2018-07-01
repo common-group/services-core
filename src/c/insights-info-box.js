@@ -7,9 +7,9 @@ const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 const insightsInfoBox = {
     view(ctrl, args) {
         const newCount = args.newCount,
-              oldCount = args.oldCount,
-              countIncrease = Math.abs( newCount - oldCount ),
-              arrowClass = !args.inverted && ( newCount > oldCount ) ? 'success' : 'error';
+            oldCount = args.oldCount,
+            countIncrease = Math.abs(newCount - oldCount),
+            arrowClass = !args.inverted && (newCount > oldCount) ? 'success' : 'error';
 
         return m('.flex-column.card.u-radius.u-marginbottom-10', [
             m('div',

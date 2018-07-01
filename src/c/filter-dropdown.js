@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import dropdown from './dropdown';
 
 const filterDropdown = {

@@ -50,7 +50,7 @@ const projectRewardCard = {
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
                     vm.contributionValue(valueFloat);
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, {contribution_value: valueFloat, reward_id: vm.selectedReward().id});
+                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, { contribution_value: valueFloat, reward_id: vm.selectedReward().id });
 
                     return false;
                 }
@@ -190,10 +190,10 @@ const projectRewardCard = {
                                   ctrl.locationOptions(reward, ctrl.selectedDestination),
                                   option => m('option',
                                               { selected: option.value === ctrl.selectedDestination(), value: option.value },
-                                              [
-                                                  `${option.name} `,
-                                                  option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
-                                              ]
+                                      [
+                                          `${option.name} `,
+                                          option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
+                                      ]
                                              )
                               )
                              )

@@ -18,13 +18,13 @@ const footer = {
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/quem-somos?ref=ctrse_footer\']',
                                                     ' Quem Somos'
-                                                ),                                               
+                                                ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/paratodos?ref=ctrse_footer\']',
                                                     ' Como funciona'
-                                                ),                                                
+                                                ),
                                                 m('a.link-footer[href=\'http://blog.catarse.me\']',
                                                     ' Blog'
-                                                ),                                                
+                                                ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']',
                                                     [
                                                         ' Nosso time ',
@@ -34,27 +34,27 @@ const footer = {
                                                 ),
                                                 m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
                                                     ' Imprensa'
-                                                ),                                                                                                
+                                                ),
                                                 m('a.u-marginbottom-30.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
                                                     ' Retrospectiva 2017'
-                                                ),   
+                                                ),
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Redes Sociais'
-                                                ),                                                                                                
+                                                ),
                                                 m('a.link-footer[href=\'http://facebook.com/catarse.me\']',
                                                     [
                                                         m('span.fa.fa-facebook-square.fa-lg'),
                                                         m.trust('&nbsp;&nbsp;'),
                                                         'Facebook'
                                                     ]
-                                                ), 
+                                                ),
                                                 m('a.link-footer[href=\'http://twitter.com/catarse\']',
                                                     [
                                                         m('span.fa.fa-twitter-square.fa-lg'),
                                                         m.trust('&nbsp;&nbsp;'),
                                                         'Twitter'
                                                     ]
-                                                ), 
+                                                ),
                                                 m('a.link-footer[href=\'http://instagram.com/catarse\']',
                                                     [
                                                         m('span.fa.fa-instagram.fa-lg'),
@@ -78,7 +78,7 @@ const footer = {
                                                 ),
                                                 m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer/\']',
                                                     ' Central de Suporte'
-                                                ),                                                
+                                                ),
                                                 h.getUser() ?
                                                     m('a.link-footer[href=\'https://suporte.catarse.me/hc/pt-br/signin?return_to=https%3A%2F%2Fsuporte.catarse.me%2Fhc%2Fpt-br%2Frequests%2Fnew&locale=19\'][target="_BLANK"]',
                                                       ' Contato'
@@ -89,7 +89,7 @@ const footer = {
                                                      ),
                                                 m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
                                                   ' Escola Catarse'
-                                                 ),                                                
+                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
                                                   ' Nossa Taxa'
                                                  ),
@@ -98,7 +98,7 @@ const footer = {
                                                  ),
                                                 m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']',
                                                   ' Responsabilidades e Segurança'
-                                                 ),                                                
+                                                 ),
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/legal/termos-de-uso\'][target="_BLANK"]',
                                                   ' Termos de uso'
                                                  ),
@@ -122,17 +122,17 @@ const footer = {
                                                     ' Publicações Independentes'
                                                 ),
                                                 m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
-                                                  [
-                                                      'Catarse Assinaturas',
-                                                      m.trust('&nbsp;'),
-                                                      m('span.badge.badge-success',
+                                                    [
+                                                        'Catarse Assinaturas',
+                                                        m.trust('&nbsp;'),
+                                                        m('span.badge.badge-success',
                                                         'Novidade‍'
                                                        )
-                                                  ]
-                                                 ),                                            
+                                                    ]
+                                                 ),
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Apoie projetos no Catarse'
-                                                ),                                           
+                                                ),
                                                 m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']',
                                                     ' Explore projetos'
                                                 ),

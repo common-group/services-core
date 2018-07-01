@@ -11,6 +11,7 @@
  */
 
 import m from 'mithril';
+import _ from 'underscore';
 import models from '../models';
 import h from '../h';
 
@@ -37,7 +38,7 @@ const youtubeLightbox = {
                 return false;
             },
             createPlayer = () => {
-                player = new YT.Player('ytvideo', {
+                player = new window.YT.Player('ytvideo', {
                     height: '528',
                     width: '940',
                     videoId: args.src,

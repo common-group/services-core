@@ -123,10 +123,10 @@ const publish = {
                                     m('div', [
                                         m((index + 1 > acceptedIndex()) ? 'a.w-inline-block.checkbox-big' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg', {
                                             onclick: () => {
-                                                    if(index >= acceptedIndex()) {
-                                                        acceptedIndex(acceptedIndex() + 1);
-                                                    }
+                                                if (index >= acceptedIndex()) {
+                                                    acceptedIndex(acceptedIndex() + 1);
                                                 }
+                                            }
                                         })
                                     ])
                                 ]),

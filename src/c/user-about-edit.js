@@ -510,7 +510,7 @@ const userAboutEdit = {
 
                                     ])
                                 )),
-                                (!user.is_admin && ( args.hideDisableAcc || user.total_published_projects > 0 ) ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
+                                (!user.is_admin && (args.hideDisableAcc || user.total_published_projects > 0) ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                     m('.w-row.u-marginbottom-10', [
                                         m('.fontweight-semibold.fontsize-smaller',
                                             'Desativar minha conta'

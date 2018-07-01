@@ -7,7 +7,7 @@
  * <div data-mithril="UsersBalance" data-parameters="{'user_id': 10}">
  */
 import m from 'mithril';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import _ from 'underscore';
 import models from '../models';
 import userBalance from './user-balance';

@@ -31,21 +31,21 @@ const userBalanceTrasactionRow = {
                              m('.w-row', [
                                  m('.w-col.w-col-4', [
                                      m('div', [
-                                         m('span.fontsize-smaller.fontcolor-secondary', I18n.t('debit', I18nScope())),
+                                         m('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('debit', I18nScope())),
                                          m.trust('&nbsp;'),
                                          m('span.fontsize-base.text-error', `R$ ${h.formatNumber(Math.abs(item.debit), 2, 3)}`)
                                      ])
                                  ]),
                                  m('.w-col.w-col-4', [
                                      m('div', [
-                                         m('span.fontsize-smaller.fontcolor-secondary', I18n.t('credit', I18nScope())),
+                                         m('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('credit', I18nScope())),
                                          m.trust('&nbsp;'),
                                          m('span.fontsize-base.text-success', `R$ ${h.formatNumber(item.credit, 2, 3)}`)
                                      ])
                                  ]),
                                  m('.w-col.w-col-4', [
                                      m('div', [
-                                         m('span.fontsize-smaller.fontcolor-secondary', I18n.t('totals', I18nScope())),
+                                         m('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('totals', I18nScope())),
                                          m.trust('&nbsp;'),
                                          m('span.fontsize-base', `R$ ${h.formatNumber(item.total_amount, 2, 3)}`)
                                      ])
@@ -60,7 +60,7 @@ const userBalanceTrasactionRow = {
                      const event_data = {
                          subscription_reward_label: transaction.origin_objects.subscription_reward_label || '',
                          subscriber_name: transaction.origin_objects.subscriber_name,
-                         service_fee: transaction.origin_objects.service_fee ? (transaction.origin_objects.service_fee*100.0) : '',
+                         service_fee: transaction.origin_objects.service_fee ? (transaction.origin_objects.service_fee * 100.0) : '',
                          project_name: transaction.origin_objects.project_name,
                          contributitor_name: transaction.origin_objects.contributor_name,
                          from_user_name: transaction.origin_objects.from_user_name,
@@ -74,8 +74,8 @@ const userBalanceTrasactionRow = {
                              ]),
                              m('.w-col.w-col-10', [
                                  (transaction.event_name === 'balance_expired'
-                                     ? m('div', m.trust(I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data))))
-                                     : m('div', I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data)))
+                                     ? m('div', m.trust(window.I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data))))
+                                     : m('div', window.I18n.t(`event_names.${transaction.event_name}`, I18nScope(event_data)))
                                  )
                              ])
                          ]),

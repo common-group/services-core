@@ -30,7 +30,7 @@ const insights = {
 
         l.load().then((data) => {
             projectDetails(data);
-            if(_.first(data).mode === 'sub') {
+            if (_.first(data).mode === 'sub') {
                 const l2 = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
                     id: _.first(data).common_id
                 }));

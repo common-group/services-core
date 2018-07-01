@@ -8,6 +8,7 @@
  * })
  */
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 import moment from 'moment';
 

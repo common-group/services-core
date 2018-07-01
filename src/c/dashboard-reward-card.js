@@ -78,10 +78,10 @@ const dashboardRewardCard = {
                     (rewardVM.canEdit(reward, project.state, args.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
-                                    onclick: () => {
-                                        reward.edit.toggle();
-                                    }
-                                },
+                                onclick: () => {
+                                    reward.edit.toggle();
+                                }
+                            },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                             )
                         ) : '')
@@ -143,10 +143,10 @@ const dashboardRewardCard = {
                 ]),
                 m(`div${ctrl.showLimited() ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
-                            style: {
-                                display: 'block'
-                            }
-                        },
+                        style: {
+                            display: 'block'
+                        }
+                    },
                         m('.w-form', [
                             [
                                 m('.w-row', [
@@ -177,8 +177,8 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                                onclick: ctrl.toggleShowLimit
-                                            },
+                                            onclick: ctrl.toggleShowLimit
+                                        },
                                             'Cancelar'
                                         )
                                     ),

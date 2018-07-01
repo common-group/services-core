@@ -1,7 +1,7 @@
 import m from 'mithril';
 import h from '../h';
 import _ from 'underscore';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import models from '../models';
 import popNotification from './pop-notification';
 import projectGoogleContactImport from './project-google-contact-import';

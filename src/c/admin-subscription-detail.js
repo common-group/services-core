@@ -10,7 +10,8 @@ import models from '../models';
 
 const adminSubscriptionDetail = {
     controller(args) {
-        let l, rL;
+        let l,
+            rL;
         const loadReward = () => {
             const rewardFilterVM = commonProject.filtersVM({
                 id: 'eq'
@@ -98,9 +99,9 @@ const adminSubscriptionDetail = {
     view(ctrl, args) {
         const payments = ctrl.payments(),
             transitions = ctrl.transitions(),
-              notifications = ctrl.notifications(),
-              reward = ctrl.reward(),
-              currentPayment = ctrl.currentPayment;
+            notifications = ctrl.notifications(),
+            reward = ctrl.reward(),
+            currentPayment = ctrl.currentPayment;
 
         return m('.card.card-terciary.w-row', payments ? [
             m('.w-col.w-col-4',
@@ -108,58 +109,49 @@ const adminSubscriptionDetail = {
                     m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20',
                       'Histórico da transação'
                      ),
-                    _.map(transitions, (transition) => {
-                        return m('.fontsize-smallest.lineheight-looser.w-row', [
-                            m('.w-col.w-col-6',
+                    _.map(transitions, transition => m('.fontsize-smallest.lineheight-looser.w-row', [
+                        m('.w-col.w-col-6',
                                 m('div',
                                     h.momentify(transition.created_at, 'DD/MM/YYYY hh:mm')
                                 )
                             ),
-                            m('.w-col.w-col-6',
+                        m('.w-col.w-col-6',
                                 m('span',
                                     `${transition.from_status} -> ${transition.to_status}`
                                 ))
-                        ]);
-
-                    }),
+                    ])),
                     m('.divider'),
-                    _.map(payments, (payment, i) => {
-                        return m(`.fontsize-smallest.lineheight-looser.w-row${payment.selected() ? '.fontweight-semibold' : ''}`, [
-                            m('.w-col.w-col-6',
+                    _.map(payments, (payment, i) => m(`.fontsize-smallest.lineheight-looser.w-row${payment.selected() ? '.fontweight-semibold' : ''}`, [
+                        m('.w-col.w-col-6',
                                 m('div',
                                     h.momentify(payment.created_at, 'DD/MM/YYYY hh:mm')
                                 )
                             ),
-                            m('.w-col.w-col-6',
+                        m('.w-col.w-col-6',
                                 m(`span.${payment.selected() ? 'link-hidden-dark' : 'alt-link'}`, {
-                                        onclick: () => {
-                                            ctrl.clearSelected(payments);
-                                            payment.selected(true);
-                                            currentPayment(payment);
-                                        }
-                                    },
+                                    onclick: () => {
+                                        ctrl.clearSelected(payments);
+                                        payment.selected(true);
+                                        currentPayment(payment);
+                                    }
+                                },
                                     payment.status
                                 ))
-                        ]);
-
-                    }),
+                    ])),
                     m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20.u-margintop-20',
                       'Notificações'
                      ),
-                    _.map(notifications, (notification) => {
-                        return m('.fontsize-smallest.lineheight-looser.w-row', [
-                            m('.w-col.w-col-6',
+                    _.map(notifications, notification => m('.fontsize-smallest.lineheight-looser.w-row', [
+                        m('.w-col.w-col-6',
                               m('div',
                                 h.momentify(notification.created_at, 'DD/MM/YYYY hh:mm')
                                )
                              ),
-                            m('.w-col.w-col-6',
+                        m('.w-col.w-col-6',
                               m('span',
                                 notification.label
                                ))
-                        ]);
-
-                    }),
+                    ])),
                 ])),
             m('.w-col.w-col-4',
                 m('div', [
@@ -167,11 +159,11 @@ const adminSubscriptionDetail = {
                         'Detalhes do apoio mensal'
                     ),
                     m('.fontsize-smallest.lineheight-loose', currentPayment() ? [
-                        `Início: ${ h.momentify(currentPayment().created_at, 'DD/MM/YYYY hh:mm') }`,
+                        `Início: ${h.momentify(currentPayment().created_at, 'DD/MM/YYYY hh:mm')}`,
                         m('br'),
-                        `Confirmação: ${ h.momentify(currentPayment().paid_at, 'DD/MM/YYYY hh:mm') }`,
+                        `Confirmação: ${h.momentify(currentPayment().paid_at, 'DD/MM/YYYY hh:mm')}`,
                         m('br'),
-                        `Valor: R$${currentPayment().amount/100}`,
+                        `Valor: R$${currentPayment().amount / 100}`,
                         m('br'),
                         // 'Taxa: R$3,35',
                         // m('br'),

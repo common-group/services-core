@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import models from '../models';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -176,7 +176,7 @@ const userBilling = {
             }) : ''),
             m('.w-row',
                 m('.w-col.w-col-10.w-col-push-1', [
-                    m(`form.simple_form.refund_bank_account_form`, {onsubmit: ctrl.onSubmit}, [
+                    m('form.simple_form.refund_bank_account_form', { onsubmit: ctrl.onSubmit }, [
                         m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'billing\']'),
                         m('.w-form.card.card-terciary', [
                             m('.fontsize-base.fontweight-semibold',

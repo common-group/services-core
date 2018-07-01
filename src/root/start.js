@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
@@ -20,7 +20,7 @@ const start = {
             selectedCategory = m.prop([]),
             featuredProjects = m.prop([]),
             selectedCategoryIdx = m.prop(-1),
-            startvm = startVM(I18n),
+            startvm = startVM(window.I18n),
             filters = catarse.filtersVM,
             paneImages = startvm.panes,
             categoryvm = filters({
@@ -298,13 +298,13 @@ const start = {
                                                 window.I18n.t('mode.sub.info', I18nScope())
                                             ),
                                             m('.fontsize-base.flex-column.fontcolor-secondary',
-                                              [
+                                                [
                                                     window.I18n.t('mode.sub.info_2', I18nScope()),
                                                     m.trust(window.I18n.t('mode.sub.more_link', I18nScope()))
-                                              ]
+                                                ]
                                             )
                                         ]
-                                    )                            
+                                    )
                                 ]
                             )
                         ),

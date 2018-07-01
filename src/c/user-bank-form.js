@@ -1,6 +1,6 @@
 import m from 'mithril';
 import userVM from '../vms/user-vm';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
@@ -11,39 +11,39 @@ import userSettingsVM from '../vms/user-settings-vm';
 
 const userBankForm = {
     controller(args) {
-        let parsedErrors = args.parsedErrors;
+        const parsedErrors = args.parsedErrors;
         const fields = args.fields,
-              user = args.user,
-              bankAccount = m.prop({}),
-              banks = m.prop(),
-              banksLoader = catarse.loader(models.bank.getPageOptions()),
-              showOtherBanks = h.toggleProp(false, true),
-              showOtherBanksInput = m.prop(false),
-              popularBanks = [{
-                  id: '51',
-                  code: '001',
-                  name: 'Banco do Brasil S.A.'
-              }, {
-                  id: '131',
-                  code: '341',
-                  name: 'Itaú Unibanco S.A.'
-              }, {
-                  id: '122',
-                  code: '104',
-                  name: 'Caixa Econômica Federal'
-              }, {
-                  id: '104',
-                  code: '033',
-                  name: 'Banco Santander  (Brasil)  S.A.'
-              }, {
-                  id: '127',
-                  code: '399',
-                  name: 'HSBC Bank Brasil S.A. - Banco Múltiplo'
-              }, {
-                  id: '23',
-                  code: '237',
-                  name: 'Banco Bradesco S.A.'
-              }];
+            user = args.user,
+            bankAccount = m.prop({}),
+            banks = m.prop(),
+            banksLoader = catarse.loader(models.bank.getPageOptions()),
+            showOtherBanks = h.toggleProp(false, true),
+            showOtherBanksInput = m.prop(false),
+            popularBanks = [{
+                id: '51',
+                code: '001',
+                name: 'Banco do Brasil S.A.'
+            }, {
+                id: '131',
+                code: '341',
+                name: 'Itaú Unibanco S.A.'
+            }, {
+                id: '122',
+                code: '104',
+                name: 'Caixa Econômica Federal'
+            }, {
+                id: '104',
+                code: '033',
+                name: 'Banco Santander  (Brasil)  S.A.'
+            }, {
+                id: '127',
+                code: '399',
+                name: 'HSBC Bank Brasil S.A. - Banco Múltiplo'
+            }, {
+                id: '23',
+                code: '237',
+                name: 'Banco Bradesco S.A.'
+            }];
 
         userVM.getUserBankAccount(user.id).then((data) => {
             if (!_.isEmpty(_.first(data))) {

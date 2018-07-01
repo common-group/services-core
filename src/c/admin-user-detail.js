@@ -18,7 +18,7 @@ import adminInputAction from './admin-input-action';
 import adminNotificationHistory from './admin-notification-history';
 import adminUserBalanceTransactionsList from './admin-user-balance-transactions-list';
 import h from '../h';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const adminUserDetail = {
     controller(args) {
@@ -55,20 +55,20 @@ const adminUserDetail = {
     },
     view(ctrl, args) {
         const actions = ctrl.actions,
-              item = args.item,
-              details = args.details,
-              banUser = (builder, id) => _.extend({}, builder, {
-                  requestOptions: {
-                      url: (`/users/${id}/ban`),
-                      method: 'POST'
-                  }
-              }),
-              addOptions = (builder, id) => _.extend({}, builder, {
-                  requestOptions: {
-                      url: (`/users/${id}/new_password`),
-                      method: 'POST'
-                  }
-              });
+            item = args.item,
+            details = args.details,
+            banUser = (builder, id) => _.extend({}, builder, {
+                requestOptions: {
+                    url: (`/users/${id}/ban`),
+                    method: 'POST'
+                }
+            }),
+            addOptions = (builder, id) => _.extend({}, builder, {
+                requestOptions: {
+                    url: (`/users/${id}/new_password`),
+                    method: 'POST'
+                }
+            });
 
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
@@ -89,7 +89,7 @@ const adminUserDetail = {
                     user: item,
                     wrapperClass: '.w-col.w-col-4'
                 }),
-                m(adminUserBalanceTransactionsList, {user_id: item.id})
+                m(adminUserBalanceTransactionsList, { user_id: item.id })
             ]),
         ]);
     }

@@ -2,7 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import $ from 'jquery';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import models from '../models';
 import paymentStatus from './payment-status';
 import h from '../h';

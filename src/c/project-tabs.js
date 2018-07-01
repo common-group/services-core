@@ -14,7 +14,7 @@ const projectTabs = {
 
         const fixOnScroll = el => () => {
             const viewportOffset = el.getBoundingClientRect();
-            
+
 
             if (window.scrollY <= originalPosition() && isFixed()) {
                 originalPosition(-1);
@@ -29,7 +29,6 @@ const projectTabs = {
                     el.classList.add(fixedNavClass);
                 }
             }
-
         };
 
         const navDisplay = (el, isInitialized) => {

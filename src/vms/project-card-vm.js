@@ -1,4 +1,5 @@
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 import projectVM from './project-vm';
 import generateErrorInstance from '../error';

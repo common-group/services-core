@@ -14,6 +14,7 @@
  * }
  */
 import m from 'mithril';
+import _ from 'underscore';
 import h from '../h';
 import adminUser from './admin-user';
 import userVM from '../vms/user-vm';
@@ -30,13 +31,13 @@ const adminSubscriptionUser = {
     },
     view(ctrl, args) {
         const item = args.item,
-              customer = item.checkout_data ? item.checkout_data.customer : {},
-              user = {
-                  profile_img_thumbnail: ctrl.user() ? ctrl.user().profile_img_thumbnail : '',
-                  id: item.user_external_id,
-                  name: customer.name,
-                  email: item.user_email
-              };
+            customer = item.checkout_data ? item.checkout_data.customer : {},
+            user = {
+                profile_img_thumbnail: ctrl.user() ? ctrl.user().profile_img_thumbnail : '',
+                id: item.user_external_id,
+                name: customer.name,
+                email: item.user_email
+            };
 
         const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${customer.email}`);
         return ctrl.user() ? m.component(adminUser, {

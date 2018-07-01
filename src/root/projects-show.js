@@ -16,8 +16,8 @@ const projectsShow = {
             post_id
         } = args;
         const currentUser = h.getUser(),
-              loading = m.prop(true),
-              userProjectSubscriptions = m.prop([]);
+            loading = m.prop(true),
+            userProjectSubscriptions = m.prop([]);
 
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
@@ -62,11 +62,8 @@ const projectsShow = {
             }
         };
 
-        const hasSubscription = () => {
-            return !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), (sub) => {
-                return sub.project_id === projectVM.currentProject().common_id;// && sub.status !== 'canceled';
-            });
-        };
+        const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id// && sub.status !== 'canceled';
+            );
 
         return {
             loadUserSubscriptions,

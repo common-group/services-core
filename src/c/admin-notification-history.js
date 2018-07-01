@@ -11,7 +11,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const adminNotificationHistory = {
     controller(args) {

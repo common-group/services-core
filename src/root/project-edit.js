@@ -1,6 +1,5 @@
 import m from 'mithril';
 import _ from 'underscore';
-import I18n from 'i18n-js';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 // @TODO move all tabs to c/

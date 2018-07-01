@@ -4,7 +4,7 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
-const paymentBadge = (paymentMethod) => paymentMethod === 'credit_card' 
+const paymentBadge = paymentMethod => paymentMethod === 'credit_card'
         ? [m('span.fa.fa-credit-card'), ' Cartão de Crédito']
         : [m('span.fa.fa-barcode'), ' Boleto Bancário'];
 
@@ -30,10 +30,10 @@ const subscriptionEditModal = {
             m('.modal-dialog-outer',
                 m('.modal-dialog-inner.modal-dialog-small',
                     [
-                        m('button.modal-close.fa.fa-close.fa-lg.w-inline-block', {onclick: () => {
+                        m('button.modal-close.fa.fa-close.fa-lg.w-inline-block', { onclick: () => {
                             vmIsLoading(false);
                             args.showModal(false);
-                        }}),
+                        } }),
                         m('.modal-dialog-header',
                             m('.fontsize-large.u-text-center',
                                 'Confirme suas alterações'
@@ -62,7 +62,7 @@ const subscriptionEditModal = {
                                                     newSubscription.reward().description
                                                         ? newSubscription.reward().description
                                                         : m.trust(
-                                                            I18n.t('selected_reward.review_without_reward_html',
+                                                            window.I18n.t('selected_reward.review_without_reward_html',
                                                                 ctrl.scope(
                                                                     _.extend({
                                                                         value: Number(newSubscription.value).toFixed()
@@ -73,8 +73,8 @@ const subscriptionEditModal = {
                                                 ),
                                                 ctrl.isLongDescription(newSubscription.reward())
                                                     ? m('a.link-more.link-hidden[href="#"]', {
-                                                            onclick: ctrl.toggleDescription.toggle
-                                                        },
+                                                        onclick: ctrl.toggleDescription.toggle
+                                                    },
                                                         ['mais', m('span.fa.fa-angle-down')]
                                                     ) : ''
                                             ]
@@ -94,7 +94,7 @@ const subscriptionEditModal = {
                                             [
                                                 m('span.fontcolor-terciary', `R$${oldSubscription().checkout_data ? oldSubscription().checkout_data.amount / 100 : ''} `),
                                                 m('span.fa.fa-angle-right.fontcolor-terciary'),
-                                                ` R$${newSubscription.value}` ])
+                                                ` R$${newSubscription.value}`])
                                     ]
                                 ),
                                 m('.divider.u-marginbottom-10'),
@@ -138,26 +138,26 @@ const subscriptionEditModal = {
                                         )
                                     ]
                                 ),
-                                m('.modal-dialog-nav-bottom', 
+                                m('.modal-dialog-nav-bottom',
                                     m('.w-row',
                                         [
                                             m('.w-col.w-col-2.w-col-push-2'),
-                                            m('.u-text-center.w-col.w-col-4', 
+                                            m('.u-text-center.w-col.w-col-4',
                                                 m('button.btn.btn-large.u-marginbottom-20', {
-                                                        onclick: () => {
-                                                            args.confirm(true);
-                                                            args.showModal(false);
-                                                            args.pay();
-                                                        }
-                                                    },
+                                                    onclick: () => {
+                                                        args.confirm(true);
+                                                        args.showModal(false);
+                                                        args.pay();
+                                                    }
+                                                },
                                                     'Confirmar'
                                                 )
                                             ),
-                                            m('.w-col.w-col-4', 
-                                                m('button.btn.btn-large.u-marginbottom-20.btn-terciary.btn-no-border', {onclick: () => {
+                                            m('.w-col.w-col-4',
+                                                m('button.btn.btn-large.u-marginbottom-20.btn-terciary.btn-no-border', { onclick: () => {
                                                     vmIsLoading(false);
                                                     args.showModal(false);
-                                                }},
+                                                } },
                                                     'Cancelar'
                                                 )
                                             )

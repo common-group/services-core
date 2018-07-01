@@ -27,7 +27,7 @@ const userBalance = {
         };
     },
     view(ctrl, args) {
-        const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0},
+        const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0 },
             positiveValue = balance.amount >= 0,
             balanceRequestModalC = [
                 userBalanceRequestModalContent,
@@ -43,27 +43,27 @@ const userBalance = {
                 m('.w-row', [
                     m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [
                         m('.fontsize-larger', [
-                            I18n.t('totals', I18nScope()),
+                            window.I18n.t('totals', I18nScope()),
                             m(`span.text-${positiveValue ? 'success' : 'error'}`, `R$ ${h.formatNumber(balance.amount || 0, 2, 3)}`)
                         ])
                     ]),
                     m('.card.card-terciary.u-radius.w-col.w-col-4', [
                         m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${((balance.amount <= 0 || balance.in_period_yet) ? 'btn-inactive' : '')}"][href="javascript:void(0);"]`,
-                            { 
-                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false)) ? ctrl.displayModal.toggle : 'javascript:void(0);') 
+                            {
+                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false)) ? ctrl.displayModal.toggle : 'javascript:void(0);')
                             },
-                            I18n.t('withdraw_cta', I18nScope())
+                            window.I18n.t('withdraw_cta', I18nScope())
                         ),
-                        m('.fontsize-smaller.fontweight-semibold', 
-                            (balance.last_transfer_amount && balance.in_period_yet ? 
-                                I18n.t('last_withdraw_msg', I18nScope({
+                        m('.fontsize-smaller.fontweight-semibold',
+                            (balance.last_transfer_amount && balance.in_period_yet ?
+                                window.I18n.t('last_withdraw_msg', I18nScope({
                                     amount: `R$ ${h.formatNumber(balance.last_transfer_amount, 2, 3)}`,
                                     date: moment(balance.last_transfer_created_at).format('MMMM')
                                 }))
-                                : I18n.t('no_withdraws_this_month', I18nScope({month_name: moment().format('MMMM')})) ),
+                                : window.I18n.t('no_withdraws_this_month', I18nScope({ month_name: moment().format('MMMM') }))),
                         ),
                         m('.fontcolor-secondary.fontsize-smallest.lineheight-tight.u-marginbottom-10',
-                            I18n.t('withdraw_limits_msg', I18nScope())
+                            window.I18n.t('withdraw_limits_msg', I18nScope())
                         )
 
                     ])

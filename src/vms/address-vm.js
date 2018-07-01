@@ -1,4 +1,5 @@
 import m from 'mithril';
+
 const states = m.prop([]);
 const countries = m.prop([]);
 const addressVM = (args) => {

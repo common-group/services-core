@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import h from '../h';
 import generateErrorInstance from '../error';
 
@@ -25,22 +25,20 @@ const mapRailsErrors = (rails_errors) => {
     let parsedErrors;
     try {
         parsedErrors = JSON.parse(rails_errors);
-    } catch(e) {
+    } catch (e) {
         parsedErrors = {};
     }
     const extractAndSetErrorMsg = (label, fieldArray) => {
-        const value = _.first(_.compact(_.map(fieldArray, (field) => {
-            return _.first(parsedErrors[field]);
-        })));
+        const value = _.first(_.compact(_.map(fieldArray, field => _.first(parsedErrors[field]))));
 
-        if(value) {
+        if (value) {
             e(label, value);
             e.inlineError(label, true);
         }
     };
 
-    //extractAndSetErrorMsg("about_html", ["user.about_html", "about_html"]);
-    //extractAndSetErrorMsg("public_name", ["user.public_name", "public_name"]);
+    // extractAndSetErrorMsg("about_html", ["user.about_html", "about_html"]);
+    // extractAndSetErrorMsg("public_name", ["user.public_name", "public_name"]);
 
     return e;
 };
