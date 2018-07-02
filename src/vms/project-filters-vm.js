@@ -64,12 +64,19 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'all'
             },
-            score: {
-                title: 'Todas as Categorias',
-                filter: score,
-                nicename: 'Populares',
+            recommended_1: {
+                title: 'Recomendados para você',
+                filter: recommended,
+                nicename: 'Recomendados para você',
                 isContextual: false,
-                keyName: 'score'
+                keyName: 'recommended_1'
+            },
+            recommended_2: {
+                title: 'Recomendados para você',
+                filter: recommended,
+                nicename: 'Recomendados para você',
+                isContextual: false,
+                keyName: 'recommended_2'
             },
             contributed_by_friends: {
                 title: 'Amigos',
@@ -78,11 +85,12 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'contributed_by_friends'
             },
-            online: {
-                title: 'No ar',
-                filter: online,
+            recent: {
+                title: 'Recentes',
+                filter: recent,
+                nicename: 'Recentes',
                 isContextual: false,
-                keyName: 'online'
+                keyName: 'recent'
             },
             expiring: {
                 title: 'Reta final',
@@ -91,13 +99,6 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'expiring'
             },
-            successful: {
-                title: 'Todas as Categorias',
-                filter: successful,
-                nicename: 'Financiados',
-                isContextual: false,
-                keyName: 'successful'
-            },
             finished: {
                 title: 'Todas as Categorias',
                 filter: finished,
@@ -105,19 +106,25 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'finished'
             },
-            recommended_1: {
-                title: 'Recomendados',
-                filter: recommended,
-                nicename: 'Recomendados',
+            score: {
+                title: 'Todas as Categorias',
+                filter: score,
+                nicename: 'Populares',
                 isContextual: false,
-                keyName: 'recommended_1'
+                keyName: 'score'
             },
-            recommended_2: {
-                title: 'Recomendados',
-                filter: recommended,
-                nicename: 'Recomendados',
+            online: {
+                title: 'No ar',
+                filter: online,
                 isContextual: false,
-                keyName: 'recommended_2'
+                keyName: 'online'
+            },
+            successful: {
+                title: 'Todas as Categorias',
+                filter: successful,
+                nicename: 'Financiados',
+                isContextual: false,
+                keyName: 'successful'
             },
             not_sub: {
                 title: 'Projetos pontuais',
@@ -136,13 +143,6 @@ const projectFiltersVM = () => {
                 filter: sub,
                 isContextual: false,
                 keyName: 'sub'
-            },
-            recent: {
-                title: 'Recentes',
-                filter: recent,
-                nicename: 'Recentes',
-                isContextual: false,
-                keyName: 'recent'
             },
             near_me: {
                 title: 'Próximos a mim',
