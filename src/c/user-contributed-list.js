@@ -52,7 +52,7 @@ const userContributedList = {
                                 )
                             ) : '')
                     ]),
-                    (!isSubscription ? 
+                    (!isSubscription ?
                         _.map(collection, contribution => m(userContributedBox, {
                             contribution
                         }))

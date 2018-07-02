@@ -13,35 +13,35 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const projectContributions = {
     controller(args) {
         const contributionsPerDay = m.prop([]),
-              listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
-              filterStats = catarse.filtersVM({
-                  project_id: 'eq'
-              }),
-              subFilterVM = catarse.filtersVM({
-                  status: 'in',
-                  project_id: 'eq'
-              }),
-              filterVM = catarse.filtersVM({
-                  project_id: 'eq'
-              }),
-              groupedCollection = (collection = []) => {
-                  let grouped = [
+            listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
+            filterStats = catarse.filtersVM({
+                project_id: 'eq'
+            }),
+            subFilterVM = catarse.filtersVM({
+                status: 'in',
+                project_id: 'eq'
+            }),
+            filterVM = catarse.filtersVM({
+                project_id: 'eq'
+            }),
+            groupedCollection = (collection = []) => {
+                let grouped = [
                       []
-                  ],
-                      group = 0;
+                    ],
+                    group = 0;
 
-                  _.map(collection, (item, index) => {
-                      if (grouped[group].length >= 3) {
-                          group += 1;
-                          grouped[group] = [];
-                      }
+                _.map(collection, (item, index) => {
+                    if (grouped[group].length >= 3) {
+                        group += 1;
+                        grouped[group] = [];
+                    }
 
-                      grouped[group].push(item);
-                  });
+                    grouped[group].push(item);
+                });
 
-                  return grouped;
-              },
-              contributionsStats = m.prop({});
+                return grouped;
+            },
+            contributionsStats = m.prop({});
 
         if (projectVM.isSubscription(args.project())) {
             subFilterVM.project_id(args.project().common_id).status('active');

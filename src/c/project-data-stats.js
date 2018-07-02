@@ -5,7 +5,7 @@
  *
  * Example:
  * m.component(c.ProjectDataStats, {project: project})
- **/
+ * */
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';

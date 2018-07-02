@@ -43,7 +43,7 @@ const ProjectsSubscriptionThankYou = {
 
         ProjectVM
             .fetchProject(projectId, false)
-            .then(projectData => {
+            .then((projectData) => {
                 project(_.first(projectData));
                 return UserVM.fetchUser(project().user.id, false);
             })
@@ -137,7 +137,7 @@ const ProjectsSubscriptionThankYou = {
                     )
                 )
             ),
-            ctrl.error() 
+            ctrl.error()
                 ? m('.w-row',
                     m('.w-col.w-col-8.w-col-offset-2',
                         m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', window.I18n.translate('thank_you.thank_you_error', I18nScope()))

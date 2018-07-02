@@ -84,7 +84,7 @@ const projectsPayment = {
         if (_.isNull(currentUserID)) {
             return h.navigateToDevise();
         }
-        if(reward() && !_.isNull(reward().id)) {
+        if (reward() && !_.isNull(reward().id)) {
             rewardVM.getFees(reward()).then(rewardVM.fees);
         }
         vm.fetchUser().then(() => {

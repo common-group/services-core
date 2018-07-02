@@ -17,9 +17,9 @@ const insightVM = {
         const translations = window.I18n.translations[
             window.I18n.currentLocale()
         ].projects.successful_onboard[state],
-              translationContext = (state === 'finished' ? {
-                  link_news: `/projects/${_.first(data.account()).project_id}/posts`
-              } : parseAccountData(
+            translationContext = (state === 'finished' ? {
+                link_news: `/projects/${_.first(data.account()).project_id}/posts`
+            } : parseAccountData(
                   _.first(data.account()),
                   _.first(data.transfer())
               ));

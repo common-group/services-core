@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import models from '../models';
 import h from '../h';
 import modalBox from '../c/modal-box';

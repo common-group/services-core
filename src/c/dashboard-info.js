@@ -11,7 +11,7 @@
  *          cta: 'next step'
  *      }
  * })
- **/
+ * */
 import m from 'mithril';
 import _ from 'underscore';
 

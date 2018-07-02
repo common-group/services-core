@@ -1,4 +1,4 @@
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import m from 'mithril';
 import models from '../models';

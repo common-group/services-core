@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -211,7 +211,7 @@ const surveyCreate = {
                             },
                                 'Pré-visualizar'
                             ),
-                            ctrl.showError() 
+                            ctrl.showError()
                                 ? m('.u-text-center.u-margintop-10', m(inlineError, { message: 'Erro ao salvar formulário.' }))
                                 : null
                         )

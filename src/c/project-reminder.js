@@ -9,7 +9,7 @@
  *  }
  */
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import models from '../models';
 import h from '../h';
 import popNotification from './pop-notification';

@@ -3,7 +3,7 @@ import h from '../h';
 
 const adminBalanceTransferItem = {
     view(ctrl, args) {
-        let item = args.item;
+        const item = args.item;
         return m('.w-row', [
             m('.w-col.w-col-1.w-col-tiny-1', [
                 m('.w-checkbox.w-clearfix', [
@@ -11,7 +11,7 @@ const adminBalanceTransferItem = {
                         disabled: (item.state != 'pending'),
                         checked: args.listWrapper.isSelected(item.id),
                         onchange: (event) => {
-                            if(event.currentTarget.checked) {
+                            if (event.currentTarget.checked) {
                                 args.listWrapper.selectItem(item);
                             } else {
                                 args.listWrapper.unSelectItem(item);
@@ -30,7 +30,7 @@ const adminBalanceTransferItem = {
                   item.user_email),
                 m('.fontcolor-secondary.fontsize-smallest',
                   `USER_ID: ${item.user_id}`)
-             ]),
+            ]),
             m('.w-col.w-col-2', [
                 m('span.fontsize-small', `R$ ${h.formatNumber(item.amount, 2, 3)}`)
             ]),
@@ -52,7 +52,7 @@ const adminBalanceTransferItem = {
             m('.w-col.w-col-2', [
                 m('.fontsize-smallest', [
                     'Confirmado em: ',
-                    (item.transferred_at ? m('span.fontsize-small.lineheight-tightest', h.momentify(item.transferred_at)) : '' ),
+                    (item.transferred_at ? m('span.fontsize-small.lineheight-tightest', h.momentify(item.transferred_at)) : ''),
                 ])
             ]),
         ]);

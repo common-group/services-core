@@ -7,19 +7,19 @@ const projectGoalsBox = {
         const subscriptionData = args.subscriptionData() || {
                 amount_paid_for_valid_period: 0
             },
-              initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value > subscriptionData.amount_paid_for_valid_period) : 0,
-              currentGoalIndex = m.prop(initialGoalIndex),
-              nextGoal = () => {
-                  if (currentGoalIndex() < args.goalDetails().length - 1) {
-                      currentGoalIndex((currentGoalIndex() + 1));
-                  }
-              },
-              previousGoal = () => {
-                  if (currentGoalIndex() > 0) {
-                      currentGoalIndex((currentGoalIndex() - 1));
-                      m.redraw();
-                  }
-              };
+            initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value > subscriptionData.amount_paid_for_valid_period) : 0,
+            currentGoalIndex = m.prop(initialGoalIndex),
+            nextGoal = () => {
+                if (currentGoalIndex() < args.goalDetails().length - 1) {
+                    currentGoalIndex((currentGoalIndex() + 1));
+                }
+            },
+            previousGoal = () => {
+                if (currentGoalIndex() > 0) {
+                    currentGoalIndex((currentGoalIndex() - 1));
+                    m.redraw();
+                }
+            };
         // amount is higher than max goal
         if (currentGoalIndex() === -1) {
             currentGoalIndex(args.goalDetails().length - 1);

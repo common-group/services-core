@@ -19,8 +19,8 @@ const projectMode = {
     view(ctrl, args) {
         const project = args.project(),
             mode = project.mode,
-            modeImgSrc = (mode === 'aon') 
-                ? '/assets/aon-badge.png' 
+            modeImgSrc = (mode === 'aon')
+                ? '/assets/aon-badge.png'
                 : (mode === 'sub')
                     ? '/assets/catarse_bootstrap/badge-sub-h.png'
                     : '/assets/flex-badge.png',
@@ -33,9 +33,9 @@ const projectMode = {
             });
 
         return mode === 'sub' ? m(`#${mode}`, [
-                !_.isEmpty(project) ? m(`img.u-marginbottom-10[src="${modeImgSrc}"][width='130']`) : '',
-                m('.fontsize-smallest.lineheight-tighter', 'Assine esse projeto mensalmente.')
-            ]) : m(`#${mode}.w-row`, [
+            !_.isEmpty(project) ? m(`img.u-marginbottom-10[src="${modeImgSrc}"][width='130']`) : '',
+            m('.fontsize-smallest.lineheight-tighter', 'Assine esse projeto mensalmente.')
+        ]) : m(`#${mode}.w-row`, [
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [
                 !_.isEmpty(project) ? m(`img[src="${modeImgSrc}"][width='30']`) : ''
             ]),

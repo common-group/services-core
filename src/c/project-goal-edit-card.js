@@ -28,7 +28,7 @@ const projectGoalEditCard = {
                     args.error(true);
                     valueError(true);
                 }
-                if  (parseInt(goal.value()) >= 10 && project.state !== 'draft' && args.currentGoal() && parseInt(goal.value()) <= args.currentGoal().value()) {
+                if (parseInt(goal.value()) >= 10 && project.state !== 'draft' && args.currentGoal() && parseInt(goal.value()) <= args.currentGoal().value()) {
                     args.error(true);
                     currentError(true);
                 }

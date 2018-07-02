@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 import adminInputAction from './admin-input-action';
@@ -43,11 +43,11 @@ const adminProjectDetail = {
 
         const changeUserAction = {
             toggler: h.toggleProp(false, true),
-            submit: (newValue) => () => {
+            submit: newValue => () => {
                 console.log('new value', newValue);
                 changeUserAction.complete(false);
                 projectVM
-                    .updateProject(project_id, {user_id: newValue})
+                    .updateProject(project_id, { user_id: newValue })
                     .then(() => {
                         changeUserAction.complete(true);
                         changeUserAction.success(true);
@@ -55,7 +55,7 @@ const adminProjectDetail = {
                     })
                     .catch(() => {
                         changeUserAction.complete(true);
-                        changeUserAction.success(true);  
+                        changeUserAction.success(true);
                         changeUserAction.error(true);
                     });
                 return false;
@@ -100,14 +100,14 @@ const adminProjectDetail = {
                     m('button.btn.btn-small.btn-terciary', {
                         onclick: ctrl.actions.changeUserAction.toggler.toggle
                     }, 'Trocar realizador'), (ctrl.actions.changeUserAction.toggler()) ?
-                    m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10',{
+                    m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
                         config: ctrl.actionUnload(ctrl.actions.changeUserAction)
-                    },[
+                    }, [
                         m('form.w-form', {
                             onsubmit: ctrl.actions.changeUserAction.submit
                         }, (!ctrl.actions.changeUserAction.complete()) ? [
                             m('label', 'Id do novo realizador:'),
-                            m(`input.w-input.text-field[type="tel"][placeholder="ex: 239049"]`, {
+                            m('input.w-input.text-field[type="tel"][placeholder="ex: 239049"]', {
                                 onchange: m.withAttr('value', ctrl.actions.changeUserAction.newValue),
                                 value: ctrl.actions.changeUserAction.newValue()
                             }),
@@ -126,7 +126,7 @@ const adminProjectDetail = {
                     ]) : ''
                 ]),
                 m('.w-col.w-col-2', [
-                    m('a.btn.btn-small.btn-terciary', {href: `/projects/${item.project_id}/contributions_report`}, 'Relatório de apoios')
+                    m('a.btn.btn-small.btn-terciary', { href: `/projects/${item.project_id}/contributions_report` }, 'Relatório de apoios')
                 ])
             ]),
             m('.w-row.card.card-terciary.u-radius', [

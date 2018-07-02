@@ -49,7 +49,7 @@ const faqBox = {
         };
     },
     view(ctrl, args) {
-        const image = args.mode === 'sub' 
+        const image = args.mode === 'sub'
             ? m('div', m('img.u-marginbottom-10[width="130"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'))
             : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                 m('img[width=\'30\']', {
@@ -60,7 +60,7 @@ const faqBox = {
             [
                 m('.w-row.u-marginbottom-30',
                     [
-                        image, 
+                        image,
                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                             m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
                                 window.I18n.t(`${ctrl.tKey()}.description`, I18nScope())

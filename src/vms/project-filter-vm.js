@@ -1,6 +1,6 @@
 import m from 'mithril';
 import h from '../h';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const { replaceDiacritics } = window;
 

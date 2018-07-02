@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 
@@ -15,9 +15,7 @@ const context = () => {
         amount: 'between'
     });
 
-    const paramToString = (p) => {
-        return (p || '').toString().trim();
-    };
+    const paramToString = p => (p || '').toString().trim();
 
     vm.state('');
     vm.transfer_id('');
@@ -52,5 +50,5 @@ const context = () => {
     };
 
     return vm;
-}
+};
 export default context;

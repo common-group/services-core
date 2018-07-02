@@ -7,7 +7,7 @@
  *    projectAccount: projectAccount,
  *    changeToAction: ctrl.changeToAction //provided by ProjectSuccessfulOnboardConfirmAccount controller
  * })
- **/
+ * */
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';

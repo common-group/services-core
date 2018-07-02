@@ -39,54 +39,54 @@ const projectReportNoRewardReceived = {
         }))];
 
         return m('.card.u-radius.u-margintop-20',
-                 [
+            [
                      (ctrl.displayModal() ? m.component(modalBox, {
                          displayModal: ctrl.displayModal,
                          content: contactModalC
                      }) : ''),
-	                   m('.w-form', 
+	                   m('.w-form',
 		                   m('form',
 			                   [
 				                     m('.report-option.w-radio',
 					                     [
 						                       m('input.w-radio-input[type=\'radio\']', {
-                                       value: ctrl.formName,
-                                       checked: args.displayFormWithName() === ctrl.formName,
-                                       onchange: m.withAttr('value', args.displayFormWithName)
-                                   }),
-						                       m('label.fontsize-small.fontweight-semibold.w-form-label',{
-                                       onclick: _ => args.displayFormWithName(ctrl.formName)
-                                   }, 'Apoiei este projeto e ainda não recebi a recompensa')
+                           value: ctrl.formName,
+                           checked: args.displayFormWithName() === ctrl.formName,
+                           onchange: m.withAttr('value', args.displayFormWithName)
+                       }),
+						                       m('label.fontsize-small.fontweight-semibold.w-form-label', {
+                           onclick: _ => args.displayFormWithName(ctrl.formName)
+                       }, 'Apoiei este projeto e ainda não recebi a recompensa')
 					                     ]
 				                      ),
 				                     m('.u-margintop-30', {
-                                 style: {
-                                     display: args.displayFormWithName() === ctrl.formName ? 'block' : 'none'
-                                 }
-                             },
+                         style: {
+                             display: args.displayFormWithName() === ctrl.formName ? 'block' : 'none'
+                         }
+                     },
 					                     m('.fontsize-small',
 						                     [
 							                       'Para saber sobre a de entrega da sua recompensa, você pode enviar uma',
 							                       m('a.alt-link', {
-                                         style: {
-                                             cursor: 'pointer'
-                                         },
-                                         onclick: h.analytics.event({
-                                             cat: 'project_view',
-                                             act: 'project_creator_sendmsg',
-                                             lbl: args.user.id,
-                                             project: args.project()
-                                         }, ctrl.sendMessage),
-                                         text:' mensagem diretamente para o(a) Realizador(a)'
-                                     }),
+                           style: {
+                               cursor: 'pointer'
+                           },
+                           onclick: h.analytics.event({
+                               cat: 'project_view',
+                               act: 'project_creator_sendmsg',
+                               lbl: args.user.id,
+                               project: args.project()
+                           }, ctrl.sendMessage),
+                           text: ' mensagem diretamente para o(a) Realizador(a)'
+                       }),
 							                       '.',
 							                       m('br'),
 							                       m('br'),
 							                       'Veja',
 							                       m('a.alt-link', {
-                                         href: 'https://suporte.catarse.me/hc/pt-br/articles/360000149946-Ainda-n%C3%A3o-recebi-minha-recompensa-E-agora-',
-                                         target: '_blank'
-                                     }, ' aqui '),
+                           href: 'https://suporte.catarse.me/hc/pt-br/articles/360000149946-Ainda-n%C3%A3o-recebi-minha-recompensa-E-agora-',
+                           target: '_blank'
+                       }, ' aqui '),
 							                       'outras dicas sobre como acompanhar essa entrega.'
 						                     ]
 					                      )
@@ -94,7 +94,7 @@ const projectReportNoRewardReceived = {
 			                   ]
 		                    )
 	                    )
-                 ]);
+            ]);
     }
 };
 

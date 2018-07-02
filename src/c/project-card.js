@@ -58,7 +58,7 @@ const projectCard = {
 
         const cardCopy = (project) => {
             if (projectVM.isSubscription(project)) {
-                return m('img.product-label[src="https://s3.amazonaws.com/cdn.catarse/assets/assinatura-label.png"]')
+                return m('img.product-label[src="https://s3.amazonaws.com/cdn.catarse/assets/assinatura-label.png"]');
             }
             if (project.expires_at) {
                 return isFinished(project) ? [

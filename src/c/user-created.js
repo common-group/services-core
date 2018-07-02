@@ -1,6 +1,6 @@
 import m from 'mithril';
 import models from '../models';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';

@@ -159,7 +159,7 @@ const projectInsightsSub = {
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                    `R$${averageRevenue ? `${h.formatNumber( averageRevenue, 2, 3 )}` : '--'}`
+                                    `R$${averageRevenue ? `${h.formatNumber(averageRevenue, 2, 3)}` : '--'}`
                                 )
 
                             ]),
@@ -177,9 +177,9 @@ const projectInsightsSub = {
                             })
                         ]),
                         m(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [
-                          window.I18n.t('visitors_per_day_label', I18nScope())
+                            window.I18n.t('visitors_per_day_label', I18nScope())
                         ]),
-                        m(".u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20", [
+                        m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [
                             window.I18n.t('last_30_days_indication', I18nScope())
                         ])
                     ]), !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {

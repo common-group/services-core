@@ -72,6 +72,6 @@ const generateErrorInstance = () => {
     };
 
     return e;
-}
+};
 
 export default generateErrorInstance;

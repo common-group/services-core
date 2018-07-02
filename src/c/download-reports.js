@@ -4,7 +4,7 @@ import _ from 'underscore';
 const downloadReports = {
     view(ctrl, args) {
         const project = args.project(),
-              paymentState = project.state === 'failed' ? 'paid,refunded' : 'paid',
+            paymentState = project.state === 'failed' ? 'paid,refunded' : 'paid',
             paidRewards = _.filter(args.rewards, reward => reward.paid_count > 0);
 
         return m('section.min-height-70',
@@ -27,7 +27,7 @@ const downloadReports = {
                                                 m.trust('Atenção:')
                                             ),
                                             'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
-                                        ]),   
+                                        ]),
                                         m('ul.w-list-unstyled', [
                                             m('li.fontsize-smaller.u-marginbottom-10',
                                                 m('div', [

@@ -12,6 +12,6 @@ const bigCard = {
             m('div', args.children)
         ]);
     }
-}
+};
 
 export default bigCard;

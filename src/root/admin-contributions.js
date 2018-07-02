@@ -1,7 +1,7 @@
 import m from 'mithril';
 import h from '../h';
 import models from '../models';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import contributionListVM from '../vms/contribution-list-vm';
 import contributionFilterVM from '../vms/contribution-filter-vm';
@@ -129,11 +129,11 @@ const adminContributions = {
             displayChargebackForm = h.toggleProp(false, true),
             chargebackIds = m.prop(),
             generateIdsToData = () => {
-                if(chargebackIds() == undefined) {
+                if (chargebackIds() == undefined) {
                     return null;
                 }
 
-                return chargebackIds().split(',').map((str) => str.trim());
+                return chargebackIds().split(',').map(str => str.trim());
             },
             processChargebacksLoader = h.toggleProp(false, true),
             displayChargebackConfirmationModal = h.toggleProp(false, true),
@@ -154,27 +154,25 @@ const adminContributions = {
                                     m('.w-col.w-col-2', 'Valor'),
                                     m('.w-col.w-col-3', 'Projeto'),
                                 ]),
-                                _.map(toChargebackCollection(), (item, index) => {
-                                      return m('.divider.fontsize-smallest.lineheight-looser', [
-                                          m('.w-row', [
-                                              m('.w-col.w-col-3', [
-                                                  m('span', item.gateway_id)
-                                              ]),
-                                              m('.w-col.w-col-4', [
-                                                  m('span', item.user_name)
-                                              ]),
-                                              m('.w-col.w-col-2', [
-                                                  m('span', `${h.formatNumber(item.value, 2, 3)}`)
-                                              ]),
-                                              m('.w-col.w-col-3', [
-                                                  m('span', item.project_name)
-                                              ]),
-                                          ])
-                                      ]);
-                                }),
+                                _.map(toChargebackCollection(), (item, index) => m('.divider.fontsize-smallest.lineheight-looser', [
+                                    m('.w-row', [
+                                        m('.w-col.w-col-3', [
+                                            m('span', item.gateway_id)
+                                        ]),
+                                        m('.w-col.w-col-4', [
+                                            m('span', item.user_name)
+                                        ]),
+                                        m('.w-col.w-col-2', [
+                                            m('span', `${h.formatNumber(item.value, 2, 3)}`)
+                                        ]),
+                                        m('.w-col.w-col-3', [
+                                            m('span', item.project_name)
+                                        ]),
+                                    ])
+                                ])),
                                 m('.w-row.fontweight-semibold.divider', [
                                     m('.w-col.w-col-6', 'Total'),
-                                    m('.w-col.w-col-3', `R$ ${h.formatNumber(_.reduce(toChargebackCollection(), (t,i) => t + i.value, 0), 2, 3)}`)
+                                    m('.w-col.w-col-3', `R$ ${h.formatNumber(_.reduce(toChargebackCollection(), (t, i) => t + i.value, 0), 2, 3)}`)
                                 ]),
                                 m('.w-row.u-margintop-40', [
                                     m('.w-col.w-col-1'),
@@ -197,21 +195,21 @@ const adminContributions = {
                 return [wrapper, customAttrs];
             },
             searchToChargebackPayments = () => {
-                if(chargebackIds() != undefined && chargebackIds() != '') {
+                if (chargebackIds() != undefined && chargebackIds() != '') {
                     searchChargebackLoader(true);
                     m.redraw();
                     toChargebackListVM.pageSize(30);
-                    toChargebackListVM.getPageWithToken({gateway: 'eq.Pagarme', gateway_id: `in.(${generateIdsToData().join(',')})`}).then((data) => {
+                    toChargebackListVM.getPageWithToken({ gateway: 'eq.Pagarme', gateway_id: `in.(${generateIdsToData().join(',')})` }).then((data) => {
                         toChargebackCollection(data);
                         searchChargebackLoader(false);
                         displayChargebackConfirmationModal(true);
                         m.redraw();
-                        toChargebackListVM.pageSize(10)
+                        toChargebackListVM.pageSize(10);
                     });
                 }
             },
             processChargebacks = () => {
-                if(generateIdsToData() != null && generateIdsToData().length >= 0) {
+                if (generateIdsToData() != null && generateIdsToData().length >= 0) {
                     processChargebacksLoader(true);
                     m.redraw();
                     m.request({
@@ -229,15 +227,14 @@ const adminContributions = {
                     });
                 }
             },
-            inputActions = () => {
-                return m('', [
-                    m('.w-inline-block', [
-                        m('button.btn-inline.btn.btn-small.btn-terciary', {
-                            onclick: displayChargebackForm.toggle
-                        },'Chargeback em massa'),
+            inputActions = () => m('', [
+                m('.w-inline-block', [
+                    m('button.btn-inline.btn.btn-small.btn-terciary', {
+                        onclick: displayChargebackForm.toggle
+                    }, 'Chargeback em massa'),
                         (displayChargebackForm() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
                             m('.w-form', [
-                                (processChargebacksLoader() 
+                                (processChargebacksLoader()
                                     ? h.loader()
                                     : m('form', [
                                         m('label.fontsize-small', 'Insira os IDs do gateway separados por vírgula'),
@@ -247,9 +244,8 @@ const adminContributions = {
                                 )
                             ])
                         ]) : '')
-                    ])
-                ]);
-            };
+                ])
+            ]);
 
         return {
             filterVM,

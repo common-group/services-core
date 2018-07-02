@@ -1,5 +1,5 @@
 import m from 'mithril';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';

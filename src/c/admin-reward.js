@@ -1,6 +1,7 @@
 import m from 'mithril';
+import _ from 'underscore'
 import h from '../h';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import models from '../models';
 
 const adminReward = {
@@ -40,7 +41,7 @@ const adminReward = {
                 m('br'),
                 `Local de entrega: ${(shippingFee.destination ? `${shippingFee.destination} R$ ${shippingFee.value}` : 'Nenhum')}`,
                 m('br'),
-                `Envio: ${I18n.t(`shared.shipping_options.${reward.shipping_options}`)}`,
+                `Envio: ${window.I18n.t(`shared.shipping_options.${reward.shipping_options}`)}`,
                 m('br'),
                 `Valor mínimo: R$${h.formatNumber(reward.minimum_value, 2, 3)}`,
                 m('br'),

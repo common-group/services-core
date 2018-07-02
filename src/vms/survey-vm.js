@@ -11,7 +11,7 @@ const openQuestionType = 'open',
         survey_question_choices_attributes: m.prop([
             {
                 option: 'opção 1'
-            }, 
+            },
             {
                 option: 'opção 2'
             }

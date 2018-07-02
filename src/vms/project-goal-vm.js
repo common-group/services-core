@@ -26,14 +26,12 @@ const updateProject = (project_id) => {
     return projectVM.updateProject(project_id, projectData);
 };
 
-const genClickChangeMode = (mode) => {
-    return () => {
-        fields.mode(mode);
-        fields.online_days('');
-        if(mode == 'flex') {
-            e.inlineError('online_days', false);
-        }
-    };
+const genClickChangeMode = mode => () => {
+    fields.mode(mode);
+    fields.online_days('');
+    if (mode == 'flex') {
+        e.inlineError('online_days', false);
+    }
 };
 
 const projectGoalVM = {

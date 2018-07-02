@@ -1,7 +1,7 @@
 import m from 'mithril';
-import _ from'underscore';
+import _ from 'underscore';
 import moment from 'moment';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const projectFiltersVM = () => {
     const filtersVM = catarse.filtersVM,

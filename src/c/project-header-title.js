@@ -8,7 +8,7 @@ const projectHeaderTitle = {
     view(ctrl, args) {
         const project = args.project,
             isSub = projectVM.isSubscription(project);
-        
+
         return !_.isUndefined(project()) ? m(`.w-section.page-header${isSub ? '.transparent-background' : ''}`, [
             m('.w-container', [
                 args.children,

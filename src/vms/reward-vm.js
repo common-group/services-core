@@ -78,7 +78,7 @@ const selectReward = reward => () => {
         selectedReward(reward);
         if (reward.id) {
             contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
-        } else { // no reward 
+        } else { // no reward
             contributionValue(h.applyMonetaryMask('$10,00'));
         }
 
@@ -181,8 +181,8 @@ const shippingFeeForCurrentReward = (selectedDestination) => {
     });
 
     if (!currentFee && _.findWhere(states(), {
-            acronym: selectedDestination()
-        })) {
+        acronym: selectedDestination()
+    })) {
         currentFee = _.findWhere(fees(), {
             destination: 'others'
         });

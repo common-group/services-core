@@ -4,7 +4,7 @@
  *
  */
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
@@ -39,10 +39,10 @@ const ownerMessageContent = {
                 content: content(),
                 project_id: args().project_id,
                 to_user_id: userDetails().id,
-		data: {
-			page_title: document.title,
-			page_url: window.location.href
-		}
+                data: {
+                    page_title: document.title,
+                    page_url: window.location.href
+                }
             });
 
             l = catarse.loaderWithToken(loaderOpts);

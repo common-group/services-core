@@ -34,7 +34,7 @@ const projectAbout = {
                     m('.fontsize-base.u-marginbottom-30.w-hidden-small.w-hidden-tiny', [
                         m('span.fontweight-semibold', titleText),
                         m.trust('&nbsp;'),
-                        m("span.badge.fontsize-smaller.badge-success", "parcele em até 6x")
+                        m('span.badge.fontsize-smaller.badge-success', 'parcele em até 6x')
                     ])
                 ],
                 hasRewards ? [

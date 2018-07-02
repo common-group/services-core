@@ -12,41 +12,41 @@ import projectVM from '../vms/project-vm';
 const projectMain = {
     controller(args) {
         const hash = m.prop(window.location.hash),
-              displayTabContent = (project) => {
-                  const c_opts = {
-                      project,
-                      post_id: args.post_id,
-                      subscriptionData: args.subscriptionData
-                  },
-                        tabs = {
-                            '#rewards': m(projectRewards, { c_opts, project, hasSubscription: args.hasSubscription, goalDetails: args.goalDetails, subscriptionData: args.subscriptionData, rewardDetails: args.rewardDetails }),
-                            '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
-                            '#contributions': m.component(projectContributions, c_opts),
-                            '#about': m.component(projectAbout, _.extend({}, {
-                                hasSubscription: args.hasSubscription,
-                                rewardDetails: args.rewardDetails,
-                                subscriptionData: args.subscriptionData,
-                                goalDetails: args.goalDetails
-                            }, c_opts)),
-                            '#comments': m.component(projectComments, c_opts),
-                            '#posts': m.component(projectPosts, _.extend({}, {
-                                projectContributions: args.projectContributions,
-                                userDetails: args.userDetails,
-                            }, c_opts))
-                        };
+            displayTabContent = (project) => {
+                const c_opts = {
+                        project,
+                        post_id: args.post_id,
+                        subscriptionData: args.subscriptionData
+                    },
+                    tabs = {
+                        '#rewards': m(projectRewards, { c_opts, project, hasSubscription: args.hasSubscription, goalDetails: args.goalDetails, subscriptionData: args.subscriptionData, rewardDetails: args.rewardDetails }),
+                        '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
+                        '#contributions': m.component(projectContributions, c_opts),
+                        '#about': m.component(projectAbout, _.extend({}, {
+                            hasSubscription: args.hasSubscription,
+                            rewardDetails: args.rewardDetails,
+                            subscriptionData: args.subscriptionData,
+                            goalDetails: args.goalDetails
+                        }, c_opts)),
+                        '#comments': m.component(projectComments, c_opts),
+                        '#posts': m.component(projectPosts, _.extend({}, {
+                            projectContributions: args.projectContributions,
+                            userDetails: args.userDetails,
+                        }, c_opts))
+                    };
 
-                  if (_.isNumber(args.post_id) && !window.location.hash) {
-                      window.location.hash = 'posts';
-                  }
+                if (_.isNumber(args.post_id) && !window.location.hash) {
+                    window.location.hash = 'posts';
+                }
 
-                  hash(window.location.hash);
+                hash(window.location.hash);
 
-                  if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
-                      return tabs[h.mobileScreen() ? '#rewards' : '#about'];
-                  }
+                if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
+                    return tabs[h.mobileScreen() ? '#rewards' : '#about'];
+                }
 
-                  return tabs[hash()];
-              };
+                return tabs[hash()];
+            };
 
         h.redrawHashChange();
 

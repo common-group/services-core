@@ -140,7 +140,7 @@ const projectsFiscal = {
                         ])
 
                     ),
-                    ]
+                ]
                 )
             )
             : h.loader())

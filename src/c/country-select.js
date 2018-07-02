@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import models from '../models';
 
 const countrySelect = {
@@ -17,7 +17,7 @@ const countrySelect = {
             args.international(parseInt(countryID) !== defaultCountryID);
         };
 
-        countriesLoader.load().then(countryData => {
+        countriesLoader.load().then((countryData) => {
             countries(_.sortBy(countryData, 'name_en'));
             if (args.addVM) {
                 args.addVM.countries(countries());

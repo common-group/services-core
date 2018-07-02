@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import models from '../models';
-import {catarse} from '../api';
+import { catarse } from '../api';
 
 const projectFriends = {
     controller(args) {

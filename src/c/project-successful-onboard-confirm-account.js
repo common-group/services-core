@@ -4,7 +4,7 @@
  *
  * Example:
  * m.component(c.ProjectSuccessfulOnboardConfirmAccount, {projectAccount: projectAccount})
- **/
+ * */
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
@@ -70,7 +70,7 @@ const projectSuccessfulOnboardConfirmAccount = {
                         ]),
                         m('div', [
                             m('span.fontcolor-secondary', window.I18n.t('person.bank.account', I18nScope())),
-                            `${projectAccount.account}-${projectAccount.account_digit} (${window.I18n.t('person.bank.account_type.' + projectAccount.account_type, I18nScope())})`
+                            `${projectAccount.account}-${projectAccount.account_digit} (${window.I18n.t(`person.bank.account_type.${projectAccount.account_type}`, I18nScope())})`
                         ])
                     ])
                 ]),

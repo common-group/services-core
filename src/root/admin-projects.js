@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import projectListVM from '../vms/project-list-vm';
 import models from '../models';
 import projectFilterVM from '../vms/project-filter-vm';

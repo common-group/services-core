@@ -8,7 +8,7 @@ import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';
 import h from '../h';
 import models from '../models';
-import {commonCommunity} from '../api';
+import { commonCommunity } from '../api';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
@@ -19,8 +19,8 @@ const dashboardSubscriptionCardDetail = {
         };
 
         const userDetailsLoader = models.commonUserDetails.getRowWithToken(userDetailsOptions);
-        
-        userDetailsLoader.then(user_details => {
+
+        userDetailsLoader.then((user_details) => {
             args.user.address = user_details.address;
         });
 
@@ -31,9 +31,9 @@ const dashboardSubscriptionCardDetail = {
 
     view(ctrl, args) {
         const subscription = args.subscription,
-              user = _.extend({project_id: subscription.project_external_id }, args.user),
-              reward = args.reward,
-              contactModalC = [ownerMessageContent, m.prop(user)];
+            user = _.extend({ project_id: subscription.project_external_id }, args.user),
+            reward = args.reward,
+            contactModalC = [ownerMessageContent, m.prop(user)];
 
         return m('.details-backed-project.card',
             m('.card.card-terciary',
@@ -67,7 +67,7 @@ const dashboardSubscriptionCardDetail = {
                                     m('span.fontcolor-secondary',
                                         'Meio de pagamento: '
                                     ),
-                                    m(paymentMethodIcon, {subscription})
+                                    m(paymentMethodIcon, { subscription })
                                 ]),
                                 m('div', [
                                     m('span.fontcolor-secondary',
@@ -81,7 +81,7 @@ const dashboardSubscriptionCardDetail = {
                                     ),
                                     m.trust('&nbsp;'),
                                     m('span.fontweight-semibold.text-success',
-                                        `R$${subscription.total_paid/100}`
+                                        `R$${subscription.total_paid / 100}`
                                     )
                                 ])
                             ])

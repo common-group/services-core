@@ -247,9 +247,9 @@ const editRewardCard = {
                                             }
                                         }, [
                                             _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
-                                                    value: monthIndex + 1,
-                                                    selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
-                                                },
+                                                value: monthIndex + 1,
+                                                selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
+                                            },
                                                 h.capitalize(month)
                                             ))
                                         ]),
@@ -261,9 +261,9 @@ const editRewardCard = {
                                         }, [
                                             _.map(_.range(moment().year(), moment().year() + 6), year =>
                                                 m('option', {
-                                                        value: year,
-                                                        selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
-                                                    },
+                                                    value: year,
+                                                    selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
+                                                },
                                                     year
                                                 )
                                             )
@@ -323,20 +323,20 @@ const editRewardCard = {
 
                                     // state fees
                                     (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
-                                            fee,
-                                            fees: ctrl.fees,
-                                            feeIndex,
-                                            states: ctrl.states
-                                        }),
+                                        fee,
+                                        fees: ctrl.fees,
+                                        feeIndex,
+                                        states: ctrl.states
+                                    }),
 
                                     ])),
                                     m('.u-margintop-20',
                                         m("a.alt-link[href='#']", {
-                                                onclick: () => {
-                                                    ctrl.fees().push(newFee);
-                                                    return false;
-                                                }
-                                            },
+                                            onclick: () => {
+                                                ctrl.fees().push(newFee);
+                                                return false;
+                                            }
+                                        },
                                             'Adicionar destino'
                                         )
                                     )
@@ -362,8 +362,8 @@ const editRewardCard = {
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                             m('input[type=\'hidden\'][value=\'false\']'),
                             m('a.remove_fields.existing', {
-                                    onclick: ctrl.confirmDelete
-                                },
+                                onclick: ctrl.confirmDelete
+                            },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
                             )
                         ])

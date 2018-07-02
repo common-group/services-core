@@ -52,8 +52,8 @@ const dashboardSubscriptionCard = {
             cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';
 
         return m(`div${cardClass}`, [m('.card.card-clickable', {
-                    onclick: ctrl.toggleDetails.toggle
-                }, ctrl.user() ?
+            onclick: ctrl.toggleDetails.toggle
+        }, ctrl.user() ?
                 m('.w-row', [
                     m('.table-col.w-col.w-col-3',
                         m('.w-row', [

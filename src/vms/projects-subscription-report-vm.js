@@ -5,15 +5,15 @@ import models from '../models';
 const { replaceDiacritics } = window;
 
 const vm = commonPayment.filtersVM({
-    status: 'in',
-    search_index: 'fts(portuguese)',
-    reward_external_id: 'eq',
-    payment_method: 'eq',
-    project_id: 'eq'
-}),
-paramToString = function(p) {
-    return (p || '').toString().trim();
-};
+        status: 'in',
+        search_index: 'fts(portuguese)',
+        reward_external_id: 'eq',
+        payment_method: 'eq',
+        project_id: 'eq'
+    }),
+    paramToString = function (p) {
+        return (p || '').toString().trim();
+    };
 
 
 vm.status('');
@@ -22,7 +22,7 @@ vm.order({
     created_at: 'desc'
 });
 
-vm.search_index.toFilter = function() {
+vm.search_index.toFilter = function () {
     const filter = paramToString(vm.search_index());
     return filter && replaceDiacritics(filter) || undefined;
 };

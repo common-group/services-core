@@ -7,7 +7,7 @@
  */
 
 import m from 'mithril';
-import {catarse} from '../api';
+import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 

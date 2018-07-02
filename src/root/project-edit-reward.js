@@ -168,7 +168,7 @@ const projectEditReward = {
                             m('.w-col.w-col-4',
                                 m('.card.u-radius', [
                                     m('.fontsize-small.u-marginbottom-20', [
-                                        m('span.fa.fa-lightbulb-o.fa-lg'), 
+                                        m('span.fa.fa-lightbulb-o.fa-lg'),
                                         m.trust(` ${window.I18n.t('reward_know_more_cta_html', I18nScope())}`)
                                     ]),
                                     m('.divider.u-marginbottom-20'),
@@ -188,7 +188,7 @@ const projectEditReward = {
                                                     m('br')
                                                 ]
                                         )
-                                    ])                                        
+                                    ])
                                 ])
                             )
                         ])

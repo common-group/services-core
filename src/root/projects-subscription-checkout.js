@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import {catarse} from '../api'
+import { catarse } from '../api';
 import models from '../models';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -54,7 +54,7 @@ const projectsSubscriptionCheckout = {
             h.navigateToDevise(`?redirect_to=/projects/${m.route.param('project_id')}`);
         }
 
-        let reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
+        const reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
         let value;
 
         if (_.isString(rewardVM.contributionValue())) {
@@ -72,7 +72,7 @@ const projectsSubscriptionCheckout = {
 
         if (rewardIdParam) {
             rewardVM.fetchRewards(projectVM.getCurrentProject().project_id).then(() => {
-                reward(_.findWhere(rewardVM.rewards(), {id: Number(rewardIdParam)}));
+                reward(_.findWhere(rewardVM.rewards(), { id: Number(rewardIdParam) }));
                 rewardVM.selectedReward(reward());
                 m.redraw();
             });
@@ -127,7 +127,7 @@ const projectsSubscriptionCheckout = {
             }));
             countriesLoader
                 .load()
-                .then(countryData => {
+                .then((countryData) => {
                     addVM().countries(_.sortBy(countryData, 'name_en'));
                 });
         });
@@ -203,7 +203,7 @@ const projectsSubscriptionCheckout = {
                             m('.fontsize-larger.text-success.u-left',
                                 `R$ ${formatedValue}`
                             ),
-                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : ''}"]`,
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? `&subscription_status=${ctrl.subscriptionStatus}` : ''}"]`,
                                 'Editar'
                             )
                         ]),
@@ -374,8 +374,8 @@ const projectsSubscriptionCheckout = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? '&subscription_status=' + ctrl.subscriptionStatus : ''}"]`,
-                                    {config: m.route},
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? `&subscription_status=${ctrl.subscriptionStatus}` : ''}"]`,
+                                    { config: m.route },
                                     window.I18n.t('selected_reward.edit', ctrl.scope())
                                 )
                             ]),
@@ -388,7 +388,7 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-money.text-success'),
-                                            ` ${window.I18n.t('selected_reward.charged_today', ctrl.scope())} ` 
+                                            ` ${window.I18n.t('selected_reward.charged_today', ctrl.scope())} `
                                         ]
                                     ),
                                     ctrl.isEdit() && !ctrl.isReactivation()

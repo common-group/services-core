@@ -16,7 +16,7 @@ const projectDataChart = {
     controller(args) {
         const resource = _.first(args.collection()),
             limitDataset = args.limitDataset,
-            source = !_.isUndefined(resource) 
+            source = !_.isUndefined(resource)
                 ? _.isNumber(limitDataset)
                     ? _.last(resource.source, limitDataset)
                     : resource.source

@@ -22,11 +22,11 @@ const userNotifications = {
         });
 
         userVM.getMailMarketingLists().then((data) => {
-            mailMarketingLists(generateListHandler(data))
+            mailMarketingLists(generateListHandler(data));
         }
         ).catch((err) => {
             error(true);
-            m.redraw()
+            m.redraw();
         });
 
         userVM.getUserContributedProjects(user_id, null).then(
@@ -39,11 +39,9 @@ const userNotifications = {
         const generateListHandler = (list) => {
             const user_lists = args.user.mail_marketing_lists;
             return _.map(list, (item, i) => {
-                let user_signed = !_.isEmpty(user_lists) && !_.isUndefined(_.find(user_lists, userList => {
-                    return userList.marketing_list ? userList.marketing_list.list_id === item.list_id : false;
-                }));
-                let handler = {
-                    item: item,
+                const user_signed = !_.isEmpty(user_lists) && !_.isUndefined(_.find(user_lists, userList => userList.marketing_list ? userList.marketing_list.list_id === item.list_id : false));
+                const handler = {
+                    item,
                     in_list: user_signed,
                     should_insert: m.prop(false),
                     should_destroy: m.prop(false),
@@ -58,18 +56,16 @@ const userNotifications = {
         const getUserMarketingListId = (list) => {
             const currentList = _.find(args.user.mail_marketing_lists, userList => userList.marketing_list.list_id === list.list_id);
 
-            return currentList ? currentList['user_marketing_list_id'] : null;
-        }
-
-        const isOnCurrentList = (userLists, currentList) => {
-            return Boolean(_.find(userLists, userList => {
-                if (userList.marketing_list) {
-                    return userList.marketing_list.list_id === currentList.list_id;
-                }
-
-                return false;
-            }));
+            return currentList ? currentList.user_marketing_list_id : null;
         };
+
+        const isOnCurrentList = (userLists, currentList) => Boolean(_.find(userLists, (userList) => {
+            if (userList.marketing_list) {
+                return userList.marketing_list.list_id === currentList.list_id;
+            }
+
+            return false;
+        }));
 
         return {
             projects: contributedProjects,
@@ -112,28 +108,28 @@ const userNotifications = {
                                         return m('.card.u-marginbottom-20.u-radius.u-text-center-small-only',
                                             m('.w-row',
                                                 [
-                                                    m('.w-sub-col.w-col.w-col-6', 
+                                                    m('.w-sub-col.w-col.w-col-6',
                                                         m('img', {
                                                             src: window.I18n.t(`newsletters.${item.list_id}.image_src`, I18nScope())
                                                         })
                                                     ),
                                                     m('.w-col.w-col-6',
-                                                        [   
-                                                            m('.fontsize-base.fontweight-semibold', 
+                                                        [
+                                                            m('.fontsize-base.fontweight-semibold',
                                                                 window.I18n.t(`newsletters.${item.list_id}.title`, I18nScope())
                                                             ),
-                                                            m('.fontsize-small.u-marginbottom-30', 
+                                                            m('.fontsize-small.u-marginbottom-30',
                                                                 window.I18n.t(`newsletters.${item.list_id}.description`, I18nScope())
                                                             ),
-                                                            (_item.should_insert() || _item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
-                                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][id]`, value: ctrl.getUserMarketingListId(item) }) : ''),
-                                                            (_item.should_destroy() ? m(`input[type='hidden']`, { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
+                                                            (_item.should_insert() || _item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
+                                                            (_item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][id]`, value: ctrl.getUserMarketingListId(item) }) : ''),
+                                                            (_item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
                                                             m('button.btn.btn-medium.w-button',
-                                                                {   
+                                                                {
                                                                     class: !_item.isInsertInListState() ? 'btn-terciary' : null,
                                                                     onclick: (event) => {
                                                                         // If user already has this list, click should enable destroy state
-                                                                        if(ctrl.isOnCurrentList(user.mail_marketing_lists, item)) {
+                                                                        if (ctrl.isOnCurrentList(user.mail_marketing_lists, item)) {
                                                                             _item.should_destroy(true);
 
                                                                             return;
@@ -146,7 +142,7 @@ const userNotifications = {
                                                                     onmouseout: () => {
                                                                         _item.hovering(false);
                                                                     }
-                                                                }, 
+                                                                },
                                                                 _item.in_list ? _item.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar'
                                                             )
                                                         ]

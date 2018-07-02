@@ -16,15 +16,15 @@ const projectEditStart = {
                 m('.u-marginbottom-40.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
                         m('.fontsize-larger.fontweight-semibold.lineheight-looser.u-marginbottom-10',
-                            I18n.t('title', I18nScope())
+                            window.I18n.t('title', I18nScope())
                         ),
                         m('.fontsize-small.lineheight-loose.u-marginbottom-40',
-                            I18n.t('description', I18nScope({
+                            window.I18n.t('description', I18nScope({
                                 name: args.project().user.name || ''
                             }))
                         ),
                         m('.card.card-terciary.u-radius',
-                            m(`iframe[allowfullscreen="true"][width="630"][height="383"][frameborder="0"][scrolling="no"][mozallowfullscreen="true"][webkitallowfullscreen="true"][src=${I18n.t('video_src', I18nScope())}]`)
+                            m(`iframe[allowfullscreen="true"][width="630"][height="383"][frameborder="0"][scrolling="no"][mozallowfullscreen="true"][webkitallowfullscreen="true"][src=${window.I18n.t('video_src', I18nScope())}]`)
                         ),
 
                     ])

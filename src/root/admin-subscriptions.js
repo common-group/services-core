@@ -20,7 +20,7 @@ const adminSubscriptions = {
                     vm: filterVM.search_index,
                     placeholder: 'Busque por projeto, permalink, email, nome do realizador...'
                 },
-            },{ // state
+            }, { // state
                 component: filterDropdown,
                 data: {
                     label: 'Com o estado',
