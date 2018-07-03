@@ -30,6 +30,7 @@
         - [Get detailed payment info](./http_payments_rpc_payment_info.md)
         - [Create credit card](./http_payments_rpc_credit_card.md)
         - [List credit cards](./http_payments_credit_cards.md)
+        - [List saved credit cards](./http_payments_saved_credit_cards.md)
     - [Projects](./http_projects.md)
         - [Create / Update project](./http_projects_rpc_project.md)
         - [Create / Update reward](./http_projects_rpc_reward.md)
