@@ -1,5 +1,5 @@
 BEGIN;
-    SELECT plan(17);
+    SELECT plan(18);
 
     -- check if table is present
     SELECT has_table('payment_service'::name, 'credit_cards'::name);
@@ -13,6 +13,7 @@ BEGIN;
     SELECT col_default_is( 'payment_service', 'credit_cards', 'data', '{}', 'should fill data with default json {}' );
     SELECT col_default_is( 'payment_service', 'credit_cards', 'created_at', 'now()', 'should fill created_at with now' );
     SELECT col_default_is( 'payment_service', 'credit_cards', 'updated_at', 'now()', 'should fill created_at with now' );
+    SELECT col_default_is( 'payment_service', 'credit_cards', 'saved_in_process', 'false', 'default value for saved_in_process should be false' );
 
     -- check not nulls
     SELECT col_not_null('payment_service', 'credit_cards', 'id', 'id should be not null');

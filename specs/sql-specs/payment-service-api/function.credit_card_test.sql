@@ -2,7 +2,7 @@ BEGIN;
     -- insert seed data for basic user/platform/project/reward
     \i /specs/sql-support/insert_platform_user_project.sql
 
-    select plan(15);
+    select plan(17);
 
     select function_returns(
         'payment_service_api', 'credit_card', ARRAY['json'], 'json'
@@ -41,6 +41,7 @@ BEGIN;
             return next is(_card.user_id, __seed_first_user_id());
             return next is(_card.data ->> 'card_hash', 'some_card_hash_platform');
             return next is(_card.platform_id, __seed_platform_id());
+            return next is(_card.saved_in_process, false);
 
             return next throws_like(
                 'EXECUTE create_card(''{"card_hash": "some_card_hash_platform", "user_id": "'||__seed_first_user_id()||'"}'')',
@@ -65,7 +66,7 @@ BEGIN;
                 'mising_card_hash',
                 'raise error when card_hash is missing');
 
-            _result := payment_service_api.credit_card('{"card_hash": "some_card_hash"}');
+            _result := payment_service_api.credit_card('{"card_hash": "some_card_hash", "save": "true"}');
 
             return next ok((_result->>'id')::uuid is not null, 'should generate new payment');
             select * from payment_service.credit_cards where id = (_result ->> 'id')::uuid
@@ -74,6 +75,7 @@ BEGIN;
             return next is(_card.user_id, __seed_first_user_id());
             return next is(_card.data ->> 'card_hash', 'some_card_hash');
             return next is(_card.platform_id, __seed_platform_id());
+            return next is(_card.saved_in_process, true);
 
             return next throws_like(
                 'select * from payment_service_api.credit_card(''{"card_hash": "some_card_hash"}'')',
