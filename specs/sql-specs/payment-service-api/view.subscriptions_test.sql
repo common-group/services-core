@@ -4,7 +4,7 @@ BEGIN;
     \i /specs/sql-support/clean_sets_helpers.sql
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(12);
+    select plan(20);
 
     select has_view('payment_service_api', 'subscriptions', 'check view');
 
@@ -37,19 +37,43 @@ BEGIN;
     returns setof text language plpgsql as $$
         declare
             _subscription payment_service.subscriptions;
+            _paid_payment payment_service.catalog_payments;
+            _refused_payment payment_service.catalog_payments;
             _result_row payment_service_api.subscriptions;
         begin
-            -- when scoped is owner of subscription
             select * from payment_service.subscriptions limit 1 into _subscription;
+            -- add paid payment to subscription
+            insert into payment_service.catalog_payments
+            (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+            values ('paid', (now() - '2 month'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'credit_card'), _subscription.id)
+            returning * into _paid_payment;
+
+            -- add refused payment
+            insert into payment_service.catalog_payments
+            (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
+            values ('refused', (now() - '1 month'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'credit_card'), _subscription.id)
+            returning * into _refused_payment;
+
+
             set local role scoped_user;
             EXECUTE 'set local "request.jwt.claim.user_id" to '''||__seed_first_user_id()||'''';
             EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
 
+            -- when scoped is owner of subscription
             select * from payment_service_api.subscriptions
             into _result_row;
 
             return next is(_result_row.id, _subscription.id, 'subscription owner can see they subscription');
             return next is(_result_row.credit_card_id, __seed_first_user_credit_card_id(), 'subscription owner can see the credit_card_id on subscription');
+            return next is((_result_row.last_payment_data->>'id')::uuid, _refused_payment.id, 'last payment id should be then same of refused payment');
+            return next is((_result_row.last_payment_data->>'status')::text, _refused_payment.status::text, 'last payment status should be  the same of refused payment');
+            return next is((_result_row.last_payment_data->>'created_at')::timestamp without time zone, _refused_payment.created_at, 'last payment created_at should be  the same of refused payment');
+            return next is((_result_row.last_payment_data->>'payment_method'), _refused_payment.data->>'payment_method', 'last payment payment method should be  the same of refused payment');
+
+            return next is((_result_row.last_paid_payment_data->>'id')::uuid, _paid_payment.id, 'last paid payment id should be then same of paid payment');
+            return next is((_result_row.last_paid_payment_data->>'status')::text, _paid_payment.status::text, 'last paid payment status should be  the same of paid payment');
+            return next is((_result_row.last_paid_payment_data->>'created_at')::timestamp without time zone, _paid_payment.created_at, 'last paid payment created_at should be the same of paid payment');
+            return next is((_result_row.last_paid_payment_data->>'payment_method'), _paid_payment.data->>'payment_method', 'last paid payment payment method should be  the same of paid payment');
 
             select * from payment_service_api.subscriptions where status = 'deleted'
             into _result_row;
