@@ -48,9 +48,9 @@ const userBalance = {
                         ])
                     ]),
                     m('.card.card-terciary.u-radius.w-col.w-col-4', [
-                        m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${((balance.amount <= 0 || balance.in_period_yet) ? 'btn-inactive' : '')}"][href="javascript:void(0);"]`,
+                        m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${((balance.amount <= 0 || balance.in_period_yet || balance.has_cancelation_request) ? 'btn-inactive' : '')}"][href="javascript:void(0);"]`,
                             {
-                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false)) ? ctrl.displayModal.toggle : 'javascript:void(0);')
+                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false) && !balance.has_cancelation_request) ? ctrl.displayModal.toggle : 'javascript:void(0);')
                             },
                             window.I18n.t('withdraw_cta', I18nScope())
                         ),
