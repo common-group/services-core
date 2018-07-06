@@ -1,0 +1,59 @@
+upstream payment_service_api_server {
+    server ${PAYMENT_SERVICE_API_SERVER};
+}
+upstream community_service_api_server {
+    server ${COMMUNITY_SERVICE_API_SERVER};
+}
+upstream project_service_api_server {
+    server ${PROJECT_SERVICE_API_SERVER};
+}
+
+server {
+    listen ${PORT} default_server;
+    server_name _;
+
+    keepalive_timeout 5;
+    proxy_ssl_session_reuse off;
+
+    set $token "";
+    if ($is_args) {
+        set $token "&";
+    }
+
+    #location / {
+    #    proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/payments;
+    #}
+
+    # location ~ ^/projects$ {
+    #     proxy_pass ${PROTO_SCHEMA}://project_service_api_server/projects;
+    # }
+
+    # location ~ ^/projects/(\w\d\-)$ {
+    #     set $args = "?id=${$1}";
+    #     proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/project_details$args;
+    # }
+
+    location ~ "^/users/([\w\d\-]+)$" {
+        set $args "${args}${token}id=$1";
+        proxy_redirect off;
+        proxy_set_header Host ${COMMUNITY_SERVICE_API_SERVER};
+        proxy_pass ${PROTO_SCHEMA}://community_service_api_server/rpc/user_details$is_args$args;
+    }
+
+    location ~ "^/projects/([\w\d\-]+)/subscribers$" {
+        set $args "${args}${token}project_id=eq.$1";
+        #proxy_redirect off;
+        proxy_set_header Host ${PROJECT_SERVICE_API_SERVER};
+        proxy_pass ${PROTO_SCHEMA}://project_service_api_server/subscribers$is_args$args;
+    }
+
+    location /subscribers {
+        proxy_method GET;
+        proxy_set_header Host ${PROJECT_SERVICE_API_SERVER};
+        proxy_pass ${PROTO_SCHEMA}://project_service_api_server/subscribers;
+    }
+
+    # location /users {
+    #     proxy_pass ${PROTO_SCHEMA}://community_service_api_server/users;
+    # }
+}
