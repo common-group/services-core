@@ -1,5 +1,5 @@
 FROM comum/deps:latest
-
+RUN echo "ipv6" >> /etc/modules
 WORKDIR /usr/app
 COPY . .
 
