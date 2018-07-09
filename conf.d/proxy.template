@@ -7,6 +7,18 @@ upstream community_service_api_server {
 upstream project_service_api_server {
     server ${PROJECT_SERVICE_API_SERVER};
 }
+upstream analytics_service_api_server {
+    server ${ANALYTICS_SERVICE_API_SERVER};
+}
+upstream catarse_moment_service_api_server {
+    server ${CATARSE_MOMENT_SERVICE_API_SERVER};
+}
+upstream notification_service_api_server {
+    server ${NOTIFICATION_SERVICE_API_SERVER};
+}
+upstream recommender_service_api_server {
+    server ${RECOMMENDER_SERVICE_API_SERVER};
+}
 
 server {
     listen ${PORT} default_server;
@@ -14,37 +26,246 @@ server {
 
     keepalive_timeout 5;
     proxy_ssl_session_reuse off;
+    proxy_redirect off;
+
+	proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
     set $token "";
     if ($is_args) {
         set $token "&";
     }
 
-    #location / {
-    #    proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/payments;
-    #}
-
-    # location ~ ^/projects$ {
-    #     proxy_pass ${PROTO_SCHEMA}://project_service_api_server/projects;
-    # }
-
-    # location ~ ^/projects/(\w\d\-)$ {
-    #     set $args = "?id=${$1}";
-    #     proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/project_details$args;
-    # }
-
-    location ~ "^/users/([\w\d\-]+)$" {
-        set $args "${args}${token}id=$1";
-        proxy_redirect off;
+    location ~ "^/users/" {
         proxy_set_header Host ${COMMUNITY_SERVICE_API_SERVER};
-        proxy_pass ${PROTO_SCHEMA}://community_service_api_server/rpc/user_details$is_args$args;
+
+        location ~ "^/users/([\w\d\-]+)$" {
+            set $args "${args}${token}id=$1";
+            proxy_pass ${PROTO_SCHEMA}://community_service_api_server/rpc/user_details$is_args$args;
+        }
     }
 
-    location ~ "^/projects/([\w\d\-]+)/subscribers$" {
-        set $args "${args}${token}project_id=eq.$1";
-        #proxy_redirect off;
+    location ~ "^/subscriptions(?:\/)?.*$" {
+        # GET /subscriptions
+        location ~ "^/subscriptions(?:\/)?$" {
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/subscriptions$is_args$args;
+        }
+
+        # GET /subscriptions/UUID
+        location ~ "^/subscriptions/([\w\d\-]+)$" {
+            proxy_set_header 'Accept' 'application/vnd.pgrst.object+json';
+            set $args "${args}${token}id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/subscriptions$is_args$args;
+        }
+
+        # GET /subscriptions/UUID
+        location ~ "^/subscriptions/([\w\d\-]+)/transitions$" {
+            set $args "${args}${token}subscription_id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/subscription_status_transitions$is_args$args;
+        }
+    }
+
+    location ~ "^/payments(?:\/)?.*$" {
+        proxy_set_header Host ${PAYMENT_SERVICE_API_SERVER};
+
+        # GET /payments
+        location ~ "^/payments(?:\/)?$" {
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/payments$is_args$args;
+        }
+
+        # GET /payments/UUID
+        location ~ "^/payments/([\w\d\-]+)$" {
+            proxy_set_header 'Accept' 'application/vnd.pgrst.object+json';
+            set $args "${args}${token}id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/payments$is_args$args;
+        }
+
+        # GET /payments/UUID/gateway_info
+        location ~ "^/payments/([\w\d\-]+)/gateway_info$" {
+            set $args "${args}${token}id=$1";
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/rpc/payment_info$is_args$args;
+        }
+
+        # POST /payments/UUID/chargeback
+        location ~ "^/payments/([\w\d\-]+)/chargeback$" {
+            set $args "${args}${token}id=$1";
+            proxy_method POST;
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/rpc/chargeback_payment$is_args$args;
+        }
+    }
+
+    # scopes to /projects route
+    location ~ "^/projects/*" {
         proxy_set_header Host ${PROJECT_SERVICE_API_SERVER};
-        proxy_pass ${PROTO_SCHEMA}://project_service_api_server/subscribers$is_args$args;
+
+        # GET /payments
+        location ~ "^/projects(?:\/)?$" {
+			if ($request_method = GET) {
+            	proxy_pass ${PROTO_SCHEMA}://project_service_api_server/projects$is_args;
+			}
+
+			if ($request_method = POST) {
+				rewrite_by_lua_block {
+                    ngx.req.read_body()
+                    ngx.req.set_method(ngx.HTTP_POST)
+
+                    local cjson = require "cjson"
+                    local body = ngx.req.get_body_data()
+
+                    if not body then
+                        return
+                    end
+
+                    local encbody = cjson.decode(body)
+                    encbody.data["id"] = ngx.var.project_id
+                    ngx.req.set_body_data(cjson.encode(encbody))
+				}
+            	proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/project$is_args;
+			}
+        }
+
+        # GET|POST /projects/UUID
+        location ~ "^/projects/([\w\d\-]+)$" {
+            proxy_set_header 'Accept' 'application/vnd.pgrst.object+json';
+            if ($request_method = GET) {
+                set $args "${args}${token}id=eq.$1";
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/projects$is_args$args;
+            }
+            if ($request_method = PUT) {
+				rewrite_by_lua_block {
+                    ngx.req.read_body()
+                    ngx.req.set_method(ngx.HTTP_POST)
+
+                    local cjson = require "cjson"
+                    local body = ngx.req.get_body_data()
+
+                    if not body then
+                        return
+                    end
+
+                    local encbody = cjson.decode(body)
+                    encbody.data["id"] = ngx.var.project_id
+                    ngx.req.set_body_data(cjson.encode(encbody))
+				}
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/project$is_args;
+            }
+        }
+
+        # GET /projects/UUID/goals
+        location ~ "^/projects/([\w\d\-]+)/goals$" {
+            set $project_id $1;
+            if ($request_method = GET) {
+                set $args "${args}${token}project_id=eq.$project_id";
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/goals$is_args$args;
+            }
+
+            if ($request_method = POST) {
+                # TODO: sent request to new rails api to update rewards from project
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/reward$is_args;
+            }
+        }
+
+        # GET /projects/UUID/rewards
+        location ~ "^/projects/([\w\d\-]+)/rewards$" {
+            set $project_id $1;
+
+            if ($request_method = GET) {
+                set $args "${args}${token}project_id=eq.$project_id";
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rewards$is_args$args;
+            }
+
+            if ($request_method = POST) {
+				rewrite_by_lua_block {
+                    ngx.req.read_body()
+                    ngx.req.set_method(ngx.HTTP_POST)
+
+                    local cjson = require "cjson"
+                    local body = ngx.req.get_body_data()
+
+                    if not body then
+                        return
+                    end
+
+                    local encbody = cjson.decode(body)
+                    encbody.data["project_id"] = ngx.var.project_id
+                    ngx.req.set_body_data(cjson.encode(encbody))
+				}
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/reward$is_args;
+            }
+        }
+
+        # GET /projects/UUID/rewards/UUID
+        location ~ "^/projects/([\w\d\-]+)/rewards/([\w\d\-]+)$" {
+            proxy_set_header 'Accept' 'application/vnd.pgrst.object+json';
+            set $project_id $1;
+            set $reward_id $2;
+
+            if ($request_method = GET) {
+                set $args "${args}${token}id=eq.$reward_id&project_id=eq.$project_id";
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rewards$is_args$args;
+            }
+
+            if ($request_method = PUT) {
+                rewrite_by_lua_block {
+                    ngx.req.read_body()
+                    ngx.req.set_method(ngx.HTTP_POST)
+
+                    local cjson = require "cjson"
+                    local body = ngx.req.get_body_data()
+
+                    if not body then
+                        return
+                    end
+
+                    local encbody = cjson.decode(body)
+                    encbody.data["id"] = ngx.var.reward_id
+                    encbody.data["project_id"] = ngx.var.project_id
+                    ngx.req.set_body_data(cjson.encode(encbody))
+                }
+                proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/reward$is_args;
+            }
+        }
+
+        # GET /projects/UUID/finish
+        location ~ "^/projects/([\w\d\-]+)/finish$" {
+            set $args "${args}${token}id=$1";
+            proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/finish_project$is_args$args;
+        }
+
+        # GET /projects/UUID/subscriptions
+        location ~ "^/projects/([\w\d\-]+)/subscriptions$" {
+            set $args "${args}${token}project_id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/subscriptions$is_args$args;
+        }
+
+        # GET /projects/UUID/subscribers
+        location ~ "^/projects/([\w\d\-]+)/subscribers$" {
+            set $args "${args}${token}project_id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://project_service_api_server/subscribers$is_args$args;
+        }
+
+        # GET /projects/UUID/fund_stats
+        location ~ "^/projects/([\w\d\-]+)/fund_stats$" {
+            proxy_set_header Host ${ANALYTICS_SERVICE_API_SERVER};
+            proxy_method GET;
+            set $args "${args}${token}id=$1";
+            proxy_pass ${PROTO_SCHEMA}://analytics_service_api_server/rpc/project_subscribers_info$is_args$args;
+        }
+
+        # GET /projects/UUID/subscriptions_per_day
+        location ~ "^/projects/([\w\d\-]+)/subscriptions_per_day$" {
+            proxy_set_header Host ${ANALYTICS_SERVICE_API_SERVER};
+            proxy_method GET;
+            set $args "${args}${token}project_id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://analytics_service_api_server/project_subscriptions_per_day$is_args$args;
+        }
+
+        # GET /projects/UUID/subscriptions
+        location ~ "^/projects/([\w\d\-]+)/subscriptions_per_month$" {
+            set $args "${args}${token}project_id=eq.$1";
+            proxy_pass ${PROTO_SCHEMA}://payment_service_api_server/subscriptions_per_month$is_args$args;
+        }
+
     }
 
     location /subscribers {
