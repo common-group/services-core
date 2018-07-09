@@ -101,8 +101,8 @@ server {
         # GET /payments
         location ~ "^/projects(?:\/)?$" {
 			if ($request_method = GET) {
-            	proxy_pass ${PROTO_SCHEMA}://project_service_api_server/projects$is_args;
-			}
+				proxy_pass ${PROTO_SCHEMA}://project_service_api_server/projects$is_args;
+            }
 
 			if ($request_method = POST) {
 				rewrite_by_lua_block {
@@ -120,7 +120,7 @@ server {
                     encbody.data["id"] = ngx.var.project_id
                     ngx.req.set_body_data(cjson.encode(encbody))
 				}
-            	proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/project$is_args;
+				proxy_pass ${PROTO_SCHEMA}://project_service_api_server/rpc/project$is_args;
 			}
         }
 
