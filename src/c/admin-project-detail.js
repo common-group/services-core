@@ -99,34 +99,37 @@ const adminProjectDetail = {
                 m('.w-col.w-col-2', [
                     m('button.btn.btn-small.btn-terciary', {
                         onclick: ctrl.actions.changeUserAction.toggler.toggle
-                    }, 'Trocar realizador'), (ctrl.actions.changeUserAction.toggler()) ?
-                    m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                        config: ctrl.actionUnload(ctrl.actions.changeUserAction)
-                    }, [
-                        m('form.w-form', {
-                            onsubmit: ctrl.actions.changeUserAction.submit
-                        }, (!ctrl.actions.changeUserAction.complete()) ? [
-                            m('label', 'Id do novo realizador:'),
-                            m('input.w-input.text-field[type="tel"][placeholder="ex: 239049"]', {
-                                onchange: m.withAttr('value', ctrl.actions.changeUserAction.newValue),
-                                value: ctrl.actions.changeUserAction.newValue()
-                            }),
-                            m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]', {
-                                onclick: ctrl.actions.changeUserAction.submit(ctrl.actions.changeUserAction.newValue())
-                            })
-                        ] : (!ctrl.actions.changeUserAction.error()) ? [
-                            m('.w-form-done[style="display:block;"]', [
-                                m('p', 'Usuário transferido com sucesso')
+                    }, 'Trocar realizador'),
+                    (ctrl.actions.changeUserAction.toggler() ? 
+                        m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+                            config: ctrl.actionUnload(ctrl.actions.changeUserAction)
+                        }, [
+                            m('form.w-form', {
+                                onsubmit: ctrl.actions.changeUserAction.submit
+                            }, (!ctrl.actions.changeUserAction.complete()) ? [
+                                m('label', 'Id do novo realizador:'),
+                                m('input.w-input.text-field[type="tel"][placeholder="ex: 239049"]', {
+                                    onchange: m.withAttr('value', ctrl.actions.changeUserAction.newValue),
+                                    value: ctrl.actions.changeUserAction.newValue()
+                                }),
+                                m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]', {
+                                    onclick: ctrl.actions.changeUserAction.submit(ctrl.actions.changeUserAction.newValue())
+                                })
+                            ] : (!ctrl.actions.changeUserAction.error()) ? [
+                                m('.w-form-done[style="display:block;"]', [
+                                    m('p', 'Usuário transferido com sucesso')
+                                ])
+                            ] : [
+                                m('.w-form-error[style="display:block;"]', [
+                                    m('p', 'Houve um problema na requisição. Verifique se o usuário que vai receber o projeto possui dados válidos.')
+                                ])
                             ])
-                        ] : [
-                            m('.w-form-error[style="display:block;"]', [
-                                m('p', 'Houve um problema na requisição. Verifique se o usuário que vai receber o projeto possui dados válidos.')
-                            ])
-                        ])
-                    ]) : ''
+                        ]) : '')
                 ]),
                 m('.w-col.w-col-2', [
-                    m('a.btn.btn-small.btn-terciary', { href: `/projects/${item.project_id}/contributions_report` }, 'Relatório de apoios')
+                    (item.mode === 'sub' ?
+                        m('a.btn.btn-small.btn-terciary', { href: `/projects/${item.project_id}/subscriptions_report` }, 'Base de assinantes')
+                        : m('a.btn.btn-small.btn-terciary', { href: `/projects/${item.project_id}/contributions_report` }, 'Relatório de apoios'))
                 ])
             ]),
             m('.w-row.card.card-terciary.u-radius', [
