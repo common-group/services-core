@@ -429,11 +429,12 @@ const
     },
 
     navigateToDevise = (params) => {
-        if (_.isUndefined(params)) {
-            const params = '';
+        if (params) {
+            window.location.href = `/pt/login${params}`;
+        } else {
+            window.location.href = `/pt/login`;
         }
 
-        window.location.href = `/pt/login${params}`;
         return false;
     },
 
