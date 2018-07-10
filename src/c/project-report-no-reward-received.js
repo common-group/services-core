@@ -17,7 +17,7 @@ const projectReportNoRewardReceived = {
         const sendMessage = () => {
             if (!h.getUser()) {
                 h.storeAction(storeId, args.project.project_id);
-                return h.navigateToDevise();
+                return h.navigateToDevise(`?redirect_to=/projects/${args.project.project_id}`);
             }
 
             displayModal(true);

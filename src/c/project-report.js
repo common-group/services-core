@@ -42,7 +42,7 @@ const projectReport = {
                     displayForm.toggle();
                 } else {
                     h.storeAction(storeReport, project.project_id);
-                    return h.navigateToDevise();
+                    return h.navigateToDevise(`?redirect_to=/projects/${project.project_id}`);
                 }
             },
             sendReport = (validateFunction) => {
