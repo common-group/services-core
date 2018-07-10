@@ -70,6 +70,9 @@ const adminProjects = {
                     }, {
                         value: 'flex',
                         option: 'Flex'
+                    }, {
+                        value: 'sub',
+                        option: 'Recorrente'
                     }
                     ]
                 }
