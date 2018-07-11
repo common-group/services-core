@@ -236,10 +236,10 @@ const adminContributions = {
                             m('.w-form', [
                                 (processChargebacksLoader()
                                     ? h.loader()
-                                    : m('form', [
+                                    : m('form', {onsubmit: searchToChargebackPayments }, [
                                         m('label.fontsize-small', 'Insira os IDs do gateway separados por vírgula'),
                                         m('textarea.text-field.w-input', { oninput: m.withAttr('value', chargebackIds) }),
-                                        m('button.btn.btn-small.w-button', { onclick: searchToChargebackPayments }, 'Virar apoios para chargeback')
+                                        m('button.btn.btn-small.w-button', 'Virar apoios para chargeback')
                                     ])
                                 )
                             ])
