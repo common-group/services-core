@@ -1,3 +1,5 @@
+process.env.CHROME_BIN = require('puppeteer').executablePath()
+
 module.exports = (config) => {
     config.set({
         basePath: '',
@@ -31,17 +33,7 @@ module.exports = (config) => {
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
-        browsers: ['NodeWebkitHidden'],
-        customLaunchers: {
-            NodeWebkitHidden: {
-                base: 'NodeWebkit',
-                options: {
-                    window: {
-                        show: false,
-                    }
-                }
-            }
-        },
+        browsers: ['ChromeHeadless'],
         singleRun: true
     });
 };
