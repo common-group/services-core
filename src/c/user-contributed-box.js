@@ -11,7 +11,7 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userContributedBox = {
-    controller(args) {
+    controller: function(args) {
         const displayModal = h.toggleProp(false, true),
             toggleDelivery = (projectId, contribution) => {
                 userVM.toggleDelivery(projectId, contribution).then(() => {
@@ -27,7 +27,7 @@ const userContributedBox = {
             toggleDelivery
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const contribution = ctrl.contribution,
             contactModalC = [ownerMessageContent, m.prop({
                 id: contribution.project_user_id,

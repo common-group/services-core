@@ -14,7 +14,7 @@ import models from '../models';
 import { catarse } from '../api';
 
 const adminNotificationHistory = {
-    controller(args) {
+    controller: function(args) {
         const notifications = m.prop([]),
             getNotifications = (user) => {
                 const notification = models.notification;
@@ -37,7 +37,7 @@ const adminNotificationHistory = {
             notifications
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico de notificações'),
             ctrl.notifications().map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [

@@ -7,7 +7,7 @@ import userVM from '../vms/user-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.email_confirmation');
 
 const CheckEmail = {
-    controller(args) {
+    controller: function(args) {
         const userID = h.getUserID(),
             user = userVM.fetchUser(userID),
             confirmedEmail = m.prop(false),
@@ -36,7 +36,7 @@ const CheckEmail = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = ctrl.user();
         if (user) {
             const userCreatedRecently = moment().isBefore(moment(user.created_at).add(2, 'days'));

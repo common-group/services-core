@@ -3,12 +3,12 @@ import h from '../h';
 import facebookButton from './facebook-button';
 
 const projectShareBox = {
-    controller() {
+    controller: function() {
         return {
             displayEmbed: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.pop-share.fontcolor-primary', {
             style: 'display: block;'
         }, [

@@ -9,7 +9,7 @@ import projectVM from '../vms/project-vm';
 const fiscalScope = _.partial(h.i18nScope, 'projects.dashboard_fiscal');
 
 const projectsFiscal = {
-    controller(args) {
+    controller: function(args) {
         const loader = catarse.loaderWithToken,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
@@ -35,7 +35,7 @@ const projectsFiscal = {
             projectFiscalData
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.projectDetail();
         const projectFiscalData = ctrl.projectFiscalData();
         const loading = ctrl.l() || ctrl.l2();

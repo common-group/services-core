@@ -10,7 +10,7 @@ import popNotification from './pop-notification';
 const I18nScope = _.partial(h.i18nScope, 'admin.balance_transfers');
 
 const adminBalanceTransferItemDetail = {
-    controller(args) {
+    controller: function(args) {
         const userBankAccount = m.prop(null),
             showPopNotification = m.prop(false),
             popNotificationAttributes = m.prop({}),
@@ -85,7 +85,7 @@ const adminBalanceTransferItemDetail = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const bankAccount = (_.isUndefined(ctrl.metaBank) ? ctrl.userBankAccount() : ctrl.transitionBankAccount());
 
         return m('#admin-balance-transfer-item-detail-box', [

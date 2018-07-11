@@ -13,7 +13,7 @@ import h from '../h';
 import models from '../models';
 
 const cancelSubscriptionContent = {
-    controller(args) {
+    controller: function(args) {
         const canceling = m.prop(false);
 
         const cancelSubscription = () => {
@@ -32,7 +32,7 @@ const cancelSubscriptionContent = {
             canceling
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const successMessage = m('.modal-dialog-content', [
                 m('.fontsize-megajumbo.u-text-center.u-marginbottom-20',
               '🙁'

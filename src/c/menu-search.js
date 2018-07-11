@@ -2,7 +2,7 @@ import $ from 'jquery';
 import m from 'mithril';
 
 const menuSearch = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('span#menu-search', [
             m('.w-form.w-hidden-small.w-hidden-tiny.header-search[id=\'discover-form-wrapper\']',
                 [

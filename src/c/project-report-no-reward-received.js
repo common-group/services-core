@@ -10,7 +10,7 @@ import ownerMessageContent from './owner-message-content';
 import modalBox from './modal-box';
 
 const projectReportNoRewardReceived = {
-    controller(args) {
+    controller: function(args) {
         const formName = 'report-no-reward-received';
         const displayModal = h.toggleProp(false, true);
         const storeId = 'send-message';
@@ -33,7 +33,7 @@ const projectReportNoRewardReceived = {
             formName: args.formName || formName
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const contactModalC = [ownerMessageContent, m.prop(_.extend(args.user, {
             project_id: args.project().id
         }))];

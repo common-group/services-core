@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const ProjectContributionDeliveryLegendModal = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center',

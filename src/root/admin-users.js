@@ -11,7 +11,7 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminUsers = {
-    controller() {
+    controller: function() {
         const listVM = userListVM,
             filterVM = userFilterVM,
             error = m.prop(''),
@@ -61,7 +61,7 @@ const adminUsers = {
             submit
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const label = 'Usuários';
 
         return m('', [

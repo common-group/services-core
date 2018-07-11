@@ -3,7 +3,7 @@ import h from '../h';
 import models from '../models';
 
 const teamTotal = {
-    controller() {
+    controller: function() {
         const vm = {
             collection: m.prop([])
         };
@@ -16,7 +16,7 @@ const teamTotal = {
             vm
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('#team-total-static.w-section.section-one-column.section.u-margintop-40.u-text-center.u-marginbottom-20', [
             ctrl.vm.collection().map(teamTotal => m('.w-container', [
                 m('.w-row', [

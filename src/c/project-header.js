@@ -11,7 +11,7 @@ import subscriptionVM from '../vms/subscription-vm';
 import projectVM from '../vms/project-vm';
 
 const projectHeader = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project,
             currentUser = h.getUser(),
             userProjectSubscriptions = args.userProjectSubscriptions,
@@ -32,7 +32,7 @@ const projectHeader = {
             showContributions: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project,
             rewardDetails = args.rewardDetails,
             activeSubscriptions = _.filter(ctrl.userProjectSubscriptions(), sub => sub.status === 'active'),

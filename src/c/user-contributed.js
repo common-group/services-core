@@ -9,7 +9,7 @@ import inlineError from './inline-error';
 import loadMoreBtn from './load-more-btn';
 
 const userContributed = {
-    controller(args) {
+    controller: function(args) {
         const contributedProjects = m.prop(),
             user_id = args.userId,
             pages = catarse.paginationVM(models.project),
@@ -45,7 +45,7 @@ const userContributed = {
             loader
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const projects_collection = ctrl.projects.collection();
         return (ctrl.error() ? m.component(inlineError, { message: 'Erro ao carregar os projetos.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
             [

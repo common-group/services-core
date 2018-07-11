@@ -15,7 +15,7 @@ import projectReportInfringesIntellectualProperty from './project-report-infring
 import projectReportNoRewardReceived from './project-report-no-reward-received';
 
 const projectReport = {
-    controller(args) {
+    controller: function(args) {
         const displayForm = h.toggleProp(false, true),
             displayFormWithName = m.prop(''),
             sendSuccess = m.prop(false),
@@ -113,7 +113,7 @@ const projectReport = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.card.card-terciary.u-radius', [
             ctrl.sendSuccess() ?
                     m('.w-form', m('p', 'Obrigado! A sua denúncia foi recebida.'))

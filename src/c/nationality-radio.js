@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const nationalityRadio = {
-    controller(args) {
+    controller: function(args) {
         const defaultCountryID = args.defaultCountryID,
             defaultForeignCountryID = args.defaultForeignCountryID,
             international = args.international;
@@ -12,7 +12,7 @@ const nationalityRadio = {
             international
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const international = ctrl.international,
             fields = args.fields;
 

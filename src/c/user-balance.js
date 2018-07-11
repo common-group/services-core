@@ -18,7 +18,7 @@ import userBalanceRequestModalContent from './user-balance-request-modal-content
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalance = {
-    controller(args) {
+    controller: function(args) {
         args.balanceManager.load();
 
         return {
@@ -26,7 +26,7 @@ const userBalance = {
             displayModal: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0 },
             positiveValue = balance.amount >= 0,
             balanceRequestModalC = [

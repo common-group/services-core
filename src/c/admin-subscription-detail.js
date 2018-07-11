@@ -9,7 +9,7 @@ import h from '../h';
 import models from '../models';
 
 const adminSubscriptionDetail = {
-    controller(args) {
+    controller: function(args) {
         let l,
             rL;
         const loadReward = () => {
@@ -96,7 +96,7 @@ const adminSubscriptionDetail = {
             l
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const payments = ctrl.payments(),
             transitions = ctrl.transitions(),
             notifications = ctrl.notifications(),

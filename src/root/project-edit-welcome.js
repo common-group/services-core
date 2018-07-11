@@ -5,7 +5,7 @@ import rewardVM from '../vms/reward-vm';
 import popNotification from '../c/pop-notification';
 
 const projectEditWelcome = {
-    controller(args) {
+    controller: function(args) {
         const rewards = m.prop([]),
             currentRewardId = m.prop(),
             currentReward = m.prop(),
@@ -82,7 +82,7 @@ const projectEditWelcome = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const error = ctrl.error,
             project = args.project;
         return m("[id='dashboard-welcome-tab']",

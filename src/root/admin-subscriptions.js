@@ -10,7 +10,7 @@ import filterDropdown from '../c/filter-dropdown';
 import filterMain from '../c/filter-main';
 
 const adminSubscriptions = {
-    controller() {
+    controller: function() {
         let listVM = subscriptionListVM,
             filterVM = subscriptionFilterVM,
             error = m.prop(''),
@@ -75,7 +75,7 @@ const adminSubscriptions = {
         };
     },
 
-    view(ctrl) {
+    view: function(ctrl) {
         const label = 'Assinaturas';
         return m('#admin-root-subscriptions', [
             m.component(adminFilter, {

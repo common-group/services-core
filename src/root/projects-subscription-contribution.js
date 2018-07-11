@@ -11,7 +11,7 @@ import faqBox from '../c/faq-box';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsSubscriptionContribution = {
-    controller() {
+    controller: function() {
         const rewards = () => _.union(
             [{
                 id: null,
@@ -50,7 +50,7 @@ const projectsSubscriptionContribution = {
             sortedRewards: () => _.sortBy(rewards(), reward => Number(reward.row_order))
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.project;
         if (_.isEmpty(project())) {
             return h.loader();

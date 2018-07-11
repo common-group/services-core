@@ -12,7 +12,7 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const start = {
-    controller() {
+    controller: function() {
         h.analytics.windowScroll({ cat: 'project_start', act: 'start_page_scroll' });
         const stats = m.prop([]),
             categories = m.prop([]),
@@ -120,7 +120,7 @@ const start = {
             validateProjectForm
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const stats = _.first(ctrl.stats());
         const testimonials = () => _.map(ctrl.testimonials, (testimonial) => {
             const content = m('.card.u-radius.card-big.card-terciary', [

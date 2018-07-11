@@ -13,7 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const paymentCreditCard = {
-    controller(args) {
+    controller: function(args) {
         const vm = args.vm,
             isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
             subscriptionEditConfirmed = m.prop(false),
@@ -251,7 +251,7 @@ const paymentCreditCard = {
             isSubscriptionEdit
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const isInternational = ctrl.vm.isInternational();
 
         return m('.w-form.u-marginbottom-40', {

@@ -9,7 +9,7 @@ import subscriptionEditModal from './subscription-edit-modal';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 
 const paymentSlip = {
-    controller(args) {
+    controller: function(args) {
         const vm = args.vm,
             isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
             slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(args.contribution_id),
@@ -68,7 +68,7 @@ const paymentSlip = {
             isReactivation
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const buttonLabel = ctrl.isSubscriptionEdit() && !args.isReactivation() ? window.I18n.t('subscription_edit', I18nScope()) : window.I18n.t('pay_slip', I18nScope());
 
         return m('.w-row',

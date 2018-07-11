@@ -12,7 +12,7 @@ import h from '../h';
 import models from '../models';
 
 const UserFollowBtn = {
-    controller(args) {
+    controller: function(args) {
         const following = m.prop((args.following || false)),
             followVM = catarse.filtersVM({ follow_id: 'eq' }),
             loading = m.prop(false),
@@ -52,7 +52,7 @@ const UserFollowBtn = {
             hover
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         if (h.userSignedIn() && h.getUserID() != args.follow_id) {
             let disableClass = args.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
                 enabledClass = args.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';

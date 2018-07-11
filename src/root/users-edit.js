@@ -11,7 +11,7 @@ import userNotifications from '../c/user-notifications';
 import userBalanceMain from '../c/user-balance-main';
 
 const usersEdit = {
-    controller(args) {
+    controller: function(args) {
         const userDetails = m.prop({}),
             userId = args.user_id.split('-')[0],
             hash = m.prop(window.location.hash),
@@ -64,7 +64,7 @@ const usersEdit = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = ctrl.userDetails();
 
         return m('div', [

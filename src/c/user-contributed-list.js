@@ -8,7 +8,7 @@ import loadMoreBtn from './load-more-btn';
 const I18nScope = _.partial(h.i18nScope, 'users.show.contributions');
 
 const userContributedList = {
-    controller(args) {
+    controller: function(args) {
         const title = args.title,
             hideSurveys = args.hideSurveys;
         return {
@@ -16,7 +16,7 @@ const userContributedList = {
             title
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const collection = args.collection,
             isSubscription = args.isSubscription,
             pagination = args.pagination,

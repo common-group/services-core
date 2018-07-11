@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectGoalsBox = {
-    controller(args) {
+    controller: function(args) {
         const subscriptionData = args.subscriptionData() || {
                 amount_paid_for_valid_period: 0
             },
@@ -26,7 +26,7 @@ const projectGoalsBox = {
         }
         return { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
                 title: 'N/A',
                 value: '',

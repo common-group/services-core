@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const bigInputCard = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const cardClass = args.cardClass || '.w-row.u-marginbottom-30.card.card-terciary.padding-redactor-description.text.optional.project_about_html.field_with_hint';
 
         return m(cardClass, { style: (args.cardStyle || {}) }, [

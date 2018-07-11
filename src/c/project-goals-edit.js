@@ -15,7 +15,7 @@ import railsErrorsVM from '../vms/rails-errors-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalsEdit = {
-    controller(args) {
+    controller: function(args) {
         const e = generateErrorInstance();
         const mapErrors = [
             ['goals', ['goals.size']]
@@ -52,7 +52,7 @@ const projectGoalsEdit = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const showSuccess = ctrl.showSuccess,
             error = ctrl.error;
         return m('.w-container',

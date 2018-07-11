@@ -5,14 +5,14 @@ import models from '../models';
 import userBalanceTransactionRow from './user-balance-transaction-row';
 
 const userBalanceTransactions = {
-    controller(args) {
+    controller: function(args) {
         args.balanceTransactionManager.load();
 
         return {
             list: args.balanceTransactionManager.list
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const list = ctrl.list;
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [

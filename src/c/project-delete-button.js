@@ -8,13 +8,13 @@ import modalBox from '../c/modal-box';
 import deleteProjectModalContent from '../c/delete-project-modal-content';
 
 const projectDeleteButton = {
-    controller(args) {
+    controller: function(args) {
         const displayDeleteModal = h.toggleProp(false, true);
         return {
             displayDeleteModal
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div', [
             (ctrl.displayDeleteModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayDeleteModal,

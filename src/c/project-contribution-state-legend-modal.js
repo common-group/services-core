@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions_report.legend_labels');
 
 const ProjectContributionStateLegendModal = {
-    controller(args) {
+    controller: function(args) {
         const translate = path => window.I18n.t(path, I18nScope());
 
         return {
@@ -48,7 +48,7 @@ const ProjectContributionStateLegendModal = {
             }
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = _.first(args.project()),
             project_stage = (project.state == 'waiting_funds' ? 'online' : project.state);
 

@@ -16,7 +16,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const dashboardInfo = {
-    controller(args) {
+    controller: function(args) {
         const toRedraw = args.dataToRedraw || {},
             listenToReplace = (element, isInitialized, context) => {
                 if (isInitialized) return;
@@ -34,7 +34,7 @@ const dashboardInfo = {
             listenToReplace
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const content = args.content;
 
         return m('.w-container', [

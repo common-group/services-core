@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const paymentMethodIcon = {
-    controller(args) {
+    controller: function(args) {
         const subscription = args.subscription;
 
         const paymentClass = {
@@ -17,7 +17,7 @@ const paymentMethodIcon = {
             paymentClass
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subscription = ctrl.subscription,
             paymentClass = ctrl.paymentClass;
 
