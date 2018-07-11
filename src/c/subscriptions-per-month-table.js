@@ -4,7 +4,7 @@ import moment from 'moment';
 import h from '../h';
 
 const subscriptionsPerMonthTable = {
-    controller() {
+    controller: function() {
         return {
             emptyRow: {
                 total_amount: 0,
@@ -15,7 +15,7 @@ const subscriptionsPerMonthTable = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div', [
             m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
                 'Crescimento mensal das assinaturas'

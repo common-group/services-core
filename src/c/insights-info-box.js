@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const insightsInfoBox = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const newCount = args.newCount,
             oldCount = args.oldCount,
             countIncrease = Math.abs(newCount - oldCount),

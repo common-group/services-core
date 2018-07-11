@@ -8,7 +8,7 @@ import modalBox from './modal-box';
 import inviteEmailsFromImport from './invite-emails-from-import';
 
 const projectGoogleContactImport = {
-    controller(args) {
+    controller: function(args) {
         const clientId = document.getElementById('google_oauth_client'),
             modalToggle = h.toggleProp(false, true),
             feedPageUrl = 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&max-results=1000',
@@ -71,7 +71,7 @@ const projectGoogleContactImport = {
             dataEmails
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project;
 
         return m('#google_contact_wrapper', [

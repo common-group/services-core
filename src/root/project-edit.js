@@ -24,7 +24,7 @@ import projectEditTab from '../c/project-edit-tab';
 const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 
 const projectEdit = {
-    controller(args) {
+    controller: function(args) {
         const { project_id, user_id } = args;
 
         const project = projectVM.fetchProject(project_id),
@@ -121,7 +121,7 @@ const projectEdit = {
             project
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.project;
 
         return m('.project-dashboard-edit', (project() ? [

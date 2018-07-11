@@ -3,12 +3,12 @@ import h from '../h';
 import modalBox from './modal-box';
 
 const InfoProjectContributionLegend = {
-    controller(args) {
+    controller: function(args) {
         return {
             modalToggle: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('span', [
             args.text,
             m.trust('&nbsp;'),

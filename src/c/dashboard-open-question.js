@@ -2,7 +2,7 @@ import m from 'mithril';
 import inlineError from '../c/inline-error';
 
 const dashboardOpenQuestion = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const { question, index } = args;
         return m('.card.u-marginbottom-30.u-radius.w-form', [
             m('div', [

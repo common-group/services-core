@@ -12,7 +12,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_basics');
 
 const projectBasicsEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectBasicsVM,
             mapErrors = [
                   ['name', ['name']],
@@ -147,7 +147,7 @@ const projectBasicsEdit = {
             tagEditingLoading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
 
         return m('#basics-tab', [

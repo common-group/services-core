@@ -13,7 +13,7 @@ import h from '../h';
 import moment from 'moment';
 
 const adminProjectDetailsCard = {
-    controller(args) {
+    controller: function(args) {
         let project = args.resource,
             isFinalLap = () =>
                 // @TODO: use 8 days because timezone on js
@@ -25,7 +25,7 @@ const adminProjectDetailsCard = {
             isFinalLap
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         let project = ctrl.project,
             progress = project.progress.toFixed(2),
             statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),

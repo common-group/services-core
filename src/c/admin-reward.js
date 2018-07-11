@@ -5,7 +5,7 @@ import { catarse } from '../api';
 import models from '../models';
 
 const adminReward = {
-    controller(args) {
+    controller: function(args) {
         let l;
         const loadShippingFee = () => {
             const shippingFee = m.prop({});
@@ -28,7 +28,7 @@ const adminReward = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const reward = args.reward(),
             contribution = args.contribution,
             available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count),

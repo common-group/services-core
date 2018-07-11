@@ -5,7 +5,7 @@ import menuSearch from '../c/menu-search';
 import menuProfile from '../c/menu-profile';
 
 const menu = {
-    controller(args) {
+    controller: function(args) {
         const user = h.getUser(),
             menuCss = () => {
                 let dynamicClasses;
@@ -29,7 +29,7 @@ const menu = {
             homeAttrs
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('header.main-header', {
             class: ctrl.menuCss()
         }, [

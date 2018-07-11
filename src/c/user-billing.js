@@ -7,7 +7,7 @@ import userVM from '../vms/user-vm';
 import popNotification from './pop-notification';
 
 const userBilling = {
-    controller(args) {
+    controller: function(args) {
         models.bank.pageSize(false);
         const user = args.user,
             bankAccount = m.prop({}),
@@ -161,7 +161,7 @@ const userBilling = {
             error
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         let user = args.user,
             fields = ctrl.fields,
             bankAccount = ctrl.bankAccount();

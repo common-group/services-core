@@ -13,7 +13,7 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
-    controller(args) {
+    controller: function(args) {
         const sample6 = _.partial(_.sample, _, 6),
             loader = catarse.loaderWithToken,
             project = models.project,
@@ -56,7 +56,7 @@ const projectsHome = {
             hasFBAuth
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const slides = () => _.map(ctrl.slidesContent, (slide) => {
             const customStyle = `background-image: url(${slide.image});`;
             const content = m('.w-container.u-text-center', [

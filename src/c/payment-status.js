@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.payment');
 
 const paymentStatus = {
-    controller(args) {
+    controller: function(args) {
         const payment = args.item;
         let card = null,
             displayPaymentMethod,
@@ -79,7 +79,7 @@ const paymentStatus = {
             stateClass
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const payment = args.item;
 
         return m('.w-row.payment-status', [

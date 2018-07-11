@@ -20,7 +20,7 @@ import adminUser from './admin-user';
 import userVM from '../vms/user-vm';
 
 const adminSubscriptionUser = {
-    controller(args) {
+    controller: function(args) {
         const user = m.prop({});
         userVM.fetchUser(args.item.user_external_id, false).then((data) => {
             user(_.first(data));
@@ -29,7 +29,7 @@ const adminSubscriptionUser = {
             user
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const item = args.item,
             customer = item.checkout_data ? item.checkout_data.customer : {},
             user = {

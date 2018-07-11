@@ -10,7 +10,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectGoalVM,
             mapErrors = [
                   ['mode', ['mode']],
@@ -59,7 +59,7 @@ const projectGoalEdit = {
             loading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#goal-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {

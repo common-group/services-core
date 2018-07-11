@@ -3,7 +3,7 @@ import teamTotal from '../c/team-total';
 import teamMembers from '../c/team-members';
 
 const team = {
-    view() {
+    view: function() {
         return m('#static-team-app', [
             m('.w-section.hero-who.hero-full', [
                 m('.w-container.u-text-center', [

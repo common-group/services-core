@@ -13,7 +13,7 @@ import projectSuccessfulOnboardConfirmAccountAccept from './project-successful-o
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
 
 const projectSuccessfulOnboardConfirmAccount = {
-    controller(args) {
+    controller: function(args) {
         const actionStages = {
                 accept: projectSuccessfulOnboardConfirmAccountAccept
             },
@@ -31,7 +31,7 @@ const projectSuccessfulOnboardConfirmAccount = {
             currentStage
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const projectAccount = args.projectAccount,
             actionStage = ctrl.actionStage,
             currentStage = ctrl.currentStage,

@@ -3,7 +3,7 @@ import h from '../h';
 import projectReport from './project-report';
 
 const projectComments = {
-    controller() {
+    controller: function() {
         const loadComments = (el, isInitialized) => (el, isInitialized) => {
             if (isInitialized) { return; }
             h.fbParse();
@@ -11,7 +11,7 @@ const projectComments = {
 
         return { loadComments };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project();
         return m('.w-row',
             [

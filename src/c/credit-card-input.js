@@ -2,7 +2,7 @@ import m from 'mithril';
 import creditCardVM from '../vms/credit-card-vm';
 
 const creditCardInput = {
-    controller(args) {
+    controller: function(args) {
         const cardType = args.type || m.prop('unknown');
       // TODO: move all input logic to vdom paradigm
       // CreditCard Input still handle events on a dom-based model.
@@ -17,7 +17,7 @@ const creditCardInput = {
             cardType
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="tel"]`, {
             onfocus: args.onfocus,
             class: args.class,

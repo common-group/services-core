@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const announceExpirationModal = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div', [
             m('.modal-dialog-content', [
                 m('.fontsize-large.u-text-center.u-marginbottom-30.fontweight-semibold',

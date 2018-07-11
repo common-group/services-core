@@ -6,7 +6,7 @@ import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectTabs = {
-    controller(args) {
+    controller: function(args) {
         const fixedNavClass = 'project-nav-fixed',
             isFixed = m.prop(false),
             originalPosition = m.prop(-1),
@@ -57,7 +57,7 @@ const projectTabs = {
             navigate
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project,
             rewards = args.rewardDetails;
 

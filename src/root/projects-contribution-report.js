@@ -15,7 +15,7 @@ import ProjectContributionStateLegendModal from '../c/project-contribution-state
 import ProjectContributionDeliveryLegendModal from '../c/project-contribution-delivery-legend-modal';
 
 const projectContributionReport = {
-    controller(args) {
+    controller: function(args) {
         const listVM = catarse.paginationVM(models.projectContribution, 'id.desc', {
                 Prefer: 'count=exact'
             }),
@@ -248,7 +248,7 @@ const projectContributionReport = {
             mapRewardsToOptions
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const list = ctrl.listVM;
 
         if (!ctrl.lProject()) {

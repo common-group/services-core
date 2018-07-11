@@ -23,7 +23,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsSubscriptionCheckout = {
-    controller(args) {
+    controller: function(args) {
         const project = projectVM.currentProject,
             vm = paymentVM(),
             showPaymentForm = m.prop(false),
@@ -158,7 +158,7 @@ const projectsSubscriptionCheckout = {
             subscriptionStatus
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),

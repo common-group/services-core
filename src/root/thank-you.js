@@ -11,7 +11,7 @@ const { CatarseAnalytics } = window;
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const thankYou = {
-    controller(args) {
+    controller: function(args) {
         const recommendedProjects = userVM.getUserRecommendedProjects(),
             isSlip = args.contribution && !_.isEmpty(args.contribution.slip_url),
             sendContributionCreationData = () => {
@@ -58,7 +58,7 @@ const thankYou = {
             recommendedProjects
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('#thank-you', { config: ctrl.setEvents }, [
             m('.page-header.u-marginbottom-30',
               m('.w-container',

@@ -8,12 +8,12 @@ import categoryTag from './category-tag';
 import projectVM from '../vms/project-vm';
 
 const projectHighlight = {
-    controller() {
+    controller: function() {
         return {
             displayShareBox: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project;
         const isSub = projectVM.isSubscription(project);
 

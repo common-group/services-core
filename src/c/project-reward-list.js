@@ -4,7 +4,7 @@ import projectRewardCard from './project-reward-card';
 import projectReport from './project-report';
 
 const projectRewardList = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project() || {
             open_for_contributions: false
         };

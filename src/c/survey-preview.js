@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveyPreview = {
-    controller(args) {
+    controller: function(args) {
         const fields = args.fields,
             multipleChoiceQuestions = args.multipleChoiceQuestions,
             openQuestions = args.openQuestions;
@@ -16,7 +16,7 @@ const surveyPreview = {
             openQuestions
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.section.u-marginbottom-40',
             m('.w-container',
                 m('.w-row', [

@@ -14,7 +14,7 @@ import select from 'select';
 import popNotification from './pop-notification';
 
 const copyTextInput = {
-    controller(args) {
+    controller: function(args) {
         const showSuccess = m.prop(false);
         const setClickHandler = (el, isInitialized) => {
             let copy;
@@ -41,7 +41,7 @@ const copyTextInput = {
             showSuccess
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.clipboard.w-row', [
             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('textarea.copy-textarea.text-field.w-input', {
                 style: 'margin-bottom:0;'

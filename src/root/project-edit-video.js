@@ -5,14 +5,14 @@ import projectVM from '../vms/project-vm';
 import projectVideoEdit from '../c/project-video-edit';
 
 const projectEditVideo = {
-    controller(args) {
+    controller: function(args) {
         return {
             user: userVM.fetchUser(args.user_id),
             project: projectVM.fetchProject(args.project_id)
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return (ctrl.user() && ctrl.project() ? m(projectVideoEdit, {
             user: ctrl.user(),
             userId: args.user_id,

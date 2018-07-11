@@ -10,7 +10,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_description');
 
 const projectDescriptionEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectDescriptionVM,
             mapErrors = [
                   ['about_html', ['about_html']],
@@ -51,7 +51,7 @@ const projectDescriptionEdit = {
             loading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#description-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {

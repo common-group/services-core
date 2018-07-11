@@ -15,7 +15,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account.refuse');
 
 const projectSuccessfulOnboardConfirmAccountError = {
-    controller(args) {
+    controller: function(args) {
         const errorReasonM = m.prop(''),
             error = m.prop(false);
 
@@ -32,7 +32,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
             error
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.w-row.bank-transfer-answer', [
             m('.w-col.w-col-6.w-col-push-3', [
                 m('.w-form.bank-transfer-problem.card.u-radius', [

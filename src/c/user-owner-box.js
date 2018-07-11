@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const UserOwnerBox = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         let project = args.project,
             user = args.user;
 

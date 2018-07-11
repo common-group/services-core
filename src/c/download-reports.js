@@ -2,7 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const downloadReports = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project(),
             paymentState = project.state === 'failed' ? 'paid,refunded' : 'paid',
             paidRewards = _.filter(args.rewards, reward => reward.paid_count > 0);

@@ -3,7 +3,7 @@ import userVM from '../vms/user-vm';
 import contributionVM from '../vms/contribution-vm';
 
 const rewardReceiver = {
-    controller() {
+    controller: function() {
         const toggleDelivery = (projectId, contribution) => {
             userVM.toggleDelivery(projectId, contribution).then(() => {
                 const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
@@ -15,7 +15,7 @@ const rewardReceiver = {
             toggleDelivery
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const contribution = args.contribution;
 
         return contributionVM.canBeDelivered(contribution) ?

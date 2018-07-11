@@ -7,7 +7,7 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const rewardSelectCard = {
-    controller(args) {
+    controller: function(args) {
         const queryRewardValue = h.getParams('value');
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
         const isSelected = currentReward => (currentReward.id == null && rewardVM.selectedReward() == undefined && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
@@ -90,7 +90,7 @@ const rewardSelectCard = {
             contributionValue: rewardVM.contributionValue
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const reward = ctrl.normalReward(args.reward);
 
         return (h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
