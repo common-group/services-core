@@ -338,7 +338,6 @@ services:
       cluster:
         ipv4_address: 10.0.1.58
 
-
   common_docs:
     image: hrektts/mdbook
     volumes:
@@ -350,4 +349,36 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.60
+
+  common_proxy:
+    build:
+      context: ../proxy
+      dockerfile: Dockerfile
+    volumes:
+      - ../proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ../proxy/conf.d/proxy.template:/etc/nginx/conf.d/proxy.template
+    links:
+      - "payment_service_api:payment_service_api"
+      - "project_service_api:project_service_api"
+      - "community_service_api:community_service_api"
+      - "analytics_service_api:analytics_service_api"
+      - "catarse_moment_service_api:catarse_moment_service_api"
+      - "notification_service_api:notification_service_api"
+      - "recommender_service_api:recommender_service_api"
+    environment:
+      PORT: 80
+      PROTO_SCHEMA: http
+      PAYMENT_SERVICE_API_SERVER: 'payment_service_api:3000'
+      PROJECT_SERVICE_API_SERVER: 'project_service_api:3000'
+      COMMUNITY_SERVICE_API_SERVER: 'community_service_api:3000'
+      ANALYTICS_SERVICE_API_SERVER: 'analytics_service_api:3000'
+      CATARSE_MOMENT_SERVICE_API_SERVER: 'catarse_moment_service_api:3000'
+      NOTIFICATION_SERVICE_API_SERVER: 'notification_service_api:3000'
+      RECOMMENDER_SERVICE_API_SERVER: 'recommender_service_api:3009'
+    ports:
+      - "3013:80"
+    command: /bin/sh -c "envsubst '$$PORT $$PROTO_SCHEMA $$PAYMENT_SERVICE_API_SERVER $$PROJECT_SERVICE_API_SERVER $$COMMUNITY_SERVICE_API_SERVER $$ANALYTICS_SERVICE_API_SERVER $$NOTIFICATION_SERVICE_API_SERVER $$CATARSE_MOMENT_SERVICE_API_SERVER $$RECOMMENDER_SERVICE_API_SERVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf && openresty -g 'daemon off;'"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.61
 

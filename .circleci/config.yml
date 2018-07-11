@@ -9,7 +9,7 @@ jobs:
           version: 17.05.0-ce
       - run: docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
       - run: docker build -f Dockerfile.test -t comum/services-core:test .
-      # - run: apk add --update ca-certificates openssl && update-ca-certificates
+        #- run: apk add --update ca-certificates openssl && update-ca-certificates
 
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < init.sql
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
