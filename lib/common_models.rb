@@ -14,6 +14,7 @@ require 'common_models/models/catalog_payment'
 module CommonModels
   def self.extended(obj)
     ActiveRecord::Base.logger = Logger.new('debug.log')
-    ActiveRecord::Base.establish_connection(@config)
+    config = ENV['DATABASE_URL'].presence || @config
+    ActiveRecord::Base.establish_connection(config)
   end
 end
