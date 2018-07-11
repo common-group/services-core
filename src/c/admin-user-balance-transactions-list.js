@@ -8,7 +8,7 @@ import { catarse } from '../api';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const adminUserBalanceTransactionsList = {
-    controller(args) {
+    controller: function(args) {
         const userBalance = m.prop({}),
             transactionsListVM = catarse.paginationVM(
                   models.balanceTransaction,
@@ -25,7 +25,7 @@ const adminUserBalanceTransactionsList = {
             transactionsListVM
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const collection = ctrl.transactionsListVM.collection(),
             userBalance = ctrl.userBalance() || { amount: 0 };
 

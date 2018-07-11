@@ -18,7 +18,7 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userFollowers = {
-    controller(args) {
+    controller: function(args) {
         models.userFollower.pageSize(9);
         const followersListVM = catarse.paginationVM(models.userFollower,
                                                        'following.asc,created_at.desc', {
@@ -36,7 +36,7 @@ const userFollowers = {
             followersListVM
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const followersVM = ctrl.followersListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [

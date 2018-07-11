@@ -3,7 +3,7 @@ import _ from 'underscore';
 import models from '../models';
 
 const teamMembers = {
-    controller() {
+    controller: function() {
         const vm = {
                 collection: m.prop([])
             },
@@ -18,7 +18,7 @@ const teamMembers = {
             vm
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         return m('#team-members-static.w-section.section', [
             m('.w-container', [
                 _.map(ctrl.vm.collection(), group => m('.w-row.u-text-center', [

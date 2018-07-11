@@ -14,7 +14,7 @@ import _ from 'underscore';
 import projectVM from '../vms/project-vm';
 
 const projectSuggestedContributions = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project();
 
         const subscriptionSuggestionUrl = amount => `/projects/${project.project_id}/subscriptions/start?value=${amount * 100}`,

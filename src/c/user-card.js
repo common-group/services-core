@@ -7,7 +7,7 @@ import modalBox from './modal-box';
 import UserFollowBtn from './user-follow-btn';
 
 const userCard = {
-    controller(args) {
+    controller: function(args) {
         const userDetails = m.prop({}),
             user_id = args.userId;
 
@@ -18,7 +18,7 @@ const userCard = {
             displayModal: h.toggleProp(false, true)
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const user = ctrl.userDetails(),
             contactModalC = [ownerMessageContent, ctrl.userDetails],
             profileImage = userVM.displayImage(user);

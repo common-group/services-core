@@ -8,7 +8,7 @@ import inlineError from './inline-error';
 import userContributedList from './user-contributed-list';
 
 const userPrivateContributed = {
-    controller(args) {
+    controller: function(args) {
         const user_id = args.userId,
             userCommonId = args.user && args.user.common_id,
             subscriptions = commonPayment.paginationVM(models.userSubscription),
@@ -69,7 +69,7 @@ const userPrivateContributed = {
             loader
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subsCollection = ctrl.subscriptions.collection(),
             onlineCollection = ctrl.onlinePages.collection(),
             successfulCollection = ctrl.successfulPages.collection(),

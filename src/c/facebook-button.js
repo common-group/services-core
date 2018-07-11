@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const facebookButton = {
-    controller(args) {
+    controller: function(args) {
         const share = () => {
             if (FB) {
                 FB.ui({
@@ -16,7 +16,7 @@ const facebookButton = {
             share
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const buttonCss = () => {
             if (args.mobile) {
                 return `w-hidden-main w-hidden-medium u-marginbottom-20 btn btn-medium btn-fb ${args.class}`;

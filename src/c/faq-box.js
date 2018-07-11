@@ -6,7 +6,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.faq');
 
 const faqBox = {
-    controller(args) {
+    controller: function(args) {
         const mode = args.mode === 'sub' && args.isEdit ? args.isReactivate ? 'sub_reactivate' : 'sub_edit' : args.mode,
             questions = args.faq.questions,
             selectedQuestion = m.prop(-1),
@@ -48,7 +48,7 @@ const faqBox = {
             tKey
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const image = args.mode === 'sub'
             ? m('div', m('img.u-marginbottom-10[width="130"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'))
             : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',

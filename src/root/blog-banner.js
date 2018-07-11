@@ -4,7 +4,7 @@ import h from '../h';
 import blogVM from '../vms/blog-vm';
 
 const blogBanner = {
-    controller(args) {
+    controller: function(args) {
         const posts = m.prop([]),
             error = m.prop(false);
 
@@ -12,7 +12,7 @@ const blogBanner = {
 
         return { posts, error };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('section.section-large.bg-gray.before-footer[id=\'blog\']',
             m('.w-container',
                 [

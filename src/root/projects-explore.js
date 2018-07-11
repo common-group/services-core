@@ -23,7 +23,7 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
-    controller(args) {
+    controller: function(args) {
         const filters = catarse.filtersVM,
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
@@ -271,7 +271,7 @@ const projectsExplore = {
             externalLinkCategories
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const categoryId = ctrl.categoryId,
             projectsCollection = ctrl.projects().collection(),
             projectsCount = projectsCollection.length,

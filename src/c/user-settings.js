@@ -12,7 +12,7 @@ import railsErrorsVM from '../vms/rails-errors-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettings = {
-    controller(args) {
+    controller: function(args) {
         let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = args.user,
@@ -135,7 +135,7 @@ const userSettings = {
             parsedErrors
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = ctrl.user,
             fields = ctrl.fields(),
             hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),

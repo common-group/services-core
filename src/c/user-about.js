@@ -5,7 +5,7 @@ import userVM from '../vms/user-vm';
 import inlineError from './inline-error';
 
 const userAbout = {
-    controller(args) {
+    controller: function(args) {
         const userDetails = m.prop({}),
             loader = m.prop(true),
             error = m.prop(false),
@@ -25,7 +25,7 @@ const userAbout = {
             loader
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = ctrl.userDetails();
         return (ctrl.error() ? m.component(inlineError, { message: 'Erro ao carregar dados.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'about-tab\']',
             m('.w-container[id=\'about-content\']',

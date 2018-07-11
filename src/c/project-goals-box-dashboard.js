@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectGoalsBoxDashboard = {
-    controller(args) {
+    controller: function(args) {
         const initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value > args.amount) : 0;
         const currentGoalIndex = m.prop(initialGoalIndex);
         const nextGoal = () => {
@@ -26,7 +26,7 @@ const projectGoalsBoxDashboard = {
             previousGoal
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
                 title: 'N/A',
                 value: '',

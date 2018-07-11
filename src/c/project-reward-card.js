@@ -7,7 +7,7 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectRewardCard = {
-    controller(args) {
+    controller: function(args) {
         const storeKey = 'selectedReward',
             reward = args.reward,
             vm = rewardVM,
@@ -93,7 +93,7 @@ const projectRewardCard = {
             contributionValue: vm.contributionValue
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         // FIXME: MISSING ADJUSTS
         // - add draft admin modifications
         const reward = ctrl.reward,

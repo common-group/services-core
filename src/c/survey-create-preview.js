@@ -6,7 +6,7 @@ import rewardCardBig from './reward-card-big';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveyCreatePreview = {
-    controller(args) {
+    controller: function(args) {
         const openQuestions = _.filter(args.surveyVM.dashboardQuestions(), { type: 'open' }),
             multipleChoiceQuestions = _.filter(args.surveyVM.dashboardQuestions(), { type: 'multiple' });
         const togglePreview = () => {
@@ -20,7 +20,7 @@ const surveyCreatePreview = {
             openQuestions
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.section.u-marginbottom-40',
             m('.section.u-text-center',
                 m('.w-container',

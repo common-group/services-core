@@ -8,7 +8,7 @@ import userContributed from '../c/user-contributed';
 import userAbout from '../c/user-about';
 
 const usersShow = {
-    controller(args) {
+    controller: function(args) {
         const userDetails = m.prop({}),
             user_id = args.user_id.split('-')[0],
             hash = m.prop(window.location.hash),
@@ -47,7 +47,7 @@ const usersShow = {
             userDetails
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = ctrl.userDetails();
 
         return m('div', [

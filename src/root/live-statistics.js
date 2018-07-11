@@ -4,7 +4,7 @@ import models from '../models';
 import h from '../h';
 
 const liveStatistics = {
-    controller(args = {}) {
+    controller: function(args = {}) {
         const pageStatistics = m.prop([]),
             notificationData = m.prop({});
 
@@ -24,7 +24,7 @@ const liveStatistics = {
             notificationData
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const data = ctrl.notificationData();
 
         return m('.w-section.bg-stats.section.min-height-100', [

@@ -8,7 +8,7 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const subProjectNew = {
-    controller() {
+    controller: function() {
         const categories = m.prop([]),
             filters = catarse.filtersVM,
             loadCategories = () => models.category.getPage(filters({}).order({
@@ -36,7 +36,7 @@ const subProjectNew = {
             validateProjectForm
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         return m('.before-footer.bg-purple.section-large.u-text-center',
             m('.w-container', [
                 m("img[src='https://daks2k3a4ib2z.cloudfront.net/57ba58b4846cc19e60acdd5b/59cd4be2c67c8d0001764fbe_logo-ass.png']"),

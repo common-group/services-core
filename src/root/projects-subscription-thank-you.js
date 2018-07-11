@@ -10,7 +10,7 @@ import CommonPaymentVM from '../vms/common-payment-vm.js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const ProjectsSubscriptionThankYou = {
-    controller(args) {
+    controller: function(args) {
         const paymentMethod = m.route.param('payment_method');
         const paymentConfirmed = JSON.parse(m.route.param('payment_confirmed'));
         const paymentId = m.route.param('payment_id');
@@ -62,7 +62,7 @@ const ProjectsSubscriptionThankYou = {
             isEdit
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.project();
         const user = h.getUser();
         const projectUser = ctrl.projectUser();

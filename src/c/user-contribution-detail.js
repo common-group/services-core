@@ -4,7 +4,7 @@ import h from '../h';
 import userContributedBox from './user-contributed-box';
 
 const userContributionDetail = {
-    controller(args) {
+    controller: function(args) {
         const contribution = args.contribution,
             rewardDetails = args.rewardDetails,
             chosenReward = _.findWhere(rewardDetails(), {
@@ -16,7 +16,7 @@ const userContributionDetail = {
             chosenReward
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const contribution = args.contribution;
 
         return m(userContributedBox, { contribution });

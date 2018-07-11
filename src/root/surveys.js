@@ -12,7 +12,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const surveyScope = _.partial(h.i18nScope, 'projects.dashboard_surveys');
 
 const surveys = {
-    controller(args) {
+    controller: function(args) {
         const loader = catarse.loaderWithToken,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
@@ -69,7 +69,7 @@ const surveys = {
             projectDetails,
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const project = _.first(ctrl.projectDetails());
         const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
         const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));

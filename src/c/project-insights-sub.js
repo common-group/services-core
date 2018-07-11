@@ -21,7 +21,7 @@ import userVM from '../vms/user-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsightsSub = {
-    controller(args) {
+    controller: function(args) {
         const filtersVM = args.filtersVM,
             visitorsTotal = m.prop(0),
             visitorLoader = catarseMoments.loaderWithToken,
@@ -80,7 +80,7 @@ const projectInsightsSub = {
             balanceLoader
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
         const weekSum = sumAmount(ctrl.weekSubscriptions());
         const lastWeekSum = sumAmount(ctrl.lastWeekSubscriptions());

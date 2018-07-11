@@ -15,7 +15,7 @@ import addressForm from '../c/address-form';
 const addressScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveysShow = {
-    controller(args) {
+    controller: function(args) {
         const {
             survey_id
         } = args,
@@ -149,7 +149,7 @@ const surveysShow = {
             survey
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const user = ctrl.user(),
             survey = ctrl.survey(),
             countryName = ctrl.countryName,

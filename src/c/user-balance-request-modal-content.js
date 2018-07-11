@@ -20,7 +20,7 @@ import userSettingsVM from '../vms/user-settings-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceRequestModelContent = {
-    controller(args) {
+    controller: function(args) {
         let parsedErrors = userSettingsVM.mapRailsErrors(args.rails_errors);
 
         const fields = {
@@ -112,7 +112,7 @@ const userBalanceRequestModelContent = {
             bankCode
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const balance = args.balance,
             fields = ctrl.fields,
             user = args.user;

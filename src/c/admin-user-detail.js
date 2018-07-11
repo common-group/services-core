@@ -21,7 +21,7 @@ import h from '../h';
 import { catarse } from '../api';
 
 const adminUserDetail = {
-    controller(args) {
+    controller: function(args) {
         return {
             actions: {
                 reset: {
@@ -53,7 +53,7 @@ const adminUserDetail = {
             },
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const actions = ctrl.actions,
             item = args.item,
             details = args.details,

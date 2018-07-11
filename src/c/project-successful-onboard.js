@@ -19,7 +19,7 @@ import insightVM from '../vms/insight-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
 
 const projectSuccessfulOnboard = {
-    controller(args) {
+    controller: function(args) {
         const projectIdVM = catarse.filtersVM({ project_id: 'eq' }),
             projectAccounts = m.prop([]),
             projectTransfers = m.prop([]),
@@ -68,7 +68,7 @@ const projectSuccessfulOnboard = {
             listenToReplace
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const projectAccount = _.first(ctrl.projectAccounts()),
             projectTransfer = _.first(ctrl.projectTransfers()),
             lpa = ctrl.lProjectAccount,

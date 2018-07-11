@@ -14,7 +14,7 @@ import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
 
 const adminBalanceTranfers = {
-    controller(args) {
+    controller: function(args) {
         const listVM = balanceTransferListVM,
             filterVM = balanceTransferFilterVM(),
             authorizedListVM = balanceTransferListVM,
@@ -130,7 +130,7 @@ const adminBalanceTranfers = {
             },
             generateWrapperModal = (customAttrs) => {
                 const wrapper = {
-                    view(ctrl, args) {
+                    view: function(ctrl, args) {
                         actionMenuToggle(false);
                         return m('', [
                             m('.modal-dialog-header', [
@@ -333,7 +333,7 @@ const adminBalanceTranfers = {
             submit
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('', [
             m(adminFilter, {
                 filterBuilder: ctrl.filterBuilder,

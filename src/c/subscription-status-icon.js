@@ -8,7 +8,7 @@ import models from '../models';
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const subscriptionStatusIcon = {
-    controller(args) {
+    controller: function(args) {
         const statusClass = {
                 active: 'fa-circle.text-success',
                 started: 'fa-circle.text-waiting',
@@ -41,7 +41,7 @@ const subscriptionStatusIcon = {
             statusClass
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subscription = args.subscription,
             statusClass = ctrl.statusClass,
 	            statusToShowTransitionDate = ['started', 'canceling', 'canceled', 'inactive'],

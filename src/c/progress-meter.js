@@ -4,7 +4,7 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const progressMeter = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project;
         const progress = args.progress;
         const isFinished = project => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
@@ -20,7 +20,7 @@ const progressMeter = {
             isFinished
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const project = ctrl.project;
         return m(ctrl.cardMeter(), [
             (ctrl.isFinished(project)) ?

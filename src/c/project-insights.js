@@ -23,7 +23,7 @@ import {
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsights = {
-    controller(args) {
+    controller: function(args) {
         const filtersVM = args.filtersVM,
             displayModal = h.toggleProp(false, true),
             contributionsPerDay = m.prop([]),
@@ -112,7 +112,7 @@ const projectInsights = {
             visitorsTotal
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project,
             buildTooltip = el => m.component(tooltip, {
                 el,

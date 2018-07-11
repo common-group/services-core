@@ -25,7 +25,7 @@ const statusCustomFilter = {
 };
 
 const projectSubscriptionReport = {
-    controller(args) {
+    controller: function(args) {
         const filterVM = projectsSubscriptionReportVM,
             catarseVM = projectsContributionReportVM,
             error = m.prop(false),
@@ -191,7 +191,7 @@ const projectSubscriptionReport = {
             project
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subsCollection = ctrl.subscriptions.collection(),
             filterBuilder = ctrl.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {

@@ -6,7 +6,7 @@
 import m from 'mithril';
 
 const errorContributionModalContent = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div',
 
             m('.modal-dialog-header',
