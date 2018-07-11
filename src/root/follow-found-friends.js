@@ -7,7 +7,7 @@ import userFollowers from '../c/user-followers';
 import userCreators from '../c/user-creators';
 
 const FollowFoundFriends = {
-    controller(args) {
+    controller: function(args) {
         const user = h.getUser(),
             hash = m.prop(window.location.hash),
             displayTabContent = () => {
@@ -37,7 +37,7 @@ const FollowFoundFriends = {
             displayTabContent
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div', [
             m('.w-section.dashboard-header', [
                 m('.w-container', [

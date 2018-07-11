@@ -5,7 +5,7 @@ import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const projectContributorCard = {
-    controller(args) {
+    controller: function(args) {
         const userDetails = m.prop({}),
             user_id = args.contribution.user_external_id;
         if (args.isSubscription) {
@@ -19,7 +19,7 @@ const projectContributorCard = {
             userDetails
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const contribution = args.contribution;
 
         return m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [

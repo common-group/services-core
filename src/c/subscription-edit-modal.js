@@ -9,7 +9,7 @@ const paymentBadge = paymentMethod => paymentMethod === 'credit_card'
         : [m('span.fa.fa-barcode'), ' Boleto Bancário'];
 
 const subscriptionEditModal = {
-    controller(args) {
+    controller: function(args) {
         const isLongDescription = reward => reward.description && reward.description.length > 110;
         const scope = attr => args.args.vm.isInternational()
                    ? I18nIntScope(attr)
@@ -21,7 +21,7 @@ const subscriptionEditModal = {
             scope
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vmIsLoading = args.vm.isLoading;
         const newSubscription = args.args;
         const oldSubscription = args.args.oldSubscription;

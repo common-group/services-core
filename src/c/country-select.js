@@ -4,7 +4,7 @@ import { catarse } from '../api';
 import models from '../models';
 
 const countrySelect = {
-    controller(args) {
+    controller: function(args) {
         const countriesLoader = catarse.loader(models.country.getPageOptions()),
             countries = m.prop(),
             defaultCountryID = args.defaultCountryID,
@@ -33,7 +33,7 @@ const countrySelect = {
             countries
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const fields = ctrl.fields;
         if (args.countryName) {
             args.countryName(ctrl.countries() && fields.countryID() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');

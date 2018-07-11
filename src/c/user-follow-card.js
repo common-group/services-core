@@ -13,13 +13,13 @@ import UserFollowBtn from '../c/user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const UserFollowCard = {
-    controller(args) {
+    controller: function(args) {
         const friend = m.prop(args.friend);
         return {
             friend
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const friend = ctrl.friend(),
             profile_img = _.isEmpty(friend.avatar) ? '/assets/catarse_bootstrap/user.jpg' : friend.avatar;
         return m('.w-col.w-col-4',

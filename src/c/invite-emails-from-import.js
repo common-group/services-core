@@ -5,7 +5,7 @@ import models from '../models';
 import { catarse } from '../api';
 
 const inviteEmailsFromImport = {
-    controller(args) {
+    controller: function(args) {
         const checkedList = m.prop([]),
             loading = m.prop(false),
             filterTerm = m.prop(''),
@@ -67,7 +67,7 @@ const inviteEmailsFromImport = {
             filtering
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project;
 
         return m('div', [

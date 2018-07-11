@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const projectEditTab = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div.u-marginbottom-80', [
             m(".w-section.dashboard-header.u-text-center[id='dashboard-titles-root']",
               m('.w-container',

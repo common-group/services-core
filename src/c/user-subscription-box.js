@@ -19,7 +19,7 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userSubscriptionBox = {
-    controller(args) {
+    controller: function(args) {
         const subscription = args.subscription,
             displayModal = h.toggleProp(false, true),
             displayCancelModal = h.toggleProp(false, true),
@@ -217,7 +217,7 @@ const userSubscriptionBox = {
             generateSecondSlip
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const subscription = ctrl.subscription;
 
         return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',

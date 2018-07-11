@@ -3,14 +3,14 @@ import _ from 'underscore';
 import userSubscriptionBox from './user-subscription-box';
 
 const userSubscriptionDetail = {
-    controller(args) {
+    controller: function(args) {
         const subscription = args.subscription;
 
         return {
             subscription
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subscription = args.subscription;
 
         return m(userSubscriptionBox, { subscription });

@@ -6,7 +6,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const postsPreview = {
-    controller(args) {
+    controller: function(args) {
         const togglePreview = () => {
                 h.scrollTop();
                 args.showPreview(false);
@@ -46,7 +46,7 @@ const postsPreview = {
             togglePreview
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const comment_html = args.comment_html(),
             title = args.title(),
             recipientsText = args.reward_id > 1 ?

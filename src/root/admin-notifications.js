@@ -7,7 +7,7 @@ import Liquid from 'liquidjs';
 import projectEditSaveBtn from '../c/project-edit-save-btn';
 
 const adminNotifications = {
-    controller() {
+    controller: function() {
         const templates = commonNotification.paginationVM(
             models.notificationTemplates, 'label.asc'),
             engine = Liquid(),
@@ -86,7 +86,7 @@ const adminNotifications = {
             selectedItemSubjectTemplate
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const templatesCollection = ctrl.templates.collection(),
             selectedItem = ctrl.selectedItem();
 

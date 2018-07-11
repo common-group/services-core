@@ -6,7 +6,7 @@ import models from '../models';
 import { catarse } from '../api';
 
 const menuProfile = {
-    controller(args) {
+    controller: function(args) {
         const contributedProjects = m.prop(),
             latestProjects = m.prop([]),
             userDetails = m.prop({}),
@@ -40,7 +40,7 @@ const menuProfile = {
             userBalance
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = ctrl.userDetails();
 
         return m('.w-dropdown.user-profile',

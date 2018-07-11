@@ -16,7 +16,7 @@ import filterDateRange from '../c/filter-date-range';
 import modalBox from '../c/modal-box';
 
 const adminContributions = {
-    controller() {
+    controller: function() {
         let listVM = contributionListVM,
             filterVM = contributionFilterVM,
             error = m.prop(''),
@@ -142,7 +142,7 @@ const adminContributions = {
             toChargebackCollection = m.prop(),
             chargebackConfirmationModalContentWrapper = (customAttrs) => {
                 const wrapper = {
-                    view(ctrl, args) {
+                    view: function(ctrl, args) {
                         return m('', [
                             m('.modal-dialog-header', [
                                 m('.fontsize-large.u-text-center', args.modalTitle)
@@ -266,7 +266,7 @@ const adminContributions = {
         };
     },
 
-    view(ctrl) {
+    view: function(ctrl) {
         return m('', [
             (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {
                 displayModal: ctrl.displayChargebackConfirmationModal,

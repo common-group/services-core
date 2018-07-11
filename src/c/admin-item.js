@@ -3,12 +3,12 @@ import _ from 'underscore';
 import h from '../h';
 
 const adminItem = {
-    controller(args) {
+    controller: function(args) {
         return {
             displayDetailBox: h.toggleProp(false, true)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const item = args.item,
             listWrapper = args.listWrapper || {},
             selectedItem = (_.isFunction(listWrapper.isSelected) ?

@@ -6,7 +6,7 @@ import rewardVM from '../vms/reward-vm';
 import faqBox from '../c/faq-box';
 
 const projectsReward = {
-    controller(args) {
+    controller: function(args) {
         const vm = rewardVM,
             selectedReward = vm.selectedReward,
             selectReward = vm.selectReward,
@@ -55,7 +55,7 @@ const projectsReward = {
             faq
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.project;
 
         return m('#project-rewards', [

@@ -14,7 +14,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const adminExternalAction = {
-    controller(args) {
+    controller: function(args) {
         let builder = args.data,
             complete = m.prop(false),
             error = m.prop(false),
@@ -67,7 +67,7 @@ const adminExternalAction = {
             unload
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const data = args.data,
             btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
 

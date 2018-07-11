@@ -11,7 +11,7 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectContributions = {
-    controller(args) {
+    controller: function(args) {
         const contributionsPerDay = m.prop([]),
             listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
             filterStats = catarse.filtersVM({
@@ -93,7 +93,7 @@ const projectContributions = {
             contributionsStats
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const list = ctrl.listVM,
             stats = projectVM.isSubscription(args.project()) ? args.subscriptionData() : ctrl.contributionsStats(),
             groupedCollection = ctrl.groupedCollection(list.collection());

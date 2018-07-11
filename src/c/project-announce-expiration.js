@@ -5,7 +5,7 @@ import modalBox from './modal-box';
 import announceExpirationModal from './announce-expiration-modal';
 
 const projectAnnounceExpiration = {
-    controller() {
+    controller: function() {
         const days = m.prop(2),
             showModal = h.toggleProp(false, true);
         return {
@@ -13,7 +13,7 @@ const projectAnnounceExpiration = {
             showModal
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const days = ctrl.days,
             expirationDate = moment().add(ctrl.days(), 'days').format('DD/MM/YYYY');
         return m("[id='dashboard-announce_expiration-tab']",

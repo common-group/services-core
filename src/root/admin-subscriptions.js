@@ -13,8 +13,8 @@ import filterMain from '../c/filter-main';
 import modalBox from '../c/modal-box';
 
 const adminSubscriptions = {
-    controller() {
-        const listVM = subscriptionListVM,
+    controller: function() {
+        let listVM = subscriptionListVM,
             filterVM = subscriptionFilterVM,
             error = m.prop(''),
             filterBuilder = [{ // name
@@ -203,7 +203,7 @@ const adminSubscriptions = {
         };
     },
 
-    view(ctrl) {
+    view: function(ctrl) {
         const label = 'Assinaturas';
         return m('', [
             (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {

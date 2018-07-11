@@ -10,7 +10,7 @@ import projectPosts from './project-posts';
 import projectVM from '../vms/project-vm';
 
 const projectMain = {
-    controller(args) {
+    controller: function(args) {
         const hash = m.prop(window.location.hash),
             displayTabContent = (project) => {
                 const c_opts = {
@@ -57,7 +57,7 @@ const projectMain = {
             hash
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
             m(`${ctrl.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
                 m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : h.loader())

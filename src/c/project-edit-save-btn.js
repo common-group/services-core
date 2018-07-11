@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const projectEditSaveBtn = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.w-section.save-draft-btn-section', {
             style: (args.hideMarginLeft ? { 'margin-left': 0 } : '')
         }, [

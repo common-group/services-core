@@ -4,13 +4,13 @@ import userVM from '../vms/user-vm';
 import userAboutEdit from '../c/user-about-edit';
 
 const projectEditUserAbout = {
-    controller(args) {
+    controller: function(args) {
         return {
             user: userVM.fetchUser(args.user_id)
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return (ctrl.user() ? m(userAboutEdit, {
             user: ctrl.user(),
             userId: args.user_id,

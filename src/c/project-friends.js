@@ -4,7 +4,7 @@ import models from '../models';
 import { catarse } from '../api';
 
 const projectFriends = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project,
             friendsSample = m.prop([]),
             listVM = catarse.paginationVM(models.contributor, 'user_id.desc', {
@@ -26,7 +26,7 @@ const projectFriends = {
             friendsSample
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.project,
             friendsCount = ctrl.listVM.collection().length,
             wrapper = args.wrapper || '.friend-backed-card';

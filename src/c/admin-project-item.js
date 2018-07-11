@@ -5,7 +5,7 @@ import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
 
 const adminProjectItem = {
-    controller(args) {
+    controller: function(args) {
         const project = args.item,
             recommended = h.toggleProp(project.recommended, !project.recommended),
             toggleRecommend = () => {
@@ -18,7 +18,7 @@ const adminProjectItem = {
             recommended
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const project = ctrl.project,
             recommended = ctrl.recommended;
         return m('.w-row', [

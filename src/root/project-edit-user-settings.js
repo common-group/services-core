@@ -5,13 +5,13 @@ import userAboutEdit from '../c/user-about-edit';
 import userSettings from '../c/user-settings';
 
 const projectEditUserSettings = {
-    controller(args) {
+    controller: function(args) {
         return {
             user: userVM.fetchUser(args.user_id)
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return (ctrl.user() ? m(userSettings, {
             user: ctrl.user(),
             userId: args.user_id,

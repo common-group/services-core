@@ -7,7 +7,7 @@ import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
 const editRewardCard = {
-    controller(args) {
+    controller: function(args) {
         const project = projectVM.getCurrentProject(),
             reward = args.reward(),
             minimumValue = projectVM.isSubscription(project) ? 5 : 10,
@@ -170,7 +170,7 @@ const editRewardCard = {
             fees
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const newFee = {
                 id: m.prop(null),
                 value: m.prop(null),

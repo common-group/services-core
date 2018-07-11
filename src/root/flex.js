@@ -8,7 +8,7 @@ import projectRow from '../c/project-row';
 import landingQA from '../c/landing-qa';
 
 const Flex = {
-    controller() {
+    controller: function() {
         const stats = m.prop([]),
             projects = m.prop([]),
             l = m.prop(),
@@ -48,7 +48,7 @@ const Flex = {
             }
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const stats = _.first(ctrl.stats());
 
         return [

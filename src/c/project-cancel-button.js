@@ -8,13 +8,13 @@ import modalBox from '../c/modal-box';
 import cancelProjectModalContent from '../c/cancel-project-modal-content';
 
 const projectCancelButton = {
-    controller(args) {
+    controller: function(args) {
         const displayCancelModal = h.toggleProp(false, true);
         return {
             displayCancelModal
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div', [
             (ctrl.displayCancelModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayCancelModal,

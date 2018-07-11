@@ -14,7 +14,7 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminProjects = {
-    controller() {
+    controller: function() {
         const listVM = projectListVM,
             filterVM = projectFilterVM,
             categories = m.prop([]),
@@ -172,7 +172,7 @@ const adminProjects = {
             submit
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const label = 'Projetos';
 
         return m('', [

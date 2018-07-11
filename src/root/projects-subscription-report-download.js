@@ -9,7 +9,7 @@ import h from '../h';
 import models from '../models';
 
 const projectSubscriptionReportDownload = {
-    controller(args) {
+    controller: function(args) {
         const catarseVM = projectsContributionReportVM;
         const project = m.prop([{}]);
         catarseVM.project_id(args.project_id);
@@ -24,7 +24,7 @@ const projectSubscriptionReportDownload = {
             project
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.section.project-metrics',
             m('.w-container',
                 m('.w-row', [

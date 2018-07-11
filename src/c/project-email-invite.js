@@ -7,7 +7,7 @@ import popNotification from './pop-notification';
 import projectGoogleContactImport from './project-google-contact-import';
 
 const projectEmailInvite = {
-    controller(args) {
+    controller: function(args) {
         const emailText = m.prop(''),
             loading = m.prop(false),
             project = args.project,
@@ -50,7 +50,7 @@ const projectEmailInvite = {
             showSuccess
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project;
 
         return m('.email-invite-box', [

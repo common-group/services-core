@@ -11,7 +11,7 @@ import popNotification from '../c/pop-notification';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const projectEditReward = {
-    controller(args) {
+    controller: function(args) {
         const rewards = m.prop([]),
             loading = m.prop(false),
             error = m.prop(false),
@@ -98,7 +98,7 @@ const projectEditReward = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const error = ctrl.error,
             project = args.project;
 

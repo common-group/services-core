@@ -3,14 +3,14 @@ import _ from 'underscore';
 import h from '../h';
 
 const SignedFriendFacebookConnect = {
-    controller(args) {
+    controller: function(args) {
         const mapWithAvatar = () => _.sample(_.filter(args.friendListVM.collection(), item => !_.isNull(item.avatar)), 8);
 
         return {
             mapWithAvatar
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         if (args.friendListVM.isLoading()) {
             return h.loader();
         }

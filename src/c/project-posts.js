@@ -9,7 +9,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.posts');
 
 const projectPosts = {
-    controller(args) {
+    controller: function(args) {
         const listVM = catarse.paginationVM(models.projectPostDetail),
             filterVM = catarse.filtersVM({
                 project_id: 'eq',
@@ -37,7 +37,7 @@ const projectPosts = {
             scrollTo
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const list = ctrl.listVM,
             project = args.project() || {};
 

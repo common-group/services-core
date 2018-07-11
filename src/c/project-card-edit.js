@@ -11,7 +11,7 @@ import projectCard from './project-card';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_card');
 
 const projectCardEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectCardVM,
             mapErrors = [
                   ['uploaded_image', ['uploaded_image']],
@@ -65,7 +65,7 @@ const projectCardEdit = {
             loading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#card-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {
