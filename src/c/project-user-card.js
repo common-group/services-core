@@ -14,7 +14,7 @@ const projectUserCard = {
             sendMessage = () => {
                 if (!h.getUser()) {
                     h.storeAction(storeId, project().project_id);
-                    return h.navigateToDevise();
+                    return h.navigateToDevise(`?redirect_to=/projects/${project().project_id}`);
                 }
 
                 displayModal(true);

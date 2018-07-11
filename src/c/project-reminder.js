@@ -26,7 +26,7 @@ const projectReminder = {
             submitReminder = () => {
                 if (!h.getUser()) {
                     h.storeAction(storeReminderName, project().project_id);
-                    return h.navigateToDevise();
+                    return h.navigateToDevise(`?redirect_to=/projects/${project().project_id}`);
                 }
                 const loaderOpts = project().in_reminder ? models.projectReminder.deleteOptions(filterVM.parameters()) : models.projectReminder.postOptions({
                     project_id: project().project_id
