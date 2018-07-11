@@ -44,4 +44,3 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'pundit'
 
 gem 'common_models', path: '../common_models/'
-gem 'postgrest', path: '../../postgrest-ruby'

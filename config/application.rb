@@ -19,6 +19,7 @@ Bundler.require(*Rails.groups)
 
 module CommonApi
   class Application < Rails::Application
+    extend CommonModels
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
