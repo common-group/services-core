@@ -13,7 +13,7 @@ import { commonCommunity } from '../api';
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCardDetail = {
-    controller(args) {
+    controller: function(args) {
         const userDetailsOptions = {
             id: args.user.common_id
         };
@@ -29,7 +29,7 @@ const dashboardSubscriptionCardDetail = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subscription = args.subscription,
             user = _.extend({ project_id: subscription.project_external_id }, args.user),
             reward = args.reward,

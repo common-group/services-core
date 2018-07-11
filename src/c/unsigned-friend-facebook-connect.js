@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const UnsignedFriendFacebookConnect = {
-    controller(args) {
+    controller: function(args) {
         return {
             largeBg: (() => {
                 if (_.isUndefined(args)) {
@@ -13,7 +13,7 @@ const UnsignedFriendFacebookConnect = {
             })()
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m(`.w-section.section${(ctrl.largeBg ? '.bg-backs-carrosel.section-large' : '')}`, [
             m('.w-container', [
                 m('.card.card-big', [

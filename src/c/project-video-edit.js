@@ -10,7 +10,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_video');
 
 const projectBudgetEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectVideoVM,
             mapErrors = [
                   ['video_url', ['video_url']],
@@ -51,7 +51,7 @@ const projectBudgetEdit = {
             loading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#video-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {

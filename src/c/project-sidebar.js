@@ -13,7 +13,7 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
 const projectSidebar = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project,
             animateProgress = (el, isInitialized) => {
                 if (!isInitialized) {
@@ -65,7 +65,7 @@ const projectSidebar = {
             navigate
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         // @TODO: remove all those things from the view
         const project = args.project,
             elapsed = project().elapsed_time,

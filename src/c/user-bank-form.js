@@ -10,7 +10,7 @@ import inlineError from './inline-error';
 import userSettingsVM from '../vms/user-settings-vm';
 
 const userBankForm = {
-    controller(args) {
+    controller: function(args) {
         const parsedErrors = args.parsedErrors;
         const fields = args.fields,
             user = args.user,
@@ -74,7 +74,7 @@ const userBankForm = {
             parsedErrors
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         let user = args.user,
             fields = args.fields,
             bankAccount = ctrl.bankAccount();

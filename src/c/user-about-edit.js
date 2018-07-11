@@ -9,7 +9,7 @@ import inlineError from './inline-error';
 import projectEditSaveBtn from './project-edit-save-btn';
 
 const userAboutEdit = {
-    controller(args) {
+    controller: function(args) {
         let parsedErrors = userAboutVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteUser;
         const user = args.user || {},
@@ -216,7 +216,7 @@ const userAboutEdit = {
             parsedErrors
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = args.user || {},
             fields = ctrl.fields;
 

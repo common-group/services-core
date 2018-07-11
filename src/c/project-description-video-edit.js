@@ -12,7 +12,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_description');
 const I18nVideoScope = _.partial(h.i18nScope, 'projects.dashboard_video');
 
 const projectDescriptionVideoEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectDescriptionVideoVM,
             mapErrors = [
                   ['about_html', ['about_html']],
@@ -54,7 +54,7 @@ const projectDescriptionVideoEdit = {
             loading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#description-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {

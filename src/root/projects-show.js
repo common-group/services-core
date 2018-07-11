@@ -9,7 +9,7 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 import subscriptionVM from '../vms/subscription-vm';
 
 const projectsShow = {
-    controller(args) {
+    controller: function(args) {
         const {
             project_id,
             project_user_id,
@@ -72,7 +72,7 @@ const projectsShow = {
             userProjectSubscriptions
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = ctrl.projectVM.currentProject,
             projectVM = ctrl.projectVM;
 

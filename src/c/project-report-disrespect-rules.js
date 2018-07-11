@@ -10,7 +10,7 @@ import h from '../h';
 import inlineError from './inline-error';
 
 const projectReportDisrespectRules = {
-    controller(args) {
+    controller: function(args) {
         const formName = 'report-disrespect-rules';
         const reasonError = m.prop(false);
         const detailsError = m.prop(false);
@@ -36,7 +36,7 @@ const projectReportDisrespectRules = {
             sendReport: args.sendReport.bind(args.sendReport, validate),
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.card.u-radius.u-margintop-20',
           m('.w-form',
             m('form', {

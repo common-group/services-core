@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const bigCard = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const cardClass = '.card.medium.card-terciary.u-marginbottom-30';
 
         return m(cardClass, [

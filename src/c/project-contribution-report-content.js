@@ -9,7 +9,7 @@ import deliverContributionModalContent from '../c/deliver-contribution-modal-con
 import errorContributionModalContent from '../c/error-contribution-modal-content';
 
 const projectContributionReportContent = {
-    controller(args) {
+    controller: function(args) {
         const showSelectedMenu = h.toggleProp(false, true),
             selectedAny = m.prop(false),
             showSuccess = m.prop(false),
@@ -69,7 +69,7 @@ const projectContributionReportContent = {
             selectedContributions
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const list = args.list;
         const isFailed = args.project().state === 'failed';
 

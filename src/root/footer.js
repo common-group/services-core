@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const footer = {
-    view() {
+    view: function() {
         return m('footer.main-footer.main-footer-neg',
             [
                 m('section.w-container',

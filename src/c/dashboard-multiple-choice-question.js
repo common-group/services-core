@@ -4,7 +4,7 @@ import surveyVM from '../vms/survey-vm';
 import inlineError from '../c/inline-error';
 
 const dashboardMultipleChoiceQuestion = {
-    controller(args) {
+    controller: function(args) {
         const { question } = args;
         const deleteOption = (question, idx) => () => {
             surveyVM.deleteMultipleQuestionOption(question, idx);
@@ -36,7 +36,7 @@ const dashboardMultipleChoiceQuestion = {
             updateOption
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const { question, index } = args;
 
         return m('.card.u-marginbottom-30.u-radius.w-form', [

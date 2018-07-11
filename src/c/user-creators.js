@@ -18,7 +18,7 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userCreators = {
-    controller() {
+    controller: function() {
         models.creatorSuggestion.pageSize(9);
         const creatorsListVM = catarse.paginationVM(
             models.creatorSuggestion,
@@ -46,7 +46,7 @@ const userCreators = {
             followAll
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const creatorsVM = ctrl.creatorsListVM;
 
         return m('.w-section.bg-gray.before-footer.section', [

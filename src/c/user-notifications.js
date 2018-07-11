@@ -6,7 +6,7 @@ import inlineError from './inline-error';
 
 const I18nScope = _.partial(h.i18nScope, 'users.edit.notifications_fields');
 const userNotifications = {
-    controller(args) {
+    controller: function(args) {
         const contributedProjects = m.prop(),
             projectReminders = m.prop(),
             mailMarketingLists = m.prop(),
@@ -78,7 +78,7 @@ const userNotifications = {
             isOnCurrentList,
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const user = args.user,
             reminders = ctrl.projectReminders(),
             projects_collection = ctrl.projects(),

@@ -6,7 +6,7 @@ import models from '../models';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.press');
 const press = {
-    controller() {
+    controller: function() {
         const stats = m.prop([]);
         const loader = catarse.loader;
         const statsLoader = loader(models.statistic.getRowOptions());
@@ -17,7 +17,7 @@ const press = {
             stats
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const stats = _.first(ctrl.stats());
 
         return m('#press', [

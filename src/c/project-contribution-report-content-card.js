@@ -11,7 +11,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const contributionScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectContributionReportContentCard = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project(),
             showDetail = h.toggleProp(false, true),
             currentTab = m.prop('info'),
@@ -81,7 +81,7 @@ const projectContributionReportContentCard = {
             selectContribution
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const contribution = args.contribution(),
             project = args.project(),
             survey = _.first(ctrl.survey()),

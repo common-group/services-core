@@ -7,7 +7,7 @@ import m from 'mithril';
 import h from '../h';
 
 const cancelProjectModalContent = {
-    controller(args) {
+    controller: function(args) {
         const checkError = m.prop(false),
             showRedactor = m.prop(false),
             check = m.prop(''),
@@ -30,7 +30,7 @@ const cancelProjectModalContent = {
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m(`form.cancel-project-modal.modal-dialog-content[accept-charset='UTF-8'][action='/pt/projects/${args.project.id}'][id='edit_project_${args.project.id}'][method='post'][novalidate='novalidate']`,
             ctrl.showRedactor() ? [
                 m("input[name='utf8'][type='hidden'][value='✓']"),

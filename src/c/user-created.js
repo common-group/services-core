@@ -9,7 +9,7 @@ import loadMoreBtn from './load-more-btn';
 import projectCard from './project-card';
 
 const userCreated = {
-    controller(args) {
+    controller: function(args) {
         const user_id = args.userId,
             showDraft = args.showDraft || false,
             error = m.prop(false),
@@ -43,7 +43,7 @@ const userCreated = {
             error
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const projects_collection = ctrl.projects.collection();
 
         return m('.content[id=\'created-tab\']',

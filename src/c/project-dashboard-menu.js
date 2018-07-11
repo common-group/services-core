@@ -18,7 +18,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
 
 const projectDashboardMenu = {
-    controller(args) {
+    controller: function(args) {
         const body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
             validating = m.prop(false),
@@ -69,7 +69,7 @@ const projectDashboardMenu = {
             projectThumb
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project(),
             projectRoute = `/projects/${project.project_id}`,
             editRoute = `${projectRoute}/edit`,

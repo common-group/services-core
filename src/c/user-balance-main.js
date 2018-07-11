@@ -14,7 +14,7 @@ import userBalance from './user-balance';
 import userBalanceTransactions from './user-balance-transactions';
 
 const userBalanceMain = {
-    controller(args) {
+    controller: function(args) {
         const userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
         userIdVM.user_id(args.user_id);
@@ -69,7 +69,7 @@ const userBalanceMain = {
             balanceTransactionManager
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
             m.component(userBalance, opts),

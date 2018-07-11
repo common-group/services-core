@@ -14,7 +14,7 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const surveyCreate = {
-    controller(args) {
+    controller: function(args) {
         const
             showError = m.prop(false),
             loader = catarse.loaderWithToken,
@@ -126,7 +126,7 @@ const surveyCreate = {
             sendQuestions
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const project = _.first(ctrl.projectDetails());
         const reward = _.first(ctrl.reward());
         return (project ? m('.project-surveys', (project.is_owner_or_admin ? m.component(projectDashboardMenu, {

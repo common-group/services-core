@@ -13,7 +13,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCard = {
-    controller(args) {
+    controller: function(args) {
         const subscription = args.subscription,
             reward = m.prop(),
             toggleDetails = h.toggleProp(false, true),
@@ -46,7 +46,7 @@ const dashboardSubscriptionCard = {
             user
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const subscription = args.subscription,
             user = ctrl.user(),
             cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';

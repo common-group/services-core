@@ -10,7 +10,7 @@ import publishVM from '../vms/publish-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.publish');
 
 const publish = {
-    controller(args) {
+    controller: function(args) {
         const filtersVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
@@ -42,7 +42,7 @@ const publish = {
             projectDetails
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = _.first(ctrl.projectDetails()),
             acceptedIndex = ctrl.acceptedIndex,
             account = _.first(ctrl.projectAccount());

@@ -6,14 +6,14 @@ import projectDescriptionEdit from '../c/project-description-edit';
 import projectDescriptionVideoEdit from '../c/project-description-video-edit';
 
 const projectEditDescription = {
-    controller(args) {
+    controller: function(args) {
         return {
             user: userVM.fetchUser(args.user_id),
             project: projectVM.fetchProject(args.project_id)
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const editComponent = projectVM.isSubscription(ctrl.project)
             ? projectDescriptionVideoEdit
             : projectDescriptionEdit;

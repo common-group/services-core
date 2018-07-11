@@ -17,14 +17,14 @@ import Chart from 'chart.js';
     if (adminRoot) {
         const adminWrap = function (component, customAttr) {
             return {
-                controller() {
+                controller: function() {
                     const attr = customAttr;
 
                     return {
                         attr
                     };
                 },
-                view(ctrl) {
+                view: function(ctrl) {
                     return m('#app', [
                         m.component(c.root.Menu, ctrl.attr),
                         m.component(component, ctrl.attr),
@@ -51,7 +51,7 @@ import Chart from 'chart.js';
     let firstRun = true;// Indica se é a primeira vez q executa um controller.
     const wrap = function (component, customAttr) {
         return {
-            controller() {
+            controller: function() {
                 if (firstRun) {
                     firstRun = false;
                 } else { // só roda se nao for firstRun
@@ -121,7 +121,7 @@ import Chart from 'chart.js';
                     attr
                 };
             },
-            view(ctrl) {
+            view: function(ctrl) {
                 return m('#app', [
                     m.component(c.root.Menu, ctrl.attr),
                     (h.getUserID() ? m.component(c.root.CheckEmail, ctrl.attr) : ''),

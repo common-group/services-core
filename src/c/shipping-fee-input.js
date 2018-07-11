@@ -4,7 +4,7 @@ import h from '../h';
 import inlineError from '../c/inline-error';
 
 const shippingFeeInput = {
-    controller(args) {
+    controller: function(args) {
         const states = args.states;
         const fee = args.fee,
             fees = args.fees,
@@ -27,7 +27,7 @@ const shippingFeeInput = {
             states
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const deleted = ctrl.deleted,
             othersCount = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international').length,
             states = ctrl.states;

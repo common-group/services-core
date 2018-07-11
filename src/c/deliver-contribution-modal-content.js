@@ -6,7 +6,7 @@
 import m from 'mithril';
 
 const deliverContributionModalContent = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div',
 
             m('.modal-dialog-header',

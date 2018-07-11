@@ -11,7 +11,7 @@ import addressVM from '../vms/address-vm';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
-    controller(args) {
+    controller: function(args) {
         const parsedErrors = args.parsedErrors;
         const statesLoader = catarse.loader(models.state.getPageOptions()),
             data = args.fields().address(),
@@ -121,7 +121,7 @@ const addressForm = {
             states
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const fields = ctrl.fields,
             international = ctrl.international,
             defaultCountryID = ctrl.defaultCountryID,

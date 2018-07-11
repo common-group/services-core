@@ -5,14 +5,14 @@ import projectVM from '../vms/project-vm';
 import projectBudgetEdit from '../c/project-budget-edit';
 
 const projectEditBudget = {
-    controller(args) {
+    controller: function(args) {
         return {
             user: userVM.fetchUser(args.user_id),
             project: projectVM.fetchProject(args.project_id)
         };
     },
 
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return (ctrl.user() && ctrl.project() ? m(projectBudgetEdit, {
             user: ctrl.user(),
             userId: args.user_id,

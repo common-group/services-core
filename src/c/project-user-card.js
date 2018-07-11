@@ -7,7 +7,7 @@ import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const projectUserCard = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project || m.prop({}),
             displayModal = h.toggleProp(false, true),
             storeId = 'message',
@@ -29,7 +29,7 @@ const projectUserCard = {
             sendMessage
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project;
         const contactModalC = [ownerMessageContent, m.prop(_.extend(args.userDetails(), {
             project_id: project().id

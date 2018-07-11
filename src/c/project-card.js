@@ -7,7 +7,7 @@ import progressMeter from './progress-meter';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
-    controller(args) {
+    controller: function(args) {
         const project = args.project,
             progress = project.progress.toFixed(2),
             remainingTextObj = h.translatedTime(project.remaining_time),
@@ -85,7 +85,7 @@ const projectCard = {
             isFinished
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = args.project,
             projectOwnerName = (project.user ? (
                   project.user.public_name || project.user.name

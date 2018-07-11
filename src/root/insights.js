@@ -7,7 +7,7 @@ import projectInsights from '../c/project-insights';
 import projectInsightsSub from '../c/project-insights-sub';
 
 const insights = {
-    controller(args) {
+    controller: function(args) {
         const filtersVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
@@ -45,7 +45,7 @@ const insights = {
             projectDetails
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const project = _.first(ctrl.projectDetails()) || {
                 user: {
                     name: 'Realizador'

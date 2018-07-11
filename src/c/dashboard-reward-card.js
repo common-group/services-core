@@ -9,7 +9,7 @@ import inlineError from './inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const dashboardRewardCard = {
-    controller(args) {
+    controller: function(args) {
         const reward = args.reward(),
             availableCount = () => reward.maximum_contributions() - reward.paid_count() - reward.waiting_payment_count(),
             limitError = m.prop(false),
@@ -57,7 +57,7 @@ const dashboardRewardCard = {
             limitError
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const reward = args.reward();
         const project = args.project();
         const isSubscription = projectVM.isSubscription(project);

@@ -9,7 +9,7 @@ import h from '../h';
 import models from '../models';
 
 const deleteProjectModalContent = {
-    controller(args) {
+    controller: function(args) {
         let l = m.prop(false);
         const deleteSuccess = m.prop(false),
             confirmed = m.prop(true),
@@ -44,7 +44,7 @@ const deleteProjectModalContent = {
             check
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('div',
                  (ctrl.deleteSuccess() ? '' : m('.modal-dialog-header',
                   m('.fontsize-large.u-text-center',

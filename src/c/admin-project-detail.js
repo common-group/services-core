@@ -9,7 +9,7 @@ import adminExternalAction from './admin-external-action';
 import projectVM from '../vms/project-vm';
 
 const adminProjectDetail = {
-    controller(args) {
+    controller: function(args) {
         let bankl;
         const project_id = args.item.project_id;
         const loadBank = () => {
@@ -86,7 +86,7 @@ const adminProjectDetail = {
             actionUnload
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const actions = ctrl.actions,
             item = args.item,
             user = ctrl.user(),

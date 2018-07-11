@@ -5,7 +5,7 @@ import h from '../h';
 const dateFieldMask = _.partial(h.mask, '99/99/9999');
 
 const filterDateRange = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         return m('.w-col.w-col-3.w-col-small-6', [
             m(`label.fontsize-smaller[for="${args.index}"]`, args.label),
             m('.w-row', [

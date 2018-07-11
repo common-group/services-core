@@ -12,7 +12,7 @@ import popNotification from '../c/pop-notification';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const posts = {
-    controller(args) {
+    controller: function(args) {
         let deleteFormSubmit;
         const showPreview = m.prop(false),
             showSuccess = m.prop(false),
@@ -135,7 +135,7 @@ const posts = {
             openedPercentage
         };
     },
-    view(ctrl) {
+    view: function(ctrl) {
         const project = _.first(ctrl.projectDetails()),
             paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);
 

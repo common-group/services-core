@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const inputCard = {
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const cardClass = args.cardClass || '.w-row.u-marginbottom-30.card.card-terciary',
             onclick = args.onclick || Function.prototype;
 

@@ -10,7 +10,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_budget');
 
 const projectBudgetEdit = {
-    controller(args) {
+    controller: function(args) {
         const vm = projectBudgetVM,
             mapErrors = [
                   ['budget', ['budget']],
@@ -51,7 +51,7 @@ const projectBudgetEdit = {
             loading
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#budget-tab', [
             (ctrl.showSuccess() ? m.component(popNotification, {

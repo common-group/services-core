@@ -11,7 +11,7 @@ import h from '../h';
 import inlineError from './inline-error';
 
 const projectReportInfringesIntellectualProperty = {
-    controller(args) {
+    controller: function(args) {
         const formName = 'report-infringes-intellectual-property',
             relationWithViolatedPropertyError = m.prop(false),
             fullNameError = m.prop(false),
@@ -51,7 +51,7 @@ const projectReportInfringesIntellectualProperty = {
             sendReport: args.sendReport.bind(args.sendReport, validate)
         };
     },
-    view(ctrl, args) {
+    view: function(ctrl, args) {
         const assertError = (condition, message) => condition ? m(inlineError, { message }) : '';
 
         return m('.card.u-radius.u-margintop-20',
