@@ -28,7 +28,7 @@ BEGIN;
 
             return next is(
                 payment_service.next_charge_at(_subscription),
-                '02-28-2018 13:00',
+                '02-28-2018 00:00',
                 'should calculate next transaction date'
             );
 
@@ -51,7 +51,7 @@ BEGIN;
 
             return next is(
                 payment_service.next_charge_at(_subscription)::text,
-                (now()::timestamp)::text,
+                (now()::date::timestamp)::text,
                 'should be current time when not have paid transactions'
             );
 
