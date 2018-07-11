@@ -2,10 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const isProd = process.env.WEBPACK_MODE === 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
     entry: './src/app.js',
+    mode: !isProd && 'development',
     module: {
       rules: [
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }

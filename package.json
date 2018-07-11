@@ -55,7 +55,7 @@
   "scripts": {
     "test": "gulp test",
     "build": "./node_modules/.bin/webpack",
-    "build:prod": "./node_modules/.bin/webpack -p",
+    "build:prod": "NODE_ENV=production ./node_modules/.bin/webpack --mode production",
     "build:dev": "./node_modules/.bin/webpack-dev-server"
   },
   "dependencies": {
