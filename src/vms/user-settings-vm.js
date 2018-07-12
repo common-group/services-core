@@ -55,6 +55,7 @@ const mapRailsErrors = (rails_errors) => {
     extractAndSetErrorMsg('complement', ['user.address_complement', 'address_complement']);
     extractAndSetErrorMsg('neighbourhood', ['user.address_neighbourhood', 'address_neighbourhood']);
     extractAndSetErrorMsg('state', ['user.address_state', 'address_state']);
+    extractAndSetErrorMsg('state_inscription', ['user.state_inscription', 'state_inscription']);
     extractAndSetErrorMsg('phonenumber', ['user.phone_number', 'phone_number']);
     extractAndSetErrorMsg('name', ['user.name', 'name']);
     extractAndSetErrorMsg('agency', ['user.bank_account.agency', 'bank_account.agency']);

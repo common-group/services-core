@@ -19,7 +19,7 @@ const userSettings = {
             fields = m.prop({
                 owner_document: m.prop(user.owner_document || ''),
                 name: m.prop(user.name || ''),
-                state_inscription: m.prop(''),
+                state_inscription: m.prop(user.state_inscription || ''),
                 address: m.prop(user.address || {}),
                 birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
                 account_type: m.prop(user.account_type || '')
@@ -53,7 +53,8 @@ const userSettings = {
                     name: fields().name(),
                     address_attributes: fields().address(),
                     account_type: fields().account_type(),
-                    birth_date: fields().birth_date()
+                    birth_date: fields().birth_date(),
+                    state_inscription: fields().state_inscription
                 };
 
                 if (args.publishingUserSettings) {
