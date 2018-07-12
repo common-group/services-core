@@ -8,7 +8,7 @@ A set of mithril components to use accross [catarse](https://github.com/catarse/
 
 Install project dependencies ```npm install```.
 
-Catarse.js uses webpack as build tool. To start developing just run `gulp` and gulp will start watching your source files for changes and running build when those happen.
+Catarse.js uses webpack as build tool. 
 
 To trigger a build, run:
 ```npm run build```
@@ -16,11 +16,11 @@ To trigger a build, run:
 If you are deploying the built code to production, then run:
 ```npm run build:prod```
 
-To link catarse.js with catarse, run:
-```npm link```
-Then, in you catarse repository, run:
-```npm link catarse.js```
+When developing, you need to link catarse.js as an npm dependency for the main catarse project. You can do so by:
 
+Running `npm link` in the root folder of the catarse.js project and then `npm link catarse.js` in the root folder of the main catarse project
+
+You can use webpack-dev-server to provide your assets locally by running `npm build:dev` and running the rails application with `webpack_dev_server` configuration set to true in config/application.rb
 
 ## Project Architecture
 
