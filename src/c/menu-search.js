@@ -1,5 +1,6 @@
-import $ from 'jquery';
 import m from 'mithril';
+
+const { $ } = window;
 
 const menuSearch = {
     view: function(ctrl, args) {

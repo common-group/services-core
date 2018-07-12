@@ -1,7 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
-import $ from 'jquery';
 import { catarse } from '../api';
 import models from '../models';
 import paymentStatus from './payment-status';
@@ -9,6 +8,7 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const contributionScope = _.partial(h.i18nScope, 'projects.contributions');
+const { $ } = window;
 
 const projectContributionReportContentCard = {
     controller: function(args) {

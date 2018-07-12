@@ -13,6 +13,7 @@ const projectUserCard = {
             storeId = 'message',
             sendMessage = () => {
                 if (!h.getUser()) {
+                    console.log('I will store an action');
                     h.storeAction(storeId, project().project_id);
                     return h.navigateToDevise(`?redirect_to=/projects/${project().project_id}`);
                 }
@@ -112,7 +113,7 @@ const projectUserCard = {
                             follow_id: userDetail.id,
                             following: userDetail.following_this_user
                         })),
-                        m(`a.w-button.btn.btn-terciary${args.isDark ? '.btn-terciary-negative' : ''}.btn-small[href=\'javascript:void(0);\']`, {
+                        m(`button.w-button.btn.btn-terciary${args.isDark ? '.btn-terciary-negative' : ''}.btn-small`, {
                             onclick: h.analytics.event({
                                 cat: 'project_view',
                                 act: 'project_creator_sendmsg',
