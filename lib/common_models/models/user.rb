@@ -7,6 +7,7 @@ module CommonModels
     attr_accessor :publishing_project, :publishing_user_settings, :publishing_user_about, :reseting_password
 
     has_many :projects
+    belongs_to :platform
 
     has_many :published_projects, -> do
       with_states(Project::PUBLISHED_STATES)

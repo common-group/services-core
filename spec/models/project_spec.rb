@@ -7,6 +7,7 @@ require "shoulda/matchers"
 RSpec.describe CommonModels::Project, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to :user }
+    it { is_expected.to belong_to :platform }
   end
 
   describe 'validations' do
