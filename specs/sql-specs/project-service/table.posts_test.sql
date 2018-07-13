@@ -29,7 +29,6 @@ BEGIN;
         'project_service', 'projects', 'id'
     );
 
-
     SELECT fk_ok(
         'project_service', 'posts', 'reward_id',
         'project_service', 'rewards', 'id'

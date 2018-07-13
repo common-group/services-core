@@ -25,7 +25,7 @@ ALTER TABLE ONLY project_service.posts
     ADD CONSTRAINT posts_user_id_fkey FOREIGN KEY (user_id) REFERENCES community_service.users(id);
 
 ALTER TABLE ONLY project_service.posts
-    ADD CONSTRAINT posts_reward_id_fkey FOREIGN KEY (project_id) REFERENCES project_service.rewards(id);
+    ADD CONSTRAINT posts_reward_id_fkey FOREIGN KEY (reward_id) REFERENCES project_service.rewards(id);
 
 GRANT SELECT,INSERT,UPDATE ON TABLE project_service.posts TO scoped_user, platform_user;
 GRANT SELECT ON TABLE project_service.posts TO anonymous;
