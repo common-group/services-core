@@ -32,14 +32,16 @@ const adminSubscriptionDetail = {
         filterVM.subscription_id(args.key);
         const currentPayment = m.prop({});
 
+        // Pagination on notifications
         const notificationsLoader = commonNotification.paginationVM(models.userNotification, 'created_at.desc');
         const notificationsInternal = m.prop([]);
         let isFirstPage = true;
 
         const loadNotifications = () => {
-
+            
             const addNotificationsToInternal = (notifications) => notificationsInternal(notifications);
 
+            // First loads the first page and configure the next interactions
             if (isFirstPage)
             {
                 const notificationFilterVM = commonNotification
@@ -58,6 +60,7 @@ const adminSubscriptionDetail = {
             }
             else
             {
+                // Next pages set the notifications with all notifications got from endpoint
                 notificationsLoader.nextPage().then(addNotificationsToInternal);
             }
 
