@@ -33,6 +33,7 @@ const projectInsightsSub = {
         const weekTransitions = m.prop([]);
         const lastWeekTransitions = m.prop([]);
         const subscriptionsPerMonth = m.prop([]);
+        const isSubscriptionsPerMonthLoaded = m.prop(false);
         const subVM = commonAnalytics.filtersVM({
             project_id: 'eq'
         });
@@ -60,7 +61,10 @@ const projectInsightsSub = {
         subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekTransitions);
         subscriptionVM.getSubscriptionsPerMonth(args.project.common_id)
-            .then(subscriptionsPerMonth);
+            .then((subscriptions) => {
+                subscriptionsPerMonth(subscriptions);
+                isSubscriptionsPerMonthLoaded(true);
+            });
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
         const balanceLoader = userVM.getUserBalance(args.project.user_id);
@@ -77,7 +81,8 @@ const projectInsightsSub = {
             subscriptionsPerDay,
             visitorsTotal,
             visitorsPerDay,
-            balanceLoader
+            balanceLoader,
+            isSubscriptionsPerMonthLoaded
         };
     },
     view: function(ctrl, args) {
@@ -214,9 +219,9 @@ const projectInsightsSub = {
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
                     }) : h.loader()]),
-                    m(subscriptionsPerMonthTable, {
-                        data: ctrl.subscriptionsPerMonth()
-                    })
+                    (ctrl.isSubscriptionsPerMonthLoaded() ?
+                        m(subscriptionsPerMonthTable, { data: ctrl.subscriptionsPerMonth() }) : h.loader())
+
                 ])
             ])
         ] : h.loader());
