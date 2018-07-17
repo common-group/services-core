@@ -42,12 +42,13 @@ const adminSubscriptionDetail = {
 
             if (isFirstPage)
             {
-                const notificationFilterVM = commonNotification.filtersVM({
-                    user_id: 'eq',
-                    project_id: 'eq'
-                }).order({
-                    created_at: 'desc'
-                });
+                const notificationFilterVM = commonNotification
+                    .filtersVM({
+                        user_id: 'eq',
+                        project_id: 'eq'
+                    }).order({
+                        created_at: 'desc'
+                    });
     
                 notificationFilterVM.user_id(args.item.user_id);
                 notificationFilterVM.project_id(args.item.project_id);
