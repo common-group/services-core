@@ -1,5 +1,5 @@
 BEGIN;
-    SELECT plan(5);
+    SELECT plan(4);
 
     -- check if table is present
     SELECT has_table('information_service'::name, 'countries'::name);
@@ -16,9 +16,5 @@ BEGIN;
         'platform_service', 'platforms', 'id'
     );
 
-    SELECT fk_ok(
-        'information_service', 'countries', 'country_id',
-        'information_service', 'countries', 'id'
-    );
     SELECT * FROM finish();
 ROLLBACK;
