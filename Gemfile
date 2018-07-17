@@ -29,6 +29,9 @@ group :development, :test do
   gem 'pry'
   gem 'rspec'
   gem 'rspec_api_documentation'
+  gem 'rspec-rails'
+  gem 'factory_bot'
+  gem 'database_cleaner'
 end
 
 group :development do
@@ -43,5 +46,5 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'pundit'
 
-#gem 'common_models', path: '../common_models'
-gem 'common_models', github: 'common-group/common_models'
+gem 'common_models', path: '../common_models'
+#gem 'common_models', github: 'common-group/common_models'
