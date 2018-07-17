@@ -40,7 +40,7 @@ const projectsFiscal = {
         const projectFiscalData = ctrl.projectFiscalData();
         const loading = ctrl.l() || ctrl.l2();
         const hasData = !loading && projectFiscalData && (!_.isEmpty(projectFiscalData.debit_notes) || !_.isEmpty(projectFiscalData.informs));
-
+        
         return m('.project-fiscal',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project)

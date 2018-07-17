@@ -15,6 +15,8 @@ const posts = {
     controller: function(args) {
         let deleteFormSubmit;
         const showPreview = m.prop(false),
+            isProjectLoaded = m.prop(false),
+            isProjectPostsLoaded = m.prop(false),
             showSuccess = m.prop(false),
             showError = m.prop(false),
             titleHasError = m.prop(false),
@@ -101,7 +103,10 @@ const posts = {
         const listVM = catarse.loaderWithToken(models.projectPostDetail.getPageOptions(_.extend(filterVM.parameters(), { order: 'created_at.desc' }))),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
-        listVM.load().then(projectPosts);
+        listVM.load().then((posts) => {
+            projectPosts(posts);
+            isProjectPostsLoaded(true);
+        });
 
 
         l.load().then((data) => {
@@ -111,6 +116,8 @@ const posts = {
             } else {
                 rewardVM.fetchRewards(project_id);
             }
+
+            isProjectLoaded(true);
         });
 
         return {
@@ -132,14 +139,17 @@ const posts = {
             setPostDeletionForm,
             toDeletePost,
             projectDetails,
-            openedPercentage
+            openedPercentage,
+            isProjectPostsLoaded,
+            isProjectLoaded
         };
     },
     view: function(ctrl) {
+        
         const project = _.first(ctrl.projectDetails()),
             paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);
 
-        return (project ? m('.project-posts',
+        return ( (ctrl.isProjectLoaded() && ctrl.isProjectPostsLoaded()) ? m('.project-posts',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
                 project: m.prop(project)
             }) : ''),
