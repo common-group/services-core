@@ -10,6 +10,7 @@ BEGIN;
     as $$
         declare
             _active_subscription payment_service.subscriptions;
+            _active_with_refused_subscription payment_service.subscriptions;
             _in_time_subscription payment_service.subscriptions;
             _generated_payment payment_service.catalog_payments;
             _count_expected integer;
@@ -24,6 +25,11 @@ BEGIN;
 
             insert into payment_service.subscriptions
                 (status, created_at, platform_id, user_id, project_id, checkout_data) 
+                values ('active', (now() - '1 month + 4 days'::interval), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
+                returning * into _active_with_refused_subscription;
+
+            insert into payment_service.subscriptions
+                (status, created_at, platform_id, user_id, project_id, checkout_data) 
                 values ('active', now(), __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), '{}'::jsonb)
                 returning * into _in_time_subscription;
 
@@ -31,7 +37,10 @@ BEGIN;
             insert into payment_service.catalog_payments
                 (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
                 values ('paid', (now() - '1 month + 4 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _active_subscription.id),
-                ('paid', (now() - '10 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _in_time_subscription.id);
+                ('paid', (now() - '10 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _in_time_subscription.id),
+                ('paid', (now() - '1 month + 4 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _active_with_refused_subscription.id),
+                ('refused', (now() - '10 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _active_with_refused_subscription.id);
+
 
             _result := payment_service.subscriptions_charge();
             return next is((_result ->> 'total_affected')::integer, 1);
