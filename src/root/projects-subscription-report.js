@@ -30,6 +30,8 @@ const projectSubscriptionReport = {
             catarseVM = projectsContributionReportVM,
             error = m.prop(false),
             loader = m.prop(true),
+            isProjectDataLoaded = m.prop(false),
+            isRewardsDataLoaded = m.prop(false),
             rewards = m.prop([]),
             subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', {
                 Prefer: 'count=exact'
@@ -136,6 +138,7 @@ const projectSubscriptionReport = {
             handleError = () => {
                 error(true);
                 loader(false);
+                isProjectDataLoaded(true);
                 m.redraw();
             },
             project = m.prop([{}]);
@@ -146,7 +149,10 @@ const projectSubscriptionReport = {
             project_id: `eq.${catarseVM.project_id()}`
         }));
 
-        lReward.load().then(rewards);
+        lReward.load().then((loadedRewards) => {
+            rewards(loadedRewards);
+            isRewardsDataLoaded(true);
+        });
         const mapRewardsToOptions = () => {
             let options = [];
             if (!lReward()) {
@@ -177,6 +183,7 @@ const projectSubscriptionReport = {
             filterVM.project_id(_.first(data).common_id);
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
+                isProjectDataLoaded(true);
             }).catch(handleError);
             project(data);
         });
@@ -188,7 +195,9 @@ const projectSubscriptionReport = {
             submit,
             subscriptions,
             lProject,
-            project
+            project,
+            isProjectDataLoaded,
+            isRewardsDataLoaded
         };
     },
     view: function(ctrl, args) {
@@ -207,7 +216,7 @@ const projectSubscriptionReport = {
                 label: 'payment_filter'
             });
         rewardFilter.data.options = ctrl.mapRewardsToOptions();
-        if (!ctrl.lProject()) {
+        if (ctrl.isProjectDataLoaded() && ctrl.isRewardsDataLoaded()) {
             return m('div', [
                 m.component(projectDashboardMenu, {
                     project: m.prop(_.first(ctrl.project()))

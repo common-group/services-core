@@ -15,6 +15,7 @@ const insights = {
             subscribersDetails = m.prop(),
             load = m.prop(false),
             loader = catarse.loaderWithToken,
+            isProjectNotLoader = m.prop(true),
             setProjectId = () => {
                 try {
                     const project_id = m.route.param('project_id');
@@ -34,7 +35,14 @@ const insights = {
                 const l2 = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
                     id: _.first(data).common_id
                 }));
-                l2.load().then((subData) => { subscribersDetails(subData); load(true); });
+                l2.load().then((subData) => { 
+                    subscribersDetails(subData); 
+                    load(true); 
+                    isProjectNotLoader(false);
+                });
+            }
+            else {
+                isProjectNotLoader(false);
             }
         });
         return {
@@ -42,7 +50,8 @@ const insights = {
             load,
             filtersVM,
             subscribersDetails,
-            projectDetails
+            projectDetails,
+            isProjectNotLoader
         };
     },
     view: function(ctrl, args) {
@@ -61,23 +70,28 @@ const insights = {
             project.user.name = project.user.name || 'Realizador';
         }
 
-        return m('.project-insights', !ctrl.l() ? (
+        return m('.project-insights', ctrl.isProjectNotLoader() ? h.loader() : (
             project.mode === 'sub' ?
-            ctrl.load() ?
-            m(projectInsightsSub, {
-                args,
-                subscribersDetails,
-                project,
-                l: ctrl.l,
-                filtersVM: ctrl.filtersVM
-            }) : '' :
-            m(projectInsights, {
-                args,
-                project,
-                l: ctrl.l,
-                filtersVM: ctrl.filtersVM
-            })
-        ) : h.loader());
+                (
+                    ctrl.load() ?
+                    m(projectInsightsSub, {
+                        args,
+                        subscribersDetails,
+                        project,
+                        l: ctrl.isProjectNotLoader,
+                        filtersVM: ctrl.filtersVM
+                    }) : '' 
+                )
+                    :
+                (
+                    m(projectInsights, {
+                        args,
+                        project,
+                        l: ctrl.isProjectNotLoader,
+                        filtersVM: ctrl.filtersVM
+                    })
+                )
+        ));
     }
 };
 
