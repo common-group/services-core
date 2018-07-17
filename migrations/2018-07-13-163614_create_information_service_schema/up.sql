@@ -15,6 +15,7 @@ CREATE TABLE information_service.countries (
 CREATE TABLE information_service.states (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL PRIMARY KEY,
     platform_id uuid NOT NULL,
+    country_id uuid NOT NULL,
     external_id text,
     name character varying NOT NULL,
     acronym character varying NOT NULL,
@@ -37,6 +38,9 @@ ALTER TABLE ONLY information_service.countries
 
 ALTER TABLE ONLY information_service.states
     ADD CONSTRAINT states_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
+
+ALTER TABLE ONLY information_service.states
+    ADD CONSTRAINT states_country_id_fkey FOREIGN KEY (country_id) REFERENCES information_service.countries(id);
 
 ALTER TABLE ONLY information_service.cities
     ADD CONSTRAINT cities_platform_id_fkey FOREIGN KEY (platform_id) REFERENCES platform_service.platforms(id);
