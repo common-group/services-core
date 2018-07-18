@@ -55,15 +55,16 @@ const userBalance = {
                             window.I18n.t('withdraw_cta', I18nScope())
                         ),
                         m('.fontsize-smaller.fontweight-semibold',
+                            balance.has_cancelation_request ? window.I18n.t('withdraw_canceling_title', I18nScope()) :
                             (balance.last_transfer_amount && balance.in_period_yet ?
                                 window.I18n.t('last_withdraw_msg', I18nScope({
                                     amount: `R$ ${h.formatNumber(balance.last_transfer_amount, 2, 3)}`,
                                     date: moment(balance.last_transfer_created_at).format('MMMM')
                                 }))
-                                : window.I18n.t('no_withdraws_this_month', I18nScope({ month_name: moment().format('MMMM') }))),
+                                : window.I18n.t('no_withdraws_this_month', I18nScope({ month_name: moment().format('MMMM') })))
                         ),
                         m('.fontcolor-secondary.fontsize-smallest.lineheight-tight.u-marginbottom-10',
-                            window.I18n.t('withdraw_limits_msg', I18nScope())
+                          balance.has_cancelation_request ? window.I18n.t('withdraw_canceling_msg', I18nScope()) : window.I18n.t('withdraw_limits_msg', I18nScope())
                         )
 
                     ])
