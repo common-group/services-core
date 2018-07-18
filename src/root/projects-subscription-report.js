@@ -33,6 +33,7 @@ const projectSubscriptionReport = {
             rewards = m.prop([]),
             subscriptions = commonPayment.paginationVM(models.userSubscription, 'paid_at.desc'),
             submit = () => {
+                // Set order by last paid on filters too
                 filterVM.order({paid_at:'desc'});
                 if (filterVM.reward_external_id() === 'null') {
                     subscriptions.firstPage(filterVM.withNullParameters()).then(null);
@@ -174,6 +175,7 @@ const projectSubscriptionReport = {
 
         lProject.load().then((data) => {
             filterVM.project_id(_.first(data).common_id);
+            // override default 'created_at' order on vm
             filterVM.order({paid_at:'desc'});
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
