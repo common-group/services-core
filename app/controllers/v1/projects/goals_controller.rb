@@ -1,9 +1,9 @@
 module V1
-  class Projects::GoalsController < ApplicationController
+  class Projects::GoalsController < ApiBaseController
     before_action :resource, except: %i[create]
+    before_action :authenticate_user!
 
     def create
-      binding.pry
       render json: { message: 'creating new goal' }
     end
 
