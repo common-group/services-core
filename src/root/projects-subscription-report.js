@@ -31,10 +31,9 @@ const projectSubscriptionReport = {
             error = m.prop(false),
             loader = m.prop(true),
             rewards = m.prop([]),
-            subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', {
-                Prefer: 'count=exact'
-            }),
+            subscriptions = commonPayment.paginationVM(models.userSubscription, 'paid_at.desc'),
             submit = () => {
+                filterVM.order({paid_at:'desc'});
                 if (filterVM.reward_external_id() === 'null') {
                     subscriptions.firstPage(filterVM.withNullParameters()).then(null);
                 } else {
@@ -175,6 +174,7 @@ const projectSubscriptionReport = {
 
         lProject.load().then((data) => {
             filterVM.project_id(_.first(data).common_id);
+            filterVM.order({paid_at:'desc'});
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
             }).catch(handleError);
