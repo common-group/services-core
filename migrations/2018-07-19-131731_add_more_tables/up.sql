@@ -13,7 +13,7 @@ CREATE TABLE community_service.addresses (
     address_city	text,
     address_zip_code	text,
     address_state	text,
-    phone_number	text
+    phone_number	text,
     created_at timestamp without time zone DEFAULT now() NOT NULL,
     updated_at timestamp without time zone DEFAULT now() NOT NULL
 );
