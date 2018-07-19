@@ -1,10 +1,17 @@
 module V1
   class Projects::GoalsController < ApiBaseController
-    before_action :resource, except: %i[create]
+    before_action :parent, except: %i[create]
     before_action :authenticate_user!
+    #after_action :verify_authorized
 
     def create
-      render json: { message: 'creating new goal' }
+      resource = parent.goals.new(permitted_attributes(resource))
+        .tap {|g| g.platform = current_platform }
+
+      authorize resource, :create?
+      resource.save
+      return render json: resource.errors, status: 400 unless resource.valid?
+      render json: { goal_id: resource.id }
     end
 
     def update
@@ -15,10 +22,16 @@ module V1
       render json: { message: 'delete new goal' }
     end
 
-    protected
+    def policy(record)
+      GoalPolicy.new(current_user, record)
+    end
 
-    def resource
-      @resource ||= CommonModels::Project.find params[:project_id]
+    def pundit_params_for(record)
+      params.require(:goal)
+    end
+
+    def parent
+      @resource ||= current_platform.projects.find params[:project_id]
     end
   end
 end

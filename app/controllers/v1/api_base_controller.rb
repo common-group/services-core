@@ -1,5 +1,8 @@
 module V1
   class ApiBaseController < ::ApplicationController
+    include Pundit
+    #after_action :verify_authorized
+
     def current_user
       @current_user ||= current_platform.users.find jwt_user_id
     end
