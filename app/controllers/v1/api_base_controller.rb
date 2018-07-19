@@ -4,7 +4,12 @@ module V1
     #after_action :verify_authorized
 
     def current_user
-      @current_user ||= current_platform.users.find jwt_user_id
+      @current_user ||= current_platform.users.find_by id: jwt_user_id
+    end
+
+    def current_platform_user
+      return if jwt_role != 'platform_user'
+      @current_platform_user ||= CommonModels::Platform.find_by token: platform_token
     end
 
     def current_platform
@@ -12,21 +17,22 @@ module V1
     end
 
     def jwt_user_id
-      decoded_api["user_id"]
+      decoded_api.try(:[], 'user_id')
     end
 
-    def jwt_user_role
-      decoded_api["role"].presence || 'anonymous'
+    def jwt_role
+      decoded_api.try(:[], 'role').presence || 'anonymous'
     end
 
     def platform_token
-      decoded_api['platform_token'].presence || request.headers['Platform-Code']
+      return decoded_api['platform_token'] if decoded_api.present?
+      return request.headers['Platform-Code']
     end
 
     def authenticate_user!
       return render json: {
         message: 'missing Authorization header'
-      }, status: 403 unless decoded_api.present? && current_user.present?
+      }, status: 403 unless decoded_api.present?
     end
 
     protected

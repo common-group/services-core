@@ -1,13 +1,18 @@
 class GoalPolicy < ApplicationPolicy
   def create?
-    is_project_owner? #|| is_admin?
+    is_platform_user? || is_project_owner?
   end
+
   def permitted_attributes
     %i[title description value]
   end
 
   def is_project_owner?
     record.project.user_id == user.id
+  end
+
+  def is_platform_user?
+    user.is_a?(CommonModels::Platform)
   end
 
   def is_admin?
