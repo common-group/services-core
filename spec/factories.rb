@@ -1,6 +1,15 @@
 FactoryBot.define do
   factory :platform, class: CommonModels::Platform do
     name 'Platform name'
+    token { SecureRandom.uuid }
+  end
+
+  factory :goal, class: CommonModels::Goal do
+    project
+    platform
+    title "Foo goal"
+    description "Description goal"
+    value 100
   end
 
   factory :project, class: CommonModels::Project do
