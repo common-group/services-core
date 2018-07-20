@@ -1,24 +1,56 @@
+# frozen_string_literal: true
+
 module V1
-  class Projects::GoalsController < ApplicationController
-    before_action :resource, except: %i[create]
+  module Projects
+    # GoalsController
+    # Project owner and platform users can manage they project goals
+    class GoalsController < ApiBaseController
+      before_action :parent, except: %i[create]
+      before_action :authenticate_user!
 
-    def create
-      binding.pry
-      render json: { message: 'creating new goal' }
-    end
+      def create
+        resource = parent.goals.new(permitted_attributes(resource))
+        resource.tap { |g| g.platform = current_platform }
 
-    def update
-      render json: { message: 'updating new goal' }
-    end
+        authorize resource, :create?
+        resource.save
 
-    def destroy
-      render json: { message: 'delete new goal' }
-    end
+        return render json: resource.errors, status: 400 unless resource.valid?
+        render json: { goal_id: resource.id }
+      end
 
-    protected
+      def update
+        resource = parent.goals.find params[:id]
+        resource.update_attributes(permitted_attributes(resource))
 
-    def resource
-      @resource ||= CommonModels::Project.find params[:project_id]
+        authorize resource, :update?
+        resource.save
+
+        return render json: resource.errors, status: 400 unless resource.valid?
+        render json: { goal_id: resource.id }
+      end
+
+      def destroy
+        resource = parent.goals.find params[:id]
+        authorize resource, :destroy?
+
+        return render status: 200, json: { goal_id: resource.id, deleted: 'OK' } if resource.destroy
+        render status: 400, json: resource.errors
+      end
+
+      private
+
+      def policy(record)
+        GoalPolicy.new((current_user.presence||current_platform_user.presence), record)
+      end
+
+      def pundit_params_for(record)
+        params.require(:goal)
+      end
+
+      def parent
+        @resource ||= current_platform.projects.find params[:project_id]
+      end
     end
   end
 end

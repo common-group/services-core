@@ -31,7 +31,7 @@ require 'rspec/rails'
 ActiveRecord::Migration.maintain_test_schema!
 RSpec.configure do |config|
   FactoryBot.definition_file_paths = [
-    MyGem::TestSupport::FACTORY_PATH,
+    CommonModels::TestSupport::FACTORY_PATH,
     # Any other paths you want to add e.g.
     # Rails.root.join("spec", "factories")
   ]
@@ -62,4 +62,19 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+  #
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
+
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
 end
