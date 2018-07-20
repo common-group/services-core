@@ -7,9 +7,15 @@ class GoalPolicy < ApplicationPolicy
     create?
   end
 
+  def destroy?
+    create?
+  end
+
   def permitted_attributes
     %i[title description value]
   end
+
+  private
 
   def is_project_owner?
     record.project.user_id == user.id

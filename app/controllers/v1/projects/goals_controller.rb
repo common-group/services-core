@@ -31,7 +31,11 @@ module V1
       end
 
       def destroy
-        render json: { message: 'delete new goal' }
+        resource = parent.goals.find params[:id]
+        authorize resource, :destroy?
+
+        return render status: 200, json: { goal_id: resource.id, deleted: 'OK' } if resource.destroy
+        render status: 400, json: resource.errors
       end
 
       private
