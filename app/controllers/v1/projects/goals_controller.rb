@@ -20,12 +20,21 @@ module V1
       end
 
       def update
-        render json: { message: 'updating new goal' }
+        resource = parent.goals.find params[:id]
+        resource.update_attributes(permitted_attributes(resource))
+
+        authorize resource, :update?
+        resource.save
+
+        return render json: resource.errors, status: 400 unless resource.valid?
+        render json: { goal_id: resource.id }
       end
 
       def destroy
         render json: { message: 'delete new goal' }
       end
+
+      private
 
       def policy(record)
         GoalPolicy.new((current_user.presence||current_platform_user.presence), record)

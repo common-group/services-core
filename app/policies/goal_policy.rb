@@ -3,6 +3,10 @@ class GoalPolicy < ApplicationPolicy
     is_platform_user? || is_project_owner?
   end
 
+  def update?
+    create?
+  end
+
   def permitted_attributes
     %i[title description value]
   end
