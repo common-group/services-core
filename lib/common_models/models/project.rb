@@ -7,6 +7,7 @@ module CommonModels
     self.table_name = 'project_service.projects'
     store_accessor :data, FIELDS
     belongs_to :user
+    belongs_to :platform
     has_many :goals, foreign_key: :project_id
 
 

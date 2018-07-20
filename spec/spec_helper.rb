@@ -1,6 +1,10 @@
 require "bundler/setup"
 require "shoulda/matchers"
 require "common_models"
+require 'factory_bot'
+require 'database_cleaner'
+require 'pry'
+
 Dir[File.join(File.dirname(__FILE__), "..", "lib" , "**.rb")].each do |f|
   require f
 end
@@ -14,7 +18,7 @@ Shoulda::Matchers.configure do |config|
 end
 
 RSpec.configure do |config|
-  CommonModels.configure_with_url(ENV['TEST_DATABASE'])
+  CommonModels.configure_with_url(ENV['TEST_DATABASE']) if ENV['TEST_DATABASE'].present?
   extend CommonModels
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
@@ -24,5 +28,20 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
+
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 end
