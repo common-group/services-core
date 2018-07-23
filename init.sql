@@ -1,4 +1,5 @@
 create user postgrest with login password 'example';
+create user proxy_server with login password 'example';
 create role admin with nologin;
 create role scoped_user with nologin;
 create role platform_user with nologin;

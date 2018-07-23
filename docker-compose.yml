@@ -355,7 +355,7 @@ services:
       context: ../proxy
       dockerfile: Dockerfile
     volumes:
-      - ../proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ../proxy/nginx.conf:/usr/local/openresty/nginx/confg/nginx.conf
       - ../proxy/conf.d:/etc/nginx/conf.d
     links:
       - "payment_service_api:payment_service_api"
@@ -366,20 +366,12 @@ services:
       - "notification_service_api:notification_service_api"
       - "recommender_service_api:recommender_service_api"
       - "common_api:common_api"
-    environment:
-      PORT: 80
-      PROTO_SCHEMA: http
-      PAYMENT_SERVICE_API_SERVER: 'payment_service_api:3000'
-      PROJECT_SERVICE_API_SERVER: 'project_service_api:3000'
-      COMMUNITY_SERVICE_API_SERVER: 'community_service_api:3000'
-      ANALYTICS_SERVICE_API_SERVER: 'analytics_service_api:3000'
-      CATARSE_MOMENT_SERVICE_API_SERVER: 'catarse_moment_service_api:3000'
-      NOTIFICATION_SERVICE_API_SERVER: 'notification_service_api:3000'
-      RECOMMENDER_SERVICE_API_SERVER: 'recommender_service_api:3009'
-      COMMON_SERVICE_API_SERVER: 'common_api:3000'
+      - "service_core_db:service_core_db"
+    env_file:
+      - ./compose_env/.common_proxy.env
     ports:
       - "3013:80"
-    command: /bin/sh -c "envsubst '$$PORT $$PROTO_SCHEMA $$PAYMENT_SERVICE_API_SERVER $$PROJECT_SERVICE_API_SERVER $$COMMUNITY_SERVICE_API_SERVER $$ANALYTICS_SERVICE_API_SERVER $$NOTIFICATION_SERVICE_API_SERVER $$CATARSE_MOMENT_SERVICE_API_SERVER $$RECOMMENDER_SERVICE_API_SERVER $$COMMON_SERVICE_API_SERVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf && openresty -g 'daemon off;'"
+    command: /bin/sh -c "envsubst '$$PORT $$PROTO_SCHEMA $$PAYMENT_SERVICE_API_SERVER $$PROJECT_SERVICE_API_SERVER $$COMMUNITY_SERVICE_API_SERVER $$ANALYTICS_SERVICE_API_SERVER $$NOTIFICATION_SERVICE_API_SERVER $$CATARSE_MOMENT_SERVICE_API_SERVER $$RECOMMENDER_SERVICE_API_SERVER $$COMMON_SERVICE_API_SERVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf && openresty"
     networks:
       cluster:
         ipv4_address: 10.0.1.61
@@ -393,9 +385,8 @@ services:
       - ../common_models:/common_models
     links:
       - "service_core_db:service_core_db"
-    environment:
-      PORT: 3000
-      DATABASE_URL: postgres://postgres:example@10.0.1.43:5432/service_core
+    env_file:
+      - ./compose_env/.common_api.env
     ports:
       - "3014:3000"
     command: 'bundle exec rails s -b 0.0.0.0 -p 3000'
