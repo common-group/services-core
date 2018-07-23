@@ -21,7 +21,6 @@ const projectEditWelcome = {
         const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
-                console.log(reward);
                 const rewardProp = {
                     id: reward.id,
                     project_id: reward.project_id,

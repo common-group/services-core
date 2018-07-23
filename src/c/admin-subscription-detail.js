@@ -32,21 +32,39 @@ const adminSubscriptionDetail = {
         filterVM.subscription_id(args.key);
         const currentPayment = m.prop({});
 
+        // Pagination on notifications
+        const notificationsLoader = commonNotification.paginationVM(models.userNotification, 'created_at.desc');
+        const notificationsInternal = m.prop([]);
+        let isFirstPage = true;
+
         const loadNotifications = () => {
-            const notifications = m.prop([]);
-            const notificationFilterVM = commonNotification.filtersVM({
-                user_id: 'eq',
-                project_id: 'eq'
-            });
-            notificationFilterVM.user_id(args.item.user_id);
-            notificationFilterVM.project_id(args.item.project_id);
+            
+            const addNotificationsToInternal = (notifications) => notificationsInternal(notifications);
 
-            const lNotifications = commonNotification.loaderWithToken(
-                models.userNotification.getPageOptions(notificationFilterVM.parameters()));
+            // First loads the first page and configure the next interactions
+            if (isFirstPage)
+            {
+                const notificationFilterVM = commonNotification
+                    .filtersVM({
+                        user_id: 'eq',
+                        project_id: 'eq'
+                    }).order({
+                        created_at: 'desc'
+                    });
+    
+                notificationFilterVM.user_id(args.item.user_id);
+                notificationFilterVM.project_id(args.item.project_id);
+    
+                notificationsLoader.firstPage(notificationFilterVM.parameters()).then(addNotificationsToInternal);
+                isFirstPage = false;
+            }
+            else
+            {
+                // Next pages set the notifications with all notifications got from endpoint
+                notificationsLoader.nextPage().then(addNotificationsToInternal);
+            }
 
-            lNotifications.load().then(notifications);
-
-            return notifications;
+            return notificationsInternal;
         };
 
         const loadTransitions = () => {
@@ -90,6 +108,8 @@ const adminSubscriptionDetail = {
             payments: loadPayments(),
             transitions: loadTransitions(),
             notifications: loadNotifications(),
+            loadNotifications,
+            notificationsLoader,
             currentPayment,
             clearSelected,
             reward: loadReward(),
@@ -148,10 +168,14 @@ const adminSubscriptionDetail = {
                                )
                              ),
                         m('.w-col.w-col-6',
-                              m('span',
+                            m('span',
                                 notification.label
-                               ))
+                            )
+                        )
                     ])),
+                    m('.w-inline-block', 
+                        (ctrl.notificationsLoader.isLastPage() ? ''
+                        : m('button.btn-inline.btn.btn-small.btn-terciary', { onclick: ctrl.loadNotifications }, 'Carregar mais')))
                 ])),
             m('.w-col.w-col-4',
                 m('div', [
