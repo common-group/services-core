@@ -23,7 +23,7 @@ const projectPosts = {
 
         filterVM.project_id(args.project().project_id);
 
-        if (_.isNumber(args.post_id)) {
+        if (_.isNumber(parseInt(args.post_id))) {
             filterVM.id(args.post_id);
         }
 
@@ -99,7 +99,10 @@ const projectPosts = {
                     ]
                 ]))),
                 m('.w-row', [
-                    (!_.isUndefined(args.post_id) ? '' :
+                    (!_.isUndefined(args.post_id) ? m('.w-col.w-col-2.w-col-push-5',
+                                                      m(`a#load-more.btn.btn-medium.btn-terciary[href=\'/projects/${project.project_id}#posts']`, {
+                                                         }, 'Ver todos')
+                                                       ) :
                         (!list.isLoading() ?
                             (list.collection().length === 0 && args.projectContributions().length === 0) ?
                             !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
