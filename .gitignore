@@ -25,3 +25,6 @@ compose_env/.recommender_service_api.env
 target/
 Cargo.lock
 compose_env/.catarse_moment_service_api.env
+.common_api.env
+compose_env/.common_api.env
+compose_env/.common_proxy.env
