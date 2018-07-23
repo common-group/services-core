@@ -51,15 +51,11 @@ server {
         set $token "&";
     }
 
-
-	# get api_key on header Authorization Bearer
-	# generate new jwt for valid api
-	# change Authorization Bearer token
+	#rewrite header with new internal jwt
 	rewrite_by_lua_file '/etc/nginx/conf.d/rewrite_auth_header.lua';
 
 	# /v1/* API endpoints
 	location ~ "^/v1/" {
-		# proxy_set_header Authorization "Bearer $jwt_process}"
 		location ~ "^/v1/users/" {
 			include /etc/nginx/conf.d/locations/v1/users_location.conf;
 		}
