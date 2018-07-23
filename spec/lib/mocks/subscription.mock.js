@@ -19,7 +19,7 @@ beforeAll(function() {
     };
 
     jasmine.Ajax.stubRequest(new RegExp("("+apiPrefix + '\/subscriptions)'+'(.*)')).andReturn({
-        'responseText' : JSON.stringify(SubscriptionVeSSionMockery())
+        'responseText' : JSON.stringify(SubscriptionMockery())
     });
 });
 
