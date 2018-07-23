@@ -8,9 +8,8 @@ import models from '../models';
 import dashboardSubscriptionCardDetail from './dashboard-subscription-card-detail';
 import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';
+import subscriptionLastPaymentStatus from './subscription-last-payment-status';
 import h from '../h';
-
-const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const dashboardSubscriptionCard = {
     controller: function(args) {
@@ -94,9 +93,7 @@ const dashboardSubscriptionCard = {
                         )
                     ]),
                     m('.w-col.w-col-2.u-text-center',
-                        m('.fontsize-smaller',
-                            subscription.paid_at ? moment(subscription.paid_at).format('DD/MM/YYYY') : ''
-                        )
+                        m(subscriptionLastPaymentStatus, { subscription })
                     ),
                     m('.w-col.w-col-2.u-text-center',
                         m(subscriptionStatusIcon, {

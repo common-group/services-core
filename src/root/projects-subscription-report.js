@@ -31,10 +31,12 @@ const projectSubscriptionReport = {
             error = m.prop(false),
             loader = m.prop(true),
             rewards = m.prop([]),
-            subscriptions = commonPayment.paginationVM(models.userSubscription, 'paid_at.desc'),
+            subscriptions = commonPayment.paginationVM(models.userSubscription, 'last_payment_data_created_at.desc', {
+                Prefer: 'count=exact'
+            }),
             submit = () => {
                 // Set order by last paid on filters too
-                filterVM.order({paid_at:'desc'});
+                filterVM.order({last_payment_data_created_at:'desc'});
                 if (filterVM.reward_external_id() === 'null') {
                     subscriptions.firstPage(filterVM.withNullParameters()).then(null);
                 } else {
@@ -176,7 +178,7 @@ const projectSubscriptionReport = {
         lProject.load().then((data) => {
             filterVM.project_id(_.first(data).common_id);
             // override default 'created_at' order on vm
-            filterVM.order({paid_at:'desc'});
+            filterVM.order({last_payment_data_created_at:'desc'});
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
             }).catch(handleError);
@@ -194,6 +196,7 @@ const projectSubscriptionReport = {
         };
     },
     view: function(ctrl, args) {
+        console.log(ctrl.subscriptions.total ? ctrl.subscriptions.total() : '');
         const subsCollection = ctrl.subscriptions.collection(),
             filterBuilder = ctrl.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {
