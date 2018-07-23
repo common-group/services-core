@@ -12,6 +12,13 @@ FactoryBot.define do
     value 100
   end
 
+  factory :report, class: CommonModels::Report do
+    project
+    reason "Foo report"
+    email "Email report "
+    details "Details report"
+  end
+
   factory :project, class: CommonModels::Project do
     goal 100
     headline 'Foo headline'
