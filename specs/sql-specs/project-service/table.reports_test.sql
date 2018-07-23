@@ -1,5 +1,5 @@
 BEGIN;
-    SELECT plan(5);
+    SELECT plan(4);
 
     -- check if table is present
     SELECT has_table('project_service'::name, 'reports'::name);
@@ -8,11 +8,6 @@ BEGIN;
     SELECT has_pk('project_service', 'reports', 'should have primary key');
 
     -- check foreign keys
-    SELECT fk_ok(
-        'project_service', 'reports', 'platform_id',
-        'platform_service', 'platforms', 'id'
-    );
-
     SELECT fk_ok(
         'project_service', 'reports', 'user_id',
         'community_service', 'users', 'id'
