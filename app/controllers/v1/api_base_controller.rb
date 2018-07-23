@@ -38,12 +38,12 @@ module V1
     protected
 
     def decoded_api
-      @decoded_api ||= JWT.decode(api_key, ENV['JWT_SECRET'], true, { algorithm: 'HS512' })[0] rescue nil
+      @decoded_api ||= JWT.decode(api_key, ENV['JWT_SECRET'], true, { algorithm: 'HS256' })[0] #rescue nil
     end
 
     def api_key
       pattern = /^Bearer /
-      header  = request.env["Authorization"]
+      header  = request.headers["Authorization"]
       header.gsub(pattern, '') if header && header.match(pattern)
     end
   end
