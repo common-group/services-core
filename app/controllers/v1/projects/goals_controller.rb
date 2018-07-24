@@ -10,7 +10,6 @@ module V1
 
       def create
         resource = parent.goals.new(permitted_attributes(resource))
-        resource.tap { |g| g.platform = current_platform }
 
         authorize resource, :create?
         resource.save
