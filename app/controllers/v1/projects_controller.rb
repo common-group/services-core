@@ -26,8 +26,10 @@ module V1
       def destroy
         authorize resource
 
-        return render status: 200, json: { project_id: resource.id, deleted: 'OK' } if resource.destroy
-        render status: 400, json: resource.errors
+        # return render status: 200, json: { project_id: resource.id, deleted: 'OK' } if resource.destroy
+        # render status: 400, json: resource.errors
+        # @TODO
+        render status: 200, json: { deleted: 'OK' }
       end
 
       private
