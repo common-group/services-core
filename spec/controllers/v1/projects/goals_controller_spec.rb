@@ -24,7 +24,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
 
   describe 'POST #create' do
     let(:project) { create(:project, user_id: current_user.id, platform: platform) }
-    let(:goal) { build(:goal, project: project, platform: platform) }
+    let(:goal) { build(:goal, project: project) }
 
     subject { response }
 
@@ -110,7 +110,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
 
   describe 'PUT #update' do
     let(:project) { create(:project, user_id: current_user.id, platform: platform) }
-    let(:goal) { create(:goal, project: project, platform: platform) }
+    let(:goal) { create(:goal, project: project) }
     let(:goal_params) { { title: 'changed_title', description: 'changed_description', value: 200 } }
 
     subject { response }
@@ -199,7 +199,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
 
   describe 'DELETE #destroy' do
     let(:project) { create(:project, user_id: current_user.id, platform: platform) }
-    let(:goal) { create(:goal, project: project, platform: platform) }
+    let(:goal) { create(:goal, project: project) }
 
     subject { response }
 
