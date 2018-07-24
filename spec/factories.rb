@@ -6,7 +6,6 @@ FactoryBot.define do
 
   factory :goal, class: CommonModels::Goal do
     project
-    platform
     title "Foo goal"
     description "Description goal"
     value 100
