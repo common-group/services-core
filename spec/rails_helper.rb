@@ -70,7 +70,6 @@ RSpec.configure do |config|
 
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
-    DatabaseCleaner.allow_remote_database_url = true
   end
 
   config.around(:each) do |example|
