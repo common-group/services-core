@@ -1,5 +1,6 @@
-PATH
-  remote: ../common_models
+GIT
+  remote: git://github.com/common-group/common_models.git
+  revision: fbd67431e31c97fd84abea8abab6d81a6600ddc3
   specs:
     common_models (0.1.0)
       activerecord (~> 5.2)
