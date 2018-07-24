@@ -22,3 +22,5 @@ ADD Gemfile.lock /app
 RUN bundle install
 
 COPY . /app
+
+CMD bundle exec rails s -C config/puma.rb

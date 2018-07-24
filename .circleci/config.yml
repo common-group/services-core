@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
+      - run: git clone https://github.com/common-group/services-core-db.git migrations
+      - run: docker build -f migrations/Dockerfile -t comum/services-core:test .
+      - run: docker build -f Dockerfile -t comum/common-api:test .
+
+      - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < init.sql
+      - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
+      - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh
+      - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/common-api:test bundle exec rspec spec
+
+  deploy_sandbox:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add git nodejs nodejs-npm bash
+      - run: npm install -g heroku
+      - run: bash .circleci/setup-heroku.sh
+      - run: heroku container:login
+
+      - run: heroku container:push web --recursive -a $SANDBOX_COMMON_API_APP
+      - run: heroku container:release web -a $SANDBOX_COMMON_API_APP
+
+workflows:
+  version: 2
+  build-and-push:
+    jobs:
+      - build
+      - deploy_sandbox:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
