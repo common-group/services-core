@@ -16,7 +16,7 @@ jobs:
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < migrations/init.sql
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
       - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pg_default):5432/services_core_test" comum/services-core:test diesel migration --migration-dir migrations/migrations run
-      - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pg_default):5432/services_core_test" comum/common-api:test bundle exec rspec spec
+      - run: docker run -i --rm --link pg_default:pg_default -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pg_default):5432/services_core_test" comum/common-api:test bundle exec rspec spec
 
   deploy_sandbox:
     docker:
