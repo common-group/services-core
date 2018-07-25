@@ -17,10 +17,10 @@ RUN gem install bundler
 
 WORKDIR /app
 
-ADD Gemfile /app
-ADD Gemfile.lock /app
-RUN bundle install
+COPY Gemfile /app
+COPY Gemfile.lock /app
+RUN bundle install --binstubs --without development test
 
 COPY . /app
 
-CMD bundle exec rails s -C /app/config/puma.rb
+CMD [ "bundle", "exec", "puma", "-C", "config/puma.rb" ]
