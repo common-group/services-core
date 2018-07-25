@@ -5,7 +5,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    entry: './src/app.js',
+    entry: './legacy/src/app.js',
     mode: !isProd && 'development',
     module: {
       rules: [
