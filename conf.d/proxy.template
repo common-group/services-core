@@ -29,7 +29,7 @@ server {
 
     keepalive_timeout 5;
     proxy_ssl_session_reuse off;
-    proxy_redirect off;
+    #proxy_redirect off;
 
 	proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -42,6 +42,8 @@ server {
     set $host_notification_service_api ${NOTIFICATION_SERVICE_API_SERVER};
     set $host_recommender_service_api ${RECOMMENDER_SERVICE_API_SERVER};
     set $host_common_service_api ${COMMON_SERVICE_API_SERVER};
+	
+	set $proxy_host ${COMMON_SERVICE_API_SERVER};
 
 	set $env_proto_schema ${PROTO_SCHEMA};
 	set $internal_jwt "";
@@ -50,6 +52,8 @@ server {
     if ($is_args) {
         set $token "&";
     }
+
+	resolver ${DNS_RESOLVER};
 
 	#rewrite header with new internal jwt
 	rewrite_by_lua_file '/etc/nginx/conf.d/rewrite_auth_header.lua';
@@ -69,7 +73,17 @@ server {
 		}
 
 		# scopes to /projects route
-		location ~ "^/v1/projects/*" {
+		location ~ "^/v1/projects(?:\/)?.*$" {
+			# Current mapped routes for /v1/projects...
+			# GET|POST 			/v1/projects
+			# GET|PUT|DELETE 	/v1/projects/:project_id
+			# GET|POST 			/v1/projects/:project_id/goals
+			# GET|PUT|DELETE 	/v1/projects/:project_id/goals/:goal_id
+			# GET|POST 			/v1/projects/:project_id/rewards
+			# GET|PUT|DELETE 	/v1/projects/:project_id/rewards/:reward_id
+			# GET 				/v1/projects/:project_id/fund_stats
+			# GET 				/v1/projects/:project_id/subscriptions_per_day
+			# GET 				/v1/projects/:project_id/subscriptions_per_month
 			include /etc/nginx/conf.d/locations/v1/projects_location.conf;
 		}
 	}
