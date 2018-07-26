@@ -7,7 +7,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: docker build .
+      - run: ./test.sh
 
   deploy_sandbox:
     docker:
