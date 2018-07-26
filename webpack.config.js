@@ -5,11 +5,20 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    entry: './src/app.js',
+    entry: './legacy/src/app.js',
     mode: !isProd && 'development',
     module: {
       rules: [
-        { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+          { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" },
+          {
+            test: /\.elm$/,
+            exclude: [/elm-stuff/, /node_modules/],
+            loader: 'elm-webpack-loader',
+            options: {
+              debug: true,
+              warn: true
+          }
+        }
       ]
     },
     devServer: {
