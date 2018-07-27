@@ -1,7 +1,6 @@
 import m from 'mithril';
 import dashboardSubscriptionCardDetail from '../../src/c/dashboard-subscription-card-detail';
 
-
 describe('UserAddressOnDashboardOfUserDetails', () => {
     let $userWithoutAddress, $userDetail, $subscription, $output, $output2;
 
@@ -24,5 +23,9 @@ describe('UserAddressOnDashboardOfUserDetails', () => {
     
     it('Should not contain user address because it is null', () => {
         expect($output2.contains('Endereço')).toBeFalsy();
+    });
+
+    it('Should show history of payments', () => {
+        expect($output.contains('Histórico de pagamento')).toBeTrue();
     });
 });
