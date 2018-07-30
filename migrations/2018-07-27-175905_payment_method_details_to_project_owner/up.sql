@@ -1,4 +1,4 @@
--- Your SQL goes here
+DROP VIEW payment_service_api.payments;
 CREATE OR REPLACE VIEW "payment_service_api"."payments" AS
  SELECT cp.id,
     cp.subscription_id,
@@ -27,4 +27,4 @@ CREATE OR REPLACE VIEW "payment_service_api"."payments" AS
   WHERE ((s.status <> 'deleted'::payment_service.subscription_status) AND (cp.platform_id = core.current_platform_id()) AND (core.is_owner_or_admin(cp.user_id) OR core.is_owner_or_admin(p.user_id)))
   ORDER BY cp.created_at DESC;;
 ---
-
+grant select on payment_service_api.payments to scoped_user, platform_user;
