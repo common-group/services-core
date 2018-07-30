@@ -205,7 +205,7 @@ const projectSubscriptionReport = {
         };
     },
     view: function(ctrl, args) {
-        console.log(ctrl.subscriptions.total ? ctrl.subscriptions.total() : '');
+        
         const subsCollection = ctrl.subscriptions.collection(),
             filterBuilder = ctrl.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {
