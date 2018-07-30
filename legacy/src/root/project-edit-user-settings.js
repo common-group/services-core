@@ -17,7 +17,8 @@ const projectEditUserSettings = {
             userId: args.user_id,
             hideCreditCards: true,
             useFloatBtn: true,
-            publishingUserSettings: true
+            publishingUserSettings: true,
+            isProjectUserEdit: true
         }) : m('div', h.loader()));
     }
 };
