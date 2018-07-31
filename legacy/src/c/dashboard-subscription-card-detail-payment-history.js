@@ -40,7 +40,7 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
                 _.map(paymentsColletion, 
                     payment => m(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment })
                 ),
-                m('.u-marginbottom-60.w-row', [
+                m('.u-marginbottom-30.u-margintop-30.w-row', [
                     m(loadMoreBtn, {
                         collection: ctrl.payments,
                         cssClass: '.w-col-push-4'
