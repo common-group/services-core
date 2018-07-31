@@ -26,8 +26,9 @@ const adminTransaction = {
                 `Meio: ${contribution.gateway}`,
                 m('br'),
                 `Operadora: ${contribution.gateway_data && contribution.gateway_data.acquirer_name}`,
+                contribution.is_second_slip ? [m('br'), m('a.link-hidden[href="#"]', 'Boleto bancário'), ' ', m('span.badge', '2a via')] : '',
                 m('br'),
-                contribution.is_second_slip ? [m('a.link-hidden[href="#"]', 'Boleto bancário'), ' ', m('span.badge', '2a via')] : ''
+                `Id Simility: ${contribution.simility_id}`
             ])
         ]);
     }
