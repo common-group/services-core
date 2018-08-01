@@ -1,5 +1,5 @@
 BEGIN;
-    select plan(25);
+    select plan(26);
 
     -- check if table is present
     SELECT has_table('payment_service'::name, 'catalog_payments'::name);
@@ -55,6 +55,11 @@ BEGIN;
     SELECT fk_ok( 
         'payment_service', 'catalog_payments', 'subscription_id',
         'payment_service', 'subscriptions', 'id'
+    );
+
+    SELECT fk_ok( 
+        'payment_service', 'catalog_payments', 'contribution_id',
+        'payment_service', 'contributions', 'id'
     );
 
     select * from finish();
