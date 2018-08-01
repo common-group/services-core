@@ -18,7 +18,7 @@ const loadMoreBtn = {
             cssClass = args.cssClass;
         return m(`.w-col.w-col-4${cssClass}`, [
               (!collection.isLoading() ?
-               (collection.isLastPage() ? '' : m('button#load-more.btn.btn-small.btn-inline.btn-terciary.w-button', {
+               (collection.isLastPage() ? '' : m('button#load-more.btn.btn-small.btn-terciary.w-button', {
                    onclick: collection.nextPage
                }, 'Carregar mais')) : h.loader())
         ]);
