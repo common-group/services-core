@@ -9,7 +9,7 @@ jobs:
           version: 17.05.0-ce
       - run: ./test.sh
 
-  deploy_sandbox:
+  deploy_production:
     docker:
       - image: comum/docker-build-env:latest
     steps:
