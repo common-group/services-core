@@ -1,7 +1,7 @@
 #!/bin/bash
 function __clean_containers() {
     docker stop common_service_db_inline_test
-    docker rm sql_test_files_inline_common
+    #docker rm sql_test_files_inline_common 
 }
 trap __clean_containers EXIT
 
@@ -28,5 +28,3 @@ docker cp specs sql_test_files_inline_common:/
 docker run -t --rm --volumes-from sql_test_files_inline_common --link common_service_db_inline_test:pg comum/pgtap -h pg -u postgres -d test_db -t '/specs/sql-specs/*/*.sql'
 
 echo 'removing test container...'
-docker stop common_service_db_inline_test
-docker rm sql_test_files_inline_common
