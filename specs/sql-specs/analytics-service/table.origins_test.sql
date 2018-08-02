@@ -1,5 +1,5 @@
 BEGIN;
-    SELECT plan(2);
+    SELECT plan(3);
 
     -- check if table is present
     SELECT has_table('analytics_service'::name, 'origins'::name);
