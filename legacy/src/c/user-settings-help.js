@@ -10,7 +10,7 @@ const userSettingsHelp = {
                 [
                     m('.fontsize-small.u-marginbottom-10',
                         [
-                            m('span.fa.fa-youtube-play.fa-lg', '.'),
+                            m('span.fa.fa-youtube-play.fa-lg'),
                             m.trust('&nbsp;'),
                             'Assista ao vídeo tutorial',
                             m('a.alt-link[href=\'https://catarse.attach.io/Hk5H9HKeZ\'][target=\'_blank\']')
@@ -25,7 +25,7 @@ const userSettingsHelp = {
                 [
                     m('.fontsize-small.u-marginbottom-20',
                         [
-                            m('span.fa.fa-lightbulb-o.fa-lg', '.'),
+                            m('span.fa.fa-lightbulb-o.fa-lg'),
                             m.trust('&nbsp;'),
                             'Dicas',
                             m('a.alt-link[href=\'https://catarse.attach.io/Hk5H9HKeZ\'][target=\'_blank\']')

@@ -27,7 +27,7 @@ const userSettingsResponsible = {
 
                 m('.divider.u-marginbottom-20'),
                 m('.w-row', [
-                    m('.w-col.w-col-6.w-sub-col',
+                    m('.w-col.w-col-5.w-sub-col',
                         m('.input.select.required.user_bank_account_bank_id', [
                             m(`select.select.required.w-input.text-field.bank-select.positive${(disableFields ? '.text-field-disabled' : '')}[id='user_bank_account_attributes_bank_id']`, {
                                 name: 'user[bank_account_attributes][bank_id]',
@@ -48,7 +48,7 @@ const userSettingsResponsible = {
                     ),
                 ]),
                 m('.w-row', [
-                    m('.w-col.w-col-6.w-sub-col', [
+                    m('.w-col.w-col-5.w-sub-col', [
                         m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_name\']',
                             window.I18n.t(
                                 (fields.account_type() == 'pf' ? 'pf_label_name' : 'pj_label_name'),
@@ -64,7 +64,7 @@ const userSettingsResponsible = {
                         }),
                         parsedErrors.inlineError('name')
                     ]),
-                    m('.w-col.w-col-6', [
+                    m('.w-col.w-col-7', [
                         m('.w-row', [
                             m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [
                                 m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark[for=\'user_bank_account_attributes_owner_document\']',
