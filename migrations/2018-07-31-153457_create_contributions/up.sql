@@ -79,8 +79,8 @@ ALTER TABLE ONLY payment_service.contributions
 ALTER TABLE ONLY payment_service.contributions
     ADD CONSTRAINT contributions_address_id_fkey FOREIGN KEY (address_id) REFERENCES community_service.addresses(id);
 
-ALTER TABLE project_service.contributions ADD FOREIGN KEY (shipping_fee_id) REFERENCES project_service.shipping_fees(id);
-ALTER TABLE project_service.contributions ADD FOREIGN KEY (origin_id) REFERENCES analytics_service.origins(id);
+ALTER TABLE payment_service.contributions ADD FOREIGN KEY (shipping_fee_id) REFERENCES project_service.shipping_fees(id);
+ALTER TABLE payment_service.contributions ADD FOREIGN KEY (origin_id) REFERENCES analytics_service.origins(id);
 
 GRANT SELECT,INSERT,UPDATE ON TABLE payment_service.contributions TO scoped_user, platform_user;
 GRANT SELECT ON TABLE payment_service.contributions TO anonymous;
