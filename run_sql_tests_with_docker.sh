@@ -1,4 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+function __clean_containers() {
+    docker stop common_service_db_inline_test
+    docker rm sql_test_files_inline_common
+}
+trap __clean_containers EXIT
+
+set -ex
+
 echo 'building dockerfile.test'
 docker build -f Dockerfile.test -t inline_services_core_test .
 
