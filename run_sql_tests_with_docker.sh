@@ -2,6 +2,11 @@
 function __clean_containers() {
     docker stop common_service_db_inline_test
     #docker rm sql_test_files_inline_common 
+    if [ $(docker rm sql_test_files_inline_common) -eq 1]; then
+        echo 'removed sql inline container'
+    else
+        echo 'sql inline container already removed'
+    fi;
 }
 trap __clean_containers EXIT
 
