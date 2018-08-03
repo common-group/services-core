@@ -29,20 +29,14 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     subject { response }
 
     context 'with anonymous' do
+      include_examples 'with anonymous'
       before do
-        allow(controller).to receive(:decoded_api).and_return(nil)
-        allow(controller).to receive(:platform_token).and_return(platform.token)
-
         post :create, params: { project_id: goal.project_id, goal: goal.attributes.compact["data"] }
       end
-
-      it { is_expected.to have_http_status('403') }
     end
 
     context 'with platform_user from another platform' do
-      let(:platform_token) { another_platform.token }
-      let(:user_id) { nil }
-      let(:token_role) { 'platform_user' }
+      include_examples 'with platform user from another platform'
 
       it do
         expect {
@@ -52,8 +46,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with platform_user from current_platform' do
-      let(:token_role) { 'platform_user' }
-      let(:user_id) { nil }
+      include_examples 'with platform user from current platform'
       let(:goal_params) { goal.attributes.compact["data"] }
 
       before do
@@ -116,20 +109,14 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     subject { response }
 
     context 'with anonymous' do
+      include_examples 'with anonymous'
       before do
-        allow(controller).to receive(:decoded_api).and_return(nil)
-        allow(controller).to receive(:platform_token).and_return(platform.token)
-
         put :update, params: { project_id: goal.project_id, id: goal.id, goal: goal_params }
       end
-
-      it { is_expected.to have_http_status('403') }
     end
 
     context 'with platform_user from another platform' do
-      let(:platform_token) { another_platform.token }
-      let(:user_id) { nil }
-      let(:token_role) { 'platform_user' }
+      include_examples 'with platform user from another platform'
 
       it do
         expect {
@@ -139,8 +126,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with platform_user from current_platform' do
-      let(:token_role) { 'platform_user' }
-      let(:user_id) { nil }
+      include_examples 'with platform user from current platform'
 
       before do
         put :update, params: { project_id: goal.project_id, id: goal.id, goal: goal_params }
@@ -204,20 +190,14 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     subject { response }
 
     context 'with anonymous' do
+      include_examples 'with anonymous'
       before do
-        allow(controller).to receive(:decoded_api).and_return(nil)
-        allow(controller).to receive(:platform_token).and_return(platform.token)
-
         delete :destroy, params: { project_id: goal.project_id, id: goal.id }
       end
-
-      it { is_expected.to have_http_status('403') }
     end
 
     context 'with platform_user from another platform' do
-      let(:platform_token) { another_platform.token }
-      let(:user_id) { nil }
-      let(:token_role) { 'platform_user' }
+      include_examples 'with platform user from another platform'
 
       it do
         expect {
@@ -227,8 +207,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with platform_user from current_platform' do
-      let(:token_role) { 'platform_user' }
-      let(:user_id) { nil }
+      include_examples 'with platform user from current platform'
 
       before do
         delete :destroy, params: { project_id: goal.project_id, id: goal.id }

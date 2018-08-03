@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/common-group/common_models.git
-  revision: d5c0b9aae1a48c9d17f06d4c93e43bb4ee71f9bf
+  revision: 51c36adcbaf1245b15b1a2f2696b2b48a90fc811
   specs:
     common_models (0.1.0)
       activerecord (~> 5.2)
