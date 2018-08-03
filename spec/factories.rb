@@ -1,4 +1,19 @@
 FactoryBot.define do
+
+  sequence :permalink do |n|
+    "foo_page_#{n}"
+  end
+
+  sequence :domain do |n|
+    "foo#{n}lorem.com"
+  end
+
+  factory :origin, class: CommonModels::Origin do |f|
+    platform
+    f.referral { generate(:permalink) }
+    f.domain { generate(:domain) }
+  end
+
   factory :platform, class: CommonModels::Platform do
     name 'Platform name'
     token { SecureRandom.uuid }
@@ -41,5 +56,58 @@ FactoryBot.define do
     end
     account_type 'pf'
     password '123456'
+  end
+
+  factory :catalog_payment, class: CommonModels::CatalogPayment do
+    platform
+    project
+    user
+    data '{value: 10.00}'
+    gateway 'Pagarme'
+  end
+
+  factory :contribution, class: CommonModels::Contribution do
+    project
+    user
+    platform
+    value 10.00
+    payer_name 'Foo Bar'
+    payer_email 'foo@bar.com'
+    anonymous false
+    factory :deleted_contribution do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'deleted', data: {value: contribution.value}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
+    factory :refused_contribution do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'refused', data: {value: contribution.value}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
+    factory :confirmed_contribution do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'paid', data: {value: contribution.value, payment_method: 'boleto'}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
+    factory :pending_contribution do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'pending', data: {value: contribution.value}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
+    factory :pending_refund_contribution do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'pending_refund', data: {value: contribution.value}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
+    factory :refunded_contribution do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'refunded', data: {value: contribution.value}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
+    factory :contribution_with_credits do
+      after :create do |contribution|
+        create(:catalog_payment, status: 'paid', gateway: 'Credits', data: {value: contribution.value}, contribution: contribution, created_at: contribution.created_at)
+      end
+    end
   end
 end

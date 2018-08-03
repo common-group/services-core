@@ -3,6 +3,7 @@ module CommonModels
     self.table_name = 'platform_service.platforms'
     has_many :users
     has_many :projects
+    has_many :contributions
     has_many :subscriptions
     has_many :catalog_payments
 
