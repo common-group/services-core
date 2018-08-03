@@ -21,4 +21,24 @@ RSpec.describe CommonModels::Contribution, type: :model do
     it { is_expected.to allow_value(10).for(:value) }
     it { is_expected.to allow_value(20).for(:value) }
   end
+
+
+  describe '#was_confirmed?' do
+    subject { contribution.was_confirmed? }
+
+    context 'when I have one payment with state paid' do
+      let(:contribution) { create(:confirmed_contribution) }
+      it { is_expected.to eq true }
+    end
+
+    context 'when I have one payment with state refunded' do
+      let(:contribution) { create(:refunded_contribution) }
+      it { is_expected.to eq true }
+    end
+
+    context 'when I have one payment with state pending' do
+      let(:contribution) { create(:pending_contribution) }
+      it { is_expected.to eq false }
+    end
+  end
 end

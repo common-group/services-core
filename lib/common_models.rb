@@ -11,6 +11,10 @@ require 'common_models/models/reward'
 require 'common_models/models/subscription'
 require 'common_models/models/notification'
 require 'common_models/models/catalog_payment'
+require 'common_models/models/shipping_fee'
+require 'common_models/models/address'
+require 'common_models/models/origin'
+require 'common_models/models/contribution'
 
 
 module CommonModels

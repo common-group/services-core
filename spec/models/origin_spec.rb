@@ -6,26 +6,31 @@ require "shoulda/matchers"
 
 RSpec.describe CommonModels::Origin, type: :model do
   describe 'associations' do
-    it { is_expected.to have_many(:projects) }
     it { is_expected.to have_many(:contributions) }
   end
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:domain) }
+  end
+
+  describe 'uniqueness' do
+    let(:platform) { create(:platform) }
+    subject { CommonModels::Origin.new(platform: platform, domain: '') }
     it { is_expected.to validate_uniqueness_of(:domain).scoped_to(:referral) }
   end
 
   describe '#process_hash' do
     let(:domain) { nil }
     let(:referral) { nil }
+    let(:platform) { create(:platform) }
 
-    subject { CommonModels::Origin.process_hash({ ref: referral, domain: domain }) }
+    subject { CommonModels::Origin.process_hash({ ref: referral, domain: domain }, platform) }
 
     context 'with ref' do
       context 'when referral already exists into database with the same origin domain' do
         let(:domain) { 'www.catarse.me' }
         let(:referral) { 'explore' }
-        let!(:origin) { create(:origin, domain: 'catarse.me', referral: referral) }
+        let!(:origin) { create(:origin, platform: platform, domain: 'catarse.me', referral: referral) }
         it 'should return the already created origin' do
           is_expected.to eq origin
         end
@@ -34,7 +39,7 @@ RSpec.describe CommonModels::Origin, type: :model do
       context 'when referral should not exists' do
         let(:domain) { 'http://m.facebook.com/posts/123123/lorem' }
         let(:referral) { 'fb_test' }
-        let!(:origin) { create(:origin, domain: 'lorem.com', referral: referral) }
+        let!(:origin) { create(:origin, platform: platform, domain: 'lorem.com', referral: referral) }
 
         it 'should store and return a new origin' do
           expect(subject.domain).to eq 'm.facebook.com'
