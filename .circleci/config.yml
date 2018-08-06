@@ -7,7 +7,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git bash
+      - run: apk update && apk add git bash curl
       - run: docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
       - run: git clone https://github.com/common-group/services-core-db.git migrations
       - run: cd migrations && git checkout develop
