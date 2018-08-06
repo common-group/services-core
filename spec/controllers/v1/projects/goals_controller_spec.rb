@@ -33,6 +33,8 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
       before do
         post :create, params: { project_id: goal.project_id, goal: goal.attributes.compact["data"] }
       end
+
+      it { is_expected.to have_http_status('403') }
     end
 
     context 'with platform_user from another platform' do
@@ -113,6 +115,8 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
       before do
         put :update, params: { project_id: goal.project_id, id: goal.id, goal: goal_params }
       end
+
+      it { is_expected.to have_http_status('403') }
     end
 
     context 'with platform_user from another platform' do
@@ -194,6 +198,8 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
       before do
         delete :destroy, params: { project_id: goal.project_id, id: goal.id }
       end
+
+      it { is_expected.to have_http_status('403') }
     end
 
     context 'with platform_user from another platform' do
