@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper.rb'
-require "shoulda/matchers"
 
 RSpec.describe CommonModels::Origin, type: :model do
   describe 'associations' do

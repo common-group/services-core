@@ -39,5 +39,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "shoulda-matchers", "~> 3.1"
 
   spec.add_dependency "activerecord", "~> 5.2"
+  spec.add_dependency "bcrypt"
   spec.add_dependency "pg"
 end
