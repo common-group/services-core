@@ -35,13 +35,17 @@ RSpec.configure do |config|
   config.before(:suite) do
     FactoryBot.find_definitions
 
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction#, { except: %i[__diesel_schema_migrations] }
+    DatabaseCleaner.clean_with(:truncation, { except: %w[__diesel_schema_migrations] })
   end
 
   config.around(:each) do |example|
     DatabaseCleaner.cleaning do
       example.run
     end
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
   end
 end
