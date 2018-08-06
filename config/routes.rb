@@ -5,6 +5,12 @@ Rails.application.routes.draw do
       resources :goals, only: %i[update destroy create], controller: 'projects/goals'
       resources :reports, only: %i[create], controller: 'projects/reports'
     end
+    resources :users do
+      collection do
+        post :login, controller: 'users/sessions'
+        post :logout, controller: 'users/sessions'
+      end
+    end
   end
 
   draw :api_v1
