@@ -60,7 +60,10 @@ server {
 
 	# /v1/* API endpoints
 	location ~ "^/v1/" {
-		location ~ "^/v1/users/" {
+		location ~ "^/v1/users(?:\/)?.*$" {
+            # Current mapped routes for /v1/users
+			# POST 			/v1/users/login
+			# POST 			/v1/users/logout
 			include /etc/nginx/conf.d/locations/v1/users_location.conf;
 		}
 
