@@ -6,6 +6,7 @@ module CommonModels
     has_many :contributions
     has_many :subscriptions
     has_many :catalog_payments
+    has_many :platform_api_keys
 
     #store_accessor :data, FIELDS
     #validates_presence_of FIELDS
