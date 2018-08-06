@@ -6,5 +6,9 @@ module CommonModels
     belongs_to :user
 
     validates :platform_id, :user_id, :token, presence: true
+
+    def self.gen_random_key
+      "user_api_key_#{SecureRandom.hex(50)}"
+    end
   end
 end

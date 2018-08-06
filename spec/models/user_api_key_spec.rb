@@ -14,4 +14,9 @@ RSpec.describe CommonModels::UserApiKey, type: :model do
       it { is_expected.to validate_presence_of field }
     end
   end
+
+  describe 'gen_random_key' do
+    subject { CommonModels::UserApiKey.gen_random_key }
+    it { is_expected.to match(/^user_api_key_(\w+){0,50}/) }
+  end
 end

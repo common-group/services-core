@@ -14,4 +14,9 @@ RSpec.describe CommonModels::TempLoginApiKey, type: :model do
       it { is_expected.to validate_presence_of field }
     end
   end
+
+  describe 'gen_random_key' do
+    subject { CommonModels::TempLoginApiKey.gen_random_key }
+    it { is_expected.to match(/^temp_login_api_key_(\w+){0,50}/) }
+  end
 end
