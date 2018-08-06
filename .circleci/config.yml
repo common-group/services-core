@@ -18,7 +18,6 @@ jobs:
 
       - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < migrations/init.sql
       - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test diesel migration --migration-dir migrations/migrations run
-      - run: bundle install
       - run: ./cc-test-reporter before-build
       - run: docker run -i --rm --link pg_default:localhost.pg -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
       - run: ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
