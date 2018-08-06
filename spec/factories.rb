@@ -8,18 +8,18 @@ FactoryBot.define do
     "foo#{n}lorem.com"
   end
 
-  sequence :platform_api_key do |f|
+  factory :platform_api_key, class: CommonModels::PlatformApiKey do |f|
     platform
     f.token { "platform_api_key_#{SecureRandom.hex(50)}" }
   end
 
-  sequence :user_api_key do |f|
+  factory :user_api_key, class: CommonModels::UserApiKey do |f|
     platform
     user
     f.token { "user_api_key_#{SecureRandom.hex(50)}" }
   end
 
-  sequence :temp_login_api_key do |f|
+  factory :temp_login_api_key, class: CommonModels::TempLoginApiKey do |f|
     platform
     user
     f.token { "temp_login_api_key_#{SecureRandom.hex(50)}" }
@@ -73,7 +73,7 @@ FactoryBot.define do
       "email#{n}@email.com"
     end
     account_type 'pf'
-    password '123456'
+    password_hash '123456'
   end
 
   factory :catalog_payment, class: CommonModels::CatalogPayment do
