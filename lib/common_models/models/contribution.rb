@@ -18,13 +18,13 @@ module CommonModels
     scope :not_anonymous, -> { where(anonymous: false) }
 
     scope :ordered, -> { order(id: :desc) }
-    scope :was_confirmed, -> { where('payment_service.was_confirmed(contributions.*)') }
-    scope :is_confirmed, -> { where('payment_service.is_confirmed(contributions.*)') }
+    scope :was_confirmed, -> { where(Arel.sql('payment_service.was_confirmed(contributions.*)')) }
+    scope :is_confirmed, -> { where(Arel.sql('payment_service.is_confirmed(contributions.*)')) }
     delegate :address_city, :country_id, :state_id, :state, :phone_number, :country, :state, :address_complement, :address_neighbourhood, :address_zip_code, :address_street, :address_number, :address_state, to: :address, allow_nil: true
 
     # contributions that have not confirmed delivery after 14 days
     def self.need_notify_about_delivery_confirmation
-      where("reward_received_at IS NULL AND reward_sent_at < current_timestamp - '14 days'::interval")
+      where(Arel.sql("reward_received_at IS NULL AND reward_sent_at < current_timestamp - '14 days'::interval"))
     end
 
     def international?
@@ -37,11 +37,11 @@ module CommonModels
     end
 
     def confirmed?
-      @confirmed ||= CommonModels::Contribution.where(id: id).pluck('payment_service.is_confirmed(contributions.*)').first
+      @confirmed ||= CommonModels::Contribution.where(id: id).pluck(Arel.sql('payment_service.is_confirmed(contributions.*)')).first
     end
 
     def was_confirmed?
-      @was_confirmed ||= CommonModels::Contribution.where(id: id).pluck('payment_service.was_confirmed(contributions.*)').first
+      @was_confirmed ||= CommonModels::Contribution.where(id: id).pluck(Arel.sql('payment_service.was_confirmed(contributions.*)')).first
     end
 
     # Used in payment engines
