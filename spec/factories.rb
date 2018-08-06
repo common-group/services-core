@@ -8,6 +8,24 @@ FactoryBot.define do
     "foo#{n}lorem.com"
   end
 
+  sequence :platform_api_key do |f|
+    platform
+    f.token { "platform_api_key_#{SecureRandom.hex(50)}" }
+  end
+
+  sequence :user_api_key do |f|
+    platform
+    user
+    f.token { "user_api_key_#{SecureRandom.hex(50)}" }
+  end
+
+  sequence :temp_login_api_key do |f|
+    platform
+    user
+    f.token { "temp_login_api_key_#{SecureRandom.hex(50)}" }
+    expires_at { 2.hours.from_now }
+  end
+
   factory :origin, class: CommonModels::Origin do |f|
     platform
     f.referral { generate(:permalink) }

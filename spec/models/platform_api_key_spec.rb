@@ -1,0 +1,16 @@
+# coding: utf-8
+# frozen_string_literal: true
+
+require 'spec_helper.rb'
+
+RSpec.describe CommonModels::PlatformApiKey, type: :model do
+  describe 'associations' do
+    it { is_expected.to belong_to :platform }
+  end
+
+  describe 'validations' do
+    %w[token platform_id].each do |field|
+      it { is_expected.to validate_presence_of field }
+    end
+  end
+end

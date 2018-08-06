@@ -15,6 +15,9 @@ require 'common_models/models/shipping_fee'
 require 'common_models/models/address'
 require 'common_models/models/origin'
 require 'common_models/models/contribution'
+require 'common_models/models/platform_api_key'
+require 'common_models/models/temp_login_api_key'
+require 'common_models/models/user_api_key'
 
 
 module CommonModels
