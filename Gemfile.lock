@@ -1,9 +1,11 @@
 GIT
   remote: git://github.com/common-group/common_models.git
-  revision: 51c36adcbaf1245b15b1a2f2696b2b48a90fc811
+  revision: 25d1de6c7a0bc1372cd5fc19faa8c9104764feb1
+  branch: develop
   specs:
     common_models (0.1.0)
       activerecord (~> 5.2)
+      bcrypt
       pg
 
 GEM
@@ -51,6 +53,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    bcrypt (3.1.12)
     bootsnap (1.3.0)
       msgpack (~> 1.0)
     builder (3.2.3)

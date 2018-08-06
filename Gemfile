@@ -48,4 +48,4 @@ gem 'pundit', '2.0.0.beta1'
 gem 'jwt'
 
 #gem 'common_models', path: '../common_models'
-gem 'common_models', github: 'common-group/common_models'
+gem 'common_models', github: 'common-group/common_models', branch: 'develop'
