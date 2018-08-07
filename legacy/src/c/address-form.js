@@ -265,13 +265,13 @@ const addressForm = {
                                 m('.field-label.fontweight-semibold',
                                     `${window.I18n.t('address_street', I18nScope())} *`
                                 ),
-                                m("input.positive.text-field.w-input[maxlength='256'][required='required'][type='text']", {
+                                m("input.positive.text-field.w-input[maxlength='50'][required='required'][type='text']", {
                                     class: errors.addressStreet() ? 'error' : '',
                                     value: ctrl.fields.addressStreet(),
                                     onchange: m.withAttr('value', ctrl.fields.addressStreet)
                                 }),
                                 errors.addressStreet() ? m(inlineError, {
-                                    message: 'Informe um endereço.'
+                                    message: 'Informe um endereço com no máximo 50 caracteres. Se for necessário, use abreviações..'
                                 }) : ''
                             ]),
                             m('.w-row', [
@@ -292,7 +292,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         window.I18n.t('address_complement', I18nScope())
                                     ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                    m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
                                         value: ctrl.fields.addressComplement(),
                                         onchange: m.withAttr('value', ctrl.fields.addressComplement)
                                     })
@@ -301,7 +301,7 @@ const addressForm = {
                                     m('.field-label.fontweight-semibold',
                                         `${window.I18n.t('address_neighbourhood', I18nScope())} *`
                                     ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
+                                    m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
                                         class: errors.addressNeighbourhood() ? 'error' : '',
                                         value: ctrl.fields.addressNeighbourhood(),
                                         onchange: m.withAttr('value', ctrl.fields.addressNeighbourhood)
