@@ -112,6 +112,7 @@ BEGIN;
             _expired_payment payment_service.catalog_payments;
             _paid_not_in_time payment_service.catalog_payments;
             _recharged_payment payment_service.catalog_payments;
+            _refused_one_payment payment_service.catalog_payments;
             _result json;
         begin
 
@@ -126,6 +127,11 @@ BEGIN;
                 (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
                 values ('paid', (now() - '1 month'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _active_subscription.id)
                 returning * into _paid_not_in_time;
+
+            insert into payment_service.catalog_payments
+                (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id, gateway_general_data) 
+                values ('refused', (now() - '25 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _active_subscription.id, json_build_object('boleto_expiration_date', now() - '23 days'::interval)::jsonb)
+                returning * into _refused_one_payment;
 
             insert into payment_service.catalog_payments
                 (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id, gateway_general_data) 
