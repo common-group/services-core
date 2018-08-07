@@ -34,6 +34,18 @@ class ApplicationPolicy
     false
   end
 
+  def is_platform_user?
+    user.is_a?(CommonModels::Platform)
+  end
+
+  def is_platform_user_and_owner?
+    is_platform_user? && record.platform_id == user.id
+  end
+
+  def is_owner?
+    record.user_id == user.id
+  end
+
   def scope
     Pundit.policy_scope!(user, record.class)
   end
@@ -45,6 +57,12 @@ class ApplicationPolicy
       @user = user
       @scope = scope
     end
+
+
+    def is_platform_user?
+      @user.is_a?(CommonModels::Platform)
+    end
+
 
     def resolve
       scope
