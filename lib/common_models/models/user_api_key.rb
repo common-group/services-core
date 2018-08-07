@@ -7,6 +7,8 @@ module CommonModels
 
     validates :platform_id, :user_id, :token, presence: true
 
+    scope :enabled, -> { where(disabled_at: nil) }
+
     def self.gen_random_key
       "user_api_key_#{SecureRandom.hex(50)}"
     end
