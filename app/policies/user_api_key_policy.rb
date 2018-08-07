@@ -10,11 +10,15 @@ class UserApiKeyPolicy < ApplicationPolicy
   end
 
   def create?
-    is_platform_user_and_owner? || is_owner?
+    user_is_from_platform? && (is_platform_user_and_owner? || is_owner?)
   end
 
   def destroy?
     create?
+  end
+
+  def user_is_from_platform?
+    record.user.try(:platform_id) == record.platform_id
   end
 
   private
