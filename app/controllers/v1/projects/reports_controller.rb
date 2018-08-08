@@ -8,19 +8,19 @@ module V1
       before_action :authenticate_user!
 
       def create
-        resource = parent.reports.new(permitted_attributes(resource))
+        @resource = parent.reports.new(permitted_attributes(@resource))
 
-        authorize resource
-        resource.save
+        authorize @resource
+        @resource.save
 
-        return render json: resource.errors, status: 400 unless resource.valid?
-        render json: { report_id: resource.id }
+        return render json: @resource.errors, status: 400 unless @resource.valid?
+        render json: { report_id: @resource.id }
       end
 
       private
 
       def policy(record)
-        ReportPolicy.new((current_user.presence || current_platform_user.presence), record)
+        ReportPolicy.new(current_user, record)
       end
 
       def pundit_params_for(record)
