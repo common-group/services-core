@@ -3,6 +3,7 @@ require 'spec_helper'
 require 'factory_bot'
 require 'database_cleaner'
 require 'common_models/test_support'
+require "pundit/rspec"
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)

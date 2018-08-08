@@ -11,6 +11,7 @@ Rails.application.routes.draw do
         post :logout, controller: 'users/sessions'
       end
     end
+    resources :api_keys, only: %i[create destroy]
   end
 
   draw :api_v1

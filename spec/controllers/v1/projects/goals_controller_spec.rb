@@ -13,6 +13,8 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
   let(:token_role) { 'scoped_user' }
   let(:platform_token) { platform.token }
   let(:user_id) { current_user.id }
+  let(:policy_model_class) { CommonModels::Goal }
+  let(:policy_scope_class) { GoalPolicy::Scope }
 
   before do
     allow(controller).to receive(:decoded_api) do
@@ -49,6 +51,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
 
     context 'with platform_user from current_platform' do
       include_examples 'with platform user from current platform'
+      include_examples 'ensure policy scope usage'
       let(:goal_params) { goal.attributes.compact["data"] }
 
       before do
@@ -63,6 +66,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with scoped_user not owner of project' do
+      include_examples 'ensure policy scope usage'
       let(:not_owner) { create(:user, platform: platform) }
       let(:token_role) { 'scoped_user' }
       let(:user_id) { not_owner.id }
@@ -76,6 +80,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with scoped_user owner of project' do
+      include_examples 'ensure policy scope usage'
       let(:goal_params) { { title: 'foo' } }
 
       before do
@@ -131,6 +136,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
 
     context 'with platform_user from current_platform' do
       include_examples 'with platform user from current platform'
+      include_examples 'ensure policy scope usage'
 
       before do
         put :update, params: { project_id: goal.project_id, id: goal.id, goal: goal_params }
@@ -148,6 +154,8 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with scoped_user not owner of project' do
+      include_examples 'ensure policy scope usage'
+
       let(:not_owner) { create(:user, platform: platform) }
       let(:token_role) { 'scoped_user' }
       let(:user_id) { not_owner.id }
@@ -156,11 +164,12 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
       it 'should not allowed' do
         expect {
           put :update, params: { project_id: goal.project_id, id: goal.id, goal: goal_params }
-        }.to raise_error(Pundit::NotAuthorizedError)
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context 'with scoped_user owner of project' do
+      include_examples 'ensure policy scope usage'
       before do
         put :update, params: { project_id: goal.project_id, id: goal.id, goal: goal_params }
       end
@@ -214,6 +223,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
 
     context 'with platform_user from current_platform' do
       include_examples 'with platform user from current platform'
+      include_examples 'ensure policy scope usage'
 
       before do
         delete :destroy, params: { project_id: goal.project_id, id: goal.id }
@@ -230,6 +240,7 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
     end
 
     context 'with scoped_user not owner of project' do
+      include_examples 'ensure policy scope usage'
       let(:not_owner) { create(:user, platform: platform) }
       let(:token_role) { 'scoped_user' }
       let(:user_id) { not_owner.id }
@@ -238,11 +249,12 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
       it 'should not allowed' do
         expect {
           delete :destroy, params: { project_id: goal.project_id, id: goal.id }
-        }.to raise_error(Pundit::NotAuthorizedError)
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context 'with scoped_user owner of project' do
+      include_examples 'ensure policy scope usage'
       before do
         delete :destroy, params: { project_id: goal.project_id, id: goal.id }
       end
@@ -255,4 +267,5 @@ RSpec.describe V1::Projects::GoalsController, type: :controller do
       end
     end
   end
+
 end

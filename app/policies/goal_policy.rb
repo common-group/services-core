@@ -1,6 +1,21 @@
 class GoalPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      scoped = scope.joins(:project)
+
+      if is_platform_user?
+        scoped.where(projects: { platform_id: user.id })
+      else
+        scoped.where(projects: {
+          platform_id: user.platform_id,
+          user_id: user.id
+        })
+      end
+    end
+  end
+
   def create?
-    is_platform_user? || is_project_owner?
+    project_is_from_platform? && (is_platform_user? || project_owner?)
   end
 
   def update?
@@ -15,17 +30,13 @@ class GoalPolicy < ApplicationPolicy
     %i[title description value]
   end
 
+  def project_is_from_platform?
+    record.project.try(:platform_id) == current_platform_id
+  end
+
   private
 
-  def is_project_owner?
+  def project_owner?
     record.project.user_id == user.id
-  end
-
-  def is_platform_user?
-    user.is_a?(CommonModels::Platform)
-  end
-
-  def is_admin?
-    #user.user_roles.any? {|r| r.name == 'admin'}
   end
 end

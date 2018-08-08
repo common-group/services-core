@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/common-group/common_models.git
-  revision: 25d1de6c7a0bc1372cd5fc19faa8c9104764feb1
+  revision: f3e68152b9401cbe5a3b9d9d7cf8dd2cba33f13a
   branch: develop
   specs:
     common_models (0.1.0)

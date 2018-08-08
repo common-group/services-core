@@ -5,11 +5,13 @@ module V1
     # GoalsController
     # Project owner and platform users can manage they project goals
     class GoalsController < ApiBaseController
-      before_action :parent, except: %i[create]
+      before_action :parent
       before_action :authenticate_user!
 
       def create
-        resource = parent.goals.new(permitted_attributes(resource))
+        resource = collection
+                   .new(permitted_attributes(resource))
+                   .tap { |r| r.project = parent }
 
         authorize resource, :create?
         resource.save
@@ -19,10 +21,10 @@ module V1
       end
 
       def update
-        resource = parent.goals.find params[:id]
+        resource = collection.find params[:id]
+        authorize resource, :update?
         resource.update_attributes(permitted_attributes(resource))
 
-        authorize resource, :update?
         resource.save
 
         return render json: resource.errors, status: 400 unless resource.valid?
@@ -30,7 +32,7 @@ module V1
       end
 
       def destroy
-        resource = parent.goals.find params[:id]
+        resource = collection.find params[:id]
         authorize resource, :destroy?
 
         return render status: 200, json: { goal_id: resource.id, deleted: 'OK' } if resource.destroy
@@ -40,7 +42,7 @@ module V1
       private
 
       def policy(record)
-        GoalPolicy.new((current_user.presence||current_platform_user.presence), record)
+        GoalPolicy.new(current_user, record)
       end
 
       def pundit_params_for(record)
@@ -48,7 +50,14 @@ module V1
       end
 
       def parent
-        @resource ||= current_platform.projects.find params[:project_id]
+        @parent ||= current_platform.projects.find params[:project_id]
+      end
+
+      def collection
+        @collection ||= policy_scope(
+          CommonModels::Goal,
+          policy_scope_class: GoalPolicy::Scope
+        )
       end
     end
   end

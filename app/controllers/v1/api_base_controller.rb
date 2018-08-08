@@ -1,10 +1,14 @@
 module V1
   class ApiBaseController < ::ApplicationController
     include Pundit
-    #after_action :verify_authorized
 
     def current_user
-      @current_user ||= current_platform.users.find_by id: jwt_user_id
+      return current_platform if is_platform_user?
+      current_platform.users.find_by(id: jwt_user_id)
+    end
+
+    def is_a_user_signed_in?
+      @is_a_user_signed_in ||= !is_platform_user? && current_user.present?
     end
 
     def current_platform_user
@@ -33,6 +37,10 @@ module V1
       return render json: {
         message: 'missing Authorization header'
       }, status: 403 unless decoded_api.present?
+    end
+
+    def is_platform_user?
+      jwt_role == 'platform_user'
     end
 
     protected

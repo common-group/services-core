@@ -24,7 +24,7 @@ RSpec.describe V1::Projects::ReportsController, type: :controller do
 
   describe 'POST #create' do
     let(:project) { create(:project, user_id: current_user.id, platform: platform) }
-    let(:report) { build(:report, project: project) }
+    let(:report) { build(:report, project: project, user: user) }
 
     subject { response }
 
@@ -46,7 +46,7 @@ RSpec.describe V1::Projects::ReportsController, type: :controller do
 
       it do
         expect {
-          post :create, params: { project_id: report.project_id, report: report.attributes.compact["data"] }
+          post :create, params: { project_id: report.project_id, report: report.attributes.compact }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
