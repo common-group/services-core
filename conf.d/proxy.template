@@ -60,6 +60,13 @@ server {
 
 	# /v1/* API endpoints
 	location ~ "^/v1/" {
+		location ~ "^/v1/api_keys(?:\/)?.*$" {
+            # Current mapped routes for /v1/api_keys
+			# POST 			/v1/api_keys
+			# DELETE		/v1/api_keys/:api_key_id
+			include /etc/nginx/conf.d/locations/v1/api_keys_location.conf;
+        }
+
 		location ~ "^/v1/users(?:\/)?.*$" {
             # Current mapped routes for /v1/users
 			# POST 			/v1/users/login
