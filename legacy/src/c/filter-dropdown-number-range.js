@@ -1,25 +1,29 @@
 import m from 'mithril';
 import h from '../h';
+import _ from 'underscore';
 
 const innerFieldInput = {
     view: function(ctrl, args)
     {
+        const defaultInputOptions = {
+            onchange: m.withAttr('value', args.inputValue),
+            value: args.inputValue()
+        };
+
+        let minmaxToNumberInput = '';
+
+        if ('min' in args) minmaxToNumberInput += `[min='${args.min}']`;
+        if ('max' in args) minmaxToNumberInput += `[max='${args.max}']`;
 
         return args.shouldRenderInnerFieldLabel ? 
-            m(`input.text-field.positive.w-input[placeholder='${args.placeholder}'][required][type='number']`, {
-                onchange: m.withAttr('value', args.inputValue),
-                value: args.inputValue()
-            })
+            m(`input.text-field.positive.w-input[placeholder='${args.placeholder}'][required][type='number']${minmaxToNumberInput}`, defaultInputOptions)
                 :
             m('.w-row', [
                 m('.text-field.positive.prefix.no-hover.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                     m('.fontsize-smallest.fontcolor-secondary.u-text-center', args.label)
                 ),
                 m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                    m(`input.text-field.postfix.positive.w-input[type='number'][placeholder='${args.placeholder}']`, {
-                        onchange: m.withAttr('value', args.inputValue),
-                        value: args.inputValue()
-                    })
+                    m(`input.text-field.postfix.positive.w-input[type='number'][placeholder='${args.placeholder}']${minmaxToNumberInput}`, defaultInputOptions)
                 )
             ]);
     }
@@ -92,7 +96,8 @@ const filterDropdownNumberRange = {
                                     shouldRenderInnerFieldLabel,
                                     inputValue: ctrl.firstValue,
                                     placeholder: args.inner_field_placeholder,
-                                    label: args.inner_field_label
+                                    label: args.inner_field_label,
+                                    min: args.min
                                 })
                             ),
                             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
@@ -105,7 +110,8 @@ const filterDropdownNumberRange = {
                                     shouldRenderInnerFieldLabel,
                                     inputValue: ctrl.secondValue,
                                     placeholder: args.inner_field_placeholder,
-                                    label: args.inner_field_label
+                                    label: args.inner_field_label,
+                                    min: args.min
                                 })
                             )
                         ]),

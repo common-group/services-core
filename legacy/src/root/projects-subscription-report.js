@@ -164,7 +164,8 @@ const projectSubscriptionReport = {
                     value_change_placeholder: 'R$ #V1 ou #V2',
                     inner_field_placeholder: '0',
                     inner_field_label: 'R$',
-                    value_multiplier: 100
+                    value_multiplier: 100,
+                    min: 0
                 }
             },
             {
@@ -182,7 +183,8 @@ const projectSubscriptionReport = {
                     init_higher_value: 'mais',
                     value_change_placeholder: '#V1 ou #V2',
                     inner_field_placeholder: '0',
-                    value_multiplier: 1
+                    value_multiplier: 1,
+                    min: 0
                 }
             }
 
