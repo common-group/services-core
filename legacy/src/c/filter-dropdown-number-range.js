@@ -82,11 +82,11 @@ const filterDropdownNumberRange = {
         
         const shouldRenderInnerFieldLabel = !!!args.inner_field_label;
 
-        return m(args.wrapper_class, {
-            'z-index' : -1
-        }, [
+        return m(args.wrapper_class, [
             m('.fontsize-smaller.u-text-center', args.label),
-            m('.w-dropdown', [
+            m('.w-dropdown', {
+                style: {'z-index' : '1'}
+            }, [
                 m('select.w-select.text-field.positive.text-nowrap', {
                     style: {
                         'margin-bottom' : '0px',
