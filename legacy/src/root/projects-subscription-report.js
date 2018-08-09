@@ -7,16 +7,17 @@ import {
 import models from '../models';
 import h from '../h';
 import loadMoreBtn from '../c/load-more-btn';
-import filterMain from '../c/filter-main';
+import filterText from '../c/filter-text';
 import FilterDropdown from '../c/filter-dropdown';
+import filterDropdownNumberRange from '../c/filter-dropdown-number-range';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
 import projectsSubscriptionReportVM from '../vms/projects-subscription-report-vm';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 
 const statusCustomFilter = {
-    view: () => m('span', [
-        'Status da assinatura ',
+    view: () => m('.fontsize-smaller.u-text-center', [
+        'Status ',
         m('a.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary', {
             href: 'https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#status',
             target: '_blank'
@@ -24,10 +25,18 @@ const statusCustomFilter = {
     ])
 };
 
+const dropdownFilterCustomLabel = {
+    view: function(ctrl, args) 
+    {
+        return m('.fontsize-smaller.u-text-center', args.label);
+    }
+};
+
 const projectSubscriptionReport = {
-    controller: function(args) {
+    controller: function (args) {
         const filterVM = projectsSubscriptionReportVM,
             catarseVM = projectsContributionReportVM,
+            dropdownNumber = m.prop(0),
             error = m.prop(false),
             loader = m.prop(true),
             isProjectDataLoaded = m.prop(false),
@@ -38,7 +47,7 @@ const projectSubscriptionReport = {
             }),
             submit = () => {
                 // Set order by last paid on filters too
-                filterVM.order({last_payment_data_created_at:'desc'});
+                filterVM.order({ last_payment_data_created_at: 'desc' });
                 if (filterVM.reward_external_id() === 'null') {
                     subscriptions.firstPage(filterVM.withNullParameters()).then(null);
                 } else {
@@ -48,28 +57,14 @@ const projectSubscriptionReport = {
                 return false;
             },
             filterBuilder = [{
-                component: filterMain,
+                component: filterText,
                 label: 'text_filter',
                 data: {
-                    label: 'Busca',
+                    label: 'Nome ou email',
                     vm: filterVM.search_index,
                     onchange: submit,
-                    wrapper_class: '.w-sub-col.w-col.w-col-5.u-margintop-20',
-                    inputWrapperClass: '.w-input.text-field.positive',
-                    btnClass: '.btn.btn-medium.u-marginbottom-10',
-                    placeholder: 'Busque por nome ou email do assinante...'
-                }
-            },
-            {
-                label: 'reward_filter',
-                component: FilterDropdown,
-                data: {
-                    label: 'Recompensa',
-                    onchange: submit,
-                    name: 'reward_external_id',
-                    vm: filterVM.reward_external_id,
-                    wrapper_class: '.w-sub-col.w-col.w-col-2',
-                    options: []
+                    wrapper_class: '.u-marginbottom-20.w-col.w-col-3',
+                    placeholder: 'Busque por assinantes'
                 }
             },
             {
@@ -83,7 +78,7 @@ const projectSubscriptionReport = {
                     onchange: submit,
                     name: 'status',
                     vm: filterVM.status,
-                    wrapper_class: '.w-sub-col.w-col.w-col-3',
+                    wrapper_class: '.w-col.w-col-3',
                     options: [{
                         value: '',
                         option: 'Todos'
@@ -112,14 +107,32 @@ const projectSubscriptionReport = {
                 }
             },
             {
+                label: 'reward_filter',
+                component: FilterDropdown,
+                data: {
+                    custom_label: [
+                        dropdownFilterCustomLabel,
+                        {label: 'Recompensa'}
+                    ],
+                    onchange: submit,
+                    name: 'reward_external_id',
+                    vm: filterVM.reward_external_id,
+                    wrapper_class: '.w-col.w-col-3',
+                    options: []
+                }
+            },
+            {
                 label: 'payment_filter',
                 component: FilterDropdown,
                 data: {
-                    label: 'Meio de pagamento',
+                    custom_label: [
+                        dropdownFilterCustomLabel,
+                        {label: 'Meio de pgto.'}
+                    ],
                     onchange: submit,
                     name: 'payment_method',
                     vm: filterVM.payment_method,
-                    wrapper_class: '.w-sub-col.w-col.w-col-2',
+                    wrapper_class: '.w-col.w-col-2',
                     options: [{
                         value: '',
                         option: 'Todos'
@@ -133,6 +146,43 @@ const projectSubscriptionReport = {
                         option: 'Boleto'
                     }
                     ]
+                }
+            },
+            {
+                label: 'total_paid_filter',
+                component: filterDropdownNumberRange,
+                data: {
+                    index: 1,
+                    selectable: dropdownNumber,
+                    label: 'Total apoiado',
+                    name: 'total_paid',
+                    onapply: submit,
+                    vm: filterVM.total_paid,
+                    wrapper_class: '.w-col.w-col-2',
+                    init_lower_value: '0',
+                    init_higher_value: 'mais',
+                    value_change_placeholder: 'R$ #V1 ou #V2',
+                    inner_field_placeholder: '0',
+                    inner_field_label: 'R$',
+                    value_multiplier: 100
+                }
+            },
+            {
+                label: 'paid_count_filter',
+                component: filterDropdownNumberRange,
+                data: {
+                    index: 2,
+                    selectable: dropdownNumber,
+                    label: 'Qtde. de apoios',
+                    name: 'paid_count',
+                    onapply: submit,
+                    vm: filterVM.paid_count,
+                    wrapper_class: '.w-col.w-col-2',
+                    init_lower_value: '0',
+                    init_higher_value: 'mais',
+                    value_change_placeholder: '#V1 ou #V2',
+                    inner_field_placeholder: '0',
+                    value_multiplier: 1
                 }
             }
 
@@ -184,7 +234,7 @@ const projectSubscriptionReport = {
         lProject.load().then((data) => {
             filterVM.project_id(_.first(data).common_id);
             // override default 'created_at' order on vm
-            filterVM.order({last_payment_data_created_at:'desc'});
+            filterVM.order({ last_payment_data_created_at: 'desc' });
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
                 isProjectDataLoaded(true);
@@ -204,8 +254,8 @@ const projectSubscriptionReport = {
             isRewardsDataLoaded
         };
     },
-    view: function(ctrl, args) {
-        
+    view: function (ctrl, args) {
+
         const subsCollection = ctrl.subscriptions.collection(),
             filterBuilder = ctrl.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {
@@ -219,6 +269,12 @@ const projectSubscriptionReport = {
             }),
             paymentFilter = _.findWhere(filterBuilder, {
                 label: 'payment_filter'
+            }),
+            totalPaidFilter = _.findWhere(filterBuilder, {
+                label: 'total_paid_filter'
+            }),
+            paidCountFilter = _.findWhere(filterBuilder, {
+                label: 'paid_count_filter'
             });
         rewardFilter.data.options = ctrl.mapRewardsToOptions();
         if (ctrl.isProjectDataLoaded() && ctrl.isRewardsDataLoaded()) {
@@ -226,7 +282,7 @@ const projectSubscriptionReport = {
                 m.component(projectDashboardMenu, {
                     project: m.prop(_.first(ctrl.project()))
                 }),
-                m('.dashboard-header',
+                m('.dashboard-header', [
                     m('.w-container',
                         m('.w-row', [
                             m('.w-col.w-col-3'),
@@ -237,29 +293,29 @@ const projectSubscriptionReport = {
                             ),
                             m('.w-col.w-col-3')
                         ])
-                    )
-                ),
-                m('.divider.u-margintop-30'),
-                m('.card',
-                    m('.w-container',
+                    ),
+                    m('.u-marginbottom-30.w-container',
                         m('.w-form', [
                             m('form', {
                                 onsubmit: ctrl.submit
                             },
-                                m('.u-margintop-20.w-row', [
-                                    m('.w-col.w-col-12.u-text-center',
+                                m('w-row', [
+                                    m.component(textFilter.component, textFilter.data),
+                                    m('.w-col.w-col-9',
                                         m('.w-row', [
                                             m.component(statusFilter.component, statusFilter.data),
                                             m.component(rewardFilter.component, rewardFilter.data),
                                             m.component(paymentFilter.component, paymentFilter.data),
-                                            m.component(textFilter.component, textFilter.data)
+                                            m.component(totalPaidFilter.component, totalPaidFilter.data),
+                                            m.component(paidCountFilter.component, paidCountFilter.data),
                                         ])
                                     )
                                 ])
                             )
                         ])
                     )
-                ),
+                ]),
+                m('.divider'),
                 m('.before-footer.bg-gray.section', [
                     m('.w-container', [
                         m('div',
@@ -277,11 +333,11 @@ const projectSubscriptionReport = {
                                     m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_download']`, {
                                         config: m.route
                                     }, [
-                                        m('span.fa.fa-download',
-                                            m.trust('&nbsp;')
-                                        ),
-                                        'Baixar relatórios'
-                                    ])
+                                            m('span.fa.fa-download',
+                                                m.trust('&nbsp;')
+                                            ),
+                                            'Baixar relatórios'
+                                        ])
                                 )
                             ])
                         ),

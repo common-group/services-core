@@ -9,13 +9,18 @@ const vm = commonPayment.filtersVM({
         search_index: 'fts(portuguese)',
         reward_external_id: 'eq',
         payment_method: 'eq',
-        project_id: 'eq'
+        project_id: 'eq',
+        total_paid: 'between',
+        paid_count: 'between'
     }),
     paramToString = function (p) {
         return (p || '').toString().trim();
     };
 
-
+vm.total_paid.gte(0);
+vm.total_paid.lte(0);
+vm.paid_count.gte(0);
+vm.paid_count.lte(0);
 vm.status('');
 vm.payment_method('');
 vm.order({
