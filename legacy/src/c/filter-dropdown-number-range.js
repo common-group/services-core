@@ -3,11 +3,24 @@ import h from '../h';
 import _ from 'underscore';
 
 const innerFieldInput = {
+    controller: function(args)
+    {
+        const inputState = {
+            value: args.inputValue,
+            setValue: function(value) {
+                value = (''+value).replace(/[^0-9]*/g, '');
+                value = Math.abs(parseInt(value));
+                inputState.value(value);
+            }
+        }
+
+        return { inputState };
+    },
     view: function(ctrl, args)
     {
         const defaultInputOptions = {
-            onchange: m.withAttr('value', args.inputValue),
-            value: args.inputValue()
+            onchange: m.withAttr('value', ctrl.inputState.setValue),
+            value: ctrl.inputState.value()
         };
 
         let minmaxToNumberInput = '';
@@ -35,8 +48,8 @@ const filterDropdownNumberRange = {
             firstValue = m.prop(0),
             secondValue = m.prop(0),
             clearFieldValues = () => { firstValue(0), secondValue(0) },
-            getLowerValue = () => firstValue() < secondValue() ? firstValue() : secondValue(),
-            getHigherValue = () => firstValue() > secondValue() ? firstValue() : secondValue(),
+            getLowerValue = () => firstValue(),
+            getHigherValue = () => secondValue(),
             renderPlaceholder = () => {
                 const 
                     lowerValue = getLowerValue(),
@@ -71,10 +84,13 @@ const filterDropdownNumberRange = {
 
         return m(args.wrapper_class, [
             m('.fontsize-smaller.u-text-center', args.label),
-            m('.w-dropdown', [
+            m('.w-dropdown', {
+                style: {'z-index' : '1'}
+            }, [
                 m('select.w-select.text-field.positive.text-nowrap', {
                     style: {
-                        'margin-bottom' : '0px'
+                        'margin-bottom' : '0px',
+                        'padding-right' : '8px'
                     },
                     onmousedown: function(e) {
                         e.preventDefault();

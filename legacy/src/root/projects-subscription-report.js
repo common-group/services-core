@@ -161,7 +161,7 @@ const projectSubscriptionReport = {
                     wrapper_class: '.w-col.w-col-2',
                     init_lower_value: '0',
                     init_higher_value: 'mais',
-                    value_change_placeholder: 'R$ #V1 ou #V2',
+                    value_change_placeholder: 'R$#V1 ou #V2',
                     inner_field_placeholder: '0',
                     inner_field_label: 'R$',
                     value_multiplier: 100,
