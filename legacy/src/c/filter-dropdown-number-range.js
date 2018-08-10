@@ -2,6 +2,8 @@ import m from 'mithril';
 import h from '../h';
 import _ from 'underscore';
 
+const EnterKey = 13;
+
 const innerFieldInput = {
     controller: function(args)
     {
@@ -20,23 +22,30 @@ const innerFieldInput = {
     {
         const defaultInputOptions = {
             onchange: m.withAttr('value', ctrl.inputState.setValue),
-            value: ctrl.inputState.value()
+            value: ctrl.inputState.value(),
+            onkeyup: (e) => {
+                if (e.keyCode == EnterKey) 
+                    args.onsetValue();
+                ctrl.inputState.setValue(e.target.value)
+            }
         };
 
-        let minmaxToNumberInput = '';
+        let inputExtraProps = '';
 
-        if ('min' in args) minmaxToNumberInput += `[min='${args.min}']`;
-        if ('max' in args) minmaxToNumberInput += `[max='${args.max}']`;
+        if ('min' in args) inputExtraProps += `[min='${args.min}']`;
+        if ('max' in args) inputExtraProps += `[max='${args.max}']`;
+        if ('placeholder' in args) inputExtraProps += `[placeholder='${args.placeholder}']`;
+        else inputExtraProps += `[placeholder=' ']`;
 
         return args.shouldRenderInnerFieldLabel ? 
-            m(`input.text-field.positive.w-input[placeholder='${args.placeholder}'][required][type='number']${minmaxToNumberInput}`, defaultInputOptions)
+            m(`input.text-field.positive.w-input[type='number']${inputExtraProps}`, defaultInputOptions)
                 :
             m('.w-row', [
                 m('.text-field.positive.prefix.no-hover.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                     m('.fontsize-smallest.fontcolor-secondary.u-text-center', args.label)
                 ),
                 m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
-                    m(`input.text-field.postfix.positive.w-input[type='number'][placeholder='${args.placeholder}']${minmaxToNumberInput}`, defaultInputOptions)
+                    m(`input.text-field.postfix.positive.w-input[type='number']${inputExtraProps}`, defaultInputOptions)
                 )
             ]);
     }
@@ -56,6 +65,8 @@ const filterDropdownNumberRange = {
                     higherValue = getHigherValue();
 
                 let placeholder = args.value_change_placeholder;
+                if (lowerValue !== 0 && higherValue !== 0) placeholder = args.value_change_both_placeholder;
+
                 if (lowerValue !== 0)
                 {
                     placeholder = placeholder.replace('#V1', lowerValue);
@@ -80,17 +91,29 @@ const filterDropdownNumberRange = {
     },
     view: function (ctrl, args) {
         
+        const dropdownOptions = {};
         const shouldRenderInnerFieldLabel = !!!args.inner_field_label;
+        const applyValueToFilter = () => {
+            const higherValue = ctrl.getHigherValue() * args.value_multiplier;
+            const lowerValue = ctrl.getLowerValue() * args.value_multiplier;
+
+            args.vm.gte(lowerValue);
+            args.vm.lte(higherValue);
+            args.onapply();
+        };
+        
+        if ('dropdown_inline_style' in args) {
+            dropdownOptions.style = args.dropdown_inline_style;
+        }
 
         return m(args.wrapper_class, [
             m('.fontsize-smaller.u-text-center', args.label),
-            m('.w-dropdown', {
+            m('div', {
                 style: {'z-index' : '1'}
             }, [
-                m('select.w-select.text-field.positive.text-nowrap', {
+                m('select.w-select.text-field.positive', {
                     style: {
-                        'margin-bottom' : '0px',
-                        'padding-right' : '8px'
+                        'margin-bottom' : '0px'
                     },
                     onmousedown: function(e) {
                         e.preventDefault();
@@ -105,7 +128,8 @@ const filterDropdownNumberRange = {
                     }, ctrl.renderPlaceholder())
                 ]),
                 ((ctrl.showDropdown() && args.selectable() == args.index) ? 
-                    m('nav.dropdown-list.dropdown-list-medium.card', [
+                    m('nav.dropdown-list.dropdown-list-medium.card', dropdownOptions,
+                    [
                         m('.u-marginbottom-20.w-row', [
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5',
                                 m(innerFieldInput, {
@@ -113,7 +137,8 @@ const filterDropdownNumberRange = {
                                     inputValue: ctrl.firstValue,
                                     placeholder: args.inner_field_placeholder,
                                     label: args.inner_field_label,
-                                    min: args.min
+                                    min: args.min,
+                                    onsetValue: applyValueToFilter
                                 })
                             ),
                             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
@@ -125,28 +150,25 @@ const filterDropdownNumberRange = {
                                 m(innerFieldInput, {
                                     shouldRenderInnerFieldLabel,
                                     inputValue: ctrl.secondValue,
-                                    placeholder: args.inner_field_placeholder,
+                                    placeholder: ' ',
                                     label: args.inner_field_label,
-                                    min: args.min
+                                    min: args.min,
+                                    onsetValue: applyValueToFilter
                                 })
                             )
                         ]),
-                        m('a.fontsize-smaller.fontweight-semibold.alt-link.u-right[href=\'#\']',
-                            {
-                                onclick: () => {
-                                    const 
-                                        higherValue = ctrl.getHigherValue() * args.value_multiplier,
-                                        lowerValue = ctrl.getLowerValue() * args.value_multiplier;
-
-                                        args.vm.gte(lowerValue);
-                                        args.vm.lte(higherValue);
-                                    args.onapply();
-                                }
-                            },
-                            'Aplicar'
-                        ),
+                        m('a.fontsize-smaller.fontweight-semibold.alt-link.u-right[href=\'#\']', {
+                            onclick: () => {
+                                applyValueToFilter();
+                                ctrl.showDropdown.toggle();
+                            }
+                        }, 'Aplicar'),
                         m('a.fontsize-smaller.link-hidden[href=\'#\']', {
-                            onclick: ctrl.clearFieldValues
+                            onclick: () => {
+                                ctrl.clearFieldValues();
+                                applyValueToFilter();
+                                ctrl.showDropdown.toggle();
+                            }
                         }, 'Limpar')
                     ])
 
