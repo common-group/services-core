@@ -64,7 +64,8 @@ const projectSubscriptionReport = {
                     vm: filterVM.search_index,
                     onchange: submit,
                     wrapper_class: '.u-marginbottom-20.w-col.w-col-3',
-                    placeholder: 'Busque por assinantes'
+                    placeholder: 'Busque por assinantes',
+                    onclick: submit
                 }
             },
             {
@@ -162,6 +163,7 @@ const projectSubscriptionReport = {
                     init_lower_value: '0',
                     init_higher_value: 'mais',
                     value_change_placeholder: 'R$#V1 ou #V2',
+                    value_change_both_placeholder: 'R$#V1 a R$#V2',
                     inner_field_placeholder: '0',
                     inner_field_label: 'R$',
                     value_multiplier: 100,
@@ -182,9 +184,13 @@ const projectSubscriptionReport = {
                     init_lower_value: '0',
                     init_higher_value: 'mais',
                     value_change_placeholder: '#V1 ou #V2',
+                    value_change_both_placeholder: '#V1 a #V2',
                     inner_field_placeholder: '0',
                     value_multiplier: 1,
-                    min: 0
+                    min: 0,
+                    dropdown_inline_style: {
+                        right: '0'
+                    }
                 }
             }
 
