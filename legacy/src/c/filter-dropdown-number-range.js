@@ -57,15 +57,16 @@ const filterDropdownNumberRange = {
             firstValue = m.prop(0),
             secondValue = m.prop(0),
             clearFieldValues = () => { firstValue(0), secondValue(0) },
-            getLowerValue = () => firstValue(),
-            getHigherValue = () => secondValue(),
+            getNumericValue = (value) => isNaN(value) ? 0 : value,
+            getLowerValue = () => getNumericValue(firstValue()),
+            getHigherValue = () => getNumericValue(secondValue()),
             renderPlaceholder = () => {
                 const 
                     lowerValue = getLowerValue(),
                     higherValue = getHigherValue();
 
                 let placeholder = args.value_change_placeholder;
-                if (lowerValue !== 0 && higherValue !== 0) placeholder = args.value_change_both_placeholder;
+                if (higherValue !== 0) placeholder = args.value_change_both_placeholder;
 
                 if (lowerValue !== 0)
                 {
@@ -100,6 +101,7 @@ const filterDropdownNumberRange = {
             args.vm.gte(lowerValue);
             args.vm.lte(higherValue);
             args.onapply();
+            ctrl.showDropdown.toggle();
         };
         
         if ('dropdown_inline_style' in args) {
@@ -158,16 +160,12 @@ const filterDropdownNumberRange = {
                             )
                         ]),
                         m('a.fontsize-smaller.fontweight-semibold.alt-link.u-right[href=\'#\']', {
-                            onclick: () => {
-                                applyValueToFilter();
-                                ctrl.showDropdown.toggle();
-                            }
+                            onclick: applyValueToFilter
                         }, 'Aplicar'),
                         m('a.fontsize-smaller.link-hidden[href=\'#\']', {
                             onclick: () => {
                                 ctrl.clearFieldValues();
                                 applyValueToFilter();
-                                ctrl.showDropdown.toggle();
                             }
                         }, 'Limpar')
                     ])
