@@ -51,6 +51,13 @@ FactoryBot.define do
     details "Details report"
   end
 
+  factory :reward, class: CommonModels::Reward do
+    project
+    minimum_value 10.0
+    title 'bar'
+    description 'foo'
+  end
+
   factory :project, class: CommonModels::Project do
     goal 100
     headline 'Foo headline'
