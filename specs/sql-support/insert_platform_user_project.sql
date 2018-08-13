@@ -46,8 +46,8 @@ insert into project_service.projects(id, platform_id, user_id, status, name, mod
     (__seed_aon_project_id(), __seed_platform_id(), __seed_second_user_id(), 'online' ,'test project 02', 'aon', 'test_project_aon', json_build_object('name', 'test project aon'));
 
 -- add reward to project
-insert into project_service.rewards(id, project_id, platform_id, data) 
-values (__seed_reward_id(), __seed_project_id(), __seed_platform_id(), json_build_object('current_ip', '127.0.0.1',
+insert into project_service.rewards(id, project_id, data) 
+values (__seed_reward_id(), __seed_project_id(), json_build_object('current_ip', '127.0.0.1',
         'minimum_value', 1200::decimal,
         'maximum_contributions', 0,
         'shipping_options', 'free'::project_service.shipping_options_enum,

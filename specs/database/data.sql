@@ -20,8 +20,8 @@ insert into community_service.users(platform_id, id, email, password, key, data)
 
 insert into project_service.projects(id, platform_id, user_id, name, status, mode, permalink, data) values ('52273d0a-1610-4f48-9239-e96e5861c3d3', '8187a11e-6fa5-4561-a5e5-83329236fbd6', 'bb8f4478-df41-411c-8ed7-12c034044c0e', 'test project 01', 'online', 'sub', 'test_project', json_build_object('name', 'test project 01'));
 
-insert into project_service.rewards(id, project_id, platform_id, data)
-values ('c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d', '52273d0a-1610-4f48-9239-e96e5861c3d3', '8187a11e-6fa5-4561-a5e5-83329236fbd6', json_build_object('current_ip', '127.0.0.1',
+insert into project_service.rewards(id, project_id, data)
+values ('c73f7f8d-df29-45b1-87ee-cecd9dc2cc7d', '52273d0a-1610-4f48-9239-e96e5861c3d3', json_build_object('current_ip', '127.0.0.1',
   'minimum_value', 1200::decimal,
   'maximum_contributions', 0,
   'shipping_options', 'free'::project_service.shipping_options_enum,
