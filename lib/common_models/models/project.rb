@@ -10,6 +10,7 @@ module CommonModels
     belongs_to :platform
     has_many :goals, foreign_key: :project_id
     has_many :reports, foreign_key: :project_id
+    has_many :rewards, foreign_key: :project_id
 
 
     scope :with_state, ->(state) {
