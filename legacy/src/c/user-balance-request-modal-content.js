@@ -158,6 +158,11 @@ const userBalanceRequestModelContent = {
                             m('span.fontcolor-secondary', window.I18n.t('bank.account', I18nScope())),
                             m.trust('&nbsp;'),
                             `${item.account}-${item.account_digit}`
+                        ]),
+                        m('div', [
+                            m('span.fontcolor-secondary', window.I18n.t('bank.account_type', I18nScope())),
+                            m.trust('&nbsp;'),
+                            window.I18n.t(`bank.${item.account_type}`, I18nScope())
                         ])
                     ])
                 ])
