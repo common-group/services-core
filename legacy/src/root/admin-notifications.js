@@ -3,14 +3,12 @@ import h from '../h';
 import _ from 'underscore';
 import { catarse, commonNotification } from '../api';
 import models from '../models';
-import Liquid from 'liquidjs';
 import projectEditSaveBtn from '../c/project-edit-save-btn';
 
 const adminNotifications = {
     controller: function() {
         const templates = commonNotification.paginationVM(
             models.notificationTemplates, 'label.asc'),
-            engine = Liquid(),
             loaderTemp = m.prop(true),
             loaderSubmit = m.prop(false),
             selectedItem = m.prop(),
@@ -24,24 +22,6 @@ const adminNotifications = {
                 user: {
                     name: 'test name user'
                 }
-            },
-            renderSubjectTemplate = (tpl) => {
-                const tplParsed = engine.parse(h.stripScripts(tpl));
-                engine.render(tplParsed, templateDefaultVars)
-                    .then((html) => {
-                        parsedSubjectTemplate(h.stripScripts(tpl));
-                        renderedSubjectTemplate(html);
-                        m.redraw();
-                    });
-            },
-            renderTemplate = (tpl) => {
-                const tplParsed = engine.parse(h.stripScripts(tpl));
-                engine.render(tplParsed, templateDefaultVars)
-                    .then((html) => {
-                        parsedTemplate(h.stripScripts(tpl));
-                        renderedTemplate(html);
-                        m.redraw();
-                    });
             },
             changeSelectedTo = collection => (evt) => {
                 const item = _.find(collection, { label: evt.target.value });
@@ -69,6 +49,34 @@ const adminNotifications = {
                     templates.firstPage({}).then(() => { loaderSubmit(false); });
                 });
             };
+
+        let engine;
+        let renderSubjectTemplate;
+        let renderTemplate;
+
+        import('liquidjs').then(Liquid => {
+            engine = Liquid();
+
+            renderSubjectTemplate = (tpl) => {
+                const tplParsed = engine.parse(h.stripScripts(tpl));
+                engine.render(tplParsed, templateDefaultVars)
+                    .then((html) => {
+                        parsedSubjectTemplate(h.stripScripts(tpl));
+                        renderedSubjectTemplate(html);
+                        m.redraw();
+                    });
+            };
+
+            renderTemplate = (tpl) => {
+                const tplParsed = engine.parse(h.stripScripts(tpl));
+                engine.render(tplParsed, templateDefaultVars)
+                    .then((html) => {
+                        parsedTemplate(h.stripScripts(tpl));
+                        renderedTemplate(html);
+                        m.redraw();
+                    });
+            };
+        });
 
         templates.firstPage({}).then(() => { loaderTemp(false); });
 
