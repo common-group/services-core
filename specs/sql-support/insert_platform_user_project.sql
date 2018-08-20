@@ -59,7 +59,7 @@ values (__seed_reward_id(), __seed_project_id(), json_build_object('current_ip',
         'description', 'test reward description',
         'metadata', '{}'::json
 )::jsonb),
-(__seed_reward_120_id(), __seed_project_id(), __seed_platform_id(), json_build_object('current_ip', '127.0.0.1',
+(__seed_reward_120_id(), __seed_project_id(), json_build_object('current_ip', '127.0.0.1',
         'minimum_value', 12000::decimal,
         'maximum_contributions', 0,
         'shipping_options', 'free'::project_service.shipping_options_enum,
