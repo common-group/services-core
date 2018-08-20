@@ -8,6 +8,7 @@ import adminUserBalanceTransactionsList from './admin-user-balance-transactions-
 import popNotification from './pop-notification';
 
 const I18nScope = _.partial(h.i18nScope, 'admin.balance_transfers');
+const I18nBankAccount = _.partial(h.i18nScope, 'users.balance.bank');
 
 const adminBalanceTransferItemDetail = {
     controller: function(args) {
@@ -95,16 +96,23 @@ const adminBalanceTransferItemDetail = {
                     (bankAccount ? [
                         m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20', 'Dados bancários'),
                         m('.fontsize-smallest.lineheight-looser', [
-                            m('span.fontweight-semibold', 'Banco:'),
-                            `${bankAccount.bank_code} - ${(bankAccount.bank_name ? bankAccount.bank_name : '')}`, m('br'),
-                            m('span.fontweight-semibold', 'Agencia:'),
-                            ` ${bankAccount.agency} - ${bankAccount.agency_digit ? bankAccount.agency_digit : ''}`, m('br'),
-                            m('span.fontweight-semibold', 'Conta:'),
-                            ` ${bankAccount.account} - ${bankAccount.account_digit ? bankAccount.account_digit : ''}`, m('br'),
-                            m('span.fontweight-semibold', 'Nome:'),
-                            bankAccount.owner_name, m('br'),
+                            m('span.fontweight-semibold', I18n.t('bank_name', I18nBankAccount())),
+                                ` ${bankAccount.bank_code} - ${(bankAccount.bank_name ? bankAccount.bank_name : '')}`, m('br'),
+
+                            m('span.fontweight-semibold', I18n.t('agency', I18nBankAccount())),
+                                ` ${bankAccount.agency} - ${bankAccount.agency_digit ? bankAccount.agency_digit : ''}`, m('br'),
+
+                            m('span.fontweight-semibold', I18n.t('account', I18nBankAccount())),
+                                ` ${bankAccount.account} - ${bankAccount.account_digit ? bankAccount.account_digit : ''}`, m('br'),
+
+                            m('span.fontweight-semibold', I18n.t('account_type_name', I18nBankAccount())),
+                                ` ${I18n.t(`account_type.${bankAccount.account_type}`, I18nBankAccount())} `, m('br'),
+                            
+                            m('span.fontweight-semibold', I18n.t('name', I18nBankAccount())),
+                                ` ${bankAccount.owner_name}`, m('br'),
+                            
                             m('span.fontweight-semibold', 'CPF:'),
-                            bankAccount.owner_document
+                                ` ${bankAccount.owner_document}`
                         ])
                     ] : h.loader()),
                     (ctrl.loadingNotes() ? h.loader() : m('', [
