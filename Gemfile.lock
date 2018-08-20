@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/common-group/common_models.git
-  revision: f3e68152b9401cbe5a3b9d9d7cf8dd2cba33f13a
+  revision: 455fa49e3bd1007d5985d66bfa7dad6d40cc6075
   branch: develop
   specs:
     common_models (0.1.0)
@@ -69,7 +69,7 @@ GEM
     ffi (1.9.25)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
-    i18n (1.0.1)
+    i18n (1.1.0)
       concurrent-ruby (~> 1.0)
     jwt (2.1.0)
     listen (3.1.5)
