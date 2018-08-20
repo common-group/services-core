@@ -2,7 +2,7 @@ class RewardPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       scope_cond = { projects: {
-                       platform_id: user.platform_id
+                        platform_id: user.try(:platform_id)
                      }, user_id: user.id }
       scope_cond = { projects: { platform_id: user.id } } if is_platform_user?
       scope.joins(:project).where(scope_cond)
