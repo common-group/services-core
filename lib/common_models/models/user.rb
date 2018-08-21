@@ -4,7 +4,7 @@ module CommonModels
   class User < ActiveRecord::Base
     include ::BCrypt
     self.table_name = 'community_service.users'
-    FIELDS = [:name, :newsletter, :created_at, :updated_at, :admin, :locale, :cpf, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :sign_in_count, :current_sign_in_at, :last_sign_in_at, :current_sign_in_ip, :last_sign_in_ip, :twitter, :facebook_link, :other_link, :uploaded_image, :moip_login, :state_inscription, :channel_id, :deactivated_at, :reactivate_token, :authentication_token, :zero_credits, :about_html, :cover_image, :permalink, :subscribed_to_project_posts, :full_text_index, :subscribed_to_new_followers, :subscribed_to_friends_contributions, :banned_at, :whitelisted_at, :sendgrid_recipient_id, :confirmed_email_at, :public_name, :account_type, :birth_date, :address_id]
+    FIELDS = [:name, :newsletter, :created_at, :updated_at, :admin, :locale, :cpf, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :sign_in_count, :current_sign_in_at, :last_sign_in_at, :current_sign_in_ip, :last_sign_in_ip, :twitter, :facebook_link, :other_link, :uploaded_image, :moip_login, :state_inscription, :channel_id, :deactivated_at, :reactivate_token, :authentication_token, :zero_credits, :about_html, :cover_image, :permalink, :subscribed_to_project_posts, :full_text_index, :subscribed_to_new_followers, :subscribed_to_friends_contributions, :banned_at, :whitelisted_at, :sendgrid_recipient_id, :confirmed_email_at, :public_name, :account_type, :birth_date]
     store_accessor :data, FIELDS
     attr_accessor :publishing_project, :publishing_user_settings, :publishing_user_about, :reseting_password
 
@@ -12,6 +12,7 @@ module CommonModels
     has_many :temp_login_api_keys
     has_many :user_api_keys
     belongs_to :platform
+    belongs_to :address
 
     has_many :published_projects, -> do
       with_states(Project::PUBLISHED_STATES)

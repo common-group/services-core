@@ -37,6 +37,38 @@ FactoryBot.define do
     token { SecureRandom.uuid }
   end
 
+  factory :country, class: CommonModels::Country do
+    platform
+    name 'foo country'
+  end
+
+  factory :state, class: CommonModels::State do
+    platform
+    country
+    name 'foo state'
+    acronym 'ct'
+  end
+
+  factory :city, class: CommonModels::City do
+    platform
+    state
+    name 'foo city'
+  end
+
+  factory :address, class: CommonModels::Address do
+    platform
+    country
+    state
+    address_street "foo street"
+    address_number "10"
+    address_complement "20"
+    address_neighbourhood "foo neighbourhood"
+    address_city "foo city"
+    address_zip_code "00000-000"
+    address_state "foo state"
+    phone_number "999999999"
+  end
+
   factory :goal, class: CommonModels::Goal do
     project
     title "Foo goal"
