@@ -3,14 +3,12 @@ import h from '../h';
 import _ from 'underscore';
 import { catarse, commonNotification } from '../api';
 import models from '../models';
-import Liquid from 'liquidjs';
 import projectEditSaveBtn from '../c/project-edit-save-btn';
 
 const adminNotifications = {
     controller: function() {
         const templates = commonNotification.paginationVM(
             models.notificationTemplates, 'label.asc'),
-            engine = Liquid(),
             loaderTemp = m.prop(true),
             loaderSubmit = m.prop(false),
             selectedItem = m.prop(),
@@ -25,24 +23,8 @@ const adminNotifications = {
                     name: 'test name user'
                 }
             },
-            renderSubjectTemplate = (tpl) => {
-                const tplParsed = engine.parse(h.stripScripts(tpl));
-                engine.render(tplParsed, templateDefaultVars)
-                    .then((html) => {
-                        parsedSubjectTemplate(h.stripScripts(tpl));
-                        renderedSubjectTemplate(html);
-                        m.redraw();
-                    });
-            },
-            renderTemplate = (tpl) => {
-                const tplParsed = engine.parse(h.stripScripts(tpl));
-                engine.render(tplParsed, templateDefaultVars)
-                    .then((html) => {
-                        parsedTemplate(h.stripScripts(tpl));
-                        renderedTemplate(html);
-                        m.redraw();
-                    });
-            },
+            renderSubjectTemplate = (tpl) => {},
+            renderTemplate = (tpl) => {},
             changeSelectedTo = collection => (evt) => {
                 const item = _.find(collection, { label: evt.target.value });
 
