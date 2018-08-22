@@ -8,10 +8,7 @@ CREATE OR REPLACE VIEW "project_service_api"."goals" AS
     g.created_at,
     g.updated_at
    FROM project_service.goals g
-  WHERE ((( SELECT p.platform_id
-           FROM project_service.projects p
-          WHERE (p.id = g.project_id)
-         LIMIT 1) = core.current_platform_id()) AND core.has_any_of_roles('{platform_user,scoped_user,anonymous}'::text[]))
+  WHERE core.has_any_of_roles('{platform_user,scoped_user,anonymous}'::text[])
   ORDER BY g.id DESC;
 
 
