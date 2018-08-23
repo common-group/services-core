@@ -1,0 +1,102 @@
+upstream payment_service_api_server {
+    server ${PAYMENT_SERVICE_API_SERVER};
+}
+upstream community_service_api_server {
+    server ${COMMUNITY_SERVICE_API_SERVER};
+}
+upstream project_service_api_server {
+    server ${PROJECT_SERVICE_API_SERVER};
+}
+upstream analytics_service_api_server {
+    server ${ANALYTICS_SERVICE_API_SERVER};
+}
+upstream catarse_moment_service_api_server {
+    server ${CATARSE_MOMENT_SERVICE_API_SERVER};
+}
+upstream notification_service_api_server {
+    server ${NOTIFICATION_SERVICE_API_SERVER};
+}
+upstream recommender_service_api_server {
+    server ${RECOMMENDER_SERVICE_API_SERVER};
+}
+upstream common_api_service_server {
+    server ${COMMON_SERVICE_API_SERVER};
+}
+
+server {
+    listen ${PORT} default_server;
+    server_name _;
+
+    keepalive_timeout 5;
+    proxy_ssl_session_reuse off;
+    #proxy_redirect off;
+
+	proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    set $host_payment_service_api ${PAYMENT_SERVICE_API_SERVER};
+    set $host_community_service_api ${COMMUNITY_SERVICE_API_SERVER};
+    set $host_project_service_api ${PROJECT_SERVICE_API_SERVER};
+    set $host_analytics_service_api ${ANALYTICS_SERVICE_API_SERVER};
+    set $host_catarse_moment_service_api ${CATARSE_MOMENT_SERVICE_API_SERVER};
+    set $host_notification_service_api ${NOTIFICATION_SERVICE_API_SERVER};
+    set $host_recommender_service_api ${RECOMMENDER_SERVICE_API_SERVER};
+    set $host_common_service_api ${COMMON_SERVICE_API_SERVER};
+	set $require_pagination "off";
+	
+	set $proxy_host ${COMMON_SERVICE_API_SERVER};
+
+	set $env_proto_schema ${PROTO_SCHEMA};
+	set $internal_jwt "";
+
+    set $token "";
+    if ($is_args) {
+        set $token "&";
+    }
+
+	resolver ${DNS_RESOLVER};
+
+	#rewrite header with new internal jwt
+	#rewrite_by_lua_file '/etc/nginx/conf.d/rewrite_auth_header.lua';
+	rewrite_by_lua_file '/etc/nginx/conf.d/rewrite_request_commons.lua';
+
+	# /v1/* API endpoints
+	location ~ "^/v1/" {
+		location ~ "^/v1/api_keys(?:\/)?.*$" {
+            # Current mapped routes for /v1/api_keys
+			# POST 			/v1/api_keys
+			# DELETE		/v1/api_keys/:api_key_id
+			include /etc/nginx/conf.d/locations/v1/api_keys_location.conf;
+        }
+
+		location ~ "^/v1/users(?:\/)?.*$" {
+            # Current mapped routes for /v1/users
+			# POST 			/v1/users/login
+			# POST 			/v1/users/logout
+			include /etc/nginx/conf.d/locations/v1/users_location.conf;
+		}
+
+		location ~ "^/v1/subscriptions(?:\/)?.*$" {
+			include /etc/nginx/conf.d/locations/v1/subscriptions_location.conf;
+		}
+
+		location ~ "^/v1/payments(?:\/)?.*$" {
+			include /etc/nginx/conf.d/locations/v1/payments_location.conf;
+		}
+
+		# scopes to /projects route
+		location ~ "^/v1/projects(?:\/)?.*$" {
+			# Current mapped routes for /v1/projects...
+			# GET|POST 			/v1/projects
+			# GET|PUT|DELETE 	/v1/projects/:project_id
+			# GET|POST 			/v1/projects/:project_id/goals
+			# GET|PUT|DELETE 	/v1/projects/:project_id/goals/:goal_id
+			# GET|POST 			/v1/projects/:project_id/rewards
+			# GET|PUT|DELETE 	/v1/projects/:project_id/rewards/:reward_id
+			# GET 				/v1/projects/:project_id/fund_stats
+			# GET 				/v1/projects/:project_id/subscriptions_per_day
+			# GET 				/v1/projects/:project_id/subscriptions_per_month
+			include /etc/nginx/conf.d/locations/v1/projects_location.conf;
+		}
+	}
+}
