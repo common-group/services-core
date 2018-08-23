@@ -1,0 +1,37 @@
+{
+  "name": "payment-service-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "ava": {
+    "files": [
+      "test/**/*.js",
+      "!test/support/*.js"
+    ]
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "dependencies": {
+    "ava": "^1.0.0-beta.3",
+    "express": "^4.16.2",
+    "get-stdin": "^5.0.1",
+    "lodash": "^4.17.4",
+    "luxon": "^0.2.5",
+    "nock": "^9.1.6",
+    "pagarme": "^3",
+    "pg": "^7",
+    "ramda": "^0.25.0",
+    "raven": "^2.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/common-group/payment-service-api.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/common-group/payment-service-api/issues"
+  },
+  "homepage": "https://github.com/common-group/payment-service-api#readme"
+}
