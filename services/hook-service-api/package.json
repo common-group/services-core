@@ -1,0 +1,21 @@
+{
+  "name": "hook-service-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "crypto": "^1.0.1",
+    "express": "^4.16.2",
+    "pagarme": "^3.1.3",
+    "pg": "^7.4.0",
+    "ramda": "^0.25.0",
+    "raven": "^2.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
