@@ -1,0 +1,148 @@
+import runTest from '../../test/runTest'
+
+test('client.company.activate', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.activate(),
+    method: 'POST',
+    url: '/companies/activate',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+test('client.company.affiliationProgress', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.affiliationProgress(),
+    method: 'GET',
+    url: '/company/affiliation_progress',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+test('client.company.create', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123',
+    },
+    subject: client => client.company.create({
+      name: 'Richard Roupas',
+    }),
+    method: 'POST',
+    url: '/companies',
+    body: {
+      api_key: 'abc123',
+      name: 'Richard Roupas',
+    },
+  })
+})
+
+test('client.company.createTemporary', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123',
+    },
+    subject: client => client.company.createTemporary({
+      potato: 'yes',
+    }),
+    method: 'POST',
+    url: '/companies/temporary',
+    body: {
+      api_key: 'abc123',
+      potato: 'yes',
+    },
+  })
+})
+
+test('client.company.current', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.current(),
+    method: 'GET',
+    url: '/company',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+test('client.company.emailTemplates.find', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.emailTemplates.find({ id: 1234 }),
+    method: 'GET',
+    url: '/company/email_templates/1234',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+test('client.company.emailTemplates.update', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client =>  client.company.emailTemplates.update({ id: 4321 }),
+    method: 'PUT',
+    url: '/company/email_templates/4321',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+test('client.company.resetKeys', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.resetKeys(),
+    method: 'PUT',
+    url: '/company/reset_keys',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+test('client.company.update', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.update(),
+    method: 'PUT',
+    url: '/company',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})
+
+
+test('client.company.updateBranding', () => {
+  return runTest({
+    connect: {
+      api_key: 'abc123'
+    },
+    subject: client => client.company.updateBranding({ id: 1234 }),
+    method: 'PUT',
+    url: '/company/branding/1234',
+    body: {
+      api_key: 'abc123',
+    },
+  })
+})

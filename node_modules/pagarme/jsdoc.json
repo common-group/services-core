@@ -1,0 +1,19 @@
+{
+  "source": {
+    "include": ["lib", "README.md"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs",
+    "template": "./node_modules/postman-jsdoc-theme"
+  }
+}
