@@ -1,0 +1,7 @@
+-- Your SQL goes here
+
+create index transition_catalog_payment_id_uidx on payment_service.payment_status_transitions(catalog_payment_id);
+create index transition_to_status_uidx on payment_service.payment_status_transitions(to_status);
+create index transition_from_status_uidx on payment_service.payment_status_transitions(from_status);
+create index transition_catalog_payment_id_to_status_uidx on payment_service.payment_status_transitions(catalog_payment_id, to_status);
+create index transition_catalog_payment_id_to_status_from_status_uidx on payment_service.payment_status_transitions(catalog_payment_id, to_status, from_status);

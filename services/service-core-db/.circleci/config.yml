@@ -1,0 +1,98 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add git bash
+      - run: ./run_sql_tests_with_docker.sh
+  push_docker:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      # with credentials stored in the UI
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      # build the application container
+      - run: docker build -t comum/services-core:latest .
+      # deploy the container
+      - run: docker push comum/services-core:latest
+  deploy_production:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add git nodejs nodejs-npm bash
+      - run: npm install -g heroku
+      - run: bash .circleci/setup-heroku.sh
+      - run: heroku container:login
+
+      - run: heroku container:push service_core --recursive -a $PRODUCTION_SERVICE_CORE_DB_APP
+      - run: heroku container:release service_core -a $PRODUCTION_SERVICE_CORE_DB_APP
+      - run: sleep 5 # wait time for new relase on heroku
+      - run: heroku run ./scripts/run_migrations.sh -a $PRODUCTION_SERVICE_CORE_DB_APP --type=service_core
+      - run: heroku restart -a $PRODUCTION_ANALYTICS_API_APP
+      - run: heroku restart -a $PRODUCTION_COMMUNITY_API_APP
+      - run: heroku restart -a $PRODUCTION_PAYMENT_API_APP
+      - run: heroku restart -a $PRODUCTION_PROJECT_API_APP
+      - run: heroku restart -a $PRODUCTION_PLATFORM_API_APP
+      - run: heroku restart -a $PRODUCTION_NOTIFICATION_API_APP
+
+
+  deploy_sandbox:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add git nodejs nodejs-npm bash
+      - run: npm install -g heroku
+      - run: bash .circleci/setup-heroku.sh
+      - run: heroku container:login
+
+      - run: heroku container:push service_core --recursive -a $SANDBOX_SERVICE_CORE_DB_APP
+      - run: heroku container:release service_core -a $SANDBOX_SERVICE_CORE_DB_APP
+      - run: sleep 5 # wait time for new relase on heroku
+      - run: heroku run ./scripts/run_migrations.sh -a $SANDBOX_SERVICE_CORE_DB_APP --type=service_core
+
+      - run: heroku restart -a $SANDBOX_ANALYTICS_API_APP
+      - run: heroku restart -a $SANDBOX_COMMUNITY_API_APP
+      - run: heroku restart -a $SANDBOX_PAYMENT_API_APP
+      - run: heroku restart -a $SANDBOX_PROJECT_API_APP
+      - run: heroku restart -a $SANDBOX_PLATFORM_API_APP
+      - run: heroku restart -a $SANDBOX_NOTIFICATION_API_APP
+
+
+workflows:
+  version: 2
+  build-and-push:
+    jobs:
+      - build
+      - push_docker:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - deploy_sandbox:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - deploy_production:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+
+

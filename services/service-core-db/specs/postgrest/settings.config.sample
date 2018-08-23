@@ -1,0 +1,7 @@
+db-uri = "postgres://postgrest:changeme@localhost:5432/service_core_test"
+db-schema = "api"
+db-anon-role = "anonymous"
+db-pool = 10
+
+server-port = 8888
+jwt-secret = "gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C"

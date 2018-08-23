@@ -1,0 +1,30 @@
+
+---
+- config:
+  - testset: "users_count"
+- test:
+  - name: "Basic get with anonymous"
+  - headers: { 'Platform-Code': 'a28be766-bb36-4821-82ec-768d2634d78b' }
+  - url: "/users_count"
+  - method: "GET"
+  - expected_status: [401]
+
+- test:
+  - name: "Get with scoped user"
+  - url: "/users_count"
+  - method: "GET"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2NvcGVkX3VzZXIiLCJwbGF0Zm9ybV90b2tlbiI6ImEyOGJlNzY2LWJiMzYtNDgyMS04MmVjLTc2OGQyNjM0ZDc4YiIsInVzZXJfaWQiOjk5OX0.UhdkoT6jKx_sBLzUYEkhtM_ya5OebuCDyHVoEUzMNys', 'Content-Type': 'application/json'}
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.users", comparator: "eq", expected: 2}
+
+
+- test:
+  - name: "Get with platform user api"
+  - url: "/users_count"
+  - method: "GET"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A', 'Content-Type': 'application/json'}
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.users", comparator: "eq", expected: 2}
+

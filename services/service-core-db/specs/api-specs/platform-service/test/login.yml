@@ -1,0 +1,22 @@
+---
+- config:
+  - testset: "Login tests"
+- test:
+  - name: "Login with valid credentials"
+  - url: "/rpc/login"
+  - method: "POST"
+  - body: '{"email": "test_login_user_01@test.com", "password": "123456"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: 'token', comparator: "regex", expected: '.*'}
+
+- test:
+  - name: "Login with invalid credentials"
+  - url: "/rpc/login"
+  - method: "POST"
+  - body: '{"email": "test2_login_user_01@test.com", "password": "123456"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [403]
+  - validators:
+    - compare: {jsonpath_mini: 'message', comparator: "eq", expected: 'invalid user or password'}

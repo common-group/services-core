@@ -1,0 +1,37 @@
+---
+- config:
+  - testset: "Platform api"
+- test:
+  - name: "listing platform api keys"
+  - url: "/api_keys"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOiI2ZDg3MGVkNy02NWM3LTQ0MTktYjc4Yi0zOTQ2ZTZmNmU2OTUifQ.YyXGSrPSTAqJWn4ILPkaDZAs7axadcUhC29wgrlusKc', 'Content-Type': 'application/json'}
+  - method: "GET"
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.platform_id", comparator: "eq", expected: '8187a11e-6fa5-4561-a5e5-83329236fbd6'}
+    - compare: {jsonpath_mini: "0.token", comparator: "eq", expected: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIiA6ICJwbGF0Zm9ybV91c2VyIiwgInBsYXRmb3JtX3Rva2VuIiA6ICJhMjhiZTc2Ni1iYjM2LTQ4MjEtODJlYy03NjhkMjYzNGQ3OGIiLCAiZ2VuX2F0IiA6IDE1MDQxMzM0NDB9.30t56HzhKy8IvYRryWSXRePQlo3ClI5_fN3U-d-dV5A"}
+
+- test:
+  - name: "listing api keys without token"
+  - url: "/api_keys"
+  - method: "GET"
+  - expected_status: [401]
+
+- test:
+  - name: "Creating new api key"
+  - url: "/rpc/generate_api_key"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOiI2ZDg3MGVkNy02NWM3LTQ0MTktYjc4Yi0zOTQ2ZTZmNmU2OTUifQ.YyXGSrPSTAqJWn4ILPkaDZAs7axadcUhC29wgrlusKc', 'Content-Type': 'application/json'}
+  - method: "POST"
+  - body: '{"platform_id": "8187a11e-6fa5-4561-a5e5-83329236fbd6"}'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.platform_id", comparator: "eq", expected: "8187a11e-6fa5-4561-a5e5-83329236fbd6"}
+    - compare: {jsonpath_mini: "0.token", comparator: "regex", expected: ".*"}
+
+- test:
+  - name: "Creating new api key without key"
+  - url: "/rpc/generate_api_key"
+  - method: "POST"
+  - body: '{"platform_id": "8187a11e-6fa5-4561-a5e5-83329236fbd6"}'
+  - expected_status: [404]
+

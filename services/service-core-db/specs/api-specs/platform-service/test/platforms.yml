@@ -1,0 +1,22 @@
+
+---
+- config:
+  - testset: "Platforms"
+- test:
+  - name: "Creating platform"
+  - url: "/rpc/create_platform"
+  - headers: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInVzZXJfaWQiOiI2ZDg3MGVkNy02NWM3LTQ0MTktYjc4Yi0zOTQ2ZTZmNmU2OTUifQ.YyXGSrPSTAqJWn4ILPkaDZAs7axadcUhC29wgrlusKc', 'Content-Type': 'application/json'}
+  - method: "POST"
+  - body: '{"name": "platform test"}'
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: "0.name", comparator: "eq", expected: "platform test"}
+
+- test:
+  - name: "Creating platform without auth"
+  - url: "/rpc/create_platform"
+  - method: "POST"
+  - body: '{"name": "platform test"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [401]
+

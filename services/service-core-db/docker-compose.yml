@@ -1,0 +1,396 @@
+version: "3"
+volumes:
+  postgres-data:
+    driver: local
+  postgres-catarse-data:
+    driver: local
+  postgres-catarse-moments-data:
+    driver: local
+  dispatcher-redis-data:
+    driver: local
+  catarse-redis-data:
+    driver: local
+
+networks:
+  cluster:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.1.0/26
+
+services:
+  dispatcher_redis:
+    image: redis
+    volumes:
+      - dispatcher-redis-data:/var/lib/redis
+    command: redis-server --appendonly yes
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.40
+
+  catarse_redis:
+    image: redis
+    volumes:
+      - catarse-redis-data:/var/lib/redis
+    command: redis-server --appendonly yes
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.41
+
+  catarse_db:
+    image: library/postgres:9.4-alpine
+    volumes:
+      - ./init_catarse.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-catarse-data:/var/lib/postgresql/data
+    ports:
+      - "5445:5432"
+    links:
+        - "service_core_db:service_core_db"
+    depends_on:
+      - service_core_db
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: catarse
+      POSTGRES_DB: catarse_db
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.42
+
+  catarse_moments_db:
+    image: library/postgres:10.3-alpine
+    volumes:
+      - ./init_catarse_moments.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-catarse-moments-data:/var/lib/postgresql/data
+    ports:
+      - "5446:5432"
+    links:
+        - "catarse_db:catarse_db"
+    depends_on:
+      - catarse_db
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: catarse_moments
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.59
+
+  service_core_db:
+    image: library/postgres:9.6.5-alpine
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5444:5432"
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: service_core
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.43
+
+  # service just for apply migrations or seed
+  migrations:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # image: comum/services-core:latest
+    env_file:
+      - ./compose_env/.service_core_migrator.env
+    command: ["./scripts/run_migrations.sh"]
+    volumes: 
+      - ./migrations:/usr/app/migrations
+    links:
+        - "service_core_db:service_core_db"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.57
+
+  notification_dispatcher:
+    build:
+      context: ../notification-service-api
+      dockerfile: Dockerfile
+    env_file:
+      - ./compose_env/.notification_dispatcher.env
+    command: ["./dispatchers/notification_dispatcher"]
+    volumes:
+      - ../notification-service-api/:/usr/app
+    links:
+      - "service_core_db:service_core_db"
+      - "dispatcher_redis:dispatcher_redis"
+    depends_on:
+      - service_core_db
+      - dispatcher_redis
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.44
+
+  payment_stream_processor:
+    build:
+      context: ../payment-service-api
+      dockerfile: Dockerfile
+    # image: comum/payment-service:latest
+    env_file:
+      - ./compose_env/.payment_stream_processor.env
+    command: ["./dispatchers/payment_stream_processor"]
+    volumes:
+      - ../payment-service-api/:/usr/app
+    links:
+      - "service_core_db:service_core_db"
+      - "dispatcher_redis:dispatcher_redis"
+    depends_on:
+      - service_core_db
+      - dispatcher_redis
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.45
+
+  subscriptions_scheduler:
+    build:
+      context: ../payment-service-api
+      dockerfile: Dockerfile
+    env_file:
+      - ./compose_env/.subscriptions_scheduler.env
+    command: ["./scripts/subscription_scheduler.js"]
+    volumes:
+      - ../payment-service-api/:/usr/app
+    links:
+      - "service_core_db:service_core_db"
+    depends_on:
+      - service_core_db
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.46
+
+  hook_service_api:
+    build:
+      context: ../hook-service-api
+      dockerfile: Dockerfile
+    env_file:
+      - ./compose_env/.hook_service_api.env
+    command: ["npm", "start", "server.js"]
+    volumes:
+      - ../hook-service-api/:/usr/app
+    links:
+      - "service_core_db:service_core_db"
+    depends_on:
+      - service_core_db
+    ports:
+      - "3006:4444"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.47
+
+  catarse:
+    build:
+      context: ../catarse
+      dockerfile: dev.Dockerfile
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
+      REDIS_URL: redis://catarse_redis:6379
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+    volumes:
+      # mount volumes for development on catarse / catarse.js
+      - ../catarse/:/usr/app
+      - ../catarse.js/:/usr/app/node_modules/catarse.js
+    links:
+      - "catarse_db:localhostcatarse"
+      - "catarse_redis:catarse_redis"
+    depends_on:
+      - catarse_db
+      - catarse_redis
+    ports:
+      - "3000:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.48
+
+  catarse_api:
+    image: postgrest/postgrest:v0.4.3.0
+    env_file:
+      - ./compose_env/.catarse_api.env
+    depends_on:
+      - catarse_db
+    links:
+      - "catarse_db:catarse_db"
+    ports:
+      - "3008:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.49
+
+  payment_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.payment_service_api.env
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    ports:
+      - "3001:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.50
+
+  project_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.project_service_api.env
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    ports:
+      - "3002:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.51
+
+  community_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.community_service_api.env
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    ports:
+      - "3003:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.52
+
+  platform_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.platform_service_api.env
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    ports:
+      - "3004:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.53
+
+  analytics_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.analytics_service_api.env
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    ports:
+      - "3005:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.54
+
+  notification_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.notification_service_api.env
+    depends_on:
+      - service_core_db
+    links:
+      - "service_core_db:service_core_db"
+    ports:
+      - "3007:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.55
+
+  recommender_service_api:
+    build:
+      context: ../catarse_recommender
+      dockerfile: catarse_recommender/Dockerfile
+    env_file:
+      - ./compose_env/.recommender_service_api.env
+    command: gunicorn -w 4 -b 0.0.0.0:3009 catarse_recommender.application:app
+    volumes:
+      - ../catarse_recommender/:/usr/app
+    depends_on:
+      - catarse_db
+    links:
+      - "catarse_db:catarse_db"
+    ports:
+      - "3009:3009"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.56
+
+  catarse_moment_service_api:
+    image: postgrest/postgrest:v0.4.4.0
+    env_file:
+      - ./compose_env/.catarse_moment_service_api.env
+    depends_on:
+      - catarse_moments_db
+    links:
+      - "catarse_moments_db:catarse_moments_db"
+    ports:
+      - "3010:3000"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.58
+
+  common_docs:
+    image: hrektts/mdbook
+    volumes:
+      - ../common/:/data
+    ports:
+      - "3011:3011"
+      - "3012:3012"
+    command: ["mdbook", "serve", "-p", "3011", "-w", "3012", "-i", "0.0.0.0"]
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.60
+
+  common_proxy:
+    build:
+      context: ../proxy
+      dockerfile: Dockerfile
+    volumes:
+      - ../proxy/nginx.conf:/usr/local/openresty/nginx/confg/nginx.conf
+      - ../proxy/conf.d:/etc/nginx/conf.d
+    links:
+      - "payment_service_api:payment_service_api"
+      - "project_service_api:project_service_api"
+      - "community_service_api:community_service_api"
+      - "analytics_service_api:analytics_service_api"
+      - "catarse_moment_service_api:catarse_moment_service_api"
+      - "notification_service_api:notification_service_api"
+      - "recommender_service_api:recommender_service_api"
+      - "common_api:common_api"
+      - "service_core_db:service_core_db"
+    env_file:
+      - ./compose_env/.common_proxy.env
+    ports:
+      - "3013:80"
+    command: /bin/sh -c "envsubst '$$PORT $$PROTO_SCHEMA $$PAYMENT_SERVICE_API_SERVER $$PROJECT_SERVICE_API_SERVER $$COMMUNITY_SERVICE_API_SERVER $$ANALYTICS_SERVICE_API_SERVER $$NOTIFICATION_SERVICE_API_SERVER $$CATARSE_MOMENT_SERVICE_API_SERVER $$RECOMMENDER_SERVICE_API_SERVER $$COMMON_SERVICE_API_SERVER $$DNS_RESOLVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf && openresty"
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.61
+
+  common_api:
+    build:
+      context: ../common-api
+      dockerfile: Dockerfile
+    volumes:
+      - ../common-api:/app
+      - ../common_models:/common_models
+    links:
+      - "service_core_db:service_core_db"
+    env_file:
+      - ./compose_env/.common_api.env
+    ports:
+      - "3014:3000"
+    command: 'bundle exec rails s -b 0.0.0.0 -p 3000'
+    networks:
+      cluster:
+        ipv4_address: 10.0.1.62
+

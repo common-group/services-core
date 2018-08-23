@@ -1,0 +1,42 @@
+# the codes are related with https://postgrest.com/en/v4.1/api.html#http-status-codes
+---
+- config:
+  - testset: "Sign up tests"
+- test:
+  - name: "Sign up new user with valid params"
+  - url: "/rpc/sign_up"
+  - method: "POST"
+  - body: '{"name": "test in registe", "email": "test_in_register@bar.com","password": "123456"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [200]
+  - validators:
+    - compare: {jsonpath_mini: 'token', comparator: "regex", expected: '.*'}
+- test:
+  - name: "Should not create duplicated user"
+  - url: "/rpc/sign_up"
+  - method: "POST"
+  - body: '{"name": "test in registe", "email": "test_in_register@bar.com","password": "123456"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [409]
+  - validators:
+    - compare: {jsonpath_mini: "code", comparator: "eq", expected: "23505"}
+- test:
+  - name: "Sign up new user with invalid params (email)"
+  - url: "/rpc/sign_up"
+  - method: "POST"
+  - body: '{"name": "test in registe", "email": "test_in_registerbar.com","password": "123456"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [400]
+  - validators:
+    - compare: {jsonpath_mini: "message", comparator: "contains", expected: "users_email_check"}
+- test:
+  - name: "Sign up new user with missing params (name)"
+  - url: "/rpc/sign_up"
+  - method: "POST"
+  - body: '{"email": "test_in_registerbar.com","password": "123456"}'
+  - headers: {'Content-Type': 'application/json'}
+  - expected_status: [404]
+  - validators:
+    - compare: {jsonpath_mini: "code", comparator: "eq", expected: "42883"}
+
+
