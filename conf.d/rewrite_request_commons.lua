@@ -32,7 +32,7 @@ end
 
 if ngx.var.require_pagination == 'on' then
     -- -- ngx.log(ngx.ERR, 'PAGINATION REQUIRED ->>>>'..inspect(ngx.var.require_pagination))
-    local limit, offset
+    local args = ngx.req.get_uri_args()
     local page_param = tonumber(ngx.var.arg_PAGE) or 1
     local per_page_param = tonumber(ngx.var.arg_PER_PAGE) or 20
 
@@ -49,11 +49,14 @@ if ngx.var.require_pagination == 'on' then
     -- ngx.log(ngx.ERR, 'PAGE ->>>>'..inspect(page_param))
     -- ngx.log(ngx.ERR, 'PER_PAGE ->>>>'..inspect(per_page_param))
 
-    limit = per_page_param
-    offset = ((page_param*per_page_param)-per_page_param)
+    args.page = nil
+    args.per_page = nil
+    args.limit = tonumber(per_page_param)
+    args.offset = tonumber(((page_param*per_page_param)-per_page_param))
 
     -- ngx.log(ngx.ERR, 'LIMIT ->>>>'..inspect(limit))
     -- ngx.log(ngx.ERR, 'OFFSET ->>>>'..inspect(offset))
 
-    ngx.req.set_uri_args({ limit = limit, offset = offset })
+    ngx.log(ngx.ERR, 'ARGS ->>>>'..inspect(args))
+    ngx.req.set_uri_args(args)
 end
