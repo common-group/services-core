@@ -1,0 +1,106 @@
+= render 'shared/header_big'
+.w-row.admin
+  h1= @title = t('.title')
+  = simple_form_for '', url: admin_financials_path, method: :get do |form|
+    .w-row
+      .w-col-2.w-col
+        = form.input :pg_search, as: :string, label: t('.permalink'), input_html: {value: current_scopes[:search_on_name]}
+      .w-col-2.w-col
+        = form.input "between_expires_at[start_at]", as: :string, label: t(".between_expires_at"), input_html: {value: params[:between_expires_at] && params[:between_expires_at][:start_at], data: { fixed_mask: '99/99/9999' } }
+      .w-col-2.w-col
+        = form.input "between_expires_at[ends_at]", as: :string, label: '', input_html: {value: params[:between_expires_at] && params[:between_expires_at][:ends_at], data: { fixed_mask: '99/99/9999' } }
+      .w-col-2.w-col
+        = form.input :by_progress, as: :string, label: t('.by_progress'), input_html: {value: params[:by_progress]}
+      .w-col-2.w-col
+        = form.input :user_name_contains, as: :string, label: t('.user'), input_html: {value: params[:user_name_contains]}
+      .w-col-2.w-col
+        = form.input :with_state, collection: Project.state_names, label: t('admin.filter.with_state'), as: :select, selected: params[:with_state], include_blank: true
+
+    .w-row
+      .w-col-2.w-col
+        = form.button :submit, t('admin.filter.submit'), class: 'button medium negative'
+      .w-col-2.w-col
+        = link_to t('.search_report'), admin_financials_path(params: params,format: :csv)
+      .w-col-2.w-col
+        p.filtered-number = @scoped_projects.count(:all)
+        p.filtered-number-label
+          = pluralize_without_number(@scoped_projects.count(:all), t('project_singular'), t('project_plural'))
+          '
+          = pluralize_without_number @scoped_projects.count(:all), t('found_singular'), t('found_plural')
+
+  = paginate @projects
+  - if @projects.empty?
+    = t('.no_projects')
+  - else
+    - @projects.each do |project|
+      table.table.fontsize-smallest
+        thead.card.card-secondary
+          tr
+            th style="width: 200px"= t('.name')
+            th= t('.user')
+            th= t('.goal')
+            th= t('.pledged')
+            th= t('.total_payment_service_fee')
+            th= t('.total_catarse_fee')
+            th= t('.repass_value')
+            th= t('.expires_at')
+            th= t('.reports')
+            th= t('.zero_fee')
+            th= t('.state')
+        tbody
+          tr id=project.id
+            td= link_to project.name, project_by_slug_path(permalink: project.permalink), target: '_blank'
+            td= link_to (project.user.moip_login.blank? ? 'Não preenchido' : project.user.moip_login), user_path(project.user, anchor: :settings), target: '_blank'
+            td= project.display_goal
+            td= project.display_pledged_with_cents
+            td= number_to_currency project.total_payment_service_fee, precision: 2
+            - catarse_fee = project.service_fee * project.pledged
+            td
+              = number_to_currency catarse_fee, precision: 2
+            td
+              = number_to_currency ((project.pledged*(1-project.service_fee))), precision: 2
+            td
+              = project.display_expires_at
+            td
+              = link_to t('.contribution_report'), admin_reports_contribution_reports_path(project_id: project.id, format: :csv)
+            td
+              = project.has_blank_service_fee?
+            td
+              - if project.online?
+                span.label.label-online= project.state
+              - elsif project.successful?
+                span.label.label-success= project.state
+              - elsif project.failed? or project.rejected?
+                span.label.label-important= project.state
+              - elsif project.waiting_funds?
+                span.label.label-warning= project.state
+              - else
+                span.label= project.state
+          tr class='detail_tr' id="project_details-#{project.id}"
+            td colspan='11'
+              table style='border: 1px #ededed solid'
+                thead
+                  th style='width: 350px'= t('.details.bank_data')
+                  th= t('.details.name')
+                  th= t('.details.document')
+                  th= t('.details.email')
+                  th= t('.details.state_inscription')
+                  th= t('.details.address')
+                  th= t('.details.phone_number')
+                  th= t('.details.permalink')
+                tbody
+                  tr
+                    td
+                      = project.user.try(:decorator).try(:display_bank_account)
+                      br/
+                      = project.user.try(:decorator).try(:display_bank_account_owner)
+                    td= project.user.try(:decorator).try(:display_name)
+                    td= project.user.name
+                    td= project.user.email
+                    td= project.user.state_inscription
+                    td= project.user.try(:decorator).try(:display_address)
+                    td= project.user.phone_number
+                    td= link_to project.permalink, project_by_slug_path(permalink: project.permalink), target: '_blank'
+
+  = paginate @projects
+= render 'shared/footer_big'

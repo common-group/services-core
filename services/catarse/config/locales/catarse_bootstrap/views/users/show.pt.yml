@@ -1,0 +1,187 @@
+pt:
+  users:
+    balance:
+      value_text: 'Valor'
+      value: 'Valor'
+      request_fund: 'Solicitar saque'
+      event_names:
+        successful_project_pledged: 'Arrecadação de projeto financiado %{project_name}'
+        catarse_project_service_fee: 'Taxa de serviço do Catarse (%{service_fee}%)'
+        irrf_tax_project: 'Impostos gerados a partir da nota fiscal do Catarse para PJ'
+        balance_transfer_request: 'Solicitação de transferência para conta bancária'
+        balance_transfer_error: 'Erro na transferência para conta bancária'
+        balance_transfer_project:  'Solicitação de transferência para conta bancária'
+        project_contribution_chargeback: 'Pagamento contestado pelo apoiador: %{contributor_name}'
+        project_contribution_reverse_chargeback: 'Pagamento confirmado após contestação pelo apoiador: %{contributor_name}'
+        project_contribution_confirmed_after_finished: 'Pagamento confirmado após projeto finalizado: %{project_name}'
+        catarse_contribution_fee: 'Taxa de serviço do Catarse (%{service_fee}%)'
+        subscription_fee: 'Taxa de serviço do Catarse (%{service_fee}%)'
+        subscription_payment: '%{subscriber_name} %{subscription_reward_label} - (Assinatura %{project_name})'
+        contribution_refund: 'Reembolso do projeto %{project_name}'
+        refund_contributions: 'Reembolso para apoiadores do projeto %{project_name}'
+        contribution_chargedback: 'Contestação de apoio para o projeto %{project_name}'
+        subscription_payment_chargedback: 'Contestação de apoio para o projeto %{project_name}'
+        balance_expired: "Reembolso não requisitado dentro do prazo de 90 dias. Consulte <a target='__blank' href='https://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos-cancelamentos#reembolso90dias'>nossa política</a>"
+        contribution_refunded_after_successful_pledged: 'Reembolso do projeto %{project_name}'
+        subscription_payment_refunded: 'Reembolso do projeto %{project_name}'
+        balance_received_from: 'Transferência recebida de %{from_user_name}'
+        balance_transferred_to: 'Transferência enviada para %{to_user_name}'
+      debit: 'Saída'
+      credit: 'Entrada'
+      totals: 'Saldo '
+      totals_transactions_title: 'Extrato ( saldo em conta: R$ %{value} )'
+      day_balance: 'Saldo do dia'
+      withdraw: "Sacar dinheiro"
+      withdraw_cta: '$ Realizar Saque'
+      last_withdraw_msg: 'Você já sacou %{amount} em %{date}'
+      no_withdraws_this_month: 'Nenhum saque realizado em %{month_name}'
+      withdraw_limits_msg: 'Você pode realizar 01 saque por mês. O valor sacado é sempre o total disponível no saldo'
+      withdraw_canceling_title: 'Cancelamento de projeto em andamento'
+      withdraw_canceling_msg: 'Você só poderá solicitar um saque após o projeto ser definitivamente cancelado e os apoiadores reembolsados.'
+      success_message: 'Seu saque foi solicitado com sucesso. Em até 10 dias úteis o seu dinheiro estará em sua conta bancária!'
+      bank:
+        account: "Conta:"
+        name: 'Nome / Razão Social:'
+        cpf_cnpj: 'CPF / CNPJ:'
+        bank_name: 'Banco:'
+        agency: 'Agência:'
+        pf: 'CPF:'
+        pj: 'CNPJ:'
+        name: 'Nome:'
+        account_type_name: 'Tipo de conta:'
+        account_type:
+          conta_corrente: 'Conta Corrente'
+          conta_poupanca: 'Conta Poupança'
+          conta_corrente_conjunta: 'Conta Corrente Conjunta'
+          conta_poupanca_conjunta: 'Conta Poupança Conjunta'
+    profile:
+      user_since: "Chegou junto em %{date}"
+      no_project_contribution: "Ainda não apoiou projetos"
+      single_project_contribution: "Apoiou 1 projeto"
+      multiple_project_contribution: "Apoiou %{n_projects} projetos"
+      single_project_created: " e já criou 1 projeto"
+      multiple_project_created: " e já criou %{n_projects} projetos"
+    contribution_row:
+      anonymous: Quero que meu apoio não seja público
+      print_slip: Imprimir boleto
+      slip_copy: Gerar 2a via
+      status: Status
+      contact_author: "Enviar mensagem"
+      show_receipt: 'Ver recibo'
+      contributed_projects: "Projetos que apoiei"
+      contribution_value: "Valor do apoio"
+      contribution_status: "Status do apoio"
+      request_refund: 'Solicitar reembolso'
+      reward: Recompensa
+      no_reward: "Não selecionou recompensa"
+      delivery_estimate: "Estimativa de entrega:"
+      delivery_status: "Status da entrega:"
+      answer_survey: "Responda o questionário"
+    card:
+      twitter_profile: "Perfil no Twitter"
+      facebook_profile: "Perfil no Facebook"
+      author_website: "Site"
+      contact_author: "Enviar mensagem"
+    failed_reactivation: "O link para reativação é inválido, por favor entre em contato com a nossa equipe."
+    reactivated: "Seja bem vindo de volta, sua conta foi reativada."
+    project:
+      confirmed: "Confirmado"
+      refunded: "Reembolsado"
+      requested_refund: "Reembolso solicitado"
+      waiting_confirmation: "Aguardando confirmação"
+      tell_about_this_contribution: Conte para o mundo sobre o seu apoio!
+    credit_cards:
+      index:
+        last_digits: 'Cartão'
+        brand: 'Operadora'
+        title: 'Cartões de credito'
+        remove: 'Remover'
+    credits:
+      modal:
+        title: 'Quer mesmo solicitar o reembolso do seu apoio?'
+        text: "Saiba como funciona o processo de reembolso no Catarse:"
+        link: "Regras e Funcionamento dos reembolsos / estornos"
+        reject_btn: "Não, desejo manter meus créditos"
+        accept_btn: "Sim, desejo solicitar o reembolso do meu apoio"
+      index:
+        contribution_date: "Data do apoio"
+        current_credits_html: "Seu saldo atual é de <span id=\"current_credits\">%{credits}</span> em créditos."
+        important_html: "Para saber todas as regras de funcionamento de reembolso, <a href='http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos' target='_blank'>clique aqui</a>. Qualquer dúvida, acesse nosso <a href='http://suporte.catarse.me' target='_blank'>suporte</a>."
+        project: Projeto
+        refunded: "Solicitação confirmada. Entraremos em contato em até 4 dias uteís."
+        insufficient_credits: "Você não tem créditos suficientes para realizar este estorno."
+        refunds_title: "Apoios que podem ter estorno realizado"
+        request_refund: "Solicitar estorno"
+        requested_refund: "Solicitado estorno"
+        status: Status
+        title: "Meus créditos"
+        value: Valor
+      refund:
+        cannot_refund: "Este apoio não pode ser estornado."
+        error: "Oops. Ocorreu um erro ao solicitar seu estorno."
+        no_credits: "Você não possui créditos suficientes para realizar este estorno."
+        refunded: "Este apoio já foi estornado."
+        requested_refund: "Você já solicitou estorno para este apoio."
+      title: "Meus créditos"
+    current_user_fields:
+      bank_account_title: "Dados bancários"
+      bank_account_hint: "Seus dados bancários serão utilizados para realizar o reembolso integral do seu apoio, caso o projeto não atinja 100% da meta estabelecida."
+      my_facebook: 'Integração com o facebook'
+      bio_limit: 'até 140 caracteres'
+      updated: "As suas informações foram atualizadas"
+      update_social_info: "Atualizar informações"
+      social_info: "Informações para contato"
+      twitter: "twitter ( usuário )"
+      facebook_link: "perfil do facebook (link completo)"
+      other_link: "link da sua página na internet"
+      change_password: "Alterar minha senha"
+      current_password_hint: "<i>Para que a senha seja alterada você precisa confirmar a sua senha atual.</i>"
+      email_hint: "Seu email será utilizado apenas para envio de comunicações do Catarse e dos projetos que você apoiar. Ele não estará visível em seu perfil. Quando você apoiar um projeto, nós daremos seu email para o dono do projeto para que ele possa providenciar as recompensas."
+      email_tooltip: "Clique aqui para preencher seu email..."
+      gravatar_hint_html: "Você também pode mudar a sua foto usando o %{link} com seu email. <br>É tão simples quanto enviar uma imagem e já funciona para outros sites também ;)"
+      local_avatar: "Meu avatar"
+      submit_text: "Escolha sua imagem"
+      submit: "Enviar"
+      my_data: "Meus dados"
+      newsletter: "Quero receber novidades do Catarse por email"
+      password_hint: "<i>Deixe em branco caso você não queira trocar sua senha.</i>"
+      deactivate: "Desativar a minha conta"
+      deactivate_notice: "A conta de %{name} foi desativada."
+      deactivate_confirm: "Você deseja desativar essa conta?"
+      deactivate_hint: "Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente."
+    unsubscribes:
+      projects_in_reminder: "Projetos com lembrete ativo:"
+      title: "Escolha de quais projetos você deseja receber notificações:"
+      posts: "Eu quero receber atualizações dos projetos"
+    show:
+      projects:
+        here: 'aqui'
+        no_projects: "%{name} ainda não realizou nenhum projeto no Catarse. Será que a inspiração vai bater uma hora dessas?"
+        no_projects_current_user_html: "Você ainda não realizou nenhum projeto no Catarse. Deixe a inspiração bater e clique %{link} para começar!"
+        title: "Projetos de %{name}"
+        title_current_user: "Meus projetos"
+      contributions:
+        project_col: Projeto
+        contribution_col: Apoio
+        reward_col: Recompensa
+        survey_col: Questionário
+        anonymous: "Apoio anônimo."
+        no_contributions: "%{name} ainda não apoiou nenhum projeto. Mas a gente sabe que é só questão de tempo! :D"
+        no_contributions_current_user_html: "Você ainda não apoiou nenhum projeto. Que tal <a href=\"/\">começar agora</a>?"
+        no_reward: "Você não selecionou nenhuma recompensa"
+        title: "Projetos que %{name} já apoiou"
+        title_current_user: "Projetos que já apoiei"
+        your_reward: "Sua recompensa"
+      attention: "Atenção"
+      tabs:
+        credit_cards: 'Cartões de credito'
+        contributed_projects: "Projetos apoiados"
+        created_projects: "Projetos criados"
+        comments: Comentários
+        credits: Créditos
+        settings: Preferências
+        unsubscribes: Notificações
+      user_social:
+        email: "Me envie um email"
+        facebook: "Perfil no facebook"
+        twitter: "Perfil no twitter"

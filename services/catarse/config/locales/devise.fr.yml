@@ -1,0 +1,99 @@
+fr:
+  devise:
+    feedback_tab:
+      title: 'Feedback et aide'
+      header_html: 'Bienvenu au <br/> nouveau login de Catarse'
+      blog_button: 'En lire plus sur le blog'
+      form_feedback_link: 'Envoyer un feedback'
+      contact_link: 'Entrez en contact'
+    links:
+      forgot_password: "J’ai oublié mon mot de passe"
+    confirmations:
+      confirmed: "Votre compte a été confirmé avec succès. Vous êtes authentifié."
+      send_instructions: "Dans quelques instants, vous recevrez un email avec les instructions pour confirmé votre compte."
+      send_paranoid_instructions: "Si votre email existe déjà dans notre base de données, vous recevrais un email avec les instructions sur comment confirmer son compte en quelques minutes."
+    failure:
+      password_token: 'Le lien pour récupérer votre mot de passe a expirer. Veuillez réécrire votre email.'
+      already_authenticated: ''
+      #already_authenticated: Vous êtes déjà authentifier.
+      inactive: Cette email appartiens déjà a un compte désactivé
+      invalid: Email ou mot de passe incorrect
+      invalid_token: Le jeton d’authentification n’est pas valide.
+      locked: Votre compte est bloqué.
+      not_found_in_database: Email ou mot de passe incorrect
+      timeout: "Votre session a expiré, s'il vous plait, reconnectez vous pour continuer."
+      unauthenticated: ''
+      unconfirmed: "Avant de continuer, confirmez votre compte."
+    mailer:
+      confirmation_instructions:
+        subject: Instruction de confirmation
+      reset_password_instructions:
+        subject: Réécrivez votre mot de passe
+      unlock_instructions:
+        subject: Instruction de débloquement
+    omniauth_callbacks:
+      failure: 'Impossible d’autorisé un compte de %{kind} parceque %{reason}.'
+      success: ''
+      #success: Autorisation accepté d’un compte de%{kind}.
+    passwords:
+      no_token: ''
+      #no_token: Vous ne pouvez pas accéder à cette page sans être connecter. Si vous venez à partir d’un mail de mot de passe oublier, merci de vérifier si l’adresse est correcte.
+      send_instructions: "Nous venons d’envoyer un email avec les instructions pour définir un nouveau mot de passe. Si votre email existe dans notre base de données, vous recevrez un email avec un lien pour récupérer votre mot de passe."
+      send_paranoid_instructions: "Si votre email existe dans notre base de données, vous recevrez un email avec un lien pour récupérer votre mot de passe."
+      updated: ''
+
+      #updated: Votre mot de passe a était modifier avec succès
+      updated_not_active: Votre mot de passe a était modifier avec succès.
+      new:
+        site_title: 'J’ai oublié mon mot de passe'
+        title: 'Confirmez votre email et demandé une modification de mot de passe'
+        submit: 'Envoyer les instructions pour modifier mon mot de passe'
+      edit:
+        site_title: 'Définir un nouveau mot de passe'
+        label_new_password: 'Nouveau mot de passe'
+        title: 'Définir un nouveau mot de passe '
+        subtitle: 'Définir un nouveau mot de passe pour utiliser votre email et pour vous connectez à Catarse.'
+        submit: 'Définir un nouveau mot de passe '
+    registrations:
+      destroyed: Au-revoir ! Votre compte a été supprimé avec succès. Nous espérons vous revoir bientôt.
+      signed_up: ''
+      #signed_up: Bienvenue ! Votre compte a été créé avec succès.
+      signed_up_but_inactive: Vous vous êtes inscrit avec succès, mais nous ne pouvons pas vous authentifier car votre compte n’a pas été activé.
+      signed_up_but_locked: Vous vous êtes inscrit avec succès, mais nous ne pouvons pas vous authentifier car votre compte est bloqué.
+      signed_up_but_unconfirmed: Un lien de confirmation vous a été envoyer sur votre email. Sil vous plait cliquez sur le lien pour activé votre compte.
+      update_needs_confirmation: Votre compte a été activer avec succès, mais nous devons vérifier la nouvelle adresse email. Sil vous plait cliquez sur le lien pour confirmer votre email.
+      updated: Votre compte a été actualisé avec succès
+    sessions:
+      new:
+        site_title: "Se connecter"
+        submit: " Se connecter"
+        title: "Se connecter en utilisant votre adresse email" 
+        login_title: Login
+        login_subtitle: "Si vous avez déjà un compte"
+        register_title: S’enregistrer
+        register_subtitle: "Utiliser mon adresse email"
+        with_facebook: "Se connecter avec Facebook"
+        with_facebook_subtitle: "Une manière rapide de se connecter"
+        with_another_social: "Twitter sera supprimée dans une semaine"
+        google_warning_html: "Si vous utilisiez un compte <strong>Google</strong>:"
+        google_step_1: "1 – Cliquez ici %{link}"
+        google_step_2: "2 – Suivez les prochaines étapes pour créer un nouveau mot de passe."
+        with_another_social_subtitle: "<a target=\"_blank\" href=\"http://blog.catarse.me/mudanca-no-sistema-de-login/\">Lire ce document</a> Pour plus d’information"
+      signed_in: ''
+      #signed_in: Connexion effectué avec succès.
+      signed_out: ''
+      #signed_out: Déconnexion effectué avec succès.
+    unlocks:
+      send_instructions: "Dans quelque instant, vous allez recevoir un email avec les instructions pour débloquer votre compte."
+      send_paranoid_instructions: "Si votre compte existe dans notre base de données, vous recevrez un email avec les instructions pour la débloquer."
+      unlocked: "Votre compte a été débloquer avec succès. Vous êtes authentifié"
+  errors:
+    messages:
+      already_confirmed: "Déjà confirmé"
+      confirmation_period_expired: "Il est nécessaire de confirmer le compte dans une période de%{period}, sil vous plait demander un nouvelle utilisateur."
+      expired: "Expirer, sil vous plait demandez-en un nouveau"
+      not_found: "non trouvé"
+      not_locked: "n’a pas été bloqué"
+      not_saved:
+        one: ! ' '
+        other: ! ' '

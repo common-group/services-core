@@ -1,0 +1,43 @@
+pt:
+  layouts:
+    footer:
+      links:
+        how_it_works: Como funciona
+        novelty: Novidade
+        rate: Nossa Taxa
+        jobs: Trabalhe conosco
+        blog: Blog
+        contact: Contato
+        press: Imprensa
+        discover: Explore projetos
+        start: 'Como funciona'
+        expiring: Na reta final
+        facebook: Facebook
+        team: Nosso time
+        flex: Catarse flex
+        crowdfunding_stats: "Retrato FC Brasil 2013/2014"
+        faq: Ajuda
+        guides: Guia dos Realizadores
+        feedback: Feedback
+        github: Github
+        instagram: Instagram
+        near: Próximos a mim
+        privacy: Política de privacidade
+        recents: Recentes
+        recommended: Recomendados
+        submit: Comece seu projeto
+        terms: Termos de uso
+        twitter: Twitter
+        help_support: Central de Suporte
+        score: Populares
+        finished: Finalizados
+        online: No ar
+      texts:
+        copyleft: Feito com amor.
+        email: Digite seu email
+      titles:
+        about: Ajuda
+        contact: Bem-vindo
+        newsletter: Assine nossa news
+        sitemap: Navegue
+        social: Redes sociais

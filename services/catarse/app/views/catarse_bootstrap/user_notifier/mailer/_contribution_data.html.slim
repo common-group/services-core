@@ -1,0 +1,45 @@
+- detail = contribution.details.ordered.first
+
+p Seguem todos os dados do pagamento:
+p
+  | Nome do apoiador: #{contribution.user.display_name}
+  br/
+  | CPF/CNPJ do apoiador: #{contribution.user.cpf}
+  br/
+  | Data da confirmação do apoio: #{I18n.l(detail.paid_at.to_date)}
+  br/
+  | Valor total da contribuição: #{number_to_currency detail.gateway_amount, precision: 2}
+  - if detail.installments > 1
+    br/
+    | Número de parcelas: #{detail.installments}
+  br/
+  -if contribution.reward.present?
+    | Recompensa selecionada: #{contribution.reward.description}
+    br/
+    | Estimativa de entrega: #{contribution.reward.display_deliver_estimate}
+    br/
+  | ID do apoio: #{detail.gateway_id}
+  br/
+  / We need the || for some old projects do not have the account info
+  - if provisional_receipt
+    - owner = contribution.project.user
+    - owner_name = owner.try(:public_name)
+    | Nome público do realizador: #{owner_name}
+    br/
+  - else
+    - owner = contribution.project.user
+    - owner_name = owner.try(:name)
+    - owner_document = owner.try(:cpf)
+    | Nome/Razão Social do realizador: #{owner_name}
+    br/
+    | CPF/CNPJ do realizador: #{owner_document} 
+p
+  ' É importante ressaltar que o Catarse <strong>não é uma loja</strong>,
+  ' e que esse recibo é referente a um apoio que você fez para um projeto que você acredita ser viável.
+  ' O Catarse não é responsável pela execução desse projeto ou pela entrega das recompensas.
+  ' #{link_to 'Relembre aqui', 'http://suporte.catarse.me/hc/pt-br/articles/115002214043'} como funciona o Financiamento Coletivo e quais são os papéis e responsabilidades
+  ' do Catarse, do Apoiador e do Realizador.
+  ' Caso tenha alguma dúvida em relação ao projeto ou recompensa selecionada 
+  ' entre em contato diretamente com o realizador através do e-mail #{mail_to owner.try(:email)}.
+
+= render partial: 'user_notifier/mailer/contact_info'

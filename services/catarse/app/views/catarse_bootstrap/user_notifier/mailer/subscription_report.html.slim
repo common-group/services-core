@@ -1,0 +1,103 @@
+- owner = @notification.project.user
+- transitions = @notification.project.subscription_transitions.where(created_at: Time.current - 1.day .. Time.current)
+- new_active = transitions.where(to_status: 'active')
+- new_started = transitions.where(to_status: 'started')
+- new_inactive = transitions.where(to_status: 'inactive')
+- new_canceled = transitions.where(to_status: 'canceled')
+
+h3 Olá #{owner.display_name},
+h3 Seu saldo atual no Catarse é R$#{owner.total_balance}.
+br
+p Nas últimas 24h da sua campanha:
+
+table style="border-collapse:collapse;border-spacing:0;width:100%;" 
+  tr
+    th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;overflow:hidden;word-break:normal;background-color:#ffffc7;text-align:center"  Assinaturas Iniciadas
+    th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;;overflow:hidden;word-break:normal;background-color:#d7f6d6;text-align:center"  Assinaturas Ativadas
+    th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;;overflow:hidden;word-break:normal;background-color:#ffccc9;color:#000000;text-align:center"  Assinaturas Inativadas
+    th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;;overflow:hidden;word-break:normal;background-color:#ffccc9;color:#000000;text-align:center"  Assinaturas Canceladas
+  tr
+    td style="font-size:22px;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;overflow:hidden;word-break:normal;font-weight:bold;background-color:#ffffc7;text-align:center"  #{new_started.count}
+    td style="font-size:22px;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;overflow:hidden;word-break:normal;font-weight:bold;background-color:#d7f6d6;text-align:center"  #{new_active.count}
+    td style="font-size:22px;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;overflow:hidden;word-break:normal;font-weight:bold;background-color:#ffccc9;text-align:center"  #{new_inactive.count}
+    td style="font-size:22px;padding:10px 5px;border-style:solid;border-width:4px;border-color:#fff;overflow:hidden;word-break:normal;font-weight:bold;background-color:#ffccc9;text-align:center"  #{new_canceled.count}
+
+
+br
+br
+hr
+br
+p Abaixo você pode conferir mais detalhes sobre cada atualização:
+br
+- if new_started.count >= 1
+  h3
+    span style="color:#ffae42;"  ●
+    | Assinaturas Iniciadas
+  
+  table style="border-collapse:collapse;border-spacing:0;border-color:#ccc;width:100%;margin-bottom:60px;" 
+    tr
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:50%;"  Nome
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:25%;"  Qtde. apoios
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  Apoio mensal
+    - new_started.each do |transition|
+      tr
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:50%;"  #{transition.subscription.user.display_name}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:25%;"  #{transition.subscription.subscription_payments.where(status: :paid).count}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  R$#{transition.subscription.amount}
+        
+
+- if new_active.count >= 1
+  h3
+    span style="color:#7cc142;"  ●
+    | Assinaturas Ativadas
+  
+  table style="border-collapse:collapse;border-spacing:0;border-color:#ccc;width:100%;margin-bottom:60px;" 
+    tr
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:50%;"  Nome
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:25%;"  Qtde. apoios
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  Apoio mensal
+    - new_active.each do |transition|
+      tr
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:50%;"  #{transition.subscription.user.display_name}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:25%;"  #{transition.subscription.subscription_payments.where(status: :paid).count}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  R$#{transition.subscription.amount}
+
+
+- if new_inactive.count >= 1
+  h3
+    span style="color:#e86666;"  ●
+    | Assinaturas Inativadas
+  
+  table style="border-collapse:collapse;border-spacing:0;border-color:#ccc;width:100%;margin-bottom:60px;" 
+    tr
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:50%;"  Nome
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:25%;"  Qtde. apoios
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  Apoio mensal
+    - new_inactive.each do |transition|
+      tr
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:50%;"  #{transition.subscription.user.display_name}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:25%;"  #{transition.subscription.subscription_payments.where(status: :paid).count}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  R$#{transition.subscription.amount}
+
+
+- if new_canceled.count >= 1
+  h3
+    span style="color:#e86666;"  ●
+    | Assinaturas Canceladas
+
+  table style="border-collapse:collapse;border-spacing:0;border-color:#ccc;width:100%;margin-bottom:60px;" 
+    tr
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:50%;"  Nome
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:left;width:25%;"  Qtde. apoios
+      th style="font-size:14px;font-weight:bold;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  Apoio mensal
+    - new_canceled.each do |transition|
+      tr
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:50%;"  #{transition.subscription.user.display_name}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;width:25%;"  #{transition.subscription.subscription_payments.where(status: :paid).count}
+        td style="font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;text-align:center;width:25%;"  R$#{transition.subscription.amount}
+
+hr
+br
+p
+  | Você está recebendo este email pois sua campanha teve ao menos uma alteração nas últimas 24 horas. Ou seja, se pelo menos 1 pessoa iniciou, ativou, inativou ou cancelou uma assinatura, você irá receber este email. Caso não haja nenhuma alteração em sua campanha, você não receberá nenhum email de atividades. Para saber mais sobre os diferentes status de assinaturas citados acima, acesse
+  a href="https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#status"  este artigo em nossa Base de Conhecimento!

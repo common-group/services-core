@@ -1,0 +1,44 @@
+- project = @notification.project
+
+- project_link = edit_project_url(project)
+- company_name = CatarseSettings[:company_name]
+
+| Oi #{project.user.display_name},
+br/
+br/
+| O prazo do projeto #{link_to project.name, project_link} no #{company_name} chegou ao fim.
+br/
+br/
+| Devido a prazos de boletos existem pagamentos pendentes para o seu projeto.
+'  Para computar esses apoios ficaremos aguardando a confirmação dessas contribuições por até <strong>4 dias úteis após o término do projeto</strong>.
+'  Lembre-se, é nesse ponto que descontamos a taxa de 13% relativa aos serviços do Catarse e dos meios de pagamento. Essa taxa incide sobre o valor total arrecadado.
+br/
+br/
+| Confira o que pode acontecer depois dessa data:
+br/
+br/
+- if project.is_flexible?
+  | Estamos a esperar o prazo para contabilizar esses apoios de última hora. Com esse processo finalizado iremos repassar o valor arrecadado para você.
+- else
+  | <strong>1) Se o seu projeto já atingiu ou ultrapassou a meta:</strong>
+  '  vamos apenas esperar o prazo para contabilizar esses apoios de última hora. Com esse processo finalizado, basta 
+  = link_to 'repassar o valor arrecadado para você.', 'http://suporte.catarse.me/hc/pt-br/articles/202037493-Como-ser%C3%A1-feito-o-repasse-do-dinheiro-', target: '__blank'
+  br/
+  br/
+  | <strong>2) Se o seu projeto ainda não atingiu a meta:</strong> vamos esperar e torcer pela confirmação desses apoios! Atingindo 100% da meta iniciaremos o repasse do dinheiro para você.
+  br/
+  | Caso contrário iniciaremos o #{link_to 'reembolso dos seus apoiadores', 'http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos', target: '__blank'}.
+br/
+br/
+| <strong>ATENÇÃO:</strong> Para fazer o repasse utilizaremos as informações cadastrais e bancárias preenchidas na <strong>#{link_to 'aba Conta', edit_project_url(project, anchor: 'user_settings')}</strong> do seu projeto. <strong>Certifique-se de que os dados estão corretos.</strong>
+br/
+br/
+= image_tag 'https://s3.amazonaws.com/cdn.catarse/notifications_assets/funded-conta.gif', width: 600
+br/
+br/
+| Se ficou com alguma dúvida, responda a esta mensagem diretamente ou fale conosco através do e-mail #{mail_to CatarseSettings[:email_projects]}.
+br/
+br/
+| Um abraço,
+br/
+= company_name

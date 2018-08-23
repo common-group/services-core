@@ -1,0 +1,18 @@
+- message = @notification.direct_message
+- to_user = User.find message.to_user_id
+- message_origin_name = message.data['page_title'].present? && message.data['page_title'].length > 0 ? message.data['page_title'] : message.data['page_url']
+
+|Olá <strong>#{to_user.try(:display_name)}</strong>
+br
+
+|Você recebeu uma nova mensagem de #{link_to message.user.try(:display_name), user_url(message.user)}  a partir da página #{link_to(message_origin_name, message.data['page_url'], target: :_blank) }:
+br
+br
+
+p style=("background-color:#f1f4f4; padding: 20px; margin: 20px 30px 50px 30px; border-radius:5px;") == message.content
+
+
+p Ao responder este email, <strong>você estará enviando uma mensagem diretamente para o endereço #{message.user.try(:email)}, que é o email de #{message.user.try(:display_name)}</strong>.
+
+
+p <strong>Importante</strong>: O Catarse não se responsabiliza pelo conteúdo das mensagens enviadas pelos usuários e recomenda cautela especial para proposta de parcerias, empréstimos ou pedido de dados pessoais. Caso você entenda que o conteúdo da mensagem acima é spam ou que infringe de alguma forma os nossos Termos de Uso, pedimos que avise a nossa equipe através do email: #{mail_to CatarseSettings[:email_contact]}.

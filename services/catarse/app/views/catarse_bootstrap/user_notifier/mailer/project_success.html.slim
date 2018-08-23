@@ -1,0 +1,50 @@
+- project = @notification.project
+
+- project_link = edit_project_url(project)
+- company_name = CatarseSettings[:company_name]
+
+| Uhuu, #{project.user.display_name},
+br/
+p Parabéns pela campanha! O projeto #{link_to project.name, project_link} foi financiado \o/
+p
+  | Depois de comemorar com vontade o término bem sucedido da sua campanha, é hora de confirmar os dados bancários e solicitar a transferência do dinheiro para a sua conta.
+p
+  | O prazo para receber o dinheiro arrecadado dura em média <strong>10 dias úteis</strong> e é <strong>iniciado somente após solicitação do saque na plataforma.</strong>
+p
+  | Para fazer a solicitação de saque, basta seguir este passo-a-passo:
+p
+    | 1) Faça o login no Catarse 
+    br/
+    | 2) Entre na aba <strong>#{link_to 'saldo', edit_user_url(project.user_id, anchor: 'balance',ref: 'notificacao_project_success')}</strong>, no seu perfil.
+    br/
+    | 3) Clique em <strong>"Realizar saque"</strong>
+    br/
+    | 4) Inscreva e confirme seus dados bancários::
+    p style="padding-left: 20px;"
+      | <strong>Se os seus dados estiverem corretos:</strong> basta clicar em: "Solicitar Saque."
+      br/
+      | <strong>Se os dados bancários estiverem incorretos (ou em branco):</strong> você deverá <strong>corrigir (ou preencher) os seus dados</strong> e depois clicar em <strong>"Solicitar o saque".</strong>
+    | 5) Clique em <strong>"Confirmar"</strong> para dar início ao processo de transferência do dinheiro.
+br/
+p
+  img src="https://s3.amazonaws.com/catarse.files/user_balance.gif"
+br/
+br/
+
+p 
+  | <strong>Dúvidas frequentes:</strong>
+p 
+  = link_to 'Quais são as etapas e prazos do repasse?', 'http://suporte.catarse.me/hc/pt-br/articles/217916143#etapas', target: '__blank'
+  br/
+  = link_to 'Quando o dinheiro estará disponível na minha conta?', 'http://suporte.catarse.me/hc/pt-br/articles/217916143#quando', target: '__blank'
+  br/
+  = link_to 'Como funciona a cobrança de taxa do Catarse', 'http://suporte.catarse.me/hc/pt-br/articles/217916143#taxa', target: '__blank' 
+  br/
+p
+  |Confira mais detalhes sobre o processo no artigo <strong>#{link_to 'A transferência do dinheiro', 'http://suporte.catarse.me/hc/pt-br/articles/217916143', target: '__blank'}</strong>
+br/
+
+p
+  | Abraços,
+  br/
+  | Equipe #{company_name}

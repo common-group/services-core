@@ -1,0 +1,88 @@
+pt:
+  users:
+    edit:
+      settings_tab:
+        credit_cards:
+          title: 'Cartões de crédito'
+          subtitle: 'Caso algum projeto que você tenha apoiado <strong>com Cartão de Crédito</strong> não seja bem-sucedido, nós efetuaremos o reembolso <strong>automaticamente</strong> no cartão utilizado para efetuar o apoio.'
+          card_label: 'Cartão'
+          provider_label: 'Operadora'
+          remove_label: 'Remover'
+        update_success_msg: 'As suas informações foram atualizadas'
+        legal_title: 'Responsável'
+        legal_subtitle: '<strong>IMPORTANTE</strong> Nome completo/Razão social e CPF/CNPJ <strong>não poderão ser modificados</strong> após serem salvos.'
+        account_types:
+          pf: 'Pessoa Física'
+          pj: 'Pessoa Jurídica'
+          mei: 'Pessoa Jurídica (Micro Empreendedor Individual - MEI)'
+        pf_label_name: 'Nome completo'
+        pj_label_name: 'Nome completo / Razão Social'
+        pf_label_document: 'CPF'
+        pj_label_document: 'CNPJ'
+        label_birth_date: 'Data de nascimento'
+        label_state_inscription: 'Inscrição Estadual'
+        address_title: 'Endereço'
+        address_subtitle: 'Os dados de endereço serão utilizados para emissão de Nota Fiscal, caso aplicável.'
+        label_country: 'País'
+        label_address_street: 'Endereço (Rua, Avenida, Alameda...)'
+        label_address_number: 'Número'
+        label_address_complement: 'Complemento'
+        label_address_neighbourhood: 'Bairro'
+        label_address_city: 'Cidade'
+        label_address_state: 'Estado'
+        label_other_option: 'Outro / other'
+        label_address_zipcode: 'CEP'
+        label_address_phone: 'Telefone'
+      email_confirmation:
+        hello: "Olá %{name}"
+        hello_sub: "Estamos tendo problemas em falar com você..."
+        hello_email: "Esse é o seu email de contato? %{email}"
+        confirmed_title: "Não deixe de olhar nossos emails!"
+        confirmed_sub: "Verifique seu SPAM e autorize os emails do Catarse."
+      contributions: "Apoiados"
+      projects: "Criados"
+      about_me: "Sobre você"
+      settings: "Dados e endereço"
+      notification: "Notificações"
+      billing: "Banco e cartões"
+      profil: "Ir para o perfil público"
+      feeds: "Atividades"
+      submit: "Salvar"
+      contributions_fields:
+        no-project: "Você ainda não apoiou nenhum projeto no&nbsp;Catarse..."
+        contribute: "Apoie agora!"
+      about_fields:
+        add_link: "+ Adicionar link"
+        image_title: "Imagem do perfil"
+        image_description: "Essa imagem será utilizada como a miniatura de seu perfil (PNG, JPG tamanho 280 x 280)"
+        cover_title: "Imagem de capa do perfil"
+        cover_description: "Essa imagem será utilizada como fundo do cabeçalho do seu perfil público (PNG ou JPG). Caso você não envie nenhum imagem aqui, utilizaremos sua imagem de perfil como alternativa."
+        profil_address_title: "Endereço do seu perfil"
+        profil_address_description: "Seu perfil público pode ter uma URL personalizada. Escolha uma fácil de guardar!"
+        name: "Nome"
+        name_description: "Esse é o nome que os usuários irão ver no seu perfil público"
+        faceebook: "Perfil do facebook"
+        facebook_description: "Cole o link do seu perfil"
+        twitter: "Perfil do twitter"
+        twitter_description: "Cole o link do seu perfil"
+        homepage: "Presença na internet"
+        homepage_description: "Inclua links que ajudem outros usuários a te conhecer melhor.&nbsp;"
+        about: "Sobre"
+        about_description: "Fale sobre você e tente fornecer as informações mais relevantes para que visitantes possam te conhecer melhor."
+      billing_fields:
+        credit_card: "Cartões de crédito"
+        card_message: "Caso algum projeto que você tenha apoiado <b>com Cartão de Crédito</b> não seja bem-sucedido, nós efetuaremos o reembolso <b>automaticamente</b> no cartão utilizado para efetuar o apoio."
+        card: "Cartão"
+        operator: "Operadora"
+        bank_account: "Dados bancários"
+        bank_account_message: "Caso algum projeto que você tenha apoiado <b>com Boleto Bancário</b> não seja bem-sucedido, nós efetuaremos o reembolso de seu pagamento <b>automaticamente</b> na conta indicada abaixo."
+      notifications_fields:
+        newsletters:
+          750382:
+            title: 'Novidades da semana'
+            description: 'Projetos em destaque e pílulas do nosso Blog, selecionados com carinho pela nossa equipe.'
+            image_src: 'http://uploads.webflow.com/5849f4f0a275a2a744efd93e/59a714d438c73b0001ee8d83_news-img.jpg'
+          1370135:
+            title: 'Geek News'
+            description: 'Quadrinhos, boardgames, RPG e jogos digitais, dentro e fora do Catarse.'
+            image_src: 'http://uploads.webflow.com/5849f4f0a275a2a744efd93e/59a713dde51ca0000149ae85_geek-news-img.jpg'

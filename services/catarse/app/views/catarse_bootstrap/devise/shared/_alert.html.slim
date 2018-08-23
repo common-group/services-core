@@ -1,0 +1,9 @@
+- if flash[:alert].present?
+  .card.card-error.u-radius.zindex-10.u-marginbottom-30
+    .fontsize-smaller.fontweight-bold.u-marginbottom-10= t('failure_title')
+    .fontsize-smaller = flash[:alert]
+- elsif resource.errors.present?
+  .card.card-error.u-radius.zindex-10.u-marginbottom-30
+    .fontsize-smaller.fontweight-bold.u-marginbottom-10= t('failure_title')
+    - resource.errors.messages.each do |message|
+      .fontsize-smaller = message[1].to_sentence.html_safe

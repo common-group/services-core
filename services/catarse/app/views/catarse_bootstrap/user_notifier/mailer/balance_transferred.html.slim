@@ -1,0 +1,30 @@
+- user = @notification.user
+- balance_transfer = @notification.balance_transfer
+- bank_account = balance_transfer.bank_data
+
+| Olá #{user.display_name},
+br/
+br/
+| O depósito do dinheiro <strong>já foi realizado!</strong> O valor será creditado na conta bancária cadastrada em até <strong>2 dias úteis</strong>.
+br/
+br/
+| Resumo da transação:
+br/
+| Valor total do repasse: #{number_to_currency balance_transfer.amount, precision: 2}
+br/
+br/
+| Dados bancários cadastrados:
+br/
+| Banco: #{bank_account['bank_code']} - #{bank_account['bank_name']}
+br/
+| Agencia: #{bank_account['agency']||bank_account['agencia']}-#{bank_account['agency_digit']||bank_account['agencia_dv']}
+br/
+| Conta: #{bank_account['account']||bank_account['conta']}-#{bank_account['account_digit']||bank_account['conta_dv']}
+br/
+| Nome: #{bank_account['legal_name']||user.name}
+br/
+| CPF/CNPJ: #{bank_account['document_number']||user.cpf}
+br/
+br/
+
+= render partial: 'user_notifier/mailer/contact_info'

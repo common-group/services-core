@@ -1,0 +1,13 @@
+- content_for :title, "#{resource.decorator.display_name} · #{CatarseSettings[:company_name]}"
+- content_for :meta_tags do
+  link rel="canonical" href=user_url(resource,locale:'')
+  meta property="og:title" content=resource.decorator.display_name
+  meta property="og:url" content=user_url(resource,locale:'')
+  meta property="og:type" content='cause'
+  meta[property="og:image" content=resource.uploaded_image.thumb_facebook.url]
+  meta property="og:site_name" content=CatarseSettings[:company_name]
+
+#application data-userid=resource.id data-hassubdomain=(resource.permalink == request.subdomain).to_s
+
+- content_for :application_js do
+  = javascript_include_tag "api/application"

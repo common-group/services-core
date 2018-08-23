@@ -1,0 +1,505 @@
+pt:
+  activerecord:
+    models:
+      channel: Canal
+      project: Projeto
+      flexible_project: Projeto
+      reward: Recompensa
+      contribution: Apoiador
+      category: Categoria
+      bank_account: Dados bancários
+      address: Endereço
+    attributes:
+      project_account:
+        address_city: Cidade
+        address_complement: Complemento
+        address_neighbourhood: Bairro
+        address_number: Número
+        address_state: Estado
+        address_street: Endereço
+        address_zip_code: CEP
+        cpf: 'CPF / CNPJ '
+        state_inscription: 'Inscrição Estadual'
+        email: Email
+        full_name: "Nome completo / Razão Social"
+        phone_number: "Telefone"
+        bank: 'Banco'
+        bank_id: 'Banco'
+        owner_name: 'Nome do titular'
+        owner_document: 'CPF do titular da conta bancária'
+        agency: 'Agência'
+        agency_digit: 'Dígito agência'
+        account: 'No. da conta'
+        account_digit: 'Dígito conta'
+        account_type: 'Tipo de conta'
+      bank_account:
+        account_type: 'Tipo de conta'
+        input_bank_number: "Número do banco"
+        bank: 'Banco'
+        bank_id: 'Banco'
+        owner_name: 'Nome do titular'
+        owner_document: 'CPF / CNPJ do titular'
+        agency: 'Agência'
+        agency_digit: 'Dígito agência'
+        account: 'No. da conta'
+        account_digit: 'Dígito conta'
+      payment:
+        state: 'Status'
+      contribution:
+        payer_name: "Nome completo / Razão Social *"
+        payer_email: "Email"
+        payer_document: "CPF ou CNPJ"
+        country: "País"
+        address_street: "Rua"
+        address_number: "Número"
+        address_complement: "Complemento"
+        address_neighbourhood: "Bairro"
+        address_state: "Estado"
+        address_city: "Cidade"
+        address_zip_code: "CEP"
+        address_phone_number: "Telefone"
+        value: Valor do apoio
+        payer_name: "Nome completo / Razão Social *"
+        payer_email: "Email"
+        country: "País"
+        address_street: "Rua"
+        address_number: "Número"
+        address_complement: "Complemento"
+        address_neighbourhood: "Bairro"
+        address_state: "Estado"
+        address_city: "Cidade"
+        address_zip_code: "CEP"
+        address_phone_number: "Telefone"
+        reward: Recompensa
+        project: projeto
+      reward:
+        deliver_at: Previsão de entrega
+      flexible_project:
+        name: 'Nome do projeto'
+        channels: Canais
+        category: Categoria
+        expires_at: Prazo
+        online_days: "Prazo para arrecadação"
+        headline: "Frase de efeito"
+        image_url: "URL da imagem"
+        name: "Nome do projeto"
+        goal: "Valor a ser arrecadado"
+        about_html: "Descrição do projeto"
+        user_id: "Id do usuário"
+        service_fee: 'Taxa do Catarse'
+        video_url: "URL do vídeo"
+        permalink: 'Link para o seu projeto no Catarse'
+        all_tags: 'Admin Tags'
+        all_public_tags: 'Tags'
+        city: 'Local do projeto'
+        more_links: 'Indique links para as pessoas conhecerem mais sobre o seu projeto e sua trajetória.'
+        traffic_sources: 'Como você conheceu o Catarse?'
+        first_contributions: "Quem são as primeiras pessoas que você vai pedir para apoiar o seu projeto?"
+        budget: 'Orçamento do projeto'
+        uploaded_image: 'Imagem do projeto'
+      project:
+        name: 'Nome do projeto'
+        channels: Canais
+        category: Categoria
+        expires_at: Prazo
+        online_days: "Prazo para arrecadação"
+        headline: "Frase de efeito"
+        image_url: "URL da imagem"
+        name: "Nome do projeto"
+        service_fee: 'Taxa do Catarse'
+        goal: "Valor a ser arrecadado"
+        about_html: "Descrição do projeto"
+        user_id: "Id do usuário"
+        video_url: "URL do vídeo"
+        permalink: 'Link do seu projeto'
+        all_tags: 'Admin Tags'
+        all_public_tags: 'Tags'
+        city: 'Local do projeto'
+        more_links: 'Indique links para as pessoas conhecerem mais sobre o seu projeto e sua trajetória.'
+        traffic_sources: 'Como você conheceu o Catarse?'
+        first_contributions: "Quem são as primeiras pessoas que você vai pedir para apoiar o seu projeto?"
+        budget: 'Orçamento do projeto'
+        uploaded_image: 'Imagem do projeto'
+      address:
+        delivery_address: Endereço de entrega
+        address_city: Cidade
+        address_complement: Complemento
+        address_neighbourhood: Bairro
+        address_number: Número
+        address_state: Estado
+        address_street: 'Endereço (Rua, Avenida, etc)'
+        zipcode_unknown: 'Não sei meu CEP'
+        address_zip_code: CEP
+        phone_number: Telefone
+        country: País / Country
+      user:
+        public_name: 'Nome público'
+        birth_date: 'Data de nascimento'
+        uploaded_image: 'Imagem do perfil'
+        cover_image: 'Imagem de capa do perfil'
+        address_city: Cidade
+        address_complement: Complemento
+        address_neighbourhood: Bairro
+        address_number: Número
+        address_state: Estado
+        address_street: Endereço
+        address_zip_code: CEP
+        cpf: 'CPF / CNPJ '
+        cpf_hint: '(?)'
+        state_inscription: 'Inscrição Estadual'
+        current_password: "Senha atual"
+        email: Email
+        full_name: "Nome completo / Razão Social"
+        bio: 'Mini Bio'
+        name: "Nome completo / Razão Social"
+        newsletter: 'Quero receber novidades do Catarse'
+        password: Senha
+        password_confirmation: "Confirmação de senha"
+        phone_number: "Telefone"
+        cpf_hint_title: Nota Fiscal será emitida para esse documento
+        id: ID
+        moip_login: Login do MoIP
+        moip_login_hint: "(Como criar uma conta)"
+        reset_password_token: "Link para recriar senha"
+      channel:
+        ga_code: Código do Analytics
+        description: Descrição
+        how_it_works: Como funciona
+        image: Imagem da novidade
+        name: Nome
+        video_url: Vídeo
+      channel_partner:
+        name: 'Nome'
+        url: 'Site'
+        image: 'Imagem'
+      project_post:
+        title: 'Título'
+        comment: 'Texto'
+      channel_post:
+        title: 'Título'
+        body: 'Conteúdo'
+        visible: 'Publicar (Marque caso queira publicar essa nóvidade)'
+    errors:
+      models:
+        payment:
+          duplicate: "O seu pagamento já está sendo processado"
+        contribution: "Erro ao salvar apoio"
+        shipping_fee:
+          attributes:
+            destination:
+              blank: 'Estado do frete não pode ficar em branco'
+            value:
+              blank: 'Valor do frete não pode ficar em branco'
+        reward:
+          attributes:
+            title:
+              blank: 'Título não pode ficar em branco'
+            description:
+              blank: 'Descrição não pode ficar em branco'
+            minimum_value:
+              blank: 'Valor mínimo não pode ficar em branco'
+        bank_account:
+          invalid: "Conta inválida"
+          attributes:
+            bank:
+              blank: 'Banco não pode ficar em branco'
+            owner_name:
+              blank: 'Nome do titular não pode ficar em branco'
+              invalid: 'Informe um nome com no mínimo 5 e no máximo 30 letras'
+            owner_document:
+              blank: 'CPF / CNPJ não pode ficar em branco'
+              invalid: 'CPF / CNPJ inválido'
+            agency:
+              blank: 'não pode ficar em branco'
+              invalid: 'inválida'
+            account:
+              blank: 'não pode ficar em branco'
+            account_digit:
+              blank: 'não pode ficar em branco'
+              invalid: 'inválido'
+            agency_digit:
+              blank: 'não pode ficar em branco'
+              invalid: 'inválido'
+        project_account:
+          invalid: 'Conta não é válida'
+          attributes:
+            full_name:
+              blank: "Razão social do usuário não pode ficar em branco"
+            email:
+              blank: "Email do usuário não pode ficar em branco"
+              invalid: "Email do usuário inválido"
+            cpf:
+              blank: "CPF do usuário não pode ficar em branco"
+              invalid: "CPF inválido"
+            address_street:
+              blank: "Endereço do usuário não pode ficar em branco"
+            address_number:
+              blank: "Número no endereço do usuário não pode ficar em branco"
+            address_city:
+              blank: "Cidade do usuário não pode ficar em branco"
+            address_state:
+              blank: "Estado do usuário não pode ficar em branco"
+            address_zip_code:
+              blank: "CEP do usuário não pode ficar em branco"
+            phone_number:
+              blank: "Telefone do usuário não pode ficar em branco"
+            bank:
+              blank: "Banco do usuário não pode ficar em branco"
+            agency:
+              blank: "Agência do usuário não pode ficar em branco"
+              invalid: "Agência inválida"
+            agency_digit:
+              blank: "Dígito agência do usuário não pode ficar em branco"
+            account:
+              blank: "No. da conta do usuário não pode ficar em branco"
+              format: "No. da conta do usuário invalido"
+            account_digit:
+              blank: "Dígito conta do usuário não pode ficar em branco"
+            owner_name:
+              blank: "Nome do titular do usuário não pode ficar em branco"
+            owner_document:
+              blank: "CPF / CNPJ do titular do usuário não pode ficar em branco"
+              not_same: "CPF/CNPJ dos dados cadastrais e bancários preenchidos não estão iguais."
+            account_type:
+              blank: "Tipo de conta não pode ficar em branco"
+        flexible_project:
+          attributes:
+            rewards:
+              at_least_one: 'Deve haver pelo menos uma recompensa'
+            city:
+              blank: Local do projeto não pode ficar em branco
+            video_url:
+              blank: 'O vídeo do projeto não pode ficar em branco'
+            budget:
+              blank: 'O orçamento do projeto não pode ficar em branco'
+            uploaded_image:
+              blank: 'A imagem do projeto não pode ficar em branco'
+            name:
+              too_long: "Nome do projeto é muito longo (máximo: 50 caracteres)"
+              blank: "O nome do projeto não pode ficar em branco"
+            permalink:
+              blank: "A URL do projeto não pode ficar em branco"
+              invalid: "A URL do projeto é inválida"
+              taken: "Essa URL de projeto já existe"
+            category:
+              blank: "Você deve escolher uma categoria para seu projeto"
+            goal:
+              blank: "O valor da meta não pode ficar em branco"
+              greater_than: "A meta deve ser maior que 9"
+              not_a_number: "Meta de arrecadação aceita somente números"
+            online_days:
+              blank: "O prazo de arrecadação não pode ficar em branco"
+              greater_than: "O prazo para arrecadação deve ser maior que 2 dias"
+              less_than_or_equal_to: "O prazo para arrecadação deve ser menor ou igual a 365 dias para projetos flex e menor ou igual a 60 dias para projetos tudo-ou-nada"
+              not_a_number: "O prazo para arrecadação deve ser um número de dias"
+            about_html:
+              blank: "A descrição do projeto não pode ficar em branco"
+            headline:
+              blank: "A frase de efeito do projeto não pode ficar em branco"
+              too_long: "A frase de efeito é muito longa. Você pode usar um máximo de 100 caracteres."
+        project:
+          attributes:
+            goals:
+              at_least_one: 'Deve haver pelo menos uma meta'
+            rewards:
+              at_least_one: 'Deve haver pelo menos uma recompensa'
+            city:
+              blank: Local do projeto não pode ficar em branco
+            video_url:
+              blank: 'O vídeo do projeto não pode ficar em branco'
+            budget:
+              blank: 'O orçamento do projeto não pode ficar em branco'
+            uploaded_image:
+              blank: 'A imagem do projeto não pode ficar em branco'
+            name:
+              too_long: "Nome do projeto é muito longo (máximo: 50 caracteres)"
+              blank: "O nome do projeto não pode ficar em branco"
+            permalink:
+              blank: "A URL do projeto não pode ficar em branco"
+              invalid: "A URL do projeto é inválida"
+              taken: "Essa URL de projeto já existe"
+            category:
+              blank: "Você deve escolher uma categoria para seu projeto"
+            public_tags:
+              less_than_or_equal_to: 'O total de tags deve ser menor ou igual a 5'
+            goal:
+              blank: "O valor da meta não pode ficar em branco"
+              greater_than: "A meta deve ser maior que 9"
+              not_a_number: "Meta de arrecadação aceita somente números"
+            online_days:
+              blank: "O prazo de arrecadação não pode ficar em branco"
+              greater_than: "O prazo para arrecadação deve ser maior que 2 dias"
+              less_than_or_equal_to: "O prazo para arrecadação deve ser menor ou igual a 60 dias para projetos tudo-ou-nada e menor ou igual a 365 dias para projetos flex"
+              not_a_number: "O prazo para arrecadação deve ser um número de dias"
+            about_html:
+              blank: "A descrição do projeto não pode ficar em branco"
+            headline:
+              blank: "A frase de efeito do projeto não pode ficar em branco"
+              too_long: "A frase de efeito é muito longa. Você pode usar um máximo de 100 caracteres."
+        bank_account:
+          attributes:
+            bank_id:
+              invalid: "Banco invalido"
+              blank: "Banco do usuário não pode ficar em branco"
+            bank:
+              invalid: "Banco invalido"
+              blank: "Banco do usuário não pode ficar em branco"
+            agency:
+              blank: "Agência não pode ficar em branco."
+              invalid: "Agência inválida - só pode conter números."
+              format: "Não possui o tamanho esperado (4 caracteres)."
+            agency_digit:
+              blank: "Dígito agência não pode ficar em branco."
+              invalid: "Dígito agência invalido"
+              format: "Não possui o tamanho esperado (1 caracteres)."
+            account:
+              blank: "No. da conta não pode ficar em branco."
+              format: "No. da conta inválida - só pode conter números."
+              invalid: "No. da conta é diferente do esperado "
+              maximum: "(máximo: %d)."
+              equal: "(deve ser igual: %d)."
+            account_digit:
+              blank: "Dígito da conta não pode ficar em branco."
+              format: "Não possui o tamanho esperado (1 caracteres)."
+              invalid: "Dígito da conta invalido."
+            account_type:
+              blank: "Tipo de conta não pode ficar em branco"
+            owner_document:
+              blank: "CPF / CNPJ não pode ficar em branco"
+              invalid: "CPF / CNPJ inválido"
+            owner_name:
+              blank: "Nome do usuário não pode ficar em branco"
+              invalid: "Nome do usuário não pode ficar em branco"
+
+        user:
+          attributes:
+            email:
+              not_found: "O email não está cadastrado, verifique o endereço ou faça seu cadastro"
+              taken: "O email já está cadastrado, faça seu login"
+              invalid: "Esse endereço de email é inválido"
+              blank: "O email não pode ficar em branco"
+            password:
+              too_short: "A senha é muito curta. Mínimo 6 caracteres."
+              confirmation: "A senha e a confirmação de senha preenchidas não estão iguais"
+              blank: "A senha não pode ficar em branco"
+            current_password:
+              invalid: "Senha atual não é válida"
+            reset_password_token:
+              invalid: 'Token expirou. Vá para <a href="/password/new" class="alt-link">redefinir senha</a> e solicite novamente a redefinição da senha.'
+            name:
+              blank: "Nome do usuário não pode ficar em branco"
+            public_name:
+              blank: "Nome público não pode ficar em branco"
+            birth_date:
+              blank: "Data de nascimento não pode ficar em branco"
+            about_html:
+              blank: "Sobre você não pode ficar em branco"
+            uploaded_image:
+              blank: "Imagem do usuário não pode ficar em branco"
+            address_street:
+              blank: "Endereço não pode ficar em branco"
+            address_number:
+              blank: "Número no endereço não pode ficar em branco"
+            address_city:
+              blank: "Cidade não pode ficar em branco"
+            address_state:
+              blank: "Estado não pode ficar em branco"
+            address_neighbourhood:
+              blank: "Bairro não pode ficar em branco"
+            address_zip_code:
+              blank: "CEP não pode ficar em branco"
+            phone_number:
+              blank: "Telefone não pode ficar em branco"
+            country_id:
+              blank: "Pais não pode ficar em branco"
+            cpf:
+              blank: "CPF / CNPJ não pode ficar em branco"
+              invalid: "CPF / CNPJ inválido"
+
+
+  project:
+    update:
+      success: As informações foram atualizadas
+      failed: 'As informações não foram salvas, verifique se todos os campos foram preenchidos corretamente'
+    delete:
+      posts: 'Novidade apagada com sucesso'
+    video_regex_validation: somente URLs do Youtube ou Vimeo são aceitas
+  payment:
+    state:
+      boletobancario:
+        pending: "Aguardando confirmação do pagamento"
+        paid: "Confirmado em %{date}"
+        refunded: "Reembolsado em %{date}"
+        pending_refund: "Reembolso solicitado em %{date}"
+        refused: "Pagamento não realizado"
+        chargeback: "Contestado"      
+      cartaodecredito:
+        pending: "Aguardando confirmação do pagamento"
+        paid: "Confirmado em %{date}"
+        refunded: "Reembolsado em %{date}"
+        pending_refund: "Reembolso solicitado em %{date}"
+        refused: "Pagamento recusado em %{date}"
+        chargeback: "Contestado"      
+  contribution:
+    payment_details:
+      desconhecido: ""
+      creditos: "Créditos"
+      boleto_bancario: "Boleto Bancário"
+      cartao_de_credito: "Cartão de crédito"
+      debito_bancario: "Débito bancário"
+      cartao_debito: "Cartão de débito"
+      transferencia_bancaria: "Transferência bancária"
+      carteira_mo_ip: "Carteira MoIP"
+      financiamento_bancario: "Financiamento Bancário"
+    project_should_be_online: Você não pode apoiar um projeto que não está no ar
+    reward_must_be_from_project: deve ser do mesmo projeto
+    should_not_contribute_if_maximum_contributions_been_reached: já atingiu seu número
+      máximo de apoiadores
+    value_must_be_at_least_rewards_value: deve ser pelo menos %{minimum_value} para
+      a recompensa selecionada
+  contribution_report_to_project_owner:
+    reward_description: Descrição da recompensa
+    deliver_at: Data de entrega da recompensa
+    confirmed_at: Data da confirmação do pagamento
+    created_at: Data de criação do apoio
+    contribution_id: ID do apoio
+    contribution_value: Valor do apoio
+    service_fee: Taxa do Catarse
+    user_id: ID do usuário
+    user_email: Email perfil Catarse
+    user_name: Nome completo
+    cpf: CPF
+    title: Título da recompensa
+    public_name: Nome público
+    gateway: Meio de pagamento
+    anonymous: Anônimo
+    address_type: Tipo de endereço
+    street: Rua
+    address_number: Número
+    complement: Complemento
+    neighbourhood: Bairro
+    city: Cidade
+    address_state: Estado
+    zip_code: CEP
+    open_questions: open_questions
+    multiple_choice_questions: multiple_choice_questions
+    shipping_choice: 'Local de entrega'
+    shipping_option: 'Envio'
+  user:
+    no_name: Sem nome
+    contributions_text:
+      many: "Apoiou este e mais outros %{total} projetos"
+      one: "Apoiou somente este projeto até agora"
+      two: "Apoiou este e mais 1 outro projeto"
+  channels_subscribers:
+    created: 'Agora você segue o %{channel}'
+    deleted: 'Você deixou de seguir o %{channel}'
+  channels:
+    edit: Atualizar canal
+    image_hint: Tamanho máximo (600x121px)
+    subscribed: "+ %{count} seguidores"
+    back_to_news: '← Voltar para as novidades'
+    follow: "Siga o canal"
+    following: "Seguindo"
+    unfollow: "Deixar de seguir"
+    subscribed: "%{count} seguindo o canal"

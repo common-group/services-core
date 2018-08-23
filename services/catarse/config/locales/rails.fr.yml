@@ -1,0 +1,211 @@
+fr:
+  date:
+    abbr_day_names:
+      - Dim
+      - Lun
+      - Mar
+      - Mer
+      - Jeu
+      - Ven
+      - Sam
+    abbr_month_names:
+      - ~
+      - Jan
+      - Fev
+      - Mar
+      - Avr
+      - Mai
+      - Jun
+      - Jul
+      - Aou
+      - Set
+      - Oct
+      - Nov
+      - Dec
+    day_names:
+      - Dimanche
+      - Lundi
+      - Mardi
+      - Mercredi
+      - Jeudi
+      - Vendredi
+      - Samedi
+    formats:
+      default: "%d/%m/%Y"
+      with_time: "%d/%m/%Y às %Hh%Mmin"
+      long: "%d de %B de %Y"
+      short: "%d de %B"
+    month_names:
+      -
+      - Janvier
+      - Février
+      - Mars
+      - Avril
+      - Mai
+      - Juin
+      - Juillet
+      - Aout
+      - Septembre
+      - Octobre
+      - Novembre
+      - Décembre
+    order:
+      - :day
+      - :month
+      - :year
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "approximativement 1 heure"
+        other: " approximativement %{count} heures "
+      about_x_months:
+        one: " approximativement 1 mois"
+        other: " approximativement %{count} mois "
+      about_x_years:
+        one: " approximativement 1 an"
+        other: " approximativement %{count} ans "
+      almost_x_years:
+        one: "presque 1 an "
+        other: " presque %{count} ans"
+      half_a_minute: "meio minuto"
+      less_than_x_minutes:
+        one: "moins d’une minute"
+        other: "moins de %{count} minutes" 
+      less_than_x_seconds:
+        one: "moins d’une seconde"
+        other: "moins de %{count} secondes"
+      over_x_years:
+        one: "plus d’un an"
+        other: "plus de %{count} ans"
+      x_days:
+        one: "1 jour"
+        other: "%{count} jours "
+      x_minutes:
+        one: "1 minute"
+        other: "%{count} minutes "
+      x_months:
+        one: "1 mois"
+        other: "%{count} mois "
+      x_seconds:
+        one: "1 seconde"
+        other: "%{count} secondes "
+    prompts:
+      day: Jour
+      hour: Heure
+      minute: Minute
+      month: Mois
+      second: seconde
+      year: An
+  errors: &errors
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: "obligation d’accepter"
+      blank: "ce champ ne peut pas être blanc"
+      confirmation: "Les mots de passe ne correspondent pas"
+      empty: "ce champ ne peut pas être vide"
+      equal_to: "il doit être égale à%{count}"
+      even: "doit être paire"
+      exclusion: "n’est pas disponible"
+      greater_than: "doit être plus grand que %{count}"
+      greater_than_or_equal_to: "doit être plus grand ou égale à %{count}"
+      inclusion: "n’est pas inclus dans la liste"
+      invalid: "invalide"
+      less_than: "doit être plus petit que %{count}"
+      less_than_or_equal_to: " doit être plus petit ou égale à %{count}"
+      not_a_number: "accepte seulement des chiffres"
+      not_an_integer: "n’est pas un nombre entier"
+      odd: "doit être impaire"
+      record_invalid: "échec lors de la validation: %{errors}"
+      taken: "déjà utilisée"
+      too_long: "trop grand (maximum: %{count} caractères)"
+      too_short: "trop petit (minimum: %{count} caractères)"
+      wrong_length: "n’a pas la taille demander (%{count} caractères)"
+    template:
+      body: "S’il vous plait, vérifier le(s) champ(s) suivant(s):"
+      header:
+        one: "La sauvegarde n’a pas abouti %{model}: 1 erreur"
+        other: " La sauvegarde n’a pas abouti %{model}: %{count} erreurs."
+  helpers:
+    select:
+      prompt: "S’il vous plait, sélectionnez"
+    submit:
+      create: "Créer %{model}"
+      submit: "Sauvegarder %{model}"
+      update: "Actualiser %{model}"
+  number:
+    currency:
+      format:
+        delimiter: "."
+        format: "%u %n"
+        precision: 0
+        separator: ","
+        significant: false
+        strip_insignificant_zeros: false
+        unit: R$
+    format:
+      delimiter: "."
+      precision: 2
+      separator: ","
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion:
+            one: billion
+            other: billions
+          million:
+            one: million
+            other: millions
+          quadrillion:
+            one: quatrillion
+            other: quatrillions
+          thousand: mil
+          trillion:
+            one: trillion
+            other: trillions
+          unit: ~
+      format:
+        delimiter: "."
+        precision: 2
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          gb: GB
+          kb: KB
+          mb: MB
+          tb: TB
+    percentage:
+      format:
+        delimiter: "."
+    precision:
+      format:
+        delimiter: "."
+  support:
+    array:
+      last_word_connector: " e "
+      two_words_connector: " e "
+      words_connector: ", "
+  time:
+    am: am
+    formats:
+      estimate: "%B/%Y"
+      simple: "%d/%m/%Y, %H:%M h"
+      default: "%A, %d de %B de %Y, %H:%M h"
+      long: "%A, %d de %B de %Y, %H:%M h"
+      short: "%d/%m, %H:%M h"
+      posts: "%d %b %Y"
+    pm: pm
+  # remove these aliases after 'activemodel' and 'activerecord' namespaces are removed from Rails repository
+  activemodel:
+    errors:
+      <<: *errors
+  activerecord:
+    errors:
+      <<: *errors

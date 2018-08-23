@@ -1,0 +1,20 @@
+- contribution = @notification.contribution
+- details = contribution.details.first
+
+|Olá, #{contribution.user.display_name}!
+br
+br
+| Infelizmente o projeto #{link_to(contribution.project.name, project_by_slug_url(permalink: contribution.project.permalink))} que você apoiou não atingiu a meta estabelecida no #{CatarseSettings[:company_name]}.
+br
+br
+| Em até 5 dias úteis faremos o reembolso do valor do seu apoio, que <strong>virá como crédito na próxima ou 
+| subsequente fatura do seu cartão</strong>. Assim que o reembolso for feito, você receberá um e-mail de confirmação da operação.
+br
+br
+p Valor do reembolso: #{number_to_currency details.value}
+
+p Data do pedido reembolso: #{details.pending_refund_at.try(:to_date)}
+
+p Identificação na fatura do cartão de crédito: “Estorno do Catarse”
+
+= render partial: 'user_notifier/mailer/contact_info'

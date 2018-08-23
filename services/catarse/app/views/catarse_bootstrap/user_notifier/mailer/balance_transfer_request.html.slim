@@ -1,0 +1,43 @@
+- user = @notification.user
+- balance_transfer = @notification.balance_transfer
+- bank_account = user.bank_account
+- company_name = CatarseSettings[:company_name]
+
+| Olá #{user.display_name},
+br/
+br/
+| O pedido de saque do dinheiro foi registrado no nosso sistema e o processo de transferência já está <strong>em andamento.</strong> :-)
+br/
+br/
+strong
+  | Resumo da operação de saque para conta bancária:
+br/
+br/
+| Pedido do saque: #{I18n.l(balance_transfer.created_at.to_date)}
+br/
+| Data máxima da transferência: #{I18n.l(balance_transfer.transfer_limit_date.to_date)}
+br/
+| Valor total da transferência: #{number_to_currency(balance_transfer.amount, precision: 2)} (taxas já descontadas)
+br/
+| Banco: #{bank_account.bank.name}
+br/
+| Agência: #{bank_account.agency}-#{bank_account.agency_digit}
+br/
+| Conta: #{bank_account.account}-#{bank_account.account_digit}
+br/
+| Nome: #{user.name}
+br/
+| CPF/CNPJ: #{user.cpf}
+p
+  | <strong>Saiba mais sobre o processo de transferência nos artigos listados abaixo:</strong>
+p
+  strong
+    | Para realizadores: 
+  = link_to 'A transferência do dinheiro', 'http://suporte.catarse.me/hc/pt-br/articles/217916143-A-transfer%C3%AAncia-do-dinheiro', target: '__blank'
+p
+  strong
+    | Para apoiadores: 
+  = link_to 'Regras e funcionamento dos reembolsos / estornos / cancelamentos', 'http://suporte.catarse.me/hc/pt-br/articles/202365507', target: '__blank'
+br/
+
+= render partial: 'user_notifier/mailer/contact_info'

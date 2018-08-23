@@ -1,0 +1,32 @@
+- content_for :title, t('.page-title')
+
+= render 'shared/header'
+
+.section
+  .w-container
+    .w-row
+      .w-col.w-col-8.w-col-push-2
+        = simple_form_for @project, defaults: { wrapper: :input_with_error}, html: { id: 'project_form', class: 'w-form' } do |form|
+
+          fieldset
+            legend.fontsize-largest.lineheight-loose.u-text-center = t('.form.blocks.first.title')
+            p.fontsize-small.u-marginbottom-60.u-text-center = t('.form.blocks.first.description')
+            = render 'devise/shared/alert'
+
+            .u-marginbottom-40
+              = form.label :name, class: 'fontsize-large', required: false, as: :string
+              .fontsize-small.fontcolor-secondary.u-marginbottom-10= form.hint :name
+              = form.input :name, as: :string
+            .u-marginbottom-40
+              = form.label :category, class: 'fontsize-large', required: false
+              .fontsize-small.fontcolor-secondary.u-marginbottom-10= form.hint :category
+              = form.association :category, as: :select, collection: Category.order(:name_pt), prompt: t('simple_form.prompts.project.category'), class: 'medium', label: '', required: false, hint: ''
+            .u-marginbottom-80
+              label.fontsize-large.field-label for="field"= t('simple_form.prompts.project.traffic_sources')
+              = form.input :traffic_sources, as: :select, collection: t('simple_form.collections.project.traffic_sources').values, prompt: t('simple_form.prompts.project.select'), class: 'medium', label: '', required: false, hint: ''
+          .w-row
+            .w-col.w-col-6.w-col-push-3   
+              = form.button :submit, t('.form.submit'), class:'btn btn-large'
+
+= render 'shared/footer'
+

@@ -1,0 +1,42 @@
+- project = @notification.project
+
+- project_link = edit_project_url(project)
+- company_name = CatarseSettings[:company_name]
+
+|Oi, #{project.user.display_name},
+br/
+br/
+| Infelizmente o projeto #{link_to project.name, project_link } não alcançou a meta de financiamento no #{company_name}.
+br/
+br/
+| Fique tranquilo, todos os seus apoiadores já receberam um email com instruções sobre o #{link_to 'processo de reembolso', 'http://suporte.catarse.me/hc/pt-br/articles/202365507-Regras-e-funcionamento-dos-reembolsos-estornos', target: '__blank' }.
+br/
+br/
+strong Quer ajudar a melhorar o Catarse?
+br/
+| Seu projeto pode não ter atingido a meta mas com certeza você aprendeu alguma coisa e pode tirar grande proveito dessa experiência se quiser! Compartilhe esse aprendizado conosco!
+br/
+br/
+strong 1. Quais os 2 piores problemas que você enfrentou durante a campanha? 
+br/
+br/
+| Pode ser algo diretamente relacionado com o #{company_name}, uma reflexão sua, auto-crítica, ou mesmo motivos externos que dificultaram seu trajeto no financiamento coletivo.
+br/
+br/
+strong 2. O que você mais sentiu falta na plataforma do #{company_name}?
+br/
+br/
+| Como podemos melhorar a plataforma? Como poderiamos ter te ajudado mais? 
+br/
+br/
+| Estamos sempre em busca de melhorar a usabilidade do site e o nosso serviço. Para isso precisamos estar atentos ao que você tem a dizer sobre a gente.
+br/
+br/
+| Esperamos que você considere essa experiência válida e saiba que estamos a postos caso precise da nossa ajuda! 
+br/
+br/
+| Te esperamos numa próxima.
+br/
+br/
+= render partial: 'user_notifier/mailer/contact_info'
+
