@@ -1,0 +1,1 @@
+# Catarse integration setup
