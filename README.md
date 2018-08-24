@@ -1,37 +1,20 @@
 ### under development
 
-# services core db [![CircleCI](https://circleci.com/gh/common-group/services-core-db.svg?style=svg)](https://circleci.com/gh/common-group/services-core-db)
-This repo handles with migrations and api specs for these micro servies:
+# services core [![CircleCI](https://circleci.com/gh/common-group/services-core-db.svg?style=svg)](https://circleci.com/gh/common-group/services-core-db)
+This repo contains docker files to setup the Catarse environment. All dependendent repos are included as git subtrees mounted on the ```services``` folder.
 
-platform_service - Handles with new platform and platform api keys
-project_service - Handles with new projects
-community_service - Handles new users on platform and social interactions between users
+## setup
+For every service described on `docker-compose.yml` we have multiple env_files `compose_env/.*.env.sample`. Just make a copy off all of them on the same directory removing .sample.
 
-token roles:
-- platform_user: can manage api at platform level;
-- scoped_user: can manage api at platform user context;
+Start Database:
+`$ docker-compose up -d service_core_db`
 
-## database roles
-
-in psql run:
+Run the migrations and seed database with sample data:
 ```
-create role postgrest login with password 'changeme';
-create role anonymous nologin;
-create role admin nologin;
-create role platform_user nologin;
-create role scoped_user nologin;
-
-grant anonymous to postgrest;
-grant platform_user to postgrest;
-grant scoped_user to postgrest;
-grant admin to postgrest;
+$ docker-compose up migrations
+// database service mapping the 5444 to postgres container
+$ psql -h localhost -p 5444 -U postgres service_core < services/services-core-db/sample.seed.sql
 ```
 
-## running migrations
-
-`cargo install diesel_cli`
-`DATABASE_URL='postgres://postgres@localhost:5432/db' ./scripts/run_migrations.sh`
-`diesel migration --database-url= run`
-## running tests
-
-`TEST_DB_HOST=localhost TEST_DB_PORT=5432 ./scripts/run_tests.sh`
+Start services:
+`$ docker-compose up -d`
