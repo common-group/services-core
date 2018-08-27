@@ -13,7 +13,7 @@ Run the migrations and seed database with sample data:
 ```
 $ docker-compose up migrations
 // database service mapping the 5444 to postgres container
-$ psql -h localhost -p 5444 -U postgres service_core < services/services-core-db/sample.seed.sql
+$ psql -h localhost -p 5444 -U postgres service_core < services/service-core-db/sample.seed.sql
 ```
 
 Start services:
