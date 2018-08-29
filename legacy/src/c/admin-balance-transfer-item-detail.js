@@ -54,7 +54,6 @@ const adminBalanceTransferItemDetail = {
             };
 
         if (!_.isUndefined(metaBank)) {
-            console.log('metaBank', metaBank);
             if (metaBank.conta) {
                 transitionBankAccount({
                     account: metaBank.conta,
