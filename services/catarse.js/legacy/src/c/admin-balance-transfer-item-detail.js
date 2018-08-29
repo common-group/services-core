@@ -58,7 +58,7 @@ const adminBalanceTransferItemDetail = {
                 transitionBankAccount({
                     account: metaBank.conta,
                     account_digit: metaBank.conta_dv,
-                    account_type: null,
+                    account_type: metaBank.type,
                     agency: metaBank.agencia,
                     agency_digit: metaBank.agencia_dv,
                     bank_code: metaBank.bank_code,
