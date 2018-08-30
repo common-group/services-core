@@ -1,5 +1,5 @@
 BEGIN;
-    SELECT plan(17);
+    SELECT plan(16);
 
     -- check if table is present
     SELECT has_table('project_service'::name, 'posts'::name);
@@ -32,11 +32,6 @@ BEGIN;
     SELECT fk_ok(
         'project_service', 'posts', 'reward_id',
         'project_service', 'rewards', 'id'
-    );
-
-    SELECT fk_ok(
-        'project_service', 'posts', 'user_id',
-        'community_service', 'users', 'id'
     );
 
     SELECT * FROM finish();
