@@ -12,6 +12,7 @@ import _ from 'underscore';
 import models from '../models';
 import userBalance from './user-balance';
 import userBalanceTransactions from './user-balance-transactions';
+import userBalanceWithdrawHistory from './user-balance-withdraw-history';
 
 const userBalanceMain = {
     controller: function(args) {
@@ -73,6 +74,7 @@ const userBalanceMain = {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
             m.component(userBalance, opts),
+            m(userBalanceWithdrawHistory),
             m('.divider'),
             m.component(userBalanceTransactions, opts),
             m('.u-marginbottom-40'),
