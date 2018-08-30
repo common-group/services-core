@@ -48,7 +48,7 @@ const dashboardSubscriptionCardDetailSubscriptionDetails = {
                 ]),
                 m('div', [
                     m('span.fontcolor-secondary',
-                        'Tempo de assinatura: '
+                        'Qtde. de apoios confirmados: '
                     ),
                     `${subscription.paid_count} meses`
                 ]),
