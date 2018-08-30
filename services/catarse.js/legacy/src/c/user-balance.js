@@ -40,14 +40,14 @@ const userBalance = {
                 content: balanceRequestModalC
             }) : ''),
             m('.w-container', [
-                m('.w-row', [
+                m('.card.card-terciary.u-radius.w-row', [
                     m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [
                         m('.fontsize-larger', [
                             window.I18n.t('totals', I18nScope()),
                             m(`span.text-${positiveValue ? 'success' : 'error'}`, `R$ ${h.formatNumber(balance.amount || 0, 2, 3)}`)
                         ])
                     ]),
-                    m('.card.card-terciary.u-radius.w-col.w-col-4', [
+                    m('.w-col.w-col-4', [
                         m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${((balance.amount <= 0 || balance.in_period_yet || balance.has_cancelation_request) ? 'btn-inactive' : '')}"][href="javascript:void(0);"]`,
                             {
                                 onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false) && !balance.has_cancelation_request) ? ctrl.displayModal.toggle : 'javascript:void(0);')
@@ -63,7 +63,7 @@ const userBalance = {
                                 }))
                                 : window.I18n.t('no_withdraws_this_month', I18nScope({ month_name: moment().format('MMMM') })))
                         ),
-                        m('.fontcolor-secondary.fontsize-smallest.lineheight-tight.u-marginbottom-10',
+                        m('.fontcolor-secondary.fontsize-smallest.lineheight-tight',
                           balance.has_cancelation_request ? window.I18n.t('withdraw_canceling_msg', I18nScope()) : window.I18n.t('withdraw_limits_msg', I18nScope())
                         )
 
