@@ -16,7 +16,7 @@ import h from '../h';
 import models from '../models';
 import projectFilters from '../vms/project-filters-vm';
 import categoryButton from '../c/category-button';
-import search from '../c/search'
+import search from '../c/search';
 import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
