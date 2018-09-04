@@ -1,7 +1,11 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
+import { catarse } from '../api';
+import models from '../models';
 import userBalanceWithdrawHistoryItemRequest from './user-balance-withdraw-history-item-request';
+import userBalanceTransfersVM from '../vms/user-balance-transfers-vm';
+import loadMoreBtn from './load-more-btn';
 
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 const I18nScopeTransfer = _.partial(h.i18nScope, 'users.balance.transfer_labels');
@@ -10,67 +14,79 @@ const I18nScopeBank = _.partial(h.i18nScope, 'users.balance.bank');
 const userBalanceWithdrawHistory = {
     controller: function (args) {
 
+        // Make the first load using filter for user_id from the current user beeing looked
+        const pageCurrentUserId = window.location.pathname.match(/\/pt\/users\/(.*:?)\/edit/)[1];
+        const userIdVM = catarse.filtersVM({user_id: 'eq'});
+        const balanceTransfersList = userBalanceTransfersVM.getWithPagination;
+        userIdVM.user_id(pageCurrentUserId);
+        balanceTransfersList.firstPage(userIdVM.parameters());
+
+        const explitInArraysOf3 = (collection) => {
+            const array = [];
+            let partArray = []; 
+            let i;
+
+            if (collection.length > 3) {
+
+                for (i = 0; i < collection.length; i++) {
+    
+                    partArray.push(collection[i]);
+
+                    if (partArray.length == 3) {
+                        array.push(partArray);
+                        partArray = [];
+                    }
+
+                }
+                
+                if (partArray.length != 3 && partArray.length != 0)
+                    array.push(partArray);
+            }
+            else {
+                array.push(collection);
+            }
+            
+            return array;
+        };
+
+        return {
+            balanceTransfersList,
+            explitInArraysOf3
+        };
     },
     view: function (ctrl, args) {
 
-        const mock_transfers = [
-            {
-                amount: 2554500,
-                bank_name: '001 - Banco do Brasil S.A.',
-                agency: '2115',
-                agency_dv: '6',
-                account: '46734',
-                account_dv: '0',
-                account_type: 'conta_corrente',
-                user_name: 'Karine Silva Oliveira',
-                document_type: 'pf',
-                document: '094.871.626-66',
-                requested_in: '2018-08-28 13:13:00',
-                funding_estimated_date: '2018-08-29 13:13:00',
-                transferred_at: null,
-                status: 'pending'
-            },
-            {
-                amount: 2554500,
-                bank_name: '001 - Banco do Brasil S.A.',
-                agency: '2115',
-                agency_dv: '6',
-                account: '46734',
-                account_dv: '0',
-                account_type: 'conta_corrente',
-                user_name: 'Karine Silva Oliveira',
-                document_type: 'pf',
-                document: '094.871.626-66',
-                requested_in: '2018-08-28 13:13:00',
-                funding_estimated_date: '2018-08-29 13:13:00',
-                transferred_at: null,
-                status: 'rejected'
-            },
-            {
-                amount: 2554500,
-                bank_name: '001 - Banco do Brasil S.A.',
-                agency: '2115',
-                agency_dv: '6',
-                account: '46734',
-                account_dv: '0',
-                account_type: 'conta_corrente',
-                user_name: 'Karine Silva Oliveira',
-                document_type: 'pf',
-                document: '094.871.626-66',
-                requested_in: '2018-08-28 13:13:00',
-                funding_estimated_date: '2018-08-29 13:13:00',
-                transferred_at: '2018-08-29 13:13:00',
-                status: 'transferred'
-            }
-        ];
 
         return m('div',
             m('.w-container', [
                 m('.u-marginbottom-20',
                     m('.fontsize-base.fontweight-semibold', I18n.t('withdraw_history_group', I18nScope()))
                 ),
-                m(".u-marginbottom-30.w-row",
-                    _.map(mock_transfers, (transfer, index) => m(userBalanceWithdrawHistoryItemRequest, { transfer, index }))
+                (
+                    _.map(ctrl.explitInArraysOf3(ctrl.balanceTransfersList.collection()), 
+                        (transferList) => m('.u-marginbottom-30.w-row',  
+                            _.map(transferList, 
+                                (transfer, index) => m(userBalanceWithdrawHistoryItemRequest, { transfer, index }))
+                    ))
+                ),
+                (
+                    ctrl.balanceTransfersList.isLoading() ? 
+                        h.loader() 
+                    :
+                        (
+                            ctrl.balanceTransfersList.isLastPage() ? 
+                                '' 
+                            : 
+                                m('.u-margintop-40.u-marginbottom-80.w-row', [
+                                    m('.w-col.w-col-5'),
+                                    m('.w-col.w-col-2',
+                                        m('a.btn.btn-medium.btn-terciary.w-button[href=\'javascript:void(0);\']', {
+                                            onclick: ctrl.balanceTransfersList.nextPage
+                                        }, 'Carregar mais')
+                                    ),
+                                    m('.w-col.w-col-5')
+                                ])
+                        )
                 )
             ])
         );

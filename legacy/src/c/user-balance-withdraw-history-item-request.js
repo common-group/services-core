@@ -40,7 +40,7 @@ const userBalanceWithdrawHistoryItemRequest = {
         const initialStateInfoRender = [
             m('span.fa.fa-clock-o', m.trust('&nbsp;')),
             I18n.t('funding_estimated_date', I18nScopeTransfer()),
-            `${args.transfer.funding_estimated_date}`,
+            h.momentify(args.transfer.funding_estimated_date, 'DD/MM/YYYY'),
             m('br')
         ];
 
@@ -59,8 +59,8 @@ const userBalanceWithdrawHistoryItemRequest = {
 
         const successStateInfoRender = [
             m('span.fa.fa-check-circle', m.trust('&nbsp;')),
-            I18n.t('received_at', I18nScopeTransfer()), 
-            `${args.transfer.transferred_at}`,
+            I18n.t('received_at', I18nScopeTransfer()),
+            h.momentify(args.transfer.transferred_at, 'DD/MM/YYYY'),
             m('br')
         ];
 
@@ -76,7 +76,7 @@ const userBalanceWithdrawHistoryItemRequest = {
             transferred: successStateInfoRender
         };
 
-        const documentMasked = (document_number) => args.transfer.document_type == 'pf' ? documentMask(document_number) : documentCompanyMask(document_number);
+        const documentMasked = (document_number) => args.transfer.document_type == 'cpf' ? documentMask(document_number) : documentCompanyMask(document_number);
 
         return {
             cardStatusClassMap,
@@ -105,10 +105,10 @@ const userBalanceWithdrawHistoryItemRequest = {
                     args.transfer.bank_name,
                     m('br'),
                     m('strong', I18n.t('agency', I18nScopeBank())),
-                    `${args.transfer.agency} - ${args.transfer.agency_dv}`,
+                    `${args.transfer.agency}${args.transfer.agency_digit ? '-' + args.transfer.agency_digit : ''}`,
                     m('br'),
                     m('strong', I18n.t('account', I18nScopeBank())),
-                    `${args.transfer.account} - ${args.transfer.account_dv}`,
+                    `${args.transfer.account}${args.transfer.account_digit ? '-' + args.transfer.account_digit : ''}`,
                     m('br'),
                     m('strong', I18n.t('account_type_name', I18nScopeBank())),
                     I18n.t(`account_type.${args.transfer.account_type}`, I18nScopeBank()),
@@ -117,7 +117,7 @@ const userBalanceWithdrawHistoryItemRequest = {
                     args.transfer.user_name,
                     m('br'),
                     m('strong', I18n.t(`${args.transfer.document_type}`, I18nScopeBank())),
-                    ctrl.documentMasked(args.transfer.document)
+                    ctrl.documentMasked(args.transfer.document_number)
                 ]),
                 m(`.fontsize-smaller.u-text-center.badge.fontweight-semibold.u-margintop-30${ctrl.innerCardStatusClassMap[args.transfer.status]}`, ctrl.innerCardInfo[args.transfer.status])
             ])
