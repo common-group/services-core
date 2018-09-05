@@ -16,6 +16,7 @@ import h from '../h';
 import models from '../models';
 import projectFilters from '../vms/project-filters-vm';
 import categoryButton from '../c/category-button';
+import search from '../c/search';
 import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
@@ -131,11 +132,11 @@ const projectsExplore = {
                     recommendedProjects = (alg) => {
                         let model;
                         switch (alg) {
-                        case '1':
-                            model = models.recommendedProjects1;
-                            break;
-                        default:
-                            model = models.recommendedProjects2;
+                            case '1':
+                                model = models.recommendedProjects1;
+                                break;
+                            default:
+                                model = models.recommendedProjects2;
                         }
                         const pages = commonRecommender.paginationVM(model, '', {}, false);
                         const rFilter = commonRecommender.filtersVM({
@@ -280,12 +281,12 @@ const projectsExplore = {
             hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
             m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
-                onclick: () => {
-                    ctrl.categoryToggle.toggle();
-                    ctrl.selectedCategory(category);
+                    onclick: () => {
+                        ctrl.categoryToggle.toggle();
+                        ctrl.selectedCategory(category);
+                    },
+                    class: ctrl.selectedCategory() === category ? 'selected' : ''
                 },
-                class: ctrl.selectedCategory() === category ? 'selected' : ''
-            },
                 category.name
             )
         );
@@ -295,6 +296,9 @@ const projectsExplore = {
             config: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
         }, [
             m('.hero-search.explore', [
+                m(".u-marginbottom-10.w-container",
+                  m(search)
+                ),
                 m('.u-text-center.w-container', [
                     m('.explore-text-fixed',
                         'Quero ver'
@@ -314,27 +318,27 @@ const projectsExplore = {
                         ctrl.modeToggle() ? '' :
                         m('.explore-filter-select', [
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.changeMode('all_modes');
+                                    onclick: () => {
+                                        ctrl.changeMode('all_modes');
+                                    },
+                                    class: ctrl.currentMode() === null ? 'selected' : ''
                                 },
-                                class: ctrl.currentMode() === null ? 'selected' : ''
-                            },
                                 'Todos os projetos'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.changeMode('not_sub');
+                                    onclick: () => {
+                                        ctrl.changeMode('not_sub');
+                                    },
+                                    class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
                                 },
-                                class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
-                            },
                                 'Projetos pontuais'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                onclick: () => {
-                                    ctrl.changeMode('sub');
+                                    onclick: () => {
+                                        ctrl.changeMode('sub');
+                                    },
+                                    class: ctrl.currentMode() === 'sub' ? 'selected' : ''
                                 },
-                                class: ctrl.currentMode() === 'sub' ? 'selected' : ''
-                            },
                                 'Projetos recorrentes'
                             ),
                             m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
@@ -362,15 +366,15 @@ const projectsExplore = {
                             m('.explore-filer-select-row', [
                                 m('.explore-filter-select-col', [
                                     m("a.explore-filter-link[href='#']", {
-                                        onclick: () => {
-                                            ctrl.categoryToggle.toggle();
-                                            ctrl.selectedCategory({
-                                                name: 'Todas as categorias',
-                                                id: null
-                                            });
+                                            onclick: () => {
+                                                ctrl.categoryToggle.toggle();
+                                                ctrl.selectedCategory({
+                                                    name: 'Todas as categorias',
+                                                    id: null
+                                                });
+                                            },
+                                            class: ctrl.selectedCategory().id === null ? 'selected' : ''
                                         },
-                                        class: ctrl.selectedCategory().id === null ? 'selected' : ''
-                                    },
                                         'Todas as categorias'
                                     ),
                                     categoryColumn(ctrl.categories(), 0, Math.floor(_.size(ctrl.categories()) / 2))
@@ -403,12 +407,12 @@ const projectsExplore = {
                             ctrl.filterToggle() ? '' :
                             m('.explore-filter-select', [
                                 _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                    onclick: () => {
-                                        ctrl.changeFilter(pageFilter.keyName);
-                                        ctrl.filterToggle.toggle();
+                                        onclick: () => {
+                                            ctrl.changeFilter(pageFilter.keyName);
+                                            ctrl.filterToggle.toggle();
+                                        },
+                                        class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
                                     },
-                                    class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
-                                },
                                     pageFilter.nicename
                                 )),
                                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
