@@ -83,6 +83,12 @@ FactoryBot.define do
     details "Details report"
   end
 
+  factory :post, class: CommonModels::Post do
+    project
+    title "Post Title"
+    comment_html "Post Comment"
+  end
+
   factory :reward, class: CommonModels::Reward do
     project
     minimum_value 10.0

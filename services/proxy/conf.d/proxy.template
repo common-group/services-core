@@ -91,6 +91,8 @@ server {
 			# GET|PUT|DELETE 	/v1/projects/:project_id
 			# GET|POST 			/v1/projects/:project_id/goals
 			# GET|PUT|DELETE 	/v1/projects/:project_id/goals/:goal_id
+      # GET|POST 			/v1/projects/:project_id/posts
+      # GET|DELETE 	/v1/projects/:project_id/posts/:goal_id
 			# GET|POST 			/v1/projects/:project_id/rewards
 			# GET|PUT|DELETE 	/v1/projects/:project_id/rewards/:reward_id
 			# GET 				/v1/projects/:project_id/fund_stats
