@@ -20,6 +20,7 @@ const models = {
     commonSubscriptionUpgrade: commonPayment.model('rpc/upgrade_subscription'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
+    userBalanceTransfers: catarse.model('user_balance_transfers'),
     contributionDetail: catarse.model('contribution_details'),
     contributionActivity: catarse.model('contribution_activities'),
     projectDetail: catarse.model('project_details'),
