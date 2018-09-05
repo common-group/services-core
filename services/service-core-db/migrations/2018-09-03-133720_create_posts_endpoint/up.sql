@@ -14,3 +14,7 @@ CREATE OR REPLACE VIEW "project_service_api"."posts" AS
    FROM project_service.posts p
   WHERE core.has_any_of_roles('{platform_user,scoped_user,anonymous}'::text[])
   ORDER BY p.id DESC;
+
+GRANT SELECT ON TABLE project_service_api.posts TO platform_user;
+GRANT SELECT ON TABLE project_service_api.posts TO scoped_user;
+GRANT SELECT ON TABLE project_service_api.posts TO anonymous;

@@ -8,3 +8,4 @@ grant admin to postgrest;
 grant scoped_user to postgrest;
 grant platform_user to postgrest;
 grant anonymous to postgrest;
+grant  usage on schema core to proxy_server;
