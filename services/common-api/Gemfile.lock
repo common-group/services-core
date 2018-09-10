@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/common-group/common_models.git
-  revision: 455fa49e3bd1007d5985d66bfa7dad6d40cc6075
+  revision: cc267d557b174139e9cb771703ee128e55f20485
   branch: develop
   specs:
     common_models (0.1.0)
@@ -188,6 +188,7 @@ DEPENDENCIES
   factory_bot
   jwt
   listen (>= 3.0.5, < 3.2)
+  pg (= 1.0.0)
   pry
   puma (~> 3.11)
   pundit (= 2.0.0.beta1)

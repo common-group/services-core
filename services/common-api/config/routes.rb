@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       end
     end
     resources :api_keys, only: %i[create destroy]
+    resources :direct_messages, only: %i[create]
   end
 
   draw :api_v1
