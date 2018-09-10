@@ -69,6 +69,13 @@ server {
 			include /etc/nginx/conf.d/locations/v1/api_keys_location.conf;
         }
 
+    location ~ "^/v1/direct_messages(?:\/)?.*$" {
+        # Current mapped routes for /v1/direct_messages
+        # POST 			/v1/direct_messages
+        # GET 			/v1/direct_messages
+        include /etc/nginx/conf.d/locations/v1/direct_messages_location.conf;
+    }
+
 		location ~ "^/v1/users(?:\/)?.*$" {
             # Current mapped routes for /v1/users
 			# POST 			/v1/users/login
