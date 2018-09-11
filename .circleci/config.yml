@@ -36,6 +36,29 @@ jobs:
             && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
             && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
             && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common-api:test bundle exec rspec spec
+  test_common_models:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - run: apk update && apk add git bash
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Common models tests
+          command: |
+            set -ex \
+            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && cd services/service-core-db/ \
+            && docker build -f Dockerfile -t comum/services-core:test . \
+            && cd ../common_models/ \
+            && docker build -f Dockerfile -t comum/common_models:test . \
+            && cd ../../ \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
+
 
 
 workflows:
@@ -44,4 +67,5 @@ workflows:
     jobs:
       - test_services_core_db
       - test_common_api
+      - test_common_models
 
