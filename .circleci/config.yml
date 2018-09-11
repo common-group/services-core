@@ -157,7 +157,7 @@ jobs:
     docker:
       - image: comum/docker-build-env:latest
     steps:
-      - run: apk add --update ca-certificates openssl git bash && update-ca-certificates
+      - run: apk update && apk add ca-certificates openssl git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
