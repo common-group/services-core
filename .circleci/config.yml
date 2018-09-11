@@ -31,7 +31,7 @@ jobs:
             && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
             && cd services/service-core-db/ \
             && docker build -f Dockerfile -t comum/services-core:test . \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < ./init.sql \
             && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
             && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh
       - run:
@@ -39,7 +39,7 @@ jobs:
           command: |
             set -ex \
             && cd services/common-api \
-            && bundle config local.common_models ../common-models \
+            && bundle config local.common_models ../common_models \
             && bundle install
       - run:
           name: Run common-api tests
