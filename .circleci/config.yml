@@ -18,7 +18,7 @@ jobs:
   test_common_api:
     docker:
       #- image: comum/docker-build-env:latest
-      - image: circleci/ruby:2.4.4-jessie-node-browsers
+      - image: circleci/ruby:2.5.1-node-browsers-legacy
     steps:
       - run: sudo apt update && sudo apt install postgresql-client
       - checkout
