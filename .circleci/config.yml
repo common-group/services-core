@@ -37,6 +37,7 @@ jobs:
             && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
             && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
             && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common-api:test bundle exec rspec spec
+
   test_common_models:
     docker:
       - image: comum/docker-build-env:latest
@@ -119,6 +120,44 @@ jobs:
     - store_artifacts:
         path: /tmp/circleci-test-results
 
+  test_payment_service_lib:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - run: apk add --update ca-certificates openssl git bash && update-ca-certificates
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Payment service tests
+          command: |
+            set -ex \
+            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && cd services/service-core-db/ \
+            && docker build -f Dockerfile -t comum/services-core:test . \
+            && cd ../payment-service-api/ \
+            && docker build -f Dockerfile -t comum/payment-service:test . \
+            && cd ../../ \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/payment-service:test npm test -- -v
+
+  test_proxy_config:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - run: apk add --update ca-certificates openssl git bash && update-ca-certificates
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Test proxy config file
+          command: |
+            set -ex \
+            && cd services/proxy \
+            && ./test.sh
+
 workflows:
   version: 2
   run-all-tests:
@@ -128,4 +167,5 @@ workflows:
       - test_common_models
       - test_catarse
       - test_catarse_js
-
+      - test_payment_service_lib
+      - test_proxy_config
