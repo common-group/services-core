@@ -75,6 +75,7 @@ jobs:
           name: 'Run catarse test'
           command: |
             set -ex \
+            && cd services/catarse \
             && bundle install \
             && npm install \
             && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rake db:migrate \
