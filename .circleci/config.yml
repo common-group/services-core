@@ -144,7 +144,7 @@ jobs:
     docker:
       - image: comum/docker-build-env:latest
     steps:
-      - run: apk add --update openssl git bash
+      - run: apk add --update git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
@@ -167,7 +167,7 @@ jobs:
     docker:
       - image: comum/docker-build-env:latest
     steps:
-      - run: apk update && apk add openssl git bash
+      - run: apk update && apk add git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
