@@ -3,37 +3,45 @@ jobs:
   test_services_core_db:
     docker:
       - image: comum/docker-build-env:latest
-    working_directory: '~/project/services/service-core-db'
     steps:
       - run: apk update && apk add git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-        #- run: cd services/service-core-db/ && ./run_sql_tests_with_docker.sh
-      - run: ./run_sql_tests_with_docker.sh
-        #  test_common_api:
-        #    docker:
-        #      - image: comum/docker-build-env:latest
-        #    steps:
-        #      - checkout
-        #      - setup_remote_docker:
-        #          version: 17.05.0-ce
-        #      - run: apk update && apk add git bash
-        #      - run: docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
-        #      - run: git clone https://github.com/common-group/services-core-db.git migrations
-        #      - run: docker build -f migrations/Dockerfile -t comum/services-core:test .
-        #      - run: docker build -f Dockerfile -t comum/common-api:test .
-        #
-        #      - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < migrations/init.sql
-        #      - run: docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
-        #      - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test diesel migration --migration-dir migrations/migrations run
-        #      - run: docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common-api:test bundle exec rspec spec
-        #
+      - run:
+          name: Service core db tests
+          command: |
+            set -ex \
+            && cd services/service-core-db \
+            && ./run_sql_tests_with_docker.sh
+  test_common_api:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - run: apk update && apk add git bash
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Common api tests
+          command: |
+            set -ex \
+            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && cd services/service-core-db/ \
+            && docker build -f Dockerfile -t comum/services-core:test . \
+            && cd ../common-api/ \
+            && docker build -f Dockerfile -t comum/common-api:test . \
+            && cd ../../ \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common-api:test bundle exec rspec spec
+
 
 workflows:
   version: 2
   run-all-tests:
     jobs:
       - test_services_core_db
-        #      - test_common_api
+      - test_common_api
 
