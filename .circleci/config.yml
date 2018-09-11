@@ -73,13 +73,23 @@ jobs:
           version: 17.05.0-ce
       - run: sudo apt update && sudo apt install postgresql-client
       - run:
-          name: 'Run catarse test'
+          name: Run catarse installs
           command: |
             set -ex \
             && cd services/catarse \
             && bundle install \
-            && npm install \
+            && npm install
+      - run:
+          name: Run catarse migration
+          command: |
+            set -ex \
+            && cd services/catarse \
             && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rake db:migrate \
+      - run:
+          name: Run catarse tests
+          command: |
+            set -ex \
+            && cd services/catarse \
             && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rspec spec
 
   test_catarse_js:
