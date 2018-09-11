@@ -17,26 +17,36 @@ jobs:
 
   test_common_api:
     docker:
-      - image: comum/docker-build-env:latest
+      #- image: comum/docker-build-env:latest
+      - image: circleci/ruby:2.4.4-jessie-node-browsers
     steps:
-      - run: apk update && apk add git bash
+      - run: sudo apt update && sudo apt install postgresql-client
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
       - run:
-          name: Common api tests
+          name: Common api database setup
           command: |
             set -ex \
             && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
             && cd services/service-core-db/ \
             && docker build -f Dockerfile -t comum/services-core:test . \
-            && cd ../common-api/ \
-            && docker build -f Dockerfile -t comum/common-api:test . \
-            && cd ../../ \
             && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
             && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
-            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
-            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common-api:test bundle exec rspec spec
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh
+      - run:
+          name: common api installs
+          command: |
+            set -ex \
+            && cd services/common-api \
+            && bundle config local.common_models ../common-models \
+            && bundle install
+      - run:
+          name: Run common-api tests
+          command: |
+            set -ex \
+            && cd services/common-api \
+            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost.pg:5432/services_core_test bundle exec rspec spec
 
   test_common_models:
     docker:
