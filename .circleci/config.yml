@@ -46,7 +46,7 @@ jobs:
           command: |
             set -ex \
             && cd services/common-api \
-            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost.pg:5432/services_core_test bundle exec rspec spec
+            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/services_core_test bundle exec rspec spec
 
   test_common_models:
     docker:
@@ -144,7 +144,7 @@ jobs:
     docker:
       - image: comum/docker-build-env:latest
     steps:
-      - run: apk add --update ca-certificates openssl git bash && update-ca-certificates
+      - run: apk add --update openssl git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
@@ -167,7 +167,7 @@ jobs:
     docker:
       - image: comum/docker-build-env:latest
     steps:
-      - run: apk update && apk add ca-certificates openssl git bash
+      - run: apk update && apk add openssl git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
