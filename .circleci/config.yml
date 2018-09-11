@@ -58,7 +58,25 @@ jobs:
             && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
             && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
             && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
-
+  test_catarse:
+    docker:
+      - image: circleci/ruby:2.4.4-jessie-node-browsers
+      - image: postgres:9.4
+        environment:
+          POSTGRES_DB: catarse_test
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: sudo apt update && sudo apt install postgresql-client
+      - run:
+          name: 'Run catarse test'
+          command: |
+            set -ex \
+            && bundle install \
+            && npm install \
+            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rake db:migrate \
+            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rspec spec
 
 
 workflows:
@@ -68,4 +86,5 @@ workflows:
       - test_services_core_db
       - test_common_api
       - test_common_models
+      - test_catarse
 
