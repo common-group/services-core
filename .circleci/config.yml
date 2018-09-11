@@ -111,7 +111,7 @@ jobs:
         key: v1-dep-{{ .Branch }}-{{ epoch }}
         paths:
         - ~/project/services/catarse.js/node_modules
-    - run: npm test
+    - run: cd services/catarse.js && npm test
     - store_test_results:
         path: /tmp/circleci-test-results
     - store_artifacts:
