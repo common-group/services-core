@@ -1,98 +1,201 @@
 version: 2
 jobs:
-  build:
+  test_services_core_db:
     docker:
       - image: comum/docker-build-env:latest
     steps:
-      - checkout
-      - setup_remote_docker:
-          version: 17.05.0-ce
       - run: apk update && apk add git bash
-      - run: ./run_sql_tests_with_docker.sh
-  push_docker:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Service core db tests
+          command: |
+            set -ex \
+            && cd services/service-core-db \
+            && ./run_sql_tests_with_docker.sh
+
+  test_common_api:
+    docker:
+      - image: circleci/ruby:2.5.1-node-browsers-legacy
+      - image: postgres:9.6
+        environment:
+          POSTGRES_DB: services_core_test
+    steps:
+      - run: sudo apt update && sudo apt install postgresql-client
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Rust setup
+          command: |
+            set -ex \
+            && curl https://sh.rustup.rs -sSf | sh -s -- -y \
+            && source $HOME/.cargo/env \
+            && cargo install diesel_cli --no-default-features --features "postgres" \
+            && sudo ln -s $HOME/.cargo/bin/diesel /usr/local/bin/diesel
+      - run:
+          name: Common api database setup
+          command: |
+            set -ex \
+            && cd services/service-core-db/ \
+            && touch Cargo.toml \
+            && psql -U postgres -h localhost -p 5432 services_core_test < ./init.sql \
+            && psql -U postgres -h localhost -p 5432 -c "alter user postgrest with superuser;" \
+            && DATABASE_URL=postgres://postgres@localhost:5432/services_core_test ./scripts/run_migrations.sh
+      - run:
+          name: common api installs
+          command: |
+            set -ex \
+            && cd services/common-api \
+            && bundle config disable_local_branch_check true \
+            && bundle config local.common_models ../common_models \
+            && bundle install
+      - run:
+          name: Run common-api tests
+          command: |
+            set -ex \
+            && cd services/common-api \
+            && RAILS_ENV=test DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true DATABASE_URL=postgres://postgres:example@localhost:5432/services_core_test bundle exec rspec spec
+
+  test_common_models:
     docker:
       - image: comum/docker-build-env:latest
+    steps:
+      - run: apk update && apk add git bash
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Common models tests
+          command: |
+            set -ex \
+            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && cd services/service-core-db/ \
+            && docker build -f Dockerfile -t comum/services-core:test . \
+            && cd ../common_models/ \
+            && docker build -f Dockerfile -t comum/common_models:test . \
+            && cd ../../ \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
+
+  test_catarse:
+    docker:
+      - image: circleci/ruby:2.4.4-jessie-node-browsers
+      - image: postgres:9.4
+        environment:
+          POSTGRES_DB: catarse_test
     steps:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      # with credentials stored in the UI
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      # build the application container
-      - run: docker build -t comum/services-core:latest .
-      # deploy the container
-      - run: docker push comum/services-core:latest
-  deploy_production:
+      - run: sudo apt update && sudo apt install postgresql-client
+      - run:
+          name: Run catarse installs
+          command: |
+            set -ex \
+            && cd services/catarse \
+            && bundle install \
+            && npm install
+      - run:
+          name: Run catarse migration
+          command: |
+            set -ex \
+            && cd services/catarse \
+            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rake db:migrate \
+      - run:
+          name: Run catarse tests
+          command: |
+            set -ex \
+            && cd services/catarse \
+            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rspec spec
+
+  test_catarse_js:
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+    docker:
+    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
+      command: /sbin/init
+    steps:
+    - checkout
+    - run:
+        name: Catarse.js install & artifacts
+        command: |
+          set -ex \
+          && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS \
+          && cd services/catarse.js \
+          && nvm install 10 && nvm alias default 10
+    - restore_cache:
+        keys:
+        - v1-dep-{{ .Branch }}-
+        - v1-dep-develop-
+        - v1-dep-
+    - run: if [ -z "${NODE_ENV:-}" ]; then export NODE_ENV=test; fi
+    - run: export PATH="~/project/services/catarse.js/node_modules/.bin:$PATH"
+    - run: cd services/catarse.js && npm install
+    - save_cache:
+        key: v1-dep-{{ .Branch }}-{{ epoch }}
+        paths:
+        - ~/project/services/catarse.js/node_modules
+    - run: cd services/catarse.js && npm test
+    - store_test_results:
+        path: /tmp/circleci-test-results
+    - store_artifacts:
+        path: /tmp/circleci-artifacts
+    - store_artifacts:
+        path: /tmp/circleci-test-results
+
+  test_payment_service_lib:
     docker:
       - image: comum/docker-build-env:latest
     steps:
+      - run: apk add --update git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku
-      - run: bash .circleci/setup-heroku.sh
-      - run: heroku container:login
+      - run:
+          name: Payment service tests
+          command: |
+            set -ex \
+            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && cd services/service-core-db/ \
+            && docker build -f Dockerfile -t comum/services-core:test . \
+            && cd ../payment-service-api/ \
+            && docker build -f Dockerfile -t comum/payment-service:test . \
+            && cd ../../ \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/payment-service:test npm test -- -v
 
-      - run: heroku container:push service_core --recursive -a $PRODUCTION_SERVICE_CORE_DB_APP
-      - run: heroku container:release service_core -a $PRODUCTION_SERVICE_CORE_DB_APP
-      - run: sleep 5 # wait time for new relase on heroku
-      - run: heroku run ./scripts/run_migrations.sh -a $PRODUCTION_SERVICE_CORE_DB_APP --type=service_core
-      - run: heroku restart -a $PRODUCTION_ANALYTICS_API_APP
-      - run: heroku restart -a $PRODUCTION_COMMUNITY_API_APP
-      - run: heroku restart -a $PRODUCTION_PAYMENT_API_APP
-      - run: heroku restart -a $PRODUCTION_PROJECT_API_APP
-      - run: heroku restart -a $PRODUCTION_PLATFORM_API_APP
-      - run: heroku restart -a $PRODUCTION_NOTIFICATION_API_APP
-
-
-  deploy_sandbox:
+  test_proxy_config:
     docker:
       - image: comum/docker-build-env:latest
     steps:
+      - run: apk update && apk add git bash
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku
-      - run: bash .circleci/setup-heroku.sh
-      - run: heroku container:login
-
-      - run: heroku container:push service_core --recursive -a $SANDBOX_SERVICE_CORE_DB_APP
-      - run: heroku container:release service_core -a $SANDBOX_SERVICE_CORE_DB_APP
-      - run: sleep 5 # wait time for new relase on heroku
-      - run: heroku run ./scripts/run_migrations.sh -a $SANDBOX_SERVICE_CORE_DB_APP --type=service_core
-
-      - run: heroku restart -a $SANDBOX_ANALYTICS_API_APP
-      - run: heroku restart -a $SANDBOX_COMMUNITY_API_APP
-      - run: heroku restart -a $SANDBOX_PAYMENT_API_APP
-      - run: heroku restart -a $SANDBOX_PROJECT_API_APP
-      - run: heroku restart -a $SANDBOX_PLATFORM_API_APP
-      - run: heroku restart -a $SANDBOX_NOTIFICATION_API_APP
-
+      - run:
+          name: Test proxy config file
+          command: |
+            set -ex \
+            && cd services/proxy \
+            && ./test.sh
 
 workflows:
   version: 2
-  build-and-push:
+  run-all-tests:
     jobs:
-      - build
-      - push_docker:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - deploy_sandbox:
-          requires:
-            - build
-          filters:
-            branches:
-              only: develop
-      - deploy_production:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-
-
+      - test_services_core_db
+      - test_common_api
+      - test_common_models
+      - test_catarse
+      - test_catarse_js
+      - test_payment_service_lib
+      - test_proxy_config
