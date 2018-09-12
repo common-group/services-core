@@ -18,7 +18,6 @@ jobs:
   test_common_api:
     docker:
       - image: circleci/ruby:2.5.1-node-browsers-legacy
-      - image: comum/deps
       - image: postgres:9.6
         environment:
           POSTGRES_DB: services_core_test
@@ -28,11 +27,17 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run:
+          name: Rust setup
+          command: |
+            set -ex \
+            && curl https://sh.rustup.rs -sSf | sh -s -- -y \
+            && source $HOME/.cargo/env \
+            && cargo install diesel_cli --no-default-features --features "postgres"
+      - run:
           name: Common api database setup
           command: |
             set -ex \
             && cd services/service-core-db/ \
-            && docker build -f Dockerfile -t comum/services-core:test . \
             && psql -U postgres -h localhost -p 5432 services_core_test < ./init.sql \
             && psql -U postgres -h localhost -p 5432 -c "alter user postgrest with superuser;" \
             && DATABASE_URL=postgres://postgres@localhost:5432/services_core_test ./scripts/run_migrations.sh
