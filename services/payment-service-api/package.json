@@ -16,7 +16,7 @@
     "ava": "^1.0.0-beta.3",
     "express": "^4.16.2",
     "get-stdin": "^5.0.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.5",
     "luxon": "^0.2.5",
     "nock": "^9.1.6",
     "pagarme": "^3",
