@@ -39,6 +39,7 @@ jobs:
           command: |
             set -ex \
             && cd services/service-core-db/ \
+            && touch Cargo.toml \
             && psql -U postgres -h localhost -p 5432 services_core_test < ./init.sql \
             && psql -U postgres -h localhost -p 5432 -c "alter user postgrest with superuser;" \
             && DATABASE_URL=postgres://postgres@localhost:5432/services_core_test ./scripts/run_migrations.sh
