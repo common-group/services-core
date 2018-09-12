@@ -32,7 +32,8 @@ jobs:
             set -ex \
             && curl https://sh.rustup.rs -sSf | sh -s -- -y \
             && source $HOME/.cargo/env \
-            && cargo install diesel_cli --no-default-features --features "postgres"
+            && cargo install diesel_cli --no-default-features --features "postgres" \
+            && sudo ln -s $HOME/.cargo/bin/diesel /usr/local/bin/diesel
       - run:
           name: Common api database setup
           command: |
