@@ -17,8 +17,11 @@ jobs:
 
   test_common_api:
     docker:
-      #- image: comum/docker-build-env:latest
       - image: circleci/ruby:2.5.1-node-browsers-legacy
+      - image: comum/deps
+      - image: postgres:9.6
+        environment:
+          POSTGRES_DB: services_core_test
     steps:
       - run: sudo apt update && sudo apt install postgresql-client
       - checkout
@@ -28,12 +31,11 @@ jobs:
           name: Common api database setup
           command: |
             set -ex \
-            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
             && cd services/service-core-db/ \
             && docker build -f Dockerfile -t comum/services-core:test . \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < ./init.sql \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
-            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh
+            && psql -U postgres -h localhost -p 5432 services_core_test < ./init.sql \
+            && psql -U postgres -h localhost -p 5432 -c "alter user postgrest with superuser;" \
+            && DATABASE_URL=postgres://postgres@localhost:5432/services_core_test ./scripts/run_migrations.sh
       - run:
           name: common api installs
           command: |
@@ -46,7 +48,7 @@ jobs:
           command: |
             set -ex \
             && cd services/common-api \
-            && RAILS_ENV=test DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true DATABASE_URL=postgres://postgres:example@$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pg_default):5432/services_core_test bundle exec rspec spec
+            && RAILS_ENV=test DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true DATABASE_URL=postgres://postgres:example@localhost:5432/services_core_test bundle exec rspec spec
 
   test_common_models:
     docker:
