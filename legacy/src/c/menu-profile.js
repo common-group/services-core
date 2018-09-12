@@ -87,11 +87,6 @@ const menuProfile = {
                                                   m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#projects']`,
                                                     'Projetos criados'
                                                    )
-                                                 ),
-                                                m('li.w-hidden-main.w-hidden-medium.lineheight-looser',
-                                                    m(`a.alt-link.fontsize-smaller[href='/pt/users/${user.id}/edit#projects']`,
-                                                        'Projetos criados'
-                                                    )
                                                  )
                                             ]
                                         ),
