@@ -10,7 +10,7 @@ const rewardSelectCard = {
     controller: function(args) {
         const queryRewardValue = h.getParams('value');
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
-        const isSelected = currentReward => (currentReward.id == null && rewardVM.selectedReward() == undefined && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
+        const isSelected = currentReward => (currentReward.id == null && !rewardVM.selectedReward() && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
         const selectedDestination = m.prop('');
         const queryRewardId = h.getParams('reward_id');
         const isEdit = m.prop(m.route.param('subscription_id'));
@@ -22,11 +22,11 @@ const rewardSelectCard = {
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
-            const shippingFee = rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : {
+            const shippingFee = rewardVM.selectedReward() != null && rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : {
                 value: 0
             };
 
-            if (!selectedDestination() && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
+            if (!selectedDestination() && rewardVM.selectedReward() != null && rewardVM.hasShippingOptions(rewardVM.selectedReward())) {
                 rewardVM.error('Por favor, selecione uma opção de frete válida.');
             } else if (valueFloat < rewardVM.selectedReward().minimum_value + shippingFee.value) {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} ${projectVM.isSubscription(projectVM.currentProject()) ? '' : `+ frete R$${h.formatNumber(shippingFee.value, 2, 3)}`}`);
@@ -36,7 +36,8 @@ const rewardSelectCard = {
                     const currentRewardId = rewardVM.selectedReward().id;
                     m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}${isEdit() ? `&subscription_id=${m.route.param('subscription_id')}` : ''}${isReactivation() ? `&subscription_status=${subscriptionStatus}` : ''}`);
                 } else {
-                    const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ',')); h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
+                    const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ',')); 
+                    h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
                 }
             }
 
