@@ -48,6 +48,7 @@ jobs:
           command: |
             set -ex \
             && cd services/common-api \
+            && bundle config disable_local_branch_check true
             && bundle config local.common_models ../common_models \
             && bundle install
       - run:
