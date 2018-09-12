@@ -79,7 +79,12 @@ const selectReward = reward => () => {
         if (reward.id) {
             contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
         } else { // no reward
-            contributionValue(h.applyMonetaryMask('$10,00'));
+            if (contributionValue() === '10,00' || 
+                contributionValue() === '' || 
+                contributionValue() === 0 || 
+                contributionValue() === null || 
+                contributionValue() === undefined)
+                contributionValue(h.applyMonetaryMask('$10,00'));
         }
 
         if (reward.id) {
