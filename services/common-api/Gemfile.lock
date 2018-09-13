@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/common-group/common_models.git
-  revision: 455fa49e3bd1007d5985d66bfa7dad6d40cc6075
+  revision: 7b777f60bd2058034bafa7ace96b4377a2049cab
   branch: develop
   specs:
     common_models (0.1.0)
@@ -93,7 +93,7 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
-    pg (1.0.0)
+    pg (1.1.3)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
