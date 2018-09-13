@@ -19,7 +19,7 @@ const projectSuccessfulEnabledWithdraw = {
         return m('.u-marginbottom-40.w-row', [
             m('.w-col.w-col-1'),
             m('.w-col.w-col-10', [
-                m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center', I18n.t('title', I18nScope())),
+                m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', I18n.t('title', I18nScope())),
                 m(projectSuccessfulProgressBar, { project: args.project, current_state: args.current_state }),
                 m('.u-marginbottom-40.u-text-center.w-row', [
                     m('.w-col.w-col-2'),
