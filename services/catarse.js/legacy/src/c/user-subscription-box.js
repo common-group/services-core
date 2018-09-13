@@ -14,6 +14,7 @@ import paymentMethodIcon from '../c/payment-method-icon';
 import cancelSubscriptionContent from '../c/cancel-subscription-content';
 import modalBox from '../c/modal-box';
 import userVM from '../vms/user-vm';
+import userSubscriptionPaymentHistoryModal from './user-subscription-payment-history-modal';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
@@ -23,6 +24,7 @@ const userSubscriptionBox = {
         const subscription = args.subscription,
             displayModal = h.toggleProp(false, true),
             displayCancelModal = h.toggleProp(false, true),
+            displayPaymentHistoryModal = h.toggleProp(false, true),
             contactModalInfo = m.prop({}),
             isGeneratingSecondSlip = h.toggleProp(false, true);
 
@@ -207,6 +209,7 @@ const userSubscriptionBox = {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
             displayCancelModal,
+            displayPaymentHistoryModal,
             subscription,
             contactModalInfo,
             showLastSubscriptionVersionValueIfHasOne,
@@ -218,7 +221,9 @@ const userSubscriptionBox = {
         };
     },
     view: function(ctrl) {
-        const subscription = ctrl.subscription;
+        const 
+            subscription = ctrl.subscription,
+            project = subscription.project;
 
         return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
             (ctrl.displayCancelModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
@@ -235,7 +240,13 @@ const userSubscriptionBox = {
                     displayModal: ctrl.displayModal,
                     content: [ownerMessageContent, ctrl.contactModalInfo]
                 }) : ''
-            ), [
+            ),
+            (ctrl.displayPaymentHistoryModal() ? 
+                m.component(modalBox, {
+                    displayModal: ctrl.displayPaymentHistoryModal,
+                    content: [userSubscriptionPaymentHistoryModal, { subscription, project }]
+                })
+            : ''), [
                 m('.card.w-row', [
                     m('.u-marginbottom-20.w-col.w-col-3', [
                         m('.u-marginbottom-10.w-row', [
@@ -266,7 +277,10 @@ const userSubscriptionBox = {
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
-                        m('.u-marginbottom-10', ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne())
+                        m('.u-marginbottom-10', ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne()),
+                        m('a.alt-link.fontsize-smallest[href="javascript:void(0);"]', {
+                            onclick: () => ctrl.displayPaymentHistoryModal.toggle()
+                        },'Histórico de pagamento')
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',

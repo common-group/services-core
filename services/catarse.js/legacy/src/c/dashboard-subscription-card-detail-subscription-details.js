@@ -63,7 +63,10 @@ const dashboardSubscriptionCardDetailSubscriptionDetails = {
                 ])
             ]),
             m(".divider.u-marginbottom-20"),
-            m(dashboardSubscriptionCardDetailPaymentHistory, { user, subscription })
+            m("div", [
+                m(".fontsize-small.fontweight-semibold.u-marginbottom-10", "Histórico de pagamentos"),
+                m(dashboardSubscriptionCardDetailPaymentHistory, { user, subscription })
+            ])
         ]);
     }
 };
