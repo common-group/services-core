@@ -19,7 +19,7 @@ const projectSuccessfulProgressBar = {
                     },
                     success: {
                         lineClass: '',
-                        text: I18n.t('waiting_funds_processing_text', I18nScope()),
+                        text: I18n.t('waiting_funds_success_text', I18nScope()),
                         circleClass: '',
                         descriptionTextClass: '.fontcolor-terciary',
                         descriptionTextSizeClass: '',
