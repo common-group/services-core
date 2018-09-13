@@ -59,7 +59,7 @@ workflows:
           filters:
             branches:
               only: develop
-      - depoy_production:
+      - deploy_production:
           requires:
             - build
           filters:
