@@ -182,9 +182,7 @@ const userNotifications = {
                                                                 m(`input.w-checkbox-input${project.unsubscribed ? '' : '[checked=\'checked\']'}[type='checkbox'][value='1'][id='user_unsubscribes_${project.project_id}']`, {
                                                                     name: `unsubscribes[${project.project_id}]`
                                                                 }),
-                                                                m('label.w-form-label.fontsize-small',
-                                                                    project.project_name
-                                                                )
+                                                                m('label.w-form-label.fontsize-small', project.project_name)
                                                             ])
                                                         )) : '')
                                                 ]) :
@@ -233,8 +231,8 @@ const userNotifications = {
                                                 name: `user[reminders][${reminder.project_id}]`
                                             }),
                                             m('label.w-form-label.fontsize-small',
-                                                    reminder.project_name
-                                                )
+                                                m(`a.alt-link[href='/projects/${reminder.project_id}?ref=ctrse_profile_reminder'][target='_blank']`, reminder.project_name)
+                                            )
                                         ])) : '')
                                     ])
                                 ])
