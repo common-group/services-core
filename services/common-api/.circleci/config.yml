@@ -18,6 +18,21 @@ jobs:
       - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test diesel migration --migration-dir migrations/migrations run
       - run: docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common-api:test bundle exec rspec spec
 
+  deploy_production:
+    docker:
+      - image: comum/docker-build-env:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run: apk update && apk add git nodejs nodejs-npm bash
+      - run: npm install -g heroku
+      - run: bash .circleci/setup-heroku.sh
+      - run: heroku container:login
+
+      - run: heroku container:push web --recursive -a $PRODUCTION_COMMON_API_APP
+      - run: heroku container:release web -a $PRODUCTION_COMMON_API_APP
+
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
@@ -44,3 +59,9 @@ workflows:
           filters:
             branches:
               only: develop
+      - deploy_production:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
