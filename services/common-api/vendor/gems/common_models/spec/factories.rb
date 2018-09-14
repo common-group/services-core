@@ -89,6 +89,15 @@ FactoryBot.define do
     comment_html "Post Comment"
   end
 
+  factory :direct_message, class: CommonModels::DirectMessage do
+    project
+    platform
+    user
+    from_email 'from@email.com'
+    from_name 'Foo Bar'
+    content 'Content'
+  end
+
   factory :reward, class: CommonModels::Reward do
     project
     minimum_value 10.0
