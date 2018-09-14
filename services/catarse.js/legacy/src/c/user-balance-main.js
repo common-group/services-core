@@ -74,7 +74,7 @@ const userBalanceMain = {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
             m.component(userBalance, opts),
-            m(userBalanceWithdrawHistory),
+            m(userBalanceWithdrawHistory, { user_id: args.user_id }),
             m('.divider'),
             m.component(userBalanceTransactions, opts),
             m('.u-marginbottom-40'),
