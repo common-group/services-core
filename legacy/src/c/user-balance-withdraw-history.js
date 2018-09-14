@@ -14,11 +14,9 @@ const I18nScopeBank = _.partial(h.i18nScope, 'users.balance.bank');
 const userBalanceWithdrawHistory = {
     controller: function (args) {
 
-        // Make the first load using filter for user_id from the current user beeing looked
-        const pageCurrentUserId = window.location.pathname.match(/\/pt\/users\/(.*:?)\/edit/)[1];
         const userIdVM = catarse.filtersVM({user_id: 'eq'});
         const balanceTransfersList = userBalanceTransfersVM.getWithPagination;
-        userIdVM.user_id(pageCurrentUserId);
+        userIdVM.user_id(args.user_id);
         balanceTransfersList.firstPage(userIdVM.parameters());
 
         const explitInArraysOf3 = (collection) => {
