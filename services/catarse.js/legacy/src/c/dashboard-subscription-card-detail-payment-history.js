@@ -32,22 +32,17 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
     {
         const paymentsColletion = ctrl.payments.collection();
 
-        return m("div",
-            [
-                m(".fontsize-small.fontweight-semibold.u-marginbottom-10", 
-                    "Histórico de pagamentos"
-                ),
-                _.map(paymentsColletion, 
-                    payment => m(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment })
-                ),
-                m('.u-marginbottom-30.u-margintop-30.w-row', [
-                    m(loadMoreBtn, {
-                        collection: ctrl.payments,
-                        cssClass: '.w-col-push-4'
-                    })
-                ])
-            ]
-        );
+        return m('div', [
+            _.map(paymentsColletion, 
+                payment => m(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment })
+            ),
+            m('.u-marginbottom-30.u-margintop-30.w-row', [
+                m(loadMoreBtn, {
+                    collection: ctrl.payments,
+                    cssClass: '.w-col-push-4'
+                })
+            ])
+        ]);
     }
 }
 

@@ -40,7 +40,7 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
 
         return m('.fontsize-smallest.w-row',
             [
-                m('.w-col.w-col-3', m('.fontcolor-secondary', moment(paymentDate).format('DD/MM/YYYY HH:mm'))),
+                m('.w-col.w-col-3', m('.fontcolor-secondary', moment(paymentDate).format('DD/MM/YYYY'))),
                 m('.w-col.w-col-9', 
                     m('div',
                         [
