@@ -40,7 +40,7 @@ const wasConfirmed = contribution => _.contains(['paid', 'pending_refund', 'refu
 
 const canShowReceipt = contribution => wasConfirmed(contribution);
 
-const canShowSlip = contribution => contribution.payment_method === 'BoletoBancario' && moment(contribution.gateway_data.boleto_expiration_date).isAfter(moment());
+const canShowSlip = contribution => contribution.payment_method === 'BoletoBancario' && moment(contribution.gateway_data.boleto_expiration_date).isAfter(moment()) && contribution.state === 'pending';
 
 const canGenerateSlip = contribution => contribution.payment_method === 'BoletoBancario' &&
       (contribution.state === 'pending' || contribution.state === 'refused') &&
