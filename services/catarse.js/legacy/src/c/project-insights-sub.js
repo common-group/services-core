@@ -138,7 +138,7 @@ const projectInsightsSub = {
                                 'Saldo',
                                 m.trust('&nbsp;'),
                                 ' ',
-                                m(`a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='/users/${project.user_id}/edit#balance']`,
+                                m(`a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='/users/${project.user_id}/edit#balance'][target='_self']`,
                                     'Sacar'
                                 )
                             ]),
