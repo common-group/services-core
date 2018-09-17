@@ -1,7 +1,5 @@
-GIT
-  remote: git://github.com/common-group/common_models.git
-  revision: 7b777f60bd2058034bafa7ace96b4377a2049cab
-  branch: develop
+PATH
+  remote: vendor/gems/common_models
   specs:
     common_models (0.1.0)
       activerecord (~> 5.2)
@@ -203,4 +201,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.2
+   1.16.4

@@ -377,6 +377,8 @@ services:
         ipv4_address: 10.0.1.61
 
   common_api:
+    tty: true
+    stdin_open: true
     build:
       context: ./services/common-api
       dockerfile: Dockerfile
