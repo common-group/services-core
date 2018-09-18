@@ -170,17 +170,17 @@ const projectGoalEdit = {
                                         m('.w-col.w-col-2'),
                                         m('.w-col.w-col-8', [
                                             m('.w-row', [
-                                                m('.w-col.w-col-8.label-hide', [
+                                                m('.w-col.w-col-8.w-col-tiny-6.w-col-small-6.label-hide', [
                                                     m('.input.integer.optional.disabled.project_online_days', [
                                                         m('label.field-label'),
-                                                        m('input.numeric.integer.optional.disabled.w-input.text-field.postfix.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
+                                                        m('input.numeric.integer.optional.disabled.w-input.text-field.positive.medium[id="project_online_days"][name="project[online_days]"][type="number"]', {
                                                             onchange: m.withAttr('value', vm.fields.online_days),
                                                             value: vm.fields.online_days(),
                                                             class: vm.e.hasError('online_days') ? 'error' : false
                                                         })
                                                     ])
                                                 ]),
-                                                m('.w-col.w-col-4', [
+                                                m('.w-col.w-col-4.w-col-tiny-6.w-col-small-6', [
                                                     m('.text-field.medium.prefix-permalink.u-text-center', [
                                                         m('', 'dias')])
                                                 ])
@@ -204,7 +204,7 @@ const projectGoalEdit = {
                                             m('.fontsize-base.fontweight-semibold.u-marginbottom-20', window.I18n.t('online_days_closed', I18nScope())),
                                             m('.w-hidden-tiny.u-marginbottom-30', window.I18n.t('online_days_closed_hint', I18nScope())),
                                             m('.w-row', [
-                                                m('.w-col.w-col-6.label-hide', [
+                                                m('.w-col.w-col-6.w-col-tiny-6.w-col-small-6.label-hide', [
                                                     m('.input.integer.optional.project_online_days', [
                                                         m('label.field-label'),
                                                         m('input.numeric.integer.optional.w-input.text-field.field.w-input.text-field.medium.prefix[id="project_online_days"][name="project[online_days]"][type="number"]', {
@@ -214,7 +214,7 @@ const projectGoalEdit = {
                                                         })
                                                     ]),
                                                 ]),
-                                                m('.w-col.w-col-6', [
+                                                m('.w-col.w-col-6.w-col-tiny-6.w-col-small-6', [
                                                     m('.text-field.medium.prefix-permalink', {
                                                         class: vm.e.hasError('online_days') ? 'error' : false
                                                     }, [
