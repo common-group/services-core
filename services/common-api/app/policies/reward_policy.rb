@@ -24,7 +24,10 @@ class RewardPolicy < ApplicationPolicy
 
   def permitted_attributes
     # @TODO remove attributes based on project status
-    record.attribute_names.map(&:to_sym)
+    [{ data: [:project_id, :minimum_value, :title, :description, :shipping_options,
+              :welcome_message_body, :welcome_message_subject,
+              :external_id, :current_ip, :maximum_contributions,
+              :deliver_at, :row_order, :created_at] }]
   end
 
   private
