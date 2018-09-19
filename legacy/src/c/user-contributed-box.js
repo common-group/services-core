@@ -6,6 +6,7 @@ import ownerMessageContent from '../c/owner-message-content';
 import modalBox from '../c/modal-box';
 import userVM from '../vms/user-vm';
 import rewardReceiver from './reward-receiver';
+import paymentVM from '../vms/payment-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
@@ -18,13 +19,15 @@ const userContributedBox = {
                     const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
                     contribution.delivery_status = contribution.delivery_status === 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
-            };
+            },
+            installmentTotalAmount = m.prop(h.formatNumber(args.contribution.installments_total_amount, 2));
 
         return {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
             contribution: args.contribution,
-            toggleDelivery
+            toggleDelivery,
+            installmentTotalAmount
         };
     },
     view: function(ctrl) {
@@ -36,6 +39,8 @@ const userContributedBox = {
             })],
             finishedAt = contribution.survey && contribution.survey.finished_at,
             answeredAt = contribution.survey_answered_at;
+
+            console.log('contribution', contribution);
 
         return (!_.isEmpty(contribution) ? m('div',
             (ctrl.displayModal() ? m.component(modalBox, {
@@ -85,8 +90,16 @@ const userContributedBox = {
                                     }))
                                 ]),
                                 m('.fontsize-smallest',
-                                    (contribution.installments > 1 ? (`${contribution.installments} x R$ ${contribution.installment_value} `) : ''),
+                                    (contribution.installments > 1 ? (`${contribution.installments} x R$ ${ h.formatNumber(contribution.installment_value, 2) } `) : ''),
                                     (contribution.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
+                                ),
+                                (
+                                    contribution.installments > 1 ? 
+                                        m(".fontsize-smallest.fontweight-semibold.u-marginbottom-10", 
+                                            I18n.t('total_amount', contributionScope({
+                                                total_amount: ctrl.installmentTotalAmount()
+                                            }))
+                                        ) : ''
                                 ),
                                 (contributionVM.canShowReceipt(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/receipt'][target='__blank']`,
