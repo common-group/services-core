@@ -191,7 +191,7 @@ const paymentCreditCard = {
                    : I18nScope(attr);
 
         // Sum the total amount of installments with taxes and returns a formated string
-        const totalAmountOfInstallment = (installments, selectedIndex) => Number.parseFloat(installments[selectedIndex - 1].total_amount).toFixed(2);
+        const totalAmountOfInstallment = (installments, selectedIndex) => h.formatNumber(installments[selectedIndex - 1].total_amount, 2);
 
         if (!args.isSubscription) {
             vm.getInstallments(args.contribution_id)
@@ -289,7 +289,7 @@ const paymentCreditCard = {
                                                 onchange: m.withAttr('value', ctrl.selectedInstallment),
                                                 value: ctrl.selectedInstallment()
                                             }, _.map(ctrl.installments(), installment => m('option', { value: installment.number },
-                                                `${installment.number} X R$ ${ Number.parseFloat(installment.amount).toFixed(2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
+                                                `${installment.number} X R$ ${ h.formatNumber(installment.amount, 2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
                                             ))
                                         ),
                                         (
@@ -422,7 +422,7 @@ const paymentCreditCard = {
                                 onchange: m.withAttr('value', ctrl.selectedInstallment),
                                 value: ctrl.selectedInstallment()
                             }, _.map(ctrl.installments(), installment => m(`option[value="${installment.number}"]`,
-                                     `${installment.number} X R$ ${ Number.parseFloat(installment.amount).toFixed(2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
+                                     `${installment.number} X R$ ${ h.formatNumber(installment.amount, 2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
                             ))),
                             (
 	                            ctrl.selectedInstallment() > 1 ?
