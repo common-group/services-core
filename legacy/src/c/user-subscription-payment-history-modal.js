@@ -13,7 +13,7 @@ const userSubscriptionPaymentHistoryModal = {
             m('.modal-dialog-header',
                 m('.fontsize-large.u-text-center', project.project_name)
             ),
-            m('.u-margintop-10.u-text-center', 
+            m('.u-margintop-30', 
                 m(dashboardSubscriptionCardDetailPaymentHistory, { subscription })
             )
         ]);
