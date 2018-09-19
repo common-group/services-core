@@ -83,7 +83,7 @@ const userContributed = {
 
                   (!_.isEmpty(projects_collection) ?
                   m('.w-row.u-marginbottom-40.u-margintop-30', [
-                      m(loadMoreBtn, { collection: ctrl.projects, cssClass: '.w-col-push-5' })
+                      m(loadMoreBtn, { collection: ctrl.projects, cssClass: '.w-col-push-4' })
                   ]) : '')
             ]
               ))
