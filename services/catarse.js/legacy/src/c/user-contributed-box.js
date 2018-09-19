@@ -20,7 +20,7 @@ const userContributedBox = {
                     contribution.delivery_status = contribution.delivery_status === 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
             },
-            installmentTotalAmount = m.prop(Number.parseFloat(args.contribution.installments_total_amount).toFixed(2));
+            installmentTotalAmount = m.prop(h.formatNumber(args.contribution.installments_total_amount, 2));
 
         return {
             toggleAnonymous: userVM.toggleAnonymous,
@@ -90,7 +90,7 @@ const userContributedBox = {
                                     }))
                                 ]),
                                 m('.fontsize-smallest',
-                                    (contribution.installments > 1 ? (`${contribution.installments} x R$ ${ Number.parseFloat(contribution.installment_value).toFixed(2) } `) : ''),
+                                    (contribution.installments > 1 ? (`${contribution.installments} x R$ ${ h.formatNumber(contribution.installment_value, 2) } `) : ''),
                                     (contribution.payment_method === 'BoletoBancario' ? 'Boleto Bancário' : 'Cartão de Crédito')
                                 ),
                                 (
