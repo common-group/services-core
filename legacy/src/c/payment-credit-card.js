@@ -191,12 +191,7 @@ const paymentCreditCard = {
                    : I18nScope(attr);
 
         // Sum the total amount of installments with taxes and returns a formated string
-        const sumTotalAmountOfInstallments = (installments, selectedIndex) => {
-            const installment = installments[selectedIndex];
-            const intResult = (installment.number * Math.round(installment.amount * 100));
-            const textResult = (`${intResult}`);
-            return `${textResult.slice(0, -2)}.${textResult.slice(-2)}`;
-        };
+        const totalAmountOfInstallment = (installments, selectedIndex) => Number.parseFloat(installments[selectedIndex - 1].total_amount).toFixed(2);
 
         if (!args.isSubscription) {
             vm.getInstallments(args.contribution_id)
@@ -243,7 +238,7 @@ const paymentCreditCard = {
             expYears: vm.expYearOptions(),
             loadPagarme,
             scope,
-            sumTotalAmountOfInstallments,
+            totalAmountOfInstallment,
             showForm,
             showSubscriptionModal,
             sendSubscriptionPayment,
@@ -294,13 +289,13 @@ const paymentCreditCard = {
                                                 onchange: m.withAttr('value', ctrl.selectedInstallment),
                                                 value: ctrl.selectedInstallment()
                                             }, _.map(ctrl.installments(), installment => m('option', { value: installment.number },
-                                                `${installment.number} X R$ ${installment.amount} ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
+                                                `${installment.number} X R$ ${ Number.parseFloat(installment.amount).toFixed(2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
                                             ))
                                         ),
                                         (
 						                ctrl.selectedInstallment() > 1 ?
                                             	m('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [
-                                                	window.I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`
+                                                	window.I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.totalAmountOfInstallment(ctrl.installments(), ctrl.selectedInstallment())}`
                                             	])
                                         	: ''
 					                    )
@@ -427,12 +422,12 @@ const paymentCreditCard = {
                                 onchange: m.withAttr('value', ctrl.selectedInstallment),
                                 value: ctrl.selectedInstallment()
                             }, _.map(ctrl.installments(), installment => m(`option[value="${installment.number}"]`,
-                                     `${installment.number} X R$ ${installment.amount} ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
+                                     `${installment.number} X R$ ${ Number.parseFloat(installment.amount).toFixed(2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, ctrl.scope())}`
                             ))),
                             (
 	                            ctrl.selectedInstallment() > 1 ?
         	                        m('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [
-                	                    window.I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.sumTotalAmountOfInstallments(ctrl.installments(), ctrl.selectedInstallment() - 1)}`
+                	                    window.I18n.t('credit_card.total', ctrl.scope()), `R$ ${ctrl.totalAmountOfInstallment(ctrl.installments(), ctrl.selectedInstallment())}`
                                 	])
                             	    : ''
             			    )
