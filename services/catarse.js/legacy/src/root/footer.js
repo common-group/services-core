@@ -150,6 +150,9 @@ const footer = {
                                                 ),
                                                 m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']',
                                                     ' Finalizados'
+                                                ),
+                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=sub&ref=ctrse_footer\']',
+                                                    ' Assinaturas'
                                                 )
                                             ]
                                         )
