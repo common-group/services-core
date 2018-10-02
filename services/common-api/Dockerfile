@@ -19,6 +19,7 @@ WORKDIR /app
 
 ADD Gemfile /app
 ADD Gemfile.lock /app
+COPY . /app
+
 RUN bundle install
 
-COPY . /app

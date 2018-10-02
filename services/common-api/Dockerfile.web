@@ -19,8 +19,8 @@ WORKDIR /app
 
 COPY Gemfile /app
 COPY Gemfile.lock /app
+COPY . /app
 RUN bundle install --binstubs --without development test
 
-COPY . /app
 
 CMD [ "bundle", "exec", "puma", "-C", "config/puma.rb" ]
