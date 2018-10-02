@@ -9,6 +9,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const projectRewardCard = {
     controller: function(args) {
         const storeKey = 'selectedReward',
+            MINIMUM_VALUE = 10,
             reward = args.reward,
             vm = rewardVM,
             descriptionExtended = m.prop(0),
@@ -37,7 +38,8 @@ const projectRewardCard = {
 
         // @TODO: move submit, fee & value logic to VM
         const submitContribution = () => {
-            const valueFloat = h.monetaryToFloat(vm.contributionValue);
+            const numberValueFloat = h.monetaryToFloat(vm.contributionValue);
+            const valueFloat = _.isNaN(numberValueFloat) ? MINIMUM_VALUE : numberValueFloat;
             const shippingFee = rewardVM.hasShippingOptions(vm.selectedReward()) ? vm.shippingFeeForCurrentReward(selectedDestination) : { value: 0 };
 
             if (!selectedDestination() && rewardVM.hasShippingOptions(vm.selectedReward())) {
@@ -46,6 +48,7 @@ const projectRewardCard = {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} ${projectVM.isSubscription(projectVM.currentProject()) ? '' : `+ frete R$${h.formatNumber(shippingFee.value, 2, 3)}`} `);
             } else {
                 vm.error('');
+                
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
@@ -64,9 +67,10 @@ const projectRewardCard = {
         const isRewardDescriptionExtended = () => descriptionExtended() === reward.id;
         const isLongDescription = () => reward.description.length > 110;
         if (h.getStoredObject(storeKey)) {
+            const storedValue = h.getStoredObject(storeKey);
             const {
                 value
-            } = h.getStoredObject(storeKey);
+            } = _.isNaN(storedValue) ? { value: MINIMUM_VALUE } : storedValue;
 
             h.removeStoredObject(storeKey);
             vm.selectedReward(reward);
