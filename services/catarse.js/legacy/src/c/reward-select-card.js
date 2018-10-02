@@ -8,6 +8,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const rewardSelectCard = {
     controller: function(args) {
+        const MINIMUM_VALUE = 10;
         const queryRewardValue = h.getParams('value');
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
         const isSelected = currentReward => (currentReward.id == null && !rewardVM.selectedReward() && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
@@ -21,7 +22,8 @@ const rewardSelectCard = {
         }
 
         const submitContribution = (event) => {
-            const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
+            const numberValue = h.monetaryToFloat(rewardVM.contributionValue)
+            const valueFloat = _.isNaN(numberValue) ? MINIMUM_VALUE : numberValue;
             const shippingFee = rewardVM.selectedReward() != null && rewardVM.hasShippingOptions(rewardVM.selectedReward()) ? rewardVM.shippingFeeForCurrentReward(selectedDestination) : {
                 value: 0
             };
