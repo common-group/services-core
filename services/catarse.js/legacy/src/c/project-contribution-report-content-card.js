@@ -153,47 +153,53 @@ const projectContributionReportContentCard = {
                                         ),
                                         m('.fontsize-smallest.fontcolor-secondary', `${reward.description.substring(0, 80)}...`)
                                     ]),
-                                    (survey ?
-                                      survey.survey_answered_at ?
-                                      m('.w-col.w-col-3.w-col-push-1', [
-                                          m('.fontsize-smallest', [
-                                              m('a.link-hidden',
-                                                'Questionário '
-                                            ),
-                                              m('span.fontweight-semibold.text-success',
-                                                'respondido'
-                                            )
-                                          ]),
-                                          m('.fontcolor-terciary.fontsize-smallest',
-                                            `em ${h.momentify(survey.survey_answered_at, 'DD/MM/YYYY')}`
-                                        )
-                                      ]) : survey.finished_at ?
-                                      m('.w-col.w-col-3.w-col-push-1', [
-                                          m('.fontsize-smallest', [
-                                              m('a.link-hidden',
-                                                'Questionário '
-                                            ),
-                                              m('span.fontweight-semibold.text-fail',
-                                                'sem resposta'
-                                            )
-                                          ]),
-                                          m('.fontcolor-terciary.fontsize-smallest',
-                                            `finalizado em ${h.momentify(survey.finished_at, 'DD/MM/YYYY')}`
-                                        )
-                                      ]) :
-                                    m('.w-col.w-col-3.w-col-push-1', [
-                                        m('.fontsize-smallest', [
-                                            m('a.link-hidden',
-                                                'Questionário '
-                                            ),
-                                            m('span.fontweight-semibold.text-waiting',
-                                                'enviado'
-                                            )
-                                        ]),
-                                        m('.fontcolor-terciary.fontsize-smallest',
-                                            `em ${h.momentify(survey.sent_at, 'DD/MM/YYYY')}`
-                                        )
-                                    ]) : '')
+                                    (() => {
+                                        if (!survey) return '';
+
+                                        if (survey.survey_answered_at) {
+                                            return m('.w-col.w-col-3.w-col-push-1', [
+                                                m('.fontsize-smallest', [
+                                                    m('a.link-hidden',
+                                                        'Questionário '
+                                                    ),
+                                                    m('span.fontweight-semibold.text-success',
+                                                        'respondido'
+                                                    )
+                                                ]),
+                                                m('.fontcolor-terciary.fontsize-smallest',
+                                                    `em ${h.momentify(survey.survey_answered_at, 'DD/MM/YYYY')}`
+                                                )
+                                            ]);
+                                        } else if (survey.finished_at) {
+                                            return m('.w-col.w-col-3.w-col-push-1', [
+                                                m('.fontsize-smallest', [
+                                                    m('a.link-hidden',
+                                                        'Questionário '
+                                                    ),
+                                                    m('span.fontweight-semibold.text-fail',
+                                                        'sem resposta'
+                                                    )
+                                                ]),
+                                                m('.fontcolor-terciary.fontsize-smallest',
+                                                    `finalizado em ${h.momentify(survey.finished_at, 'DD/MM/YYYY')}`
+                                                )
+                                            ]);
+                                        } else if (contribution.survey_status !== 'not_sent') {
+                                            return m('.w-col.w-col-3.w-col-push-1', [
+                                                m('.fontsize-smallest', [
+                                                    m('a.link-hidden',
+                                                        'Questionário '
+                                                    ),
+                                                    m('span.fontweight-semibold.text-waiting',
+                                                        'enviado'
+                                                    )
+                                                ]),
+                                                m('.fontcolor-terciary.fontsize-smallest',
+                                                    `em ${h.momentify(survey.sent_at, 'DD/MM/YYYY')}`
+                                                )
+                                            ]);
+                                        }
+                                    })(),
                                 ])
                             ])
                         ])
