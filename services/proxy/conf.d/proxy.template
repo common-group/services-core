@@ -19,6 +19,9 @@ upstream notification_service_api_server {
 upstream recommender_service_api_server {
     server ${RECOMMENDER_SERVICE_API_SERVER};
 }
+upstream catarse_service_api_server {
+    server ${CATARSE_SERVICE_API_SERVER};
+}
 upstream common_api_service_server {
     server ${COMMON_SERVICE_API_SERVER};
 }
@@ -41,6 +44,7 @@ server {
     set $host_catarse_moment_service_api ${CATARSE_MOMENT_SERVICE_API_SERVER};
     set $host_notification_service_api ${NOTIFICATION_SERVICE_API_SERVER};
     set $host_recommender_service_api ${RECOMMENDER_SERVICE_API_SERVER};
+    set $host_catarse_service_api ${CATARSE_SERVICE_API_SERVER};
     set $host_common_service_api ${COMMON_SERVICE_API_SERVER};
 	set $require_pagination "off";
 	
@@ -80,6 +84,7 @@ server {
             # Current mapped routes for /v1/users
 			# POST 			/v1/users/login
 			# POST 			/v1/users/logout
+      # GET 			/v1/users
 			include /etc/nginx/conf.d/locations/v1/users_location.conf;
 		}
 
