@@ -91,9 +91,7 @@ const projectGoalsEdit = {
                                         });
                                     }
                                     return m(projectGoalCard, {
-                                        goal,
-                                        project: args.project,
-                                        currentGoal: ctrl.currentGoal
+                                        goal
                                     });
                                 }),
                                 m('button.btn.btn-large.btn-message', {
