@@ -47,7 +47,9 @@ const projectGoalEditCard = {
                 }).then(() => {
                     destroyed(true);
                     m.redraw();
-                });
+                }).catch(() =>
+                    alert('Erro ao deletar meta.')
+                );
             }
             return false;
         };
