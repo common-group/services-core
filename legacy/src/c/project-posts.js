@@ -82,8 +82,8 @@ const projectPosts = {
                             ]
 
                         ])
-                    ] : [m('.w-col.w-col-1'),
-                        m('.w-col.w-col-10', [
+                    ] : [m('.w-col.w-col-2'),
+                        m('.w-col.w-col-8', [
                             m('.post', [
                                 m('.u-marginbottom-60 .w-clearfix', [
                                     m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
@@ -95,7 +95,7 @@ const projectPosts = {
                                 m('.divider.u-marginbottom-60')
                             ])
                         ]),
-                        m('.w-col.w-col-1')
+                        m('.w-col.w-col-2')
                     ]
                 ]))),
                 m('.w-row', [
