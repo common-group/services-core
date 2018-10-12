@@ -41,15 +41,15 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku-cli
+      - run: npm install heroku-cli
       - run: docker build -t comum/payment-service:latest .
       - run: bash .circleci/setup-heroku.sh
 
-      - run: heroku container:login
-      - run: heroku container:push payment_stream_processor --recursive -a $PRODUCTION_PAYMENT_STREAM_APP
-      - run: heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
-      - run: heroku container:release payment_stream_processor -a $PRODUCTION_PAYMENT_STREAM_APP
-      - run: heroku container:release subscriptions_scheduler -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
+      - run: npx heroku container:login
+      - run: npx heroku container:push payment_stream_processor --recursive -a $PRODUCTION_PAYMENT_STREAM_APP
+      - run: npx heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
+      - run: npx heroku container:release payment_stream_processor -a $PRODUCTION_PAYMENT_STREAM_APP
+      - run: npx heroku container:release subscriptions_scheduler -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
 
   deploy_sandbox:
     docker:
@@ -59,15 +59,15 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku-cli
+      - run: npm install heroku-cli
       - run: docker build -t comum/payment-service:latest .
       - run: bash .circleci/setup-heroku.sh
 
-      - run: heroku container:login
-      - run: heroku container:push payment_stream_processor --recursive -a $SANDBOX_PAYMENT_STREAM_APP
-      - run: heroku container:push subscriptions_scheduler --recursive -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
-      - run: heroku container:release payment_stream_processor -a $SANDBOX_PAYMENT_STREAM_APP
-      - run: heroku container:release subscriptions_scheduler -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
+      - run: npx heroku container:login
+      - run: npx heroku container:push payment_stream_processor --recursive -a $SANDBOX_PAYMENT_STREAM_APP
+      - run: npx heroku container:push subscriptions_scheduler --recursive -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
+      - run: npx heroku container:release payment_stream_processor -a $SANDBOX_PAYMENT_STREAM_APP
+      - run: npx heroku container:release subscriptions_scheduler -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
 
 
 workflows:

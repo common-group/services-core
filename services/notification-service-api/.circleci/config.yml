@@ -32,12 +32,12 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add nodejs nodejs-npm bash
-      - run: npm install -g heroku-cli
+      - run: npm install heroku-cli
       - run: docker build -t comum/notification-service:latest .
       - run: bash .circleci/setup-heroku.sh
 
-      - run: heroku container:login
-      - run: heroku container:push notification_dispatcher --recursive -a $PRODUCTION_NOTIFICATION_DISPATCHER_APP
+      - run: npx heroku container:login
+      - run: npx heroku container:push notification_dispatcher --recursive -a $PRODUCTION_NOTIFICATION_DISPATCHER_APP
 
   deploy_sandbox:
     docker:
@@ -47,12 +47,12 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add nodejs nodejs-npm bash
-      - run: npm install -g heroku-cli
+      - run: npm install heroku-cli
       - run: docker build -t comum/notification-service:latest .
       - run: bash .circleci/setup-heroku.sh
 
-      - run: heroku container:login
-      - run: heroku container:push notification_dispatcher --recursive -a $SANDBOX_NOTIFICATION_DISPATCHER_APP
+      - run: npx heroku container:login
+      - run: npx heroku container:push notification_dispatcher --recursive -a $SANDBOX_NOTIFICATION_DISPATCHER_APP
 
 
 workflows:

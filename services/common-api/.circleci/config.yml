@@ -26,12 +26,12 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku
+      - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
-      - run: heroku container:login
+      - run: npx heroku container:login
 
-      - run: heroku container:push web --recursive -a $PRODUCTION_COMMON_API_APP
-      - run: heroku container:release web -a $PRODUCTION_COMMON_API_APP
+      - run: npx heroku container:push web --recursive -a $PRODUCTION_COMMON_API_APP
+      - run: npx heroku container:release web -a $PRODUCTION_COMMON_API_APP
 
   deploy_sandbox:
     docker:
@@ -41,12 +41,12 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku
+      - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
-      - run: heroku container:login
+      - run: npx heroku container:login
 
-      - run: heroku container:push web --recursive -a $SANDBOX_COMMON_API_APP
-      - run: heroku container:release web -a $SANDBOX_COMMON_API_APP
+      - run: npx heroku container:push web --recursive -a $SANDBOX_COMMON_API_APP
+      - run: npx heroku container:release web -a $SANDBOX_COMMON_API_APP
 
 workflows:
   version: 2

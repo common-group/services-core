@@ -30,20 +30,20 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku
+      - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
-      - run: heroku container:login
+      - run: npx heroku container:login
 
-      - run: heroku container:push service_core --recursive -a $PRODUCTION_SERVICE_CORE_DB_APP
-      - run: heroku container:release service_core -a $PRODUCTION_SERVICE_CORE_DB_APP
+      - run: npx heroku container:push service_core --recursive -a $PRODUCTION_SERVICE_CORE_DB_APP
+      - run: npx heroku container:release service_core -a $PRODUCTION_SERVICE_CORE_DB_APP
       - run: sleep 5 # wait time for new relase on heroku
-      - run: heroku run ./scripts/run_migrations.sh -a $PRODUCTION_SERVICE_CORE_DB_APP --type=service_core
-      - run: heroku restart -a $PRODUCTION_ANALYTICS_API_APP
-      - run: heroku restart -a $PRODUCTION_COMMUNITY_API_APP
-      - run: heroku restart -a $PRODUCTION_PAYMENT_API_APP
-      - run: heroku restart -a $PRODUCTION_PROJECT_API_APP
-      - run: heroku restart -a $PRODUCTION_PLATFORM_API_APP
-      - run: heroku restart -a $PRODUCTION_NOTIFICATION_API_APP
+      - run: npx heroku run ./scripts/run_migrations.sh -a $PRODUCTION_SERVICE_CORE_DB_APP --type=service_core
+      - run: npx heroku restart -a $PRODUCTION_ANALYTICS_API_APP
+      - run: npx heroku restart -a $PRODUCTION_COMMUNITY_API_APP
+      - run: npx heroku restart -a $PRODUCTION_PAYMENT_API_APP
+      - run: npx heroku restart -a $PRODUCTION_PROJECT_API_APP
+      - run: npx heroku restart -a $PRODUCTION_PLATFORM_API_APP
+      - run: npx heroku restart -a $PRODUCTION_NOTIFICATION_API_APP
 
 
   deploy_sandbox:
@@ -54,21 +54,21 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install -g heroku
+      - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
-      - run: heroku container:login
+      - run: npx heroku container:login
 
-      - run: heroku container:push service_core --recursive -a $SANDBOX_SERVICE_CORE_DB_APP
-      - run: heroku container:release service_core -a $SANDBOX_SERVICE_CORE_DB_APP
+      - run: npx heroku container:push service_core --recursive -a $SANDBOX_SERVICE_CORE_DB_APP
+      - run: npx heroku container:release service_core -a $SANDBOX_SERVICE_CORE_DB_APP
       - run: sleep 5 # wait time for new relase on heroku
-      - run: heroku run ./scripts/run_migrations.sh -a $SANDBOX_SERVICE_CORE_DB_APP --type=service_core
+      - run: npx heroku run ./scripts/run_migrations.sh -a $SANDBOX_SERVICE_CORE_DB_APP --type=service_core
 
-      - run: heroku restart -a $SANDBOX_ANALYTICS_API_APP
-      - run: heroku restart -a $SANDBOX_COMMUNITY_API_APP
-      - run: heroku restart -a $SANDBOX_PAYMENT_API_APP
-      - run: heroku restart -a $SANDBOX_PROJECT_API_APP
-      - run: heroku restart -a $SANDBOX_PLATFORM_API_APP
-      - run: heroku restart -a $SANDBOX_NOTIFICATION_API_APP
+      - run: npx heroku restart -a $SANDBOX_ANALYTICS_API_APP
+      - run: npx heroku restart -a $SANDBOX_COMMUNITY_API_APP
+      - run: npx heroku restart -a $SANDBOX_PAYMENT_API_APP
+      - run: npx heroku restart -a $SANDBOX_PROJECT_API_APP
+      - run: npx heroku restart -a $SANDBOX_PLATFORM_API_APP
+      - run: npx heroku restart -a $SANDBOX_NOTIFICATION_API_APP
 
 
 workflows:
