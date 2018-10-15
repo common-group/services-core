@@ -109,13 +109,25 @@ CREATE OR REPLACE VIEW "community_service_api"."users" AS
     u.id,
     (u.data ->> 'name'::text) AS name,
     (u.data ->> 'public_name'::text) AS public_name,
-    (u.data ->> 'document_number'::text) AS document_number,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN (u.data ->> 'document_number'::text)
+        ELSE NULL::text
+    END AS document_number,
     (u.data ->> 'document_type'::text) AS document_type,
     (u.data ->> 'legal_account_type'::text) AS legal_account_type,
-    u.email,
-    ((u.data ->> 'address'::text))::jsonb AS address,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN u.email
+        ELSE NULL::email
+    END AS email,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN ((u.data ->> 'address'::text))::jsonb
+        ELSE NULL::jsonb
+    END AS address,
     ((u.data ->> 'metadata'::text))::jsonb AS metadata,
-    ((u.data ->> 'bank_account'::text))::jsonb AS bank_account,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN ((u.data ->> 'bank_account'::text))::jsonb
+        ELSE NULL::jsonb
+    END AS bank_account,
     u.created_at,
     u.updated_at,
     (u.data ->> 'thumbnail_url'::text) AS thumbnail_url
