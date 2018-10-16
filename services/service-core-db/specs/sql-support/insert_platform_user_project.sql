@@ -36,7 +36,15 @@ insert into platform_service.platforms(id, name, token) values (__seed_platform_
 
 -- add users to community
 insert into community_service.users(platform_id, id, email, password, key, data) values
-(__seed_platform_id(), __seed_first_user_id(), 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f', json_build_object('name', 'test community user 01')::jsonb), 
+(__seed_platform_id(), __seed_first_user_id(), 'test_community_user_01@test.com', crypt('123456', gen_salt('bf')), 'b58df795-56a1-4d16-9f83-fb33cfbddd6f', 
+  json_build_object(
+    'name', 'test community user 01',
+    'document_type', 'foo',
+    'legal_account_type', 'foo',
+    'address', json_build_object('street', 'stree name'),
+    'metadata', json_build_object('foo', '1'),
+    'bank_account', json_build_object('account_digits', '1')
+  )::jsonb),
 (__seed_platform_id(), __seed_second_user_id(), 'test_community_user_02@test.com', crypt('123456', gen_salt('bf')), 'ef6283de-32b7-4d92-91f7-8925d22a3c63', json_build_object('name', 'test community user 02')::jsonb),
 (__seed_platform_id(), __seed_third_user_id(), 'test_community_user_03@test.com', crypt('123456', gen_salt('bf')), '60667ced-8fd4-4ad1-a761-d1ff7009d44b', json_build_object('name', 'test community user 03')::jsonb);
 

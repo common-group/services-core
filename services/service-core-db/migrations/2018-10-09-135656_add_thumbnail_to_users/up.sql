@@ -18,6 +18,7 @@ AS $function$
                 'email', ($1->>'email')::email,
                 'document_number', replace(replace(replace(($1->>'document_number')::text, '.', ''), '/', ''), '-', ''),
                 'born_at', ($1->>'born_at')::date,
+                'deactivated_at', ($1->>'deactivated_at')::date,
                 'document_type', ($1->>'document_type')::text,
                 'legal_account_type', ($1->>'legal_account_type')::text,
                 'address', json_build_object(
@@ -71,6 +72,7 @@ AS $function$
                 'email', coalesce(($1->>'email')::email, ($2->>'email')::email),
                 'document_number', replace(replace(replace(coalesce(($1->>'document_number')::text, ($2->>'document_number')::text), '.', ''), '/', ''), '-', ''),
                 'born_at', coalesce(($1->>'born_at')::date, ($2->>'born_at')::date),
+                'deactivated_at', coalesce(($1->>'deactivated_at')::date, ($2->>'deactivated_at')::date),
                 'document_type', coalesce(($1->>'document_type')::text, ($2->>'document_type')::text),
                 'legal_account_type', coalesce(($1->>'legal_account_type')::text, ($2->>'legal_account_type')::text),
                 'address', json_build_object(
@@ -107,14 +109,23 @@ AS $function$
 CREATE OR REPLACE VIEW "community_service_api"."users" AS 
  SELECT u.external_id,
     u.id,
-    (u.data ->> 'name'::text) AS name,
-    (u.data ->> 'public_name'::text) AS public_name,
+    CASE
+        WHEN (((u.data->>'deactivated_at') IS NOT NULL) AND (NOT core.is_owner_or_admin(u.id))) THEN (''::character varying(255))::text
+        ELSE (u.data->>'name'::text)
+    END AS name,
+    (u.data->>'public_name'::text) AS public_name,
     CASE
         WHEN core.is_owner_or_admin(u.id) THEN (u.data ->> 'document_number'::text)
         ELSE NULL::text
     END AS document_number,
-    (u.data ->> 'document_type'::text) AS document_type,
-    (u.data ->> 'legal_account_type'::text) AS legal_account_type,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN (u.data ->> 'document_type'::text)
+        ELSE NULL::text
+    END AS document_type,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN (u.data ->> 'legal_account_type'::text)
+        ELSE NULL::text
+    END AS legal_account_type,
     CASE
         WHEN core.is_owner_or_admin(u.id) THEN u.email
         ELSE NULL::email
@@ -123,7 +134,10 @@ CREATE OR REPLACE VIEW "community_service_api"."users" AS
         WHEN core.is_owner_or_admin(u.id) THEN ((u.data ->> 'address'::text))::jsonb
         ELSE NULL::jsonb
     END AS address,
-    ((u.data ->> 'metadata'::text))::jsonb AS metadata,
+    CASE
+        WHEN core.is_owner_or_admin(u.id) THEN ((u.data ->> 'metadata'::text))::jsonb
+        ELSE NULL::jsonb
+    END AS metadata,
     CASE
         WHEN core.is_owner_or_admin(u.id) THEN ((u.data ->> 'bank_account'::text))::jsonb
         ELSE NULL::jsonb
@@ -133,3 +147,8 @@ CREATE OR REPLACE VIEW "community_service_api"."users" AS
     (u.data ->> 'thumbnail_url'::text) AS thumbnail_url
    FROM community_service.users u
   WHERE (u.platform_id = core.current_platform_id());
+
+
+GRANT SELECT ON TABLE community_service_api.users TO platform_user;
+GRANT SELECT ON TABLE community_service_api.users TO anonymous;
+GRANT SELECT ON TABLE community_service_api.users TO scoped_user;
