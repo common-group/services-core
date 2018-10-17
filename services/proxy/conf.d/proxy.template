@@ -80,6 +80,7 @@ server {
             # Current mapped routes for /v1/users
 			# POST 			/v1/users/login
 			# POST 			/v1/users/logout
+			# GET 			/v1/users
 			include /etc/nginx/conf.d/locations/v1/users_location.conf;
 		}
 
