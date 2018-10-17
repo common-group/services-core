@@ -95,7 +95,7 @@ const usersEdit = {
                             m(`a.dashboard-nav-link${(ctrl.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
                               'Saldo'
                              ),
-                            m(`a.dashboard-nav-link.u-right-big-only[href='/pt/users/${user.id}']`, {
+                            m(`a.dashboard-nav-link.u-right-big-only[href='/${window.I18n.locale}/users/${user.id}']`, {
                                 config: m.route,
                                 onclick: () => {
                                     m.route(`/users/${user.id}`, {
