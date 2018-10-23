@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   concern :api_base do
     resources :projects, only: %i[update destroy create] do
       resources :goals, only: %i[update destroy create], controller: 'projects/goals'
+      resources :contributions, only: %i[update create], controller: 'projects/contributions'
       resources :reports, only: %i[create], controller: 'projects/reports'
       resources :posts, only: %i[create destroy], controller: 'projects/posts'
       resources :rewards, only: %i[create update destroy], controller: 'projects/rewards'
