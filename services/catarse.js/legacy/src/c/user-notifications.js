@@ -87,7 +87,7 @@ const userNotifications = {
         return m('[id=\'notifications-tab\']', ctrl.error() ? m.component(inlineError, {
             message: 'Erro ao carregar a página.'
         }) :
-            m(`form.simple_form.edit_user[accept-charset='UTF-8'][action='/pt/users/${user.id}'][method='post'][novalidate='novalidate']`, [
+            m(`form.simple_form.edit_user[accept-charset='UTF-8'][action='/${window.I18n.locale}/users/${user.id}'][method='post'][novalidate='novalidate']`, [
                 m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                 m('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'),
                 m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),

@@ -48,17 +48,17 @@ const menu = {
                     ]
                 ),
                 m('.text-align-right.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
-                    ctrl.user ? m.component(menuProfile, { user: ctrl.user }) : m('a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/pt/login?ref=ctrse_header\']', 'Login'),
+                    ctrl.user ? m.component(menuProfile, { user: ctrl.user }) : m(`a.w-nav-link.header-link.w-nav-link.btn-edit.u-right[href=\'/${window.I18n.locale}/login?ref=ctrse_header\']`, 'Login'),
                 ])
 
             ]),
             args.menuShort ? '' : m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
                 [
-                    m('a.header-link.w-nav-link[href=\'/pt/start?ref=ctrse_header\']',
+                    m(`a.header-link.w-nav-link[href=\'/${window.I18n.locale}/start?ref=ctrse_header\']`,
                         { onclick: () => m.route('/start') },
                         'Comece seu projeto'
                     ),
-                    m('a.header-link.w-nav-link[href=\'/pt/explore?ref=ctrse_header\']',
+                    m(`a.header-link.w-nav-link[href=\'/${window.I18n.locale}/explore?ref=ctrse_header\']`,
                         { onclick: () => m.route('/explore') },
                         'Explore'
                     )

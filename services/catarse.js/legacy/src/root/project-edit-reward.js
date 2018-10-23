@@ -35,7 +35,7 @@ const projectEditReward = {
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
             method: 'POST',
-            url: `/pt/projects/${args.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
+            url: `/${window.I18n.locale}/projects/${args.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
             config: (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());

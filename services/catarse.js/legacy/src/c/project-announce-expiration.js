@@ -17,7 +17,7 @@ const projectAnnounceExpiration = {
         const days = ctrl.days,
             expirationDate = moment().add(ctrl.days(), 'days').format('DD/MM/YYYY');
         return m("[id='dashboard-announce_expiration-tab']",
-            m(`form.simple_form.project-form.w-form[accept-charset='UTF-8'][action='/pt/flexible_projects/${args.project_id}'][id='expiration-form'][method='post'][novalidate='novalidate']`, [
+            m(`form.simple_form.project-form.w-form[accept-charset='UTF-8'][action='/${window.I18n.locale}/flexible_projects/${args.project_id}'][id='expiration-form'][method='post'][novalidate='novalidate']`, [
                 m("input[name='utf8'][type='hidden'][value='✓']"),
                 m("input[name='_method'][type='hidden'][value='patch']"),
                 m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
