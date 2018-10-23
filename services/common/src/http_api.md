@@ -20,8 +20,8 @@ Most routes need auth tokens to proceed.
 
 ## Hosts
 
-- Production: api.comum.io
-- Sandbox: api.sandbox.comum.io
+- Production: https://api.comum.io
+- Sandbox: https://api.sandbox.comum.io
 
 ## Routes index:
 
