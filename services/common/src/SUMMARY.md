@@ -9,7 +9,25 @@
 - [Periodic tasks](./periodic_tasks.md)
     - [Automatic subscriptions charge](./period_task_subscriptions_charge.md)
     - [Automatic recharge or inactive card subscriptions](./period_task_automatic_recharge_or_inactive_card_subscriptions.md)
-- [HTTP API - Services](./http_api.md)
+- [HTTP API - Routes](./http_api.md)
+    - [POST - /v1/users/login](./post_http_route_v1_users_login.md)
+    - [POST - /v1/users/logout](./post_http_routes_v1_users_logout.md)
+    - [POST - /v1/api_keys](./post_http_routes_v1_api_keys.md)
+    - [DELETE - /v1/api_keys/:API_KEY_ID](./delete_http_routes_v1_api_keys_API_KEY_ID.md)
+    - [GET - /v1/projects](./get_http_routes_v1_projects.md)
+    - [GET - /v1/projects/:PROJECT_ID/fund_stats](./get_http_routes_v1_projects_PROJECT_ID_fund_stats.md)
+    - [GET - /v1/projects/:PROJECT_ID/subscriptions_per_month](./get_http_routes_v1_projects_PROJECT_ID_subscriptions_per_month.md)
+    - [GET - /v1/projects/:PROJECT_ID/subscriptions_per_day](./get_http_routes_v1_projects_PROJECT_ID_subscriptions_per_day.md)
+    - [GET - /v1/projects/:PROJECT_ID/subscribers](./get_http_routes_v1_PROJECT_ID_subscribers.md)
+    - [GET - /v1/projects/:PROJECT_ID/subscriptions](./get_http_routes_v1_projects_PROJECT_ID_subscriptions.md)
+    - [POST - /v1/projects/:PROJECT_ID/finish](./post_http_routes_v1_projects_PROJECT_ID_finish.md)
+    - [GET - /v1/projects/:PROJECT_ID/goals](./get_http_routes_v1_projects_PROJECT_ID_goals.md)
+    - [GET - /v1/projects/:PROJECT_ID/goals/:GOAL_ID](./get_http_routes_v1_projects_PROJECT_ID_goals_GOAL_ID.md)
+    - [POST - /v1/projects/:PROJECT_ID/goals](./post_http_routes_v1_projects_PROJECT_ID_goals.md)
+    - [PUT - /v1/projects/:PROJECT_ID/goals/:GOAL_ID](./put_http_routes_v1_projects_PROJECT_ID_goals_GOAL_ID.md)
+
+
+<!--
     - [Analytics](./http_analytics.md)
         - [Get project subscribers stats](./http_analytics_rpc_project_subscribers_info.md)
     - [Community](./http_community.md)
@@ -39,7 +57,6 @@
         - [Listing rewards](./http_projects_rewards.md)
         - [Listing subscribers](./http_projects_subscribers.md)
 
-<!--
     - [Platforms](./http_platforms.md)
         - [Sign up](./http_platforms_rpc_sign_up.md)
         - [Login](./http_platforms_rpc_login.md)
