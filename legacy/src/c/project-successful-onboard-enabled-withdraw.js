@@ -8,7 +8,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.insights.enabled_withdraw');
 const projectSuccessfulEnabledWithdraw = {
 
     controller: function(args) {
-        const balanceUrl = `/pt/users/${args.project().user_id}/edit#balance`;
+        const balanceUrl = `/${window.I18n.locale}/users/${args.project().user_id}/edit#balance`;
 
         return {
             balanceUrl

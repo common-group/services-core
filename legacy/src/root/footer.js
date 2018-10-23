@@ -25,14 +25,14 @@ const footer = {
                                                 m('a.link-footer[href=\'http://blog.catarse.me\']',
                                                     ' Blog'
                                                 ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/team?ref=ctrse_footer\']',
+                                                m(`a.link-footer[href=\'https://www.catarse.me/${window.I18n.locale}/team?ref=ctrse_footer\']`,
                                                     [
                                                         ' Nosso time ',
                                                         m.trust('&lt;'),
                                                         '3'
                                                     ]
                                                 ),
-                                                m('a.link-footer[href=\'https://www.catarse.me/pt/press?ref=ctrse_footer\']',
+                                                m(`a.link-footer[href=\'https://www.catarse.me/${window.I18n.locale}/press?ref=ctrse_footer\']`,
                                                     ' Imprensa'
                                                 ),
                                                 m('a.u-marginbottom-30.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
@@ -112,7 +112,7 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Faça uma campanha'
                                                 ),
-                                                m('a.link-footer[href=\'/pt/start?ref=ctrse_footer\']',
+                                                m(`a.link-footer[href=\'/${window.I18n.locale}/start?ref=ctrse_footer\']`,
                                                     ' Comece seu projeto'
                                                 ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/financiamento-coletivo-musica-independente?ref=ctrse_footer\']',
@@ -133,7 +133,7 @@ const footer = {
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Apoie projetos no Catarse'
                                                 ),
-                                                m('a.link-footer[href=\'/pt/explore?ref=ctrse_footer\']',
+                                                m(`a.link-footer[href=\'/${window.I18n.locale}/explore?ref=ctrse_footer\']`,
                                                     ' Explore projetos'
                                                 ),
                                                 m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://blog.catarse.me?ref=ctrse_footer\']',
@@ -142,16 +142,16 @@ const footer = {
                                                 m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\']',
                                                     ' Contato'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=score&ref=ctrse_footer\']',
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=score&ref=ctrse_footer\']`,
                                                     ' Populares'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=online&ref=ctrse_footer\']',
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=online&ref=ctrse_footer\']`,
                                                     ' No ar'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=finished&ref=ctrse_footer\']',
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=finished&ref=ctrse_footer\']`,
                                                     ' Finalizados'
                                                 ),
-                                                m('a.w-hidden-tiny.link-footer[href=\'/pt/explore?filter=sub&ref=ctrse_footer\']',
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=sub&ref=ctrse_footer\']`,
                                                     ' Assinaturas'
                                                 )
                                             ]
