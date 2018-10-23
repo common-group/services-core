@@ -7,7 +7,7 @@ const menuSearch = {
         return m('span#menu-search', [
             m('.w-form.w-hidden-small.w-hidden-tiny.header-search[id=\'discover-form-wrapper\']',
                 [
-                    m('form.discover-form[accept-charset=\'UTF-8\'][action=\'/pt/explore?ref=ctrse_header\'][id=\'search-form\'][method=\'get\']',
+                    m(`form.discover-form[accept-charset=\'UTF-8\'][action=\'/${window.I18n.locale}/explore?ref=ctrse_header\'][id=\'search-form\'][method=\'get\']`,
                         [
                             m('div', { style: { display: 'none' } },
                                   m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']')
@@ -15,7 +15,7 @@ const menuSearch = {
                             m('input.w-input.text-field.prefix.search-input[autocomplete=\'off\'][id=\'pg_search\'][name=\'pg_search\'][placeholder=\'Busque projetos\'][type=\'text\']')
                         ]
                       ),
-                    m('.search-pre-result.w-hidden[data-searchpath=\'/pt/auto_complete_projects\']',
+                    m(`.search-pre-result.w-hidden[data-searchpath=\'/${window.I18n.locale}/auto_complete_projects\']`,
                         [
                             m('.result',
                                   m('.u-text-center',

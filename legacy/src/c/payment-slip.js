@@ -102,11 +102,11 @@ const paymentSlip = {
                                     ctrl.error() ? m.component(inlineError, { message: ctrl.error() }) : '',
                                     m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                                         'Ao apoiar, você concorda com os ',
-                                        m('a.alt-link[href=\'/pt/terms-of-use\']',
+                                        m(`a.alt-link[href=\'/${window.I18n.locale}/terms-of-use\']`,
                                             'Termos de Uso '
                                         ),
                                         'e ',
-                                        m('a.alt-link[href=\'/pt/privacy-policy\']',
+                                        m(`a.alt-link[href=\'/${window.I18n.locale}/privacy-policy\']`,
                                         'Política de Privacidade'
                                         )
                                     ])

@@ -94,8 +94,8 @@ const ProjectsSubscriptionThankYou = {
                                             I18nScope({
                                                 total: project.total_contributions,
                                                 email: user.email,
-                                                link2: `/pt/users/${user.user_id}/edit#contributions`,
-                                                link_email: `/pt/users/${user.user_id}/edit#about_me`
+                                                link2: `/${window.I18n.locale}/users/${user.user_id}/edit#contributions`,
+                                                link_email: `/${window.I18n.locale}/users/${user.user_id}/edit#about_me`
                                             })
                                         )
                                     )

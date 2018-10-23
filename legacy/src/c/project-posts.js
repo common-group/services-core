@@ -52,7 +52,7 @@ const projectPosts = {
                     ]) : '') : '',
                     m('.w-row.u-marginbottom-20', [
                         m('.w-col.w-col-4.w-col-push-4', [
-                            m(`a.btn.btn-edit.btn-small[href='/pt/projects/${project.project_id}/posts']`, 'Escrever novidade')
+                            m(`a.btn.btn-edit.btn-small[href='/${window.I18n.locale}/projects/${project.project_id}/posts']`, 'Escrever novidade')
                         ])
                     ])
                 ] : ''), (_.map(list.collection(), post => m('.w-row', [

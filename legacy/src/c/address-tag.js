@@ -10,7 +10,7 @@ const addressTag = {
                 city: ''
             };
 
-        return !_.isNull(address) ? m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10${args.isDark ? '.fontcolor-negative' : ''}[href="/pt/explore?pg_search=${address.state_acronym}"]`, {
+        return !_.isNull(address) ? m(`a.btn.btn-inline.btn-small.btn-transparent.link-hidden-light.u-marginbottom-10${args.isDark ? '.fontcolor-negative' : ''}[href="/${window.I18n.locale}/explore?pg_search=${address.state_acronym}"]`, {
             onclick: h.analytics.event({
                 cat: 'project_view',
                 act: 'project_location_link',

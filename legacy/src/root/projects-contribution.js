@@ -66,7 +66,7 @@ const projectsContribution = {
                         m('.section', m('.w-container', m('.w-row', [
                             m('.w-col.w-col-8',
                         m('.w-form.back-reward-form',
-                            m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/pt/projects/${project().id}/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]`,
+                            m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/${window.I18n.locale}/projects/${project().id}/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]`,
                                 { onsubmit: ctrl.submitContribution }
                             , [
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
