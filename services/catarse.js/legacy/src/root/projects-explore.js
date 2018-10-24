@@ -82,6 +82,8 @@ const projectsExplore = {
                         showFilter.toggle();
                     }
                     resetContextFilter();
+                    const scoreFilterForAonFlex = _.first(projectFiltersVM.getContextFilters());
+                    currentFilter(scoreFilterForAonFlex);
                 }
                 loadRoute();
             },
@@ -245,6 +247,18 @@ const projectsExplore = {
             currentFilter(filtersMap[defaultFilter]);
         }
 
+        let notWasTried = true;
+
+        const tryLoadFromQueryPath = () => {
+            let innerDefaultFilter = h.paramByName('filter') || args.filter || 'all'
+            
+            if (notWasTried) {
+                changeMode(innerDefaultFilter);
+                modeToggle(true);
+                notWasTried = false;
+            }
+        }
+
         return {
             categories: categoryCollection,
             changeFilter,
@@ -269,7 +283,8 @@ const projectsExplore = {
             checkForMinScoredProjects,
             categoryId,
             hasSpecialFooter,
-            externalLinkCategories
+            externalLinkCategories,
+            tryLoadFromQueryPath
         };
     },
     view: function(ctrl, args) {
@@ -291,6 +306,8 @@ const projectsExplore = {
             )
         );
         let widowProjects = [];
+
+        ctrl.tryLoadFromQueryPath();
 
         return m('#explore', {
             config: h.setPageTitle(window.I18n.t('header_html', I18nScope()))

@@ -97,6 +97,31 @@ beforeAll(function(){
       "tracker_snippet_html":"",
       "cover_image":null,
       "common_id":"9deafb36-6d86-48d5-900c-bf3c6b7e3e54"
+    },
+    {
+      project_id: 6012,
+      project_name: 'foo',
+      headline: 'foo',
+      permalink: 'foo',
+      state: "online",
+      mode: 'sub',
+      online_date: "2015-07-13T10:19:40.193106-03:00",
+      recommended: 'true',
+      project_img: 'http://foo.com/foo.jpg',
+      remaining_time: {
+        unit: 'days',
+        total: '10'
+      },
+      elapsed_time: {
+        unit: 'days',
+        total: '0'
+      },
+      expires_at: "2015-09-12T02:59:59",
+      pledged: 5220.0,
+      progress: 41,
+      state_acronym: 'SP',
+      owner_name: 'foo',
+      city_name: 'bar'
     }];
 
     return data;
