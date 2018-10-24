@@ -1,0 +1,7 @@
+drop TABLE project_service.surveys;
+drop TABLE project_service.survey_open_questions;
+drop TABLE project_service.survey_multiple_choice_questions;
+drop TABLE project_service.survey_open_question_answers;
+drop TABLE project_service.survey_question_choices;
+drop TABLE project_service.survey_multiple_choice_question_answers;
+drop TABLE project_service.survey_address_answers;

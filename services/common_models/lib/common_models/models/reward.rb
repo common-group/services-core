@@ -5,6 +5,7 @@ module CommonModels
     store_accessor :data, FIELDS
 
     belongs_to :project
+    has_one :survey
     has_many :payments, through: :contributions
     has_many :contributions, dependent: :nullify
   end

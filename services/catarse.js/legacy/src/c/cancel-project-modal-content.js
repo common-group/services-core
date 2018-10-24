@@ -31,7 +31,7 @@ const cancelProjectModalContent = {
     },
 
     view: function(ctrl, args) {
-        return m(`form.cancel-project-modal.modal-dialog-content[accept-charset='UTF-8'][action='/pt/projects/${args.project.id}'][id='edit_project_${args.project.id}'][method='post'][novalidate='novalidate']`,
+        return m(`form.cancel-project-modal.modal-dialog-content[accept-charset='UTF-8'][action='/${window.I18n.locale}/projects/${args.project.id}'][id='edit_project_${args.project.id}'][method='post'][novalidate='novalidate']`,
             ctrl.showRedactor() ? [
                 m("input[name='utf8'][type='hidden'][value='✓']"),
                 m("input[name='_method'][type='hidden'][value='patch']"),

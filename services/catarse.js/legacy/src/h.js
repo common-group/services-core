@@ -430,9 +430,9 @@ const
 
     navigateToDevise = (params) => {
         if (params) {
-            window.location.href = `/pt/login${params}`;
+            window.location.href = `/${window.I18n.locale}/login${params}`;
         } else {
-            window.location.href = `/pt/login`;
+            window.location.href = `/${window.I18n.locale}/login`;
         }
 
         return false;
@@ -783,7 +783,7 @@ const
     isHome = () => {
         const path = window.location.pathname;
 
-        return path == '/pt' || path == '/';
+        return path == '/en' || path == '/';
     },
     isProjectPage = () => {
         const path = window.location.pathname,
