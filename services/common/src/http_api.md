@@ -43,6 +43,11 @@ Most routes need auth tokens to proceed.
 ### POST - /v1/projects/:PROJECT_ID/goals
 ### PUT - /v1/projects/:PROJECT_ID/goals/:GOAL_ID
 
+### GET - /v1/projects/:PROJECT_ID/rewards
+### GET - /v1/projects/:PROJECT_ID/rewards/:REWARD_ID
+### POST - /v1/projects/:PROJECT_ID/rewards
+### PUT/PATCH - /v1/projects/:PROJECT_ID/rewards/:REWARD_ID
+
 
 
 

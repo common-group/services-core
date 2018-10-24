@@ -15,6 +15,7 @@
     - [POST - /v1/api_keys](./post_http_routes_v1_api_keys.md)
     - [DELETE - /v1/api_keys/:API_KEY_ID](./delete_http_routes_v1_api_keys_API_KEY_ID.md)
     - [GET - /v1/projects](./get_http_routes_v1_projects.md)
+    - [GET - /v1/projects/:PROJECT_ID](./get_http_routes_v1_projects_PROJECT_ID.md)
     - [GET - /v1/projects/:PROJECT_ID/fund_stats](./get_http_routes_v1_projects_PROJECT_ID_fund_stats.md)
     - [GET - /v1/projects/:PROJECT_ID/subscriptions_per_month](./get_http_routes_v1_projects_PROJECT_ID_subscriptions_per_month.md)
     - [GET - /v1/projects/:PROJECT_ID/subscriptions_per_day](./get_http_routes_v1_projects_PROJECT_ID_subscriptions_per_day.md)
@@ -25,6 +26,10 @@
     - [GET - /v1/projects/:PROJECT_ID/goals/:GOAL_ID](./get_http_routes_v1_projects_PROJECT_ID_goals_GOAL_ID.md)
     - [POST - /v1/projects/:PROJECT_ID/goals](./post_http_routes_v1_projects_PROJECT_ID_goals.md)
     - [PUT - /v1/projects/:PROJECT_ID/goals/:GOAL_ID](./put_http_routes_v1_projects_PROJECT_ID_goals_GOAL_ID.md)
+    - [GET - /v1/projects/:PROJECT_ID/rewards](./get_http_routes_v1_projects_PROJECT_ID_rewards.md)
+    - [GET - /v1/projects/:PROJECT_ID/rewards/:REWARD_ID](./get_http_routes_v1_projects_PROJECT_ID_rewards_REWARD_ID.md)
+    - [POST - /v1/projects/:PROJECT_ID/rewards](./post_http_routes_v1_projects_PROJECT_ID_rewards.md)
+    - [PUT - /v1/projects/:PROJECT_ID/rewards/:REWARD_ID](./put_http_routes_v1_projects_PROJECT_ID_rewards_REWARD_ID.md)
 
 
 <!--
