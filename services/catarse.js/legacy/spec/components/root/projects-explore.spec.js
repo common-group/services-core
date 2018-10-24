@@ -14,4 +14,23 @@ describe('ProjectsExplore', () => {
         $output.should.have('.hero-search');
     });
 
+    describe('view', () => {
+
+        let $outputWithSubscriptionsSelected, $outputWithAonFlexSelected;
+
+        beforeAll(() => {
+            $outputWithSubscriptionsSelected = mq(m.component(projectsExplore, { filter: 'sub' }));
+            $outputWithAonFlexSelected = mq(m(projectsExplore, { filter: 'not_sub' }));
+        });
+
+        it('should render explorer selecting subscriptions', () => {
+            expect($outputWithSubscriptionsSelected.contains('Projetos recorrentes')).toBeTrue();
+            expect($outputWithSubscriptionsSelected.find('.explore-mobile-label').length).toEqual(2);
+        });
+
+        it('should render explorer selecting aon and flex', () => {
+            expect($outputWithAonFlexSelected.contains('Projetos pontuais')).toBeTrue();
+            expect($outputWithAonFlexSelected.contains('Populares')).toBeTrue();            
+        });
+    });
 });
