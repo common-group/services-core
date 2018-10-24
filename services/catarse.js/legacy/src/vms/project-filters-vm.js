@@ -128,9 +128,11 @@ const projectFiltersVM = () => {
             },
             not_sub: {
                 title: 'Projetos pontuais',
+                nicename: 'Projetos pontuais',
                 filter: notSub,
                 isContextual: false,
-                keyName: 'not_sub'
+                keyName: 'not_sub',
+                header_badges: ['badge-aon-h-margin', 'badge-flex-h-margin']
             },
             all_modes: {
                 title: 'Todos os projetos',
@@ -140,9 +142,11 @@ const projectFiltersVM = () => {
             },
             sub: {
                 title: 'Projetos recorrentes',
+                nicename: 'Projetos recorrentes',
                 filter: sub,
                 isContextual: false,
-                keyName: 'sub'
+                keyName: 'sub',
+                header_badges: ['badge-sub-h-margin']
             },
             near_me: {
                 title: 'Próximos a mim',
