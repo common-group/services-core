@@ -3,10 +3,9 @@ import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
-import projectFilters from '../vms/project-filters-vm';
 import homeVM from '../vms/home-vm';
 import slider from '../c/slider';
-import projectRow from '../c/project-row';
+import projectsDisplay from '../c/projects-display';
 import blogBanner from './blog-banner';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 
@@ -14,11 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
     controller: function(args) {
-        const sample6 = _.partial(_.sample, _, 6),
-            loader = catarse.loaderWithToken,
-            project = models.project,
-            filters = projectFilters().filters,
-            userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
+        const userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
             friendListVM = catarse.paginationVM(models.userFriend, 'user_id.desc', {
                 Prefer: 'count=exact'
             }),
@@ -26,32 +21,13 @@ const projectsHome = {
             hasFBAuth = currentUser.has_fb_auth,
             vm = homeVM();
 
-        project.pageSize(20);
-
         userFriendVM.user_id(currentUser.user_id);
 
         if (hasFBAuth && !friendListVM.collection().length) {
             friendListVM.firstPage(userFriendVM.parameters());
         }
 
-        const collections = _.map(['score', 'contributed_by_friends'], (name) => {
-            const f = filters[name],
-                cLoader = loader(project.getPageOptions(_.extend({}, { order: 'score.desc' }, f.filter.parameters()))),
-                collection = m.prop([]);
-
-            cLoader.load().then(_.compose(collection, sample6));
-
-            return {
-                title: f.nicename,
-                hash: (name === 'score' ? 'all' : name),
-                collection,
-                loader: cLoader,
-                showFriends: (name === 'contributed_by_friends')
-            };
-        });
-
         return {
-            collections,
             slidesContent: vm.banners,
             hasFBAuth
         };
@@ -73,27 +49,22 @@ const projectsHome = {
             };
         });
 
-        return m('#projects-home-component', { config: h.setPageTitle(window.I18n.t('header_html', I18nScope())) }, [
-            // m.component(menu, {transparent: true}),
-            m.component(slider, {
-                slides: slides(),
-                effect: 'fade',
-                slideClass: 'hero-slide start',
-                wrapperClass: 'hero-full hero-full-slide',
-                sliderTime: 10000
-            }),
-            _.map(ctrl.collections, collection => m.component(projectRow, {
-                collection,
-                title: collection.title,
-                ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
-                showFriends: collection.showFriends
-            })),
-            // m.component(contributionActivities),
-            (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, { largeBg: true }) : ''),
-            m.component(blogBanner)
-            // m.component(footer, {expanded: true}),
-            // m.component(contributionActivities)
-        ]);
+        return m('#projects-home-component', {
+                config: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
+            }, 
+            [
+                m.component(slider, {
+                    slides: slides(),
+                    effect: 'fade',
+                    slideClass: 'hero-slide start',
+                    wrapperClass: 'hero-full hero-full-slide',
+                    sliderTime: 10000
+                }),
+                m(projectsDisplay),
+                (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, { largeBg: true }) : ''),
+                m.component(blogBanner)
+            ]
+        );
     }
 };
 
