@@ -250,7 +250,7 @@ const projectsExplore = {
         let notWasTried = true;
 
         const tryLoadFromQueryPath = () => {
-            let innerDefaultFilter = h.paramByName('filter') || 'all'
+            let innerDefaultFilter = h.paramByName('filter') || args.filter || 'all'
             
             if (notWasTried) {
                 changeMode(innerDefaultFilter);
