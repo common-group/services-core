@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import { catarse } from '../api';
 import _ from 'underscore';
@@ -9,12 +10,12 @@ import loadMoreBtn from './load-more-btn';
 import projectCard from './project-card';
 
 const userCreated = {
-    controller: function(args) {
-        const user_id = args.userId,
-            showDraft = args.showDraft || false,
-            error = m.prop(false),
+    oninit: function(vnode) {
+        const user_id = vnode.attrs.userId,
+            showDraft = vnode.attrs.showDraft || false,
+            error = prop(false),
             pages = catarse.paginationVM(models.project),
-            loader = m.prop(true),
+            loader = prop(true),
             contextVM = catarse.filtersVM({
                 project_user_id: 'eq',
                 state: 'in'
@@ -47,10 +48,10 @@ const userCreated = {
         const projects_collection = ctrl.projects.collection();
 
         return m('.content[id=\'created-tab\']',
-            (ctrl.error() ? m.component(inlineError, {
+            (ctrl.error() ? m(inlineError, {
                 message: 'Erro ao carregar os projetos.'
             }) : !ctrl.loader() ? [
-                (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m.component(projectCard, {
+                (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m(projectCard, {
                     project,
                     ref: 'user_contributed',
                     showFriends: false

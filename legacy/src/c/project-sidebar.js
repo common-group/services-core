@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectMode from './project-mode';
@@ -13,8 +14,8 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
 const projectSidebar = {
-    controller: function(args) {
-        const project = args.project,
+    oninit: function(vnode) {
+        const project = vnode.attrs.project,
             animateProgress = (el, isInitialized) => {
                 if (!isInitialized) {
                     let animation,
@@ -51,8 +52,8 @@ const projectSidebar = {
             };
 
         const navigate = () => {
-            if (projectVM.isSubscription(args.project)) {
-                m.route(`/projects/${project().project_id}/subscriptions/start`);
+            if (projectVM.isSubscription(vnode.attrs.project)) {
+                m.route.set(`/projects/${project().project_id}/subscriptions/start`);
                 return false;
             }
             h.navigateTo(`/projects/${project().project_id}/contributions/new`);
@@ -97,7 +98,7 @@ const projectSidebar = {
                 return states[project().state];
             },
             isSub = projectVM.isSubscription(project),
-            subscriptionData = args.subscriptionData && args.subscriptionData() ? args.subscriptionData() : m.prop(),
+            subscriptionData = args.subscriptionData && args.subscriptionData() ? args.subscriptionData() : prop(),
             subGoal = isSub ? (_.find(args.goalDetails(), g => g.value > subscriptionData.amount_paid_for_valid_period) || _.last(args.goalDetails()) || { value: '--' }) : null,
             pledged = isSub ? subscriptionData.amount_paid_for_valid_period : project().pledged,
             progress = isSub ? (subscriptionData.amount_paid_for_valid_period / subGoal.value) * 100 : project().progress,
@@ -143,7 +144,7 @@ const projectSidebar = {
                             ])
                     ]),
                     m('.w-row', [
-                        m.component(projectMode, {
+                        m(projectMode, {
                             project
                         })
                     ])
@@ -159,19 +160,19 @@ const projectSidebar = {
 
                         }, window.I18n.t(`submit_${project().mode}`, I18nScope()))
                     ]),
-                    isSub ? null : m('.back-project-btn-row-right', m.component(projectReminder, {
+                    isSub ? null : m('.back-project-btn-row-right', m(projectReminder, {
                         project,
                         type: 'link'
                     }))
                 ]) : ''),
                 m('.friend-backed-card.project-page', [
-                    (!_.isUndefined(project()) && project().contributed_by_friends ? m.component(projectFriends, { project: project(), wrapper: 'div' }) : '')
+                    (!_.isUndefined(project()) && project().contributed_by_friends ? m(projectFriends, { project: project(), wrapper: 'div' }) : '')
                 ]),
                 m(`div[class="fontsize-smaller u-marginbottom-30 ${displayCardClass()}"]`, displayStatusText())
             ]),
             m('.project-share.w-hidden-main.w-hidden-medium', [
-                m.component(addressTag, { project }),
-                m.component(categoryTag, { project }),
+                m(addressTag, { project }),
+                m(categoryTag, { project }),
                 m('.u-marginbottom-30.u-text-center-small-only',
                     m(`button.btn.btn-inline.btn-medium.btn-terciary${projectVM.isSubscription(project) ? '.btn-terciary-negative' : ''}`, {
                         onclick: ctrl.displayShareBox.toggle
@@ -182,7 +183,7 @@ const projectSidebar = {
                     displayShareBox: ctrl.displayShareBox
                 }) : ''
             ]),
-            m('.user-c', m.component(projectUserCard, {
+            m('.user-c', m(projectUserCard, {
                 userDetails: args.userDetails,
                 isDark: projectVM.isSubscription(project),
                 project

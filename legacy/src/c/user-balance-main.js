@@ -7,6 +7,7 @@
  * <div data-mithril="UsersBalance" data-parameters="{'user_id': 10}">
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import models from '../models';
@@ -15,14 +16,14 @@ import userBalanceTransactions from './user-balance-transactions';
 import userBalanceWithdrawHistory from './user-balance-withdraw-history';
 
 const userBalanceMain = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
-        userIdVM.user_id(args.user_id);
+        userIdVM.user_id(vnode.attrs.user_id);
 
         // Handles with user balance request data
         const balanceManager = (() => {
-                const collection = m.prop([{ amount: 0, user_id: args.user_id }]),
+                const collection = prop([{ amount: 0, user_id: vnode.attrs.user_id }]),
                     load = () => {
                         models.balance.getRowWithToken(userIdVM.parameters()).then(collection);
                     };
@@ -49,7 +50,7 @@ const userBalanceMain = {
 
               // Handles with bank account to check
             bankAccountManager = (() => {
-                const collection = m.prop([]),
+                const collection = prop([]),
                     loader = (() => catarse.loaderWithToken(
                                 models.bankAccount.getRowOptions(
                                     userIdVM.parameters())))(),
@@ -73,10 +74,10 @@ const userBalanceMain = {
     view: function(ctrl, args) {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
-            m.component(userBalance, opts),
+            m(userBalance, opts),
             m(userBalanceWithdrawHistory, { user_id: args.user_id }),
             m('.divider'),
-            m.component(userBalanceTransactions, opts),
+            m(userBalanceTransactions, opts),
             m('.u-marginbottom-40'),
             m('.w-section.section.card-terciary.before-footer')
         ]);

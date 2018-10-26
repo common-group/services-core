@@ -1,26 +1,27 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
 
 const countrySelect = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const countriesLoader = catarse.loader(models.country.getPageOptions()),
-            countries = m.prop(),
-            defaultCountryID = args.defaultCountryID,
-            defaultForeignCountryID = args.defaultForeignCountryID,
-            fields = args.fields,
-            international = args.international(fields.countryID() !== '' && fields.countryID() !== defaultCountryID);
+            countries = prop(),
+            defaultCountryID = vnode.attrs.defaultCountryID,
+            defaultForeignCountryID = vnode.attrs.defaultForeignCountryID,
+            fields = vnode.attrs.fields,
+            international = vnode.attrs.international(fields.countryID() !== '' && fields.countryID() !== defaultCountryID);
 
         const changeCountry = (countryID) => {
             fields.countryID(parseInt(countryID));
-            args.international(parseInt(countryID) !== defaultCountryID);
+            vnode.attrs.international(parseInt(countryID) !== defaultCountryID);
         };
 
         countriesLoader.load().then((countryData) => {
             countries(_.sortBy(countryData, 'name_en'));
-            if (args.addVM) {
-                args.addVM.countries(countries());
+            if (vnode.attrs.addVM) {
+                vnode.attrs.addVM.countries(countries());
             }
         });
 

@@ -11,18 +11,19 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 
 const contributionActivities = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let interval;
-        const collection = m.prop([]),
-            resource = m.prop(),
-            collectionIndex = m.prop(0),
-            collectionSize = m.prop(),
+        const collection = prop([]),
+            resource = prop(),
+            collectionIndex = prop(0),
+            collectionSize = prop(),
             collectionL = catarse.loader(
                   models.contributionActivity.getPageOptions()),
             nextResource = () => {

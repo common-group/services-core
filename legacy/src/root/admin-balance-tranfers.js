@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import balanceTransferListVM from '../vms/balance-transfer-list-vm';
@@ -14,14 +15,14 @@ import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
 
 const adminBalanceTranfers = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const listVM = balanceTransferListVM,
             filterVM = balanceTransferFilterVM(),
             authorizedListVM = balanceTransferListVM,
             authorizedFilterVM = balanceTransferFilterVM(),
-            authorizedCollection = m.prop([]),
-            error = m.prop(''),
-            selectedAny = m.prop(false),
+            authorizedCollection = prop([]),
+            error = prop(''),
+            selectedAny = prop(false),
             filterBuilder = [
                 {
                     component: filterMain,
@@ -90,14 +91,14 @@ const adminBalanceTranfers = {
                     }
                 }
             ],
-            selectedItemsIDs = m.prop([]),
+            selectedItemsIDs = prop([]),
             displayApprovalModal = h.toggleProp(false, true),
             displayManualModal = h.toggleProp(false, true),
             displayRejectModal = h.toggleProp(false, true),
             displayProcessTransfer = h.toggleProp(false, true),
             processingTranfersLoader = h.toggleProp(false, true),
-            selectAllLoading = m.prop(false),
-            redrawProp = m.prop(false),
+            selectAllLoading = prop(false),
+            redrawProp = prop(false),
             actionMenuToggle = h.toggleProp(false, true),
             isSelected = item_id => _.find(selectedItemsIDs(), i => i.id == item_id),
             selectItem = (item) => {
@@ -130,11 +131,11 @@ const adminBalanceTranfers = {
             },
             generateWrapperModal = (customAttrs) => {
                 const wrapper = {
-                    view: function(ctrl, args) {
+                    view: function(ctrl, {attrs}) {
                         actionMenuToggle(false);
                         return m('', [
                             m('.modal-dialog-header', [
-                                m('.fontsize-large.u-text-center', args.modalTitle)
+                                m('.fontsize-large.u-text-center', attrs.modalTitle)
                             ]),
                             m('.modal-dialog-content', [
                                 m('.w-row.fontweight-semibold', [
@@ -165,12 +166,12 @@ const adminBalanceTranfers = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
-                                            onclick: args.onClickCallback
-                                        }, args.ctaText)
+                                            onclick: attrs.onClickCallback
+                                        }, attrs.ctaText)
                                        ),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.btn-terciary.w-button', {
-                                            onclick: args.displayModal.toggle
+                                            onclick: attrs.displayModal.toggle
                                         }, 'Voltar')
                                        ),
                                     m('.w-col.w-col-1')

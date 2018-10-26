@@ -1,10 +1,10 @@
 import m from 'mithril';
 
 const nationalityRadio = {
-    controller: function(args) {
-        const defaultCountryID = args.defaultCountryID,
-            defaultForeignCountryID = args.defaultForeignCountryID,
-            international = args.international;
+    oninit: function(vnode) {
+        const defaultCountryID = vnode.attrs.defaultCountryID,
+            defaultForeignCountryID = vnode.attrs.defaultForeignCountryID,
+            international = vnode.attrs.international;
 
         return {
             defaultCountryID,

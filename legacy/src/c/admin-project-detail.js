@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import {
     catarse,
@@ -12,14 +13,14 @@ import adminExternalAction from './admin-external-action';
 import projectVM from '../vms/project-vm';
 
 const adminProjectDetail = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let bankl;
-        const currentItem = m.prop(args.item);
-        const project_id = args.item.project_id;
+        const currentItem = prop(vnode.attrs.item);
+        const project_id = vnode.attrs.item.project_id;
         const loadBank = () => {
             const model = models.projectAccount,
                 opts = model.getRowOptions(h.idVM.id(project_id).parameters()),
-                project = m.prop({});
+                project = prop({});
 
             bankl = catarse.loaderWithToken(opts);
 
@@ -32,9 +33,9 @@ const adminProjectDetail = {
         let l;
         const loadUser = () => {
             const model = models.userDetail,
-                user_id = args.item.user_id,
+                user_id = vnode.attrs.item.user_id,
                 opts = model.getRowOptions(h.idVM.id(user_id).parameters()),
-                user = m.prop({});
+                user = prop({});
 
             l = catarse.loaderWithToken(opts);
 
@@ -63,10 +64,10 @@ const adminProjectDetail = {
                     });
                 return false;
             },
-            complete: m.prop(false),
-            error: m.prop(false),
-            success: m.prop(false),
-            newValue: m.prop('')
+            complete: prop(false),
+            error: prop(false),
+            success: prop(false),
+            newValue: prop('')
         };
 
         const contributionReport = {
@@ -80,7 +81,7 @@ const adminProjectDetail = {
             action.newValue('');
         };
 
-        const projectSubscriberInfo = m.prop();
+        const projectSubscriberInfo = prop();
         const projectRevert = {
             toggler: h.toggleProp(false, true),
             loading: h.toggleProp(false, true),
@@ -104,9 +105,9 @@ const adminProjectDetail = {
             }
         };
 
-        if (args.item.mode === 'sub') {
+        if (vnode.attrs.item.mode === 'sub') {
             commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
-                id: args.item.common_id
+                id: vnode.attrs.item.common_id
             })).load().then(projectSubscriberInfo);
         }
 

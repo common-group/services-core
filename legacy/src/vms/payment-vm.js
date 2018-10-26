@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
@@ -8,10 +9,10 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 const paymentVM = () => {
-    const pagarme = m.prop({}),
+    const pagarme = prop({}),
         defaultCountryID = 36,
-        submissionError = m.prop(false),
-        isLoading = m.prop(false);
+        submissionError = prop(false),
+        isLoading = prop(false);
 
     const setCsrfToken = (xhr) => {
         if (h.authenticityToken()) {
@@ -20,22 +21,22 @@ const paymentVM = () => {
     };
 
     const fields = {
-        completeName: m.prop(''),
+        completeName: prop(''),
         anonymous: h.toggleProp(false, true),
-        address: m.prop({ country_id: defaultCountryID }),
-        ownerDocument: m.prop(''),
-        errors: m.prop([])
+        address: prop({ country_id: defaultCountryID }),
+        ownerDocument: prop(''),
+        errors: prop([])
     };
 
     const creditCardFields = {
-        name: m.prop(''),
-        number: m.prop(''),
-        expMonth: m.prop(''),
-        expYear: m.prop(''),
-        save: m.prop(false),
-        cvv: m.prop(''),
-        errors: m.prop([]),
-        cardOwnerDocument: m.prop('')
+        name: prop(''),
+        number: prop(''),
+        expMonth: prop(''),
+        expYear: prop(''),
+        save: prop(false),
+        cvv: prop(''),
+        errors: prop([]),
+        cardOwnerDocument: prop('')
     };
 
     const populateForm = (fetchedData) => {
@@ -139,7 +140,7 @@ const paymentVM = () => {
     };
 
     const getSlipPaymentDate = (contribution_id) => {
-        const paymentDate = m.prop();
+        const paymentDate = prop();
 
         m.request({
             method: 'GET',
@@ -192,7 +193,7 @@ const paymentVM = () => {
         }
     };
 
-    const savedCreditCards = m.prop([]);
+    const savedCreditCards = prop([]);
 
     const getSavedCreditCards = (user_id) => {
         const otherSample = {
@@ -375,7 +376,7 @@ const paymentVM = () => {
         return newErrors(creditCardFields.errors(), errorField);
     };
 
-    const installments = m.prop([{ value: 10, number: 1 }]);
+    const installments = prop([{ value: 10, number: 1 }]);
 
     const getInstallments = contribution_id => m.request({
         method: 'GET',

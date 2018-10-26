@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -6,7 +7,7 @@ import models from '../models';
 import projectFilters from './project-filters-vm';
 
 const idVM = h.idVM,
-    currentUser = m.prop({}),
+    currentUser = prop({}),
     createdVM = catarse.filtersVM({ project_user_id: 'eq' });
 
 const getUserCreatedProjects = (user_id, pageSize = 3) => {
@@ -163,8 +164,8 @@ const displayCover = (user) => {
 
 const getUserRecommendedProjects = (contribution) => {
     const sample3 = _.partial(_.sample, _, 3),
-        loaders = m.prop([]),
-        collection = m.prop([]),
+        loaders = prop([]),
+        collection = prop([]),
         { user_id } = h.getUser();
 
     const loader = () => _.reduce(loaders(), (memo, curr) => {

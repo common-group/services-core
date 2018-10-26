@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -8,15 +9,15 @@ import userContributed from '../c/user-contributed';
 import userAbout from '../c/user-about';
 
 const usersShow = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            user_id = args.user_id.split('-')[0],
-            hash = m.prop(window.location.hash),
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            user_id = vnode.attrs.user_id.split('-')[0],
+            hash = prop(window.location.hash),
             displayTabContent = (user) => {
                 const tabs = {
-                    '#created': m.component(userCreated, { userId: user.id }),
-                    '#contributed': m.component(userContributed, { userId: user.id }),
-                    '#about': m.component(userAbout, { userId: user.id })
+                    '#created': m(userCreated, { userId: user.id }),
+                    '#contributed': m(userContributed, { userId: user.id }),
+                    '#about': m(userAbout, { userId: user.id })
                 };
 
                 hash(window.location.hash);
@@ -51,14 +52,14 @@ const usersShow = {
         const user = ctrl.userDetails();
 
         return m('div', [
-            m.component(userHeader, { user }),
+            m(userHeader, { user }),
 
             m('nav.project-nav.u-text-center.u-marginbottom-30.profile', { style: { 'z-index': '10', position: 'relative' } },
               m('.w-container[data-anchor=\'created\']',
                   [
                     (!_.isEmpty(user) ?
                      (user.is_owner_or_admin ?
-                      m(`a.dashboard-nav-link.dashboard[href=\'/${window.I18n.locale}/users/${user.id}/edit\']`, { config: m.route,
+                      m(`a.dashboard-nav-link.dashboard[href=\'/${window.I18n.locale}/users/${user.id}/edit\']`, { oncreate: m.route.link,
                           onclick: () => {
                               m.route(`/users/edit/${user.id}`, { user_id: user.id });
                           } },

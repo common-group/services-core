@@ -16,7 +16,7 @@ import models from '../models';
 import h from '../h';
 
 const youtubeLightbox = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let player;
         const showLightbox = h.toggleProp(false, true),
             setYoutube = (el, isInitialized) => {
@@ -41,7 +41,7 @@ const youtubeLightbox = {
                 player = new window.YT.Player('ytvideo', {
                     height: '528',
                     width: '940',
-                    videoId: args.src,
+                    videoId: vnode.attrs.src,
                     playerVars: {
                         showInfo: 0,
                         modestBranding: 0

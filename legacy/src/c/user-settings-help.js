@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const userSettingsHelp = {
-    controller: function (args) {
+    oninit: function (vnode) {
         return {};
     },
     view: function (ctrl, args) {

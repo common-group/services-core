@@ -3,7 +3,7 @@ import h from '../h';
 import modalBox from './modal-box';
 
 const InfoProjectContributionLegend = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
             modalToggle: h.toggleProp(false, true)
         };
@@ -15,7 +15,7 @@ const InfoProjectContributionLegend = {
             m('a.fa.fa-question-circle.fontcolor-secondary[href="#"]', {
                 onclick: ctrl.modalToggle.toggle
             }, ''),
-            (ctrl.modalToggle() ? m.component(modalBox, {
+            (ctrl.modalToggle() ? m(modalBox, {
                 displayModal: ctrl.modalToggle,
                 content: args.content
             }) : '')

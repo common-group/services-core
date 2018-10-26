@@ -1,17 +1,18 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import moment from 'moment';
 import UserFollowBtn from './user-follow-btn';
 import ownerMessageContent from './owner-message-content';
 import modalBox from './modal-box';
 
 const dashboardSubscriptionCardDetailUserProfile = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         return {};
     },
     view: function(ctrl, args)
     {
-        const contactModalC = [ownerMessageContent, m.prop(args.user)];
+        const contactModalC = [ownerMessageContent, prop(args.user)];
 
         return m('.u-marginbottom-20.card.card-secondary.u-radius', [
             m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
@@ -31,7 +32,7 @@ const dashboardSubscriptionCardDetailUserProfile = {
                     m.trust('&nbsp;'),
                     `Criou ${args.user.total_published_projects} projetos`
                 ]),
-                (args.displayModal() ? m.component(modalBox, {
+                (args.displayModal() ? m(modalBox, {
                     displayModal: args.displayModal,
                     content: contactModalC
                 }) : ''),

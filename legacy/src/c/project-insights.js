@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -24,12 +25,12 @@ import {
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsights = {
-    controller: function(args) {
-        const filtersVM = args.filtersVM,
+    oninit: function(vnode) {
+        const filtersVM = vnode.attrs.filtersVM,
             displayModal = h.toggleProp(false, true),
-            contributionsPerDay = m.prop([]),
-            visitorsTotal = m.prop(0),
-            visitorsPerDay = m.prop([]),
+            contributionsPerDay = prop([]),
+            visitorsTotal = prop(0),
+            visitorsPerDay = prop([]),
             loader = catarse.loaderWithToken;
 
         if (h.paramByName('online_success') === 'true') {
@@ -115,7 +116,7 @@ const projectInsights = {
     },
     view: function(ctrl, args) {
         const project = args.project,
-            buildTooltip = el => m.component(tooltip, {
+            buildTooltip = el => m(tooltip, {
                 el,
                 text: [
                     'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
@@ -130,22 +131,22 @@ const projectInsights = {
 
         return m('.project-insights', !args.l() ? [
             m(`.w-section.section-product.${project.mode}`),
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
-            (ctrl.displayModal() ? m.component(modalBox, {
+            (ctrl.displayModal() ? m(modalBox, {
                 displayModal: ctrl.displayModal,
                 content: [onlineSuccessModalContent]
             }) : ''),
 
             m('.w-container', 
                 ((project.state === 'successful' || project.state === 'waiting_funds' ) && !project.has_cancelation_request) ? 
-                    m.component(projectSuccessfullNextSteps, { project: m.prop(project) }) : [
+                    m(projectSuccessfullNextSteps, { project: prop(project) }) : [
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-8.w-col-push-2', [
                                 m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', window.I18n.t('campaign_title', I18nScope())),
-                                (project.state === 'online' && !project.has_cancelation_request ? m.component(projectInviteCard, { project }) : ''),
-                                (project.state === 'draft' && !project.has_cancelation_request ? m.component(adminProjectDetailsCard, { resource: project }) : ''),
+                                (project.state === 'online' && !project.has_cancelation_request ? m(projectInviteCard, { project }) : ''),
+                                (project.state === 'draft' && !project.has_cancelation_request ? m(adminProjectDetailsCard, { resource: project }) : ''),
                                 m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`,
                                     project.has_cancelation_request ? 
                                         m.trust(window.I18n.t('has_cancelation_request_explanation', I18nScope())) : [
@@ -163,13 +164,16 @@ const projectInsights = {
                         ])
                     ]),
             (project.state === 'draft' ?
-               m.component(projectDeleteButton, { project })
+               m(projectDeleteButton, { project })
             : ''),
             (project.is_published) ? [
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
-                        m.component(projectDataStats, { project: m.prop(project), visitorsTotal: ctrl.visitorsTotal }),
+                        m(
+                            projectDataStats,
+                            { project: prop(project), visitorsTotal: ctrl.visitorsTotal }
+                        ),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {
@@ -179,7 +183,7 @@ const projectInsights = {
                                 m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
                                     window.I18n.t('visitors_per_day_label', I18nScope())
                                 ]),
-                                !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
+                                !ctrl.lVisitorsPerDay() ? m(projectDataChart, {
                                     collection: ctrl.visitorsPerDay,
                                     dataKey: 'visitors',
                                     xAxis: item => h.momentify(item.day),
@@ -193,7 +197,7 @@ const projectInsights = {
                                     'min-height': '300px'
                                 }
                             }, [
-                                !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                                !ctrl.lContributionsPerDay() ? m(projectDataChart, {
                                     collection: ctrl.contributionsPerDay,
                                     label: window.I18n.t('amount_per_day_label', I18nScope()),
                                     dataKey: 'total_amount',
@@ -208,7 +212,7 @@ const projectInsights = {
                                     'min-height': '300px'
                                 }
                             }, [
-                                !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                                !ctrl.lContributionsPerDay() ? m(projectDataChart, {
                                     collection: ctrl.contributionsPerDay,
                                     label: window.I18n.t('contributions_per_day_label', I18nScope()),
                                     dataKey: 'total',
@@ -225,7 +229,7 @@ const projectInsights = {
                                         ' ',
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
-                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {
+                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m(projectDataTable, {
                                         table: ctrl.contributionsPerRefTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
@@ -242,7 +246,7 @@ const projectInsights = {
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', window.I18n.t('location_origin_title', I18nScope())),
-                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
+                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m(projectDataTable, {
                                         table: ctrl.contributionsPerLocationTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
@@ -257,7 +261,7 @@ const projectInsights = {
                         ]),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', [
-                                m.component(projectReminderCount, {
+                                m(projectReminderCount, {
                                     resource: project
                                 })
                             ]),
@@ -265,7 +269,7 @@ const projectInsights = {
                     ])
                 ]),
             (project.can_cancel ?
-                m.component(projectCancelButton, { project })
+                m(projectCancelButton, { project })
             : '')
 
             ] : ''

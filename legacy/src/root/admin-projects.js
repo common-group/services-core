@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import projectListVM from '../vms/project-list-vm';
@@ -14,12 +15,12 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminProjects = {
-    controller: function() {
+    oninit: function() {
         const listVM = projectListVM,
             filterVM = projectFilterVM,
-            categories = m.prop([]),
+            categories = prop([]),
             filters = catarse.filtersVM,
-            error = m.prop(''),
+            error = prop(''),
             filterBuilder = [{ // name
                 component: filterMain,
                 data: {
@@ -179,13 +180,13 @@ const adminProjects = {
         const label = 'Projetos';
 
         return m('', [
-            m.component(adminFilter, {
+            m(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
                 label,
                 submit: ctrl.submit
             }),
-            m.component(adminList, {
+            m(adminList, {
                 vm: ctrl.listVM,
                 filterVM: ctrl.filterVM,
                 label,

@@ -9,18 +9,19 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
 const adminResetPassword = {
-    controller: function(args) {
-        let builder = args.data,
-            complete = m.prop(false),
-            error = m.prop(false),
-            fail = m.prop(false),
+    oninit: function(vnode) {
+        let builder = vnode.attrs.data,
+            complete = prop(false),
+            error = prop(false),
+            fail = prop(false),
             key = builder.property,
             data = {},
-            item = args.item;
+            item = vnode.attrs.item;
 
         builder.requestOptions.config = (xhr) => {
             if (h.authenticityToken()) {
@@ -28,10 +29,10 @@ const adminResetPassword = {
             }
         };
 
-        const l = m.prop(false),
+        const l = prop(false),
             load = () => m.request(_.extend({}, { data }, builder.requestOptions)),
-            newPassword = m.prop(''),
-            error_message = m.prop('');
+            newPassword = prop(''),
+            error_message = prop('');
 
         const requestError = (err) => {
             l(false);

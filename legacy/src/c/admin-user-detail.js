@@ -21,7 +21,7 @@ import h from '../h';
 import { catarse } from '../api';
 
 const adminUserDetail = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
             actions: {
                 reset: {
@@ -73,16 +73,16 @@ const adminUserDetail = {
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
             m('.w-row.u-marginbottom-30', [
-                m.component(adminResetPassword, {
+                m(adminResetPassword, {
                     data: addOptions(actions.reset, item.id),
                     item
                 }),
-                m.component(adminExternalAction, {
+                m(adminExternalAction, {
                     data: banUser(actions.ban, item.id),
                     item
                 }),
                 (item.deactivated_at) ?
-                    m.component(adminInputAction, { data: actions.reactivate, item }) : ''
+                    m(adminInputAction, { data: actions.reactivate, item }) : ''
             ]),
             m('.w-row.card.card-terciary.u-radius', [
                 m(adminNotificationHistory, {

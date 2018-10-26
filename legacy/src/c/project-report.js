@@ -4,6 +4,7 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -15,27 +16,27 @@ import projectReportInfringesIntellectualProperty from './project-report-infring
 import projectReportNoRewardReceived from './project-report-no-reward-received';
 
 const projectReport = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const displayForm = h.toggleProp(false, true),
-            displayFormWithName = m.prop(''),
-            sendSuccess = m.prop(false),
-            submitDisabled = m.prop(false),
-            user = args && args.user ? args.user : (h.getUser() || {}),
-            email = m.prop(user.email),
-            details = m.prop(''),
-            reason = m.prop(''),
+            displayFormWithName = prop(''),
+            sendSuccess = prop(false),
+            submitDisabled = prop(false),
+            user = vnode.attrs && vnode.attrs.user ? vnode.attrs.user : (h.getUser() || {}),
+            email = prop(user.email),
+            details = prop(''),
+            reason = prop(''),
             storeReport = 'report',
-            project = args && args.project ? args.project : projectVM.currentProject(),
+            project = vnode.attrs && vnode.attrs.project ? vnode.attrs.project : projectVM.currentProject(),
             hasPendingAction = project && (h.callStoredAction(storeReport) == project.project_id),
-            CPF = m.prop(''),
-            telephone = m.prop(''),
-            businessName = m.prop(''),
-            CNPJ = m.prop(''),
-            businessRole = m.prop(''),
-            relationWithViolatedProperty = m.prop(''),
-            fullName = m.prop(''),
-            fullAddress = m.prop(''),
-            projectInfringes = m.prop(''),
+            CPF = prop(''),
+            telephone = prop(''),
+            businessName = prop(''),
+            CNPJ = prop(''),
+            businessRole = prop(''),
+            relationWithViolatedProperty = prop(''),
+            fullName = prop(''),
+            fullAddress = prop(''),
+            projectInfringes = prop(''),
             termsAgreed = h.toggleProp(false, true),
             checkLogin = (event) => {
                 if (!_.isEmpty(user)) {
@@ -98,7 +99,7 @@ const projectReport = {
             user,
             details,
             reason,
-            project: m.prop(project),
+            project: prop(project),
             user,
             CPF,
             telephone,

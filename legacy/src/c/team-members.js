@@ -1,11 +1,12 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 
 const teamMembers = {
-    controller: function() {
+    oninit: function() {
         const vm = {
-                collection: m.prop([])
+                collection: prop([])
             },
 
             groupCollection = (collection, groupTotal) => _.map(_.range(Math.ceil(collection.length / groupTotal)), i => collection.slice(i * groupTotal, (i + 1) * groupTotal));

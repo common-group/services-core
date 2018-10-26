@@ -11,7 +11,7 @@ import faqBox from '../c/faq-box';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsContribution = {
-    controller: function() {
+    oninit: function() {
         const rewards = () => _.union(
             [{
                 id: null,
@@ -81,7 +81,7 @@ const projectsContribution = {
                                     m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', window.I18n.t('contribution_warning.info', I18nScope())),
                                     m(`a.alt-link.fontsize-smallest[target="__blank"][href="${window.I18n.t('contribution_warning.link', I18nScope())}"]`, window.I18n.t('contribution_warning.link_label', I18nScope()))
                                 ]),
-                                m.component(faqBox, {
+                                m(faqBox, {
                                     mode: project().mode,
                                     vm: ctrl.paymentVM,
                                     faq: ctrl.paymentVM.faq(project().mode),

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -12,7 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userContributedBox = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const displayModal = h.toggleProp(false, true),
             toggleDelivery = (projectId, contribution) => {
                 userVM.toggleDelivery(projectId, contribution).then(() => {
@@ -20,19 +21,19 @@ const userContributedBox = {
                     contribution.delivery_status = contribution.delivery_status === 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
             },
-            installmentTotalAmount = m.prop(h.formatNumber(args.contribution.installments_total_amount, 2));
+            installmentTotalAmount = prop(h.formatNumber(vnode.attrs.contribution.installments_total_amount, 2));
 
         return {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
-            contribution: args.contribution,
+            contribution: vnode.attrs.contribution,
             toggleDelivery,
             installmentTotalAmount
         };
     },
     view: function(ctrl) {
         const contribution = ctrl.contribution,
-            contactModalC = [ownerMessageContent, m.prop({
+            contactModalC = [ownerMessageContent, prop({
                 id: contribution.project_user_id,
                 name: contribution.project_owner_name,
                 project_id: contribution.project_id
@@ -42,8 +43,8 @@ const userContributedBox = {
 
             console.log('contribution', contribution);
 
-        return (!_.isEmpty(contribution) ? m('div',
-            (ctrl.displayModal() ? m.component(modalBox, {
+        return !_.isEmpty(contribution) ? m('div',
+            (ctrl.displayModal() ? m(modalBox, {
                 displayModal: ctrl.displayModal,
                 content: contactModalC
             }) : ''), [
@@ -185,7 +186,7 @@ const userContributedBox = {
                     ] : '')
                 ])
             ]
-        ) : m('div', ''));
+        ) : m('div', '');
     }
 };
 

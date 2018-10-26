@@ -1,13 +1,13 @@
 import m from 'mithril';
 
 const facebookButton = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const share = () => {
             if (FB) {
                 FB.ui({
-                    method: args.messenger ? 'send' : 'share',
-                    link: args.url,
-                    href: args.url,
+                    method: vnode.attrs.messenger ? 'send' : 'share',
+                    link: vnode.attrs.url,
+                    href: vnode.attrs.url,
                 });
             }
         };

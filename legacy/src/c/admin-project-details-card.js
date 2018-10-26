@@ -13,8 +13,8 @@ import h from '../h';
 import moment from 'moment';
 
 const adminProjectDetailsCard = {
-    controller: function(args) {
-        let project = args.resource,
+    oninit: function(vnode) {
+        let project = vnode.attrs.resource,
             isFinalLap = () =>
                 // @TODO: use 8 days because timezone on js
                  !_.isNull(project.expires_at) && moment().add(8, 'days') >= moment(project.zone_expires_at);

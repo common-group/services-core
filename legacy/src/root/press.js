@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -6,8 +7,8 @@ import models from '../models';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.press');
 const press = {
-    controller: function() {
-        const stats = m.prop([]);
+    oninit: function() {
+        const stats = prop([]);
         const loader = catarse.loader;
         const statsLoader = loader(models.statistic.getRowOptions());
 

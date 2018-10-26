@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import { catarse } from '../api';
@@ -8,12 +9,12 @@ import modalBox from './modal-box';
 import inviteEmailsFromImport from './invite-emails-from-import';
 
 const projectGoogleContactImport = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const clientId = document.getElementById('google_oauth_client'),
             modalToggle = h.toggleProp(false, true),
             feedPageUrl = 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&max-results=1000',
-            dataEmails = m.prop([]),
-            loadingContacts = m.prop(false),
+            dataEmails = prop([]),
+            loadingContacts = prop(false),
             fetch = (token, pageUrl) => {
                 if (!modalToggle()) {
                     modalToggle.toggle();
@@ -75,7 +76,7 @@ const projectGoogleContactImport = {
         const project = args.project;
 
         return m('#google_contact_wrapper', [
-            (ctrl.modalToggle() ? m.component(modalBox, {
+            (ctrl.modalToggle() ? m(modalBox, {
                 displayModal: ctrl.modalToggle,
                 content: [inviteEmailsFromImport, {
                     project: args.project,

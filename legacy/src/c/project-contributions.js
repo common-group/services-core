@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse, commonProject } from '../api';
 import models from '../models';
@@ -11,9 +12,9 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectContributions = {
-    controller: function(args) {
-        const contributionsPerDay = m.prop([]),
-            listVM = projectVM.isSubscription(args.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
+    oninit: function(vnode) {
+        const contributionsPerDay = prop([]),
+            listVM = projectVM.isSubscription(vnode.attrs.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
             filterStats = catarse.filtersVM({
                 project_id: 'eq'
             }),
@@ -41,18 +42,18 @@ const projectContributions = {
 
                 return grouped;
             },
-            contributionsStats = m.prop({});
+            contributionsStats = prop({});
 
-        if (projectVM.isSubscription(args.project())) {
-            subFilterVM.project_id(args.project().common_id).status('active');
+        if (projectVM.isSubscription(vnode.attrs.project())) {
+            subFilterVM.project_id(vnode.attrs.project().common_id).status('active');
         } else {
-            filterVM.project_id(args.project().project_id);
+            filterVM.project_id(vnode.attrs.project().project_id);
         }
 
-        filterStats.project_id(args.project().project_id);
+        filterStats.project_id(vnode.attrs.project().project_id);
 
         if (!listVM.collection().length) {
-            listVM.firstPage(projectVM.isSubscription(args.project()) ? subFilterVM.parameters() : filterVM.parameters());
+            listVM.firstPage(projectVM.isSubscription(vnode.attrs.project()) ? subFilterVM.parameters() : filterVM.parameters());
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
         const lContributionsPerDay = catarse.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
@@ -164,7 +165,7 @@ const projectContributions = {
                         style: {
                             'min-height': '300px'
                         }
-                    }, [!ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
+                    }, [!ctrl.lContributionsPerDay() ? m(projectDataChart, {
                         collection: ctrl.contributionsPerDay,
                         label: 'R$ arrecadados por dia',
                         dataKey: 'total_amount',
@@ -175,7 +176,7 @@ const projectContributions = {
                 m('.w-row',
                     m('.w-col.w-col-12.u-text-center', [
                         m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os apoios'),
-                        (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
+                        (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m(projectDataTable, {
                             table: ctrl.contributionsPerLocationTable,
                             defaultSortIndex: -2
                         }) : '' : h.loader())

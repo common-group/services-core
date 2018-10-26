@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import models from '../models';
@@ -12,14 +13,14 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const start = {
-    controller: function() {
+    oninit: function() {
         h.analytics.windowScroll({ cat: 'project_start', act: 'start_page_scroll' });
-        const stats = m.prop([]),
-            categories = m.prop([]),
-            selectedPane = m.prop(0),
-            selectedCategory = m.prop([]),
-            featuredProjects = m.prop([]),
-            selectedCategoryIdx = m.prop(-1),
+        const stats = prop([]),
+            categories = prop([]),
+            selectedPane = prop(0),
+            selectedCategory = prop([]),
+            featuredProjects = prop([]),
+            selectedCategoryIdx = prop(-1),
             startvm = startVM(window.I18n),
             filters = catarse.filtersVM,
             paneImages = startvm.panes,
@@ -86,10 +87,10 @@ const start = {
                 uservm.id(_.first(project).user.id);
                 lUser().load().then(user => setUser(user, idx));
             },
-            projectCategory = m.prop('-1'),
-            projectName = m.prop(''),
-            projectNameError = m.prop(false),
-            projectCategoryError = m.prop(false),
+            projectCategory = prop('-1'),
+            projectName = prop(''),
+            projectNameError = prop(false),
+            projectCategoryError = prop(false),
             validateProjectForm = () => {
                 projectCategoryError(projectCategory() == -1);
                 projectNameError(projectName().trim() === '');
@@ -332,7 +333,7 @@ const start = {
                         m('br'),
                         window.I18n.t('video.subtitle', I18nScope())
                     ]),
-                    m.component(youtubeLightbox, {
+                    m(youtubeLightbox, {
                         src: window.I18n.t('video.src', I18nScope()),
                         onclick: h.analytics.event({ cat: 'project_start', act: 'start_video_play' })
                     })
@@ -386,7 +387,7 @@ const start = {
                     ])
                 ])
             ]),
-            m.component(slider, {
+            m(slider, {
                 slides: testimonials(),
                 title: window.I18n.t('testimonials_title', I18nScope()),
                 slideClass: 'slide-testimonials-content',
@@ -397,12 +398,12 @@ const start = {
             m('.w-container', [
                 m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', window.I18n.t('qa_title', I18nScope())),
                 m('.w-row.u-marginbottom-60', [
-                    m('.w-col.w-col-6', _.map(ctrl.questions.col_1, question => m.component(landingQA, {
+                    m('.w-col.w-col-6', _.map(ctrl.questions.col_1, question => m(landingQA, {
                         question: question.question,
                         answer: question.answer,
                         onclick: h.analytics.event({ cat: 'project_start', act: 'start_qa_click', lbl: question.question })
                     }))),
-                    m('.w-col.w-col-6', _.map(ctrl.questions.col_2, question => m.component(landingQA, {
+                    m('.w-col.w-col-6', _.map(ctrl.questions.col_2, question => m(landingQA, {
                         question: question.question,
                         answer: question.answer,
                         onclick: h.analytics.event({ cat: 'project_start', act: 'start_qa_click', lbl: question.question })
@@ -453,7 +454,10 @@ const start = {
                                     m(`input[type="submit"][value="${window.I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
                                 ]),
                             ]),
-                            m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m.component(inlineError, { message: 'Por favor, verifique novamente os campos acima!' }) : '')
+                            m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m(
+                                inlineError,
+                                { message: 'Por favor, verifique novamente os campos acima!' }
+                            ) : '')
                         ])
                 ])
             ])

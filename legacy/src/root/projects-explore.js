@@ -7,6 +7,7 @@
  * <div data-mithril="ProjectsExplore">
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import {
     catarse,
     commonRecommender
@@ -24,19 +25,19 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const filters = catarse.filtersVM,
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
             currentUser = h.getUser() || {},
-            chosenRecommender = m.prop(null),
-            currentMode = m.prop(filtersMap.all_modes),
-            selectedCategory = m.prop({
+            chosenRecommender = prop(null),
+            currentMode = prop(filtersMap.all_modes),
+            selectedCategory = prop({
                 name: 'Todas as categorias',
                 id: null
             }),
             defaultFilter = h.paramByName('filter') || 'all',
-            currentFilter = m.prop(filtersMap[defaultFilter]),
+            currentFilter = prop(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
             availableRecommenders = ['recommended_1', 'recommended_2'],
             categoryToggle = h.toggleProp(true, false),
@@ -88,9 +89,9 @@ const projectsExplore = {
                 loadRoute();
             },
             hasFBAuth = currentUser.has_fb_auth,
-            isSearch = m.prop(false),
-            categoryCollection = m.prop([]),
-            categoryId = m.prop(),
+            isSearch = prop(false),
+            categoryCollection = prop([]),
+            categoryId = prop(),
             findCategory = id => _.find(categoryCollection(), c => c.id === parseInt(id)),
             category = _.compose(findCategory, categoryId),
             loadCategories = () => models.category.getPageWithToken(filters({}).order({
@@ -101,8 +102,8 @@ const projectsExplore = {
             // just small fix when have two scored projects only
             checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
             // Fake projects object to be able to render page while loadding (in case of search)
-            projects = m.prop({
-                collection: m.prop([]),
+            projects = prop({
+                collection: prop([]),
                 isLoading: () => true,
                 isLastPage: () => true
             }),
@@ -158,7 +159,7 @@ const projectsExplore = {
                                 query: search
                             })),
                             page = { // We build an object with the same interface as paginationVM
-                                collection: m.prop([]),
+                                collection: prop([]),
                                 isLoading: l,
                                 isLastPage: () => true,
                                 nextPage: () => false
@@ -221,7 +222,7 @@ const projectsExplore = {
                 }
                 categoryId(cat && cat.id);
             },
-            title = m.prop();
+            title = prop();
 
         window.addEventListener('hashchange', () => {
             resetContextFilter();
@@ -239,8 +240,8 @@ const projectsExplore = {
         models.project.pageSize(9);
         loadCategories().then(loadRoute);
 
-        if (args.filter) {
-            currentFilter(filtersMap[args.filter]);
+        if (vnode.attrs.filter) {
+            currentFilter(filtersMap[vnode.attrs.filter]);
         }
 
         if (!currentFilter()) {
@@ -250,7 +251,7 @@ const projectsExplore = {
         let notWasTried = true;
 
         const tryLoadFromQueryPath = () => {
-            let innerDefaultFilter = h.paramByName('filter') || args.filter || 'all'
+            let innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all'
             
             if (notWasTried) {
                 changeMode(innerDefaultFilter);
@@ -453,7 +454,7 @@ const projectsExplore = {
                 )
             ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
-                (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '') :
+                (!ctrl.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
                 ''),
             m('.w-section.section', [
                 m('.w-container', [
@@ -490,7 +491,7 @@ const projectsExplore = {
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {
+                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m(projectCard, {
                                 project,
                                 ref,
                                 type: cardType,

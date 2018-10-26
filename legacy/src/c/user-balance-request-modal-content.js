@@ -8,6 +8,7 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -20,29 +21,29 @@ import userSettingsVM from '../vms/user-settings-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceRequestModelContent = {
-    controller: function(args) {
-        let parsedErrors = userSettingsVM.mapRailsErrors(args.rails_errors);
+    oninit: function(vnode) {
+        let parsedErrors = userSettingsVM.mapRailsErrors(vnode.attrs.rails_errors);
 
         const fields = {
-            agency: m.prop(''),
-            bank_id: m.prop(''),
-            agency_digit: m.prop(''),
-            account: m.prop(''),
-            account_digit: m.prop(''),
-            bank_account_id: m.prop(''),
-            bank_account_type: m.prop('')
+            agency: prop(''),
+            bank_id: prop(''),
+            agency_digit: prop(''),
+            account: prop(''),
+            account_digit: prop(''),
+            bank_account_id: prop(''),
+            bank_account_type: prop('')
         };
 
-        const bankAccounts = m.prop([]);
+        const bankAccounts = prop([]);
 
-        const bankInput = m.prop(''),
-            bankCode = m.prop('-1'),
+        const bankInput = prop(''),
+            bankCode = prop('-1'),
             vm = catarse.filtersVM({ user_id: 'eq' }),
-            balance = args.balance,
+            balance = vnode.attrs.balance,
             loaderOpts = models.balanceTransfer.postOptions({
                 user_id: balance.user_id }),
             requestLoader = catarse.loaderWithToken(loaderOpts),
-            loading = m.prop(false),
+            loading = prop(false),
             displayDone = h.toggleProp(false, true),
             displayConfirmation = h.toggleProp(false, true),
             updateUserData = (user_id) => {
@@ -88,8 +89,8 @@ const userBalanceRequestModelContent = {
             },
             requestFund = () => {
                 requestLoader.load().then((data) => {
-                    args.balanceManager.load();
-                    args.balanceTransactionManager.load();
+                    vnode.attrs.balanceManager.load();
+                    vnode.attrs.balanceTransactionManager.load();
                     displayConfirmation(false);
                     displayDone.toggle();
                     m.redraw();
@@ -103,7 +104,7 @@ const userBalanceRequestModelContent = {
             bankAccounts,
             displayDone,
             displayConfirmation,
-            loadBankA: args.bankAccountManager.loader,
+            loadBankA: vnode.attrs.bankAccountManager.loader,
             updateUserData,
             requestFund,
             parsedErrors,

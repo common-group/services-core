@@ -39,7 +39,7 @@ const userHeader = {
                               [
                                   m('.w-col.w-col-4'),
                                   m('.w-col.w-col-4',
-                                  m.component(UserFollowBtn, {
+                                  m(UserFollowBtn, {
                                       disabledClass: '.btn.btn-medium.btn-secondary-dark.w-button',
                                       following: user.following_this_user,
                                       follow_id: user.id })

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -11,10 +12,10 @@ import userNotifications from '../c/user-notifications';
 import userBalanceMain from '../c/user-balance-main';
 
 const usersEdit = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            userId = args.user_id.split('-')[0],
-            hash = m.prop(window.location.hash),
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            userId = vnode.attrs.user_id.split('-')[0],
+            hash = prop(window.location.hash),
             displayTabContent = (user) => {
                 const tabs = {
                     '#projects': m(userCreated, {
@@ -96,7 +97,7 @@ const usersEdit = {
                               'Saldo'
                              ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/${window.I18n.locale}/users/${user.id}']`, {
-                                config: m.route,
+                                oncreate: m.route.link,
                                 onclick: () => {
                                     m.route(`/users/${user.id}`, {
                                         user_id: user.id

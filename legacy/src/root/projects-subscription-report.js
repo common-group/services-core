@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import {
     catarse,
@@ -33,15 +34,15 @@ const dropdownFilterCustomLabel = {
 };
 
 const projectSubscriptionReport = {
-    controller: function (args) {
+    oninit: function (vnode) {
         const filterVM = projectsSubscriptionReportVM,
             catarseVM = projectsContributionReportVM,
-            dropdownNumber = m.prop(0),
-            error = m.prop(false),
-            loader = m.prop(true),
-            isProjectDataLoaded = m.prop(false),
-            isRewardsDataLoaded = m.prop(false),
-            rewards = m.prop([]),
+            dropdownNumber = prop(0),
+            error = prop(false),
+            loader = prop(true),
+            isProjectDataLoaded = prop(false),
+            isRewardsDataLoaded = prop(false),
+            rewards = prop([]),
             subscriptions = commonPayment.paginationVM(models.userSubscription, 'last_payment_data_created_at.desc', {
                 Prefer: 'count=exact'
             }),
@@ -201,9 +202,9 @@ const projectSubscriptionReport = {
                 isProjectDataLoaded(true);
                 m.redraw();
             },
-            project = m.prop([{}]);
+            project = prop([{}]);
 
-        catarseVM.project_id(args.project_id);
+        catarseVM.project_id(vnode.attrs.project_id);
 
         const lReward = catarse.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: `eq.${catarseVM.project_id()}`
@@ -287,8 +288,8 @@ const projectSubscriptionReport = {
         rewardFilter.data.options = ctrl.mapRewardsToOptions();
         if (ctrl.isProjectDataLoaded() && ctrl.isRewardsDataLoaded()) {
             return m('div', [
-                m.component(projectDashboardMenu, {
-                    project: m.prop(_.first(ctrl.project()))
+                m(projectDashboardMenu, {
+                    project: prop(_.first(ctrl.project()))
                 }),
                 m('.dashboard-header', [
                     m('.w-container',
@@ -308,14 +309,14 @@ const projectSubscriptionReport = {
                                 onsubmit: ctrl.submit
                             },
                                 m('w-row', [
-                                    m.component(textFilter.component, textFilter.data),
+                                    m(textFilter.component, textFilter.data),
                                     m('.w-col.w-col-9',
                                         m('.w-row', [
-                                            m.component(statusFilter.component, statusFilter.data),
-                                            m.component(rewardFilter.component, rewardFilter.data),
-                                            m.component(paymentFilter.component, paymentFilter.data),
-                                            m.component(totalPaidFilter.component, totalPaidFilter.data),
-                                            m.component(paidCountFilter.component, paidCountFilter.data),
+                                            m(statusFilter.component, statusFilter.data),
+                                            m(rewardFilter.component, rewardFilter.data),
+                                            m(paymentFilter.component, paymentFilter.data),
+                                            m(totalPaidFilter.component, totalPaidFilter.data),
+                                            m(paidCountFilter.component, paidCountFilter.data),
                                         ])
                                     )
                                 ])
@@ -339,7 +340,7 @@ const projectSubscriptionReport = {
                                 ),
                                 m('.w-col.w-col-6',
                                     m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_download']`, {
-                                        config: m.route
+                                        oncreate: m.route.link
                                     }, [
                                             m('span.fa.fa-download',
                                                 m.trust('&nbsp;')

@@ -8,7 +8,7 @@ import modalBox from '../c/modal-box';
 import cancelProjectModalContent from '../c/cancel-project-modal-content';
 
 const projectCancelButton = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const displayCancelModal = h.toggleProp(false, true);
         return {
             displayCancelModal
@@ -16,7 +16,7 @@ const projectCancelButton = {
     },
     view: function(ctrl, args) {
         return m('div', [
-            (ctrl.displayCancelModal() ? m.component(modalBox, {
+            (ctrl.displayCancelModal() ? m(modalBox, {
                 displayModal: ctrl.displayCancelModal,
                 content: [cancelProjectModalContent, { displayModal: ctrl.displayCancelModal, project: args.project }]
             }) : ''),

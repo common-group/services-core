@@ -16,7 +16,7 @@ import m from 'mithril';
 import h from '../h';
 
 const landingQA = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
             showAnswer: h.toggleProp(false, true)
         };

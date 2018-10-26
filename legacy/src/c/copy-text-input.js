@@ -10,18 +10,19 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import select from 'select';
 import popNotification from './pop-notification';
 
 const copyTextInput = {
-    controller: function(args) {
-        const showSuccess = m.prop(false);
+    oninit: function(vnode) {
+        const showSuccess = prop(false);
         const setClickHandler = (el, isInitialized) => {
             let copy;
             if (!isInitialized) {
                 const textarea = el.parentNode.previousSibling.firstChild;
 
-                textarea.innerText = args.value; // This fixes an issue when instantiating multiple copy clipboard components
+                textarea.innerText = vnode.attrs.value; // This fixes an issue when instantiating multiple copy clipboard components
                 el.onclick = () => {
                     select(textarea);
                     copy = document.execCommand('copy');
@@ -49,7 +50,7 @@ const copyTextInput = {
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
                 config: ctrl.setClickHandler
             })),
-            ctrl.showSuccess() ? m.component(popNotification, { message: 'Link copiado' }) : ''
+            ctrl.showSuccess() ? m(popNotification, { message: 'Link copiado' }) : ''
         ]);
     }
 };

@@ -5,10 +5,10 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceTrasactionRow = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const expanded = h.toggleProp(false, true);
 
-        if (args.index == 0) {
+        if (vnode.attrs.index == 0) {
             expanded.toggle();
         }
 

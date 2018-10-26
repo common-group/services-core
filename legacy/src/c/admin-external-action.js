@@ -10,17 +10,18 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
 const adminExternalAction = {
-    controller: function(args) {
-        let builder = args.data,
-            complete = m.prop(false),
-            error = m.prop(false),
-            fail = m.prop(false),
+    oninit: function(vnode) {
+        let builder = vnode.attrs.data,
+            complete = prop(false),
+            error = prop(false),
+            fail = prop(false),
             data = {},
-            item = args.item;
+            item = vnode.attrs.item;
 
         builder.requestOptions.config = (xhr) => {
             if (h.authenticityToken()) {
@@ -29,7 +30,7 @@ const adminExternalAction = {
         };
 
         const reload = _.compose(builder.model.getRowWithToken, h.idVM.id(item[builder.updateKey]).parameters),
-            l = m.prop(false);
+            l = prop(false);
 
         const reloadItem = () => reload().then(updateItem);
 

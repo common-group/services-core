@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
@@ -11,31 +12,31 @@ import popNotification from '../c/pop-notification';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const projectEditReward = {
-    controller: function(args) {
-        const rewards = m.prop([]),
-            loading = m.prop(false),
-            error = m.prop(false),
-            errors = m.prop([]),
-            showSuccess = m.prop(false),
+    oninit: function(vnode) {
+        const rewards = prop([]),
+            loading = prop(false),
+            error = prop(false),
+            errors = prop([]),
+            showSuccess = prop(false),
             newReward = () => ({
-                id: m.prop(null),
-                minimum_value: m.prop(null),
-                title: m.prop(''),
-                shipping_options: m.prop('free'),
+                id: prop(null),
+                minimum_value: prop(null),
+                title: prop(''),
+                shipping_options: prop('free'),
                 edit: h.toggleProp(true, false),
-                deliver_at: m.prop(moment().date(1).format()),
-                description: m.prop(''),
-                paid_count: m.prop(0),
-                waiting_payment_count: m.prop(0),
+                deliver_at: prop(moment().date(1).format()),
+                description: prop(''),
+                paid_count: prop(0),
+                waiting_payment_count: prop(0),
                 limited: h.toggleProp(false, true),
-                maximum_contributions: m.prop(null),
+                maximum_contributions: prop(null),
                 newReward: true,
-                row_order: m.prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
+                row_order: prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
             });
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
             method: 'POST',
-            url: `/${window.I18n.locale}/projects/${args.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
+            url: `/${window.I18n.locale}/projects/${vnode.attrs.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
             config: (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
@@ -55,29 +56,29 @@ const projectEditReward = {
             }
         };
 
-        const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
+        const loadRewards = () => rewardVM.fetchRewards(vnode.attrs.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
                 const limited = reward.maximum_contributions !== null;
-                const rewardProp = m.prop({
-                    id: m.prop(reward.id),
-                    deliver_at: m.prop(reward.deliver_at),
-                    description: m.prop(reward.description),
-                    maximum_contributions: m.prop(reward.maximum_contributions),
-                    minimum_value: m.prop(reward.minimum_value),
+                const rewardProp = prop({
+                    id: prop(reward.id),
+                    deliver_at: prop(reward.deliver_at),
+                    description: prop(reward.description),
+                    maximum_contributions: prop(reward.maximum_contributions),
+                    minimum_value: prop(reward.minimum_value),
                     edit: h.toggleProp(false, true),
                     limited: h.toggleProp(limited, !limited),
-                    paid_count: m.prop(reward.paid_count),
-                    row_order: m.prop(reward.row_order),
-                    shipping_options: m.prop(reward.shipping_options),
-                    title: m.prop(reward.title),
-                    waiting_payment_count: m.prop(reward.waiting_payment_count)
+                    paid_count: prop(reward.paid_count),
+                    row_order: prop(reward.row_order),
+                    shipping_options: prop(reward.shipping_options),
+                    title: prop(reward.title),
+                    waiting_payment_count: prop(reward.waiting_payment_count)
                 });
                 rewards().push(rewardProp);
             });
 
             if (rewardVM.rewards().length === 0) {
-                rewards().push(m.prop(newReward()));
+                rewards().push(prop(newReward()));
             }
         });
 
@@ -91,7 +92,7 @@ const projectEditReward = {
             errors,
             showSuccess,
             rewards,
-            user: userVM.fetchUser(args.user_id),
+            user: userVM.fetchUser(vnode.attrs.user_id),
             newReward,
             setSorting,
             tips
@@ -106,10 +107,10 @@ const projectEditReward = {
             (project() ? [
                 m('.w-section.section',
                     m('.w-container', [
-                        (ctrl.showSuccess() ? m.component(popNotification, {
+                        (ctrl.showSuccess() ? m(popNotification, {
                             message: 'Recompensa salva com sucesso'
                         }) : ''),
-                        (ctrl.error() ? m.component(popNotification, {
+                        (ctrl.error() ? m(popNotification, {
                             message: ctrl.errors(),
                             error: true
                         }) : ''),
@@ -158,7 +159,7 @@ const projectEditReward = {
                                 ]),
                                 rewardVM.canAdd(project().state, ctrl.user()) ? [
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                        onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
+                                        onclick: () => ctrl.rewards().push(prop(ctrl.newReward()))
                                     },
                                         window.I18n.t('add_reward', I18nScope())
                                     )

@@ -6,38 +6,38 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const postsPreview = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const togglePreview = () => {
                 h.scrollTop();
-                args.showPreview(false);
+                vnode.attrs.showPreview(false);
             },
             sendNotification = (e) => {
                 e.preventDefault();
 
                 const notificationData = {
-                    title: args.title(),
-                    comment_html: args.comment_html(),
-                    reward_id: args.reward_id >= 1 ? args.reward_id : null,
-                    recipients: args.reward_id >= 1 ? 'reward' : args.reward_id == '-1' ? 'public' : 'backers'
+                    title: vnode.attrs.title(),
+                    comment_html: vnode.attrs.comment_html(),
+                    reward_id: vnode.attrs.reward_id >= 1 ? vnode.attrs.reward_id : null,
+                    recipients: vnode.attrs.reward_id >= 1 ? 'reward' : vnode.attrs.reward_id == '-1' ? 'public' : 'backers'
                 };
 
                 return m.request({
                     method: 'POST',
-                    url: `/projects/${args.project_id}/posts.json`,
+                    url: `/projects/${vnode.attrs.project_id}/posts.json`,
                     data: {
                         project_post: notificationData,
-                        project: args.project_id
+                        project: vnode.attrs.project_id
                     },
                     config: h.setCsrfToken
                 }).then(() => {
-                    args.showSuccess(true);
-                    args.comment_html('');
-                    args.title('');
+                    vnode.attrs.showSuccess(true);
+                    vnode.attrs.comment_html('');
+                    vnode.attrs.title('');
                     togglePreview();
                     m.redraw();
                 }).catch((err) => {
-                    args.errors('Erro ao enviar mensagem.'),
-                    args.showError(true);
+                    vnode.attrs.errors('Erro ao enviar mensagem.'),
+                    vnode.attrs.showError(true);
                     m.redraw();
                 });
             };

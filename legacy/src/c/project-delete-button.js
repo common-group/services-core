@@ -8,7 +8,7 @@ import modalBox from '../c/modal-box';
 import deleteProjectModalContent from '../c/delete-project-modal-content';
 
 const projectDeleteButton = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const displayDeleteModal = h.toggleProp(false, true);
         return {
             displayDeleteModal
@@ -16,7 +16,7 @@ const projectDeleteButton = {
     },
     view: function(ctrl, args) {
         return m('div', [
-            (ctrl.displayDeleteModal() ? m.component(modalBox, {
+            (ctrl.displayDeleteModal() ? m(modalBox, {
                 displayModal: ctrl.displayDeleteModal,
                 hideCloseButton: true,
                 content: [deleteProjectModalContent, { displayDeleteModal: ctrl.displayDeleteModal, project: args.project }]

@@ -3,12 +3,12 @@ import h from '../h';
 import adminItem from './admin-item';
 
 const adminList = {
-    controller: function(args) {
-        const list = args.vm.list;
+    oninit: function(vnode) {
+        const list = vnode.attrs.vm.list;
 
         if (!list.collection().length && list.firstPage) {
-            list.firstPage(args.filterVM ? args.filterVM.parameters() : null).then(null, (serverError) => {
-                args.vm.error(serverError.message);
+            list.firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null).then(null, (serverError) => {
+                vnode.attrs.vm.error(serverError.message);
             });
         }
     },
@@ -39,7 +39,7 @@ const adminList = {
                         ])
                     ]),
                     m('#admin-contributions-list.w-container', [
-                        list.collection().map(item => m.component(itemComponent, {
+                        list.collection().map(item => m(itemComponent, {
                             listItem: args.listItem,
                             listDetail: args.listDetail,
                             listWrapper: args.vm,

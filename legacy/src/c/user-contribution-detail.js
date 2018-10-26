@@ -4,9 +4,9 @@ import h from '../h';
 import userContributedBox from './user-contributed-box';
 
 const userContributionDetail = {
-    controller: function(args) {
-        const contribution = args.contribution,
-            rewardDetails = args.rewardDetails,
+    oninit: function(vnode) {
+        const contribution = vnode.attrs.contribution,
+            rewardDetails = vnode.attrs.rewardDetails,
             chosenReward = _.findWhere(rewardDetails(), {
                 id: contribution.reward_id
             });

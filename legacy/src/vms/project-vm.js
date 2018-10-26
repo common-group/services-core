@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse, commonAnalytics } from '../api';
 import h from '../h';
@@ -7,10 +8,10 @@ import rewardVM from './reward-vm';
 import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
 
-const currentProject = m.prop(),
-    userDetails = m.prop(),
-    subscriptionData = m.prop(),
-    projectContributions = m.prop([]),
+const currentProject = prop(),
+    userDetails = prop(),
+    subscriptionData = prop(),
+    projectContributions = prop([]),
     vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
 
@@ -142,7 +143,7 @@ const storeSubscribeAction = (route) => {
 const checkSubscribeAction = () => {
     const actionRoute = h.callStoredAction(subscribeActionKey);
     if (actionRoute) {
-        m.route(actionRoute);
+        m.route.set(actionRoute);
     }
 };
 

@@ -14,23 +14,24 @@ import Chart from 'chart.js';
     if (adminRoot) {
         const adminWrap = function (component, customAttr) {
             return {
-                controller: function() {
+                oninit: function(vnode) {
                     const attr = customAttr;
 
-                    return {
+                    vnode.state = {
                         attr
                     };
                 },
-                view: function(ctrl) {
+                view: function({state}) {
+                    const {attr} = state;
                     return m('#app', [
-                        m.component(c.root.Menu, ctrl.attr),
-                        m.component(component, ctrl.attr),
-                        (ctrl.attr.hideFooter ? '' : m.component(c.root.Footer, ctrl.attr))
+                        m(c.root.Menu, attr),
+                        m(component, attr),
+                        (attr.hideFooter ? '' : m(c.root.Footer, attr))
                     ]);
                 }
             };
         };
-        m.route.mode = 'hash';
+        m.route.prefix("#");
 
         m.route(adminRoot, '/', {
             '/': adminWrap(c.root.AdminContributions, { root: adminRoot, menuTransparency: false, hideFooter: true }),
@@ -48,7 +49,7 @@ import Chart from 'chart.js';
     let firstRun = true;// Indica se é a primeira vez q executa um controller.
     const wrap = function (component, customAttr) {
         return {
-            controller: function() {
+            oninit: function(vnode) {
                 if (firstRun) {
                     firstRun = false;
                 } else { // só roda se nao for firstRun
@@ -113,17 +114,14 @@ import Chart from 'chart.js';
 
                 body.className = 'body-project closed';
 
-
-                return {
-                    attr
-                };
+                vnode.state.attr = attr;
             },
-            view: function(ctrl) {
+            view: function({state}) {
                 return m('#app', [
-                    m.component(c.root.Menu, ctrl.attr),
-                    (h.getUserID() ? m.component(c.root.CheckEmail, ctrl.attr) : ''),
-                    m.component(component, ctrl.attr),
-                    (ctrl.attr.hideFooter ? '' : m.component(c.root.Footer, ctrl.attr))
+                    m(c.root.Menu, state.attr),
+                    (h.getUserID() ? m(c.root.CheckEmail, state.attr) : ''),
+                    m(component, state.attr),
+                    (state.attr.hideFooter ? '' : m(c.root.Footer, state.attr))
                 ]);
             }
         };
@@ -137,72 +135,72 @@ import Chart from 'chart.js';
         const rootEl = app,
             isUserProfile = body.getAttribute('data-controller-name') == 'users' && body.getAttribute('data-action') == 'show' && app.getAttribute('data-hassubdomain') == 'true';
 
-        m.route.mode = 'pathname';
+        m.route.prefix("");
 
         m.route(rootEl, '/', {
             '/': wrap((isUserProfile ? c.root.UsersShow : c.root.ProjectsHome), { menuTransparency: true, footerBig: true, absoluteHome: isUserProfile }),
-            '/explore': wrap(c.root.ProjectsExplore, { menuTransparency: true, footerBig: true }),
-            '/start': wrap(c.root.Start, { menuTransparency: true, footerBig: true }),
-            '/start-sub': wrap(c.root.SubProjectNew, { menuTransparency: false }),
-            '/projects/:project_id/contributions/new': wrap(c.root.ProjectsContribution),
-            '/projects/:project_id/contributions/fallback_create': wrap(c.root.ProjectsContribution),
-            '/projects/:project_id/contributions/:contribution_id/edit': wrap(c.root.ProjectsPayment, { menuShort: true }),
-            '/projects/:project_id/subscriptions/start': wrap(c.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
-            '/projects/:project_id/subscriptions/checkout': wrap(c.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
-            '/projects/:project_id/subscriptions/thank_you': wrap(c.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/contributions/new')]: wrap(c.root.ProjectsContribution),
-            [urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit')]: wrap(c.root.ProjectsPayment, { menuShort: true }),
-            [urlWithLocale('/projects/:project_id/subscriptions/start')]: wrap(c.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/subscriptions/checkout')]: wrap(c.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
-            [urlWithLocale('/projects/subscriptions/thank_you')]: wrap(c.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false }),
-            '/en': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/flexible_projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
-            '/projects': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/explore')]: wrap(c.root.ProjectsExplore, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/start')]: wrap(c.root.Start, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/projects/:project_id/contributions/:contribution_id')]: wrap(c.root.ThankYou, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/contributions/:contribution_id': wrap(c.root.ThankYou, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/:project')]: wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/insights': wrap(c.root.Insights, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/insights')]: wrap(c.root.Insights, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/contributions_report': wrap(c.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/contributions_report')]: wrap(c.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/subscriptions_report': wrap(c.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/subscriptions_report')]: wrap(c.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/subscriptions_report_download': wrap(c.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/subscriptions_report_download')]: wrap(c.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/surveys': wrap(c.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true }),
-            '/projects/:project_id/fiscal': wrap(c.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true }),
-            '/projects/:project_id/posts': wrap(c.root.Posts, { menuTransparency: false, footerBig: false }),
-            '/projects/:project_id/posts/:post_id': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: true }),
-            [urlWithLocale('/projects/:project_id/posts')]: wrap(c.root.Posts, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/projects/:project_id/posts/:post_id')]: wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: true }),
-            '/projects/:project_id': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
-            '/users/:user_id': wrap(c.root.UsersShow, { menuTransparency: true, footerBig: false }),
-            [urlWithLocale('/users/:user_id')]: wrap(c.root.UsersShow, { menuTransparency: true, footerBig: false }),
-            '/contributions/:contribution_id/surveys/:survey_id': wrap(c.root.SurveysShow, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/contributions/:contribution_id/surveys/:survey_id')]: wrap(c.root.SurveysShow, { menuTransparency: false, footerBig: false }),
-            '/users/:user_id/edit': wrap(c.root.UsersEdit, { menuTransparency: true, footerBig: false }),
-            [urlWithLocale('/users/:user_id/edit')]: wrap(c.root.UsersEdit, { menuTransparency: true, footerBig: false }),
-            '/projects/:project_id/edit': wrap(c.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true }),
-            [urlWithLocale('/projects/:project_id/edit')]: wrap(c.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true }),
-            '/projects/:project_id/rewards/:reward_id/surveys/new': wrap(c.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true }),
-            '/:project': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/follow-fb-friends')]: wrap(c.root.FollowFoundFriends, { menuTransparency: false, footerBig: false }),
-            '/follow-fb-friends': wrap(c.root.FollowFoundFriends, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/team')]: wrap(c.root.Team, { menuTransparency: true, footerBig: true }),
-            '/team': wrap(c.root.Team, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/jobs')]: wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
-            '/jobs': wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
-            '/press': wrap(c.root.Press, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/press')]: wrap(c.root.Press, { menuTransparency: true, footerBig: true })
+            // '/explore': wrap(c.root.ProjectsExplore, { menuTransparency: true, footerBig: true }),
+            // '/start': wrap(c.root.Start, { menuTransparency: true, footerBig: true }),
+            // '/start-sub': wrap(c.root.SubProjectNew, { menuTransparency: false }),
+            // '/projects/:project_id/contributions/new': wrap(c.root.ProjectsContribution),
+            // '/projects/:project_id/contributions/fallback_create': wrap(c.root.ProjectsContribution),
+            // '/projects/:project_id/contributions/:contribution_id/edit': wrap(c.root.ProjectsPayment, { menuShort: true }),
+            // '/projects/:project_id/subscriptions/start': wrap(c.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
+            // '/projects/:project_id/subscriptions/checkout': wrap(c.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
+            // '/projects/:project_id/subscriptions/thank_you': wrap(c.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/contributions/new')]: wrap(c.root.ProjectsContribution),
+            // [urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit')]: wrap(c.root.ProjectsPayment, { menuShort: true }),
+            // [urlWithLocale('/projects/:project_id/subscriptions/start')]: wrap(c.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/subscriptions/checkout')]: wrap(c.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
+            // [urlWithLocale('/projects/subscriptions/thank_you')]: wrap(c.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false }),
+            // '/en': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/flexible_projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
+            // '/projects': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/explore')]: wrap(c.root.ProjectsExplore, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/start')]: wrap(c.root.Start, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/projects/:project_id/contributions/:contribution_id')]: wrap(c.root.ThankYou, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/contributions/:contribution_id': wrap(c.root.ThankYou, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/:project')]: wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/insights': wrap(c.root.Insights, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/insights')]: wrap(c.root.Insights, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/contributions_report': wrap(c.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/contributions_report')]: wrap(c.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/subscriptions_report': wrap(c.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/subscriptions_report')]: wrap(c.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/subscriptions_report_download': wrap(c.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/subscriptions_report_download')]: wrap(c.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/surveys': wrap(c.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true }),
+            // '/projects/:project_id/fiscal': wrap(c.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true }),
+            // '/projects/:project_id/posts': wrap(c.root.Posts, { menuTransparency: false, footerBig: false }),
+            // '/projects/:project_id/posts/:post_id': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: true }),
+            // [urlWithLocale('/projects/:project_id/posts')]: wrap(c.root.Posts, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/projects/:project_id/posts/:post_id')]: wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: true }),
+            // '/projects/:project_id': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
+            // '/users/:user_id': wrap(c.root.UsersShow, { menuTransparency: true, footerBig: false }),
+            // [urlWithLocale('/users/:user_id')]: wrap(c.root.UsersShow, { menuTransparency: true, footerBig: false }),
+            // '/contributions/:contribution_id/surveys/:survey_id': wrap(c.root.SurveysShow, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/contributions/:contribution_id/surveys/:survey_id')]: wrap(c.root.SurveysShow, { menuTransparency: false, footerBig: false }),
+            // '/users/:user_id/edit': wrap(c.root.UsersEdit, { menuTransparency: true, footerBig: false }),
+            // [urlWithLocale('/users/:user_id/edit')]: wrap(c.root.UsersEdit, { menuTransparency: true, footerBig: false }),
+            // '/projects/:project_id/edit': wrap(c.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true }),
+            // [urlWithLocale('/projects/:project_id/edit')]: wrap(c.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true }),
+            // '/projects/:project_id/rewards/:reward_id/surveys/new': wrap(c.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true }),
+            // '/:project': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/follow-fb-friends')]: wrap(c.root.FollowFoundFriends, { menuTransparency: false, footerBig: false }),
+            // '/follow-fb-friends': wrap(c.root.FollowFoundFriends, { menuTransparency: false, footerBig: false }),
+            // [urlWithLocale('/team')]: wrap(c.root.Team, { menuTransparency: true, footerBig: true }),
+            // '/team': wrap(c.root.Team, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/jobs')]: wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
+            // '/jobs': wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
+            // '/press': wrap(c.root.Press, { menuTransparency: true, footerBig: true }),
+            // [urlWithLocale('/press')]: wrap(c.root.Press, { menuTransparency: true, footerBig: true })
         });
     }
     _.each(document.querySelectorAll('div[data-mithril]'), (el) => {
         const component = c.root[el.attributes['data-mithril'].value],
             paramAttr = el.attributes['data-parameters'],
             params = paramAttr && JSON.parse(paramAttr.value);
-        m.mount(el, m.component(component, _.extend({ root: el }, params)));
+        m.mount(el, m(component, _.extend({ root: el }, params)));
     });
 }());

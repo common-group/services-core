@@ -19,16 +19,17 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 
 const tooltip = {
-    controller: function(args) {
-        let parentHeight = m.prop(0),
-            width = m.prop(args.width || 280),
-            top = m.prop(0),
-            left = m.prop(0),
-            opacity = m.prop(0),
-            parentOffset = m.prop({ top: 0, left: 0 }),
+    oninit: function(vnode) {
+        let parentHeight = prop(0),
+            width = prop(vnode.attrs.width || 280),
+            top = prop(0),
+            left = prop(0),
+            opacity = prop(0),
+            parentOffset = prop({ top: 0, left: 0 }),
             tooltip = h.toggleProp(0, 1),
             toggle = () => {
                 tooltip.toggle();

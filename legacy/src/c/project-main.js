@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectSuggestedContributions from './project-suggested-contributions';
@@ -10,32 +11,32 @@ import projectPosts from './project-posts';
 import projectVM from '../vms/project-vm';
 
 const projectMain = {
-    controller: function(args) {
-        const hash = m.prop(window.location.hash),
+    oninit: function(vnode) {
+        const hash = prop(window.location.hash),
             displayTabContent = (project) => {
                 const c_opts = {
                         project,
-                        post_id: args.post_id,
-                        subscriptionData: args.subscriptionData
+                        post_id: vnode.attrs.post_id,
+                        subscriptionData: vnode.attrs.subscriptionData
                     },
                     tabs = {
-                        '#rewards': m(projectRewards, { c_opts, project, hasSubscription: args.hasSubscription, goalDetails: args.goalDetails, subscriptionData: args.subscriptionData, rewardDetails: args.rewardDetails }),
-                        '#contribution_suggestions': m.component(projectSuggestedContributions, c_opts),
-                        '#contributions': m.component(projectContributions, c_opts),
-                        '#about': m.component(projectAbout, _.extend({}, {
-                            hasSubscription: args.hasSubscription,
-                            rewardDetails: args.rewardDetails,
-                            subscriptionData: args.subscriptionData,
-                            goalDetails: args.goalDetails
+                        '#rewards': m(projectRewards, { c_opts, project, hasSubscription: vnode.attrs.hasSubscription, goalDetails: vnode.attrs.goalDetails, subscriptionData: vnode.attrs.subscriptionData, rewardDetails: vnode.attrs.rewardDetails }),
+                        '#contribution_suggestions': m(projectSuggestedContributions, c_opts),
+                        '#contributions': m(projectContributions, c_opts),
+                        '#about': m(projectAbout, _.extend({}, {
+                            hasSubscription: vnode.attrs.hasSubscription,
+                            rewardDetails: vnode.attrs.rewardDetails,
+                            subscriptionData: vnode.attrs.subscriptionData,
+                            goalDetails: vnode.attrs.goalDetails
                         }, c_opts)),
-                        '#comments': m.component(projectComments, c_opts),
-                        '#posts': m.component(projectPosts, _.extend({}, {
-                            projectContributions: args.projectContributions,
-                            userDetails: args.userDetails,
+                        '#comments': m(projectComments, c_opts),
+                        '#posts': m(projectPosts, _.extend({}, {
+                            projectContributions: vnode.attrs.projectContributions,
+                            userDetails: vnode.attrs.userDetails,
                         }, c_opts))
                     };
 
-                if (_.isNumber(args.post_id) && !window.location.hash) {
+                if (_.isNumber(vnode.attrs.post_id) && !window.location.hash) {
                     window.location.hash = 'posts';
                 }
 

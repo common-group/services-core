@@ -1,11 +1,12 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import models from '../models';
 
 const teamTotal = {
-    controller: function() {
+    oninit: function() {
         const vm = {
-            collection: m.prop([])
+            collection: prop([])
         };
 
         models.teamTotal.getRow().then((data) => {

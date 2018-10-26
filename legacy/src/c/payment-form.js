@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import paymentSlip from './payment-slip';
@@ -8,15 +9,15 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const paymentForm = {
-    controller: function(args) {
-        const isSlip = m.prop(false),
-            scope = () => args.vm.isInternational()
+    oninit: function(vnode) {
+        const isSlip = prop(false),
+            scope = () => vnode.attrs.vm.isInternational()
                        ? I18nIntScope()
                        : I18nScope();
         return {
             isSlip,
             scope,
-            vm: args.vm
+            vm: vnode.attrs.vm
         };
     },
     view: function(ctrl, args) {
@@ -53,9 +54,9 @@ const paymentForm = {
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299c6ef96a6e44489a7a07_boleto.png\'][width=\'48\']')
                 ]) : m('.flex-column')
             ]), !ctrl.isSlip() ? m('#credit-card-section', [
-                m.component(paymentCreditCard, args)
+                m(paymentCreditCard, args)
             ]) : !args.vm.isInternational() ? m('#boleto-section', [
-                m.component(paymentSlip, args)
+                m(paymentSlip, args)
             ]) : ''
         ]);
     }

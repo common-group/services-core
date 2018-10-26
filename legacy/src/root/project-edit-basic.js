@@ -5,10 +5,10 @@ import projectVM from '../vms/project-vm';
 import projectBasicsEdit from '../c/project-basics-edit';
 
 const projectEditBasic = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
-            user: userVM.fetchUser(args.user_id),
-            project: projectVM.fetchProject(args.project_id)
+            user: userVM.fetchUser(vnode.attrs.user_id),
+            project: projectVM.fetchProject(vnode.attrs.project_id)
         };
     },
 

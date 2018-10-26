@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import { catarse } from '../api';
@@ -23,24 +24,24 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsSubscriptionCheckout = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const project = projectVM.currentProject,
             vm = paymentVM(),
-            showPaymentForm = m.prop(false),
-            addVM = m.prop(),
+            showPaymentForm = prop(false),
+            addVM = prop(),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            isCnpj = m.prop(false),
+            isCnpj = prop(false),
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser(),
-            oldSubscription = m.prop({}),
+            oldSubscription = prop({}),
             countriesLoader = catarse.loader(models.country.getPageOptions()),
-            error = m.prop();
+            error = prop();
 
-        const subscriptionId = m.prop(m.route.param('subscription_id'));
-        const isEdit = m.prop(Boolean(subscriptionId()));
+        const subscriptionId = prop(m.route.param('subscription_id'));
+        const isEdit = prop(Boolean(subscriptionId()));
         const subscriptionStatus = m.route.param('subscription_status');
-        const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
+        const isReactivation = prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
 
         if (isEdit) {
             subscriptionVM
@@ -50,11 +51,11 @@ const projectsSubscriptionCheckout = {
         }
 
         if (_.isNull(currentUserID)) {
-            projectVM.storeSubscribeAction(m.route());
+            projectVM.storeSubscribeAction(m.route.get());
             h.navigateToDevise(`?redirect_to=/projects/${m.route.param('project_id')}`);
         }
 
-        const reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
+        const reward = prop(rewardVM.selectedReward() || rewardVM.noReward);
         let value;
 
         if (_.isString(rewardVM.contributionValue())) {
@@ -89,7 +90,7 @@ const projectsSubscriptionCheckout = {
                 field: fieldName
             });
 
-            return fieldWithError ? m.component(inlineError, {
+            return fieldWithError ? m(inlineError, {
                 message: fieldWithError.message
             }) : '';
         };
@@ -281,7 +282,7 @@ const projectsSubscriptionCheckout = {
                                             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
                                                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
                                                     (project ? 'Dados do apoiador ' : 'Dados do usuário '),
-                                                    m(`a.alt-link[href="/not-my-account?redirect_to=${encodeURIComponent(m.route())}"]`, 'Não é você?')
+                                                    m(`a.alt-link[href="/not-my-account?redirect_to=${encodeURIComponent(m.route.get())}"]`, 'Não é você?')
                                                 ]),
                                                 m('.fontsize-base.fontweight-semibold', user.name),
                                                 (user.owner_document ?
@@ -330,7 +331,7 @@ const projectsSubscriptionCheckout = {
                                     m(addressForm, {
                                         addVM,
                                         addressFields: addVM.fields,
-                                        fields: m.prop(ctrl.vm.fields),
+                                        fields: prop(ctrl.vm.fields),
                                         international: addVM.international,
                                         hideNationality: true
                                     })
@@ -347,7 +348,7 @@ const projectsSubscriptionCheckout = {
                                 window.I18n.t('next_step', ctrl.scope())
                             )
                         ) : ''),
-                        ctrl.showPaymentForm() ? m.component(paymentForm, {
+                        ctrl.showPaymentForm() ? m(paymentForm, {
                             addressVM: addVM,
                             vm: ctrl.vm,
                             project_id: projectVM.currentProject().project_id,
@@ -375,7 +376,7 @@ const projectsSubscriptionCheckout = {
                                     `R$ ${formatedValue}`
                                 ),
                                 m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? `&subscription_status=${ctrl.subscriptionStatus}` : ''}"]`,
-                                    { config: m.route },
+                                    { oncreate: m.route.link },
                                     window.I18n.t('selected_reward.edit', ctrl.scope())
                                 )
                             ]),
@@ -444,7 +445,7 @@ const projectsSubscriptionCheckout = {
                                 ]) : ''
                             ]),
                         ]),
-                        m.component(faqBox, {
+                        m(faqBox, {
                             mode: project.mode,
                             isEdit: ctrl.isEdit(),
                             isReactivate: ctrl.isReactivation(),

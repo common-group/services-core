@@ -5,8 +5,8 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.payment');
 
 const paymentStatus = {
-    controller: function(args) {
-        const payment = args.item;
+    oninit: function(vnode) {
+        const payment = vnode.attrs.item;
         let card = null,
             displayPaymentMethod,
             paymentMethodClass,

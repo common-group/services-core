@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettingsSavedCreditCards = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         return {};
     },

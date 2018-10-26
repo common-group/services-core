@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import {
     commonPayment,
@@ -9,16 +10,16 @@ import h from '../h';
 import models from '../models';
 
 const adminSubscriptionDetail = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let l,
             rL;
         const loadReward = () => {
             const rewardFilterVM = commonProject.filtersVM({
                 id: 'eq'
             });
-            rewardFilterVM.id(args.item.reward_id);
+            rewardFilterVM.id(vnode.attrs.item.reward_id);
             rL = commonProject.loaderWithToken(models.projectReward.getRowOptions(rewardFilterVM.parameters()));
-            const reward = m.prop({});
+            const reward = prop({});
             rL.load().then((data) => {
                 reward(_.first(data));
             });
@@ -29,12 +30,12 @@ const adminSubscriptionDetail = {
         const filterVM = commonPayment.filtersVM({
             subscription_id: 'eq'
         });
-        filterVM.subscription_id(args.key);
-        const currentPayment = m.prop({});
+        filterVM.subscription_id(vnode.attrs.key);
+        const currentPayment = prop({});
 
         // Pagination on notifications
         const notificationsLoader = commonNotification.paginationVM(models.userNotification, 'created_at.desc');
-        const notificationsInternal = m.prop([]);
+        const notificationsInternal = prop([]);
         let isFirstPage = true;
 
         const loadNotifications = () => {
@@ -52,8 +53,8 @@ const adminSubscriptionDetail = {
                         created_at: 'desc'
                     });
     
-                notificationFilterVM.user_id(args.item.user_id);
-                notificationFilterVM.project_id(args.item.project_id);
+                notificationFilterVM.user_id(vnode.attrs.item.user_id);
+                notificationFilterVM.project_id(vnode.attrs.item.project_id);
     
                 notificationsLoader.firstPage(notificationFilterVM.parameters()).then(addNotificationsToInternal);
                 isFirstPage = false;
@@ -68,7 +69,7 @@ const adminSubscriptionDetail = {
         };
 
         const loadTransitions = () => {
-            const transitions = m.prop([]);
+            const transitions = prop([]);
 
             const lPaymentTransitions = commonPayment.loaderWithToken(
                 models.subscriptionTransition.getPageOptions(filterVM.parameters()));
@@ -79,7 +80,7 @@ const adminSubscriptionDetail = {
         };
 
         const loadPayments = () => {
-            const payments = m.prop([]);
+            const payments = prop([]);
 
             models.commonPayments.pageSize(false);
             const lUserPayments = commonPayment.loaderWithToken(
@@ -89,7 +90,7 @@ const adminSubscriptionDetail = {
                 currentPayment(_.first(data));
                 _.map(data, (payment, i) => {
                     _.extend(payment, {
-                        selected: m.prop(i === 0)
+                        selected: prop(i === 0)
                     });
                 });
                 payments(data);

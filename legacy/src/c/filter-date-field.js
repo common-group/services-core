@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const filterDateField = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
             dateFieldMask: _.partial(h.mask, '99/99/9999')
         };

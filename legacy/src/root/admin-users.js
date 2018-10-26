@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import userListVM from '../vms/user-list-vm';
 import userFilterVM from '../vms/user-filter-vm';
@@ -11,10 +12,10 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminUsers = {
-    controller: function() {
+    oninit: function() {
         const listVM = userListVM,
             filterVM = userFilterVM,
-            error = m.prop(''),
+            error = prop(''),
             itemBuilder = [{
                 component: adminUser,
                 wrapperClass: '.w-col.w-col-4'
@@ -65,13 +66,13 @@ const adminUsers = {
         const label = 'Usuários';
 
         return m('', [
-            m.component(adminFilter, {
+            m(adminFilter, {
                 form: ctrl.filterVM.formDescriber,
                 filterBuilder: ctrl.filterBuilder,
                 label,
                 submit: ctrl.submit
             }),
-            m.component(adminList, {
+            m(adminList, {
                 vm: ctrl.listVM,
                 label,
                 listItem: adminUserItem,

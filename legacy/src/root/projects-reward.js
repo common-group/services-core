@@ -6,7 +6,7 @@ import rewardVM from '../vms/reward-vm';
 import faqBox from '../c/faq-box';
 
 const projectsReward = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = rewardVM,
             selectedReward = vm.selectedReward,
             selectReward = vm.selectReward,
@@ -152,7 +152,7 @@ const projectsReward = {
                                     )
                                 )
                             ),
-                                m('.w-col.w-col-4', m.component(faqBox, { mode: ctrl.project().mode, faq: ctrl.faq }))
+                                m('.w-col.w-col-4', m(faqBox, { mode: ctrl.project().mode, faq: ctrl.faq }))
                             ]
                     )
                 )

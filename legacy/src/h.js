@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import moment from 'moment';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
 
@@ -196,12 +197,12 @@ const
         return true;
     },
 
-    validationErrors = m.prop([]),
+    validationErrors = prop([]),
 
     resetValidations = () => validationErrors([]),
 
     validate = () => {
-        const errorFields = m.prop([]);
+        const errorFields = prop([]);
 
         return {
             submit(fields, fn) {
@@ -270,7 +271,7 @@ const
     formatNumber = generateFormatNumber('.', ','),
 
     toggleProp = (defaultState, alternateState) => {
-        const p = m.prop(defaultState);
+        const p = prop(defaultState);
         p.toggle = () => p(((p() === alternateState) ? defaultState : alternateState));
 
         return p;
@@ -739,12 +740,12 @@ const
 
     removeStoredObject = sessionKey => sessionStorage.removeItem(sessionKey),
 
-    currentProject = m.prop(),
+    currentProject = prop(),
     setProject = (project) => {
         currentProject(project);
     },
     getProject = () => currentProject,
-    currentReward = m.prop(),
+    currentReward = prop(),
     setReward = (reward) => {
         currentReward(reward);
     },

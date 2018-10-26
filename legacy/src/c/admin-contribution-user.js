@@ -27,7 +27,7 @@ const adminContributionUser = {
             };
 
         const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${item.payer_email}`);
-        return m.component(adminUser, { item: user, additional_data: additionalData });
+        return m(adminUser, { item: user, additional_data: additionalData });
     }
 };
 

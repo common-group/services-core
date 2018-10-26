@@ -4,8 +4,8 @@ import surveyVM from '../vms/survey-vm';
 import inlineError from '../c/inline-error';
 
 const dashboardMultipleChoiceQuestion = {
-    controller: function(args) {
-        const { question } = args;
+    oninit: function(vnode) {
+        const { question } = vnode.attrs;
         const deleteOption = (question, idx) => () => {
             surveyVM.deleteMultipleQuestionOption(question, idx);
 

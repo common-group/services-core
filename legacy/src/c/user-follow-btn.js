@@ -7,20 +7,21 @@
  */
 
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 
 const UserFollowBtn = {
-    controller: function(args) {
-        const following = m.prop((args.following || false)),
+    oninit: function(vnode) {
+        const following = prop((vnode.attrs.following || false)),
             followVM = catarse.filtersVM({ follow_id: 'eq' }),
-            loading = m.prop(false),
-            hover = m.prop(false),
+            loading = prop(false),
+            hover = prop(false),
             userFollowInsert = models.userFollow.postOptions({
-                follow_id: args.follow_id }),
+                follow_id: vnode.attrs.follow_id }),
             userFollowDelete = (() => {
-                followVM.follow_id(args.follow_id);
+                followVM.follow_id(vnode.attrs.follow_id);
 
                 return models.userFollow.deleteOptions(
                       followVM.parameters());

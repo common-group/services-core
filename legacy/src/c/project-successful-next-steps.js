@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -10,17 +11,17 @@ import projectSuccessOnboardEnabledWithdraw from './project-successful-onboard-e
 
 const projectSuccessfulNextSteps = {
 
-    controller: function(args) {
+    oninit: function(vnode) {
         
         const 
             wishedState = 'transferred',
             userIdVM = catarse.filtersVM({user_id: 'eq', state: 'eq'}),
             lastBalanceTransfer = catarse.paginationVM(models.balanceTransfer, 'created_at.desc', { Prefer: 'count=exact' }),
-            current_state = m.prop(args.project().state),
-            isLoading = m.prop(true),
+            current_state = prop(vnode.attrs.project().state),
+            isLoading = prop(true),
             successfulOnboards = () => {
 
-                const onboardProjectAndCalculatedState = { project: args.project, current_state: current_state };
+                const onboardProjectAndCalculatedState = { project: vnode.attrs.project, current_state: current_state };
     
                 if (isLoading()) {
                     return h.loader();
@@ -39,7 +40,7 @@ const projectSuccessfulNextSteps = {
                 }
             };
         
-        userIdVM.user_id(args.project().user_id).state(wishedState);
+        userIdVM.user_id(vnode.attrs.project().user_id).state(wishedState);
         lastBalanceTransfer
             .firstPage(userIdVM.parameters())
             .then((balanceTransfers) => {
@@ -48,14 +49,14 @@ const projectSuccessfulNextSteps = {
                     lastBalanceTransferItem = _.first(balanceTransfers),
                     hasAtLeastOneTransfered = balanceTransfers.length > 0,
                     balanceCreatedAtDate = hasAtLeastOneTransfered ? new Date(lastBalanceTransferItem.transferred_at) : null,
-                    projectExpiredAtDate = new Date(args.project().expires_at),
+                    projectExpiredAtDate = new Date(vnode.attrs.project().expires_at),
                     withdrawTransferredOccuredAfterProjectExpiredDate = hasAtLeastOneTransfered ? balanceCreatedAtDate.getTime() > projectExpiredAtDate.getTime() : false;
 
                 if (withdrawTransferredOccuredAfterProjectExpiredDate) {
                     current_state('successful');
                 }
                 else {
-                    if (args.project().state == 'successful')
+                    if (vnode.attrs.project().state == 'successful')
                         current_state('successful_waiting_transfer');
                 }
 

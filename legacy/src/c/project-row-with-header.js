@@ -23,7 +23,7 @@ const projectRowWithHeader = {
                             m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title} populares`)),
                             m('.w-col.w-col-4', [
                                 m(`a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=${ref}&filter=${collection.hash}"]`, 
-                                    { config: m.route },
+                                    { oncreate: m.route.link },
                                     'Ver todos'
                                 ),
                                 (showFriends ? 
@@ -36,7 +36,7 @@ const projectRowWithHeader = {
                             ])
                         ])
                     ]) : '',
-                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m.component(projectCard, {
+                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m(projectCard, {
                         project,
                         ref,
                         showFriends

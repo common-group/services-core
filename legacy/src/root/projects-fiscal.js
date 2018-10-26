@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -9,16 +10,16 @@ import projectVM from '../vms/project-vm';
 const fiscalScope = _.partial(h.i18nScope, 'projects.dashboard_fiscal');
 
 const projectsFiscal = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const loader = catarse.loaderWithToken,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             {
                 project_id
-            } = args,
-            projectDetail = m.prop({}),
-            projectFiscalData = m.prop({});
+            } = vnode.attrs,
+            projectDetail = prop({}),
+            projectFiscalData = prop({});
         filterVM.project_id(project_id);
         const l = loader(models.projectFiscalId.getRowOptions(filterVM.parameters()));
         l.load().then((data) => {
@@ -42,8 +43,8 @@ const projectsFiscal = {
         const hasData = !loading && projectFiscalData && (!_.isEmpty(projectFiscalData.debit_notes) || !_.isEmpty(projectFiscalData.informs));
         
         return m('.project-fiscal',
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
             m('.section',
                 m('.w-container',

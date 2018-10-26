@@ -7,11 +7,11 @@ import userBalanceTransactionRow from './user-balance-transaction-row';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceTransactions = {
-    controller: function(args) {
-        args.balanceTransactionManager.load();
+    oninit: function(vnode) {
+        vnode.attrs.balanceTransactionManager.load();
 
         return {
-            list: args.balanceTransactionManager.list
+            list: vnode.attrs.balanceTransactionManager.list
         };
     },
     view: function(ctrl, args) {
@@ -21,7 +21,7 @@ const userBalanceTransactions = {
             m('.w-container', [
                 m('.u-marginbottom-20', m('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope())))
             ].concat(
-                _.map(list.collection(), (item, index) => m.component(userBalanceTransactionRow, { item, index })))
+                _.map(list.collection(), (item, index) => m(userBalanceTransactionRow, { item, index })))
             ),
             m('.container', [
                 m('.w-row.u-margintop-40', [

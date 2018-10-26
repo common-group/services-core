@@ -3,7 +3,7 @@ import h from '../h';
 import facebookButton from './facebook-button';
 
 const projectShareBox = {
-    controller: function() {
+    oninit: function() {
         return {
             displayEmbed: h.toggleProp(false, true)
         };
@@ -32,7 +32,7 @@ const projectShareBox = {
                     m(`iframe[frameborder="0"][height="350px"][src="/projects/${args.project().project_id}/embed"][width="300px"][scrolling="no"]`)
                 ])
             ]) : ''),
-            args.project().permalink ? m.component(facebookButton, {
+            args.project().permalink ? m(facebookButton, {
                 mobile: true,
                 url: `https://www.catarse.me/${args.project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`
             }) : '',

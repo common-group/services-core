@@ -4,7 +4,7 @@ import moment from 'moment';
 import h from '../h';
 
 const subscriptionsPerMonthTable = {
-    controller: function() {
+    oninit: function() {
         return {
             emptyRow: {
                 total_amount: 0,

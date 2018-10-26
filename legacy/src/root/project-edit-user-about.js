@@ -4,9 +4,9 @@ import userVM from '../vms/user-vm';
 import userAboutEdit from '../c/user-about-edit';
 
 const projectEditUserAbout = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
-            user: userVM.fetchUser(args.user_id)
+            user: userVM.fetchUser(vnode.attrs.user_id)
         };
     },
 

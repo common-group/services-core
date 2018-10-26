@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
@@ -6,12 +7,12 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.faq');
 
 const faqBox = {
-    controller: function(args) {
-        const mode = args.mode === 'sub' && args.isEdit ? args.isReactivate ? 'sub_reactivate' : 'sub_edit' : args.mode,
-            questions = args.faq.questions,
-            selectedQuestion = m.prop(-1),
-            user = m.prop({ name: '...' }),
-            tKey = () => !args.vm.isInternational()
+    oninit: function(vnode) {
+        const mode = vnode.attrs.mode === 'sub' && vnode.attrs.isEdit ? vnode.attrs.isReactivate ? 'sub_reactivate' : 'sub_edit' : vnode.attrs.mode,
+            questions = vnode.attrs.faq.questions,
+            selectedQuestion = prop(-1),
+            user = prop({ name: '...' }),
+            tKey = () => !vnode.attrs.vm.isInternational()
                        ? `${mode}`
                        : `international.${mode}`;
 
@@ -39,7 +40,7 @@ const faqBox = {
             return updatedQuestions;
         };
 
-        userVM.fetchUser(args.projectUserId, false).then(data => user(_.first(data)));
+        userVM.fetchUser(vnode.attrs.projectUserId, false).then(data => user(_.first(data)));
 
         return {
             scopedQuestions,

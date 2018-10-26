@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -6,13 +7,13 @@ import inlineError from './inline-error';
 
 const I18nScope = _.partial(h.i18nScope, 'users.edit.notifications_fields');
 const userNotifications = {
-    controller: function(args) {
-        const contributedProjects = m.prop(),
-            projectReminders = m.prop(),
-            mailMarketingLists = m.prop(),
-            user_id = args.userId,
+    oninit: function(vnode) {
+        const contributedProjects = prop(),
+            projectReminders = prop(),
+            mailMarketingLists = prop(),
+            user_id = vnode.attrs.userId,
             showNotifications = h.toggleProp(false, true),
-            error = m.prop(false);
+            error = prop(false);
 
         userVM.getUserProjectReminders(user_id).then(
             projectReminders
@@ -37,16 +38,16 @@ const userNotifications = {
         });
 
         const generateListHandler = (list) => {
-            const user_lists = args.user.mail_marketing_lists;
+            const user_lists = vnode.attrs.user.mail_marketing_lists;
             return _.map(list, (item, i) => {
                 const user_signed = !_.isEmpty(user_lists) && !_.isUndefined(_.find(user_lists, userList => userList.marketing_list ? userList.marketing_list.list_id === item.list_id : false));
                 const handler = {
                     item,
                     in_list: user_signed,
-                    should_insert: m.prop(false),
-                    should_destroy: m.prop(false),
+                    should_insert: prop(false),
+                    should_destroy: prop(false),
                     isInsertInListState: h.toggleProp(false, true),
-                    hovering: m.prop(false)
+                    hovering: prop(false)
                 };
                 handler.isInsertInListState(!handler.in_list);
                 return handler;
@@ -54,7 +55,7 @@ const userNotifications = {
         };
 
         const getUserMarketingListId = (list) => {
-            const currentList = _.find(args.user.mail_marketing_lists, userList => userList.marketing_list.list_id === list.list_id);
+            const currentList = _.find(vnode.attrs.user.mail_marketing_lists, userList => userList.marketing_list.list_id === list.list_id);
 
             return currentList ? currentList.user_marketing_list_id : null;
         };
@@ -84,7 +85,7 @@ const userNotifications = {
             projects_collection = ctrl.projects(),
             marketing_lists = ctrl.mailMarketingLists();
 
-        return m('[id=\'notifications-tab\']', ctrl.error() ? m.component(inlineError, {
+        return m('[id=\'notifications-tab\']', ctrl.error() ? m(inlineError, {
             message: 'Erro ao carregar a página.'
         }) :
             m(`form.simple_form.edit_user[accept-charset='UTF-8'][action='/${window.I18n.locale}/users/${user.id}'][method='post'][novalidate='novalidate']`, [

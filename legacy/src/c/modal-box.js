@@ -23,7 +23,7 @@ const modalBox = {
                     m(`a.w-inline-block.fa.fa-lg.modal-close${args.hideCloseButton ? '' : '.fa-close'}[href="javascript:void(0);"]`, {
                         onclick: args.displayModal.toggle
                     }),
-                    m.component(args.content[0], args.content[1])
+                    m(args.content[0], args.content[1])
                 ]),
             ])
         ]);

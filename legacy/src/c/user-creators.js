@@ -10,6 +10,7 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -18,14 +19,14 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userCreators = {
-    controller: function() {
+    oninit: function() {
         models.creatorSuggestion.pageSize(9);
         const creatorsListVM = catarse.paginationVM(
             models.creatorSuggestion,
             'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
                 Prefer: 'count=exact'
             });
-        const allLoading = m.prop(false);
+        const allLoading = prop(false);
         const followAll = () => {
             allLoading(true);
             const l = catarse.loaderWithToken(models.followAllCreators.postOptions({}));
@@ -63,28 +64,25 @@ const userCreators = {
                     ])
                 ]),
                 m('.w-row', [
-                    _.map(creatorsVM.collection(), friend => m.component(
-                            UserFollowCard,
-                        {
-                            friend: _.extend({}, {
-                                friend_id: friend.user_id
-                            }, friend)
-                        })),
+                    _.map(creatorsVM.collection(), friend => m(UserFollowCard, {
+                        friend: _.extend({}, {
+                            friend_id: friend.user_id
+                        }, friend)
+                    })),
                 ]),
                 m('.w-section.section.bg-gray', [
                     m('.w-container', [
                         m('.w-row.u-marginbottom-60', [
                             m('.w-col.w-col-5', [
                                 m('.u-marginright-20')
-                            ]), m.component(loadMoreBtn, { collection: creatorsVM }),
+                            ]), m(loadMoreBtn, { collection: creatorsVM }),
                             m('.w-col.w-col-5')
                         ])
                     ])
                 ])
 
             ])
-        ])
-        ;
+        ]);
     }
 };
 

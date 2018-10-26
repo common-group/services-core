@@ -4,14 +4,15 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 
 const cancelProjectModalContent = {
-    controller: function(args) {
-        const checkError = m.prop(false),
-            showRedactor = m.prop(false),
-            check = m.prop(''),
-            commentHtml = m.prop(''),
+    oninit: function(vnode) {
+        const checkError = prop(false),
+            showRedactor = prop(false),
+            check = prop(''),
+            commentHtml = prop(''),
             showNextModal = () => {
                 if (check() === 'cancelar-projeto') {
                     showRedactor(true);

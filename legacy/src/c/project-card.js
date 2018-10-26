@@ -7,12 +7,12 @@ import progressMeter from './progress-meter';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
-    controller: function(args) {
-        const project = args.project,
+    oninit: function(vnode) {
+        const project = vnode.attrs.project,
             progress = project.progress.toFixed(2),
             remainingTextObj = h.translatedTime(project.remaining_time),
             elapsedTextObj = h.translatedTime(project.elapsed_time),
-            type = args.type || 'small';
+            type = vnode.attrs.type || 'small';
 
         const css = () => {
             const cssClasses = {
@@ -139,10 +139,10 @@ const projectCard = {
                     ]),
                 ]),
                 (args.showFriends && ctrl.type === 'big' ?
-                 m('.w-col.w-col-4.w-col-medium-6', [m.component(projectFriends, { project })]) : '')
+                 m('.w-col.w-col-4.w-col-medium-6', [m(projectFriends, { project })]) : '')
             ]),
             (args.showFriends && ctrl.type !== 'big' ?
-              m.component(projectFriends, { project }) : '')
+              m(projectFriends, { project }) : '')
         ]);
     }
 };

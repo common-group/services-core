@@ -9,20 +9,21 @@
  *  }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import models from '../models';
 import h from '../h';
 import popNotification from './pop-notification';
 
 const projectReminder = {
-    controller: function(args) {
-        let l = m.prop(false);
-        const project = args.project,
+    oninit: function(vnode) {
+        let l = prop(false);
+        const project = vnode.attrs.project,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             storeReminderName = 'reminder',
-            popNotification = m.prop(false),
+            popNotification = prop(false),
             submitReminder = () => {
                 if (!h.getUser()) {
                     h.storeAction(storeReminderName, project().project_id);
@@ -85,7 +86,7 @@ const projectReminder = {
                 onclick: onclickFunc
             }, [
                 (ctrl.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o')))
-            ]), (ctrl.popNotification() ? m.component(popNotification, {
+            ]), (ctrl.popNotification() ? m(popNotification, {
                 message: 'Ok, Vamos te mandar um lembrete por e-mail antes do fim da campanha!'
             }) : '')
         ]);

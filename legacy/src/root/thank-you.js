@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import facebookButton from '../c/facebook-button';
@@ -11,16 +12,16 @@ const { CatarseAnalytics } = window;
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const thankYou = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const recommendedProjects = userVM.getUserRecommendedProjects(),
-            isSlip = args.contribution && !_.isEmpty(args.contribution.slip_url),
+            isSlip = vnode.attrs.contribution && !_.isEmpty(vnode.attrs.contribution.slip_url),
             sendContributionCreationData = () => {
                 const analyticsData = {
                     cat: 'contribution_creation',
                     act: 'contribution_created',
                     extraData: {
-                        project_id: args.contribution.project.id,
-                        contribution_id: args.contribution.contribution_id
+                        project_id: vnode.attrs.contribution.project.id,
+                        contribution_id: vnode.attrs.contribution.contribution_id
                     }
                 };
                 h.analytics.event(analyticsData)();
@@ -34,19 +35,19 @@ const thankYou = {
                     cat: 'contribution_finish',
                     act: 'contribution_finished',
                     lbl: isSlip ? 'slip' : 'creditcard',
-                    val: args.contribution.value,
+                    val: vnode.attrs.contribution.value,
                     extraData: {
-                        contribution_id: args.contribution.contribution_id
+                        contribution_id: vnode.attrs.contribution.contribution_id
                     }
                 });
 
                 CatarseAnalytics.checkout(
-                    `${args.contribution.contribution_id}`,
-                    `[${args.contribution.project.permalink}] ${args.contribution.reward ? args.contribution.reward.minimum_value : '10'} [${isSlip ? 'slip' : 'creditcard'}]`,
-                    `${args.contribution.reward ? args.contribution.reward.reward_id : ''}`,
-                    `${args.contribution.project.category}`,
-                    `${args.contribution.value}`,
-                    `${args.contribution.value * args.contribution.project.service_fee}`
+                    `${vnode.attrs.contribution.contribution_id}`,
+                    `[${vnode.attrs.contribution.project.permalink}] ${vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.minimum_value : '10'} [${isSlip ? 'slip' : 'creditcard'}]`,
+                    `${vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.reward_id : ''}`,
+                    `${vnode.attrs.contribution.project.category}`,
+                    `${vnode.attrs.contribution.value}`,
+                    `${vnode.attrs.contribution.value * vnode.attrs.contribution.project.service_fee}`
                 );
             }
         };
@@ -102,11 +103,11 @@ const thankYou = {
                               [
                                   m('.w-hidden-small.w-hidden-tiny',
                                       [
-                                          m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
+                                          m('.w-sub-col.w-col.w-col-4', m(facebookButton, {
                                               url: `https://www.catarse.me/${args.contribution.project.permalink}?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`,
                                               big: true
                                           })),
-                                          m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
+                                          m('.w-sub-col.w-col.w-col-4', m(facebookButton, {
                                               messenger: true,
                                               big: true,
                                               url: `https://www.catarse.me/${args.contribution.project.permalink}?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=messenger&utm_campaign=thanks_share`
@@ -121,8 +122,8 @@ const thankYou = {
                                           onclick: ctrl.displayShareBox.toggle
                                       }, 'Compartilhe')),
                                       ctrl.displayShareBox() ? m(projectShareBox, {
-                                                         // Mocking a project m.prop
-                                          project: m.prop({
+                                                         // Mocking a project prop
+                                          project: prop({
                                               permalink: args.contribution.project.permalink,
                                               name: args.contribution.project.name
                                           }),
@@ -153,7 +154,7 @@ const thankYou = {
                                    m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
                                      window.I18n.t('thank_you.project_recommendations', I18nScope())
                                     ),
-                                   m.component(projectRow, {
+                                   m(projectRow, {
                                        collection: ctrl.recommendedProjects,
                                        ref: 'ctrse_thankyou_r'
                                    })

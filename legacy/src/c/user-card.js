@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -7,9 +8,9 @@ import modalBox from './modal-box';
 import UserFollowBtn from './user-follow-btn';
 
 const userCard = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            user_id = args.userId;
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            user_id = vnode.attrs.userId;
 
         userVM.fetchUser(user_id, true, userDetails);
 
@@ -55,7 +56,7 @@ const userCard = {
                     ]))
                 ]),
             ]),
-            (ctrl.displayModal() ? m.component(modalBox, {
+            (ctrl.displayModal() ? m(modalBox, {
                 displayModal: ctrl.displayModal,
                 content: contactModalC
             }) : ''),

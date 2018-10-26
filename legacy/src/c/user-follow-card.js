@@ -7,14 +7,15 @@
  */
 
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import UserFollowBtn from '../c/user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const UserFollowCard = {
-    controller: function(args) {
-        const friend = m.prop(args.friend);
+    oninit: function(vnode) {
+        const friend = prop(vnode.attrs.friend);
         return {
             friend
         };
@@ -48,7 +49,10 @@ const UserFollowCard = {
                       [
                           m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
                           m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6',
-                    m.component(UserFollowBtn, { following: friend.following, follow_id: friend.friend_id })
+                    m(
+                        UserFollowBtn,
+                        { following: friend.following, follow_id: friend.friend_id }
+                    )
                   ),
                           m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3')
                       ]

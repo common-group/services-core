@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import inlineError from './inline-error';
@@ -9,16 +10,16 @@ import subscriptionEditModal from './subscription-edit-modal';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 
 const paymentSlip = {
-    controller: function(args) {
-        const vm = args.vm,
-            isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
-            slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(args.contribution_id),
-            loading = m.prop(false),
-            error = m.prop(false),
-            completed = m.prop(false),
-            subscriptionEditConfirmed = m.prop(false),
-            showSubscriptionModal = m.prop(false),
-            isReactivation = args.isReactivation || m.prop(false);
+    oninit: function(vnode) {
+        const vm = vnode.attrs.vm,
+            isSubscriptionEdit = vnode.attrs.isSubscriptionEdit || prop(false),
+            slipPaymentDate = projectVM.isSubscription() ? null : vm.getSlipPaymentDate(vnode.attrs.contribution_id),
+            loading = prop(false),
+            error = prop(false),
+            completed = prop(false),
+            subscriptionEditConfirmed = prop(false),
+            showSubscriptionModal = prop(false),
+            isReactivation = vnode.attrs.isReactivation || prop(false);
 
         const buildSlip = () => {
             vm.isLoading(true);
@@ -34,14 +35,14 @@ const paymentSlip = {
 
             if (projectVM.isSubscription()) {
                 const commonData = {
-                    rewardCommonId: args.reward_common_id,
-                    userCommonId: args.user_common_id,
-                    projectCommonId: args.project_common_id,
-                    amount: args.value * 100
+                    rewardCommonId: vnode.attrs.reward_common_id,
+                    userCommonId: vnode.attrs.user_common_id,
+                    projectCommonId: vnode.attrs.project_common_id,
+                    amount: vnode.attrs.value * 100
                 };
 
                 if (isSubscriptionEdit()) {
-                    commonPaymentVM.sendSlipPayment(vm, _.extend({}, commonData, { subscription_id: args.subscriptionId() }));
+                    commonPaymentVM.sendSlipPayment(vm, _.extend({}, commonData, { subscription_id: vnode.attrs.subscriptionId() }));
 
                     return false;
                 }
@@ -50,7 +51,7 @@ const paymentSlip = {
 
                 return false;
             }
-            vm.paySlip(args.contribution_id, args.project_id, error, loading, completed);
+            vm.paySlip(vnode.attrs.contribution_id, vnode.attrs.project_id, error, loading, completed);
 
             return false;
         };
@@ -99,7 +100,7 @@ const paymentSlip = {
                                             }
                                         ) : null,
                                     !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
-                                    ctrl.error() ? m.component(inlineError, { message: ctrl.error() }) : '',
+                                    ctrl.error() ? m(inlineError, { message: ctrl.error() }) : '',
                                     m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                                         'Ao apoiar, você concorda com os ',
                                         m(`a.alt-link[href=\'/${window.I18n.locale}/terms-of-use\']`,

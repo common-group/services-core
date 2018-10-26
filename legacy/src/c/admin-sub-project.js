@@ -1,12 +1,13 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
 
 const adminSubProject = {
-    controller: function(args) {
-        const project = m.prop({});
-        projectVM.fetchProject(args.item.project_external_id, false).then((data) => {
+    oninit: function(vnode) {
+        const project = prop({});
+        projectVM.fetchProject(vnode.attrs.item.project_external_id, false).then((data) => {
             project(_.first(data));
         });
         return {

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -14,13 +15,13 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const surveyCreate = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const
-            showError = m.prop(false),
+            showError = prop(false),
             loader = catarse.loaderWithToken,
             showPreview = h.toggleProp(false, true),
             confirmAddress = surveyVM.confirmAddress,
-            projectDetails = m.prop([]),
+            projectDetails = prop([]),
             rewardFilterVM = catarse.filtersVM({
                 id: 'eq'
             }),
@@ -30,14 +31,14 @@ const surveyCreate = {
             {
                 project_id,
                 reward_id
-            } = args;
+            } = vnode.attrs;
 
         rewardFilterVM.id(reward_id);
         filterVM.project_id(project_id);
         const rewardVM = catarse.loaderWithToken(models.rewardDetail.getPageOptions(rewardFilterVM.parameters())),
             l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
 
-        const reward = m.prop([]);
+        const reward = prop([]);
         l.load().then(projectDetails);
         rewardVM.load().then(reward);
 
@@ -107,7 +108,7 @@ const surveyCreate = {
         };
 
         const sendQuestions = () => {
-            surveyVM.submitQuestions(reward_id).then(m.route(`/projects/${project_id}/surveys`)).catch(console.error);
+            surveyVM.submitQuestions(reward_id).then(m.route.set(`/projects/${project_id}/surveys`)).catch(console.error);
 
             return false;
         };
@@ -129,8 +130,8 @@ const surveyCreate = {
     view: function(ctrl) {
         const project = _.first(ctrl.projectDetails());
         const reward = _.first(ctrl.reward());
-        return (project ? m('.project-surveys', (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-            project: m.prop(project)
+        return project ? m('.project-surveys', (project.is_owner_or_admin ? m(projectDashboardMenu, {
+            project: prop(project)
         }) : ''),
             ctrl.showPreview() ? m(surveyCreatePreview, { confirmAddress: ctrl.confirmAddress(), showPreview: ctrl.showPreview, surveyVM, reward, sendQuestions: ctrl.sendQuestions }) : [
             (reward ?
@@ -183,7 +184,7 @@ const surveyCreate = {
                         _.map(surveyVM.dashboardQuestions(), (question, index) => m('.card.card-terciary.medium.u-marginbottom-20.w-row', [
                             ctrl.choiceDropdown(question),
                             m('.w-clearfix.w-col.w-col-8', [
-                                m.component(
+                                m(
                                     question.type === 'multiple' ? dashboardMultipleChoiceQuestion : dashboardOpenQuestion,
                                     { question, index }
                                 ),
@@ -218,7 +219,7 @@ const surveyCreate = {
                     ])
                 )
             )]
-        ) : h.loader());
+        ) : h.loader();
     }
 };
 

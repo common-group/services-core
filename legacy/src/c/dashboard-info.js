@@ -16,8 +16,8 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const dashboardInfo = {
-    controller: function(args) {
-        const toRedraw = args.dataToRedraw || {},
+    oninit: function(vnode) {
+        const toRedraw = vnode.attrs.dataToRedraw || {},
             listenToReplace = (element, isInitialized, context) => {
                 if (isInitialized) return;
 

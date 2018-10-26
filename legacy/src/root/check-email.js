@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import moment from 'moment';
 import _ from 'underscore';
 import h from '../h';
@@ -7,11 +8,11 @@ import userVM from '../vms/user-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.email_confirmation');
 
 const CheckEmail = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const userID = h.getUserID(),
             user = userVM.fetchUser(userID),
-            confirmedEmail = m.prop(false),
-            hideAlert = m.prop(false);
+            confirmedEmail = prop(false),
+            hideAlert = prop(false);
 
         return {
             confirmedEmail,

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
@@ -7,16 +8,16 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const rewardSelectCard = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const MINIMUM_VALUE = 10;
         const queryRewardValue = h.getParams('value');
         const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
         const isSelected = currentReward => (currentReward.id == null && !rewardVM.selectedReward() && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
-        const selectedDestination = m.prop('');
+        const selectedDestination = prop('');
         const queryRewardId = h.getParams('reward_id');
-        const isEdit = m.prop(m.route.param('subscription_id'));
+        const isEdit = prop(m.route.param('subscription_id'));
         const subscriptionStatus = m.route.param('subscription_status');
-        const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
+        const isReactivation = prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
         if (queryRewardValue) {
             rewardVM.setValue(h.formatNumber(Number(queryRewardValue / 100), 2, 3));
         }
@@ -34,9 +35,9 @@ const rewardSelectCard = {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value} ${projectVM.isSubscription(projectVM.currentProject()) ? '' : `+ frete R$${h.formatNumber(shippingFee.value, 2, 3)}`}`);
             } else {
                 rewardVM.error('');
-                if (args.isSubscription) {
+                if (vnode.attrs.isSubscription) {
                     const currentRewardId = rewardVM.selectedReward().id;
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}${isEdit() ? `&subscription_id=${m.route.param('subscription_id')}` : ''}${isReactivation() ? `&subscription_status=${subscriptionStatus}` : ''}`);
+                    m.route.set(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}${isEdit() ? `&subscription_id=${m.route.param('subscription_id')}` : ''}${isReactivation() ? `&subscription_status=${subscriptionStatus}` : ''}`);
                 } else {
                     const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ',')); 
                     h.navigateTo(`/projects/${projectVM.currentProject().project_id}/contributions/fallback_create?contribution%5Breward_id%5D=${rewardVM.selectedReward().id}&contribution%5Bvalue%5D=${valueUrl}&contribution%5Bshipping_fee_id%5D=${shippingFee.id}`);
@@ -72,8 +73,8 @@ const rewardSelectCard = {
         };
 
 
-        if (args.reward.id === Number(queryRewardId)) {
-            rewardVM.selectReward(args.reward).call();
+        if (vnode.attrs.reward.id === Number(queryRewardId)) {
+            rewardVM.selectReward(vnode.attrs.reward).call();
         }
 
         rewardVM.getStates();

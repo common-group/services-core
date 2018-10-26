@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import { catarse, commonPayment } from '../api';
 import _ from 'underscore';
@@ -8,15 +9,15 @@ import inlineError from './inline-error';
 import userContributedList from './user-contributed-list';
 
 const userPrivateContributed = {
-    controller: function(args) {
-        const user_id = args.userId,
-            userCommonId = args.user && args.user.common_id,
+    oninit: function(vnode) {
+        const user_id = vnode.attrs.userId,
+            userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
             subscriptions = commonPayment.paginationVM(models.userSubscription),
             onlinePages = catarse.paginationVM(models.userContribution),
             successfulPages = catarse.paginationVM(models.userContribution),
             failedPages = catarse.paginationVM(models.userContribution),
-            error = m.prop(false),
-            loader = m.prop(true),
+            error = prop(false),
+            loader = prop(true),
             handleError = () => {
                 error(true);
                 loader(false);
@@ -75,7 +76,7 @@ const userPrivateContributed = {
             successfulCollection = ctrl.successfulPages.collection(),
             failedCollection = ctrl.failedPages.collection();
 
-        return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m.component(inlineError, {
+        return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m(inlineError, {
             message: 'Erro ao carregar os projetos.'
         }) : ctrl.loader() ? h.loader() :
             (_.isEmpty(subsCollection) && _.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
@@ -92,9 +93,9 @@ const userPrivateContributed = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6',
                                 m(`a.btn.btn-large[href=\'/${window.I18n.locale}/explore\']`, {
-                                    config: m.route,
+                                    oncreate: m.route.link,
                                     onclick: () => {
-                                        m.route('/explore');
+                                        m.route.set('/explore');
                                     }
                                 },
                                     'Apoie agora!'
@@ -107,23 +108,23 @@ const userPrivateContributed = {
                 ])
             ) :
             [
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Assinaturas',
                     collection: subsCollection,
                     isSubscription: true,
                     pagination: ctrl.subscriptions
                 }),
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Projetos em andamento',
                     collection: onlineCollection,
                     pagination: ctrl.onlinePages
                 }),
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Projetos bem-sucedidos',
                     collection: successfulCollection,
                     pagination: ctrl.successfulPages
                 }),
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Projetos não-financiados',
                     collection: failedCollection,
                     pagination: ctrl.failedPages,

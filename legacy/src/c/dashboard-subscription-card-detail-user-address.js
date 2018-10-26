@@ -2,7 +2,7 @@
 import m from 'mithril';
 
 const dashboardSubscriptionCardDetailUserAddress = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         return {};
     },

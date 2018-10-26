@@ -22,14 +22,15 @@
  *  })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
 
 const projectDataTable = {
-    controller: function(args) {
-        const table = m.prop(args.table),
-            sortIndex = m.prop(-1);
+    oninit: function(vnode) {
+        const table = prop(vnode.attrs.table),
+            sortIndex = prop(-1);
 
         const comparator = (a, b) => {
             let idx = sortIndex(),
@@ -59,10 +60,10 @@ const projectDataTable = {
             table(_.union([header], body));
         };
 
-        sortTable(Math.abs(args.defaultSortIndex) || 0);
+        sortTable(Math.abs(vnode.attrs.defaultSortIndex) || 0);
 
-        if (args.defaultSortIndex < 0) {
-            sortTable(Math.abs(args.defaultSortIndex) || 0);
+        if (vnode.attrs.defaultSortIndex < 0) {
+            sortTable(Math.abs(vnode.attrs.defaultSortIndex) || 0);
         }
 
         return {

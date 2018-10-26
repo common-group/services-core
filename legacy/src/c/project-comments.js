@@ -3,7 +3,7 @@ import h from '../h';
 import projectReport from './project-report';
 
 const projectComments = {
-    controller: function() {
+    oninit: function() {
         const loadComments = (el, isInitialized) => (el, isInitialized) => {
             if (isInitialized) { return; }
             h.fbParse();
@@ -18,7 +18,7 @@ const projectComments = {
                 m('.w-col.w-col-7',
                 m(`.fb-comments[data-href="http://www.catarse.me/${project.permalink}"][data-num-posts=50][data-width="610"]`, { config: ctrl.loadComments() })
               ),
-                m('.w-col.w-col-5', m.component(projectReport))
+                m('.w-col.w-col-5', m(projectReport))
             ]
           );
     }

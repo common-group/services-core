@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
@@ -7,13 +8,13 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectRewardCard = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const storeKey = 'selectedReward',
             MINIMUM_VALUE = 10,
-            reward = args.reward,
+            reward = vnode.attrs.reward,
             vm = rewardVM,
-            descriptionExtended = m.prop(0),
-            selectedDestination = m.prop(''),
+            descriptionExtended = prop(0),
+            selectedDestination = prop(''),
             toggleDescriptionExtended = (rewardId) => {
                 if (descriptionExtended() === rewardId) {
                     descriptionExtended(0);
