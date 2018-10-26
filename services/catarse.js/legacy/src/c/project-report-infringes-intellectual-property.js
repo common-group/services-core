@@ -4,6 +4,7 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -11,21 +12,21 @@ import h from '../h';
 import inlineError from './inline-error';
 
 const projectReportInfringesIntellectualProperty = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const formName = 'report-infringes-intellectual-property',
-            relationWithViolatedPropertyError = m.prop(false),
-            fullNameError = m.prop(false),
-            fullAddressError = m.prop(false),
-            projectInfringesError = m.prop(false),
-            detailsError = m.prop(false),
-            termsAgreedError = m.prop(false),
+            relationWithViolatedPropertyError = prop(false),
+            fullNameError = prop(false),
+            fullAddressError = prop(false),
+            projectInfringesError = prop(false),
+            detailsError = prop(false),
+            termsAgreedError = prop(false),
             validate = () => {
-                relationWithViolatedPropertyError(_.isEmpty(args.relationWithViolatedProperty()));
-                fullNameError(_.isEmpty(args.fullName()));
-                fullAddressError(_.isEmpty(args.fullAddress()));
-                projectInfringesError(_.isEmpty(args.projectInfringes()));
-                detailsError(_.isEmpty(args.details()));
-                termsAgreedError(!args.termsAgreed());
+                relationWithViolatedPropertyError(_.isEmpty(vnode.attrs.relationWithViolatedProperty()));
+                fullNameError(_.isEmpty(vnode.attrs.fullName()));
+                fullAddressError(_.isEmpty(vnode.attrs.fullAddress()));
+                projectInfringesError(_.isEmpty(vnode.attrs.projectInfringes()));
+                detailsError(_.isEmpty(vnode.attrs.details()));
+                termsAgreedError(!vnode.attrs.termsAgreed());
 
                 if (!relationWithViolatedPropertyError() &&
                           !fullNameError() &&
@@ -34,21 +35,21 @@ const projectReportInfringesIntellectualProperty = {
                           !detailsError() &&
                           !termsAgreedError()
                      ) {
-                    args.reason('Este projeto infringe propriedade intelectual');
+                    vnode.attrs.reason('Este projeto infringe propriedade intelectual');
                     return true;
                 }
                 return false;
             };
 
         return {
-            formName: args.formName || formName,
+            formName: vnode.attrs.formName || formName,
             relationWithViolatedPropertyError,
             fullNameError,
             fullAddressError,
             projectInfringesError,
             detailsError,
             termsAgreedError,
-            sendReport: args.sendReport.bind(args.sendReport, validate)
+            sendReport: vnode.attrs.sendReport.bind(vnode.attrs.sendReport, validate)
         };
     },
     view: function(ctrl, args) {

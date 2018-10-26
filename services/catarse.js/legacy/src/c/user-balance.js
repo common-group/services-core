@@ -18,11 +18,11 @@ import userBalanceRequestModalContent from './user-balance-request-modal-content
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalance = {
-    controller: function(args) {
-        args.balanceManager.load();
+    oninit: function(vnode) {
+        vnode.attrs.balanceManager.load();
 
         return {
-            userBalances: args.balanceManager.collection,
+            userBalances: vnode.attrs.balanceManager.collection,
             displayModal: h.toggleProp(false, true)
         };
     },
@@ -35,7 +35,7 @@ const userBalance = {
             ];
 
         return m('.w-section.section.user-balance-section', [
-            (ctrl.displayModal() ? m.component(modalBox, {
+            (ctrl.displayModal() ? m(modalBox, {
                 displayModal: ctrl.displayModal,
                 content: balanceRequestModalC
             }) : ''),

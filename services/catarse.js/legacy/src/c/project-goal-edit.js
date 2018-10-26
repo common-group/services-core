@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -10,7 +11,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectGoalVM,
             mapErrors = [
                   ['mode', ['mode']],
@@ -22,11 +23,11 @@ const projectGoalEdit = {
             showModeDiff = h.toggleProp(false, true),
             showTaxesDiff = h.toggleProp(false, true),
             applyGoalMask = _.compose(vm.fields.goal, h.applyMonetaryMask),
-            loading = m.prop(false),
+            loading = prop(false),
             onSubmit = (event) => {
                 loading(true);
                 m.redraw();
-                vm.updateProject(args.projectId).then((data) => {
+                vm.updateProject(vnode.attrs.projectId).then((data) => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
@@ -46,7 +47,7 @@ const projectGoalEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
         return {
             onSubmit,
@@ -62,11 +63,11 @@ const projectGoalEdit = {
     view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#goal-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (ctrl.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (ctrl.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true

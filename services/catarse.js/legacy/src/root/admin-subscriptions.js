@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import models from '../models';
 import _ from 'underscore';
@@ -13,10 +14,10 @@ import filterMain from '../c/filter-main';
 import modalBox from '../c/modal-box';
 
 const adminSubscriptions = {
-    controller: function() {
+    oninit: function() {
         let listVM = subscriptionListVM,
             filterVM = subscriptionFilterVM,
-            error = m.prop(''),
+            error = prop(''),
             filterBuilder = [{ // name
                 component: filterMain,
                 data: {
@@ -64,7 +65,7 @@ const adminSubscriptions = {
                 return false;
             },
             displayChargebackForm = h.toggleProp(false, true),
-            chargebackIds = m.prop(),
+            chargebackIds = prop(),
             generateIdsToData = () => {
                 if (chargebackIds() === undefined) {
                     return null;
@@ -73,7 +74,7 @@ const adminSubscriptions = {
                 return chargebackIds().split(',').map(str => str.trim());
             },
             toChargebackListVM = models.commonPayments,
-            toChargebackCollection = m.prop(),
+            toChargebackCollection = prop(),
             processChargebacksLoader = h.toggleProp(false, true),
             displayChargebackConfirmationModal = h.toggleProp(false, true),
             searchChargebackLoader = h.toggleProp(false, true),
@@ -216,13 +217,13 @@ const adminSubscriptions = {
                 })
             }) : ''),
             m('#admin-root-subscriptions', [
-                m.component(adminFilter, {
+                m(adminFilter, {
                     form: ctrl.filterVM.formDescriber,
                     filterBuilder: ctrl.filterBuilder,
                     label,
                     submit: ctrl.submit
                 }),
-                m.component(adminList, {
+                m(adminList, {
                     vm: ctrl.listVM,
                     listItem: adminSubscriptionItem,
                     listDetail: adminSubscriptionDetail

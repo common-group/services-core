@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import { catarse } from '../api';
@@ -10,15 +11,15 @@ import publishVM from '../vms/publish-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.publish');
 
 const publish = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const filtersVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
-            projectAccount = m.prop([]),
-            projectDetails = m.prop([]),
+            projectAccount = prop([]),
+            projectDetails = prop([]),
             loader = catarse.loaderWithToken;
 
-        filtersVM.project_id(args.root.getAttribute('data-id'));
+        filtersVM.project_id(vnode.attrs.root.getAttribute('data-id'));
 
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters())),
             accountL = loader(models.projectAccount.getRowOptions(filtersVM.parameters()));
@@ -30,7 +31,7 @@ const publish = {
             return moment().add(project.online_days, 'days');
         };
 
-        const acceptedIndex = m.prop(0);
+        const acceptedIndex = prop(0);
 
         return {
             l,
@@ -52,8 +53,8 @@ const publish = {
                                    publishVM.subTerms(project);
 
         return [project && account ? [
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project),
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project),
                 hidePublish: true
             }) : ''),
             m(`.w-section.section-product.${project.mode}`),

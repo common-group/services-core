@@ -38,13 +38,13 @@ const projectAbout = {
                     ])
                 ],
                 hasRewards ? [
-                    m.component(projectRewardList, {
+                    m(projectRewardList, {
                         project: args.project,
                         hasSubscription: args.hasSubscription,
                         rewardDetails: args.rewardDetails
                     })
                 ] : [
-                    m.component(projectSuggestedContributions, { project: args.project })
+                    m(projectSuggestedContributions, { project: args.project })
                 ],
                 fundingPeriod()
             ];
@@ -62,7 +62,7 @@ const projectAbout = {
                     m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
                     m('p.fontsize-base', m.trust(project.budget))
                 ] : '',
-                m.component(projectReport)
+                m(projectReport)
             ]),
             m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [
                 projectVM.isSubscription(project) ? (args.subscriptionData() ? m(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : h.loader()) : '',

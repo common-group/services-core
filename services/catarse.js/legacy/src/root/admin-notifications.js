@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import { catarse, commonNotification } from '../api';
@@ -6,18 +7,18 @@ import models from '../models';
 import projectEditSaveBtn from '../c/project-edit-save-btn';
 
 const adminNotifications = {
-    controller: function() {
+    oninit: function() {
         const templates = commonNotification.paginationVM(
             models.notificationTemplates, 'label.asc'),
-            loaderTemp = m.prop(true),
-            loaderSubmit = m.prop(false),
-            selectedItem = m.prop(),
-            selectedItemTemplate = m.prop(),
-            renderedTemplate = m.prop(),
-            renderedSubjectTemplate = m.prop(),
-            parsedTemplate = m.prop(),
-            parsedSubjectTemplate = m.prop(),
-            selectedItemSubjectTemplate = m.prop(),
+            loaderTemp = prop(true),
+            loaderSubmit = prop(false),
+            selectedItem = prop(),
+            selectedItemTemplate = prop(),
+            renderedTemplate = prop(),
+            renderedSubjectTemplate = prop(),
+            parsedTemplate = prop(),
+            parsedSubjectTemplate = prop(),
+            selectedItemSubjectTemplate = prop(),
             templateDefaultVars = {
                 user: {
                     name: 'test name user'

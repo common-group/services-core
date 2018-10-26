@@ -5,10 +5,10 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveyPreview = {
-    controller: function(args) {
-        const fields = args.fields,
-            multipleChoiceQuestions = args.multipleChoiceQuestions,
-            openQuestions = args.openQuestions;
+    oninit: function(vnode) {
+        const fields = vnode.attrs.fields,
+            multipleChoiceQuestions = vnode.attrs.multipleChoiceQuestions,
+            openQuestions = vnode.attrs.openQuestions;
 
         return {
             fields,

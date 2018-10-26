@@ -1,13 +1,14 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectVM from './project-vm';
 import generateErrorInstance from '../error';
 
 const e = generateErrorInstance();
 
 const fields = {
-    mode: m.prop(''),
-    online_days: m.prop(''),
-    goal: m.prop('')
+    mode: prop(''),
+    online_days: prop(''),
+    goal: prop('')
 };
 
 const fillFields = (data) => {

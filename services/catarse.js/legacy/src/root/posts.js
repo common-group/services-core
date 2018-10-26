@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -12,22 +13,22 @@ import popNotification from '../c/pop-notification';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const posts = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let deleteFormSubmit;
-        const showPreview = m.prop(false),
-            isProjectLoaded = m.prop(false),
-            isProjectPostsLoaded = m.prop(false),
-            showSuccess = m.prop(false),
-            showError = m.prop(false),
-            titleHasError = m.prop(false),
-            commentHasError = m.prop(false),
-            projectPosts = m.prop(),
+        const showPreview = prop(false),
+            isProjectLoaded = prop(false),
+            isProjectPostsLoaded = prop(false),
+            showSuccess = prop(false),
+            showError = prop(false),
+            titleHasError = prop(false),
+            commentHasError = prop(false),
+            projectPosts = prop(),
             loader = catarse.loaderWithToken,
-            errors = m.prop(''),
+            errors = prop(''),
             fields = {
-                title: m.prop(''),
-                comment_html: m.prop(''),
-                reward_id: m.prop('-1')
+                title: prop(''),
+                comment_html: prop(''),
+                reward_id: prop('-1')
             },
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
@@ -61,8 +62,8 @@ const posts = {
                 }
                 return false;
             },
-            project_id = args.project_id,
-            projectDetails = m.prop([]),
+            project_id = vnode.attrs.project_id,
+            projectDetails = prop([]),
             rewardText = (rewardId, project) => {
                 // @TODO move non-sub rewards to common API
                 if (projectVM.isSubscription(project)) {
@@ -84,7 +85,7 @@ const posts = {
                 }
                 return '...';
             },
-            toDeletePost = m.prop(-1),
+            toDeletePost = prop(-1),
             deletePost = post => () => {
                 toDeletePost(post.id);
                 m.redraw(true);
@@ -149,11 +150,11 @@ const posts = {
         const project = _.first(ctrl.projectDetails()),
             paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);
 
-        return ( (ctrl.isProjectLoaded() && ctrl.isProjectPostsLoaded()) ? m('.project-posts',
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+        return (ctrl.isProjectLoaded() && ctrl.isProjectPostsLoaded()) ? m('.project-posts',
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
-            ctrl.showPreview() ? m.component(postsPreview, {
+            ctrl.showPreview() ? m(postsPreview, {
                 showError: ctrl.showError,
                 showSuccess: ctrl.showSuccess,
                 errors: ctrl.errors,
@@ -166,10 +167,10 @@ const posts = {
                 rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id(), project) : null
             }) : [
                 m(`.w-section.section-product.${project.mode}`),
-                (ctrl.showSuccess() ? m.component(popNotification, {
+                (ctrl.showSuccess() ? m(popNotification, {
                     message: window.I18n.t('successful', I18nScope())
                 }) : ''),
-                (ctrl.showError() ? m.component(popNotification, {
+                (ctrl.showError() ? m(popNotification, {
                     message: ctrl.errors(),
                     error: true
                 }) : ''),
@@ -325,7 +326,7 @@ const posts = {
                         m('.w-col.w-col-1')
                     ])
                 ))
-            ]) : h.loader());
+            ]) : h.loader();
     }
 };
 

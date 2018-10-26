@@ -7,6 +7,7 @@
  * m.component(c.ProjectSuccessfulOnboard, {project: project})
  * */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -19,10 +20,10 @@ import insightVM from '../vms/insight-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard');
 
 const projectSuccessfulOnboard = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const projectIdVM = catarse.filtersVM({ project_id: 'eq' }),
-            projectAccounts = m.prop([]),
-            projectTransfers = m.prop([]),
+            projectAccounts = prop([]),
+            projectTransfers = prop([]),
             showTaxModal = h.toggleProp(false, true),
             loader = catarse.loaderWithToken,
             listenToReplace = (element, isInitialized, context) => {
@@ -48,7 +49,7 @@ const projectSuccessfulOnboard = {
             };
 
 
-        projectIdVM.project_id(args.project().project_id);
+        projectIdVM.project_id(vnode.attrs.project().project_id);
 
         const lProjectAccount = loader(models.projectAccount.getRowOptions(projectIdVM.parameters()));
         lProjectAccount.load().then((data) => {
@@ -75,7 +76,7 @@ const projectSuccessfulOnboard = {
             lpt = ctrl.lProjectTransfer;
 
         return m('.w-section.section', [
-            (ctrl.showTaxModal() ? m.component(modalBox, {
+            (ctrl.showTaxModal() ? m(modalBox, {
                 displayModal: ctrl.showTaxModal,
                 content: [successfulProjectTaxModal, {
                     projectTransfer

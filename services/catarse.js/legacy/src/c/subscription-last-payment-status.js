@@ -6,7 +6,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.payment');
 
 const subscriptionLastPaymentStatus = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         const statusClass = {
             paid: '.text-success',
@@ -20,9 +20,9 @@ const subscriptionLastPaymentStatus = {
 
         return {
             statusClass,
-            lastPaymentDate: args.subscription.last_payment_data_created_at,
-            lastPaymentStatus: args.subscription.last_payment_data.status,
-            lastPaymentMethod: args.subscription.last_payment_data.payment_method
+            lastPaymentDate: vnode.attrs.subscription.last_payment_data_created_at,
+            lastPaymentStatus: vnode.attrs.subscription.last_payment_data.status,
+            lastPaymentMethod: vnode.attrs.subscription.last_payment_data.payment_method
         };
     },
     view: function(ctrl, args)

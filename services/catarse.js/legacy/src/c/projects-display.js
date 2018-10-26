@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectFilters from '../vms/project-filters-vm';
 import models from '../models';
 import { catarse } from '../api';
@@ -10,7 +11,7 @@ import projectRowWithHeader from './project-row-with-header';
 
 const projectsDisplay = {
 
-    controller: function(args) {
+    oninit: function(vnode) {
 
         const 
             EXPERIMENT_CASE_CURRENT = 'EXPERIMENT_CASE_CURRENT',
@@ -24,9 +25,9 @@ const projectsDisplay = {
 
         const 
             filters = projectFilters().filters,
-            currentCase = m.prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_CURRENT),
-            subHomeWith6 = m.prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_6SUBHOM),
-            subHomeWith3 = m.prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_3SUBHOM),
+            currentCase = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_CURRENT),
+            subHomeWith6 = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_6SUBHOM),
+            subHomeWith3 = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_3SUBHOM),
             sample6 = _.partial(_.sample, _, 6),
             sample3 = _.partial(_.sample, _, 3),
             loader = catarse.loaderWithToken,
@@ -41,7 +42,7 @@ const projectsDisplay = {
         const collectionsMapper = (sample_no, name) => {
             const f = filters[name],
                 cLoader = loader(project.getPageOptions(_.extend({}, { order: 'score.desc' }, f.filter.parameters()))),
-                collection = m.prop([]);
+                collection = prop([]);
 
             cLoader.load().then(_.compose(collection, sample_no));
 
@@ -87,7 +88,7 @@ const projectsDisplay = {
 
         if (ctrl.subHomeWith6()) {
             return m('div', 
-                _.map(ctrl.aonAndFlex_Sub_6, (collection, index) => m.component(projectRowWithHeader, {
+                _.map(ctrl.aonAndFlex_Sub_6, (collection, index) => m(projectRowWithHeader, {
                     collection,
                     title: collection.title,
                     ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
@@ -97,7 +98,7 @@ const projectsDisplay = {
             );
         }
         else if (ctrl.subHomeWith3()) {
-            return m('div', _.map(ctrl.aonAndFlex_Sub_3, (collection, index) => m.component(projectRowWithHeader, {
+            return m('div', _.map(ctrl.aonAndFlex_Sub_3, (collection, index) => m(projectRowWithHeader, {
                     collection,
                     title: collection.title,
                     ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
@@ -107,7 +108,7 @@ const projectsDisplay = {
             );
         }
         else {
-            return m('div', _.map(ctrl.collections, collection => m.component(projectRow, {
+            return m('div', _.map(ctrl.collections, collection => m(projectRow, {
                 collection,
                 title: collection.title,
                 ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,

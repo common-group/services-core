@@ -3,8 +3,8 @@ import _ from 'underscore';
 import h from '../h';
 
 const SignedFriendFacebookConnect = {
-    controller: function(args) {
-        const mapWithAvatar = () => _.sample(_.filter(args.friendListVM.collection(), item => !_.isNull(item.avatar)), 8);
+    oninit: function(vnode) {
+        const mapWithAvatar = () => _.sample(_.filter(vnode.attrs.friendListVM.collection(), item => !_.isNull(item.avatar)), 8);
 
         return {
             mapWithAvatar

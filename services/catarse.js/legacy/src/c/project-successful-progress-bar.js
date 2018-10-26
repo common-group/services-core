@@ -5,7 +5,7 @@ import _ from 'underscore';
 const I18nScope = _.partial(h.i18nScope, 'projects.insights.progress_bar');
 
 const projectSuccessfulProgressBar = {
-    controller: function(args) {
+    oninit: function(vnode) {
 
         const
             designStates = {
@@ -28,7 +28,7 @@ const projectSuccessfulProgressBar = {
                 successful_waiting_transfer: {
                     processing: {
                         lineClass: '.done',
-                        text: `${I18n.t('successful_waiting_transfer_processing_text', I18nScope())} ${h.momentify(args.project().expires_at, 'DD/MM/YYYY')}`,
+                        text: `${I18n.t('successful_waiting_transfer_processing_text', I18nScope())} ${h.momentify(vnode.attrs.project().expires_at, 'DD/MM/YYYY')}`,
                         circleClass: '.done.fa.fa-check.fa-2x',
                         descriptionTextClass: '.fontcolor-terciary',
                         descriptionTextSizeClass: '',

@@ -8,7 +8,7 @@ import projectDeleteButton from '../c/project-delete-button';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_start');
 const projectEditStart = {
-    controller: function(args) {},
+    oninit: function(vnode) {},
 
     view: function(ctrl, args) {
         return m('.dashboard-header.min-height-70.u-text-center.u-marginbottom-80', [
@@ -31,7 +31,7 @@ const projectEditStart = {
                 ])
             ),
             (args.project().state === 'draft' ?
-                m.component(projectDeleteButton, {
+                m(projectDeleteButton, {
                     project: args.project()
                 }) :
                 '')

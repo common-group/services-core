@@ -13,8 +13,8 @@ import projectVM from '../vms/project-vm';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 
 const projectsDashboard = {
-    controller: function(args) {
-        projectVM.init(args.project_id, args.project_user_id);
+    oninit: function(vnode) {
+        projectVM.init(vnode.attrs.project_id, vnode.attrs.project_user_id);
 
         return projectVM;
     },
@@ -22,7 +22,7 @@ const projectsDashboard = {
         const project = ctrl.currentProject;
 
         return project().is_owner_or_admin ?
-            m.component(projectDashboardMenu, { project }) : '';
+            m(projectDashboardMenu, { project }) : '';
     }
 };
 

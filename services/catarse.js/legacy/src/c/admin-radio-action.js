@@ -1,29 +1,30 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import { catarse } from '../api';
 
 const adminRadioAction = {
-    controller: function(args) {
-        const builder = args.data,
-            complete = m.prop(false),
+    oninit: function(vnode) {
+        const builder = vnode.attrs.data,
+            complete = prop(false),
             data = {},
-            error = m.prop(false),
-            fail = m.prop(false),
-            item = args.item(),
-            description = m.prop(item.description || ''),
+            error = prop(false),
+            fail = prop(false),
+            item = vnode.attrs.item(),
+            description = prop(item.description || ''),
             key = builder.getKey,
-            newID = m.prop(''),
+            newID = prop(''),
             getFilter = {},
             setFilter = {},
-            radios = m.prop([]),
+            radios = prop([]),
             getAttr = builder.radios,
             getKey = builder.getKey,
-            getKeyValue = args.getKeyValue,
+            getKeyValue = vnode.attrs.getKeyValue,
             updateKey = builder.updateKey,
-            updateKeyValue = args.updateKeyValue,
+            updateKeyValue = vnode.attrs.updateKeyValue,
             validate = builder.validate,
-            selectedItem = builder.selectedItem || m.prop();
+            selectedItem = builder.selectedItem || prop();
 
         setFilter[updateKey] = 'eq';
         const setVM = catarse.filtersVM(setFilter);

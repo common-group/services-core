@@ -13,9 +13,9 @@ import _ from 'underscore';
 import Chart from 'chart.js';
 
 const projectDataChart = {
-    controller: function(args) {
-        const resource = _.first(args.collection()),
-            limitDataset = args.limitDataset,
+    oninit: function(vnode) {
+        const resource = _.first(vnode.attrs.collection()),
+            limitDataset = vnode.attrs.limitDataset,
             source = !_.isUndefined(resource)
                 ? _.isNumber(limitDataset)
                     ? _.last(resource.source, limitDataset)
@@ -28,14 +28,14 @@ const projectDataChart = {
                 pointStrokeColor: '#fff',
                 pointHighlightFill: '#fff',
                 pointHighlightStroke: 'rgba(220,220,220,1)',
-                data: _.map(source, item => item[args.dataKey])
+                data: _.map(source, item => item[vnode.attrs.dataKey])
             }],
             renderChart = (element, isInitialized) => {
                 if (!isInitialized) {
                     const ctx = element.getContext('2d');
 
                     new Chart(ctx).Line({
-                        labels: args.xAxis ? _.map(source, item => args.xAxis(item)) : [],
+                        labels: vnode.attrs.xAxis ? _.map(source, item => vnode.attrs.xAxis(item)) : [],
                         datasets: mountDataset()
                     });
                 }

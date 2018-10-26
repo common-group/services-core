@@ -5,7 +5,7 @@ import paymentMethodIcon from './payment-method-icon';
 import dashboardSubscriptionCardDetailPaymentHistory from './dashboard-subscription-card-detail-payment-history';
 
 const dashboardSubscriptionCardDetailSubscriptionDetails = {
-    controller: function(args)
+    oninit: function(vnode)
     {
 
     },

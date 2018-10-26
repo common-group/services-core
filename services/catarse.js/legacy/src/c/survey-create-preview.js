@@ -6,11 +6,11 @@ import rewardCardBig from './reward-card-big';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveyCreatePreview = {
-    controller: function(args) {
-        const openQuestions = _.filter(args.surveyVM.dashboardQuestions(), { type: 'open' }),
-            multipleChoiceQuestions = _.filter(args.surveyVM.dashboardQuestions(), { type: 'multiple' });
+    oninit: function(vnode) {
+        const openQuestions = _.filter(vnode.attrs.surveyVM.dashboardQuestions(), { type: 'open' }),
+            multipleChoiceQuestions = _.filter(vnode.attrs.surveyVM.dashboardQuestions(), { type: 'multiple' });
         const togglePreview = () => {
-            args.showPreview.toggle();
+            vnode.attrs.showPreview.toggle();
             h.scrollTop();
         };
 

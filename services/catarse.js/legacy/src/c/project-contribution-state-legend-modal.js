@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions_report.legend_labels');
 
 const ProjectContributionStateLegendModal = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const translate = path => window.I18n.t(path, I18nScope());
 
         return {

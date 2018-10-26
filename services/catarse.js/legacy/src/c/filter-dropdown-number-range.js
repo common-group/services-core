@@ -1,14 +1,15 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 
 const EnterKey = 13;
 
 const innerFieldInput = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         const inputState = {
-            value: args.inputValue,
+            value: vnode.attrs.inputValue,
             setValue: function(value) {
                 value = (''+value).replace(/[^0-9]*/g, '');
                 value = Math.abs(parseInt(value));
@@ -52,10 +53,10 @@ const innerFieldInput = {
 }
 
 const filterDropdownNumberRange = {
-    controller: function (args) {
+    oninit: function (vnode) {
         const
-            firstValue = m.prop(0),
-            secondValue = m.prop(0),
+            firstValue = prop(0),
+            secondValue = prop(0),
             clearFieldValues = () => { firstValue(0), secondValue(0) },
             getNumericValue = (value) => isNaN(value) ? 0 : value,
             getLowerValue = () => getNumericValue(firstValue()),
@@ -65,8 +66,8 @@ const filterDropdownNumberRange = {
                     lowerValue = getLowerValue(),
                     higherValue = getHigherValue();
 
-                let placeholder = args.value_change_placeholder;
-                if (higherValue !== 0) placeholder = args.value_change_both_placeholder;
+                let placeholder = vnode.attrs.value_change_placeholder;
+                if (higherValue !== 0) placeholder = vnode.attrs.value_change_both_placeholder;
 
                 if (lowerValue !== 0)
                 {
@@ -74,7 +75,7 @@ const filterDropdownNumberRange = {
                 }
                 else
                 {
-                    placeholder = placeholder.replace('#V1', args.init_lower_value);
+                    placeholder = placeholder.replace('#V1', vnode.attrs.init_lower_value);
                 }
         
                 if (higherValue !== 0)
@@ -83,7 +84,7 @@ const filterDropdownNumberRange = {
                 }
                 else
                 {
-                    placeholder = placeholder.replace('#V2', args.init_higher_value);
+                    placeholder = placeholder.replace('#V2', vnode.attrs.init_higher_value);
                 }
                 return placeholder;
             },

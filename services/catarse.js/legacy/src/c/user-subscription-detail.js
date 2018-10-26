@@ -3,8 +3,8 @@ import _ from 'underscore';
 import userSubscriptionBox from './user-subscription-box';
 
 const userSubscriptionDetail = {
-    controller: function(args) {
-        const subscription = args.subscription;
+    oninit: function(vnode) {
+        const subscription = vnode.attrs.subscription;
 
         return {
             subscription

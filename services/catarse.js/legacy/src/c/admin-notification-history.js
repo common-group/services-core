@@ -8,14 +8,15 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 import { catarse } from '../api';
 
 const adminNotificationHistory = {
-    controller: function(args) {
-        const notifications = m.prop([]),
+    oninit: function(vnode) {
+        const notifications = prop([]),
             getNotifications = (user) => {
                 const notification = models.notification;
                 notification.getPageWithToken(catarse.filtersVM({
@@ -31,7 +32,7 @@ const adminNotificationHistory = {
                 .then(notifications);
             };
 
-        getNotifications(args.user);
+        getNotifications(vnode.attrs.user);
 
         return {
             notifications

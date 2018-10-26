@@ -4,6 +4,7 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import {
     catarse,
     commonPayment
@@ -13,16 +14,16 @@ import h from '../h';
 import models from '../models';
 
 const cancelSubscriptionContent = {
-    controller: function(args) {
-        const canceling = m.prop(false);
+    oninit: function(vnode) {
+        const canceling = prop(false);
 
         const cancelSubscription = () => {
             const l = commonPayment.loaderWithToken(models.cancelSubscription.postOptions({
-                id: args.subscription.id
+                id: vnode.attrs.subscription.id
             }));
             l.load().then(() => {
                 canceling(true);
-                args.subscription.status = 'canceling';
+                vnode.attrs.subscription.status = 'canceling';
                 m.redraw();
             });
         };

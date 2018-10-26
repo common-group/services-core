@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import userVM from '../vms/user-vm';
 import { catarse } from '../api';
 import _ from 'underscore';
@@ -10,15 +11,15 @@ import inlineError from './inline-error';
 import userSettingsVM from '../vms/user-settings-vm';
 
 const userBankForm = {
-    controller: function(args) {
-        const parsedErrors = args.parsedErrors;
-        const fields = args.fields,
-            user = args.user,
-            bankAccount = m.prop({}),
-            banks = m.prop(),
+    oninit: function(vnode) {
+        const parsedErrors = vnode.attrs.parsedErrors;
+        const fields = vnode.attrs.fields,
+            user = vnode.attrs.user,
+            bankAccount = prop({}),
+            banks = prop(),
             banksLoader = catarse.loader(models.bank.getPageOptions()),
             showOtherBanks = h.toggleProp(false, true),
-            showOtherBanksInput = m.prop(false),
+            showOtherBanksInput = prop(false),
             popularBanks = [{
                 id: '51',
                 code: '001',
@@ -55,7 +56,7 @@ const userBankForm = {
                 fields.agency_digit(bankAccount().agency_digit);
                 fields.bank_id(bankAccount().bank_id);
                 fields.bank_account_type(bankAccount().account_type);
-                args.bankCode(bankAccount().bank_id);
+                vnode.attrs.bankCode(bankAccount().bank_id);
             } else {
                 fields.bank_account_type('conta_corrente');
             }
@@ -63,8 +64,8 @@ const userBankForm = {
         banksLoader.load().then(banks);
 
         return {
-            bankInput: args.bankInput,
-            bankCode: args.bankCode,
+            bankInput: vnode.attrs.bankInput,
+            bankCode: vnode.attrs.bankCode,
             banks,
             banksLoader,
             showOtherBanksInput,

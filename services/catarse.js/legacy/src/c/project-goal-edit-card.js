@@ -1,33 +1,34 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectGoalsVM from '../vms/project-goals-vm';
 
 const projectGoalEditCard = {
-    controller: function(args) {
-        const goal = args.goal(),
-            project = args.project,
-            descriptionError = m.prop(false),
-            titleError = m.prop(false),
-            valueError = m.prop(false),
+    oninit: function(vnode) {
+        const goal = vnode.attrs.goal(),
+            project = vnode.attrs.project,
+            descriptionError = prop(false),
+            titleError = prop(false),
+            valueError = prop(false),
             validate = () => {
-                args.error(false);
+                vnode.attrs.error(false);
                 descriptionError(false);
                 valueError(false);
                 if (_.isEmpty(goal.title())) {
-                    args.error(true);
+                    vnode.attrs.error(true);
                     titleError(true);
                 }
                 if (_.isEmpty(goal.description())) {
-                    args.error(true);
+                    vnode.attrs.error(true);
                     descriptionError(true);
                 }
                 if (!goal.value() || parseInt(goal.value()) < 10) {
-                    args.error(true);
+                    vnode.attrs.error(true);
                     valueError(true);
                 }
             };
-        const destroyed = m.prop(false);
+        const destroyed = prop(false);
 
         const acceptNumeric = (e) => {
             goal.value(e.target.value.replace(/[^0-9]/g, ''));
@@ -55,7 +56,7 @@ const projectGoalEditCard = {
         };
         const saveGoal = () => {
             validate();
-            if (args.error()) {
+            if (vnode.attrs.error()) {
                 return false;
             }
             const data = {
@@ -68,13 +69,13 @@ const projectGoalEditCard = {
 
             if (goal.id()) {
                 projectGoalsVM.updateGoal(goal.project_id(), goal.id(), data).then(() => {
-                    args.showSuccess(true);
+                    vnode.attrs.showSuccess(true);
                     goal.editing.toggle();
                 });
             } else {
                 projectGoalsVM.createGoal(goal.project_id(), data).then((r) => {
                     goal.id(r.goal_id);
-                    args.showSuccess(true);
+                    vnode.attrs.showSuccess(true);
                     goal.editing.toggle();
                     m.redraw();
                 });

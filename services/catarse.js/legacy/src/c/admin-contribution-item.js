@@ -7,7 +7,7 @@ import adminContributionUser from './admin-contribution-user';
 import paymentStatus from './payment-status';
 
 const adminContributionItem = {
-    controller: function() {
+    oninit: function() {
         return {
             itemBuilder: [{
                 component: adminContributionUser,
@@ -28,7 +28,7 @@ const adminContributionItem = {
         return m(
             '.w-row',
             _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [
-                m.component(panel.component, {
+                m(panel.component, {
                     item: args.item,
                     key: args.key
                 })

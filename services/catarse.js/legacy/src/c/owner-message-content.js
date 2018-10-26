@@ -4,6 +4,7 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -11,19 +12,19 @@ import models from '../models';
 import userVM from '../vms/user-vm';
 
 const ownerMessageContent = {
-    controller: function(args) {
-        let l = m.prop(false);
-        const sendSuccess = m.prop(false),
-            userDetails = args,
-            submitDisabled = m.prop(false),
+    oninit: function(vnode) {
+        let l = prop(false);
+        const sendSuccess = prop(false),
+            userDetails = vnode.attrs,
+            submitDisabled = prop(false),
             // sets default values when user is not logged in
             user = h.getUser() || {
                 name: '',
                 email: ''
             },
-            from_name = m.prop(userVM.displayName(user)),
-            from_email = m.prop(user.email),
-            content = m.prop('');
+            from_name = prop(userVM.displayName(user)),
+            from_email = prop(user.email),
+            content = prop('');
 
         const sendMessage = () => {
             if (l()) {
@@ -37,7 +38,7 @@ const ownerMessageContent = {
                 from_email: from_email(),
                 user_id: h.getUser().user_id,
                 content: content(),
-                project_id: args().project_id,
+                project_id: vnode.attrs().project_id,
                 to_user_id: userDetails().id,
                 data: {
                     page_title: document.title,
@@ -57,7 +58,7 @@ const ownerMessageContent = {
             sendMessage,
             submitDisabled,
             sendSuccess,
-            userDetails: args,
+            userDetails: vnode.attrs,
             from_name,
             from_email,
             content,

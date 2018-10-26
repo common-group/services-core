@@ -1,19 +1,20 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import { catarse } from '../api';
 
 const adminInputAction = {
-    controller: function(args) {
-        const builder = args.data,
-            complete = m.prop(false),
-            error = m.prop(false),
-            fail = m.prop(false),
+    oninit: function(vnode) {
+        const builder = vnode.attrs.data,
+            complete = prop(false),
+            error = prop(false),
+            fail = prop(false),
             data = {},
-            item = args.item,
+            item = vnode.attrs.item,
             key = builder.property,
             forceValue = builder.forceValue || null,
-            newValue = m.prop(forceValue);
+            newValue = prop(forceValue);
 
         h.idVM.id(item[builder.updateKey]);
 

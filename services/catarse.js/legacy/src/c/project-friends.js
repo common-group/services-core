@@ -1,12 +1,13 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import { catarse } from '../api';
 
 const projectFriends = {
-    controller: function(args) {
-        const project = args.project,
-            friendsSample = m.prop([]),
+    oninit: function(vnode) {
+        const project = vnode.attrs.project,
+            friendsSample = prop([]),
             listVM = catarse.paginationVM(models.contributor, 'user_id.desc', {
                 Prefer: 'count=exact'
             }),

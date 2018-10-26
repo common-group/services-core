@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse, commonAnalytics } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -7,22 +8,22 @@ import projectInsights from '../c/project-insights';
 import projectInsightsSub from '../c/project-insights-sub';
 
 const insights = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const filtersVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
-            projectDetails = m.prop([]),
-            subscribersDetails = m.prop(),
-            load = m.prop(false),
+            projectDetails = prop([]),
+            subscribersDetails = prop(),
+            load = prop(false),
             loader = catarse.loaderWithToken,
-            isProjectNotLoader = m.prop(true),
+            isProjectNotLoader = prop(true),
             setProjectId = () => {
                 try {
                     const project_id = m.route.param('project_id');
 
                     filtersVM.project_id(project_id);
                 } catch (e) {
-                    filtersVM.project_id(args.root.getAttribute('data-id'));
+                    filtersVM.project_id(vnode.attrs.root.getAttribute('data-id'));
                 }
             };
 

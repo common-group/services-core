@@ -4,21 +4,22 @@ import {
 } from '../api';
 import _ from 'underscore';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import h from '../h';
 
-const error = m.prop(''),
-    rewards = m.prop([]),
-    states = m.prop([]),
-    fees = m.prop([]),
+const error = prop(''),
+    rewards = prop([]),
+    states = prop([]),
+    fees = prop([]),
     noReward = {
         id: null,
         description: '',
         shipping_options: null,
         minimum_value: 10
     },
-    contributionValue = m.prop(noReward.minimum_value),
-    selectedReward = m.prop(),
+    contributionValue = prop(noReward.minimum_value),
+    selectedReward = prop(),
     vm = catarse.filtersVM({
         project_id: 'eq'
     });
@@ -98,7 +99,7 @@ const getStates = () => {
 };
 
 const locationOptions = (reward, destination) => {
-    const options = m.prop([]),
+    const options = prop([]),
         mapStates = _.map(states(), (state) => {
             let fee;
             const feeState = _.findWhere(fees(), {

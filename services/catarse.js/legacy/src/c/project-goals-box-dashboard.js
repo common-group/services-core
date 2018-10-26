@@ -1,13 +1,14 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
 const projectGoalsBoxDashboard = {
-    controller: function(args) {
-        const initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value > args.amount) : 0;
-        const currentGoalIndex = m.prop(initialGoalIndex);
+    oninit: function(vnode) {
+        const initialGoalIndex = vnode.attrs.goalDetails().length > 0 ? _.findIndex(vnode.attrs.goalDetails(), goal => goal.value > vnode.attrs.amount) : 0;
+        const currentGoalIndex = prop(initialGoalIndex);
         const nextGoal = () => {
-            if (currentGoalIndex() < args.goalDetails().length - 1) {
+            if (currentGoalIndex() < vnode.attrs.goalDetails().length - 1) {
                 currentGoalIndex((currentGoalIndex() + 1));
             }
         };
@@ -18,7 +19,7 @@ const projectGoalsBoxDashboard = {
             }
         };
         if (currentGoalIndex() === -1) {
-            currentGoalIndex(args.goalDetails().length - 1);
+            currentGoalIndex(vnode.attrs.goalDetails().length - 1);
         }
         return {
             currentGoalIndex,

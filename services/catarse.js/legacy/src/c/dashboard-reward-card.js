@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import copyTextInput from './copy-text-input';
@@ -9,10 +10,10 @@ import inlineError from './inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const dashboardRewardCard = {
-    controller: function(args) {
-        const reward = args.reward(),
+    oninit: function(vnode) {
+        const reward = vnode.attrs.reward(),
             availableCount = () => reward.maximum_contributions() - reward.paid_count() - reward.waiting_payment_count(),
-            limitError = m.prop(false),
+            limitError = prop(false),
             showLimited = h.toggleProp(false, true),
             toggleLimit = () => {
                 reward.limited.toggle();
@@ -23,24 +24,24 @@ const dashboardRewardCard = {
             },
             validate = () => {
                 limitError(false);
-                args.error(false);
-                args.errors('Erro ao salvar informações.');
+                vnode.attrs.error(false);
+                vnode.attrs.errors('Erro ao salvar informações.');
                 if (reward.maximum_contributions() && reward.paid_count() > reward.maximum_contributions()) {
                     limitError(true);
-                    args.error(true);
+                    vnode.attrs.error(true);
                 }
             },
             saveReward = () => {
                 validate();
-                if (args.error()) {
+                if (vnode.attrs.error()) {
                     return false;
                 }
                 const data = {
                     maximum_contributions: reward.maximum_contributions()
                 };
 
-                rewardVM.updateReward(args.project().project_id, reward.id(), data).then(() => {
-                    args.showSuccess(true);
+                rewardVM.updateReward(vnode.attrs.project().project_id, reward.id(), data).then(() => {
+                    vnode.attrs.showSuccess(true);
                     showLimited.toggle();
                     reward.limited(reward.maximum_contributions() !== null);
                     m.redraw();
@@ -202,7 +203,7 @@ const dashboardRewardCard = {
                 ),
                 m('.w-form',
                     m('.w-col.w-col-6',
-                        m.component(copyTextInput, {
+                        m(copyTextInput, {
                             value: `https://www.catarse.me/pt/projects/${project.project_id}/${isSubscription ? 'subscriptions/start' : 'contributions/new'}?reward_id=${reward.id()}`
                         }),
                     )

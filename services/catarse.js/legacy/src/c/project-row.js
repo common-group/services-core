@@ -25,12 +25,12 @@ const projectRow = {
                                 ]) : ''),
                                 m((showFriends ? '.w-col.w-col-6' : '.w-col.w-col-12'),
                                     m(`a.btn.btn-small.btn-terciary[href="/explore?ref=${ref}&filter=${collection.hash}"]`, {
-                                        config: m.route
+                                        oncreate: m.route.link
                                     }, 'Ver todos'))
                             ])
                         ])
                     ]) : '',
-                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m.component(projectCard, {
+                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m(projectCard, {
                         project,
                         ref,
                         showFriends

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -7,18 +8,18 @@ import generateErrorInstance from '../error';
 const e = generateErrorInstance();
 
 const fields = {
-    password: m.prop(''),
-    current_password: m.prop(''),
-    uploaded_image: m.prop(''),
-    cover_image: m.prop(''),
-    email: m.prop(''),
-    permalink: m.prop(''),
-    public_name: m.prop(''),
-    facebook_link: m.prop(''),
-    twitter: m.prop(''),
-    links: m.prop([]),
-    about_html: m.prop(''),
-    email_confirmation: m.prop('')
+    password: prop(''),
+    current_password: prop(''),
+    uploaded_image: prop(''),
+    cover_image: prop(''),
+    email: prop(''),
+    permalink: prop(''),
+    public_name: prop(''),
+    facebook_link: prop(''),
+    twitter: prop(''),
+    links: prop([]),
+    about_html: prop(''),
+    email_confirmation: prop('')
 };
 
 const mapRailsErrors = (rails_errors) => {

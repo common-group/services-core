@@ -9,6 +9,7 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -18,10 +19,10 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
 
 const projectDashboardMenu = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
-            validating = m.prop(false),
+            validating = prop(false),
             showPublish = h.toggleProp(true, false),
             bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed'),
             validatePublish = () => {
@@ -29,11 +30,11 @@ const projectDashboardMenu = {
                 m.redraw();
                 m.request({
                     method: 'GET',
-                    url: `/projects/${args.project().project_id}/validate_publish`,
+                    url: `/projects/${vnode.attrs.project().project_id}/validate_publish`,
                     config: h.setCsrfToken
                 }).then(() => {
                     validating(false);
-                    window.location.href = (`/projects/${args.project().project_id}/publish`);
+                    window.location.href = (`/projects/${vnode.attrs.project().project_id}/publish`);
                     m.redraw();
                 }).catch((err) => {
                     validating(false);
@@ -51,11 +52,11 @@ const projectDashboardMenu = {
                 return project.large_image;
             };
 
-        if (args.project().is_published) {
+        if (vnode.attrs.project().is_published) {
             editLinksToggle.toggle(false);
         }
 
-        if (args.hidePublish) {
+        if (vnode.attrs.hidePublish) {
             showPublish.toggle(false);
         }
 
@@ -95,18 +96,18 @@ const projectDashboardMenu = {
                             m('span.fa.fa-info.fa-lg.fa-fw'), window.I18n.t('draft_start_tab', I18nScope())
                         ]) :
                         m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, {
-                            config: m.route
+                            oncreate: m.route.link
                         }, [
                             m('span.fa.fa-bar-chart.fa-lg.fa-fw'), window.I18n.t('start_tab', I18nScope())
                         ]), (project.is_published ? [
                             projectVM.isSubscription(project) ?
                             m(`a#dashboard_subscriptions_link[class="dashboard-nav-link-left ${h.locationActionMatch('subscriptions_report') ? 'selected' : ''}"][href="${projectRoute}/subscriptions_report"]`, {
-                                config: m.route
+                                oncreate: m.route.link
                             }, [
                                 m('span.fa.fa.fa-users.fa-lg.fa-fw'), window.I18n.t('subscriptions_tab', I18nScope())
                             ]) :
                             m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, {
-                                config: m.route
+                                oncreate: m.route.link
                             }, [
                                 m('span.fa.fa.fa-table.fa-lg.fa-fw'), window.I18n.t('reports_tab', I18nScope())
                             ]),
@@ -120,13 +121,13 @@ const projectDashboardMenu = {
 
                             (projectVM.isSubscription(project) ? '' :
                                 m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, {
-                                    config: m.route
+                                    oncreate: m.route.link
                                 }, [
                                     m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), window.I18n.t('surveys_tab', I18nScope())
                                 ])),
 
                             m(`a#dashboard_fiscal_link[class="dashboard-nav-link-left ${h.locationActionMatch('fiscal') ? 'selected' : ''}"][href="${projectRoute}/fiscal"]`, {
-                                config: m.route
+                                oncreate: m.route.link
                             }, [
                                 m('span.fa.fa.fa-book.fa-lg.fa-fw'), window.I18n.t('fiscal_tab', I18nScope())
                             ])

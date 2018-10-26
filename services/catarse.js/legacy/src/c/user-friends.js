@@ -10,6 +10,7 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -18,15 +19,15 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userFriends = {
-    controller: function(args) {
+    oninit: function(vnode) {
         models.userFriend.pageSize(9);
 
         const userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
-            user = args.user,
+            user = vnode.attrs.user,
             friendListVM = catarse.paginationVM(models.userFriend, 'following.asc,total_contributed_projects.desc', {
                 Prefer: 'count=exact'
             }),
-            allLoading = m.prop(false),
+            allLoading = prop(false),
             followAll = () => {
                 allLoading(true);
                 const l = catarse.loaderWithToken(models.followAllFriends.postOptions({}));
@@ -65,7 +66,7 @@ const userFriends = {
                     ])
                 ]),
                 m('.w-row', [
-                    _.map(listVM.collection(), friend => m.component(UserFollowCard, { friend })),
+                    _.map(listVM.collection(), friend => m(UserFollowCard, { friend })),
                 ]),
                 m('.w-section.section.bg-gray', [
                     m('.w-container', [
@@ -73,15 +74,14 @@ const userFriends = {
                             m('.w-col.w-col-5', [
                                 m('.u-marginright-20')
                             ]),
-                            m.component(loadMoreBtn, { collection: listVM }),
+                            m(loadMoreBtn, { collection: listVM }),
                             m('.w-col.w-col-5')
                         ])
                     ])
                 ])
 
             ])
-        ])
-      ;
+        ]);
     }
 };
 

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import models from '../models';
 import { catarse } from '../api';
@@ -16,10 +17,10 @@ import filterDateRange from '../c/filter-date-range';
 import modalBox from '../c/modal-box';
 
 const adminContributions = {
-    controller: function() {
+    oninit: function() {
         let listVM = contributionListVM,
             filterVM = contributionFilterVM,
-            error = m.prop(''),
+            error = prop(''),
             filterBuilder = [{ // full_text_index
                 component: filterMain,
                 data: {
@@ -127,7 +128,7 @@ const adminContributions = {
                 return false;
             },
             displayChargebackForm = h.toggleProp(false, true),
-            chargebackIds = m.prop(),
+            chargebackIds = prop(),
             generateIdsToData = () => {
                 if (chargebackIds() == undefined) {
                     return null;
@@ -139,7 +140,7 @@ const adminContributions = {
             displayChargebackConfirmationModal = h.toggleProp(false, true),
             searchChargebackLoader = h.toggleProp(false, true),
             toChargebackListVM = models.contributionDetail,
-            toChargebackCollection = m.prop(),
+            toChargebackCollection = prop(),
             chargebackConfirmationModalContentWrapper = (customAttrs) => {
                 const wrapper = {
                     view: function(ctrl, args) {
@@ -278,12 +279,12 @@ const adminContributions = {
                 })
             }) : ''),
             m('#admin-root-contributions', [
-                m.component(adminFilter, {
+                m(adminFilter, {
                     form: ctrl.filterVM.formDescriber,
                     filterBuilder: ctrl.filterBuilder,
                     submit: ctrl.submit
                 }),
-                m.component(adminList, {
+                m(adminList, {
                     vm: ctrl.listVM,
                     listItem: adminContributionItem,
                     listDetail: adminContributionDetail

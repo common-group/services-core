@@ -1,18 +1,19 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from './project-vm';
 import generateErrorInstance from '../error';
 
 const e = generateErrorInstance();
-const currentProject = m.prop({});
+const currentProject = prop({});
 
 const fields = {
-    headline: m.prop(''),
-    uploaded_image: m.prop(''),
-    cover_image: m.prop(''),
-    upload_files_targets: m.prop({}),
-    upload_files: m.prop(new FormData())
+    headline: prop(''),
+    uploaded_image: prop(''),
+    cover_image: prop(''),
+    upload_files_targets: prop({}),
+    upload_files: prop(new FormData())
 };
 
 const fillFields = (data) => {

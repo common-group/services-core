@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import popNotification from './pop-notification';
@@ -9,17 +10,17 @@ import deliverContributionModalContent from '../c/deliver-contribution-modal-con
 import errorContributionModalContent from '../c/error-contribution-modal-content';
 
 const projectContributionReportContent = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const showSelectedMenu = h.toggleProp(false, true),
-            selectedAny = m.prop(false),
-            showSuccess = m.prop(false),
-            loading = m.prop(false),
+            selectedAny = prop(false),
+            showSuccess = prop(false),
+            loading = prop(false),
             displayDeliverModal = h.toggleProp(false, true),
             displayErrorModal = h.toggleProp(false, true),
-            selectedContributions = m.prop([]),
-            deliveryMessage = m.prop(''),
+            selectedContributions = prop([]),
+            deliveryMessage = prop(''),
             selectAll = () => {
-                projectsContributionReportVM.getAllContributions(args.filterVM).then((data) => {
+                projectsContributionReportVM.getAllContributions(vnode.attrs.filterVM).then((data) => {
                     const exceptReceived = _.filter(data, contrib => contrib.delivery_status !== 'received');
                     selectedContributions().push(..._.pluck(exceptReceived, 'id'));
                     selectedAny(!_.isEmpty(exceptReceived));
@@ -47,7 +48,7 @@ const projectContributionReportContent = {
                     loading(false);
                     showSuccess(true);
                     // update status so we don't have to reload the page
-                    _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
+                    _.map(_.filter(vnode.attrs.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
                           item => item.delivery_status = status);
                 }).catch(() => {
                     m.redraw();
@@ -74,18 +75,18 @@ const projectContributionReportContent = {
         const isFailed = args.project().state === 'failed';
 
         return m('.w-section.bg-gray.before-footer.section', ctrl.loading() ? h.loader() : [
-              (ctrl.displayErrorModal() ? m.component(modalBox, {
+              (ctrl.displayErrorModal() ? m(modalBox, {
                   displayModal: ctrl.displayErrorModal,
                   hideCloseButton: false,
                   content: [errorContributionModalContent, { project: args.project, displayModal: ctrl.displayErrorModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
               }) : ''),
-              (ctrl.displayDeliverModal() ? m.component(modalBox, {
+              (ctrl.displayDeliverModal() ? m(modalBox, {
                   displayModal: ctrl.displayDeliverModal,
                   hideCloseButton: false,
                   content: [deliverContributionModalContent, { project: args.project, displayModal: ctrl.displayDeliverModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
               }) : ''),
 
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (ctrl.showSuccess() ? m(popNotification, {
                 message: 'As informações foram atualizadas'
             }) : ''),
             m('.w-container', [
@@ -150,8 +151,8 @@ const projectContributionReportContent = {
                 ),
 
                 _.map(list.collection(), (item) => {
-                    const contribution = m.prop(item);
-                    return m.component(projectContributionReportContentCard, {
+                    const contribution = prop(item);
+                    return m(projectContributionReportContentCard, {
                         project: args.project,
                         contribution,
                         selectedContributions: ctrl.selectedContributions,

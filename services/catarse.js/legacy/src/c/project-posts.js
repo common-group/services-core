@@ -9,7 +9,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.posts');
 
 const projectPosts = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const listVM = catarse.paginationVM(models.projectPostDetail),
             filterVM = catarse.filtersVM({
                 project_id: 'eq',
@@ -21,10 +21,10 @@ const projectPosts = {
             }
         };
 
-        filterVM.project_id(args.project().project_id);
+        filterVM.project_id(vnode.attrs.project().project_id);
 
-        if (_.isNumber(parseInt(args.post_id))) {
-            filterVM.id(args.post_id);
+        if (_.isNumber(parseInt(vnode.attrs.post_id))) {
+            filterVM.id(vnode.attrs.post_id);
         }
 
         if (!listVM.collection().length) {

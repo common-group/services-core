@@ -5,8 +5,8 @@ import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
 
 const adminProjectItem = {
-    controller: function(args) {
-        const project = args.item,
+    oninit: function(vnode) {
+        const project = vnode.attrs.item,
             recommended = h.toggleProp(project.recommended, !project.recommended),
             toggleRecommend = () => {
                 projectVM.updateProject(project.project_id, { recommended: !recommended() }).then(recommended.toggle);

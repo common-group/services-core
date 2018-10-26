@@ -7,7 +7,7 @@ const I18nScopePayment = _.partial(h.i18nScope, 'projects.payment');
 const I18nScopePaymentMethod = _.partial(h.i18nScope, 'projects.payment_method');
 
 const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         const statusClass = {
             paid: '.text-success',

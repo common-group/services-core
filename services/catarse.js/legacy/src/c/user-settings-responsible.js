@@ -6,7 +6,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettingsResponsible = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         return {};
     },

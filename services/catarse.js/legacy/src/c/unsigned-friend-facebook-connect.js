@@ -3,13 +3,13 @@ import _ from 'underscore';
 import h from '../h';
 
 const UnsignedFriendFacebookConnect = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
             largeBg: (() => {
-                if (_.isUndefined(args)) {
+                if (_.isUndefined(vnode.attrs)) {
                     return false;
                 }
-                return (_.isUndefined(args.largeBg) ? false : args.largeBg);
+                return _.isUndefined(vnode.attrs.largeBg) ? false : vnode.attrs.largeBg;
             })()
         };
     },

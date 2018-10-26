@@ -1,12 +1,13 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
 
 const liveStatistics = {
-    controller: function(args = {}) {
-        const pageStatistics = m.prop([]),
-            notificationData = m.prop({});
+    oninit: function(vnode) {
+        const pageStatistics = prop([]),
+            notificationData = prop({});
 
         models.statistic.getRow().then(pageStatistics);
         // args.socket is a socket provided by socket.io

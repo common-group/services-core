@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
@@ -6,12 +7,12 @@ import models from '../models';
 import { catarse } from '../api';
 
 const menuProfile = {
-    controller: function(args) {
-        const contributedProjects = m.prop(),
-            latestProjects = m.prop([]),
-            userDetails = m.prop({}),
-            user_id = args.user.user_id,
-            userBalance = m.prop(0),
+    oninit: function(vnode) {
+        const contributedProjects = prop(),
+            latestProjects = prop([]),
+            userDetails = prop({}),
+            user_id = vnode.attrs.user.user_id,
+            userBalance = prop(0),
             userIdVM = catarse.filtersVM({ user_id: 'eq' });
 
         const userName = () => {
@@ -184,7 +185,7 @@ const menuProfile = {
                                 //        m(`ul.w-list-unstyled.u-marginbottom-20`, ctrl.contributedProjects() ?
                                 //            _.isEmpty(ctrl.contributedProjects) ? 'Nenhum projeto.' :
                                 //            m.component(quickProjectList, {
-                                //                projects: m.prop(_.map(ctrl.contributedProjects(), (contribution) => {
+                                //                projects: prop(_.map(ctrl.contributedProjects(), (contribution) => {
                                 //                    return {
                                 //                        project_id: contribution.project_id,
                                 //                        project_user_id: contribution.project_user_id,

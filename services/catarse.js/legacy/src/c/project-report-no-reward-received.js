@@ -4,43 +4,44 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import ownerMessageContent from './owner-message-content';
 import modalBox from './modal-box';
 
 const projectReportNoRewardReceived = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const formName = 'report-no-reward-received';
         const displayModal = h.toggleProp(false, true);
         const storeId = 'send-message';
         const sendMessage = () => {
             if (!h.getUser()) {
-                h.storeAction(storeId, args.project.project_id);
-                return h.navigateToDevise(`?redirect_to=/projects/${args.project.project_id}`);
+                h.storeAction(storeId, vnode.attrs.project.project_id);
+                return h.navigateToDevise(`?redirect_to=/projects/${vnode.attrs.project.project_id}`);
             }
 
             displayModal(true);
         };
 
-        if (h.callStoredAction(storeId) == args.project().project_id) {
+        if (h.callStoredAction(storeId) == vnode.attrs.project().project_id) {
             displayModal(true);
         }
 
         return {
             displayModal,
             sendMessage,
-            formName: args.formName || formName
+            formName: vnode.attrs.formName || formName
         };
     },
     view: function(ctrl, args) {
-        const contactModalC = [ownerMessageContent, m.prop(_.extend(args.user, {
+        const contactModalC = [ownerMessageContent, prop(_.extend(args.user, {
             project_id: args.project().id
         }))];
 
         return m('.card.u-radius.u-margintop-20',
             [
-                     (ctrl.displayModal() ? m.component(modalBox, {
+                     (ctrl.displayModal() ? m(modalBox, {
                          displayModal: ctrl.displayModal,
                          content: contactModalC
                      }) : ''),

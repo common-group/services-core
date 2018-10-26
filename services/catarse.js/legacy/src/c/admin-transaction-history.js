@@ -3,8 +3,8 @@ import _ from 'underscore';
 import h from '../h';
 
 const adminTransactionHistory = {
-    controller: function(args) {
-        const contribution = args.contribution,
+    oninit: function(vnode) {
+        const contribution = vnode.attrs.contribution,
             mapEvents = _.reduce([{
                 date: contribution.paid_at,
                 name: 'Apoio confirmado'

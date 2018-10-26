@@ -1,16 +1,17 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
 const projectGoalsBox = {
-    controller: function(args) {
-        const subscriptionData = args.subscriptionData() || {
+    oninit: function(vnode) {
+        const subscriptionData = vnode.attrs.subscriptionData() || {
                 amount_paid_for_valid_period: 0
             },
-            initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value > subscriptionData.amount_paid_for_valid_period) : 0,
-            currentGoalIndex = m.prop(initialGoalIndex),
+            initialGoalIndex = vnode.attrs.goalDetails().length > 0 ? _.findIndex(vnode.attrs.goalDetails(), goal => goal.value > subscriptionData.amount_paid_for_valid_period) : 0,
+            currentGoalIndex = prop(initialGoalIndex),
             nextGoal = () => {
-                if (currentGoalIndex() < args.goalDetails().length - 1) {
+                if (currentGoalIndex() < vnode.attrs.goalDetails().length - 1) {
                     currentGoalIndex((currentGoalIndex() + 1));
                 }
             },
@@ -22,7 +23,7 @@ const projectGoalsBox = {
             };
         // amount is higher than max goal
         if (currentGoalIndex() === -1) {
-            currentGoalIndex(args.goalDetails().length - 1);
+            currentGoalIndex(vnode.attrs.goalDetails().length - 1);
         }
         return { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
     },

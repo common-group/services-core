@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import moment from 'moment';
@@ -20,12 +21,12 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userSubscriptionBox = {
-    controller: function(args) {
-        const subscription = args.subscription,
+    oninit: function(vnode) {
+        const subscription = vnode.attrs.subscription,
             displayModal = h.toggleProp(false, true),
             displayCancelModal = h.toggleProp(false, true),
             displayPaymentHistoryModal = h.toggleProp(false, true),
-            contactModalInfo = m.prop({}),
+            contactModalInfo = prop({}),
             isGeneratingSecondSlip = h.toggleProp(false, true);
 
         const filterProjVM = catarse.filtersVM({
@@ -225,9 +226,9 @@ const userSubscriptionBox = {
             subscription = ctrl.subscription,
             project = subscription.project;
 
-        return (!_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
+        return !_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
             (ctrl.displayCancelModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
-                m.component(modalBox, {
+                m(modalBox, {
                     displayModal: ctrl.displayCancelModal,
                     content: [cancelSubscriptionContent, {
                         displayModal: ctrl.displayCancelModal,
@@ -236,13 +237,13 @@ const userSubscriptionBox = {
                 }) : ''
             ),
             (ctrl.displayModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
-                m.component(modalBox, {
+                m(modalBox, {
                     displayModal: ctrl.displayModal,
                     content: [ownerMessageContent, ctrl.contactModalInfo]
                 }) : ''
             ),
             (ctrl.displayPaymentHistoryModal() ? 
-                m.component(modalBox, {
+                m(modalBox, {
                     displayModal: ctrl.displayPaymentHistoryModal,
                     content: [userSubscriptionPaymentHistoryModal, { subscription, project }]
                 })
@@ -424,7 +425,7 @@ const userSubscriptionBox = {
                     )
                 ])
             ]
-        ) : m('div', ''));
+        ) : m('div', '');
     }
 };
 

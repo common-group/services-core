@@ -5,9 +5,9 @@ import userAboutEdit from '../c/user-about-edit';
 import userSettings from '../c/user-settings';
 
 const projectEditUserSettings = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
-            user: userVM.fetchUser(args.user_id)
+            user: userVM.fetchUser(vnode.attrs.user_id)
         };
     },
 

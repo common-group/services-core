@@ -5,10 +5,10 @@ import projectVM from '../vms/project-vm';
 import projectBudgetEdit from '../c/project-budget-edit';
 
 const projectEditBudget = {
-    controller: function(args) {
+    oninit: function(vnode) {
         return {
-            user: userVM.fetchUser(args.user_id),
-            project: projectVM.fetchProject(args.project_id)
+            user: userVM.fetchUser(vnode.attrs.user_id),
+            project: projectVM.fetchProject(vnode.attrs.project_id)
         };
     },
 

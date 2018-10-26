@@ -12,15 +12,24 @@ const projectInviteCard = {
             m('.fontsize-base.fontweight-semibold.u-marginbottom-30.u-text-center', 'Convide seus amigos para apoiar sua campanha'),
             m('.w-row', [
                 m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [
-                    m.component(facebookButton, { url: `${h.projectFullPermalink(project)}?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights`, medium: true })
+                    m(
+                        facebookButton,
+                        { url: `${h.projectFullPermalink(project)}?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_insights`, medium: true }
+                    )
                 ]),
                 m('.w-sub-col.u-marginbottom-20.w-col.w-col-4', [
-                    m.component(facebookButton, { messenger: true, url: `${h.projectFullPermalink(project)}?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share_insights`, medium: true })
+                    m(
+                        facebookButton,
+                        { messenger: true, url: `${h.projectFullPermalink(project)}?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share_insights`, medium: true }
+                    )
                 ]),
                 m('.w-col.w-col-4', [
                     m('.w-form', [
                         m('form[data-name=\'Email Form 2\'][id=\'email-form-2\'][name=\'email-form-2\']', [
-                            m.component(copyTextInput, { value: `${h.projectFullPermalink(project)}?ref=project_link` })
+                            m(
+                                copyTextInput,
+                                { value: `${h.projectFullPermalink(project)}?ref=project_link` }
+                            )
                         ])
                     ])
                 ])

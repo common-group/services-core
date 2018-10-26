@@ -62,15 +62,15 @@ const projectContributionReportHeader = {
                                 m('.u-margintop-20.w-row', [
                                     m('.w-col.w-col-8',
                                         m('.w-row', [
-                                            m.component(paymentStateFilter.component, paymentStateFilter.data),
-                                            m.component(rewardFilter.component, rewardFilter.data),
-                                            m.component(deliveryFilter.component, deliveryFilter.data),
-                                            m.component(surveyFilter.component, surveyFilter.data)
+                                            m(paymentStateFilter.component, paymentStateFilter.data),
+                                            m(rewardFilter.component, rewardFilter.data),
+                                            m(deliveryFilter.component, deliveryFilter.data),
+                                            m(surveyFilter.component, surveyFilter.data)
                                         ])
                                     ),
                                     m('.w-col.w-col-4',
                                         m('.u-margintop-20.w-row', [
-                                            m.component(mainFilter.component, mainFilter.data)
+                                            m(mainFilter.component, mainFilter.data)
 
                                         ])
                                     )

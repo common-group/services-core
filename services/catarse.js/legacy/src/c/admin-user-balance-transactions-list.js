@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import userVM from '../vms/user-vm';
@@ -8,8 +9,8 @@ import { catarse } from '../api';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const adminUserBalanceTransactionsList = {
-    controller: function(args) {
-        const userBalance = m.prop({}),
+    oninit: function(vnode) {
+        const userBalance = prop({}),
             transactionsListVM = catarse.paginationVM(
                   models.balanceTransaction,
                   'created_at.desc',
@@ -17,8 +18,8 @@ const adminUserBalanceTransactionsList = {
               );
 
         models.balanceTransaction.pageSize(2);
-        userVM.getUserBalance(args.user_id).then(_.compose(userBalance, _.first));
-        transactionsListVM.firstPage({ user_id: `eq.${args.user_id}` });
+        userVM.getUserBalance(vnode.attrs.user_id).then(_.compose(userBalance, _.first));
+        transactionsListVM.firstPage({ user_id: `eq.${vnode.attrs.user_id}` });
 
         return {
             userBalance,

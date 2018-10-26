@@ -4,22 +4,23 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 
 const deleteProjectModalContent = {
-    controller: function(args) {
-        let l = m.prop(false);
-        const deleteSuccess = m.prop(false),
-            confirmed = m.prop(true),
-            error = m.prop(''),
-            check = m.prop('');
+    oninit: function(vnode) {
+        let l = prop(false);
+        const deleteSuccess = prop(false),
+            confirmed = prop(true),
+            error = prop(''),
+            check = prop('');
 
         const deleteProject = () => {
             if (check() === 'deletar-rascunho') {
                 const loaderOpts = models.deleteProject.postOptions({
-                    _project_id: args.project.project_id
+                    _project_id: vnode.attrs.project.project_id
                 });
                 l = catarse.loaderWithToken(loaderOpts);
                 l.load().then(() => {

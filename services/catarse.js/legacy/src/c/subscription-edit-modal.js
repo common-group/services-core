@@ -9,9 +9,9 @@ const paymentBadge = paymentMethod => paymentMethod === 'credit_card'
         : [m('span.fa.fa-barcode'), ' Boleto Bancário'];
 
 const subscriptionEditModal = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const isLongDescription = reward => reward.description && reward.description.length > 110;
-        const scope = attr => args.args.vm.isInternational()
+        const scope = attr => vnode.attrs.args.vm.isInternational()
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
 

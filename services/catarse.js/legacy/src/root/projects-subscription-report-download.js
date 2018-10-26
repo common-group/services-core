@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import {
@@ -9,10 +10,10 @@ import h from '../h';
 import models from '../models';
 
 const projectSubscriptionReportDownload = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const catarseVM = projectsContributionReportVM;
-        const project = m.prop([{}]);
-        catarseVM.project_id(args.project_id);
+        const project = prop([{}]);
+        catarseVM.project_id(vnode.attrs.project_id);
         const lProject = catarse.loaderWithToken(models.projectDetail.getPageOptions({
             project_id: `eq.${catarseVM.project_id()}`
         }));
@@ -28,8 +29,8 @@ const projectSubscriptionReportDownload = {
         return m('.section.project-metrics',
             m('.w-container',
                 m('.w-row', [
-                    m.component(projectDashboardMenu, {
-                        project: m.prop(_.first(ctrl.project()))
+                    m(projectDashboardMenu, {
+                        project: prop(_.first(ctrl.project()))
                     }),
                     m('.w-col.w-col-2'),
                     m('.w-col.w-col-8',

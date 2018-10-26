@@ -1,12 +1,13 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import moment from 'moment';
 import h from '../h';
 import modalBox from './modal-box';
 import announceExpirationModal from './announce-expiration-modal';
 
 const projectAnnounceExpiration = {
-    controller: function() {
-        const days = m.prop(2),
+    oninit: function() {
+        const days = prop(2),
             showModal = h.toggleProp(false, true);
         return {
             days,
@@ -93,7 +94,7 @@ const projectAnnounceExpiration = {
                     )
                 ),
 
-                (ctrl.showModal() ? m.component(modalBox, {
+                (ctrl.showModal() ? m(modalBox, {
                     displayModal: ctrl.showModal,
                     content: [announceExpirationModal, {
                         expirationDate,

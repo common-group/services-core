@@ -1,18 +1,19 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const projectContributorCard = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            user_id = args.contribution.user_external_id;
-        if (args.isSubscription) {
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            user_id = vnode.attrs.contribution.user_external_id;
+        if (vnode.attrs.isSubscription) {
             userVM.fetchUser(user_id, true, userDetails).then(() => {
-                args.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
-                args.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
-                args.contribution.data.total_published_projects += userDetails().total_published_projects;
+                vnode.attrs.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
+                vnode.attrs.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
+                vnode.attrs.contribution.data.total_published_projects += userDetails().total_published_projects;
             });
         }
         return {

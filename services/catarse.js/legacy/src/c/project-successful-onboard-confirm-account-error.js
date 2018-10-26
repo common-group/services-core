@@ -9,21 +9,22 @@
  * })
  * */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account.refuse');
 
 const projectSuccessfulOnboardConfirmAccountError = {
-    controller: function(args) {
-        const errorReasonM = m.prop(''),
-            error = m.prop(false);
+    oninit: function(vnode) {
+        const errorReasonM = prop(''),
+            error = prop(false);
 
         const addErrorReason = () => {
             if (errorReasonM().trim() === '')	{
                 return error(true);
             }
-            return args.addErrorReason(errorReasonM).call();
+            return vnode.attrs.addErrorReason(errorReasonM).call();
         };
 
         return {

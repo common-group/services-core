@@ -7,7 +7,7 @@ import adminSubscriptionUser from './admin-subscription-user';
 import subPaymentStatus from './sub-payment-status';
 
 const adminSubscriptionItem = {
-    controller: function() {
+    oninit: function() {
         return {
             itemBuilder: [{
                 component: adminSubscriptionUser,
@@ -29,7 +29,7 @@ const adminSubscriptionItem = {
         return m(
             '.w-row',
             _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [
-                m.component(panel.component, {
+                m(panel.component, {
                     item: args.item,
                     key: args.key
                 })

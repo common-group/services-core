@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -15,25 +16,25 @@ import addressForm from '../c/address-form';
 const addressScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const surveysShow = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const {
             survey_id
-        } = args,
+        } = vnode.attrs,
             contributionId = m.route.param('contribution_id'),
-            survey = m.prop(),
+            survey = prop(),
             idVM = h.idVM,
             displayModal = h.toggleProp(false, true),
             showPreview = h.toggleProp(false, true),
             showThanks = h.toggleProp(false, true),
-            finished = m.prop(false),
-            countryName = m.prop(''),
-            stateName = m.prop(''),
-            answeredAt = m.prop(''),
-            fields = m.prop({}),
-            openQuestions = m.prop([]),
-            multipleChoiceQuestions = m.prop([]),
-            user = m.prop({}),
-            reward = m.prop(),
+            finished = prop(false),
+            countryName = prop(''),
+            stateName = prop(''),
+            answeredAt = prop(''),
+            fields = prop({}),
+            openQuestions = prop([]),
+            multipleChoiceQuestions = prop([]),
+            user = prop({}),
+            reward = prop(),
             sendMessage = () => {
                 displayModal(true);
             },
@@ -108,20 +109,20 @@ const surveysShow = {
                     lUser.load().then((userData) => {
                         user(_.first(userData));
                         fields({
-                            address: m.prop(surveyData.address || _.omit(user().address, 'id') || {})
+                            address: prop(surveyData.address || _.omit(user().address, 'id') || {})
                         });
                     });
 
                     _.map(surveyData.open_questions, (question) => {
                         openQuestions().push({
                             question,
-                            value: m.prop(question.answer)
+                            value: prop(question.answer)
                         });
                     });
                     _.map(surveyData.multiple_choice_questions, (question) => {
                         multipleChoiceQuestions().push({
                             question,
-                            value: m.prop(question.survey_question_choice_id)
+                            value: prop(question.survey_question_choice_id)
                         });
                     });
                 });
@@ -158,12 +159,12 @@ const surveysShow = {
             multipleChoiceQuestions = ctrl.multipleChoiceQuestions(),
             project = ctrl.projectVM.currentProject(),
             reward = _.first(ctrl.reward()),
-            contactModalC = [ownerMessageContent, m.prop(project ? project.user : {})],
+            contactModalC = [ownerMessageContent, prop(project ? project.user : {})],
             profileImage = userVM.displayImage(user);
 
         return m('.survey', {
             config: ctrl.loadSurvey
-        }, _.isEmpty(user) ? '' : [(ctrl.displayModal() ? m.component(modalBox, {
+        }, _.isEmpty(user) ? '' : [(ctrl.displayModal() ? m(modalBox, {
             displayModal: ctrl.displayModal,
             content: contactModalC
         }) : ''),

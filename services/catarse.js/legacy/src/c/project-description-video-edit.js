@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -12,7 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_description');
 const I18nVideoScope = _.partial(h.i18nScope, 'projects.dashboard_video');
 
 const projectDescriptionVideoEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectDescriptionVideoVM,
             mapErrors = [
                   ['about_html', ['about_html']],
@@ -20,11 +21,11 @@ const projectDescriptionVideoEdit = {
             ],
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            loading = m.prop(false),
+            loading = prop(false),
             onSubmit = (event) => {
                 loading(true);
                 m.redraw();
-                vm.updateProject(args.projectId).then((data) => {
+                vm.updateProject(vnode.attrs.projectId).then((data) => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
@@ -44,7 +45,7 @@ const projectDescriptionVideoEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
         return {
             onSubmit,
@@ -57,11 +58,11 @@ const projectDescriptionVideoEdit = {
     view: function(ctrl, args) {
         const vm = ctrl.vm;
         return m('#description-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (ctrl.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (ctrl.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true

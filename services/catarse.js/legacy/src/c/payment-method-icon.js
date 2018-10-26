@@ -5,8 +5,8 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const paymentMethodIcon = {
-    controller: function(args) {
-        const subscription = args.subscription;
+    oninit: function(vnode) {
+        const subscription = vnode.attrs.subscription;
 
         const paymentClass = {
             boleto: 'fa-barcode',

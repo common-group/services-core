@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import moment from 'moment';
 import _ from 'underscore';
 import h from '../h';
@@ -7,11 +8,11 @@ import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
 const editRewardCard = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const project = projectVM.getCurrentProject(),
-            reward = args.reward(),
+            reward = vnode.attrs.reward(),
             minimumValue = projectVM.isSubscription(project) ? 5 : 10,
-            destroyed = m.prop(false),
+            destroyed = prop(false),
             acceptNumeric = (e) => {
                 reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
                 return true;
@@ -25,7 +26,7 @@ const editRewardCard = {
                     }
                     return m.request({
                         method: 'DELETE',
-                        url: `/projects/${args.project_id}/rewards/${reward.id()}`,
+                        url: `/projects/${vnode.attrs.project_id}/rewards/${reward.id()}`,
                         config: h.setCsrfToken
                     }).then(() => {
                         destroyed(true);
@@ -34,28 +35,28 @@ const editRewardCard = {
                 }
                 return false;
             },
-            descriptionError = m.prop(false),
-            minimumValueError = m.prop(false),
-            deliverAtError = m.prop(false),
-            states = m.prop([]),
-            fees = m.prop([]),
+            descriptionError = prop(false),
+            minimumValueError = prop(false),
+            deliverAtError = prop(false),
+            states = prop([]),
+            fees = prop([]),
             statesLoader = rewardVM.statesLoader,
             validate = () => {
-                args.error(false);
-                args.errors('Erro ao salvar informações. Confira os dados informados.');
+                vnode.attrs.error(false);
+                vnode.attrs.errors('Erro ao salvar informações. Confira os dados informados.');
                 descriptionError(false);
                 minimumValueError(false);
                 deliverAtError(false);
                 if (reward.newReward && moment(reward.deliver_at()).isBefore(moment().date(-1))) {
-                    args.error(true);
+                    vnode.attrs.error(true);
                     deliverAtError(true);
                 }
                 if (_.isEmpty(reward.description())) {
-                    args.error(true);
+                    vnode.attrs.error(true);
                     descriptionError(true);
                 }
                 if (!reward.minimum_value() || parseInt(reward.minimum_value()) < minimumValue) {
-                    args.error(true);
+                    vnode.attrs.error(true);
                     minimumValueError(true);
                 }
                 _.map(fees(), (fee) => {
@@ -63,7 +64,7 @@ const editRewardCard = {
                         error: false
                     });
                     if (fee.destination() === null) {
-                        args.error(true);
+                        vnode.attrs.error(true);
                         _.extend(fee, {
                             error: true
                         });
@@ -72,12 +73,12 @@ const editRewardCard = {
             },
             saveReward = () => {
                 validate();
-                if (args.error()) {
+                if (vnode.attrs.error()) {
                     return false;
                 }
                 const data = {
                     title: reward.title(),
-                    project_id: args.project_id,
+                    project_id: vnode.attrs.project_id,
                     shipping_options: reward.shipping_options(),
                     minimum_value: reward.minimum_value(),
                     description: reward.description(),
@@ -95,16 +96,16 @@ const editRewardCard = {
                     });
                 }
                 if (reward.newReward) {
-                    rewardVM.createReward(args.project_id, data).then((r) => {
-                        args.showSuccess(true);
+                    rewardVM.createReward(vnode.attrs.project_id, data).then((r) => {
+                        vnode.attrs.showSuccess(true);
                         reward.newReward = false;
                         // save id so we can update without reloading the page
                         reward.id(r.reward_id);
                         reward.edit.toggle();
                     });
                 } else {
-                    rewardVM.updateReward(args.project_id, reward.id(), data).then(() => {
-                        args.showSuccess(true);
+                    rewardVM.updateReward(vnode.attrs.project_id, reward.id(), data).then(() => {
+                        vnode.attrs.showSuccess(true);
                         reward.edit.toggle();
                     });
                 }
@@ -114,18 +115,18 @@ const editRewardCard = {
                 const destinations = _.map(fees(), fee => fee.destination());
                 if (((reward.shipping_options() === 'national' || reward.shipping_options() === 'international') && !_.contains(destinations, 'others'))) {
                     fees().push({
-                        id: m.prop(null),
-                        value: m.prop(0),
-                        destination: m.prop('others')
+                        id: prop(null),
+                        value: prop(0),
+                        destination: prop('others')
                     });
                 }
                 if (reward.shipping_options() === 'national') {
                     fees(_.reject(fees(), fee => fee.destination() === 'international'));
                 } else if (reward.shipping_options() === 'international' && !_.contains(destinations, 'international')) {
                     fees().push({
-                        id: m.prop(null),
-                        value: m.prop(0),
-                        destination: m.prop('international')
+                        id: prop(null),
+                        value: prop(0),
+                        destination: prop('international')
                     });
                 }
             };
@@ -143,9 +144,9 @@ const editRewardCard = {
                 }).then((feeData) => {
                     _.map(feeData, (fee) => {
                         const feeProp = {
-                            id: m.prop(fee.id),
-                            value: m.prop(fee.value),
-                            destination: m.prop(fee.destination)
+                            id: prop(fee.id),
+                            value: prop(fee.value),
+                            destination: prop(fee.destination)
                         };
                         fees().unshift(feeProp);
                     });
@@ -172,9 +173,9 @@ const editRewardCard = {
     },
     view: function(ctrl, args) {
         const newFee = {
-                id: m.prop(null),
-                value: m.prop(null),
-                destination: m.prop(null)
+                id: prop(null),
+                value: prop(null),
+                destination: prop(null)
             },
             fees = ctrl.fees(),
             reward = args.reward(),

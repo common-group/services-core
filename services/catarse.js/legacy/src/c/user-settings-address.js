@@ -7,7 +7,7 @@ import addressForm from './address-form';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettingsAddress = {
-    controller: function(args)
+    oninit: function(vnode)
     {
         return {};
     },

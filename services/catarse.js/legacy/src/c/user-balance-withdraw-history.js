@@ -12,11 +12,11 @@ const I18nScopeTransfer = _.partial(h.i18nScope, 'users.balance.transfer_labels'
 const I18nScopeBank = _.partial(h.i18nScope, 'users.balance.bank');
 
 const userBalanceWithdrawHistory = {
-    controller: function (args) {
+    oninit: function (vnode) {
 
         const userIdVM = catarse.filtersVM({user_id: 'eq'});
         const balanceTransfersList = userBalanceTransfersVM.getWithPagination;
-        userIdVM.user_id(args.user_id);
+        userIdVM.user_id(vnode.attrs.user_id);
         balanceTransfersList.firstPage(userIdVM.parameters());
 
         const explitInArraysOf3 = (collection) => {

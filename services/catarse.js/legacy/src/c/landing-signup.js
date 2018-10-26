@@ -15,13 +15,14 @@
  *  }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 
 const landingSignup = {
-    controller: function(args) {
-        const builder = args.builder,
-            email = m.prop(''),
-            error = m.prop(false),
+    oninit: function(vnode) {
+        const builder = vnode.attrs.builder,
+            email = prop(''),
+            error = prop(false),
             submit = () => {
                 if (h.validateEmail(email())) {
                     return true;

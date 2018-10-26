@@ -8,9 +8,9 @@ import loadMoreBtn from './load-more-btn';
 const I18nScope = _.partial(h.i18nScope, 'users.show.contributions');
 
 const userContributedList = {
-    controller: function(args) {
-        const title = args.title,
-            hideSurveys = args.hideSurveys;
+    oninit: function(vnode) {
+        const title = vnode.attrs.title,
+            hideSurveys = vnode.attrs.hideSurveys;
         return {
             hideSurveys,
             title

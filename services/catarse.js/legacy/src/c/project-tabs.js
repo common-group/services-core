@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectReminder from './project-reminder';
@@ -6,11 +7,11 @@ import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectTabs = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const fixedNavClass = 'project-nav-fixed',
-            isFixed = m.prop(false),
-            originalPosition = m.prop(-1),
-            project = args.project;
+            isFixed = prop(false),
+            originalPosition = prop(-1),
+            project = vnode.attrs.project;
 
         const fixOnScroll = el => () => {
             const viewportOffset = el.getBoundingClientRect();
@@ -42,7 +43,7 @@ const projectTabs = {
             event.preventDefault();
 
             if (projectVM.isSubscription(project)) {
-                m.route(`/projects/${project().project_id}/subscriptions/start`);
+                m.route.set(`/projects/${project().project_id}/subscriptions/start`);
                 return false;
             }
 
@@ -125,7 +126,7 @@ const projectTabs = {
                                 m('.w-col.w-col-6.w-col-medium-4', {
                                     onclick: h.analytics.event({ cat: 'project_view', act: 'project_floatingreminder_click', project: project() })
                                 }, [
-                                    projectVM.isSubscription(project) ? null : m.component(projectReminder, { project, type: 'button', hideTextOnMobile: true })
+                                    projectVM.isSubscription(project) ? null : m(projectReminder, { project, type: 'button', hideTextOnMobile: true })
                                 ])
                             ])
                         ] : '') : ''

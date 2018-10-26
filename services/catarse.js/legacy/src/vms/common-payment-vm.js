@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import projectVM from '../vms/project-vm';
 import addressVM from '../vms/address-vm';
@@ -6,7 +7,7 @@ import models from '../models';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
-const paymentInfoId = m.prop();
+const paymentInfoId = prop();
 const { commonPayment, commonSubscriptionUpgrade, commonPaymentInfo, commonCreditCard, commonCreditCards, rechargeSubscription } = models;
 const sendPaymentRequest = data => commonPayment.postWithToken(
     { data: _.extend({}, data, { payment_id: paymentInfoId() }) },
@@ -77,7 +78,7 @@ const isReactivation = () => {
     const subscriptionStatus = m.route.param('subscription_status');
     return subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled';
 };
-const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}${payment_id ? `&payment_id=${payment_id}` : ''}${isEdit && !isReactivation() ? '&is_edit=1' : ''}`);
+const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route.set(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}${payment_id ? `&payment_id=${payment_id}` : ''}${isEdit && !isReactivation() ? '&is_edit=1' : ''}`);
 const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
     if (retries <= 0) {
         return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentId, isEdit));

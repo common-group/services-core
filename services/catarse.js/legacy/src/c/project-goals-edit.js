@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import _ from 'underscore';
 import h from '../h';
@@ -15,7 +16,7 @@ import railsErrorsVM from '../vms/rails-errors-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalsEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const e = generateErrorInstance();
         const mapErrors = [
             ['goals', ['goals.size']]
@@ -23,21 +24,21 @@ const projectGoalsEdit = {
         const goals = projectGoalsVM.goals;
 
         const l = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
-            id: args.project.common_id
+            id: vnode.attrs.project.common_id
         }));
 
-        const currentGoal = m.prop();
-        const subscribersDetails = m.prop({});
+        const currentGoal = prop();
+        const subscribersDetails = prop({});
         l.load().then((subData) => {
             subscribersDetails(subData);
             const sortedGoals = _.sortBy(goals(), g => g().value()),
                 nextGoal = _.find(sortedGoals, goal => goal().value() > subscribersDetails().amount_paid_for_valid_period);
             currentGoal(nextGoal());
         });
-        const showSuccess = m.prop(false);
-        const error = m.prop(false);
+        const showSuccess = prop(false);
+        const error = prop(false);
 
-        projectGoalsVM.fetchGoalsEdit(args.projectId);
+        projectGoalsVM.fetchGoalsEdit(vnode.attrs.projectId);
 
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, e);
@@ -57,10 +58,10 @@ const projectGoalsEdit = {
             error = ctrl.error;
         return m('.w-container',
             m('.w-row', [
-                (ctrl.showSuccess() ? m.component(popNotification, {
+                (ctrl.showSuccess() ? m(popNotification, {
                     message: 'Meta salva com sucesso'
                 }) : ''),
-                (ctrl.error() ? m.component(popNotification, {
+                (ctrl.error() ? m(popNotification, {
                     message: 'Erro ao salvar informações',
                     error: true
                 }) : ''),

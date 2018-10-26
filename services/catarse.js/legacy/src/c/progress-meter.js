@@ -4,9 +4,9 @@ import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const progressMeter = {
-    controller: function(args) {
-        const project = args.project;
-        const progress = args.progress;
+    oninit: function(vnode) {
+        const project = vnode.attrs.project;
+        const progress = vnode.attrs.progress;
         const isFinished = project => _.contains(['successful', 'failed', 'waiting_funds'], project.state);
         const cardMeter = () => {
             const failed = () => ((project.state === 'failed') || (project.state === 'waiting_funds')) ? 'card-secondary' : '';

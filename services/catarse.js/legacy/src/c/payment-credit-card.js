@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import tooltip from './tooltip';
@@ -13,40 +14,40 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const paymentCreditCard = {
-    controller: function(args) {
-        const vm = args.vm,
-            isSubscriptionEdit = args.isSubscriptionEdit || m.prop(false),
-            subscriptionEditConfirmed = m.prop(false),
-            showSubscriptionModal = m.prop(false),
-            loadingInstallments = m.prop(true),
-            loadingSavedCreditCards = m.prop(true),
-            selectedCreditCard = m.prop({ id: -1 }),
-            selectedInstallment = m.prop('1'),
-            showForm = m.prop(false),
-            creditCardType = m.prop('unknown'),
+    oninit: function(vnode) {
+        const vm = vnode.attrs.vm,
+            isSubscriptionEdit = vnode.attrs.isSubscriptionEdit || prop(false),
+            subscriptionEditConfirmed = prop(false),
+            showSubscriptionModal = prop(false),
+            loadingInstallments = prop(true),
+            loadingSavedCreditCards = prop(true),
+            selectedCreditCard = prop({ id: -1 }),
+            selectedInstallment = prop('1'),
+            showForm = prop(false),
+            creditCardType = prop('unknown'),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
 
         const sendSubscriptionPayment = (creditCard, subscriptionVM, commonData) => {
             if (!isSubscriptionEdit()) {
-                commonPaymentVM.sendCreditCardPayment(creditCard, subscriptionVM, commonData, args.addressVM);
+                commonPaymentVM.sendCreditCardPayment(creditCard, subscriptionVM, commonData, vnode.attrs.addressVM);
 
                 return false;
             }
 
-            if (!subscriptionEditConfirmed() && !args.isReactivation()) {
+            if (!subscriptionEditConfirmed() && !vnode.attrs.isReactivation()) {
                 showSubscriptionModal(true);
 
                 return false;
             }
 
-            const data = _.extend({}, commonData, { subscription_id: args.subscriptionId() });
+            const data = _.extend({}, commonData, { subscription_id: vnode.attrs.subscriptionId() });
 
             commonPaymentVM.sendCreditCardPayment(
                 selectedCreditCard,
                 subscriptionVM,
                 data,
-                args.addressVM
+                vnode.attrs.addressVM
             );
 
             return false;
@@ -118,16 +119,16 @@ const paymentCreditCard = {
             }
 
             if (vm.creditCardFields.errors().length === 0) {
-                if (args.isSubscription) {
+                if (vnode.attrs.isSubscription) {
                     const commonData = {
-                        rewardCommonId: args.reward_common_id,
-                        userCommonId: args.user_common_id,
-                        projectCommonId: args.project_common_id,
-                        amount: args.value * 100
+                        rewardCommonId: vnode.attrs.reward_common_id,
+                        userCommonId: vnode.attrs.user_common_id,
+                        projectCommonId: vnode.attrs.project_common_id,
+                        amount: vnode.attrs.value * 100
                     };
                     sendSubscriptionPayment(selectedCreditCard, vm, commonData);
                 } else {
-                    vm.sendPayment(selectedCreditCard, selectedInstallment, args.contribution_id, args.project_id);
+                    vm.sendPayment(selectedCreditCard, selectedInstallment, vnode.attrs.contribution_id, vnode.attrs.project_id);
                 }
             }
 
@@ -154,10 +155,10 @@ const paymentCreditCard = {
         const fieldHasError = (fieldName) => {
             const fieldWithError = _.findWhere(vm.creditCardFields.errors(), { field: fieldName });
 
-            return fieldWithError ? m.component(inlineError, { message: fieldWithError.message }) : '';
+            return fieldWithError ? m(inlineError, { message: fieldWithError.message }) : '';
         };
 
-        const buildTooltip = tooltipText => m.component(tooltip, {
+        const buildTooltip = tooltipText => m(tooltip, {
             el: '.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary',
             text: tooltipText,
             width: 380
@@ -193,16 +194,16 @@ const paymentCreditCard = {
         // Sum the total amount of installments with taxes and returns a formated string
         const totalAmountOfInstallment = (installments, selectedIndex) => h.formatNumber(installments[selectedIndex - 1].total_amount, 2);
 
-        if (!args.isSubscription) {
-            vm.getInstallments(args.contribution_id)
+        if (!vnode.attrs.isSubscription) {
+            vm.getInstallments(vnode.attrs.contribution_id)
                 .then(() => {
                     loadingInstallments(false);
                     m.redraw();
                 });
         }
 
-        if (!args.hideSave) {
-            vm.getSavedCreditCards(args.user_id)
+        if (!vnode.attrs.hideSave) {
+            vm.getSavedCreditCards(vnode.attrs.user_id)
                 .then((savedCards) => {
                     loadingSavedCreditCards(false);
                     selectCreditCard(savedCards[0]);
@@ -351,7 +352,7 @@ const paymentCreditCard = {
                         m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                             window.I18n.t('credit_card.number_tip', ctrl.scope())
                         ),
-                        m.component(creditCardInput, {
+                        m(creditCardInput, {
                             onfocus: ctrl.vm.resetCreditCardFieldError('number'),
                             onblur: ctrl.checkCreditCard,
                             class: ctrl.fieldHasError('number') ? 'error' : '',

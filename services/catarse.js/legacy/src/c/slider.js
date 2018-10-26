@@ -14,23 +14,24 @@
  */
 
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 
 const slider = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let interval;
-        const selectedSlideIdx = m.prop(0),
-            translationSize = m.prop(1600),
-            sliderTime = args.sliderTime || 6500,
+        const selectedSlideIdx = prop(0),
+            translationSize = prop(1600),
+            sliderTime = vnode.attrs.sliderTime || 6500,
             decrementSlide = () => {
                 if (selectedSlideIdx() > 0) {
                     selectedSlideIdx(selectedSlideIdx() - 1);
                 } else {
-                    selectedSlideIdx(args.slides.length - 1);
+                    selectedSlideIdx(vnode.attrs.slides.length - 1);
                 }
             },
             incrementSlide = () => {
-                if (selectedSlideIdx() < (args.slides.length - 1)) {
+                if (selectedSlideIdx() < (vnode.attrs.slides.length - 1)) {
                     selectedSlideIdx(selectedSlideIdx() + 1);
                 } else {
                     selectedSlideIdx(0);

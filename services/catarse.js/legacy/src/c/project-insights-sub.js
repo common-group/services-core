@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import moment from 'moment';
 import _ from 'underscore';
 import {
@@ -21,19 +22,19 @@ import userVM from '../vms/user-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsightsSub = {
-    controller: function(args) {
-        const filtersVM = args.filtersVM,
-            visitorsTotal = m.prop(0),
+    oninit: function(vnode) {
+        const filtersVM = vnode.attrs.filtersVM,
+            visitorsTotal = prop(0),
             visitorLoader = catarseMoments.loaderWithToken,
             loader = commonAnalytics.loaderWithToken,
-            visitorsPerDay = m.prop([]);
-        const weekSubscriptions = m.prop([]);
-        const subscriptionsPerDay = m.prop([]);
-        const lastWeekSubscriptions = m.prop([]);
-        const weekTransitions = m.prop([]);
-        const lastWeekTransitions = m.prop([]);
-        const subscriptionsPerMonth = m.prop([]);
-        const isSubscriptionsPerMonthLoaded = m.prop(false);
+            visitorsPerDay = prop([]);
+        const weekSubscriptions = prop([]);
+        const subscriptionsPerDay = prop([]);
+        const lastWeekSubscriptions = prop([]);
+        const weekTransitions = prop([]);
+        const lastWeekTransitions = prop([]);
+        const subscriptionsPerMonth = prop([]);
+        const isSubscriptionsPerMonthLoaded = prop(false);
         const subVM = commonAnalytics.filtersVM({
             project_id: 'eq'
         });
@@ -44,30 +45,30 @@ const projectInsightsSub = {
             }
         };
 
-        subVM.project_id(args.project.common_id);
+        subVM.project_id(vnode.attrs.project.common_id);
         const lVisitorsPerDay = visitorLoader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
         lVisitorsPerDay.load().then(processVisitors);
 
         const lSubscriptionsPerDay = loader(models.projectSubscriptionsPerDay.getRowOptions(subVM.parameters()));
         lSubscriptionsPerDay.load().then(subscriptionsPerDay);
 
-        subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+        subscriptionVM.getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekSubscriptions);
-        subscriptionVM.getNewSubscriptions(args.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+        subscriptionVM.getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekSubscriptions);
 
-        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+        subscriptionVM.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekTransitions);
-        subscriptionVM.getSubscriptionTransitions(args.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+        subscriptionVM.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
             .then(lastWeekTransitions);
-        subscriptionVM.getSubscriptionsPerMonth(args.project.common_id)
+        subscriptionVM.getSubscriptionsPerMonth(vnode.attrs.project.common_id)
             .then((subscriptions) => {
                 subscriptionsPerMonth(subscriptions);
                 isSubscriptionsPerMonthLoaded(true);
             });
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
-        const balanceLoader = userVM.getUserBalance(args.project.user_id);
+        const balanceLoader = userVM.getUserBalance(vnode.attrs.project.user_id);
 
         return {
             weekSubscriptions,
@@ -98,8 +99,8 @@ const projectInsightsSub = {
 
         return m('.project-insights', !args.l() ? [
             m(`.w-section.section-product.${project.mode}`),
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
             m('.dashboard-header.section-one-column', [
                 m('.u-marginbottom-30.u-text-center', [
@@ -113,7 +114,7 @@ const projectInsightsSub = {
                 m('.w-container', [
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                         subscribersDetails && !_.isEmpty(ctrl.projectGoalsVM.goals()) ?
-                        m.component(projectGoalsBoxDashboard, {
+                        m(projectGoalsBoxDashboard, {
                             goalDetails: ctrl.projectGoalsVM.goals,
                             amount: subscribersDetails.amount_paid_for_valid_period
                         }) : '',
@@ -150,7 +151,7 @@ const projectInsightsSub = {
                             )
                         ])
                     ]),
-                    (project.state === 'online' && !project.has_cancelation_request ? m('.w-container.u-marginbottom-60', m.component(projectInviteCard, {
+                    (project.state === 'online' && !project.has_cancelation_request ? m('.w-container.u-marginbottom-60', m(projectInviteCard, {
                         project
                     })) : ''),
 
@@ -187,7 +188,7 @@ const projectInsightsSub = {
                         m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [
                             window.I18n.t('last_30_days_indication', I18nScope())
                         ])
-                    ]), !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
+                    ]), !ctrl.lVisitorsPerDay() ? m(projectDataChart, {
                         collection: ctrl.visitorsPerDay,
                         dataKey: 'visitors',
                         limitDataset: 30,
@@ -199,7 +200,7 @@ const projectInsightsSub = {
                         style: {
                             'min-height': '300px'
                         }
-                    }, [!ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
+                    }, [!ctrl.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: ctrl.subscriptionsPerDay,
                         label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
                         subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
@@ -211,7 +212,7 @@ const projectInsightsSub = {
                         style: {
                             'min-height': '300px'
                         }
-                    }, [!ctrl.lSubscriptionsPerDay() ? m.component(projectDataChart, {
+                    }, [!ctrl.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: ctrl.subscriptionsPerDay,
                         label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
                         subLabel: window.I18n.t('last_30_days_indication', I18nScope()),

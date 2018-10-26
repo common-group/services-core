@@ -1,10 +1,11 @@
 import { commonPayment } from '../api';
 import _ from 'underscore';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import h from '../h';
 
-const subscriptions = m.prop([]),
+const subscriptions = prop([]),
     vm = commonPayment.filtersVM({
         project_id: 'eq'
     });

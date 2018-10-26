@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import moment from 'moment';
@@ -12,14 +13,14 @@ const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const surveyScope = _.partial(h.i18nScope, 'projects.dashboard_surveys');
 
 const surveys = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const loader = catarse.loaderWithToken,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             {
                 project_id
-            } = args,
+            } = vnode.attrs,
             toggleOpen = (reward) => {
                 m.request({
                     method: 'GET',
@@ -33,7 +34,7 @@ const surveys = {
                     m.redraw();
                 });
             },
-            projectDetails = m.prop([]);
+            projectDetails = prop([]);
 
         filterVM.project_id(project_id);
         const l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
@@ -77,7 +78,7 @@ const surveys = {
             if (canBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-small-stack.w-col-tiny-tiny-stack',
                     m('a.btn.btn-small.w-button', {
-                        onclick: () => m.route(`/projects/${ctrl.project_id}/rewards/${reward.id}/surveys/new`)
+                        onclick: () => m.route.set(`/projects/${ctrl.project_id}/rewards/${reward.id}/surveys/new`)
                     },
                         window.I18n.t('create_survey', surveyScope())
                     )
@@ -147,9 +148,9 @@ const surveys = {
             );
         };
 
-        return (project && !projectVM.isSubscription(project) ? m('.project-surveys',
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+        return project && !projectVM.isSubscription(project) ? m('.project-surveys',
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
             m('.section',
                 m('.w-container',
@@ -298,7 +299,7 @@ const surveys = {
                         ])
                     ])
                 ])
-            )) : h.loader());
+            )) : h.loader();
     }
 };
 

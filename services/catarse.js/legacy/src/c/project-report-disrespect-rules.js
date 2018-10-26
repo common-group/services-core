@@ -4,25 +4,26 @@
   *
   */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
 import inlineError from './inline-error';
 
 const projectReportDisrespectRules = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const formName = 'report-disrespect-rules';
-        const reasonError = m.prop(false);
-        const detailsError = m.prop(false);
+        const reasonError = prop(false);
+        const detailsError = prop(false);
         const validate = () => {
             let ok = true;
             detailsError(false);
             reasonError(false);
-            if (_.isEmpty(args.reason())) {
+            if (_.isEmpty(vnode.attrs.reason())) {
                 reasonError(true);
                 ok = false;
             }
-            if (_.isEmpty(args.details())) {
+            if (_.isEmpty(vnode.attrs.details())) {
                 detailsError(true);
                 ok = false;
             }
@@ -30,10 +31,10 @@ const projectReportDisrespectRules = {
         };
 
         return {
-            formName: args.formName || formName,
+            formName: vnode.attrs.formName || formName,
             reasonError,
             detailsError,
-            sendReport: args.sendReport.bind(args.sendReport, validate),
+            sendReport: vnode.attrs.sendReport.bind(vnode.attrs.sendReport, validate),
         };
     },
     view: function(ctrl, args) {

@@ -1,16 +1,17 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 import { catarse } from '../api';
 
 const inviteEmailsFromImport = {
-    controller: function(args) {
-        const checkedList = m.prop([]),
-            loading = m.prop(false),
-            filterTerm = m.prop(''),
-            filteredData = m.prop(args.dataEmails()),
-            filtering = m.prop(false),
+    oninit: function(vnode) {
+        const checkedList = prop([]),
+            loading = prop(false),
+            filterTerm = prop(''),
+            filteredData = prop(vnode.attrs.dataEmails()),
+            filtering = prop(false),
             onCheckGenerator = item => () => {
                 const matchEmail = resource => resource.email === item.email;
                 if (_.find(checkedList(), matchEmail)) {
@@ -26,13 +27,13 @@ const inviteEmailsFromImport = {
                     catarse.loaderWithToken(
                           models.inviteProjectEmail.postOptions({
                               data: {
-                                  project_id: args.project.project_id,
+                                  project_id: vnode.attrs.project.project_id,
                                   emails: _.map(checkedList(), x => x.email)
                               }
                           })).load().then((data) => {
-                              args.modalToggle.toggle();
+                              vnode.attrs.modalToggle.toggle();
                               loading(false);
-                              args.showSuccess(true);
+                              vnode.attrs.showSuccess(true);
                           });
                 }
             },
@@ -48,11 +49,11 @@ const inviteEmailsFromImport = {
                     };
 
                     if (!_.isEmpty(filterTerm()) || !_.isUndefined(filterTerm())) {
-                        searchFilter = _.filter(args.dataEmails(), matchSearch);
+                        searchFilter = _.filter(vnode.attrs.dataEmails(), matchSearch);
                     }
 
                     filtering(false);
-                    return searchFilter || args.dataEmails;
+                    return searchFilter || vnode.attrs.dataEmails;
                 }
             };
 

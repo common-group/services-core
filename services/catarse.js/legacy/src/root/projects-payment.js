@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -19,17 +20,17 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsPayment = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const project = projectVM.currentProject,
             vm = paymentVM(),
-            showPaymentForm = m.prop(false),
-            addVM = m.prop(),
+            showPaymentForm = prop(false),
+            addVM = prop(),
             contribution = contributionVM.getCurrentContribution(),
-            reward = m.prop(contribution().reward),
+            reward = prop(contribution().reward),
             value = contribution().value,
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            isCnpj = m.prop(false),
+            isCnpj = prop(false),
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
@@ -49,7 +50,7 @@ const projectsPayment = {
                 field: fieldName
             });
 
-            return fieldWithError ? m.component(inlineError, {
+            return fieldWithError ? m(inlineError, {
                 message: fieldWithError.message
             }) : '';
         };
@@ -293,7 +294,7 @@ const projectsPayment = {
                                 m('.card.card-terciary.u-radius.u-marginbottom-40',
                                     m(addressForm, {
                                         addressFields: addVM.fields,
-                                        fields: m.prop(ctrl.vm.fields),
+                                        fields: prop(ctrl.vm.fields),
                                         international: addVM.international,
                                         hideNationality: true
                                     })
@@ -310,7 +311,7 @@ const projectsPayment = {
                                 window.I18n.t('next_step', ctrl.scope())
                             )
                         ) : ''),
-                        ctrl.showPaymentForm() ? m.component(paymentForm, {
+                        ctrl.showPaymentForm() ? m(paymentForm, {
                             vm: ctrl.vm,
                             contribution_id: ctrl.contribution().id,
                             project_id: projectVM.currentProject().project_id,
@@ -394,7 +395,7 @@ const projectsPayment = {
                                 )
                             ]),
                         ]),
-                        m.component(faqBox, {
+                        m(faqBox, {
                             mode: project.mode,
                             vm: ctrl.vm,
                             faq: ctrl.vm.faq(project.mode),

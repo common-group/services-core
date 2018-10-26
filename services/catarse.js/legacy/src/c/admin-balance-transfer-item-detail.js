@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -11,24 +12,24 @@ const I18nScope = _.partial(h.i18nScope, 'admin.balance_transfers');
 const I18nBankAccount = _.partial(h.i18nScope, 'users.balance.bank');
 
 const adminBalanceTransferItemDetail = {
-    controller: function(args) {
-        const userBankAccount = m.prop(null),
-            showPopNotification = m.prop(false),
-            popNotificationAttributes = m.prop({}),
-            metadata = args.item.last_transition_metadata || { transfer_data: {} },
+    oninit: function(vnode) {
+        const userBankAccount = prop(null),
+            showPopNotification = prop(false),
+            popNotificationAttributes = prop({}),
+            metadata = vnode.attrs.item.last_transition_metadata || { transfer_data: {} },
             transferData = metadata.transfer_data || {},
             metaBank = transferData.bank_account,
-            userBalance = m.prop({}),
-            transitionBankAccount = m.prop({}),
+            userBalance = prop({}),
+            transitionBankAccount = prop({}),
             fields = {
-                admin_notes: m.prop(args.item.admin_notes)
+                admin_notes: prop(vnode.attrs.item.admin_notes)
             },
-            loadingNotes = m.prop(false),
+            loadingNotes = prop(false),
             submitNotes = () => {
                 loadingNotes(true);
                 m.request({
                     method: 'PUT',
-                    url: `/admin/balance_transfers/${args.item.id}`,
+                    url: `/admin/balance_transfers/${vnode.attrs.item.id}`,
                     data: {
                         balance_transfer: {
                             admin_notes: fields.admin_notes()
@@ -71,7 +72,7 @@ const adminBalanceTransferItemDetail = {
             }
         }
 
-        userVM.getUserBankAccount(args.item.user_id).then(_.compose(userBankAccount, _.first));
+        userVM.getUserBankAccount(vnode.attrs.item.user_id).then(_.compose(userBankAccount, _.first));
 
         return {
             metaBank,

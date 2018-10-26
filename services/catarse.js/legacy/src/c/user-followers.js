@@ -18,13 +18,13 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userFollowers = {
-    controller: function(args) {
+    oninit: function(vnode) {
         models.userFollower.pageSize(9);
         const followersListVM = catarse.paginationVM(models.userFollower,
                                                        'following.asc,created_at.desc', {
                                                            Prefer: 'count=exact'
                                                        }),
-            user = args.user,
+            user = vnode.attrs.user,
             userIdVM = catarse.filtersVM({ follow_id: 'eq' });
 
         userIdVM.follow_id(user.user_id);
@@ -41,23 +41,24 @@ const userFollowers = {
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
                 m('.w-row', [
-                    _.map(followersVM.collection(), friend => m.component(UserFollowCard,
-                                           { friend: _.extend({}, { friend_id: friend.user_id }, friend.source) })),
+                    _.map(followersVM.collection(), friend => m(
+                        UserFollowCard,
+                        { friend: _.extend({}, { friend_id: friend.user_id }, friend.source) }
+                    )),
                 ]),
                 m('.w-section.section.bg-gray', [
                     m('.w-container', [
                         m('.w-row.u-marginbottom-60', [
                             m('.w-col.w-col-5', [
                                 m('.u-marginright-20')
-                            ]), m.component(loadMoreBtn, { collection: followersVM }),
+                            ]), m(loadMoreBtn, { collection: followersVM }),
                             m('.w-col.w-col-5')
                         ])
                     ])
                 ])
 
             ])
-        ])
-        ;
+        ]);
     }
 };
 

@@ -11,24 +11,24 @@ import subscriptionVM from '../vms/subscription-vm';
 import projectVM from '../vms/project-vm';
 
 const projectHeader = {
-    controller: function(args) {
-        const project = args.project,
+    oninit: function(vnode) {
+        const project = vnode.attrs.project,
             currentUser = h.getUser(),
-            userProjectSubscriptions = args.userProjectSubscriptions,
-            hasSubscription = args.hasSubscription;
+            userProjectSubscriptions = vnode.attrs.userProjectSubscriptions,
+            hasSubscription = vnode.attrs.hasSubscription;
 
         if (h.isProjectPage() && currentUser && !_.isUndefined(project())) {
             if (!projectVM.isSubscription(project)) {
                 contributionVM
                     .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
-                    .then(args.projectContributions);
+                    .then(vnode.attrs.projectContributions);
             }
         }
 
         return {
             hasSubscription,
             userProjectSubscriptions,
-            projectContributions: args.projectContributions,
+            projectContributions: vnode.attrs.projectContributions,
             showContributions: h.toggleProp(false, true)
         };
     },
@@ -50,11 +50,11 @@ const projectHeader = {
                 ]),
                 ctrl.showContributions() ? m('.u-margintop-20.w-row',
                     (!projectVM.isSubscription(project) ?
-                        _.map(ctrl.projectContributions(), contribution => m.component(userContributionDetail, {
+                        _.map(ctrl.projectContributions(), contribution => m(userContributionDetail, {
                             contribution,
                             rewardDetails
                         })) :
-                     _.map(activeSubscriptions.length > 0 ? activeSubscriptions : sortedSubscriptions, subscription => m.component(userSubscriptionDetail, {
+                     _.map(activeSubscriptions.length > 0 ? activeSubscriptions : sortedSubscriptions, subscription => m(userSubscriptionDetail, {
                          subscription,
                          project: project()
                      }))
@@ -64,7 +64,7 @@ const projectHeader = {
             '');
         const hasBackground = Boolean(project().cover_image);
 
-        return (!_.isUndefined(project()) ? m('#project-header', [
+        return !_.isUndefined(project()) ? m('#project-header', [
             m(`.w-section.section-product.${project().mode}`),
             m(`${projectVM.isSubscription(project) ? '.dark' : ''}.project-main-container`, {
                 class: hasBackground ? 'project-with-background' : null,
@@ -77,10 +77,10 @@ const projectHeader = {
                 m(`.w-section.project-main${projectVM.isSubscription(project) ? '.transparent-background' : ''}`, [
                     m('.w-container', [
                         m('.w-row', [
-                            m('.w-col.w-col-8.project-highlight', m.component(projectHighlight, {
+                            m('.w-col.w-col-8.project-highlight', m(projectHighlight, {
                                 project
                             })),
-                            m('.w-col.w-col-4', m.component(projectSidebar, {
+                            m('.w-col.w-col-4', m(projectSidebar, {
                                 project,
                                 hasSubscription: ctrl.hasSubscription(),
                                 subscriptionData: args.subscriptionData,
@@ -91,7 +91,7 @@ const projectHeader = {
                     ])
                 ])
             ])
-        ]) : m(''));
+        ]) : m('');
     }
 };
 

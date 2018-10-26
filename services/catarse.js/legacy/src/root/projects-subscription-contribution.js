@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import rewardVM from '../vms/reward-vm';
 import paymentVM from '../vms/payment-vm';
@@ -11,7 +12,7 @@ import faqBox from '../c/faq-box';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsSubscriptionContribution = {
-    controller: function() {
+    oninit: function() {
         const rewards = () => _.union(
             [{
                 id: null,
@@ -23,9 +24,9 @@ const projectsSubscriptionContribution = {
             projectVM.rewardDetails()
         );
 
-        const isEdit = m.prop(m.route.param('subscription_id'));
+        const isEdit = prop(m.route.param('subscription_id'));
         const subscriptionStatus = m.route.param('subscription_status');
-        const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
+        const isReactivation = prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
 
         const submitContribution = (event) => {
             const valueFloat = h.monetaryToFloat(rewardVM.contributionValue);
@@ -35,7 +36,7 @@ const projectsSubscriptionContribution = {
                 rewardVM.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${rewardVM.selectedReward().minimum_value}`);
             } else {
                 rewardVM.error('');
-                m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}${isEdit() ? `&subscription_id=${m.route.param('subscription_id')}` : ''}${isReactivation() ? `&subscription_status=${subscriptionStatus}` : ''}`);
+                m.route.set(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}${currentRewardId ? `&reward_id=${currentRewardId}` : ''}${isEdit() ? `&subscription_id=${m.route.param('subscription_id')}` : ''}${isReactivation() ? `&subscription_status=${subscriptionStatus}` : ''}`);
             }
         };
 
@@ -101,7 +102,7 @@ const projectsSubscriptionContribution = {
                         m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', window.I18n.t('contribution_warning.info', I18nScope())),
                         m(`a.alt-link.fontsize-smallest[target="__blank"][href="${window.I18n.t('contribution_warning.link', I18nScope())}"]`, window.I18n.t('contribution_warning.link_label', I18nScope()))
                     ]),
-                    m.component(faqBox, {
+                    m(faqBox, {
                         mode: project().mode,
                         vm: ctrl.paymentVM,
                         faq,

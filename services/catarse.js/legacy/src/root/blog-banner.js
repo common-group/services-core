@@ -1,12 +1,13 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import blogVM from '../vms/blog-vm';
 
 const blogBanner = {
-    controller: function(args) {
-        const posts = m.prop([]),
-            error = m.prop(false);
+    oninit: function(vnode) {
+        const posts = prop([]),
+            error = prop(false);
 
         blogVM.getBlogPosts().then(posts).catch(error);
 

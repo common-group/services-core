@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import models from '../models';
@@ -8,16 +9,16 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const subProjectNew = {
-    controller: function() {
-        const categories = m.prop([]),
+    oninit: function() {
+        const categories = prop([]),
             filters = catarse.filtersVM,
             loadCategories = () => models.category.getPage(filters({}).order({
                 name: 'asc'
             }).parameters()).then(categories),
-            projectCategory = m.prop('-1'),
-            projectName = m.prop(''),
-            projectNameError = m.prop(false),
-            projectCategoryError = m.prop(false),
+            projectCategory = prop('-1'),
+            projectName = prop(''),
+            projectNameError = prop(false),
+            projectCategoryError = prop(false),
             validateProjectForm = () => {
                 projectCategoryError(projectCategory() == -1);
                 projectNameError(projectName().trim() === '');
@@ -100,7 +101,7 @@ const subProjectNew = {
                     ),
                     m('.w-col.w-col-2')
                 ]),
-                m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m.component(inlineError, {
+                m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m(inlineError, {
                     message: 'Por favor, verifique novamente os campos acima!'
                 }) : ''),
 

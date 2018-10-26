@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import ownerMessageContent from './owner-message-content';
@@ -7,8 +8,8 @@ import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const projectUserCard = {
-    controller: function(args) {
-        const project = args.project || m.prop({}),
+    oninit: function(vnode) {
+        const project = vnode.attrs.project || prop({}),
             displayModal = h.toggleProp(false, true),
             storeId = 'message',
             sendMessage = () => {
@@ -32,13 +33,13 @@ const projectUserCard = {
     },
     view: function(ctrl, args) {
         const project = args.project;
-        const contactModalC = [ownerMessageContent, m.prop(_.extend(args.userDetails(), {
+        const contactModalC = [ownerMessageContent, prop(_.extend(args.userDetails(), {
             project_id: project().id
         }))];
         const userDetail = args.userDetails();
 
         return m('#user-card', _.isEmpty(userDetail) ? 'carregando...' : m('.u-marginbottom-30.u-text-center-small-only', [
-            (ctrl.displayModal() ? m.component(modalBox, {
+            (ctrl.displayModal() ? m(modalBox, {
                 displayModal: ctrl.displayModal,
                 content: contactModalC
             }) : ''),
@@ -49,7 +50,7 @@ const projectUserCard = {
                 m('.w-col.w-col-8', [
                     m('.fontsize-small.link-hidden.fontweight-semibold.u-marginbottom-10.lineheight-tight[itemprop="name"]', [
                         m(`a.link-hidden${args.isDark ? '.link-hidden-white' : ''}[href="${_.isNull(userDetail.deactivated_at) ? `/users/${userDetail.id}` : 'javascript:void(0);'}"]`, {
-                            config: m.route,
+                            oncreate: m.route.link,
                             onclick: () => {
                                 if (!_.isNull(userDetail.deactivated_at)) {
                                     return false;

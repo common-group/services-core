@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -11,35 +12,35 @@ import addressVM from '../vms/address-vm';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
-    controller: function(args) {
-        const parsedErrors = args.parsedErrors;
+    oninit: function(vnode) {
+        const parsedErrors = vnode.attrs.parsedErrors;
         const statesLoader = catarse.loader(models.state.getPageOptions()),
-            data = args.fields().address(),
+            data = vnode.attrs.fields().address(),
             vm = addressVM({
                 data
             }),
             defaultCountryID = vm.defaultCountryID,
             defaultForeignCountryID = vm.defaultForeignCountryID,
-            states = m.prop(),
-            zipCodeErrorMessage = m.prop(''),
-            fields = args.addressFields || vm.fields,
+            states = prop(),
+            zipCodeErrorMessage = prop(''),
+            fields = vnode.attrs.addressFields || vm.fields,
             errors = {
-                countryID: m.prop(parsedErrors ? parsedErrors.hasError('country_id') : false),
-                stateID: m.prop(parsedErrors ? parsedErrors.hasError('state') : false),
-                addressStreet: m.prop(parsedErrors ? parsedErrors.hasError('street') : false),
-                addressNumber: m.prop(parsedErrors ? parsedErrors.hasError('number') : false),
-                addressComplement: m.prop(false),
-                addressNeighbourhood: m.prop(parsedErrors ? parsedErrors.hasError('neighbourhood') : false),
-                addressCity: m.prop(parsedErrors ? parsedErrors.hasError('city') : false),
-                addressState: m.prop(parsedErrors ? parsedErrors.hasError('state') : false),
-                addressZipCode: m.prop(parsedErrors ? parsedErrors.hasError('zipcode') : false),
-                phoneNumber: m.prop(parsedErrors ? parsedErrors.hasError('phonenumber') : false)
+                countryID: prop(parsedErrors ? parsedErrors.hasError('country_id') : false),
+                stateID: prop(parsedErrors ? parsedErrors.hasError('state') : false),
+                addressStreet: prop(parsedErrors ? parsedErrors.hasError('street') : false),
+                addressNumber: prop(parsedErrors ? parsedErrors.hasError('number') : false),
+                addressComplement: prop(false),
+                addressNeighbourhood: prop(parsedErrors ? parsedErrors.hasError('neighbourhood') : false),
+                addressCity: prop(parsedErrors ? parsedErrors.hasError('city') : false),
+                addressState: prop(parsedErrors ? parsedErrors.hasError('state') : false),
+                addressZipCode: prop(parsedErrors ? parsedErrors.hasError('zipcode') : false),
+                phoneNumber: prop(parsedErrors ? parsedErrors.hasError('phonenumber') : false)
             },
             phoneMask = _.partial(h.mask, '(99) 9999-99999'),
             zipcodeMask = _.partial(h.mask, '99999-999'),
             applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = args.disableInternational ? m.prop(false) : args.international || vm.international;
+            international = vnode.attrs.disableInternational ? prop(false) : vnode.attrs.international || vm.international;
 
         const checkPhone = () => {
             let hasError = false;
@@ -58,7 +59,7 @@ const addressForm = {
             }
             return hasError;
         };
-        _.extend(args.fields(), {
+        _.extend(vnode.attrs.fields(), {
             validate: () => {
                 let hasError = false;
                 const fieldsToIgnore = international() ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber'] : ['id', 'addressComplement', 'addressState', 'phoneNumber'];
@@ -108,7 +109,7 @@ const addressForm = {
             states(data);
             addressVM.states(states());
         });
-        return {
+        vnode.state = {
             lookupZipCode,
             zipCodeErrorMessage,
             errors,
@@ -121,12 +122,12 @@ const addressForm = {
             states
         };
     },
-    view: function(ctrl, args) {
-        const fields = ctrl.fields,
-            international = ctrl.international,
-            defaultCountryID = ctrl.defaultCountryID,
-            defaultForeignCountryID = ctrl.defaultForeignCountryID,
-            errors = ctrl.errors,
+    view: function({state, attrs}) {
+        const fields = state.fields,
+            international = state.international,
+            defaultCountryID = state.defaultCountryID,
+            defaultForeignCountryID = state.defaultForeignCountryID,
+            errors = state.errors,
             // hash to send to rails
             address = {
                 id: fields.id(),
@@ -142,13 +143,13 @@ const addressForm = {
                 phone_number: fields.phoneNumber()
             };
 
-        args.fields().address(address);
-        if (args.stateName) {
-            args.stateName(ctrl.states() && fields.stateID() ? _.find(ctrl.states(), state => state.id === parseInt(fields.stateID())).name : '');
+        attrs.fields().address(address);
+        if (attrs.stateName) {
+            attrs.stateName(state.states() && fields.stateID() ? _.find(state.states(), state => state.id === parseInt(fields.stateID())).name : '');
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            (!args.hideNationality ?
+            (!attrs.hideNationality ?
                 m('.u-marginbottom-30',
                 m(nationalityRadio, {
                     fields,
@@ -159,10 +160,10 @@ const addressForm = {
             // @TODO move to another component
             (international() ?
                 m('form', [
-                    args.disableInternational ? '' : m(countrySelect, {
-                        countryName: args.countryName,
+                    attrs.disableInternational ? '' : m(countrySelect, {
+                        countryName: attrs.countryName,
                         fields,
-                        addVM: args.addVM,
+                        addVM: attrs.addVM,
                         international,
                         defaultCountryID,
                         defaultForeignCountryID
@@ -175,8 +176,8 @@ const addressForm = {
                                 ),
                                 m("input.positive.text-field.w-input[required='required'][type='text']", {
                                     class: errors.addressStreet() ? 'error' : '',
-                                    value: ctrl.fields.addressStreet(),
-                                    onchange: m.withAttr('value', ctrl.fields.addressStreet)
+                                    value: state.fields.addressStreet(),
+                                    onchange: m.withAttr('value', state.fields.addressStreet)
                                 }),
                                 errors.addressStreet() ? m(inlineError, {
                                     message: 'Please fill in an address.'
@@ -190,8 +191,8 @@ const addressForm = {
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressZipCode() ? 'error' : '',
-                                        value: ctrl.fields.addressZipCode(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressZipCode)
+                                        value: state.fields.addressZipCode(),
+                                        onchange: m.withAttr('value', state.fields.addressZipCode)
                                     }),
                                     errors.addressZipCode() ? m(inlineError, {
                                         message: 'ZipCode is required'
@@ -203,8 +204,8 @@ const addressForm = {
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressCity() ? 'error' : '',
-                                        value: ctrl.fields.addressCity(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressCity)
+                                        value: state.fields.addressCity(),
+                                        onchange: m.withAttr('value', state.fields.addressCity)
                                     }),
                                     errors.addressCity() ? m(inlineError, {
                                         message: 'City is required'
@@ -216,8 +217,8 @@ const addressForm = {
                                     ),
                                     m("input#address-state.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressState() ? 'error' : '',
-                                        value: ctrl.fields.addressState(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressState)
+                                        value: state.fields.addressState(),
+                                        onchange: m.withAttr('value', state.fields.addressState)
                                     }),
                                     errors.addressState() ? m(inlineError, {
                                         message: 'State is required'
@@ -229,8 +230,8 @@ const addressForm = {
                 ]) :
                 m('.w-form', [
                     m('div', [
-                        args.disableInternational ? null : m(countrySelect, {
-                            countryName: args.countryName,
+                        attrs.disableInternational ? null : m(countrySelect, {
+                            countryName: attrs.countryName,
                             fields,
                             international,
                             defaultCountryID,
@@ -249,14 +250,14 @@ const addressForm = {
                                     ]),
                                     m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                         class: errors.addressZipCode() ? 'error' : '',
-                                        value: ctrl.fields.addressZipCode(),
-                                        onkeyup: m.withAttr('value', value => ctrl.applyZipcodeMask(value)),
+                                        value: state.fields.addressZipCode(),
+                                        onkeyup: m.withAttr('value', value => state.applyZipcodeMask(value)),
                                         oninput: (e) => {
-                                            ctrl.lookupZipCode(e.target.value);
+                                            state.lookupZipCode(e.target.value);
                                         }
                                     }),
                                     errors.addressZipCode() ? m(inlineError, {
-                                        message: ctrl.zipCodeErrorMessage() ? ctrl.zipCodeErrorMessage() : 'Informe um CEP válido.'
+                                        message: state.zipCodeErrorMessage() ? state.zipCodeErrorMessage() : 'Informe um CEP válido.'
                                     }) : ''
                                 ]),
                                 m('.w-col.w-col-6')
@@ -267,8 +268,8 @@ const addressForm = {
                                 ),
                                 m("input.positive.text-field.w-input[maxlength='50'][required='required'][type='text']", {
                                     class: errors.addressStreet() ? 'error' : '',
-                                    value: ctrl.fields.addressStreet(),
-                                    onchange: m.withAttr('value', ctrl.fields.addressStreet)
+                                    value: state.fields.addressStreet(),
+                                    onchange: m.withAttr('value', state.fields.addressStreet)
                                 }),
                                 errors.addressStreet() ? m(inlineError, {
                                     message: 'Informe um endereço com no máximo 50 caracteres. Se for necessário, use abreviações..'
@@ -281,8 +282,8 @@ const addressForm = {
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressNumber() ? 'error' : '',
-                                        value: ctrl.fields.addressNumber(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressNumber)
+                                        value: state.fields.addressNumber(),
+                                        onchange: m.withAttr('value', state.fields.addressNumber)
                                     }),
                                     errors.addressNumber() ? m(inlineError, {
                                         message: 'Informe um número.'
@@ -293,8 +294,8 @@ const addressForm = {
                                         window.I18n.t('address_complement', I18nScope())
                                     ),
                                     m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
-                                        value: ctrl.fields.addressComplement(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressComplement)
+                                        value: state.fields.addressComplement(),
+                                        onchange: m.withAttr('value', state.fields.addressComplement)
                                     })
                                 ]),
                                 m('.w-col.w-col-4', [
@@ -303,8 +304,8 @@ const addressForm = {
                                     ),
                                     m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
                                         class: errors.addressNeighbourhood() ? 'error' : '',
-                                        value: ctrl.fields.addressNeighbourhood(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressNeighbourhood)
+                                        value: state.fields.addressNeighbourhood(),
+                                        onchange: m.withAttr('value', state.fields.addressNeighbourhood)
                                     }),
                                     errors.addressNeighbourhood() ? m(inlineError, {
                                         message: 'Informe um bairro.'
@@ -318,8 +319,8 @@ const addressForm = {
                                     ),
                                     m("input.positive.text-field.w-input[required='required'][type='text']", {
                                         class: errors.addressCity() ? 'error' : '',
-                                        value: ctrl.fields.addressCity(),
-                                        onchange: m.withAttr('value', ctrl.fields.addressCity)
+                                        value: state.fields.addressCity(),
+                                        onchange: m.withAttr('value', state.fields.addressCity)
                                     }),
                                     errors.addressCity() ? m(inlineError, {
                                         message: 'Informe uma cidade.'
@@ -331,13 +332,13 @@ const addressForm = {
                                     ),
                                     m('select#address-state.positive.text-field.w-select', {
                                         class: errors.stateID() ? 'error' : '',
-                                        onchange: m.withAttr('value', ctrl.fields.stateID)
+                                        onchange: m.withAttr('value', state.fields.stateID)
                                     }, [
                                         m('option', { value: '' }),
-                                        (!_.isEmpty(ctrl.states()) ?
-                                            _.map(ctrl.states(), state => m('option', {
+                                        (!_.isEmpty(state.states()) ?
+                                            _.map(state.states(), state => m('option', {
                                                 value: state.id,
-                                                selected: state.id === ctrl.fields.stateID()
+                                                selected: state.id === state.fields.stateID()
                                             },
                                                 state.acronym
                                             )) : ''),
@@ -352,9 +353,9 @@ const addressForm = {
                                     ),
                                     m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                         class: errors.phoneNumber() ? 'error' : '',
-                                        value: ctrl.fields.phoneNumber(),
-                                        onkeyup: m.withAttr('value', value => ctrl.applyPhoneMask(value)),
-                                        onchange: m.withAttr('value', ctrl.fields.phoneNumber)
+                                        value: state.fields.phoneNumber(),
+                                        onkeyup: m.withAttr('value', value => state.applyPhoneMask(value)),
+                                        onchange: m.withAttr('value', state.fields.phoneNumber)
                                     }),
                                     errors.phoneNumber() ? m(inlineError, {
                                         message: 'Informe um telefone válido.'

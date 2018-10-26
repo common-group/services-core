@@ -4,10 +4,10 @@ import h from '../h';
 import inlineError from '../c/inline-error';
 
 const shippingFeeInput = {
-    controller: function(args) {
-        const states = args.states;
-        const fee = args.fee,
-            fees = args.fees,
+    oninit: function(vnode) {
+        const states = vnode.attrs.states;
+        const fee = vnode.attrs.fee,
+            fees = vnode.attrs.fees,
             deleted = h.toggleProp(false, true),
             stateInUse = (state) => {
                 const destinations = _.map(fees(), fee => fee.destination());

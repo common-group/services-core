@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -9,38 +10,38 @@ import inlineError from './inline-error';
 import projectEditSaveBtn from './project-edit-save-btn';
 
 const userAboutEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let parsedErrors = userAboutVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteUser;
-        const user = args.user || {},
+        const user = vnode.attrs.user || {},
             fields = {
-                password: m.prop(''),
-                current_password: m.prop(''),
-                uploaded_image: m.prop(userVM.displayImage(user)),
-                cover_image: m.prop(user.profile_cover_image || ''),
-                email: m.prop(''),
-                permalink: m.prop(user.permalink || ''),
-                public_name: m.prop(user.public_name || ''),
-                facebook_link: m.prop(user.facebook_link || ''),
-                twitter: m.prop(user.twitter_username || ''),
-                links: m.prop(user.links || []),
-                about_html: m.prop(user.about_html || ''),
-                email_confirmation: m.prop('')
+                password: prop(''),
+                current_password: prop(''),
+                uploaded_image: prop(userVM.displayImage(user)),
+                cover_image: prop(user.profile_cover_image || ''),
+                email: prop(''),
+                permalink: prop(user.permalink || ''),
+                public_name: prop(user.public_name || ''),
+                facebook_link: prop(user.facebook_link || ''),
+                twitter: prop(user.twitter_username || ''),
+                links: prop(user.links || []),
+                about_html: prop(user.about_html || ''),
+                email_confirmation: prop('')
             },
-            passwordHasError = m.prop(false),
-            emailHasError = m.prop(false),
+            passwordHasError = prop(false),
+            emailHasError = prop(false),
             showEmailForm = h.toggleProp(false, true),
-            showSuccess = m.prop(false),
-            showError = m.prop(false),
-            errors = m.prop(),
-            loading = m.prop(false),
-            uploading = m.prop(false),
-            errorsArray = m.prop([]),
+            showSuccess = prop(false),
+            showError = prop(false),
+            errors = prop(),
+            loading = prop(false),
+            uploading = prop(false),
+            errorsArray = prop([]),
             pushErrosMessage = () => {
                 errors(errorsArray().join('<br/>'));
             },
             updateFieldsFromUser = () => {
-                userVM.fetchUser(args.userId, false).then((dataResponse) => {
+                userVM.fetchUser(vnode.attrs.userId, false).then((dataResponse) => {
                     const data = _.first(dataResponse);
                     fields.uploaded_image(userVM.displayImage(data));
                     fields.cover_image(data.profile_cover_image);
@@ -57,9 +58,9 @@ const userAboutEdit = {
                     userCoverImageEl = window.document.getElementById('user_cover_image'),
                     formData = new FormData();
 
-                if (userUploadedImageEl.files[0] || (!args.hideCoverImg && userCoverImageEl.files[0])) {
+                if (userUploadedImageEl.files[0] || (!vnode.attrs.hideCoverImg && userCoverImageEl.files[0])) {
                     formData.append('uploaded_image', userUploadedImageEl.files[0]);
-                    if (!args.hideCoverImg) {
+                    if (!vnode.attrs.hideCoverImg) {
                         formData.append('cover_image', userCoverImageEl.files[0]);
                     }
 
@@ -106,7 +107,7 @@ const userAboutEdit = {
                     links_attributes: linkAttributes()
                 };
 
-                if (args.publishingUserAbout) {
+                if (vnode.attrs.publishingUserAbout) {
                     userData.publishing_user_about = true;
                 }
 
@@ -221,10 +222,10 @@ const userAboutEdit = {
             fields = ctrl.fields;
 
         return m('#about-tab.content', [
-            (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
+            (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m(popNotification, {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
-            (ctrl.showError() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
+            (ctrl.showError() && !ctrl.loading() && !ctrl.uploading() ? m(popNotification, {
                 message: m.trust(ctrl.errors()),
                 error: true
             }) : ''),

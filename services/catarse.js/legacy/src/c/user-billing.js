@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -7,36 +8,36 @@ import userVM from '../vms/user-vm';
 import popNotification from './pop-notification';
 
 const userBilling = {
-    controller: function(args) {
+    oninit: function(vnode) {
         models.bank.pageSize(false);
-        const user = args.user,
-            bankAccount = m.prop({}),
+        const user = vnode.attrs.user,
+            bankAccount = prop({}),
             fields = {
-                owner_name: m.prop(''),
-                agency: m.prop(''),
-                bank_id: m.prop(''),
-                agency_digit: m.prop(''),
-                account: m.prop(''),
-                account_digit: m.prop(''),
-                owner_document: m.prop(''),
-                bank_account_id: m.prop('')
+                owner_name: prop(''),
+                agency: prop(''),
+                bank_id: prop(''),
+                agency_digit: prop(''),
+                account: prop(''),
+                account_digit: prop(''),
+                owner_document: prop(''),
+                bank_account_id: prop('')
             },
-            userId = args.userId,
-            error = m.prop(''),
-            showError = m.prop(false),
-            loader = m.prop(true),
-            bankInput = m.prop(''),
-            bankCode = m.prop('-1'),
-            banks = m.prop(),
+            userId = vnode.attrs.userId,
+            error = prop(''),
+            showError = prop(false),
+            loader = prop(true),
+            bankInput = prop(''),
+            bankCode = prop('-1'),
+            banks = prop(),
             handleError = () => {
                 error(true);
                 loader(false);
                 m.redraw();
             },
             banksLoader = catarse.loader(models.bank.getPageOptions()),
-            showSuccess = m.prop(false),
+            showSuccess = prop(false),
             showOtherBanks = h.toggleProp(false, true),
-            showOtherBanksInput = m.prop(false),
+            showOtherBanksInput = prop(false),
             setCsrfToken = (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
@@ -167,10 +168,10 @@ const userBilling = {
             bankAccount = ctrl.bankAccount();
 
         return m('[id=\'billing-tab\']', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (ctrl.showSuccess() ? m(popNotification, {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (ctrl.showError() ? m(popNotification, {
                 message: m.trust(ctrl.error()),
                 error: true
             }) : ''),

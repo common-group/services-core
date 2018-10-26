@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import { catarse } from '../api';
@@ -11,19 +12,19 @@ const contributionScope = _.partial(h.i18nScope, 'projects.contributions');
 const { $ } = window;
 
 const projectContributionReportContentCard = {
-    controller: function(args) {
-        const project = args.project(),
+    oninit: function(vnode) {
+        const project = vnode.attrs.project(),
             showDetail = h.toggleProp(false, true),
-            currentTab = m.prop('info'),
-            checked = contribution => _.contains(args.selectedContributions(), contribution.id),
+            currentTab = prop('info'),
+            checked = contribution => _.contains(vnode.attrs.selectedContributions(), contribution.id),
             selectContribution = (contribution) => {
                 const anyChecked = $('input:checkbox').is(':checked');
 
-                args.selectedAny(anyChecked);
+                vnode.attrs.selectedAny(anyChecked);
                 if (!checked(contribution)) {
-                    args.selectedContributions().push(contribution.id);
+                    vnode.attrs.selectedContributions().push(contribution.id);
                 } else {
-                    args.selectedContributions(_.without(args.selectedContributions(), contribution.id));
+                    vnode.attrs.selectedContributions(_.without(vnode.attrs.selectedContributions(), contribution.id));
                 }
                 return true;
             },
@@ -31,11 +32,11 @@ const projectContributionReportContentCard = {
                 contribution_id: 'eq'
             }),
             surveyLoader = () => {
-                vm.contribution_id(args.contribution().id);
+                vm.contribution_id(vnode.attrs.contribution().id);
 
                 return catarse.loaderWithToken(models.survey.getPageOptions(vm.parameters()));
             },
-            survey = m.prop(),
+            survey = prop(),
             stateClass = (state) => {
                 const classes = {
                     online: {

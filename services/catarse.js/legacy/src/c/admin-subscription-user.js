@@ -14,15 +14,16 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import adminUser from './admin-user';
 import userVM from '../vms/user-vm';
 
 const adminSubscriptionUser = {
-    controller: function(args) {
-        const user = m.prop({});
-        userVM.fetchUser(args.item.user_external_id, false).then((data) => {
+    oninit: function(vnode) {
+        const user = prop({});
+        userVM.fetchUser(vnode.attrs.item.user_external_id, false).then((data) => {
             user(_.first(data));
         });
         return {
@@ -40,7 +41,7 @@ const adminSubscriptionUser = {
             };
 
         const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${customer.email}`);
-        return ctrl.user() ? m.component(adminUser, {
+        return ctrl.user() ? m(adminUser, {
             item: user,
             additional_data: additionalData
         }) : h.loader();

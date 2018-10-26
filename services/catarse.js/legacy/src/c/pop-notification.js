@@ -2,8 +2,8 @@ import m from 'mithril';
 import h from '../h';
 
 const popNotification = {
-    controller: function(args) {
-        const displayNotification = args.toggleOpt || h.toggleProp(true, false),
+    oninit: function(vnode) {
+        const displayNotification = vnode.attrs.toggleOpt || h.toggleProp(true, false),
             setPopTimeout = () => {
                 setTimeout(() => { displayNotification(false); m.redraw(); }, 3000);
             };

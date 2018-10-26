@@ -1,19 +1,20 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore'
 import h from '../h';
 import { catarse } from '../api';
 import models from '../models';
 
 const adminReward = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let l;
         const loadShippingFee = () => {
-            const shippingFee = m.prop({});
+            const shippingFee = prop({});
 
-            if (args.contribution.shipping_fee_id) {
+            if (vnode.attrs.contribution.shipping_fee_id) {
                 const options = models.shippingFee.getRowOptions(
                     h.idVM.id(
-                        args.contribution.shipping_fee_id
+                        vnode.attrs.contribution.shipping_fee_id
                     ).parameters());
 
                 l = catarse.loaderWithToken(options);

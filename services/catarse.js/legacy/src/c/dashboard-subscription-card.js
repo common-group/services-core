@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import {
@@ -12,11 +13,11 @@ import subscriptionLastPaymentStatus from './subscription-last-payment-status';
 import h from '../h';
 
 const dashboardSubscriptionCard = {
-    controller: function(args) {
-        const subscription = args.subscription,
-            reward = m.prop(),
+    oninit: function(vnode) {
+        const subscription = vnode.attrs.subscription,
+            reward = prop(),
             toggleDetails = h.toggleProp(false, true),
-            user = m.prop();
+            user = prop();
 
         if (subscription.user_external_id) {
             const filterUserVM = catarse.filtersVM({

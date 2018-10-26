@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -12,7 +13,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_basics');
 
 const projectBasicsEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectBasicsVM,
             mapErrors = [
                   ['name', ['name']],
@@ -21,15 +22,15 @@ const projectBasicsEdit = {
                   ['category_id', ['category']],
                   ['city_id', ['city']]
             ],
-            loading = m.prop(false),
-            cities = m.prop(),
-            categories = m.prop([]),
+            loading = prop(false),
+            cities = prop(),
+            categories = prop([]),
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            selectedTags = m.prop([]),
-            tagOptions = m.prop([]),
-            isEditingTags = m.prop(false),
-            tagEditingLoading = m.prop(false),
+            selectedTags = prop([]),
+            tagOptions = prop([]),
+            isEditingTags = prop(false),
+            tagEditingLoading = prop(false),
             onSubmit = () => {
                 if (isEditingTags()) {
                     return false;
@@ -39,7 +40,7 @@ const projectBasicsEdit = {
                 m.redraw();
                 const tagString = _.pluck(selectedTags(), 'name').join(',');
                 vm.fields.public_tags(tagString);
-                vm.updateProject(args.projectId).then(() => {
+                vm.updateProject(vnode.attrs.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     showSuccess(true);
@@ -58,7 +59,7 @@ const projectBasicsEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
         if (vm.fields.public_tags()) {
             selectedTags(_.map(vm.fields.public_tags().split(','), name => ({ name })));
@@ -90,8 +91,8 @@ const projectBasicsEdit = {
 
             return false;
         };
-        const tagString = m.prop('');
-        const transport = m.prop({ abort: Function.prototype });
+        const tagString = prop('');
+        const transport = prop({ abort: Function.prototype });
         const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
         const searchTags = () => m.request({ method: 'POST', background: true, config: transport, data: { query: tagString(), count: 3 }, url: searchTagsUrl });
         const triggerTagSearch = (e) => {
@@ -151,11 +152,11 @@ const projectBasicsEdit = {
         const vm = ctrl.vm;
 
         return m('#basics-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (ctrl.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
                 toggleOpt: ctrl.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (ctrl.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
                 toggleOpt: ctrl.showError,
                 error: true

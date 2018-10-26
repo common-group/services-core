@@ -7,15 +7,15 @@ import dashboardSubscriptionCardDetailUserProfile from './dashboard-subscription
 import dashboardSubscriptionCardDetailUserAddress from './dashboard-subscription-card-detail-user-address';
 
 const dashboardSubscriptionCardDetail = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const userDetailsOptions = {
-            id: args.user.common_id
+            id: vnode.attrs.user.common_id
         };
 
         const userDetailsLoader = models.commonUserDetails.getRowWithToken(userDetailsOptions);
 
         userDetailsLoader.then((user_details) => {
-            args.user.address = user_details.address;
+            vnode.attrs.user.address = user_details.address;
         });
 
         return {

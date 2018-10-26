@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -15,15 +16,15 @@ import ProjectContributionStateLegendModal from '../c/project-contribution-state
 import ProjectContributionDeliveryLegendModal from '../c/project-contribution-delivery-legend-modal';
 
 const projectContributionReport = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const listVM = catarse.paginationVM(models.projectContribution, 'id.desc', {
                 Prefer: 'count=exact'
             }),
             filterVM = projectsContributionReportVM,
-            project = m.prop([{}]),
-            rewards = m.prop([]),
-            showDownloads = m.prop(false),
-            contributionStateOptions = m.prop([]),
+            project = prop([{}]),
+            rewards = prop([]),
+            showDownloads = prop(false),
+            contributionStateOptions = prop([]),
             reloadSelectOptions = (projectState) => {
                 let opts = [{
                     value: '',
@@ -192,7 +193,7 @@ const projectContributionReport = {
             }
             ];
 
-        filterVM.project_id(args.project_id);
+        filterVM.project_id(vnode.attrs.project_id);
 
         const lReward = catarse.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: `eq.${filterVM.project_id()}`
@@ -253,27 +254,27 @@ const projectContributionReport = {
 
         if (!ctrl.lProject()) {
             return m('', [
-                m.component(projectDashboardMenu, {
-                    project: m.prop(_.first(ctrl.project()))
+                m(projectDashboardMenu, {
+                    project: prop(_.first(ctrl.project()))
                 }),
                 ctrl.showDownloads() ? m(downloadReports, {
-                    project: m.prop(_.first(ctrl.project())),
+                    project: prop(_.first(ctrl.project())),
                     rewards: ctrl.rewards()
                 }) : [
                     m(`.w-section.section-product.${_.first(ctrl.project()).mode}`),
-                    m.component(projectContributionReportHeader, {
+                    m(projectContributionReportHeader, {
                         submit: ctrl.submit,
                         filterBuilder: ctrl.filterBuilder,
                         form: ctrl.filterVM.formDescriber,
                         mapRewardsToOptions: ctrl.mapRewardsToOptions,
                         filterVM: ctrl.filterVM
                     }),
-                    m.component(projectContributionReportContent, {
+                    m(projectContributionReportContent, {
                         submit: ctrl.submit,
                         list,
                         showDownloads: ctrl.showDownloads,
                         filterVM: ctrl.filterVM,
-                        project: m.prop(_.first(ctrl.project()))
+                        project: prop(_.first(ctrl.project()))
                     })
                 ]
             ]);

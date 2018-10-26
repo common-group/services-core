@@ -1,16 +1,17 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import popNotification from '../c/pop-notification';
 
 const projectEditWelcome = {
-    controller: function(args) {
-        const rewards = m.prop([]),
-            currentRewardId = m.prop(),
-            currentReward = m.prop(),
-            showSuccess = m.prop(false),
-            error = m.prop(false);
+    oninit: function(vnode) {
+        const rewards = prop([]),
+            currentRewardId = prop(),
+            currentReward = prop(),
+            showSuccess = prop(false),
+            error = prop(false);
 
         const changeReward = () => {
             const reward = _.find(rewards(), r => r.id == currentRewardId());
@@ -18,7 +19,7 @@ const projectEditWelcome = {
             m.redraw();
         };
 
-        const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
+        const loadRewards = () => rewardVM.fetchRewards(vnode.attrs.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
                 const rewardProp = {
@@ -26,8 +27,8 @@ const projectEditWelcome = {
                     project_id: reward.project_id,
                     minimum_value: reward.minimum_value,
                     title: reward.title,
-                    welcome_message_subject: m.prop(reward.welcome_message_subject || ''),
-                    welcome_message_body: m.prop(reward.welcome_message_body || '')
+                    welcome_message_subject: prop(reward.welcome_message_subject || ''),
+                    welcome_message_body: prop(reward.welcome_message_body || '')
                 };
                 rewards().push(rewardProp);
             });
@@ -86,10 +87,10 @@ const projectEditWelcome = {
             project = args.project;
         return m("[id='dashboard-welcome-tab']",
             (project() ? [
-                ctrl.showSuccess() ? m.component(popNotification, {
+                ctrl.showSuccess() ? m(popNotification, {
                     message: 'Recompensas salvas com sucesso'
                 }) : '',
-                (ctrl.error() ? m.component(popNotification, {
+                (ctrl.error() ? m(popNotification, {
                     message: 'Erro ao salvar. Preencha todos os campos',
                     error: true
                 }) : ''),
