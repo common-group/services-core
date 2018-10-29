@@ -4,7 +4,7 @@ import h from '../h';
 
 const UnsignedFriendFacebookConnect = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             largeBg: (() => {
                 if (_.isUndefined(vnode.attrs)) {
                     return false;
@@ -13,8 +13,8 @@ const UnsignedFriendFacebookConnect = {
             })()
         };
     },
-    view: function(ctrl, args) {
-        return m(`.w-section.section${(ctrl.largeBg ? '.bg-backs-carrosel.section-large' : '')}`, [
+    view: function({state}) {
+        return m(`.w-section.section${(state.largeBg ? '.bg-backs-carrosel.section-large' : '')}`, [
             m('.w-container', [
                 m('.card.card-big', [
                     m('.w-row', [

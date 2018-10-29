@@ -20,15 +20,15 @@ const userAbout = {
             m.redraw();
         });
 
-        return {
+        vnode.state = {
             userDetails,
             error,
             loader
         };
     },
-    view: function(ctrl, args) {
-        const user = ctrl.userDetails();
-        return ctrl.error() ? m(inlineError, { message: 'Erro ao carregar dados.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'about-tab\']',
+    view: function({state}) {
+        const user = state.userDetails();
+        return state.error() ? m(inlineError, { message: 'Erro ao carregar dados.' }) : state.loader() ? h.loader() : m('.content[id=\'about-tab\']',
             m('.w-container[id=\'about-content\']',
                 m('.w-row',
                     [
