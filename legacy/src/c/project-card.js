@@ -75,7 +75,7 @@ const projectCard = {
         };
 
 
-        return {
+        vnode.state = {
             cardCopy,
             css,
             type,
@@ -85,8 +85,8 @@ const projectCard = {
             isFinished
         };
     },
-    view: function(ctrl, args) {
-        const project = args.project,
+    view: function({state, attrs}) {
+        const project = attrs.project,
             projectOwnerName = (project.user ? (
                   project.user.public_name || project.user.name
               ) : (project.owner_public_name || project.owner_name)),
@@ -94,37 +94,37 @@ const projectCard = {
                   `${project.address.city} - ${project.address.state_acronym}`
               ) : (`${project.city_name} - ${project.state_acronym}`));
 
-        return m(ctrl.css().wrapper, [
-            m(ctrl.css().innerWrapper, [
-                m(`a${ctrl.css().thumb}[href="/${project.permalink}?ref=${args.ref}"]`, {
-                    onclick: projectVM.routeToProject(project, args.ref),
+        return m(state.css().wrapper, [
+            m(state.css().innerWrapper, [
+                m(`a${state.css().thumb}[href="/${project.permalink}?ref=${attrs.ref}"]`, {
+                    onclick: projectVM.routeToProject(project, attrs.ref),
                     style: {
                         'background-image': `url(${project.project_img || project.large_image})`,
                         display: 'block'
                     }
                 }),
-                m(ctrl.css().descriptionWrapper, [
-                    m(ctrl.css().description, [
-                        m(ctrl.css().title, [
-                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
-                                onclick: projectVM.routeToProject(project, args.ref)
+                m(state.css().descriptionWrapper, [
+                    m(state.css().description, [
+                        m(state.css().title, [
+                            m(`a.link-hidden[href="/${project.permalink}?ref=${attrs.ref}"]`, {
+                                onclick: projectVM.routeToProject(project, attrs.ref)
                             },
                             project.project_name || project.name)
                         ]),
-                        m(ctrl.css().author, `${window.I18n.t('by', I18nScope())} ${projectOwnerName}`),
-                        m(ctrl.css().headline, [
-                            m(`a.link-hidden[href="/${project.permalink}?ref=${args.ref}"]`, {
-                                onclick: projectVM.routeToProject(project, args.ref)
+                        m(state.css().author, `${window.I18n.t('by', I18nScope())} ${projectOwnerName}`),
+                        m(state.css().headline, [
+                            m(`a.link-hidden[href="/${project.permalink}?ref=${attrs.ref}"]`, {
+                                onclick: projectVM.routeToProject(project, attrs.ref)
                             }, project.headline)
                         ])
                     ]),
-                    m(ctrl.css().city, [
+                    m(state.css().city, [
                         m('.fontsize-smallest.fontcolor-secondary', [
                             m('span.fa.fa-fw.fa-map-marker.fa-1', ' '),
                             projectAddress
                         ])
                     ]),
-                    m(progressMeter, { progress: ctrl.progress, project }),
+                    m(progressMeter, { progress: state.progress, project }),
                     m('.card-project-stats', [
                         m('.w-row', [
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
@@ -134,14 +134,14 @@ const projectCard = {
                                 m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
                                 m('.fontsize-smallest.lineheight-tightest', window.I18n.t(`pledged.${project.mode}`, I18nScope()))
                             ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', ctrl.cardCopy(project)),
+                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', state.cardCopy(project)),
                         ])
                     ]),
                 ]),
-                (args.showFriends && ctrl.type === 'big' ?
+                (attrs.showFriends && state.type === 'big' ?
                  m('.w-col.w-col-4.w-col-medium-6', [m(projectFriends, { project })]) : '')
             ]),
-            (args.showFriends && ctrl.type !== 'big' ?
+            (attrs.showFriends && state.type !== 'big' ?
               m(projectFriends, { project }) : '')
         ]);
     }

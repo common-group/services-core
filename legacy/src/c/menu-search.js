@@ -3,7 +3,7 @@ import m from 'mithril';
 const { $ } = window;
 
 const menuSearch = {
-    view: function(ctrl, args) {
+    view: function() {
         return m('span#menu-search', [
             m('.w-form.w-hidden-small.w-hidden-tiny.header-search[id=\'discover-form-wrapper\']',
                 [

@@ -14,7 +14,7 @@ const CheckEmail = {
             confirmedEmail = prop(false),
             hideAlert = prop(false);
 
-        return {
+        vnode.state = {
             confirmedEmail,
             hideAlert,
             user,
@@ -37,13 +37,13 @@ const CheckEmail = {
         };
     },
 
-    view: function(ctrl, args) {
-        const user = ctrl.user();
+    view: function({state, attrs}) {
+        const user = state.user();
         if (user) {
             const userCreatedRecently = moment().isBefore(moment(user.created_at).add(2, 'days'));
 
-            return ((user && !userCreatedRecently && !user.email_active && !ctrl.hideAlert()) ? m('.card-alert.section.u-text-center', { style: (args.menuTransparency ? { 'padding-top': '100px' } : {}) }, [
-                m('.w-container', (ctrl.confirmedEmail() ? [
+            return ((user && !userCreatedRecently && !user.email_active && !state.hideAlert()) ? m('.card-alert.section.u-text-center', { style: (attrs.menuTransparency ? { 'padding-top': '100px' } : {}) }, [
+                m('.w-container', (state.confirmedEmail() ? [
                     m('.fontsize-large.fontweight-semibold', window.I18n.t('confirmed_title', I18nScope())),
                     m('.fontsize-large.fontweight-semibold.u-marginbottom-20', window.I18n.t('confirmed_sub', I18nScope())),
                 ] : [
@@ -54,7 +54,7 @@ const CheckEmail = {
                         m('.w-col.w-col-3'),
                         m('.w-col.w-col-3', [
                             m('button.btn.btn-medium.btn-terciary.w-button', {
-                                onclick: ctrl.checkEmail
+                                onclick: state.checkEmail
                             }, 'Sim!')
                         ]),
                         m('.w-col.w-col-3', [

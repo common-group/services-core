@@ -14,49 +14,49 @@ const paymentForm = {
             scope = () => vnode.attrs.vm.isInternational()
                        ? I18nIntScope()
                        : I18nScope();
-        return {
+        vnode.state {
             isSlip,
             scope,
             vm: vnode.attrs.vm
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('#catarse_pagarme_form', [
             m('.u-text-center-small-only.u-marginbottom-30', [
                 m('.fontsize-large.fontweight-semibold',
-                    window.I18n.t('payment_info', ctrl.scope())
+                    window.I18n.t('payment_info', state.scope())
                 ),
                 m('.fontsize-smallest.fontcolor-secondary.fontweight-semibold', [
                     m('span.fa.fa-lock'),
-                    window.I18n.t('safe_payment', ctrl.scope())
+                    window.I18n.t('safe_payment', state.scope())
                 ])
             ]),
             m('.flex-row.u-marginbottom-40', [
                 m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
-                    onclick: () => ctrl.isSlip(false),
-                    class: !ctrl.isSlip() ? 'selected' : ''
+                    onclick: () => state.isSlip(false),
+                    class: !state.isSlip() ? 'selected' : ''
                 }, [
                     m('.fontsize-base.fontweight-semibold',
-                        window.I18n.t('credit_card_select', ctrl.scope())
+                        window.I18n.t('credit_card_select', state.scope())
                         ),
                     m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-20',
-                            window.I18n.t('debit_card_info', ctrl.scope())
+                            window.I18n.t('debit_card_info', state.scope())
                         ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299bd8f326a24d4828a0fd_credit-cards.png\']')
                 ]),
-                !args.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
-                    onclick: () => ctrl.isSlip(true),
-                    class: ctrl.isSlip() ? 'selected' : ''
+                !attrs.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
+                    onclick: () => state.isSlip(true),
+                    class: state.isSlip() ? 'selected' : ''
                 }, [
                     m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
                             'Boleto bancário'
                         ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299c6ef96a6e44489a7a07_boleto.png\'][width=\'48\']')
                 ]) : m('.flex-column')
-            ]), !ctrl.isSlip() ? m('#credit-card-section', [
-                m(paymentCreditCard, args)
-            ]) : !args.vm.isInternational() ? m('#boleto-section', [
-                m(paymentSlip, args)
+            ]), !state.isSlip() ? m('#credit-card-section', [
+                m(paymentCreditCard, attrs)
+            ]) : !attrs.vm.isInternational() ? m('#boleto-section', [
+                m(paymentSlip, attrs)
             ]) : ''
         ]);
     }

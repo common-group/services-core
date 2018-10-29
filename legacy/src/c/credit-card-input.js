@@ -13,17 +13,17 @@ const creditCardInput = {
             }
         };
 
-        return {
+        vnode.state = {
             setCreditCardHandlers,
             cardType
         };
     },
-    view: function(ctrl, args) {
-        return m(`input.w-input.text-field[name="${args.name}"][required="required"][type="tel"]`, {
-            onfocus: args.onfocus,
-            class: args.class,
-            config: ctrl.setCreditCardHandlers,
-            onblur: args.onblur
+    view: function({state, attrs}) {
+        return m(`input.w-input.text-field[name="${attrs.name}"][required="required"][type="tel"]`, {
+            onfocus: attrs.onfocus,
+            class: attrs.class,
+            config: state.setCreditCardHandlers,
+            onblur: attrs.onblur
         });
     }
 };

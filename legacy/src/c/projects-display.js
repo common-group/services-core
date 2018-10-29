@@ -67,7 +67,7 @@ const projectsDisplay = {
             console.log('Experiment Name:', window.__GO_EXPE_NAME)
         });
 
-        return {
+        vnode.state = {
             collections,
             aonAndFlex_Sub_6,
             aonAndFlex_Sub_3,
@@ -78,17 +78,17 @@ const projectsDisplay = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state}) {
 
-        if (ctrl.windowEventNOTDispatched) {
+        if (state.windowEventNOTDispatched) {
             window.dispatchEvent(new Event('on_projects_controller_loaded'));
-            ctrl.windowEventNOTDispatched = false;
+            state.windowEventNOTDispatched = false;
         }
 
 
-        if (ctrl.subHomeWith6()) {
+        if (state.subHomeWith6()) {
             return m('div', 
-                _.map(ctrl.aonAndFlex_Sub_6, (collection, index) => m(projectRowWithHeader, {
+                _.map(state.aonAndFlex_Sub_6, (collection, index) => m(projectRowWithHeader, {
                     collection,
                     title: collection.title,
                     ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
@@ -97,8 +97,8 @@ const projectsDisplay = {
                 }))
             );
         }
-        else if (ctrl.subHomeWith3()) {
-            return m('div', _.map(ctrl.aonAndFlex_Sub_3, (collection, index) => m(projectRowWithHeader, {
+        else if (state.subHomeWith3()) {
+            return m('div', _.map(state.aonAndFlex_Sub_3, (collection, index) => m(projectRowWithHeader, {
                     collection,
                     title: collection.title,
                     ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
@@ -108,7 +108,7 @@ const projectsDisplay = {
             );
         }
         else {
-            return m('div', _.map(ctrl.collections, collection => m(projectRow, {
+            return m('div', _.map(state.collections, collection => m(projectRow, {
                 collection,
                 title: collection.title,
                 ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,

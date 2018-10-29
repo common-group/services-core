@@ -68,7 +68,7 @@ const userNotifications = {
             return false;
         }));
 
-        return {
+        vnode.state = {
             projects: contributedProjects,
             mailMarketingLists,
             showNotifications,
@@ -79,13 +79,13 @@ const userNotifications = {
             isOnCurrentList,
         };
     },
-    view: function(ctrl, args) {
-        const user = args.user,
-            reminders = ctrl.projectReminders(),
-            projects_collection = ctrl.projects(),
-            marketing_lists = ctrl.mailMarketingLists();
+    view: function({state, attrs}) {
+        const user = attrs.user,
+            reminders = state.projectReminders(),
+            projects_collection = state.projects(),
+            marketing_lists = state.mailMarketingLists();
 
-        return m('[id=\'notifications-tab\']', ctrl.error() ? m(inlineError, {
+        return m('[id=\'notifications-tab\']', state.error() ? m(inlineError, {
             message: 'Erro ao carregar a página.'
         }) :
             m(`form.simple_form.edit_user[accept-charset='UTF-8'][action='/${window.I18n.locale}/users/${user.id}'][method='post'][novalidate='novalidate']`, [
@@ -123,14 +123,14 @@ const userNotifications = {
                                                                 window.I18n.t(`newsletters.${item.list_id}.description`, I18nScope())
                                                             ),
                                                             (_item.should_insert() || _item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][mail_marketing_list_id]`, value: item.id }) : ''),
-                                                            (_item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][id]`, value: ctrl.getUserMarketingListId(item) }) : ''),
+                                                            (_item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][id]`, value: state.getUserMarketingListId(item) }) : ''),
                                                             (_item.should_destroy() ? m('input[type=\'hidden\']', { name: `user[mail_marketing_users_attributes][${i}][_destroy]`, value: _item.should_destroy() }) : ''),
                                                             m('button.btn.btn-medium.w-button',
                                                                 {
                                                                     class: !_item.isInsertInListState() ? 'btn-terciary' : null,
                                                                     onclick: (event) => {
                                                                         // If user already has this list, click should enable destroy state
-                                                                        if (ctrl.isOnCurrentList(user.mail_marketing_lists, item)) {
+                                                                        if (state.isOnCurrentList(user.mail_marketing_lists, item)) {
                                                                             _item.should_destroy(true);
 
                                                                             return;
@@ -168,12 +168,12 @@ const userNotifications = {
                                             ),
                                             m('.u-marginbottom-20',
                                                 m('a.alt-link[href=\'javascript:void(0);\']', {
-                                                    onclick: ctrl.showNotifications.toggle
+                                                    onclick: state.showNotifications.toggle
                                                 },
                                                     ` Gerenciar as notificações de ${user.total_contributed_projects} projetos`
                                                 )
                                             ),
-                                            (ctrl.showNotifications() ?
+                                            (state.showNotifications() ?
                                                 m('ul.w-list-unstyled.u-radius.card.card-secondary[id=\'notifications-box\']', [
                                                     (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m('li',
                                                             m('.w-checkbox.w-clearfix', [

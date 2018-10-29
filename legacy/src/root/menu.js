@@ -29,7 +29,7 @@ const menu = {
             homeAttrs
         };
     },
-    view: function({state}) {
+    view: function({state, attrs}) {
         return m('header.main-header', {
             class: state.menuCss()
         }, [
@@ -40,7 +40,7 @@ const menu = {
                             state.homeAttrs(),
                             m('img[alt=\'Logo big\'][src=\'/assets/catarse_bootstrap/logo_big.png\']')
                         ),
-                        args.menuShort ? '' : m('div#menu-components', [
+                        attrs.menuShort ? '' : m('div#menu-components', [
                             m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'https://crowdfunding.catarse.me/comece\']', 'Comece seu projeto'),
                             m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { oncreate: m.route.link }, 'Explore'),
                             m(menuSearch)
@@ -52,7 +52,7 @@ const menu = {
                 ])
 
             ]),
-            args.menuShort ? '' : m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
+            attrs.menuShort ? '' : m('.header-controls-mobile.w-hidden-main.w-hidden-medium',
                 [
                     m(`a.header-link.w-nav-link[href=\'/${window.I18n.locale}/start?ref=ctrse_header\']`,
                         { onclick: () => m.route.set('/start') },
