@@ -36,6 +36,8 @@
     		- [GET - /v1/projects/:PROJECT_ID/goals/:GOAL_ID](./get_http_routes_v1_projects_PROJECT_ID_goals_GOAL_ID.md)
     		- [POST - /v1/projects/:PROJECT_ID/goals](./post_http_routes_v1_projects_PROJECT_ID_goals.md)
     		- [PUT - /v1/projects/:PROJECT_ID/goals/:GOAL_ID](./put_http_routes_v1_projects_PROJECT_ID_goals_GOAL_ID.md)
+		- [Posts](./http_route_v1_project_managment_stats_posts_main.md)
+    		- [GET - /v1/projects/:PROJECT_ID/posts](./get_http_routes_v1_projects_PROJECT_ID_posts.md)
 
 <!--
     - [Analytics](./http_analytics.md)
